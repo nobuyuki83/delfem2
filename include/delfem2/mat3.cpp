@@ -81,8 +81,9 @@ DFM2_INLINE double SqLength3(double v[3])
 
 // t is a tmporary buffer size of 9
 template <typename T>
-void delfem2::Transpose_Mat3(T t[9],
-                          const T a[9])
+void delfem2::Transpose_Mat3(
+    T t[9],
+    const T a[9])
 {
   t[0] = a[0];
   t[1] = a[3];
@@ -102,9 +103,9 @@ template void delfem2::Transpose_Mat3(double t[], const double a[]);
 // --------------------------------------
 
 template <typename REAL>
-void delfem2::Inverse_Mat3
-(REAL Ainv[9],
- const REAL A[9])
+void delfem2::Inverse_Mat3(
+    REAL Ainv[9],
+    const REAL A[9])
 {
   const REAL det =
   + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
@@ -129,8 +130,8 @@ template void delfem2::Inverse_Mat3(double Ainv[9], const double A[9]);
 // --------------------------------------
 
 template <typename REAL>
-void delfem2::Inverse_Mat3
- (REAL A[9])
+void delfem2::Inverse_Mat3(
+    REAL A[9])
 {
   const REAL B[9] = {
     A[0],A[1],A[2],

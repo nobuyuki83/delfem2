@@ -319,14 +319,16 @@ CVec3<T> screenUnProjection(const CVec3<T>& v,
                             const float* mPj);
   
 template <typename T>
-CVec3<T> screenUnProjectionDirection(const CVec3<T>& v,
-                                     const float* mMV,
-                                     const float* mPj);
+CVec3<T> screenUnProjectionDirection(
+    const CVec3<T>& v,
+    const float* mMV,
+    const float* mPj);
   
 template <typename T>
-CVec3<T> screenDepthDirection(const CVec3<T>& v,
-                              const float* mMV,
-                              const float* mPj);
+CVec3<T> screenDepthDirection(
+    const CVec3<T>& v,
+    const float* mMV,
+    const float* mPj);
 
 template <typename T>
 double ScalarTripleProduct(const CVec3<T>& a, const CVec3<T>& b, const CVec3<T>& c);
@@ -344,10 +346,12 @@ template <typename T>
 void GetVertical2Vector (const CVec3<T>& vec_n, CVec3<T>& vec_x, CVec3<T>& vec_y);
 
 template <typename T>
-bool IntersectRay_Tri3(T& r0, T& r1,
-                       const CVec3<T>& org, const CVec3<T>& dir,
-                       const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2,
-                       T eps);
+bool IntersectRay_Tri3(
+    T& r0,
+    T& r1,
+    const CVec3<T>& org, const CVec3<T>& dir,
+    const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2,
+    T eps);
 
 // --------------------------------------------------------------
 
@@ -372,32 +376,35 @@ CVec3<T> nearest_LineSeg_Point(double& t,
                                  const CVec3<T>& e); // direction
   
 template <typename T>
-CVec3<T> nearest_Plane_Point(const CVec3<T>& p, // point
-                             const CVec3<T>& o, // origin
-                             const CVec3<T>& n); // normal
+CVec3<T> nearest_Plane_Point(
+    const CVec3<T>& p, // point
+    const CVec3<T>& o, // origin
+    const CVec3<T>& n); // normal
   
 template <typename T>
-CVec3<T> Nearest_Origin_Tri(double& r0,
-                            double& r1,
-                            const CVec3<T>& q0,
-                            const CVec3<T>& q1,
-                            const CVec3<T>& q2);
+CVec3<T> Nearest_Origin_Tri(
+    double& r0,
+    double& r1,
+    const CVec3<T>& q0,
+    const CVec3<T>& q1,
+    const CVec3<T>& q2);
   
 template <typename T>
-CVec3<T> nearst_Origin_Quad(double& s0, double& s1,
-                            const CVec3<T>& p,
-                            const CVec3<T>& q0,
-                            const CVec3<T>& q1,
-                            const CVec3<T>& q2,
-                            const CVec3<T>& q3);
+CVec3<T> nearst_Origin_Quad(
+    double& s0, double& s1,
+    const CVec3<T>& p,
+    const CVec3<T>& q0,
+    const CVec3<T>& q1,
+    const CVec3<T>& q2,
+    const CVec3<T>& q3);
 
 // --------------------------------
 
 template <typename T>
-void nearest_LineSeg_Line
-(CVec3<T>& a, CVec3<T>& b,
- const CVec3<T>& ps, const CVec3<T>& pe,
- const CVec3<T>& pb_, const CVec3<T>& vb);
+void nearest_LineSeg_Line(
+    CVec3<T>& a, CVec3<T>& b,
+    const CVec3<T>& ps, const CVec3<T>& pe,
+    const CVec3<T>& pb_, const CVec3<T>& vb);
 
 // --------------------------------
 
@@ -407,10 +414,10 @@ void nearest_LineSeg_Line
  *  @param Db (out) nearest point scaled by D on line B
  */
 template <typename T>
-void nearest_Line_Line
- (T& D, CVec3<T>& Da, CVec3<T>& Db,
-  const CVec3<T>& pa_, const CVec3<T>& va,
-  const CVec3<T>& pb_, const CVec3<T>& vb);
+void nearest_Line_Line(
+    T& D, CVec3<T>& Da, CVec3<T>& Db,
+    const CVec3<T>& pa_, const CVec3<T>& va,
+    const CVec3<T>& pb_, const CVec3<T>& vb);
 
 // ------------------------------------
 
@@ -436,11 +443,11 @@ DFM2_INLINE double Nearest_LineSeg_LineSeg_CCD_Iteration(
  *  @param Dtb (out) parameter for nearest pont one line B. Db = D*pb_ + Dtb*vb
  */
 template <typename T>
-void nearest_Line_Line
- (T& D, CVec3<T>& Da, CVec3<T>& Db,
-  T& Dta, T& Dtb,
-  const CVec3<T>& pa_, const CVec3<T>& va,
-  const CVec3<T>& pb_, const CVec3<T>& vb);
+void nearest_Line_Line(
+    T& D, CVec3<T>& Da, CVec3<T>& Db,
+    T& Dta, T& Dtb,
+    const CVec3<T>& pa_, const CVec3<T>& va,
+    const CVec3<T>& pb_, const CVec3<T>& vb);
 
 // ------------------------------------
   
@@ -449,73 +456,80 @@ void nearest_Line_Line
  * @param q0 (out)  nearest point on circle
  */
 template <typename T>
-void Nearest_Line_Circle
- (CVec3<T>& p0,
-  CVec3<T>& q0,
-  const CVec3<T>& src,
-  const CVec3<T>& dir,
-  const CVec3<T>& org,
-  const CVec3<T>& normal,
-  T rad);
+void Nearest_Line_Circle(
+    CVec3<T>& p0,
+    CVec3<T>& q0,
+    const CVec3<T>& src,
+    const CVec3<T>& dir,
+    const CVec3<T>& org,
+    const CVec3<T>& normal,
+    T rad);
 
 template <typename T>
-CVec3<T> nearst_Origin_Quad(double& s0,
-                            double& s1,
-                            const CVec3<T>& q0,
-                            const CVec3<T>& q1,
-                            const CVec3<T>& q2,
-                            const CVec3<T>& q3);
+CVec3<T> nearst_Origin_Quad(
+    double& s0,
+    double& s1,
+    const CVec3<T>& q0,
+    const CVec3<T>& q1,
+    const CVec3<T>& q2,
+    const CVec3<T>& q3);
 
 template <typename T>
-CVec3<T> nearest_Origin_LineSeg(const CVec3<T>& s, // start
-                                const CVec3<T>& e); // end
+CVec3<T> nearest_Origin_LineSeg(
+    const CVec3<T>& s, // start
+    const CVec3<T>& e); // end
 
 // r0==0 -> p0==org
 // r0==1 -> p1==org
 template <typename T>
-CVec3<T> nearest_Origin_LineSeg(double& r0,
-                                const CVec3<T>& p0, // start
-                                const CVec3<T>& p1); // end
+CVec3<T> nearest_Origin_LineSeg(
+    double& r0,
+    const CVec3<T>& p0, // start
+    const CVec3<T>& p1); // end
 
 template <typename T>
-CVec3<T> Nearest_Orgin_PlaneTri(double& r0,
-                                double& r1,
-                                const CVec3<T>& q0,
-                                const CVec3<T>& q1,
-                                const CVec3<T>& q2);
+CVec3<T> Nearest_Orgin_PlaneTri(
+    double& r0,
+    double& r1,
+    const CVec3<T>& q0,
+    const CVec3<T>& q1,
+    const CVec3<T>& q2);
     
 // -----------------------------------------
 
 template <typename T>
-bool intersection_Plane_Line(CVec3<T>& p0, double& r0, double& r1, double& r2,
-                             double eps,
-                             const CVec3<T>& src, const CVec3<T>& dir,
-                             const CVec3<T>& q0, const CVec3<T>& q1, const CVec3<T>& q2);
+bool intersection_Plane_Line(
+    CVec3<T>& p0, double& r0, double& r1, double& r2,
+    double eps,
+    const CVec3<T>& src, const CVec3<T>& dir,
+    const CVec3<T>& q0, const CVec3<T>& q1, const CVec3<T>& q2);
   
 template <typename T>
-bool intersection_Point_Quad(CVec3<T>& psec, double& s0, double& s1,
-                             const CVec3<T>& src, const CVec3<T>& dir,
-                             const CVec3<T>& q0,
-                             const CVec3<T>& q1,
-                             const CVec3<T>& q2,
-                             const CVec3<T>& q3);
+bool intersection_Point_Quad(
+    CVec3<T>& psec, double& s0, double& s1,
+    const CVec3<T>& src, const CVec3<T>& dir,
+    const CVec3<T>& q0,
+    const CVec3<T>& q1,
+    const CVec3<T>& q2,
+    const CVec3<T>& q3);
 
 template <typename T>
-void iteration_intersection_Line_Quad
-    (double& t0, double& t1,
-     const CVec3<T>& src,
-     const CVec3<T>& u,
-     const CVec3<T>& v,
-     const CVec3<T>& q0,
-     const CVec3<T>& q1,
-     const CVec3<T>& q2,
-     const CVec3<T>& q3);
+void iteration_intersection_Line_Quad(
+    double& t0, double& t1,
+    const CVec3<T>& src,
+    const CVec3<T>& u,
+    const CVec3<T>& v,
+    const CVec3<T>& q0,
+    const CVec3<T>& q1,
+    const CVec3<T>& q2,
+    const CVec3<T>& q3);
   
 template <typename T>
-CVec3<T> intersection_Plane_Line(const CVec3<T>& o, // one point on plane
-                                 const CVec3<T>& n, // plane normal
-                                 const CVec3<T>& s, // one point on line
-                                 const CVec3<T>& d); // direction of line
+CVec3<T> intersection_Plane_Line(
+    const CVec3<T>& o, // one point on plane
+    const CVec3<T>& n, // plane normal
+    const CVec3<T>& s, // one point on line
+    const CVec3<T>& d); // direction of line
 
 // ----------------------------------------------------------------------------------
 
@@ -559,23 +573,25 @@ bool isIntersectTriPair(
 // ---------------------------------------------------------
 
 template <typename T>
-bool barycentricCoord_Origin_Tet(double& r0,
-                                 double& r1,
-                                 double& r2,
-                                 const CVec3<T>& p0,
-                                 const CVec3<T>& p1,
-                                 const CVec3<T>& p2,
-                                 const CVec3<T>& p3);
+bool barycentricCoord_Origin_Tet(
+    double& r0,
+    double& r1,
+    double& r2,
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3);
   
 template <typename T>
-bool barycentricCoord_Origin_Pyramid(double& r0,
-                                     double& r1,
-                                     double& r2,
-                                     const CVec3<T>& p0,
-                                     const CVec3<T>& p1,
-                                     const CVec3<T>& p2,
-                                     const CVec3<T>& p3,
-                                     const CVec3<T>& p4);
+bool barycentricCoord_Origin_Pyramid(
+    double& r0,
+    double& r1,
+    double& r2,
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& p4);
   
 template <typename T>
 bool barycentricCoord_Origin_Wedge(double& r0,
@@ -588,66 +604,73 @@ bool barycentricCoord_Origin_Wedge(double& r0,
                                    const CVec3<T>& p4,
                                    const CVec3<T>& p5);
 template <typename T>
-CVec3<T> positionBarycentricCoord_Pyramid(double r0,
-                                          double r1,
-                                          double r2,
-                                          const CVec3<T>& p0,
-                                          const CVec3<T>& p1,
-                                          const CVec3<T>& p2,
-                                          const CVec3<T>& p3,
-                                          const CVec3<T>& p4);
+CVec3<T> positionBarycentricCoord_Pyramid(
+    double r0,
+    double r1,
+    double r2,
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& p4);
   
 template <typename T>
-CVec3<T> positionBarycentricCoord_Wedge(double r0,
-                                        double r1,
-                                        double r2,
-                                        const CVec3<T>& p0,
-                                        const CVec3<T>& p1,
-                                        const CVec3<T>& p2,
-                                        const CVec3<T>& p3,
-                                        const CVec3<T>& p4,
-                                        const CVec3<T>& p5);
+CVec3<T> positionBarycentricCoord_Wedge(
+    double r0,
+    double r1,
+    double r2,
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& p4,
+    const CVec3<T>& p5);
   
 template <typename T>
-void iteration_barycentricCoord_Origin_Solid(double& r0,
-                                             double& r1,
-                                             double& r2,
-                                             const CVec3<T>& q, // q=positionBarycentricCoord_Wedge
-                                             const CVec3<T>& dpdr0,
-                                             const CVec3<T>& dpdr1,
-                                             const CVec3<T>& dpdr2,
-                                             double damp=1.0);
+void iteration_barycentricCoord_Origin_Solid(
+    double& r0,
+    double& r1,
+    double& r2,
+    const CVec3<T>& q, // q=positionBarycentricCoord_Wedge
+    const CVec3<T>& dpdr0,
+    const CVec3<T>& dpdr1,
+    const CVec3<T>& dpdr2,
+    double damp=1.0);
 
   
 // ---------------------------------------------------------
 
 template <typename T>
-bool IsInside_Orgin_BoundingBoxPoint4(const CVec3<T>& p0,
-                                    const CVec3<T>& p1,
-                                    const CVec3<T>& p2,
-                                    const CVec3<T>& p3);
+bool IsInside_Orgin_BoundingBoxPoint4(
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3);
 
 template <typename T>
-bool IsInside_Orgin_BoundingBoxPoint5(const CVec3<T>& p0,
-                                    const CVec3<T>& p1,
-                                    const CVec3<T>& p2,
-                                    const CVec3<T>& p3,
-                                    const CVec3<T>& p4);
+bool IsInside_Orgin_BoundingBoxPoint5(
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& p4);
 
 template <typename T>
-bool IsInside_Orgin_BoundingBoxPoint6(const CVec3<T>& p0,
-                                    const CVec3<T>& p1,
-                                    const CVec3<T>& p2,
-                                    const CVec3<T>& p3,
-                                    const CVec3<T>& p4,
-                                    const CVec3<T>& p5);
+bool IsInside_Orgin_BoundingBoxPoint6(
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& p4,
+    const CVec3<T>& p5);
 
 // -----------------------------------------------
 
 template <typename T>
-double Volume_OrgTet(const CVec3<T>& v1,
-                     const CVec3<T>& v2,
-                     const CVec3<T>& v3 );
+double Volume_OrgTet(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3 );
   
 template <typename T>
 T Volume_Tet(
@@ -657,19 +680,21 @@ T Volume_Tet(
     const CVec3<T>& v3 );
 
 template <typename T>
-double Volume_Pyramid(const CVec3<T>& p0,
-                      const CVec3<T>& p1,
-                      const CVec3<T>& p2,
-                      const CVec3<T>& p3,
-                      const CVec3<T>& p4);
+double Volume_Pyramid(
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& p4);
 
 template <typename T>
-double Volume_Wedge(const CVec3<T>& p0,
-                    const CVec3<T>& p1,
-                    const CVec3<T>& p2,
-                    const CVec3<T>& p3,
-                    const CVec3<T>& p4,
-                    const CVec3<T>& p5);
+double Volume_Wedge(
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& p4,
+    const CVec3<T>& p5);
 
 // ---------------------------------------------
 
@@ -700,28 +725,32 @@ template <typename T>
 double Distance(const CVec3<T>& ipo0, const CVec3<T>& ipo1);
 
 template <typename T>
-double SqareLongestEdgeLength(const CVec3<T>& ipo0,
-                              const CVec3<T>& ipo1,
-                              const CVec3<T>& ipo2,
-                              const CVec3<T>& ipo3 );
+double SqareLongestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 );
 
 template <typename T>
-double LongestEdgeLength(const CVec3<T>& ipo0,
-                         const CVec3<T>& ipo1,
-                         const CVec3<T>& ipo2,
-                         const CVec3<T>& ipo3 );
+double LongestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 );
 
 template <typename T>
-double SqareShortestEdgeLength(const CVec3<T>& ipo0,
-                               const CVec3<T>& ipo1,
-                               const CVec3<T>& ipo2,
-                               const CVec3<T>& ipo3 );
+double SqareShortestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 );
 
 template <typename T>
-double ShortestEdgeLength(const CVec3<T>& ipo0,
-                          const CVec3<T>& ipo1,
-                          const CVec3<T>& ipo2,
-                          const CVec3<T>& ipo3 );
+double ShortestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 );
 
 template <typename T>
 void Normal(CVec3<T>& vnorm,
@@ -799,17 +828,20 @@ CVec3<T> ProjectPointOnTriangle(const CVec3<T> &p0,
                                 const CVec3<T> &tri_p1, const CVec3<T> &tri_p2, const CVec3<T> &tri_p3);
 
 template <typename T>
-bool isPointInsideTriangle(const CVec3<T> &p0,
-                           const CVec3<T> &tri_p1, const CVec3<T> &tri_p2, const CVec3<T> &tri_p3);
+bool isPointInsideTriangle(
+    const CVec3<T> &p0,
+    const CVec3<T> &tri_p1, const CVec3<T> &tri_p2, const CVec3<T> &tri_p3);
   
 template <typename T>
-bool isPointSameSide(const CVec3<T> &p0, const CVec3<T> &p1,
-                     const CVec3<T> &line_p0, const CVec3<T> &line_p1);
+bool isPointSameSide(
+    const CVec3<T> &p0, const CVec3<T> &p1,
+    const CVec3<T> &line_p0, const CVec3<T> &line_p1);
   
 template <typename T>
-bool isRayIntersectingTriangle(const CVec3<T> &line0, const CVec3<T> &line1,
-                               const CVec3<T> &tri0, const CVec3<T> &tri1, const CVec3<T> &tri2,
-                               CVec3<T> &intersectionPoint);
+bool isRayIntersectingTriangle(
+    const CVec3<T> &line0, const CVec3<T> &line1,
+    const CVec3<T> &tri0, const CVec3<T> &tri1, const CVec3<T> &tri2,
+    CVec3<T> &intersectionPoint);
   
   
 // ----------------------------------------------------------
@@ -833,14 +865,15 @@ void ConvexHull(std::vector<int>& aTri,
                 const std::vector<CVec3<T> >& aXYZ);
 
 template <typename T>
-CVec3<T> CG_Tri3(unsigned int itri,
-                 const std::vector<unsigned int>& aTri,
-                 const std::vector<T>& aXYZ)
+CVec3<T> CG_Tri3(
+    unsigned int itri,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<T>& aXYZ)
 {
+  const unsigned int i0 = aTri[itri*3+0];
+  const unsigned int i1 = aTri[itri*3+1];
+  const unsigned int i2 = aTri[itri*3+2];
   CVec3<T> p;
-  int i0 = aTri[itri*3+0];
-  int i1 = aTri[itri*3+1];
-  int i2 = aTri[itri*3+2];
   p.p[0] = (aXYZ[i0*3+0]+aXYZ[i1*3+0]+aXYZ[i2*3+0])/3.0;
   p.p[1] = (aXYZ[i0*3+1]+aXYZ[i1*3+1]+aXYZ[i2*3+1])/3.0;
   p.p[2] = (aXYZ[i0*3+2]+aXYZ[i1*3+2]+aXYZ[i2*3+2])/3.0;
@@ -848,16 +881,17 @@ CVec3<T> CG_Tri3(unsigned int itri,
 }
 
 template <typename T>
-inline CVec3<T> Normal_Tri3(int itri,
-                         const std::vector<int>& aTri,
-                         const std::vector<double>& aXYZ)
+inline CVec3<T> Normal_Tri3(
+    unsigned int itri,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<T>& aXYZ)
 {
-  int i0 = aTri[itri*3+0];
-  int i1 = aTri[itri*3+1];
-  int i2 = aTri[itri*3+2];
-  CVec3<T> p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
-  CVec3<T> p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
-  CVec3<T> p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
+  const unsigned int i0 = aTri[itri*3+0];
+  const unsigned int i1 = aTri[itri*3+1];
+  const unsigned int i2 = aTri[itri*3+2];
+  const CVec3<T> p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
+  const CVec3<T> p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
+  const CVec3<T> p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
   return (p1-p0)^(p2-p0);
 }
 
