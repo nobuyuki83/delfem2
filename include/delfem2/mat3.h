@@ -411,7 +411,7 @@ public:
     return m;
   }
 public:
-  REAL mat[9];
+  REAL mat[9]; // value with row-major order
 };
 
 using CMat3d = CMat3<double>;

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.12)
 
 option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
@@ -28,6 +28,7 @@ add_subdirectory(107_ParamGeo2)
 add_subdirectory(108_ParamGeo3)
 add_subdirectory(109_ContourLine2D)
 add_subdirectory(110_ClusteringMesh)
+#add_subdirectory(111_FlatteringExponentialMap)
 add_subdirectory(112_OffscreenRendering)
 add_subdirectory(113_ProjectionBox)
 add_subdirectory(114_CollisionLineHightfield)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.12)
 project(004_minmaxpoint3d)
 
 set(DELFEM2_INCLUDE_DIR "../../include")

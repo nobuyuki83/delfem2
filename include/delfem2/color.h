@@ -139,15 +139,19 @@ DFM2_INLINE CColor getColor
  (double input, const std::vector<std::pair<double, CColor> >& colorMap);
 
 
-DFM2_INLINE void ColorMap_BlueGrayRed
- (std::vector<std::pair<double, CColor> >& colorMap,
-  float min, float max);
-DFM2_INLINE void ColorMap_BlueCyanGreenYellowRed
- (std::vector<std::pair<double, CColor> >& colorMap,
-  float min, float max, float alpha=1);
-DFM2_INLINE void ColorMap_RedYellowGreenCyanBlue
- (std::vector<std::pair<double, CColor> >& colorMap,
-  float min, float max);
+DFM2_INLINE void ColorMap_BlueGrayRed(
+    std::vector<std::pair<double, CColor> >& colorMap,
+    float min,
+    float max);
+DFM2_INLINE void ColorMap_BlueCyanGreenYellowRed(
+    std::vector<std::pair<double, CColor> >& colorMap,
+    float min,
+    float max,
+    float alpha=1);
+DFM2_INLINE void ColorMap_RedYellowGreenCyanBlue(
+    std::vector<std::pair<double, CColor> >& colorMap,
+    float min,
+    float max);
 
 class CColorMap
 {
