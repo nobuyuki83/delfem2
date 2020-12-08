@@ -126,7 +126,7 @@ void DijkstraElem_MeshElemGeo3(
     que.pop();
     if( aOrder[ielm0] != UINT_MAX ){ continue; } // already fixed so this is not the shortest path
     aOrder[ielm0] = icnt; // found shortest path
-    proc.AddElem(ielm0,icnt,aOrder);
+    proc.AddElem(ielm0,aOrder);
     icnt++;
     for (unsigned int iedge = 0; iedge < nedge; ++iedge) {
       const unsigned int ielm1 = aElSuEl[ielm0 * nedge + iedge];
@@ -205,7 +205,7 @@ void DijkstraPoint_MeshTri3D(
     que.pop();
     if( aOrder[ip0] != UINT_MAX ){ continue; } // already fixed (this wes necessary)
     aOrder[ip0] = icnt;
-    proc.AddPoint(ip0,icnt,aOrder);
+    proc.AddPoint(ip0,aOrder);
     icnt++;
     for(unsigned int ipsup=psup_ind[ip0];ipsup<psup_ind[ip0+1];++ipsup) {
       const unsigned int ip1 = psup[ipsup];
