@@ -33,13 +33,12 @@ void myGlutDisplay(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& aTri,
     const std::vector<double>& aNorm,
-    const std::vector<double>& aTex,
-    const std::vector<unsigned int>& aIndTri)
+    const std::vector<double>& aTex)
 {
   ::glBegin(GL_TRIANGLES);
-//  for(unsigned int itri=0;itri<aTri.size()/3;itri++){
-  for(unsigned int iit=0;iit<aIndTri.size();++iit){
-    unsigned int itri = aIndTri[iit];
+  for(unsigned int itri=0;itri<aTri.size()/3;itri++){
+//  for(unsigned int iit=0;iit<aIndTri.size();++iit){
+//    unsigned int itri = aIndTri[iit];
     const unsigned int i0 = aTri[itri*3+0];
     const unsigned int i1 = aTri[itri*3+1];
     const unsigned int i2 = aTri[itri*3+2];
@@ -147,80 +146,32 @@ int main(int argc,char* argv[])
       aXYZ,aTri);
   delfem2::Normalize_Points3(aXYZ);
 
-  std::vector<unsigned int> elsup_ind, elsup;
   std::vector<unsigned int> psup_ind, psup;
   {
+    std::vector<unsigned int> elsup_ind, elsup;
     dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
         aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
     dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
         aTri.data(), elsup_ind, elsup, 3, aXYZ.size()/3);
   }
-
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(
       aNorm.data(),
       aXYZ.data(), aXYZ.size() / 3,
       aTri.data(), aTri.size() / 3);
 
-
   unsigned int ip_ker = 0;
-
   std::vector<double> aTex;
-  std::vector<unsigned int> aIndTri;
   {
     CExpMap expmap(ip_ker,
                    aXYZ,aNorm,aTri,aTex,
                    psup_ind,psup);
-
     std::vector<unsigned int> mapIp2Io;
     std::vector<double> aDist;
     dfm2::DijkstraPoint_MeshTri3D(
         aDist, mapIp2Io, expmap,
         ip_ker, aXYZ, psup_ind, psup);
-
-    std::vector<unsigned int> aTriSuTri;
-    ElSuEl_MeshElem(aTriSuTri,
-                    aTri.data(), aTri.size()/3,
-                    delfem2::MESHELEM_TRI,
-                    aXYZ.size()/3);
-
-    std::vector<int> aFlgTri(aTri.size()/3,0); // 0: not set, 1: used, -1: skew
-    std::stack<unsigned int> stackItri;
-    {
-      const unsigned int it_ker = elsup[elsup_ind[ip_ker]];
-      stackItri.push(it_ker);
-    }
-    while(!stackItri.empty()){
-      unsigned int it0 = stackItri.top();
-      stackItri.pop();
-      if( aFlgTri[it0] != 0 ) continue; // this is already exermined
-      unsigned int ip0 = aTri[it0*3+0];
-      unsigned int ip1 = aTri[it0*3+1];
-      unsigned int ip2 = aTri[it0*3+2];
-      double area2 = dfm2::Area_Tri2(aTex.data()+ip0*2, aTex.data()+ip1*2, aTex.data()+ip2*2);
-      double area3 = dfm2::Area_Tri3(aXYZ.data()+ip0*3, aXYZ.data()+ip1*3, aXYZ.data()+ip2*3);
-      double score = area2/area3 + area3/area2;
-      if( score < 0 || score > 2.5 ){ aFlgTri[it0] = -1; continue; } // skew
-      aFlgTri[it0] = 1;
-      for(unsigned int ied=0;ied<3;++ied) {
-        unsigned int jt0 = aTriSuTri[it0 * 3 + ied];
-        if( jt0 == UINT_MAX ){ continue; }
-        if( aFlgTri[jt0] != 0 ){ continue; }
-        stackItri.push(jt0);
-      }
-    }
-    for(unsigned int it=0;it<aTri.size()/3;++it){
-      if( aFlgTri[it] != 1 ){ continue; }
-      aIndTri.push_back(it);
-    }
   }
-
-  /*
-  std::vector<double> aTex;
-  ExponentialMap(aTex,
-      ip_ker,
-      aXYZ,aNorm,mapIp2Io,psup_ind,psup);
-      */
 
   // above: data preparation
   // -----------------------
@@ -257,10 +208,12 @@ int main(int argc,char* argv[])
     dfm2::ColorMap_BlueCyanGreenYellowRed(colorMap, 0,1);
     for(unsigned int iframe=0;iframe<30;++iframe) {
       viewer.DrawBegin_oldGL();
-      ::glDisable(GL_LIGHTING);
-      ::glDisable(GL_TEXTURE_2D);
-      ::glColor3d(0, 0, 0);
-      delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
+      {
+        ::glDisable(GL_LIGHTING);
+        ::glDisable(GL_TEXTURE_2D);
+        ::glColor3d(0, 0, 0);
+        delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
+      }
       {
         ::glEnable(GL_TEXTURE_2D);
         ::glEnable(GL_LIGHTING);
@@ -270,7 +223,7 @@ int main(int argc,char* argv[])
         ::glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, shine);
         ::glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 128.0);
       }
-      myGlutDisplay( aXYZ,aTri,aNorm,aTex, aIndTri);
+      myGlutDisplay( aXYZ,aTri,aNorm,aTex);
       {
       }
       glfwSwapBuffers(viewer.window);
