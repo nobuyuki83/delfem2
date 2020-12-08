@@ -7,97 +7,22 @@
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/tex_gl.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/dijkstra.h"
+#include "delfem2/expmap_geo3dijk.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/color.h"
 #include "delfem2/vec3.h"
 #include "delfem2/imgio.h"
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
 #include <cstdlib>
-#include <random>
 #include <set>
 
 namespace dfm2 = delfem2;
 
 // ---------------------------
-
-class CExpMap{
-public:
-  std::vector<double>& aTex;
-  const std::vector<double>& aXYZ;
-  const std::vector<unsigned int>& aTri;
-  const std::vector<unsigned int>& aTriSuTri;
-  std::vector<double> aW;
-  std::vector<dfm2::CVec3d> aAxisX;
-public:
-  CExpMap(
-      std::vector<double>& aTex_,
-      unsigned int it_ker,
-      const std::vector<double>& aXYZ_,
-      const std::vector<unsigned int>& aTri_,
-      std::vector<unsigned int>& aTriSuTri_) :
-      aTex(aTex_), aXYZ(aXYZ_), aTri(aTri_), aTriSuTri(aTriSuTri_)
-  {
-    const unsigned int ntri = aTri.size() / 3;
-    aAxisX.resize(ntri, dfm2::CVec3d(0, 0, 0));
-    aTex.resize(ntri * 2);
-    aW.assign(ntri, 0.0);
-    { // set kernel point information
-      aTex[it_ker * 2 + 0] = 0.0;
-      aTex[it_ker * 2 + 1] = 0.0;
-      dfm2::CVec3d n0 = dfm2::Normal_Tri3(it_ker,aTri,aXYZ).Normalize();
-      dfm2::CVec3d y0;
-      dfm2::GetVertical2Vector(
-          n0,
-          aAxisX[it_ker], y0);
-      aW[it_ker] = 1.0;
-    }
-  }
-
-  /**
-   *
-   * @param[in] ip0 point newly added
-   * @param[in] io0 the order of newly added point. ( 0 if this is the first point)
-   * @param[in] aOrder map from point index 2 the order of points added
-   */
-  void AddElem(
-      unsigned int it0,
-      unsigned int io0,
-      std::vector<unsigned int>& aOrder)
-  {
-    assert( aOrder.size() == aTri.size()/3 );
-    assert( aOrder[it0] != UINT_MAX );
-    const dfm2::CVec3d n0 = dfm2::Normal_Tri3(it0,aTri,aXYZ).Normalize();
-    const dfm2::CVec3d p0 = dfm2::CG_Tri3(it0,aTri,aXYZ);
-    aAxisX[it0].SetNormalizedVector();
-    const dfm2::CVec3d x0 = aAxisX[it0];
-    const dfm2::CVec3d y0 = n0^x0;
-    aTex[it0 * 2 + 0] /= aW[it0];
-    aTex[it0 * 2 + 1] /= aW[it0];
-    for (unsigned int iedge = 0; iedge < 3; ++iedge) {
-      const unsigned int it1 = aTriSuTri[it0*3+iedge];
-      if( it1 == UINT_MAX ){ continue; }
-      if ( aOrder[it1] != UINT_MAX ) { continue; } // effect propagate from fixed to unfixed
-      const dfm2::CVec3d n1 = dfm2::Normal_Tri3(it1,aTri,aXYZ).Normalize();
-      const dfm2::CVec3d d01 = dfm2::CG_Tri3(it1,aTri,aXYZ)-p0;
-      const double len01 = d01.Length();
-      const dfm2::CVec3d e01 = (d01 - (d01 * n0) * n0).Normalize() * len01; // projected edge and same length
-      const double w01 = 1.0 / len01;
-      const dfm2::CVec3d x1 = dfm2::Mat3_MinimumRotation(n0, n1) * x0;
-      aAxisX[it1] += w01 * x1;
-      aW[it1] += w01;
-      aTex[it1 * 2 + 0] += w01 * (aTex[it0 * 2 + 0] + (e01 * x0));
-      aTex[it1 * 2 + 1] += w01 * (aTex[it0 * 2 + 1] + (e01 * y0));
-    }
-  }
-};
 
 void Draw(
     const std::vector<double>& aXYZ,
@@ -200,7 +125,7 @@ int main(int argc,char* argv[])
   std::vector<double> aTexP;
   {
     std::vector<double> aTexE; // element-wise texture coordinate
-    CExpMap expmap(
+    dfm2::CExpMap_DijkstraElem expmap(
         aTexE,
         ielm_ker, aXYZ, aTri, aTriSuTri);
     std::vector<double> aDist;
