@@ -46,6 +46,10 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [110_ClusteringMesh](110_ClusteringMesh)
 <img src="110_ClusteringMesh/thumbnail.png" width=200px>
 
+### [111_ExponentialMapElem](111_ExponentialMapElem)
+
+<img src="111_ExponentialMapElem/thumbnail.png" width=200px>
+
 ### [112_OffscreenRendering](112_OffscreenRendering)
 <img src="112_OffscreenRendering/thumbnail.png" width=200px>
 
@@ -55,8 +59,8 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [114_CollisionLineHightfield](114_CollisionLineHightfield)
 <img src="114_CollisionLineHightfield/thumbnail.png" width=200px>
 
-### [115_ExponentialMap](115_ExponentialMap)
-<img src="115_ExponentialMap/thumbnail.png" width=200px>
+### [115_ExponentialMapPoint](115_ExponentialMapPoint)
+<img src="115_ExponentialMapPoint/thumbnail.png" width=200px>
 
 ### [116_GridOnMesh](116_GridOnMesh)
 <img src="116_GridOnMesh/thumbnail.png" width=200px>

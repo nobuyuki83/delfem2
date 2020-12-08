@@ -31,8 +31,8 @@ template <typename DISTANCE>
 class CNode
 {
 public:
-  CNode(unsigned int ino, DISTANCE mesh_dist)
-  : ind(ino), dist(mesh_dist){}
+  CNode(unsigned int ino, DISTANCE dist_)
+  : ind(ino), dist(dist_){}
   bool operator < (const CNode& lhs) const {
     return this->dist > lhs.dist;
   }
@@ -44,18 +44,18 @@ public:
 }
 
 
-void DijkstraElem_MeshElem(
+void DijkstraElem_MeshElemTopo(
     std::vector<unsigned int> &aDist,
     std::vector<unsigned int>& aOrder,
     //
     unsigned int ielm_ker,
-    const std::vector<unsigned int> &aElSuEl)
+    const std::vector<unsigned int> &aElSuEl,
+    unsigned int nelem)
 {
-  const unsigned int nelem = aDist.size();
   aOrder.assign(nelem,UINT_MAX);
   aDist.assign(nelem, UINT_MAX);
   aDist[ielm_ker] = 0;
-  const unsigned int nedelm = aElSuEl.size() / nelem;
+  const unsigned int nedge = aElSuEl.size() / nelem;
   std::priority_queue<dijkstra::CNode<unsigned int>> que;
   que.push(dijkstra::CNode<unsigned int>(ielm_ker, 0));
   unsigned int icnt = 0;
@@ -64,17 +64,78 @@ void DijkstraElem_MeshElem(
     const unsigned int idist0 = que.top().dist;
     que.pop();
     if( aOrder[ielm0] != UINT_MAX ){ continue; } // already fixed so this is not the shortest path
-    // found shortest path
-    aOrder[ielm0] = icnt; icnt++;
-    for (unsigned int iedelm = 0; iedelm < nedelm; ++iedelm) {
-      const unsigned int ielm1 = aElSuEl[ielm0 * nedelm + iedelm];
+    aOrder[ielm0] = icnt; // found shortest path
+    icnt++;
+    for (unsigned int iedge = 0; iedge < nedge; ++iedge) {
+      const unsigned int ielm1 = aElSuEl[ielm0 * nedge + iedge];
       if (ielm1 == UINT_MAX) { continue; }
       const unsigned int idist1 = idist0+1;
       if (idist1 >= aDist[ielm1]) { continue; }
-      // Found the shortest path ever examined.
-      aDist[ielm1] = idist1;
-      // put this in the que because this is a candidate for the shortest path
-      que.push(dijkstra::CNode<unsigned int>(ielm1, idist1));
+      aDist[ielm1] = idist1; // Found the shortest path so far
+      que.push(dijkstra::CNode<unsigned int>(ielm1, idist1)); // candidate of shortest path
+    }
+  }
+  assert(icnt==nelem);
+}
+
+void Center_Elem3(
+    double p[3],
+    unsigned int ielm1,
+    const std::vector<unsigned int> &aTri,
+    unsigned int nnoel,
+    const std::vector<double> &aXYZ)
+{
+  p[0] = 0.;
+  p[1] = 0.;
+  p[2] = 0.;
+  for(unsigned int inoel=0;inoel<nnoel;++inoel){
+    const unsigned int ip0 = aTri[ielm1*nnoel+inoel];
+    p[0] += aXYZ[ ip0*3+0 ];
+    p[1] += aXYZ[ ip0*3+1 ];
+    p[2] += aXYZ[ ip0*3+2 ];
+  }
+  p[0] /= nnoel;
+  p[1] /= nnoel;
+  p[2] /= nnoel;
+}
+
+template <typename PROC>
+void DijkstraElem_MeshElemGeo3(
+    std::vector<double> &aDist,
+    std::vector<unsigned int>& aOrder,
+    PROC& proc,
+    //
+    unsigned int ielm_ker,
+    const std::vector<unsigned int> &aTri,
+    const unsigned int nelem,
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aElSuEl)
+{
+  aOrder.assign(nelem,UINT_MAX);
+  aDist.assign(nelem, -1.0);
+  aDist[ielm_ker] = 0.0;
+  const unsigned int nedge = aElSuEl.size() / nelem;
+  const unsigned int nnoel = aTri.size() / nelem;
+  std::priority_queue<dijkstra::CNode<double>> que;
+  que.push(dijkstra::CNode<double>(ielm_ker, 0.));
+  unsigned int icnt = 0;
+  while (!que.empty()) {
+    const unsigned int ielm0 = que.top().ind;
+    const double idist0 = que.top().dist;
+    double p0[3]; Center_Elem3(p0, ielm0,aTri,nnoel,aXYZ);
+    que.pop();
+    if( aOrder[ielm0] != UINT_MAX ){ continue; } // already fixed so this is not the shortest path
+    aOrder[ielm0] = icnt; // found shortest path
+    proc.AddElem(ielm0,icnt,aOrder);
+    icnt++;
+    for (unsigned int iedge = 0; iedge < nedge; ++iedge) {
+      const unsigned int ielm1 = aElSuEl[ielm0 * nedge + iedge];
+      if (ielm1 == UINT_MAX) { continue; }
+      double p1[3]; Center_Elem3(p1, ielm1,aTri,nnoel,aXYZ);
+      const double idist1 = idist0+dijkstra::Distance3(p0,p1);
+      if ( aDist[ielm1] > -0.1 && aDist[ielm1] < idist1 ) { continue; }
+      aDist[ielm1] = idist1; // Found the shortest path so far
+      que.push(dijkstra::CNode<double>(ielm1, idist1)); // candidate of shortest path
     }
   }
   assert(icnt==nelem);
@@ -95,9 +156,9 @@ void MeshClustering(
   assert(itri_ker < ntri);
   aFlgElm.assign(ntri, 0);
   std::vector<unsigned int> aOrder;
-  DijkstraElem_MeshElem(
+  DijkstraElem_MeshElemTopo(
       aDist0,aOrder,
-      itri_ker, aTriSuTri);
+      itri_ker, aTriSuTri,ntri);
   for (unsigned int icluster = 1; icluster < ncluster; ++icluster) {
     unsigned int itri_maxdist;
     { // find triangle with maximum distance
@@ -109,9 +170,9 @@ void MeshClustering(
       }
     }
     std::vector<unsigned int> aDist1(ntri, UINT_MAX);
-    DijkstraElem_MeshElem(
+    DijkstraElem_MeshElemTopo(
         aDist1,aOrder,
-        itri_maxdist, aTriSuTri);
+        itri_maxdist, aTriSuTri,ntri);
     for (unsigned int it = 0; it < ntri; ++it) {
       if (aDist1[it] < aDist0[it]) {
         aDist0[it] = aDist1[it];
