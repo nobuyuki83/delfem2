@@ -5,15 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <vector>
-#include <algorithm>
-#include "delfem2/points.h" // random uniform
-#include "delfem2/bv.h"
-#include "delfem2/bvh.h"
-// ---------------------------------
-#include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/points.h" // random uniform
+#include "delfem2/bvh.h"
+#include "delfem2/srhbv3aabb.h"
+#include "delfem2/srhbv3sphere.h"
+#include <GLFW/glfw3.h>
+#include <vector>
+#include <algorithm>
 
 namespace dfm2 = delfem2;
 

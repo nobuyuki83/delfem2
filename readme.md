@@ -24,13 +24,17 @@ The implementation is based on my old open source project [DelFEM](https://githu
 
 There are currently no tutorial available for this library. To understand the code, please look at the exaxmples and tests  under following directoris.
 
-+ C++ examples
-  + [delfem2/examples_oldgl_glfw](examples_oldgl_glfw): examples with GLFW dependency (legacy OpenGL)
-  + [delfem2/examples_oldgl_glfw_cnpy](examples_oldgl_glfw_cnpy): example with GLFW, CNPY dependency (legacy OpenGL)
-  + [delfem2/examples_oldgl_glfw_tinygltf](examples_oldgl_glfw_tinygltf): example with GLFW and TinyGLTF dependency (legacy OpenGL)
-  + [delfem2/examples_newgl_glfw](examples_newgl_glfw):  examples with GLFW depencency (modern OpenGL)
-  + [delfem2/examples_oldgl_glut](examples_oldgl_glut):  examples with GLUT depencency (legacy OpenGL)
-  + [delfem2/examples_cuda](examples_cuda): examples using cuda
++ examples using legacy OpenGL
+  + [delfem2/examples_oldgl_glfw](examples_oldgl_glfw):  dependency: GLFW
+  + [delfem2/examples_oldgl_glfw_cnpy](examples_oldgl_glfw_cnpy): dependencies: GLFW and cnpy
+  + [delfem2/examples_oldgl_glfw_thread](examples_oldgl_glfw_thread): dependencies: GLFW and thread
+  + [delfem2/examples_oldgl_glfw_tinygltf](examples_oldgl_glfw_tinygltf): dependencies: GLFW and TinyGLTF
+  + [delfem2/examples_oldgl_glut](examples_oldgl_glut):  dependency: GLUT
++ examples usigng modern OpenGL
+  + [delfem2/examples_newgl_glfw](examples_newgl_glfw):  dependency: GLFW
+  + [delfem2/examples_newgl_glfw_imgui](examples_newgl_glfw_imgui):  dependencies: GLFW and imgui
++ examples using CUDA
+  + [delfem2/examples_cuda](examples_cuda): dependency: CUDA
 + C++ test:
   + [delfem2/test_cpp](test_cpp): tests using C++
   + [delfem2/test_cuda](test_cuda) : test using cuda

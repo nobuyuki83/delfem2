@@ -63,7 +63,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/emat.h                 ${DELFEM2_INC}/emat.cpp
       ${DELFEM2_INC}/bvh.h                  ${DELFEM2_INC}/bvh.cpp
       ${DELFEM2_INC}/slice.h                ${DELFEM2_INC}/slice.cpp
-      ${DELFEM2_INC}/bv.h
+      ${DELFEM2_INC}/srhbv3aabb.h
+      ${DELFEM2_INC}/srhbv3sphere.h
       
       ${DELFEM2_INC}/cam3_m4q.h             ${DELFEM2_INC}/cam3_m4q.cpp
       ${DELFEM2_INC}/geo3_v23m34q.h         ${DELFEM2_INC}/geo3_v23m34q.cpp

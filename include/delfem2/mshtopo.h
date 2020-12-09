@@ -10,192 +10,18 @@
  * @details the functions only care about the topology. Geometry (coordinate) information is not handled in this file
  */
 
-
-// TODO: separate mixed elem
+// DONE(2020/12/09): separate mixed elem
+// TODO: change name mshuni.h
 
 #ifndef DFM2_MSHTOPO_H
 #define DFM2_MSHTOPO_H
 
+#include "delfem2/mshelm.h"
 #include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>
 
-
 namespace delfem2 {
-
-enum MESHELEM_TYPE
-{
-  MESHELEM_TRI = 0,
-  MESHELEM_TET = 1,
-  MESHELEM_QUAD = 2,
-  MESHELEM_HEX = 3,
-  MESHELEM_PYRAMID = 4,
-  MESHELEM_WEDGE = 5,
-  MESHELEM_VOX = 6,
-  MESHELEM_LINE = 7,
-};
-
-// 5 : VTK_TRIANGLE
-// 9 : VTK_QUAD
-// 10: VTK_TETRA
-// 12: VTK_HEXAHEDRON
-// 13: VTK_WEDGE
-// 14: VTK_PYRAMD
-
-////
-const int mapMeshElemType2NNodeElem[8] = {
-  3, // TRI 0
-  4, // TET 1
-  4, // QUAD 2
-  8, // HEX 3
-  5, // PYRAM 4
-  6, // WEDGE 5
-  8,  // VOX 6
-  2, // LINE 7
-};
-////
-const int mapMeshElemType2NFaceElem[7] = {
-  3, // TRI
-  4, // TET
-  4, // QUAD
-  6, // HEX
-  5, // Pyramid
-  5, // Wedge
-  6  // VOX
-};
-////
-const int mapMeshElemTypeIndFace2NNoelElemFace[7][6] =
-{
-  {2,2,2,-1,-1,-1}, // TRI
-  {3,3,3, 3,-1,-1}, // TET
-  {2,2,2, 2,-1,-1}, // QUAD
-  {4,4,4, 4, 4, 4}, // HEX
-  {4,3,3, 3, 3,-1}, // Pyramid
-  {4,4,4, 3, 3,-1}, // Wedge
-  {4,4,4, 4, 4, 4}, // VOX
-};
-////
-const int noelElemFace_Tri[3][4] = {
-  { 1, 2,-1,-1 }, //edge 0
-  { 2, 0,-1,-1 }, //edge 1
-  { 0, 1,-1,-1 }, //edge 2
-};
-const int noelElemFace_Tet[4][4] ={
-  { 1, 2, 3,-1 },
-  { 0, 3, 2,-1 },
-  { 0, 1, 3,-1 },
-  { 0, 2, 1,-1 }
-};
-const int noelElemFace_Quad[4][4] = {
-  { 0, 1,-1,-1 },
-  { 1, 2,-1,-1 },
-  { 2, 3,-1,-1 },
-  { 3, 0,-1,-1 },
-};
-const int noelElemFace_Vox[6][4] = { // this numbering is corresponds to VTK_VOX
-  { 0, 4, 6, 2 }, // -x
-  { 1, 3, 7, 5 }, // +x
-  { 0, 1, 5, 4 }, // -y
-  { 2, 6, 7, 3 }, // +y
-  { 0, 2, 3, 1 }, // -z
-  { 4, 5, 7, 6 }  // +z
-};
-const int noelElemFace_Hex[6][4] = { // this numbering is corresponds to VTK_HEX
-  { 0, 4, 7, 3 }, // -x
-  { 1, 2, 6, 5 }, // +x
-  { 0, 1, 5, 4 }, // -y
-  { 3, 7, 6, 2 }, // +y
-  { 0, 3, 2, 1 }, // -z
-  { 4, 5, 6, 7 }  // +z
-};
-const int noelElemFace_Pyram[5][4] = {
-  { 0, 3, 2, 1},
-  { 0, 1, 4,-1},
-  { 1, 2, 4,-1},
-  { 2, 3, 4,-1},
-  { 3, 0, 4,-1}
-};
-const int noelElemFace_Wed[5][4] = {
-  { 0, 2, 5, 3},
-  { 1, 0, 3, 4},
-  { 2, 1, 4, 5},
-  { 0, 1, 2,-1},
-  { 3, 5, 4,-1}
-};
-
-const int mapMeshElemType2NEdgeElem[7] = {
-  3, // TRI
-  6, // TET
-  4, // QUAD
-  12, // HEX
-  8, // PYRAM
-  9, // WEDGE
-  12  // VOX
-};
-const int noelElemEdge_Tri[3][2] = {
-  { 0, 1},
-  { 1, 2},
-  { 2, 0},
-};
-const int noelElemEdge_Tet[6][2] = {
-  { 0, 1},
-  { 0, 2},
-  { 0, 3},
-  { 1, 2},
-  { 1, 3},
-  { 2, 2},
-};
-const int noelElemEdge_Quad[4][2] = {
-  { 0, 1},
-  { 1, 2},
-  { 2, 3},
-  { 3, 0},
-};
-const int noelElemEdge_Hex[12][2] = {
-  {0,1},{1,2},{2,3},{3,0},
-  {4,5},{5,6},{6,7},{7,4},
-  {0,4},{1,5},{2,6},{3,7}
-};
-// TODO: this looks wrong...
-const int noelElemEdge_Vox[12][2] = {
-  {0,1},{3,2},{4,5},{7,6},
-  {0,3},{1,2},{4,7},{5,6},
-  {0,4},{1,5},{3,7},{2,6} 
-};
-
-// -----------------------------
-inline int nNodeElem(MESHELEM_TYPE type){
-  return mapMeshElemType2NNodeElem[type];
-}
-inline int nFaceElem(MESHELEM_TYPE type){
-  return mapMeshElemType2NFaceElem[type];
-}
-inline int nNodeElemFace(MESHELEM_TYPE type,int iface){
-  return mapMeshElemTypeIndFace2NNoelElemFace[type][iface];
-}
-inline const int (*noelElemFace(MESHELEM_TYPE type))[4]
-{
-  const int (*noelElemFace0[7])[4] = {
-    noelElemFace_Tri,
-    noelElemFace_Tet,
-    noelElemFace_Quad,
-    noelElemFace_Hex,
-    noelElemFace_Pyram,
-    noelElemFace_Wed,
-    noelElemFace_Vox,
-  };
-  return noelElemFace0[type];
-}
-inline const int (*noelElemEdge(MESHELEM_TYPE type))[2]
-{
-  const int (*noelElemEdge0[4])[2] = {
-    noelElemEdge_Tri,
-    noelElemEdge_Tet,
-    noelElemEdge_Quad,
-    noelElemEdge_Hex
-  };
-  return noelElemEdge0[type];
-}
   
 // ---------------------------------------------
 // function related to jagged array
@@ -249,12 +75,6 @@ DFM2_INLINE void convert2Tri_Quad(
     std::vector<unsigned int>& aTri,
     const std::vector<unsigned int>& aQuad);
 
-DFM2_INLINE void Convert2Tri_MeshMix(
-    std::vector<unsigned int>& aTri,
-    //
-    const std::vector<unsigned int>& aElemInd,
-    const std::vector<unsigned int>& aElem,
-    const std::vector<delfem2::MESHELEM_TYPE>& aElemType);
 
 /**
  * @brief Make quad mesh from tri mesh by merging adjacent triangle elements
@@ -271,13 +91,6 @@ DFM2_INLINE void ElemQuad_DihedralTri(
 
 DFM2_INLINE void FlipElement_Tri(
     std::vector<unsigned int>& aTri);
-
-DFM2_INLINE void FlipElement_MeshMix(
-    std::vector<int>& aElem_Flip,
-    //
-    const std::vector<unsigned int>& aElemInd,
-    const std::vector<unsigned int>& aElem,
-    const std::vector<delfem2::MESHELEM_TYPE>& aElemType);
 
 
 /**
@@ -302,16 +115,6 @@ DFM2_INLINE void JArray_ElSuP_MeshTri(
     const std::vector<unsigned int> &aTri,
     int nXYZ);
 
-/**
- * @brief elem surrounding point for mixed element
- */
-DFM2_INLINE void JArray_ElSuP_MeshMix(
-    std::vector<unsigned int> &elsup_ind,
-    std::vector<unsigned int> &elsup,
-    //
-    const std::vector<unsigned int> &aElemInd,
-    const std::vector<unsigned int> &aElem,
-    int nPo);
 
 
 // -----------------
@@ -353,41 +156,6 @@ DFM2_INLINE void ElSuEl_MeshElem(
     const unsigned int *aElem, size_t nElem,
     delfem2::MESHELEM_TYPE type,
     size_t nXYZ);
-
-DFM2_INLINE void ElSuEl_MeshMix(
-    std::vector<int> &aElemFaceInd,
-    std::vector<int> &aElemFaceRel,
-    const std::vector<unsigned int> &aElemInd,
-    const std::vector<unsigned int> &aElem,
-    const std::vector<delfem2::MESHELEM_TYPE> &aElemType,
-    int nPo);
-
-/**
- * @brief the relationship between neighboring elements for mixed mesh
- */
-DFM2_INLINE void ElSuEl_MeshMix(
-    std::vector<int> &aElemFaceInd,
-    std::vector<int> &aElemFaceRel,
-    //
-    const std::vector<unsigned int> &aElemInd,
-    const std::vector<unsigned int> &aElem,
-    const std::vector<delfem2::MESHELEM_TYPE> &aElemType,
-    const std::vector<unsigned int> &elsup_ind,
-    const std::vector<unsigned int> &elsup);
-
-// -------------------
-// make boundary
-
-DFM2_INLINE void Boundary_MeshMix(
-    std::vector<unsigned int>& aElemInd_Bound,
-    std::vector<unsigned int>& aElem_Bound,
-    std::vector<delfem2::MESHELEM_TYPE>& aElemType_Bound,
-    //
-    const std::vector<unsigned int>& aElemInd,
-    const std::vector<unsigned int>& aElem,
-    const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
-    const std::vector<int>& aElemFaceInd,
-    const std::vector<int>& aElemFaceRel);
 
 /**
  * @brief make point surrounding point
@@ -468,13 +236,6 @@ DFM2_INLINE void MarkConnectedElements(
     const std::vector<int>& aTriSurRel,
     int nfael);
 
-DFM2_INLINE void MarkConnectedElements(
-    std::vector<int>& aIndGroup,
-    unsigned int itri_ker,
-    int igroup,
-    const std::vector<int>& aElemFaceInd,
-    const std::vector<int>& aElemFaceRel);
-
 DFM2_INLINE void MakeGroupElem(
     int& ngroup,
     std::vector<int>& aIndGroup,
@@ -488,36 +249,6 @@ DFM2_INLINE void MakeGroupElem_Tri(
     std::vector<int>& aIndGroup,
     const std::vector<int>& aTri,
     const std::vector<int>& aTriSurRel);
-
-DFM2_INLINE void MakeGroupElem(
-    int& ngroup,
-    std::vector<int>& aIndGroup,
-    const std::vector<unsigned int>& aElemInd,
-    const std::vector<unsigned int>& aElem,
-    const std::vector<int>& aElemFaceInd,
-    const std::vector<int>& aElemFaceRel);
-
-DFM2_INLINE void MakeGroupElem_MeshMix(
-    int& ngroup,
-    std::vector<int>& aIndGroup,
-    //
-    const std::vector<unsigned int>& aElemInd,
-    const std::vector<unsigned int>& aElem,
-    const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
-    int nPo);
-
-// ------------------------------
-
-DFM2_INLINE void ClipGroup_MeshMix(
-    std::vector<unsigned int>& aElemInd1,
-    std::vector<unsigned int>& aElem1,
-    std::vector<delfem2::MESHELEM_TYPE>& aElemType1,
-    //
-    const std::vector<unsigned int>& aElemInd,
-    const std::vector<unsigned int>& aElem,
-    const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
-    int igroup,
-    const std::vector<int>& aIndGroup);
 
 // -----------------------------------------------
 
@@ -563,106 +294,8 @@ DFM2_INLINE int findFace(
 
 // ---------------------------------------------------
 
-DFM2_INLINE void AddElement(
-    const delfem2::MESHELEM_TYPE& femelem_type,
-    const std::vector<int>& aElemIn,
-    //
-    std::vector<unsigned int>& aElemInd,
-    std::vector<unsigned int>& aElem,
-    std::vector<delfem2::MESHELEM_TYPE>& aElemType);
 
-class CElemMixed{
-public:
-  CElemMixed(){
-    aElemInd.resize(1,0);
-  }
-  void AddElement(
-      const MESHELEM_TYPE& femelem_type,
-      const std::vector<int>& aElemIn) {
-    ::delfem2::AddElement(femelem_type,aElemIn,
-                          aElemInd,aElem,aElemType);
-  }
-  void MakeElemSurroundingPoint(
-      std::vector<unsigned int>& elsup_ind,
-      std::vector<unsigned int>& elsup,
-      const int nPo) const {
-    ::delfem2::JArray_ElSuP_MeshMix(elsup_ind,elsup,
-                                        aElemInd,aElem,nPo);
-  }
-  void MakeSurroundingRelationship(
-      std::vector<int>& aElemFaceInd,
-      std::vector<int>& aElemFaceRel,
-      //
-      const std::vector<unsigned int>& elsup_ind,
-      const std::vector<unsigned int>& elsup) const {
-    ::delfem2::ElSuEl_MeshMix(aElemFaceInd, aElemFaceRel,
-                                           aElemInd,aElem,aElemType,
-                                           elsup_ind,elsup);
-  }
-  void MakeSurroundingRelationship(
-      std::vector<int>& aElemFaceInd,
-      std::vector<int>& aElemFaceRel,
-      const int nPo) const {
-    ::delfem2::ElSuEl_MeshMix(aElemFaceInd, aElemFaceRel,
-                                           aElemInd,aElem,aElemType,nPo);
-  }
-  int nElem() const {  return (int)aElemInd.size()-1; }
-  void makeBoundary(
-      CElemMixed& emb,
-      const std::vector<int>& aElemFaceInd,
-      const std::vector<int>& aElemFaceRel) const {
-    ::delfem2::Boundary_MeshMix(emb.aElemInd, emb.aElem, emb.aElemType,
-                            aElemInd, aElem, aElemType,
-                            aElemFaceInd, aElemFaceRel);
-  }
-  void makeBoundary(CElemMixed& emb, int nPo ) const{
-    std::vector<unsigned int> elsup_ind, elsup;
-    this->MakeElemSurroundingPoint(elsup_ind, elsup, nPo);
-    std::vector<int> aElemFaceInd, aElemFaceRel;
-    this->MakeSurroundingRelationship(aElemFaceInd, aElemFaceRel,
-                                   elsup_ind, elsup);
-    this->makeBoundary(emb,
-                    aElemFaceInd, aElemFaceRel);
-  }
-  void MakeGroupElem(
-      int& ngroup,
-      std::vector<int>& aIndGroup,
-      const std::vector<int>& aElemFaceInd,
-      const std::vector<int>& aElemFaceRel) const {
-    ::delfem2::MakeGroupElem(ngroup, aIndGroup,
-                             aElemInd, aElem,
-                             aElemFaceInd, aElemFaceRel);
-  }
-  void MakeGroupElem(
-      int& ngroup,
-      std::vector<int>& aIndGroup,
-      int nPo) const{
-    ::delfem2::MakeGroupElem_MeshMix(ngroup, aIndGroup,
-                           aElemInd, aElem, aElemType, nPo);
-  }
-  void ClipGroup(
-      CElemMixed& em,
-      int igroup,
-      const std::vector<int>& aIndGroup) const{
-    ::delfem2::ClipGroup_MeshMix(em.aElemInd,em.aElem,em.aElemType,
-                       aElemInd,aElem,aElemType,
-                       igroup,aIndGroup);
-  }
-  void FlipElement(std::vector<int>& aElem_Flip) const{
-    ::delfem2::FlipElement_MeshMix(aElem_Flip,
-                           aElemInd,aElem,aElemType);
-  }
-  void getTriElement(std::vector<unsigned int>& aTri) const{
-    ::delfem2::Convert2Tri_MeshMix(aTri,
-                           aElemInd,aElem,aElemType);
-  }
-private:
-public:
-  std::vector<unsigned int> aElemInd;
-  std::vector<unsigned int> aElem;
-  std::vector<delfem2::MESHELEM_TYPE> aElemType;
-};
-  
+
 } // end namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
