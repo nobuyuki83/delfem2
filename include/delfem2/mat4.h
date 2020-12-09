@@ -164,17 +164,17 @@ void Translate_Mat4Affine(
     REAL A[16],
     const REAL v[3]);
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void Vec3_Mat4Vec3_AffineProjection(
-    T y0[3],
-    const T a[16],
-    const T x0[3]);
+    T0 y0[3],
+    const T1 a[16],
+    const T2 x0[3]);
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void Vec3_Vec3Mat4_AffineProjection(
-    T y0[3],
-    const T x0[3],
-    const T a[16]);
+    T0 y0[3],
+    const T1 x0[3],
+    const T2 a[16]);
 
 template <typename T>
 void Vec3_Mat4Vec3_Affine(

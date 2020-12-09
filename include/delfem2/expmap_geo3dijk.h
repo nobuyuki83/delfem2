@@ -106,7 +106,7 @@ public:
       unsigned int it_ker,
       const std::vector<double>& aXYZ_,
       const std::vector<unsigned int>& aTri_,
-      std::vector<unsigned int>& aTriSuTri_) :
+      const std::vector<unsigned int>& aTriSuTri_) :
       aTex(aTex_), aXYZ(aXYZ_), aTri(aTri_), aTriSuTri(aTriSuTri_)
   {
     const unsigned int ntri = aTri.size() / 3;
@@ -125,13 +125,15 @@ public:
     }
   }
 
+  virtual bool IsIncludeElem(unsigned int ie){ return true; }
+
   /**
    *
    * @param[in] ip0 point newly added
    * @param[in] io0 the order of newly added point. ( 0 if this is the first point)
    * @param[in] aOrder map from point index 2 the order of points added
    */
-  void AddElem(
+  virtual void AddElem(
       unsigned int it0,
       std::vector<unsigned int>& aOrder)
   {
@@ -161,6 +163,124 @@ public:
     }
   }
 };
+
+
+class CExpMap_DijkstraElemFlag
+    : public CExpMap_DijkstraElem
+{
+public:
+  const std::vector<unsigned int>& aFlgElem;
+  unsigned int iflag0;
+public:
+  CExpMap_DijkstraElemFlag(
+      std::vector<double>& aTex_,
+      unsigned int it_ker,
+      const std::vector<double>& aXYZ_,
+      const std::vector<unsigned int>& aTri_,
+      const std::vector<unsigned int>& aTriSuTri_,
+      const std::vector<unsigned int>& aFlgElem_) :
+      CExpMap_DijkstraElem(aTex_,it_ker,aXYZ_,aTri_,aTriSuTri_), aFlgElem(aFlgElem_)
+  {
+    iflag0 = aFlgElem[it_ker];
+  }
+
+  void AddElem(
+      unsigned int it0,
+      std::vector<unsigned int>& aOrder) override{
+    assert( aFlgElem[it0] == iflag0 );
+    CExpMap_DijkstraElem::AddElem(it0,aOrder);
+  }
+
+  bool IsIncludeElem(unsigned int ie) override{
+    return aFlgElem[ie] == iflag0;;
+  }
+};
+
+
+void TexPoint_TexElemFlag(
+    std::vector<double> &aTexP,
+    const std::vector<double> &aXYZ,
+    const std::vector<double> &aTexE,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<unsigned int> &elsup_ind,
+    const std::vector<unsigned int> &elsup,
+    unsigned int iflg,
+    std::vector<unsigned int> aFlgTri)
+{
+  aTexP.resize(aXYZ.size() / 3 * 2);
+  for (unsigned int ip0 = 0; ip0 < aXYZ.size() / 3; ++ip0) {
+    const CVec3d p0(aXYZ.data() + ip0 * 3);
+    double tex[2] = {0, 0};
+    double w0 = 0.0;
+    for (unsigned int ielsup = elsup_ind[ip0]; ielsup < elsup_ind[ip0 + 1]; ++ielsup) {
+      const unsigned int it1 = elsup[ielsup];
+      if( aFlgTri[it1] != iflg ){ continue; }
+      CVec3d p1 = CG_Tri3(it1, aTri, aXYZ);
+      double w1 = 1.0 / (p0 - p1).Length();
+      tex[0] += w1 * aTexE[it1 * 2 + 0];
+      tex[1] += w1 * aTexE[it1 * 2 + 1];
+      w0 += w1;
+    }
+    tex[0] /= w0;
+    tex[1] /= w0;
+    aTexP[ip0 * 2 + 0] = tex[0];
+    aTexP[ip0 * 2 + 1] = tex[1];
+  }
+}
+
+void FlatteringPattern(
+    unsigned int &ielm_ker,
+    CVec3d coordLocal[4],
+    std::vector<double> &aTexP,
+    //
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<unsigned int> &aTriSuTri,
+    unsigned int iflg0,
+    const std::vector<unsigned int> &aFlgTri,
+    const std::vector<unsigned int> &elsup_ind,
+    const std::vector<unsigned int> &elsup) {
+  {
+    class CProc {
+    public:
+      unsigned int ie0 = UINT_MAX;
+    public:
+      void AddElem(unsigned int iel, std::vector<unsigned> &aOrder) { ie0 = iel; }
+    } proc;
+    std::vector<unsigned int> aOrder, aDist;
+    Dijkstra_FillFromBoundary(
+        aOrder, aDist,
+        proc, iflg0, aFlgTri, aTriSuTri);
+    ielm_ker = proc.ie0;
+  }
+  {
+    std::vector<double> aTexE; // element-wise texture coordinate
+    CExpMap_DijkstraElemFlag expmap(
+        aTexE,
+        ielm_ker, aXYZ, aTri, aTriSuTri,
+        aFlgTri);
+    std::vector<double> aDist;
+    std::vector<unsigned int> aOrder;
+    DijkstraElem_MeshElemGeo3(
+        aDist, aOrder, expmap,
+        ielm_ker,
+        aTri, aTri.size() / 3,
+        aXYZ,
+        aTriSuTri);
+    coordLocal[0] = expmap.aAxisX[ielm_ker];
+    coordLocal[2] = Normal_Tri3(ielm_ker, aTri, aXYZ).Normalize();
+    assert(fabs(coordLocal[0] * coordLocal[2]) < 1.0e-10);
+    assert(fabs(coordLocal[0].Length() - 1.0) < 1.0e-10);
+    assert(fabs(coordLocal[2].Length() - 1.0) < 1.0e-10);
+    coordLocal[1] = coordLocal[2] ^ coordLocal[0];
+    coordLocal[3] = CG_Tri3(ielm_ker, aTri, aXYZ);
+    //
+    TexPoint_TexElemFlag(aTexP,
+        aXYZ, aTexE, aTri,
+        elsup_ind, elsup,
+        iflg0, aFlgTri);
+  }
+}
 
 }
 

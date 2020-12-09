@@ -287,14 +287,14 @@ template void delfem2::VecMat4(double v[4], const double x[4], const double A[16
 
 // ---------------------------
 
-template <typename T>
+template <typename T0, typename  T1, typename T2>
 DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection(
-    T y0[3],
-    const T a[16],
-    const T x0[3])
+    T0 y0[3],
+    const T1 a[16],
+    const T2 x0[3])
 {
-  const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
-  T y1[4]; MatVec4(y1,a,x1);
+  const T1 x1[4] = {(T1)x0[0], (T1)x0[1], (T1)x0[2], (T1)1};
+  T1 y1[4]; MatVec4(y1,a,x1);
   y0[0] = y1[0]/y1[3];
   y0[1] = y1[1]/y1[3];
   y0[2] = y1[2]/y1[3];
@@ -304,14 +304,14 @@ template void delfem2::Vec3_Mat4Vec3_AffineProjection(float y0[3], const float a
 template void delfem2::Vec3_Mat4Vec3_AffineProjection(double y0[3], const double a[16], const double x0[3]);
 #endif
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 DFM2_INLINE void delfem2::Vec3_Vec3Mat4_AffineProjection(
-    T y0[3],
-    const T x0[3],
-    const T a[16])
+    T0 y0[3],
+    const T1 x0[3],
+    const T2 a[16])
 {
-  const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
-  T y1[4]; VecMat4(y1,x1,a);
+  const T2 x1[4] = {(T2)x0[0], (T2)x0[1], (T2)x0[2], 1};
+  T2 y1[4]; VecMat4(y1,x1,a);
   y0[0] = y1[0]/y1[3];
   y0[1] = y1[1]/y1[3];
   y0[2] = y1[2]/y1[3];

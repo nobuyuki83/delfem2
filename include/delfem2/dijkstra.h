@@ -131,14 +131,17 @@ void DijkstraElem_MeshElemGeo3(
     for (unsigned int iedge = 0; iedge < nedge; ++iedge) {
       const unsigned int ielm1 = aElSuEl[ielm0 * nedge + iedge];
       if (ielm1 == UINT_MAX) { continue; }
+      if( aOrder[ielm1] != UINT_MAX ){ continue; } // aready fixed
+      if( !proc.IsIncludeElem(ielm1) ){ continue; } // ielm is outside
       double p1[3]; Center_Elem3(p1, ielm1,aTri,nnoel,aXYZ);
       const double idist1 = idist0+dijkstra::Distance3(p0,p1);
-      if ( aDist[ielm1] > -0.1 && aDist[ielm1] < idist1 ) { continue; }
-      aDist[ielm1] = idist1; // Found the shortest path so far
-      que.push(dijkstra::CNode<double>(ielm1, idist1)); // candidate of shortest path
+      if ( aDist[ielm1] < -0.1 || idist1 < aDist[ielm1] ) {
+        aDist[ielm1] = idist1; // Found the shortest path so far
+        que.push(dijkstra::CNode<double>(ielm1, idist1)); // candidate of shortest path
+      }
     }
   }
-  assert(icnt==nelem);
+//  assert(icnt==nelem);
 }
 
 void MeshClustering(
@@ -177,6 +180,61 @@ void MeshClustering(
       if (aDist1[it] < aDist0[it]) {
         aDist0[it] = aDist1[it];
         aFlgElm[it] = icluster;
+      }
+    }
+  }
+}
+
+template<typename PROC>
+void Dijkstra_FillFromBoundary(
+    std::vector<unsigned int> &aOrder,
+    std::vector<unsigned int> &aDist,
+    PROC &proc,
+    //
+    unsigned int iflg0,
+    const std::vector<unsigned int> &aFlgTri,
+    const std::vector<unsigned int> &aTriSuTri) {
+  const unsigned int ntri = aFlgTri.size();
+  const unsigned int nedge = aTriSuTri.size() / ntri;
+  aDist.assign(ntri, UINT_MAX);
+  std::priority_queue<dijkstra::CNode<unsigned int>> que;
+  for (unsigned int it = 0; it < ntri; ++it) {
+    if (aFlgTri[it] != iflg0) { continue; }
+    bool is_boundary = false;
+    for (unsigned int ied = 0; ied < nedge; ++ied) {
+      unsigned int jt = aTriSuTri[it * nedge + ied];
+      if (jt == UINT_MAX) continue;
+      if (aFlgTri[jt] != iflg0) {
+        is_boundary = true;
+        break;
+      }
+    }
+    if (!is_boundary) { continue; }
+    //
+    aDist[it] = 0;
+    que.push(dijkstra::CNode<unsigned int>(it, 0));
+  }
+  //
+  aOrder.assign(ntri, UINT_MAX);
+  unsigned int icnt = 0;
+  while (!que.empty()) {
+    const unsigned int ielm0 = que.top().ind;
+    const unsigned int idist0 = que.top().dist;
+    que.pop();
+    if (aOrder[ielm0] != UINT_MAX) { continue; } // already fixed so this is not the shortest path
+    assert(aFlgTri[ielm0] == iflg0);
+    aOrder[ielm0] = icnt; // found shortest path
+    proc.AddElem(ielm0, aOrder);
+    icnt++;
+    for (unsigned int iedge = 0; iedge < nedge; ++iedge) {
+      const unsigned int ielm1 = aTriSuTri[ielm0 * nedge + iedge];
+      if (ielm1 == UINT_MAX) { continue; }
+      if (aFlgTri[ielm1] != iflg0) { continue; }
+      if (aOrder[ielm1] != UINT_MAX) { continue; } // already fixed
+      const unsigned int idist1 = idist0 + 1;
+      if (idist1 < aDist[ielm1]) {
+        aDist[ielm1] = idist1; // Found the shortest path so far
+        que.push(dijkstra::CNode<unsigned int>(ielm1, idist1)); // candidate of shortest path
       }
     }
   }

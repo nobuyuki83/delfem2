@@ -182,6 +182,16 @@ DFM2_INLINE void UpdateRotationsByMatchingCluster_SVD(
     const std::vector<unsigned int>& psup_ind,
     const std::vector<unsigned int>& psup);
 
+DFM2_INLINE bool Distortion_MappingTriangleFrom2To3Dim(
+    double thresA,
+    double thresE,
+    unsigned int it0,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aTexP);
+
+
+
 } // 
 
 

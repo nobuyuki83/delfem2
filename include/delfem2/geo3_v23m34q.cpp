@@ -433,3 +433,31 @@ DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_SVD(
   R1.GetQuat_RotMatrix(q1.q);
   q1.CopyTo(aQuat1.data()+ip*4);
 }
+
+
+bool delfem2::Distortion_MappingTriangleFrom2To3Dim(
+    double thresA,
+    double thresE,
+    unsigned int it0,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aTexP)
+{ // check the distortion
+  const unsigned int i0 = aTri[it0 * 3 + 0];
+  const unsigned int i1 = aTri[it0 * 3 + 1];
+  const unsigned int i2 = aTri[it0 * 3 + 2];
+  const double area2 = Area_Tri2(aTexP.data() + i0 * 2, aTexP.data() + i1 * 2, aTexP.data() + i2 * 2);
+  const double area3 = Area_Tri3(aXYZ.data() + i0 * 3, aXYZ.data() + i1 * 3, aXYZ.data() + i2 * 3);
+  const double scoreArea = 0.5 * (area2 / area3 + area3 / area2);
+  if (scoreArea < 0 || scoreArea > thresA) { return true; }
+  const double len12 = Distance2(aTexP.data() + i1 * 2, aTexP.data() + i2 * 2);
+  const double len20 = Distance2(aTexP.data() + i2 * 2, aTexP.data() + i0 * 2);
+  const double len01 = Distance2(aTexP.data() + i0 * 2, aTexP.data() + i1 * 2);
+  const double Len12 = Distance3(aXYZ.data() + i1 * 3, aXYZ.data() + i2 * 3);
+  const double Len20 = Distance3(aXYZ.data() + i2 * 3, aXYZ.data() + i0 * 3);
+  const double Len01 = Distance3(aXYZ.data() + i0 * 3, aXYZ.data() + i1 * 3);
+  if (0.5 * (len12 / Len12 + Len12 / len12) > thresE ) { return true; }
+  if (0.5 * (len20 / Len20 + Len20 / len20) > thresE ) { return true; }
+  if (0.5 * (len01 / Len01 + Len01 / len01) > thresE ) { return true; }
+  return false;
+}
