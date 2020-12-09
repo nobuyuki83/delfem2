@@ -12,11 +12,10 @@
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/rig_geo3.h"
 #include "inputs_garment.h"
-//
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/dtri.h"
-#include "delfem2/bv.h"
+#include "delfem2/srhbv3sphere.h"
 #include "delfem2/color.h"
 #include <cstdlib>
 #include <iostream>

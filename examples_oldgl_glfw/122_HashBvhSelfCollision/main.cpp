@@ -5,18 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <vector>
-#include "delfem2/bv.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/srchbi_v3bvh.h"
+#include "delfem2/srhbv3sphere.h"
 #include "delfem2/bvh.h"
 #include "delfem2/primitive.h"
 #include "delfem2/points.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/srchbi_v3bvh.h"
-
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <iostream>
+#include <vector>
 
 namespace dfm2 = delfem2;
 

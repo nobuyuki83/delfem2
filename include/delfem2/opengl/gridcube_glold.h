@@ -11,8 +11,7 @@
 #include <stdio.h>
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/gridcube.h"
-#include "delfem2/primitive.h"
-#include "delfem2/bv.h"
+#include "delfem2/vec3.h"
 
 namespace delfem2 {
 namespace opengl {

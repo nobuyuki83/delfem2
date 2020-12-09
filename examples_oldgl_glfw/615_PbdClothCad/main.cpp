@@ -17,7 +17,7 @@
 #include "delfem2/mshmisc.h" // Rotate, NormalMeshTri3D
 #include "delfem2/points.h" // Rotate, NormalMeshTri3D
 #include "delfem2/dtri.h"
-#include "delfem2/bv.h"
+#include "delfem2/srhbv3sphere.h"
 #include "delfem2/primitive.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>

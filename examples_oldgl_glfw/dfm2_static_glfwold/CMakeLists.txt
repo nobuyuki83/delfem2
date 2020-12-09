@@ -47,6 +47,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/primitive.h                 ${DELFEM2_INC}/primitive.cpp
     ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
     ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
+    ${DELFEM2_INC}/mshmix.h                    ${DELFEM2_INC}/mshmix.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/points.h                    ${DELFEM2_INC}/points.cpp
     ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
@@ -62,7 +63,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
     ${DELFEM2_INC}/bem.h                       ${DELFEM2_INC}/bem.cpp
     ${DELFEM2_INC}/bvh.h                       ${DELFEM2_INC}/bvh.cpp
-    ${DELFEM2_INC}/bv.h
+    ${DELFEM2_INC}/srhbv3sphere.h
+    ${DELFEM2_INC}/srhbv3aabb.h
     ${DELFEM2_INC}/pgeo.h
     ${DELFEM2_INC}/sdf.h
         

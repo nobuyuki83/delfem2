@@ -13,7 +13,7 @@
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/bv.h"
+#include "delfem2/srhbv3sphere.h"
 #include "delfem2/bvh.h"
 #include "delfem2/mat4.h"
 #include <GLFW/glfw3.h>

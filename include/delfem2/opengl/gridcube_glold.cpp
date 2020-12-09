@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/opengl/gridcube_glold.h"
+#include "delfem2/srhbv3aabb.h"
 #include "delfem2/vec3.h"
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
@@ -15,7 +17,6 @@
 #else // linux
   #include <GL/gl.h>
 #endif
-#include "delfem2/opengl/gridcube_glold.h"
 
 namespace dfm2 = delfem2;
 

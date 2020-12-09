@@ -16,7 +16,8 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/bv.h"
+#include "delfem2/srhbv3aabb.h"
+#include "delfem2/srhbv3sphere.h"
 
 namespace delfem2 {
 
