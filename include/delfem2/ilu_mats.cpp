@@ -163,8 +163,8 @@ CPreconditionerILU<double>::DoILUDecomp()
   const int nmax_sing = 10;
 	int icnt_sing = 0;
   
-	const unsigned int len = mat.len_col;
-  const unsigned int nblk = mat.nblk_col;
+	const unsigned int len = mat.nrowdim;
+  const unsigned int nblk = mat.nrowblk;
 //  const int m_ncrs = mat.m_ncrs;
   const unsigned int* colind = mat.colInd.data();
   const unsigned int* rowptr = mat.rowPtr.data();
@@ -429,8 +429,8 @@ CPreconditionerILU<std::complex<double>>::DoILUDecomp()
 //  const int nmax_sing = 10;
 //  int icnt_sing = 0;
   
-  const unsigned int len = mat.len_col;
-  const unsigned int nblk = mat.nblk_col;
+  const unsigned int len = mat.nrowdim;
+  const unsigned int nblk = mat.nrowblk;
   //  const int m_ncrs = mat.m_ncrs;
   const unsigned int* colind = mat.colInd.data();
   const unsigned int* rowptr = mat.rowPtr.data();
@@ -505,8 +505,8 @@ template <typename T>
 void delfem2::CPreconditionerILU<T>::ForwardSubstitution
 ( T* vec ) const
 {
-  const unsigned int len = mat.len_col;
-  const unsigned int nblk = mat.nblk_col;
+  const unsigned int len = mat.nrowdim;
+  const unsigned int nblk = mat.nrowblk;
   
   if( len == 1 ){
     const unsigned int* colind = mat.colInd.data();
@@ -661,8 +661,8 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitutionDegenerate(
     T* vec,
     const unsigned int N ) const
 {
-  assert( mat.len_col == 1 );
-  const unsigned int nblk = mat.nblk_col;
+  assert( mat.nrowdim == 1 );
+  const unsigned int nblk = mat.nrowblk;
   
   const unsigned int* colind = mat.colInd.data();
   const unsigned int* rowptr = mat.rowPtr.data();
@@ -693,8 +693,8 @@ template <typename T>
 void delfem2::CPreconditionerILU<T>::BackwardSubstitution
 ( T* vec ) const
 {
-  const unsigned int len = mat.len_col;
-  const int nblk = mat.nblk_col;
+  const unsigned int len = mat.nrowdim;
+  const int nblk = mat.nrowblk;
   
   if( len == 1 ){
     const unsigned int* colind = mat.colInd.data();
@@ -842,8 +842,8 @@ template <typename T>
 void delfem2::CPreconditionerILU<T>::BackwardSubstitutionDegenerate
  ( T* vec, unsigned int N ) const
 {
-  assert( mat.len_col == 1 );
-  const int nblk = mat.nblk_col;
+  assert( mat.nrowdim == 1 );
+  const int nblk = mat.nrowblk;
   
   const unsigned int* colind = mat.colInd.data();
   const unsigned int* rowptr = mat.rowPtr.data();
@@ -884,10 +884,10 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
   std::vector<ilu::CRowLev> aRowLev;
   aRowLev.reserve(m.rowPtr.size()*4);
   
-  assert(m.nblk_col==m.nblk_row);
-  const unsigned int nblk = m.nblk_col;
-  assert(m.len_col==m.len_row);
-  const unsigned int len = m.len_col;
+  assert(m.nrowblk==m.ncolblk);
+  const unsigned int nblk = m.nrowblk;
+  assert(m.nrowdim==m.ncoldim);
+  const unsigned int len = m.nrowdim;
   
   assert(!m.valDia.empty());
   mat.Initialize(nblk, len, true);
@@ -1015,12 +1015,12 @@ template <typename T>
 void delfem2::CPreconditionerILU<T>::SetValueILU
  (const CMatrixSparse<T>& rhs)
 {
-  const unsigned int nblk = mat.nblk_col;
-  const unsigned int len = mat.len_col;
-  assert( rhs.nblk_col == nblk );
-  assert( rhs.nblk_row == nblk );
-  assert( rhs.len_col == len );
-  assert( rhs.len_row == len );
+  const unsigned int nblk = mat.nrowblk;
+  const unsigned int len = mat.nrowdim;
+  assert( rhs.nrowblk == nblk );
+  assert( rhs.ncolblk == nblk );
+  assert( rhs.nrowdim == len );
+  assert( rhs.ncoldim == len );
   const unsigned int blksize = len*len;
   std::vector<int> row2crs(nblk,-1);
   {
@@ -1066,7 +1066,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILU0
  (const CMatrixSparse<T>& m)
 {
   this->mat = m;
-  const int nblk = m.nblk_col;
+  const int nblk = m.nrowblk;
   m_diaInd.resize(nblk);
   for(int iblk=0;iblk<nblk;iblk++){
     m_diaInd[iblk] = mat.colInd[iblk+1];

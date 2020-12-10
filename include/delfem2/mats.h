@@ -22,7 +22,7 @@ namespace delfem2 {
 template<typename T>
 class CMatrixSparse {
 public:
-  CMatrixSparse() : nblk_col(0), nblk_row(0), len_col(0), len_row(0) {}
+  CMatrixSparse() : nrowblk(0), ncolblk(0), nrowdim(0), ncoldim(0) {}
 
   virtual ~CMatrixSparse() {
     this->Clear();
@@ -33,17 +33,17 @@ public:
     rowPtr.clear();
     valCrs.clear();
     valDia.clear();
-    this->nblk_col = 0;
-    this->len_col = 0;
-    this->nblk_row = 0;
-    this->len_row = 0;
+    this->nrowblk = 0;
+    this->nrowdim = 0;
+    this->ncolblk = 0;
+    this->ncoldim = 0;
   }
 
   void Initialize(unsigned int nblk, unsigned int len, bool is_dia) {
-    this->nblk_col = nblk;
-    this->len_col = len;
-    this->nblk_row = nblk;
-    this->len_row = len;
+    this->nrowblk = nblk;
+    this->nrowdim = len;
+    this->ncolblk = nblk;
+    this->ncoldim = len;
     colInd.assign(nblk + 1, 0);
     rowPtr.clear();
     valCrs.clear();
@@ -52,10 +52,10 @@ public:
   }
 
   void operator=(const CMatrixSparse &m) {
-    this->nblk_col = m.nblk_col;
-    this->len_col = m.len_col;
-    this->nblk_row = m.nblk_row;
-    this->len_row = m.len_row;
+    this->nrowblk = m.nrowblk;
+    this->nrowdim = m.nrowdim;
+    this->ncolblk = m.ncolblk;
+    this->ncoldim = m.ncoldim;
     colInd = m.colInd;
     rowPtr = m.rowPtr;
     valCrs = m.valCrs;
@@ -65,26 +65,26 @@ public:
   void SetPattern(const unsigned int *colind, size_t ncolind,
                   const unsigned int *rowptr, size_t nrowptr) {
     assert(rowPtr.empty());
-    assert(ncolind == nblk_col + 1);
-    for (unsigned int iblk = 0; iblk < nblk_col + 1; iblk++) { colInd[iblk] = colind[iblk]; }
-    const unsigned int ncrs = colind[nblk_col];
+    assert(ncolind == nrowblk + 1);
+    for (unsigned int iblk = 0; iblk < nrowblk + 1; iblk++) { colInd[iblk] = colind[iblk]; }
+    const unsigned int ncrs = colind[nrowblk];
     assert(ncrs == nrowptr);
     rowPtr.resize(ncrs);
     for (unsigned int icrs = 0; icrs < ncrs; icrs++) { rowPtr[icrs] = rowptr[icrs]; }
-    valCrs.resize(ncrs * len_col * len_row);
+    valCrs.resize(ncrs * nrowdim * ncoldim);
   }
 
   bool SetZero() {
     if (valDia.size() != 0) {
-      assert(len_col == len_row);
-      assert(nblk_col == nblk_row);
+      assert(nrowdim == ncoldim);
+      assert(nrowblk == ncolblk);
       const unsigned int n = valDia.size();
-      assert(n == len_col * len_col * nblk_col);
+      assert(n == nrowdim * nrowdim * nrowblk);
       for (unsigned int i = 0; i < n; ++i) { valDia[i] = 0; }
     }
     {
       const unsigned int n = valCrs.size();
-      assert(n == len_col * len_row * rowPtr.size());
+      assert(n == nrowdim * ncoldim * rowPtr.size());
       for (unsigned int i = 0; i < n; i++) { valCrs[i] = 0.0; }
     }
     return true;
@@ -139,12 +139,12 @@ public:
   }
 
   void AddDia(T eps) {
-    assert(this->nblk_row == this->nblk_col);
-    assert(this->len_row == this->len_col);
-    const int blksize = len_col * len_row;
-    const int nlen = this->len_col;
+    assert(this->ncolblk == this->nrowblk);
+    assert(this->ncoldim == this->nrowdim);
+    const int blksize = nrowdim * ncoldim;
+    const int nlen = this->nrowdim;
     if (valDia.empty()) { return; }
-    for (unsigned int ino = 0; ino < nblk_col; ++ino) {
+    for (unsigned int ino = 0; ino < nrowblk; ++ino) {
       for (int ilen = 0; ilen < nlen; ++ilen) {
         valDia[ino * blksize + ilen * nlen + ilen] += eps;
       }
@@ -159,11 +159,11 @@ public:
    */
   void AddDia_LumpedMass(const T *lm, double scale) {
     assert(this->nblk_row == this->nblk_col);
-    assert(this->len_row == this->len_col);
-    const int blksize = len_col * len_row;
-    const int nlen = this->len_col;
+    assert(this->len_row == this->nrowdim);
+    const int blksize = nrowdim * ncoldim;
+    const int nlen = this->nrowdim;
     if (valDia.empty()) { return; }
-    for (unsigned int iblk = 0; iblk < nblk_col; ++iblk) {
+    for (unsigned int iblk = 0; iblk < nrowblk; ++iblk) {
       for (int ilen = 0; ilen < nlen; ++ilen) {
         valDia[iblk * blksize + ilen * nlen + ilen] += lm[iblk];
       }
@@ -171,10 +171,10 @@ public:
   }
 
 public:
-  unsigned int nblk_col;
-  unsigned int nblk_row;
-  unsigned int len_col;
-  unsigned int len_row;
+  unsigned int nrowblk;
+  unsigned int ncolblk;
+  unsigned int nrowdim;
+  unsigned int ncoldim;
   /**
    * @param colInd indeces where the row starts in CRS data structure
    */

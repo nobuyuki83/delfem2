@@ -528,8 +528,8 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
   const std::vector<unsigned int>& aElemRod,
   const std::vector<int>& aBCFlag)
 {
-  assert( mats.len_col == 3 );
-  assert( mats.len_row == 3 );
+  assert( mats.nrowdim == 3 );
+  assert( mats.ncoldim == 3 );
   const unsigned int nNode = aBCFlag.size()/3;
   assert(aP.size()+aS.size()==nNode);
   mats.SetZero();
@@ -934,8 +934,8 @@ DFM2_INLINE void delfem2::Solve_RodHair(
     const std::vector<int>& aBCFlag,
     const std::vector<unsigned int>& aIP_HairRoot)
 {
-  assert( mats.len_col == 4 );
-  assert( mats.len_row == 4 );
+  assert( mats.nrowdim == 4 );
+  assert( mats.ncoldim == 4 );
   const unsigned int np = aP.size();
   assert( aP0.size() == np );
   assert( aS0.size() == np );
@@ -1032,8 +1032,8 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     const double stiff_contact,
     const std::vector<CContactHair>& aContact)
 {
-  assert( mats.len_col == 4 );
-  assert( mats.len_row == 4 );
+  assert( mats.nrowdim == 4 );
+  assert( mats.ncoldim == 4 );
   const unsigned int np = aP.size();
   assert( aP0.size() == np );
   assert( aS0.size() == np );
