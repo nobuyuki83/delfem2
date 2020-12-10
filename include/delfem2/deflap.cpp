@@ -18,7 +18,7 @@ void SetLinSys_LaplaceGraph_MeshTri3
 (CMatrixSparse<double>& mat_A)
 {
   mat_A.SetZero();
-  for(unsigned int ip=0;ip<mat_A.nblk_col;++ip){
+  for(unsigned int ip=0;ip<mat_A.nrowblk;++ip){
     const double dn = (double)(mat_A.colInd[ip+1] - mat_A.colInd[ip]);
     for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
       mat_A.valCrs[icrs*9+0*3+0] = -1.0;
@@ -92,7 +92,7 @@ void delfem2::CDef_LaplacianLinearGram::Init
   Mat.SetPattern(psup_ind.data(), psup_ind.size(),
                  psup.data(),     psup.size());
   defarap::SetLinSys_LaplaceGraph_MeshTri3(Mat);
-  const unsigned int np = Mat.nblk_col;
+  const unsigned int np = Mat.nrowblk;
   aRes0.assign(np*3,0.0);
   Mat.MatVec(aRes0.data(),
              -1.0, aXYZ0.data(), 0.0);
@@ -103,7 +103,7 @@ void delfem2::CDef_LaplacianLinearGram::SetBoundaryConditionToPreconditioner()
   if( !is_preconditioner ){ return; }
   // ---------
   // make jacobi preconditioner
-  const unsigned int np = Mat.nblk_col;
+  const unsigned int np = Mat.nrowblk;
   aDiaInv.assign(np*9,0.0);
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int icrs=Mat.colInd[ip];icrs<Mat.colInd[ip+1];++icrs){
@@ -274,7 +274,7 @@ void delfem2::CDef_LaplacianLinear::SetValueToPreconditioner()
 {
   if( !is_preconditioner ){ return; }
   //
-  const unsigned int np = Mat.nblk_col;
+  const unsigned int np = Mat.nrowblk;
   assert( aBCFlag.size() == np*3 );
   for(unsigned int ip=0;ip<np;++ip){
     for(int idim=0;idim<3;++idim){
@@ -466,7 +466,7 @@ void delfem2::CDef_LaplacianLinearDegenerate::SetBoundaryConditionToPrecondition
   if( !is_preconditioner ){ return; }
   // ---------
   // make jacobi preconditioner
-  const unsigned int np = Mat.nblk_col;
+  const unsigned int np = Mat.nrowblk;
   aDiaInv.assign(np*9,0.0);
   for(unsigned int ip=0;ip<np;++ip){
     double v0 = Mat.valDia[ip];

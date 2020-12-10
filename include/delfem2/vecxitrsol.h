@@ -201,8 +201,8 @@ Solve_CG_Complex(
   using COMPLEX = std::complex<REAL>;
   assert(!mat.valDia.empty());
   assert(mat.nblk_col == mat.nblk_row);
-  assert(mat.len_col == mat.len_row);
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
+  assert(mat.nrowdim == mat.len_row);
+  const unsigned int ndof = mat.nblk_col * mat.nrowdim;
   assert(r_vec.size() == ndof);
   std::vector<double> aConv;
   u_vec.assign(ndof, 0.0);   // {x} = 0
@@ -246,9 +246,9 @@ Solve_BiCGStab(
     const MAT& mat)
 {
   assert(!mat.valDia.empty());
-  assert(mat.nblk_col == mat.nblk_row);
-  assert(mat.len_col == mat.len_row);
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
+  assert(mat.nrowblk == mat.ncolblk);
+  assert(mat.nrowdim == mat.ncoldim);
+  const unsigned int ndof = mat.nrowblk * mat.nrowdim;
   assert(r_vec.size() == ndof);
   
   std::vector<double> aConv;
@@ -330,8 +330,8 @@ Solve_BiCGSTAB_Complex(
   //
   assert(!mat.valDia.empty());
   assert(mat.nblk_col == mat.nblk_row);
-  assert(mat.len_col == mat.len_row);
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
+  assert(mat.nrowdim == mat.len_row);
+  const unsigned int ndof = mat.nblk_col * mat.nrowdim;
   assert(r_vec.size() == ndof);
   
   std::vector<double> aConv;
@@ -391,8 +391,8 @@ Solve_BiCGSTAB_Complex(
 }
 
 template <typename REAL, typename MAT, typename PREC>
-std::vector<double> Solve_PBiCGStab
-(REAL* r_vec,
+std::vector<double> Solve_PBiCGStab(
+ REAL* r_vec,
  REAL* x_vec,
  double conv_ratio_tol,
  unsigned int max_niter,
@@ -400,9 +400,9 @@ std::vector<double> Solve_PBiCGStab
  const PREC& ilu)
 {
   assert( !mat.valDia.empty() );
-  assert( mat.nblk_col == mat.nblk_row );
-  assert( mat.len_col == mat.len_row );
-  const unsigned int ndof = mat.nblk_col*mat.len_col;
+  assert( mat.nrowblk == mat.ncolblk );
+  assert( mat.nrowdim == mat.ncoldim );
+  const unsigned int ndof = mat.nrowblk*mat.nrowdim;
   std::vector<double> aResHistry;
   
   // {u} = 0
@@ -492,8 +492,8 @@ std::vector<double> Solve_PBiCGStab_Complex
   
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
-  assert( mat.len_col == mat.len_row );
-  const unsigned int ndof = mat.nblk_col*mat.len_col;
+  assert( mat.nrowdim == mat.len_row );
+  const unsigned int ndof = mat.nblk_col*mat.nrowdim;
   std::vector<double> aResHistry;
   
   for(unsigned int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
@@ -644,7 +644,7 @@ std::vector<double> Solve_PCG_Complex
 {
   using COMPLEX = std::complex<REAL>;
 
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
+  const unsigned int ndof = mat.nblk_col * mat.nrowdim;
   std::vector<double> aResHistry;
   
   for (unsigned int i = 0; i < ndof; i++) { x_vec[i] = COMPLEX(0.0, 0.0); }    // {x} = 0
@@ -715,9 +715,9 @@ std::vector<double> Solve_PCOCG
   using COMPLEX = std::complex<REAL>;
 
   assert( !mat.valDia.empty() );
-  assert( mat.nblk_col == mat.nblk_row );
-  assert( mat.len_col == mat.len_row );
-  const unsigned int ndof = mat.nblk_col*mat.len_col;
+  assert( mat.nrowblk == mat.ncolblk );
+  assert( mat.nrowdim == mat.ncoldim );
+  const unsigned int ndof = mat.nrowblk*mat.nrowdim;
   std::vector<double> aResHistry;
   
   for(unsigned int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0

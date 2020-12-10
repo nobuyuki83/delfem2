@@ -2,6 +2,7 @@
 
 #include "delfem2/mshmix.h"
 #include <stack>
+#include <cassert>
 
 DFM2_INLINE void delfem2::AddElement
  (const delfem2::MESHELEM_TYPE& femelem_type,

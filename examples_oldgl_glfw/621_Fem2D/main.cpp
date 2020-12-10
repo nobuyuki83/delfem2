@@ -6,26 +6,23 @@
  */
 
 
-#include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <vector>
-#include <random>
+#include "delfem2/opengl/color_glold.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/ilu_mats.h"
+#include "delfem2/fem_emats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/dtri.h"
 #include "delfem2/mats.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/color.h"
-// ----------
-#include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/ilu_mats.h"
-#include "delfem2/fem_emats.h"
-
-// ---------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
+#include <vector>
+#include <random>
 
 namespace dfm2 = delfem2;
 
