@@ -24,9 +24,6 @@ namespace dfm2 = delfem2;
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_oldGL();
-  
   // --------------------------
   // begin computing subdivision
 
@@ -64,18 +61,11 @@ int main(int argc,char* argv[])
   
   // end computing subdivision
   // ----------------------------
-  
-  viewer.nav.camera.view_height = 2.0;
-  delfem2::opengl::setSomeLighting();
 
-  {
-    float mP[16];
-    viewer.nav.camera.Mat4_AffineTransProjection(mP,1,1);
-    std::cout << mP[0] << " " << mP[5] << " " << mP[10] << " " << mP[15] << std::endl;
-    viewer.nav.camera.Mat4_AffineTransModelView(mP);
-    std::cout << mP[0] << " " << mP[5] << " " << mP[10] << " " << mP[15] << std::endl;
-  }
-  
+  delfem2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.camera.view_height = 2.0;
+  delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window))
   {
     viewer.DrawBegin_oldGL();
@@ -86,7 +76,6 @@ int main(int argc,char* argv[])
     ::glColor3d(0,0,0);
     delfem2::opengl::DrawMeshQuad3D_Edge(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
     viewer.SwapBuffers();
-
     glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);

@@ -182,8 +182,8 @@ int main(int argc,char* argv[])
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.nav.camera.view_height = 4;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.view_height = 4;
   
   while (!glfwWindowShouldClose(viewer.window))
   {

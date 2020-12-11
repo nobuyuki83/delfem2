@@ -5,15 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/cad2_dtri2.h"
-#include <cmath>
-#include <stack>
-// --------------
-#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v2_glold.h"
 #include "delfem2/opengl/cad2dtriv2_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/cad2_dtri2.h"
+#include <cmath>
+#include <stack>
+#include <GLFW/glfw3.h>
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793
@@ -58,11 +57,11 @@ int main(int argc,char* argv[])
       }
       if( iframe % nframe_interval == 0 ){
         dfm2::CBoundingBox2D bb = cad.BB();
-        viewer.nav.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
-        viewer.nav.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
-        viewer.nav.camera.trans[2] = 0.0;
-        viewer.nav.camera.view_height = 0.5*bb.LengthDiagonal();
-        viewer.nav.camera.scale = 1.0;
+        viewer.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
+        viewer.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
+        viewer.camera.trans[2] = 0.0;
+        viewer.camera.view_height = 0.5*bb.LengthDiagonal();
+        viewer.camera.scale = 1.0;
       }
       iframe = (iframe+1)%(nframe_interval*5);
     }

@@ -196,8 +196,7 @@ public:
       ::glMatrixMode(GL_PROJECTION);
       ::glLoadIdentity();
       float mP[16];
-      double depth = camera.view_height/(camera.scale*tan(0.5*camera.fovy*3.1415/180.0));
-      camera.Mat4_AffineTransProjection(mP, (double)win_w/win_h, depth);
+      camera.Mat4_AffineTransProjection(mP, (double)win_w/win_h);
       ::glMultMatrixf(mP);
     }
     {
@@ -212,7 +211,7 @@ public:
   int iwin;
   int imodifier;
   int ibutton;
-  delfem2::CCamera<double> camera;
+  delfem2::CCam3_OnAxisZplusLookOrigin<double> camera;
   double mouse_x, mouse_y;
   double dx;
   double dy;

@@ -46,11 +46,11 @@ int main(int argc,char* argv[])
                           path_svg, 1.0);
 //      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       dfm2::CBoundingBox2D bb = cad.BB();
-      viewer.nav.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
-      viewer.nav.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
-      viewer.nav.camera.trans[2] = 0.0;
-      viewer.nav.camera.view_height = 0.5*bb.LengthDiagonal();
-      viewer.nav.camera.scale = 1.0;
+      viewer.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
+      viewer.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
+      viewer.camera.trans[2] = 0.0;
+      viewer.camera.view_height = 0.5*bb.LengthDiagonal();
+      viewer.camera.scale = 1.0;
       cad.iedge_picked = 22;
     }
     iframe = (iframe+1)%(nframe_interval*6);

@@ -19,8 +19,6 @@
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/glnew_funcs.h"
 #include "delfem2/opengl/glnew_mshcolor.h"
-//
-#include "delfem2/opengl/glfw/cam_glfw.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
@@ -128,8 +126,10 @@ void draw(GLFWwindow* window)
   StepTime();
   shdr_trimsh.UpdateVertex(aXYZ, aTri);
 
+  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
+  const float asp = (float)nw/nh;
   float mP[16], mMV[16];
-  viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
+  viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
   shdr_trimsh.Draw(mP,mMV);
   
   viewer.SwapBuffers();
@@ -171,8 +171,8 @@ int main()
   shdr_trimsh.Compile();
   shdr_trimsh.Initialize(aXYZ, aTri);  
   
-  viewer.nav.camera.view_height = 1.5;
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.view_height = 1.5;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
    
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

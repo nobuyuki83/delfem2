@@ -25,9 +25,7 @@
 #include "delfem2/opengl/tex_gl.h"
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/glnew_mshcolor.h"
-//
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/glfw/cam_glfw.h"
 
 namespace dfm2 = delfem2;
 
@@ -55,11 +53,14 @@ void draw(GLFWwindow* window)
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
+  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
+  const float asp = (float)nw/nh;
+  
   {
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexColor);
     float mP[16], mMV[16];
-    viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
+    viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
     mMV[3*4+0] -= 0.5;
     shdr.Draw(mP, mMV);
   }
@@ -68,7 +69,7 @@ void draw(GLFWwindow* window)
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexDepth);
     float mP[16], mMV[16];
-    viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
+    viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
     mMV[3*4+0] += 0.5;
     shdr.Draw(mP, mMV);
   }
@@ -245,8 +246,8 @@ int main()
   }
    */
 
-  viewer.nav.camera.view_height = 1.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.view_height = 1.0;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

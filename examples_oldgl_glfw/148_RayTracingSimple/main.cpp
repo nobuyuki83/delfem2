@@ -121,8 +121,8 @@ int main(int argc,char* argv[])
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.width = 400;
   viewer.height = 400;
-  viewer.nav.camera.view_height = 2;
-  viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.view_height = 2;
+  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
 
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
@@ -144,10 +144,14 @@ int main(int argc,char* argv[])
       float mMVP[16];
       {
         float mMV[16], mP[16];
-        viewer.nav.Mat4_MVP_OpenGL(mMV, mP, viewer.window);
+        {
+          int width0, height0;
+          glfwGetFramebufferSize(viewer.window, &width0, &height0);
+          viewer.camera.Mat4_MVP_OpenGL(mMV, mP, float(width0)/float(height0));
+        }
         dfm2::MatMat4(mMVP, mMV, mP);
       }
-      std::vector< delfem2::CPtElm2<double> > aPointElemSurf;
+      std::vector< delfem2::CPtElm2d > aPointElemSurf;
       Intersection_ImageRay_TriMesh3(aPointElemSurf,
            tex.h,tex.w, mMVP,
            aNodeBVH,aAABB,aXYZ,aTri);

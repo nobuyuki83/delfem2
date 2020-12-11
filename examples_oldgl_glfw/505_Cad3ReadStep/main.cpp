@@ -858,7 +858,7 @@ int main(int argc, char* argv[])
   
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 100;
+  viewer.camera.view_height = 100;
   
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.DrawBegin_oldGL();

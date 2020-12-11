@@ -25,9 +25,7 @@
 
 #include "delfem2/opengl/glnew_mshcolor.h"
 #include "delfem2/opengl/r2tgln_glnew.h"
-//
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/glfw/cam_glfw.h"
 
 
 namespace dfm2 = delfem2;
@@ -49,8 +47,11 @@ void draw(GLFWwindow* window)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
 
+  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
+  const float asp = (float)nw/nh;
+  
   float mP[16], mMV[16];
-  viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
+  viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
   shdr1.Draw(mP,mMV);
   shdr0.Draw(mP, mMV);
   sampler.Draw(mP,mMV);
@@ -101,9 +102,9 @@ int main()
   sampler.End();
   sampler.SetDepth();
   //
-  viewer.nav.camera.view_height = 2.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.nav.camera.Rot_Camera(+0.8, -0.2);
+  viewer.camera.view_height = 2.0;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.Rot_Camera(+0.8, -0.2);
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

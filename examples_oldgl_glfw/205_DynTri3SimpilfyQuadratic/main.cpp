@@ -287,7 +287,7 @@ int main(int argc,char* argv[])
   // -----------
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 1.5;
+  viewer.camera.view_height = 1.5;
   while (!glfwWindowShouldClose(viewer.window))
   {
     RemoveOnePoint(aDP,aDTri,aVec3,

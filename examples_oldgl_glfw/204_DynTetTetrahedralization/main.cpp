@@ -273,7 +273,7 @@ void AddRandomPoint(
 int main(int argc, char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.nav.camera.view_height = 2.5;
+  viewer.camera.view_height = 2.5;
   viewer.Init_oldGL();
 
   std::random_device rd;

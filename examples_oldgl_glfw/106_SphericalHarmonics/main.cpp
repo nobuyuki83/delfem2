@@ -138,7 +138,7 @@ int main(int argc,char* argv[])
   
   // -----------------------------
   
-  viewer.nav.camera.view_height = 1.0;
+  viewer.camera.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window))
   {

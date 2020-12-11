@@ -86,10 +86,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/glnew_funcs.h        ${DELFEM2_INC}/opengl/glnew_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_mshcolor.h     ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
     ${DELFEM2_INC}/opengl/r2tgln_glnew.h       ${DELFEM2_INC}/opengl/r2tgln_glnew.cpp
-    ${DELFEM2_INC}/opengl/glnew_v23dtricad.h   ${DELFEM2_INC}/opengl/glnew_v23dtricad.cpp
-    
+    ${DELFEM2_INC}/opengl/glnew_v23dtricad.h   ${DELFEM2_INC}/opengl/glnew_v23dtricad.cpp    
     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
-    ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
 )
 
 file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)

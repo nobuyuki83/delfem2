@@ -122,8 +122,8 @@ std::string LoadFile
 int main(int argc, const char * argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.nav.camera.view_height = 0.5;
-  viewer.nav.camera.Rot_Camera(-0.2, -0.2);
+  viewer.camera.view_height = 0.5;
+  viewer.camera.Rot_Camera(-0.2, -0.2);
   //
   viewer.Init_newGL();
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -176,8 +176,10 @@ int main(int argc, const char * argv[])
     ::glEnable(GL_POLYGON_OFFSET_FILL );
     ::glPolygonOffset( 1.1f, 4.0f );
     
+    int nw, nh; glfwGetFramebufferSize(viewer.window, &nw, &nh);
+    const float asp = (float)nw/nh;
     float mP[16], mMV[16];
-    viewer.nav.Mat4_MVP_OpenGL(mMV, mP, viewer.window);
+    viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
     
     const unsigned int nslice = 256;
 

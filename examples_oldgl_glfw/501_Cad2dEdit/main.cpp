@@ -30,7 +30,7 @@ int main(int argc,char* argv[])
     }
     //
     void mouse_press(const float src[3], const float dir[3]) override{
-      cad.Pick(src[0], src[1], this->nav.camera.view_height);
+      cad.Pick(src[0], src[1], this->camera.view_height);
     }
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
@@ -46,7 +46,7 @@ int main(int argc,char* argv[])
   // --------------------
   CCAD2DViewer viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 1.5;
+  viewer.camera.view_height = 1.5;
   delfem2::opengl::setSomeLighting();
   // --------------------
   while(!glfwWindowShouldClose(viewer.window)){

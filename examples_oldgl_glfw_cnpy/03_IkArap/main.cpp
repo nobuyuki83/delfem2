@@ -404,8 +404,8 @@ int main()
   // -----------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.nav.camera.view_height = 1.2;
+  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.view_height = 1.2;
   dfm2::opengl::setSomeLighting();
 
   int iframe = 0;

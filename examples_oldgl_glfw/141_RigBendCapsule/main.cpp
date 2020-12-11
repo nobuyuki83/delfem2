@@ -77,9 +77,9 @@ int main(int argc,char* argv[])
   // ----------------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 1.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.nav.camera.Rot_Camera(+0.0,+0.0);
+  viewer.camera.view_height = 1.0;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.Rot_Camera(+0.0,+0.0);
   dfm2::opengl::setSomeLighting();
 
   int iframe = 0;

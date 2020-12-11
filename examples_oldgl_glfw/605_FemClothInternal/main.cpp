@@ -215,11 +215,11 @@ int main(int argc,char* argv[])
   delfem2::opengl::setSomeLighting();
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
   delfem2::opengl::setSomeLighting();
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::ZTOP;
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::ZTOP;
-  viewer.nav.camera.psi = 3.1415*0.2;
-  viewer.nav.camera.theta = 3.1415*0.1;
-  viewer.nav.camera.view_height = 2;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
+  viewer.camera.psi = 3.1415*0.2;
+  viewer.camera.theta = 3.1415*0.1;
+  viewer.camera.view_height = 2;
   while(!glfwWindowShouldClose(viewer.window)) {
     StepTime();
     viewer.DrawBegin_oldGL();

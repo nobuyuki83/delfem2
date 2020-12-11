@@ -107,7 +107,6 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/r2tglo_glold.h       ${DELFEM2_INC}/opengl/r2tglo_glold.cpp
     ${DELFEM2_INC}/opengl/gridcube_glold.h     ${DELFEM2_INC}/opengl/gridcube_glold.cpp
     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
-    ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
 )
 
 file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)

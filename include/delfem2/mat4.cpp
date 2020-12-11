@@ -94,87 +94,64 @@ template void delfem2::MatMat4(double* C, const double* A, const double* B);
  */
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionOrtho(
     float mP[16],
-    double l, double r,
-    double b, double t,
-    double n, double f)
+    double xmin, double xmax, // -x, +x
+    double ymin, double ymax, // -y, +y
+    double zmin, double zmax) // -z, +z
 {
   // column 0
-  mP[0*4+0] = 2.0/(r-l);
+  mP[0*4+0] = 2.0/(xmax-xmin);
   mP[0*4+1] = 0.0;
   mP[0*4+2] = 0.0;
   mP[0*4+3] = 0.0;
   // column 1
   mP[1*4+0] = 0.0;
-  mP[1*4+1] = 2.0/(t-b);
+  mP[1*4+1] = 2.0/(ymax-ymin);
   mP[1*4+2] = 0.0;
   mP[1*4+3] = 0.0;
   // column 2
   mP[2*4+0] = 0.0;
   mP[2*4+1] = 0.0;
-  mP[2*4+2] = 2.0/(n-f); // draw range  Z=[-f,-n], view movel from +Z direction
+  mP[2*4+2] = 2.0/(zmax-zmin); // draw range  Z=[f,n], view movel from +Z direction
   mP[2*4+3] = 0.0;
   // collumn 3
-  mP[3*4+0] = -(l+r)/(r-l);
-  mP[3*4+1] = -(t+b)/(t-b);
-  mP[3*4+2] = -(n+f)/(n-f);
+  mP[3*4+0] = -(xmin+xmax)/(xmax-xmin);
+  mP[3*4+1] = -(ymax+ymin)/(ymax-ymin);
+  mP[3*4+2] = -(zmax+zmin)/(zmax-zmin);
   mP[3*4+3] = 1.0;
 }
 
 
 
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
-    float *matrix,
-    float left,
-    float right,
-    float bottom,
-    float top,
-    float znear,
-    float zfar)
-{
-  float temp, temp2, temp3, temp4;
-  temp = 2.f * znear;
-  temp2 = right - left;
-  temp3 = top - bottom;
-  temp4 = zfar - znear;
-  // column 0
-  matrix[0*4+0] = temp / temp2;
-  matrix[0*4+1] = 0.0;
-  matrix[0*4+2] = 0.0;
-  matrix[0*4+3] = 0.0;
-  // column 1
-  matrix[1*4+0] = 0.0;
-  matrix[1*4+1] = temp / temp3;
-  matrix[1*4+2] = 0.0;
-  matrix[1*4+3] = 0.0;
-  // column 2
-  matrix[2*4+0] = (right + left) / temp2;
-  matrix[2*4+1] = (top + bottom) / temp3;
-  matrix[2*4+2] = (-zfar - znear) / temp4;
-  matrix[2*4+3] = -1.0;
-  // column 3
-  matrix[3*4+0] = 0.0;
-  matrix[3*4+1] = 0.0;
-  matrix[3*4+2] = (-temp * zfar) / temp4;
-  matrix[3*4+3] = 0.0;
-}
-
-//matrix will receive the calculated perspective matrix.
-//You would have to upload to your shader
-// or use glLoadMatrixf if you aren't using shaders.
-DFM2_INLINE void delfem2::Mat4_AffineTransProjectionPerspective(
-    float *matrix,
-    float fovyInDegrees,
+    float mP[16],
+    float fovyInRad,
     float aspectRatio,
-    float znear,
-    float zfar)
+    float zmin,
+    float zmax)
 {
-  float ymax, xmax;
-  ymax = znear * tanf(fovyInDegrees * 3.14159 / 360.0);
-  xmax = ymax * aspectRatio;
-  Mat4_AffineTransProjectionFrustum(matrix,
-                                    -xmax, xmax, -ymax, ymax, znear, zfar);
+  const float yratio = 0.5/tan(fovyInRad*0.5); // how z change w.r.t. the y change
+  const float xratio = yratio/aspectRatio;
+  // column 0
+  mP[0*4+0] = xratio;
+  mP[0*4+1] = 0.0;
+  mP[0*4+2] = 0.0;
+  mP[0*4+3] = 0.0;
+  // column 1
+  mP[1*4+0] = 0.0;
+  mP[1*4+1] = yratio;
+  mP[1*4+2] = 0.0;
+  mP[1*4+3] = 0.0;
+  // column 2
+  mP[2*4+0] = 0.0;
+  mP[2*4+1] = 0.0;
+  mP[2*4+2] = -(zmin + zmax) / (zmax - zmin);
+  mP[2*4+3] = -1.0;
+  // column 3
+  mP[3*4+0] = 0.0;
+  mP[3*4+1] = 0.0;
+  mP[3*4+2] = +(zmin*zmax*2) / (zmax - zmin);
+  mP[3*4+3] = 0.0;
 }
-
 
 DFM2_INLINE void delfem2::MultMat4AffineTransTranslateFromRight(
     float *matrix,
