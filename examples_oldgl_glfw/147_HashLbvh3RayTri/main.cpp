@@ -103,8 +103,8 @@ int main(int argc,char* argv[])
   }
   
   dfm2::opengl::CViewer_GLFW viewer;
-  viewer.nav.camera.view_height = 1.5;
-  viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.view_height = 1.5;
+  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
 

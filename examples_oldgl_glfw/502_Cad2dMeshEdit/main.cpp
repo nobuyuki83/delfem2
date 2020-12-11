@@ -58,7 +58,7 @@ int main(int argc,char* argv[])
       }
     }
     void mouse_press(const float src[3], const float dir[3]) override{
-      cad.Pick(src[0], src[1], this->nav.camera.view_height);
+      cad.Pick(src[0], src[1], this->camera.view_height);
     }
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
@@ -94,8 +94,8 @@ int main(int argc,char* argv[])
   // ----------------------------------
   CCadMesh2DVeiwer viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 1.5;
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::YTOP;
+  viewer.camera.view_height = 1.5;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();

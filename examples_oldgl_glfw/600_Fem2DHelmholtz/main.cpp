@@ -5,23 +5,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <vector>
-#include <complex>
+
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/color_glold.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/cad2_dtri2.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/vecxitrsol.h"
-
-// ---------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
+#include <vector>
+#include <complex>
 
 namespace dfm2 = delfem2;
 
@@ -123,7 +122,7 @@ int main(int argc,char* argv[])
   for(size_t ip=0;ip<aVal.size();++ip){ aVal[ip] = aCVal[ip].real(); }
   
   dfm2::opengl::CViewer_GLFW viewer;
-  viewer.nav.camera.view_height = 1.5;
+  viewer.camera.view_height = 1.5;
   viewer.Init_oldGL();
   while(!glfwWindowShouldClose(viewer.window)){
     {

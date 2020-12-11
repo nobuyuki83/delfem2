@@ -22,7 +22,8 @@ int main(int argc,char* argv[])
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/rollsRoyce.obj",
+  dfm2::Read_Obj(
+      std::string(PATH_INPUT_DIR)+"/rollsRoyce.obj",
     aXYZ,aTri);
   dfm2::Normalize_Points3(aXYZ,4.0);
   // ---------------------------------------
@@ -38,9 +39,9 @@ int main(int argc,char* argv[])
   // ---------------------------------------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 2.0;
-  viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.nav.camera.Rot_Camera(+0.2, -0.2);
+  viewer.camera.view_height = 2.0;
+  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.Rot_Camera(+0.2, -0.2);
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);

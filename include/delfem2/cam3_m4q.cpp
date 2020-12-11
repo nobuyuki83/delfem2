@@ -15,34 +15,50 @@
 // implementation of CCamera class starts here
 
 template <typename REAL>
-void delfem2::CCamera<REAL>::Mat4_AffineTransProjection(
+void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransProjection(
     float mP[16],
-    double asp,
-    double depth) const
+    float asp) const
 {
+  float depth = (0.5*view_height)/tan(fovy*0.5*(2*M_PI)/360.0);
+  float mP0[16];
   if( is_pars ){
-    Mat4_AffineTransProjectionPerspective(mP,
-        fovy, asp, depth*0.01, depth*10);
+    Mat4_AffineTransProjectionFrustum(mP0,
+        fovy*(2*M_PI)/360.0, asp,
+        -depth*2, -depth*0.01);
   }
   else{
-    Mat4_AffineTransProjectionOrtho(mP,
+    Mat4_AffineTransProjectionOrtho(mP0,
         -view_height*asp,
         +view_height*asp,
         -view_height,
         +view_height,
-        -depth*10,
-        +depth*10);
+        -2*depth,
+        0);
   }
+  float mT0[16];
+  {
+    // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
+    // to view the object we translate the object at the origin (0,0,-depth)
+    const float t0[3] = {0.f,0.f,-(float)depth };
+    ::delfem2::Mat4_AffineTransTranslate(mT0, t0 );
+  }
+  const float mRefZ[16] = { // reflection with the XY plane
+      +1.f,  0.f,  0.f,  0.f,
+       0.f, +1.f,  0.f,  0.f,
+       0.f,  0.f, -1.f,  0.f,
+       0.f,  0.f,  0.f, +1.f };
+  float mTmp[16];
+  ::delfem2::MatMat4(mTmp,mT0,mP0);
+  ::delfem2::MatMat4(mP,mTmp,mRefZ);
 }
-template void delfem2::CCamera<double>::Mat4_AffineTransProjection(
+template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Mat4_AffineTransProjection(
     float mP[16],
-    double asp,
-    double depth) const;
+    float asp) const;
 
 // ----------------------------
 
 template <typename REAL>
-void delfem2::CCamera<REAL>::Mat4_AffineTransModelView(float mMV[16]) const
+void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransModelView(float mMV[16]) const
 {
   float Mt[16];
   {
@@ -80,24 +96,24 @@ void delfem2::CCamera<REAL>::Mat4_AffineTransModelView(float mMV[16]) const
     }
   }
   float Mrt[16]; MatMat4(Mrt, Mr,Mt);
-  MatMat4(mMV, Mrt,Ms);
+  MatMat4(mMV, Mrt, Ms);
 }
-template void delfem2::CCamera<double>::Mat4_AffineTransModelView(float mMV[16]) const;
+template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Mat4_AffineTransModelView(float mMV[16]) const;
 
 // -------------------------
 
 template <typename REAL>
-void delfem2::CCamera<REAL>::Scale(double s){
+void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Scale(double s){
   scale *= s;
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CCamera<double>::Scale(double s);
+template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Scale(double s);
 #endif
   
 // --------------------------
 
 template <typename REAL>
-void delfem2::CCamera<REAL>::Rot_Camera(double dx, double dy){
+void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Rot_Camera(double dx, double dy){
   if(      camera_rot_mode == CAMERA_ROT_MODE::YTOP ){
     theta -= dx;
     psi   -= dy;
@@ -117,13 +133,13 @@ void delfem2::CCamera<REAL>::Rot_Camera(double dx, double dy){
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CCamera<double>::Rot_Camera(double dx, double dy);
+template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Rot_Camera(double dx, double dy);
 #endif
 
 // ------------------------
 
 template <typename REAL>
-void delfem2::CCamera<REAL>::Pan_Camera(double dx, double dy){
+void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Pan_Camera(double dx, double dy){
     double s = view_height/scale;
     trans[0] += s*dx;
     trans[1] += s*dy;
@@ -131,7 +147,7 @@ void delfem2::CCamera<REAL>::Pan_Camera(double dx, double dy){
   
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CCamera<double>::Pan_Camera(double dx, double dy);
+template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Pan_Camera(double dx, double dy);
 #endif
 
 // ------------------------
@@ -139,7 +155,7 @@ template void delfem2::CCamera<double>::Pan_Camera(double dx, double dy);
 namespace delfme2 {
 
 template <typename REAL>
-std::ostream &operator<<(std::ostream &output, delfem2::CCamera<REAL>& c)
+std::ostream &operator<<(std::ostream &output, delfem2::CCam3_OnAxisZplusLookOrigin<REAL>& c)
 {
   output.setf(std::ios::scientific);
   output << c.is_pars << std::endl;
@@ -154,7 +170,7 @@ std::ostream &operator<<(std::ostream &output, delfem2::CCamera<REAL>& c)
 }
 
 template <typename REAL>
-std::istream &operator>>(std::istream &input, delfem2::CCamera<REAL>& c)
+std::istream &operator>>(std::istream &input, delfem2::CCam3_OnAxisZplusLookOrigin<REAL>& c)
 {
   {
     int is0; input >> is0; c.is_pars = (bool)is0;

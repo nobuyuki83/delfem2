@@ -5,8 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// TODO: rename this file "cam3_m4q.h"
-// DONE(2020_11_29): make this file dependent on mat4.h and quat.h
+// DONE(2020/12/11): rename the class "CCam3_OnAxisZplus" from CCamera
+// DONE(2020/12/--): rename this file "cam3_m4q.h"
+// DONE(2020/11/29): make this file dependent on mat4.h and quat.h
 
 /**
  * @file camera class that define projection and model-view transformation.
@@ -30,22 +31,29 @@ namespace delfem2{
 
 // ----------------------------------------------------
 
-
+/**
+ * the camera is placed on the positive Z axis and looking at the origin.
+ * The object will undergo movdel view transformation (rotation->translation)
+ * and then perspective transformation (scale->orthognoal/perspective).
+ *
+ * @tparam REAL either float or double
+ */
 template <typename REAL>
-class CCamera
+class CCam3_OnAxisZplusLookOrigin
 {
+
 public:
   enum class CAMERA_ROT_MODE { YTOP, ZTOP, TBALL };
 
 public:
-  CCamera() :
+  CCam3_OnAxisZplusLookOrigin() :
   trans{0,0,0}, Quat_tball{1,0,0,0}
   {
     is_pars = false;
-    fovy = 60;
+    fovy = 10;
     view_height = 1.0;
     scale = 1.0;
-    camera_rot_mode =  CAMERA_ROT_MODE::YTOP;
+    camera_rot_mode =  CAMERA_ROT_MODE::TBALL;
     psi = 0;
     theta = 0;
   }
@@ -62,7 +70,7 @@ public:
    * @param asp
    * @param depth
    */
-  void Mat4_AffineTransProjection(float mP[16], double asp, double depth) const;
+  void Mat4_AffineTransProjection(float mP[16], float asp) const;
   
   /**
    *
@@ -71,7 +79,25 @@ public:
    * @detail column major
    */
   void Mat4_AffineTransModelView(float mMV[16]) const;
-  
+
+  /**
+   * @brief make 4x4 affine matrix for view transformation.
+   * @details the matrix strage format is *column-major*. Applying trasformation need to multply vector from *left hand side*.
+   * A 3D point is transfromed with this affine matrix and then a cube [-1,+1, -1,+1, -1,+1] is looked from -Z directoin.
+   * To look from +Z direction, The transformation needs a mirror transformation in XY plane.
+   * We separate mMV and  mP because of the light (light position should not be affected by the modelview transform).
+   * @param[out] mMV modelview matrix (column major order)
+   * @param[out] mP  projection matrix (column major order)
+   * @param asp
+   */
+  void Mat4_MVP_OpenGL(
+      float mMV[16],
+      float mP[16],
+      float asp) const
+  {
+    Mat4_AffineTransProjection(mP, asp); // project space into cube [-1,+1,-1,+1,-1,+1] and view from -Z
+    Mat4_AffineTransModelView(mMV);
+  }
   // ------------------------
   
   void Scale(double s);
@@ -83,6 +109,7 @@ public:
   double fovy;
   double scale;
   double view_height;
+
   double trans[3];
   
   CAMERA_ROT_MODE camera_rot_mode;
@@ -96,10 +123,10 @@ public:
 };
 
 template <typename REAL>
-std::ostream &operator<<(std::ostream &output, CCamera<REAL>& c);
+std::ostream &operator<<(std::ostream &output, CCam3_OnAxisZplusLookOrigin<REAL>& c);
 
 template <typename REAL>
-std::istream &operator>>(std::istream &input, CCamera<REAL>& c);
+std::istream &operator>>(std::istream &input, CCam3_OnAxisZplusLookOrigin<REAL>& c);
 
 } // namespace delfem2
 

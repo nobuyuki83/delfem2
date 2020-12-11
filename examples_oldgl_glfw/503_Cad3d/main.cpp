@@ -273,29 +273,33 @@ int main(int argc,char* argv[])
   public:
     CCAD3DViewer(){
       cad.Initialize_Sphere();
-      nav.camera.view_height = 1.5;
-      nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::YTOP;
+      camera.view_height = 1.5;
+      camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
       cad.imode_edit = dfm2::CCad3D::EDIT_MOVE;
     }
     void Draw(){
       this->DrawBegin_oldGL();
       DrawFace_RightSelected(cad,false);
-      DrawVtxEdgeHandler(cad,nav.camera.view_height);
+      DrawVtxEdgeHandler(cad,camera.view_height);
       this->SwapBuffers();
     }
     void mouse_press(const float src[3], const float dir[3]) override{
       const dfm2::CVec3d src_pick(src), dir_pick(dir);
-      float mMV[16], mPrj[16]; nav.Mat4_MVP_OpenGL(mMV, mPrj, this->window);
+      int nw, nh; glfwGetFramebufferSize(this->window,&nw,&nh);
+      const float asp = (float)nw/nh;
+      float mMV[16], mPrj[16]; camera.Mat4_MVP_OpenGL(mMV, mPrj, asp);
       cad.MouseDown(src_pick, dir_pick,
                     dfm2::CVec2d(nav.mouse_x,nav.mouse_y),
                     mMV,mPrj,
-                    nav.camera.view_height);
+                    camera.view_height);
     }
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       dfm2::CVec2d sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
       dfm2::CVec2d sp1(nav.mouse_x, nav.mouse_y);
       const dfm2::CVec3d src_pick(src1), dir_pick(dir);
-      float mMV[16], mPrj[16]; nav.Mat4_MVP_OpenGL(mMV, mPrj, this->window);
+      int nw, nh; glfwGetFramebufferSize(this->window,&nw,&nh);
+      const float asp = (float)nw/nh;
+      float mMV[16], mPrj[16]; camera.Mat4_MVP_OpenGL(mMV, mPrj, asp);
       cad.MouseMotion(src_pick,dir_pick, sp0,sp1, mMV, mPrj);
     }
   public:

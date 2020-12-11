@@ -5,9 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include "delfem2/vec3.h"
-
 #include "glad/glad.h" // gl3.0+
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
@@ -20,6 +17,7 @@
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/r2tglo_glold.h"
+#include "delfem2/vec3.h"
 
 // --------------------------------------------
 

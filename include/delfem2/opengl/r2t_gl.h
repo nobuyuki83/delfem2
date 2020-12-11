@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// TODO: having MVP matrix instead of axes
 
 #ifndef DFM2_RENDER2TEX_GL_H
 #define DFM2_RENDER2TEX_GL_H
@@ -69,6 +70,9 @@ public:
   unsigned int id_tex_color;
   unsigned int id_tex_depth;
   unsigned int id_framebuffer;
+  //
+  double mMvp[16]; // affine matrix
+  //
   double lengrid;
   double z_range;
   double z_axis[3];

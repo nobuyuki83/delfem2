@@ -45,32 +45,81 @@ static void glfw_callback_resize(GLFWwindow* window, int width, int height)
 static void glfw_callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
   assert( pViewer != 0 );
-  pViewer->nav.Mouse(window,button,action,mods);
+  int width, height;
+  glfwGetWindowSize(window, &width, &height);
+  const float asp = width / (float) height;
+  {
+    ::delfem2::CNav3& nav = pViewer->nav;
+    nav.imodifier = mods;
+    double x, y;  glfwGetCursorPos (window, &x,&y);
+    nav.mouse_x = (2.0*x-width)/width;
+    nav.mouse_y = (height-2.0*y)/height;
+    if( action == 0 ){
+      nav.ibutton = -1;
+    }
+    else if( action == 1 ){ // mouse down
+      nav.ibutton = button;
+      nav.mouse_x_down = nav.mouse_x;
+      nav.mouse_y_down = nav.mouse_y;
+    }
+  }
   if( action == GLFW_PRESS ){
     float src[3], dir[3];
-    pViewer->nav.MouseRay(src, dir,
-                          pViewer->window);
+    float mMVP[16];
+    {
+      float mMV[16], mP[16];
+      pViewer->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+      ::delfem2::MatMat4(mMVP, mMV,mP);
+    }
+    pViewer->nav.MouseRay(src, dir, asp, mMVP);
     pViewer->mouse_press(src,dir);
-    
   }
 }
 
 static void glfw_callback_cursor_position(GLFWwindow* window, double xpos, double ypos)
 {
   assert( pViewer != 0 );
-  pViewer->nav.Motion(window,xpos,ypos);
+//  pViewer->nav.Motion(window,xpos,ypos);
+  int width, height;
+  glfwGetWindowSize(window, &width, &height);
+  const float asp = width / (float) height;
+  {
+    ::delfem2::CNav3& nav = pViewer->nav;
+    ::delfem2::CCam3_OnAxisZplusLookOrigin<double>& camera = pViewer->camera;
+    const double mov_end_x = (2.0*xpos-width)/width;
+    const double mov_end_y = (height-2.0*ypos)/height;
+    nav.dx = mov_end_x - nav.mouse_x;
+    nav.dy = mov_end_y - nav.mouse_y;
+    if( nav.ibutton == -1 ){
+    }
+    else{
+      if(      nav.imodifier == 4  ){
+        camera.Rot_Camera(nav.dx, nav.dy);
+      }
+      else if( nav.imodifier == 1 ){
+        camera.Pan_Camera(nav.dx, nav.dy);
+      }
+    }
+    nav.mouse_x = mov_end_x;
+    nav.mouse_y = mov_end_y;
+  }
   if( pViewer->nav.ibutton == 0 ){
-    float src0[3], src1[3], dir[3];
-    pViewer->nav.RayMouseMove(src0, src1, dir,
-                              pViewer->window);
-    pViewer->mouse_drag(src0,src1,dir);
+    float src0[3], src1[3], dir0[3], dir1[3];
+    float mMVP[16];
+    {
+      float mMV[16], mP[16];
+      pViewer->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+      ::delfem2::MatMat4(mMVP, mMV,mP);
+    }
+    pViewer->nav.RayMouseMove(src0, src1, dir0, dir1, asp,mMVP);
+    pViewer->mouse_drag(src0,src1,dir0);
   }
 }
 
 static void glfw_callback_scroll(GLFWwindow* window, double xoffset, double yoffset)
 {
   assert( pViewer != nullptr );
-  pViewer->nav.camera.scale *= pow(1.01,yoffset);
+  pViewer->camera.scale *= pow(1.01,yoffset);
 }
 
 
@@ -172,7 +221,14 @@ void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
 
-  float mMV[16], mP[16]; nav.Mat4_MVP_OpenGL(mMV,mP, this->window);
+
+  float asp;
+  {
+    int width0, height0;
+    glfwGetFramebufferSize(window, &width0, &height0);
+    asp = width0 / (float) height0;
+  }
+  float mMV[16], mP[16]; camera.Mat4_MVP_OpenGL(mMV,mP, asp);
   
   // glnew will skip compilling following section
 #ifdef GL_PROJECTION

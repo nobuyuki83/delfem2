@@ -5,16 +5,15 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/gizmo_glold.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
-// ---
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/gizmo_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 
@@ -64,8 +63,8 @@ int main(int argc,char* argv[])
   } viewer;
   // --------------------
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 1.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.view_height = 1.0;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   // --------------------
   while(true){

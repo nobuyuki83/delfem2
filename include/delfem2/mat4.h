@@ -27,6 +27,22 @@
 namespace delfem2 {
 
 template <typename REAL>
+void Print_Mat4(const REAL m[16]){
+  std::cout <<  m[ 0] << " " << m[ 1] << " " << m[ 2] << " " << m[ 3] << std::endl;
+  std::cout <<  m[ 4] << " " << m[ 5] << " " << m[ 6] << " " << m[ 7] << std::endl;
+  std::cout <<  m[ 8] << " " << m[ 9] << " " << m[10] << " " << m[11] << std::endl;
+  std::cout <<  m[12] << " " << m[13] << " " << m[14] << " " << m[15] << std::endl;
+}
+
+template <typename REAL>
+void Print_Mat4Transp(const REAL m[16]){
+  std::cout <<  m[ 0] << " " << m[ 4] << " " << m[ 8] << " " << m[12] << std::endl;
+  std::cout <<  m[ 1] << " " << m[ 5] << " " << m[ 9] << " " << m[13] << std::endl;
+  std::cout <<  m[ 2] << " " << m[ 6] << " " << m[10] << " " << m[14] << std::endl;
+  std::cout <<  m[ 3] << " " << m[ 7] << " " << m[11] << " " << m[15] << std::endl;
+}
+
+template <typename REAL>
 void Copy_Mat4(
     REAL M0[16],
     const REAL M1[16])
@@ -61,9 +77,9 @@ void MatMat4(
 
 void Mat4_AffineTransProjectionOrtho(
     float mP[16],
-    double l, double r,
-    double b, double t,
-    double n, double f);
+    double xmin, double xmax,
+    double ymin, double ymax,
+    double zmin, double zmax);
 
 void Mat4_AffineTransLookAt(
     float* Mr,
@@ -77,21 +93,21 @@ void MultMat4AffineTransTranslateFromRight(
     float y,
     float z);
 
+/**
+ * construct projection matrix mapping perspective view to a cube [-1,+1, -1,+1, -1,+1]
+ * The view is from the origin to the -Z direction (zmin < zmax < 0).
+ * @param[out] matrix affine matrix (column major)
+ * @param[in] fovyInRad filed-of-view in radian
+ * @param[in] aspectRatio aspect ratio of the window
+ * @param[in] zmin minimum Z coordinate for the view frustrum (i.e, far clipping plane)
+ * @param[in] zmax maximum Z coordinate for the view frustrum (i.e, near clipping plane)
+ */
 void Mat4_AffineTransProjectionFrustum(
-    float *matrix,
-    float left,
-    float right,
-    float bottom,
-    float top,
-    float znear,
-    float zfar);
-
-void Mat4_AffineTransProjectionPerspective(
-    float *matrix,
-    float fovyInDegrees,
+    float mP[16],
+    float fovyInRad,
     float aspectRatio,
-    float znear,
-    float zfar);
+    float zmin,
+    float zmax);
 
 template <typename REAL>
 void Mat4_Identity(
@@ -203,6 +219,7 @@ DFM2_INLINE void Mat4_ScaleRotTrans(
     const double quat[4],
     const double trans[3]);
 
+// ---------------------------------------
 
 template<typename T>
 class CMat4;

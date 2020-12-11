@@ -106,8 +106,8 @@ int main(int argc,char* argv[])
 
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.trans[0] = -0.5;
-  viewer.nav.camera.trans[1] = -0.5;
+  viewer.camera.trans[0] = -0.5;
+  viewer.camera.trans[1] = -0.5;
   while (!glfwWindowShouldClose(viewer.window))
   {
     // ---------

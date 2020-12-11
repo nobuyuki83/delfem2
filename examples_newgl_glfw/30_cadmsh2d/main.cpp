@@ -28,8 +28,6 @@
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/glnew_funcs.h"
 #include "delfem2/opengl/glnew_v23dtricad.h"
-//
-#include "delfem2/opengl/glfw/cam_glfw.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
@@ -76,11 +74,11 @@ public:
     
     shdr_cad.is_show_face = false;
     
-    nav.camera.view_height = 1.5;
-    nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
+    camera.view_height = 1.5;
+    camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   }
   void mouse_press(const float src[3], const float dir[3]) override {
-    cad.Pick(src[0], src[1], nav.camera.view_height);
+    cad.Pick(src[0], src[1], camera.view_height);
   }
   void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
     if( nav.ibutton == 0 ){
@@ -123,7 +121,9 @@ void draw(GLFWwindow* window)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  float mMV[16], mP[16]; viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
+  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
+  const float asp = (float)nw/nh;
+  float mMV[16], mP[16]; viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
   viewer.shdr_cad.Draw(mP, mMV, viewer.cad);
   viewer.shdr_dmsh.Draw(mP, mMV);
   
