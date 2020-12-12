@@ -50,8 +50,8 @@ DFM2_INLINE void CalcInvMat(
 DFM2_INLINE void Normalize3D(
     float vec[3])
 {
-  float len = sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
-  float leninv = 1.0/len;
+  const float len = sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
+  const float leninv = 1.f/len;
   vec[0] *= leninv;
   vec[1] *= leninv;
   vec[2] *= leninv;
@@ -87,38 +87,48 @@ template void delfem2::MatMat4(float* C, const float* A, const float* B);
 template void delfem2::MatMat4(double* C, const double* A, const double* B);
 #endif
 
+// ------------------
 
-/**
- * @brief affine matrix
- * @details column major order
- */
+template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionOrtho(
-    float mP[16],
+    REAL mP[16],
     double xmin, double xmax, // -x, +x
     double ymin, double ymax, // -y, +y
     double zmin, double zmax) // -z, +z
 {
   // column 0
-  mP[0*4+0] = 2.0/(xmax-xmin);
-  mP[0*4+1] = 0.0;
-  mP[0*4+2] = 0.0;
-  mP[0*4+3] = 0.0;
+  mP[0*4+0] = static_cast<REAL>(2.0/(xmax-xmin));
+  mP[0*4+1] = 0;
+  mP[0*4+2] = 0;
+  mP[0*4+3] = 0;
   // column 1
-  mP[1*4+0] = 0.0;
-  mP[1*4+1] = 2.0/(ymax-ymin);
-  mP[1*4+2] = 0.0;
-  mP[1*4+3] = 0.0;
+  mP[1*4+0] = 0;
+  mP[1*4+1] = static_cast<REAL>(2.0/(ymax-ymin));
+  mP[1*4+2] = 0;
+  mP[1*4+3] = 0;
   // column 2
-  mP[2*4+0] = 0.0;
-  mP[2*4+1] = 0.0;
-  mP[2*4+2] = 2.0/(zmax-zmin); // draw range  Z=[f,n], view movel from +Z direction
-  mP[2*4+3] = 0.0;
+  mP[2*4+0] = 0;
+  mP[2*4+1] = 0;
+  mP[2*4+2] = static_cast<REAL>(2.0/(zmax-zmin));
+  mP[2*4+3] = 0;
   // collumn 3
-  mP[3*4+0] = -(xmin+xmax)/(xmax-xmin);
-  mP[3*4+1] = -(ymax+ymin)/(ymax-ymin);
-  mP[3*4+2] = -(zmax+zmin)/(zmax-zmin);
-  mP[3*4+3] = 1.0;
+  mP[3*4+0] = static_cast<REAL>(-(xmin+xmax)/(xmax-xmin));
+  mP[3*4+1] = static_cast<REAL>(-(ymax+ymin)/(ymax-ymin));
+  mP[3*4+2] = static_cast<REAL>(-(zmax+zmin)/(zmax-zmin));
+  mP[3*4+3] = 1;
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat4_AffineTransProjectionOrtho(
+    double mP[16],
+    double xmin, double xmax, // -x, +x
+    double ymin, double ymax, // -y, +y
+    double zmin, double zmax); // -z, +z
+template void delfem2::Mat4_AffineTransProjectionOrtho(
+    float mP[16],
+    double xmin, double xmax, // -x, +x
+    double ymin, double ymax, // -y, +y
+    double zmin, double zmax); // -z, +z
+#endif
 
 
 

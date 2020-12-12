@@ -11,6 +11,7 @@
  */
 
 // DONE(2020/12/09): separate mixed elem
+// DONE(2020/12/12): separated mshsubdiv
 // TODO: change name mshuni.h
 
 #ifndef DFM2_MSHTOPO_H
@@ -29,6 +30,7 @@ namespace delfem2 {
 DFM2_INLINE void JArray_Sort(
     const std::vector<unsigned int>& index,
     std::vector<unsigned int>& array);
+
 DFM2_INLINE void JArray_Sort(
     const unsigned int* index,
     unsigned int size,
@@ -37,8 +39,10 @@ DFM2_INLINE void JArray_Sort(
 DFM2_INLINE void JArray_AddDiagonal(
     std::vector<unsigned int> &psup_ind1,
     std::vector<unsigned int> &psup1,
-    const unsigned int *psup_ind0, int npsup_ind0,
-    const unsigned int *psup0, int npsup0);
+    const unsigned int *psup_ind0,
+    int npsup_ind0,
+    const unsigned int *psup0,
+    int npsup0);
 
 DFM2_INLINE void JArray_Print(
     const std::vector<int>& index,
@@ -249,52 +253,6 @@ DFM2_INLINE void MakeGroupElem_Tri(
     std::vector<int>& aIndGroup,
     const std::vector<int>& aTri,
     const std::vector<int>& aTriSurRel);
-
-// -----------------------------------------------
-
-/**
- * @brief making topology for subdivision of quad
- * @details new points is in the order of [old points], [edge points], [face points]
- * @param aQuad1 (out) new connectivity
- * @param aEdgeFace0 (out) two end points on a edge and two quads touching the edge
- */
-DFM2_INLINE void SubdivTopo_MeshQuad(
-    std::vector<unsigned int> &aQuad1,
-    std::vector<unsigned int> &psup_ind,
-    std::vector<unsigned int> &psup,
-    std::vector<int> &aEdgeFace0,
-    const unsigned int *aQuad0, unsigned int nQuad0,
-    unsigned int nPoint0);
-
-DFM2_INLINE void SubdivTopo_MeshHex(
-    std::vector<unsigned int> &aHex1,
-    std::vector<unsigned int> &psupIndHex0,
-    std::vector<unsigned int> &psupHex0,
-    std::vector<unsigned int> &aQuadHex0,
-    const unsigned int *aHex0, int nHex0,
-    int nhp0);
-
-DFM2_INLINE void SubdivTopo_MeshTet(
-    std::vector<unsigned int> &aTet1,
-    std::vector<unsigned int> &psup_ind,
-    std::vector<unsigned int> &psup,
-    const unsigned int *aTet0, int nTet0,
-    unsigned int nPoint0);
-
-DFM2_INLINE int findEdge(
-    unsigned int ip0, unsigned int ip1,
-    const std::vector<unsigned int> &psup_ind,
-    const std::vector<unsigned int> &psup);
-
-DFM2_INLINE int findFace(
-    unsigned int ip0, unsigned int ip1, unsigned int ip2, unsigned int ip3,
-    const std::vector<unsigned int> &aQuad,
-    const std::vector<unsigned int> &elsupInd,
-    const std::vector<unsigned int> &elsup);
-
-// ---------------------------------------------------
-
-
 
 } // end namespace delfem2
 
