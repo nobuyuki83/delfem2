@@ -5,21 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/srchuni_v3.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/mshsubdiv.h"
+#include "delfem2/vec3.h"
+#include "delfem2/primitive.h"
+#include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
 #include <cstdlib>
-#include "delfem2/mshmisc.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/vec3.h"
-#include "delfem2/primitive.h"
-#include "delfem2/srchuni_v3.h"
-
-// --------------------
-// gl related includes
-#include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
-
 
 namespace dfm2 = delfem2;
 
@@ -46,13 +42,13 @@ void InitializeProblem() {
     const double bbmax[3] = {+1,+1,+1};
     aaQuad.resize(1);
     dfm2::MeshQuad3_CubeVox(aXYZ_Quad, aaQuad[0],
-                            bbmin, bbmax);
+        bbmin, bbmax);
   }
   
   for(unsigned int ip=0;ip<aXYZ_Quad.size()/3;++ip){
     dfm2::CVec3d p0(aXYZ_Quad[ip*3+0], aXYZ_Quad[ip*3+1], aXYZ_Quad[ip*3+2]);
     dfm2::CPtElm2<double> pes0 = Nearest_Point_MeshTri3D(p0,
-                                                                aXYZ, aTri);
+        aXYZ, aTri);
     dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
     aXYZ_Quad[ip*3+0] = q0.x();
     aXYZ_Quad[ip*3+1] = q0.y();
@@ -66,9 +62,10 @@ void InitializeProblem() {
   for(unsigned int isubdiv=0;isubdiv<nsubdiv;++isubdiv){
     std::vector<unsigned int> psup_ind, psup;
     std::vector<int> aEdgeFace0;
-    dfm2::SubdivTopo_MeshQuad(aaQuad[isubdiv+1], psup_ind, psup, aEdgeFace0,
-                     aaQuad[isubdiv].data(), aaQuad[isubdiv].size()/4,
-                     aXYZ_Quad.size()/3);
+    dfm2::SubdivTopo_MeshQuad(
+        aaQuad[isubdiv+1], psup_ind, psup, aEdgeFace0,
+        aaQuad[isubdiv].data(), aaQuad[isubdiv].size()/4,
+        aXYZ_Quad.size()/3);
     const unsigned int nv0 = aXYZ_Quad.size()/3;
     const unsigned int ne0 = aEdgeFace0.size()/4;
     const unsigned int nq0 = aaQuad[isubdiv].size()/4;

@@ -75,8 +75,13 @@ void MatMat4(
     const T* A,
     const T* B);
 
+/**
+ * @brief affine matrix for orthogonal projection
+ * @details column major order (fortran order)
+ */
+template <typename T>
 void Mat4_AffineTransProjectionOrtho(
-    float mP[16],
+    T mP[16],
     double xmin, double xmax,
     double ymin, double ymax,
     double zmin, double zmax);
@@ -94,13 +99,13 @@ void MultMat4AffineTransTranslateFromRight(
     float z);
 
 /**
- * construct projection matrix mapping perspective view to a cube [-1,+1, -1,+1, -1,+1]
+ * construct projection matrix mapping perspective view frustrum to a cube [-1,+1, -1,+1, -1,+1]
  * The view is from the origin to the -Z direction (zmin < zmax < 0).
  * @param[out] matrix affine matrix (column major)
  * @param[in] fovyInRad filed-of-view in radian
  * @param[in] aspectRatio aspect ratio of the window
- * @param[in] zmin minimum Z coordinate for the view frustrum (i.e, far clipping plane)
- * @param[in] zmax maximum Z coordinate for the view frustrum (i.e, near clipping plane)
+ * @param[in] zmin minimum Z coordinate for the view frustrum (mapped to the plane Z==-1)
+ * @param[in] zmax maximum Z coordinate for the view frustrum (mapped to the plane Z==+1)
  */
 void Mat4_AffineTransProjectionFrustum(
     float mP[16],

@@ -12,6 +12,7 @@
 
 #ifndef DFM2_MSHMISC_H
 #define DFM2_MSHMISC_H
+
 #include "delfem2/dfm2_inline.h"
 #include <vector>
 
@@ -198,31 +199,6 @@ DFM2_INLINE void LaplacianSmoothing(
 
 // ---------------------------------------------------------
 
-DFM2_INLINE void SubdivisionPoints_QuadCatmullClark(
-    std::vector<double>& aXYZ1,
-    //
-    const std::vector<unsigned int>& aQuad1,
-    const std::vector<int>& aEdgeFace0,
-    const std::vector<unsigned int> &psupIndQuad0,
-    const std::vector<unsigned int> &psupQuad0,
-    const unsigned int* aQuad0, unsigned int nQuad0,
-    const double* aXYZ0, unsigned int nXYZ0);
-  
-DFM2_INLINE void SubdivPoints3_MeshQuad(
-    std::vector<double>& aXYZ1,
-    //
-    const std::vector<int>& aEdgeFace0,
-    const std::vector<unsigned int>& aQuad0,
-    const std::vector<double>& aXYZ0);
-
-DFM2_INLINE void SubdivisionPoints_Hex(
-    std::vector<double>& aXYZ1,
-    //
-    const std::vector<unsigned int> &psupIndHex0,
-    const std::vector<unsigned int> &psupHex0,
-    const std::vector<unsigned int>& aQuadHex0,
-    const unsigned int* aHex0, unsigned int nHex0,
-    const double* aXYZ0, unsigned int nXYZ0);
 
 } // delfem2
 

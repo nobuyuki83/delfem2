@@ -9,14 +9,15 @@
  * @brief simple demo of subdivision surface
  */
 
-#include <cstdlib>
-#include "delfem2/mshmisc.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/primitive.h"
-
-#include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/mshsubdiv.h"
+#include "delfem2/primitive.h"
+#include <GLFW/glfw3.h>
+#include <cstdlib>
+
+
 
 namespace dfm2 = delfem2;
 
