@@ -12,8 +12,6 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshsubdiv.h"
 
-// ---------------------------------------------
-
 // ----------------------------------------------------
 
 DFM2_INLINE int delfem2::findEdge(

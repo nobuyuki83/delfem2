@@ -98,9 +98,14 @@ void Project(
     double len_min = -1;
     for(const auto & smplr : sampler.aSampler){
       dfm2::CVec3d p0, n0;
-      bool res = GetProjectedPoint(p0, n0, ps,smplr);
+      bool res = GetProjectedPoint(p0, n0, ps, smplr);
       if( !res ){ continue; }
-      double ct = n0*dfm2::CVec3d(smplr.z_axis);
+//      std::cout << ip << " " << p0 << " " << n0 << std::endl;
+      dfm2::CVec3d z0(0,0,1);
+      double mMVP[16]; dfm2::MatMat4(mMVP, smplr.mMV, smplr.mP);
+      double mMVinv[16]; dfm2::Inverse_Mat4(mMVinv, mMVP);
+      dfm2::CVec3d z1; dfm2::Vec3_Vec3Mat4_AffineProjection(z1.p,z0.p,mMVinv);
+      double ct = n0*z1.Normalize();
       if( ct <= 0.0 ){ continue; }
       if( (p0-ps).Length() > 0.1 ){ continue; }
       const double len = ((p0-ps).Length()+1.0e-5)/ct;
@@ -122,10 +127,9 @@ void Project(
 
 
 void Draw(
-    const CCapsuleRigged trg,
+    const CCapsuleRigged& trg,
     const std::vector<double>& aXYZ1,
-    const std::vector<unsigned int>& aTri,
-    const dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler)
+    const std::vector<unsigned int>& aTri)
 {
   dfm2::opengl::DrawBackground( dfm2::CColor(0.2,0.7,0.7) );
   ::glEnable(GL_LIGHTING);
@@ -135,9 +139,8 @@ void Draw(
   ::glColor3d(0,0,0);
   ::glLineWidth(1);
   dfm2::opengl::DrawMeshTri3D_Edge(aXYZ1,aTri);
-  glPointSize(3);
-  sampler.Draw();
   {
+    glPointSize(3);
     ::glLineWidth(1);
     dfm2::opengl::DrawMeshTri3D_Edge(trg.aXYZ1, trg.aElm);
   }
@@ -220,7 +223,8 @@ int main(int argc,char* argv[])
 
         // drawing functions
         viewer.DrawBegin_oldGL();
-        Draw(trg,aXYZ1,aTri,sampler);
+        Draw(trg,aXYZ1,aTri);
+        sampler.Draw();
         viewer.SwapBuffers();
         glfwPollEvents();
         viewer.ExitIfClosed();
@@ -257,7 +261,8 @@ int main(int argc,char* argv[])
         // ----------------------------
         // drawing functions
         viewer.DrawBegin_oldGL();
-        Draw(trg,aXYZ1,aTri,sampler);
+        Draw(trg,aXYZ1,aTri);
+        sampler.Draw();
         viewer.SwapBuffers();
         glfwPollEvents();
         viewer.ExitIfClosed();

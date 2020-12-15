@@ -17,7 +17,6 @@
 #ifndef DFM2_MSHSUBDIV_H
 #define DFM2_MSHSUBDIV_H
 
-//#include "delfem2/mshelm.h"
 #include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>

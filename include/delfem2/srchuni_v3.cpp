@@ -563,12 +563,10 @@ CPtElm2 intersect_Ray_MeshTri3D
 
 DFM2_INLINE void delfem2::IntersectionLine_Hightfield(
     std::vector<CPtElm2<double>>& aPes,
-    double hmin, double hmax,
     const double src[3],
     const double dir[3],
     unsigned int nx,
     unsigned int ny,
-    double elen,
     const std::vector<float>& aH)
 {
   for(unsigned int iey=0;iey<ny-1;++iey){
@@ -577,16 +575,18 @@ DFM2_INLINE void delfem2::IntersectionLine_Hightfield(
       const double h10 = aH[(iey+0)*nx+(iex+1)];
       const double h01 = aH[(iey+1)*nx+(iex+0)];
       const double h11 = aH[(iey+1)*nx+(iex+1)];
+      /*
       if( hmin < hmax ){
         if( h00 < hmin || h00 > hmax ) continue;
         if( h10 < hmin || h10 > hmax ) continue;
         if( h01 < hmin || h01 > hmax ) continue;
         if( h11 < hmin || h11 > hmax ) continue;
       }
-      const double p00[3] = {(iex+0)*elen,(iey+0)*elen,h00};
-      const double p10[3] = {(iex+1)*elen,(iey+0)*elen,h10};
-      const double p01[3] = {(iex+0)*elen,(iey+1)*elen,h01};
-      const double p11[3] = {(iex+1)*elen,(iey+1)*elen,h11};
+       */
+      const double p00[3] = {double(iex+0),double(iey+0),h00};
+      const double p10[3] = {double(iex+1),double(iey+0),h10};
+      const double p01[3] = {double(iex+0),double(iey+1),h01};
+      const double p11[3] = {double(iex+1),double(iey+1),h11};
       double r0=1.0, r1=1.0;
       if( IntersectRay_Tri3(r0, r1,
           CVec3d(src), CVec3d(dir),

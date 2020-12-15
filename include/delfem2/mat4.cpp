@@ -47,6 +47,62 @@ DFM2_INLINE void CalcInvMat(
   }
 }
 
+template <typename REAL>
+bool CalcInvMatPivot(REAL* a, unsigned int n, unsigned int* tmp)
+{
+  unsigned int* row = tmp;
+  for(unsigned int ipv=0 ; ipv < n ; ipv++){
+    // find maximum
+    REAL big=0.0;
+    unsigned int pivot_row;
+    for(unsigned int i=ipv ; i<n ; i++){
+      if(fabs(a[i*n+ipv]) < big ){ continue; }
+      big = fabs(a[i*n+ipv]);
+      pivot_row = i;
+    }
+    if(big == 0.0){ return false;}
+    row[ipv] = pivot_row;
+
+    // swapping column
+    if(ipv != pivot_row){
+      for(unsigned int i=0 ; i<n ; i++){
+        REAL temp = a[ipv*n+i];
+        a[ipv*n+i] = a[pivot_row*n+i];
+        a[pivot_row*n+i] = temp;
+      }
+    }
+
+    // set diagonal 1 for for pivotting column
+    REAL inv_pivot = 1.0/a[ipv*n+ipv];
+    a[ipv*n+ipv]=1.0;
+    for(unsigned int j=0 ; j < n ; j++){
+      a[ipv*n+j] *= inv_pivot;
+    }
+
+    // set pivot column 0 except for pivotting column
+    for(unsigned int i=0 ; i<n ; i++){
+      if(i == ipv){ continue; }
+      REAL temp = a[i*n+ipv];
+      a[i*n+ipv]=0.0;
+      for(unsigned int j=0 ; j<n ; j++){
+        a[i*n+j] -= temp*a[ipv*n+j];
+      }
+    }
+
+  }
+
+  // swaping column
+  for(int j=n-1 ; j>=0 ; j--){
+    if(j == row[j]){ continue; }
+    for(unsigned int i=0 ; i<n ; i++){
+      REAL temp = a[i*n+j];
+      a[i*n+j]=a[i*n+row[j]];
+      a[i*n+row[j]]=temp;
+    }
+  }
+  return true;
+}
+
 DFM2_INLINE void Normalize3D(
     float vec[3])
 {
@@ -68,26 +124,10 @@ DFM2_INLINE void Cross3D(
 }
 
 
-// ------------------------
+// ------------------------------
 // below: mat4
 
-template <typename T>
-DFM2_INLINE void delfem2::MatMat4(
-    T* C,
-    const T* A, const T* B)
-{
-  for(int i=0;i<4;i++){
-    for(int j=0;j<4;j++){
-      C[i*4+j] = A[i*4+0]*B[0*4+j] + A[i*4+1]*B[1*4+j] + A[i*4+2]*B[2*4+j] + A[i*4+3]*B[3*4+j];
-    }
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::MatMat4(float* C, const float* A, const float* B);
-template void delfem2::MatMat4(double* C, const double* A, const double* B);
-#endif
 
-// ------------------
 
 template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionOrtho(
@@ -639,6 +679,8 @@ void delfem2::Copy_Mat4(double m1[16], const double m0[16])
  */
 
 
+
+
 template <typename REAL>
 DFM2_INLINE void delfem2::Inverse_Mat4(
     REAL minv[16],
@@ -646,6 +688,11 @@ DFM2_INLINE void delfem2::Inverse_Mat4(
 {
   for(int i=0;i<16;++i){ minv[i] = m[i]; }
   int info; mat4::CalcInvMat(minv,4,info);
+  if(info!=0){
+    for(int i=0;i<16;++i){ minv[i] = m[i]; }
+    unsigned int tmp[4];
+    mat4::CalcInvMatPivot(minv,4,tmp);
+  }
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Inverse_Mat4(float minv[], const float m[]);

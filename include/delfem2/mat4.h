@@ -42,12 +42,12 @@ void Print_Mat4Transp(const REAL m[16]){
   std::cout <<  m[ 3] << " " << m[ 7] << " " << m[11] << " " << m[15] << std::endl;
 }
 
-template <typename REAL>
+template <typename T0, typename T1>
 void Copy_Mat4(
-    REAL M0[16],
-    const REAL M1[16])
+    T0 M0[16],
+    const T1 M1[16])
 {
-  for(int i=0;i<16;++i){ M0[i] = M1[i]; }
+  for(int i=0;i<16;++i){ M0[i] = static_cast<T0>(M1[i]); }
 }
 
 
@@ -69,11 +69,18 @@ DFM2_INLINE void Inverse_Mat4(
   const REAL m[16]);
 
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void MatMat4(
-    T* C,
-    const T* A,
-    const T* B);
+    T0* C,
+    const T1* A,
+    const T2* B)
+{
+  for(int i=0;i<4;i++){
+    for(int j=0;j<4;j++){
+      C[i*4+j] = A[i*4+0]*B[0*4+j] + A[i*4+1]*B[1*4+j] + A[i*4+2]*B[2*4+j] + A[i*4+3]*B[3*4+j];
+    }
+  }
+}
 
 /**
  * @brief affine matrix for orthogonal projection

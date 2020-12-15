@@ -25,7 +25,7 @@
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/vec3.h"
+#include "delfem2/mat4.h"
 #include "delfem2/opengl/r2tgln_glnew.h"
 
 namespace dfm2 = delfem2;
@@ -38,18 +38,16 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
   CRender2Tex::ExtractFromTexture_Depth(aZ);
   assert( aZ.size() == nResX*nResY );
   std::vector<double> aXYZ(nResX*nResY*3);
-  const double* ax = this->x_axis;
-  const double* az = this->z_axis;
-  double ay[3]; dfm2::Cross3(ay, az, ax);
   for(unsigned int iy=0;iy<nResY;++iy){
     for(unsigned int ix=0;ix<nResX;++ix){
-      int ip = iy*nResX+ix;
-      double lz = -aZ[ip]*z_range;
-      double lx = (ix+0.5)*lengrid;
-      double ly = (iy+0.5)*lengrid;
-      aXYZ[ip*3+0] = origin[0] + lx*ax[0] + ly*ay[0] + lz*az[0];
-      aXYZ[ip*3+1] = origin[1] + lx*ax[1] + ly*ay[1] + lz*az[1];
-      aXYZ[ip*3+2] = origin[2] + lx*ax[2] + ly*ay[2] + lz*az[2];
+      const int ip = iy*nResX+ix;
+      double q0[3] = {
+          (ix+0.5)/nResX*2.0-1.0,
+          (iy+0.5)/nResY*2.0-1.0,
+          aZ[ip]*2.0-1.0 };
+      aXYZ[ip*3+0] = q0[0];
+      aXYZ[ip*3+1] = q0[1];
+      aXYZ[ip*3+2] = q0[2];
     }
   }
   shdr2.Initialize(aXYZ);
@@ -61,23 +59,17 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL()
   //
   { // draw grid
     this->shdr0.Compile();
-    double xmin = 0.0;
-    double xmax = lengrid*nResX;
-    double ymin = 0.0;
-    double ymax = lengrid*nResY;
-    double zmin = 0.0;
-    double zmax = -z_range;
     std::vector<double> aPos3d = {
-        xmin, ymin, zmin,
-        xmin, ymin, zmax,
-        xmin, ymax, zmin,
-        xmin, ymax, zmax,
-        xmax, ymin, zmin,
-        xmax, ymin, zmax,
-        xmax, ymax, zmin,
-        xmax, ymax, zmax,
+        -1, -1, -1,
+        -1, -1, +1,
+        -1, +1, -1,
+        -1, +1, +1,
+        +1, -1, -1,
+        +1, -1, +1,
+        +1, +1, -1,
+        +1, +1, +1,
     };
-    std::vector<unsigned int> aTri = {
+    std::vector<unsigned int> aLine = {
         0,  1,
         1,  3,
         2,  3,
@@ -91,25 +83,17 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL()
         2,  6,
         3,  7,
     };
-    shdr0.Initialize(aPos3d, aTri);
+    shdr0.Initialize(aPos3d, aLine);
   }
   // -----
   { // draw texture
     shdr1.Compile();
     // --------------
-    const dfm2::CVec3d& dx = x_axis;
-    const dfm2::CVec3d& dy = dfm2::CVec3d(z_axis)^dx;
-    const double lx = lengrid*nResX;
-    const double ly = lengrid*nResY;
-    dfm2::CVec3d p0 = origin;
-    dfm2::CVec3d p1 = p0 + lx*dx;
-    dfm2::CVec3d p2 = p0 + lx*dx + ly*dy;
-    dfm2::CVec3d p3 = p0 + ly*dy;
     std::vector<double> aPos3d = {
-        p0.x(), p0.y(), p0.z(),
-        p1.x(), p1.y(), p1.z(),
-        p2.x(), p2.y(), p2.z(),
-        p3.x(), p3.y(), p3.z(),
+        -1, -1, -1,
+        +1, -1, -1,
+        +1, +1, -1,
+        -1, +1, -1
     };
     std::vector<unsigned int> aTri = {
         0, 1, 2,
@@ -123,41 +107,23 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL()
     };
     shdr1.Initialize(aPos3d, aTri, aTex2d);
   }
-
   {
     shdr2.Compile();
   }
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::Draw
- (float mP[16], float mV[16]) const
+DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::Draw(
+    float mP0[16],
+    float mMV0[16]) const
 {
- ::glLineWidth(5);
-  float mM[16];
-  {
-    const double* ax = this->x_axis;
-    const double* az = this->z_axis;
-    double ay[3]; dfm2::Cross3(ay, az, ax);
-    const double* o = this->origin;
-    mM[ 0] = ax[0];  mM[ 1] = ax[1];  mM[ 2] = ax[2];  mM[ 3] = 0;
-    mM[ 4] = ay[0];  mM[ 5] = ay[1];  mM[ 6] = ay[2];  mM[ 7] = 0;
-    mM[ 8] = az[0];  mM[ 9] = az[1];  mM[10] = az[2];  mM[11] = 0;
-    mM[12] = +o[0];  mM[13] = +o[1];  mM[14] = +o[2];  mM[15] = 1;
-  }
-  float mMV[16];
-  for(int i=0;i<4;++i){
-    for(int j=0;j<4;++j) {
-      mMV[i*4+j] = 0;
-      for(int k=0;k<4;++k){
-        mMV[i*4+j] += mM[i*4+k] *  mV[k*4+j];
-      }
-    }
-  }
-  shdr0.Draw(mP,mMV);
-  shdr2.Draw(mP,mV);
+  double mMVP[16]; dfm2::MatMat4(mMVP,mMV,mP);
+  double mMVPinv[16]; dfm2::Inverse_Mat4(mMVPinv,mMVP);
+  float mMVP1[16]; dfm2::MatMat4(mMVP1,mMVPinv,mMV0);
+  shdr0.Draw(mP0,mMVP1);
+  shdr2.Draw(mP0,mMVP1);
   glEnable(GL_TEXTURE_2D);
   glActiveTexture(0);
   glBindTexture(GL_TEXTURE_2D, this->id_tex_color);
-  shdr1.Draw(mP,mV);
+  shdr1.Draw(mP0,mMVP1);
   glBindTexture(GL_TEXTURE_2D, 0);
 }

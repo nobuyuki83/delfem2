@@ -41,7 +41,7 @@ int main(int argc,char* argv[])
   viewer.Init_oldGL();
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.Rot_Camera(+0.2, -0.2);
+//  viewer.camera.Rot_Camera(+0.2, -0.2);
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
@@ -49,6 +49,7 @@ int main(int argc,char* argv[])
 
   dfm2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
+
 
   sampler_box.Draw();
   for(auto& smplr: sampler_box.aSampler){
@@ -69,6 +70,8 @@ int main(int argc,char* argv[])
   {
     viewer.DrawBegin_oldGL();
     sampler_box.Draw();
+    ::glEnable(GL_LIGHTING);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

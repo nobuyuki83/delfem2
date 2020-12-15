@@ -57,10 +57,14 @@ int main(int argc,char* argv[])
   double elen = 0.02;
   dfm2::opengl::CRender2Tex_DrawOldGL sampler;
   sampler.SetTextureProperty(nres, nres, true);
-  sampler.SetCoord(elen, elen*nres,
-                   dfm2::CVec3d(-elen*0.5*nres,-elen*0.5*nres,+elen*nres*0.5).stlvec(),
-                   dfm2::CVec3d(0,0,+1).stlvec(),
-                   dfm2::CVec3d(1,0,0).stlvec() );
+  {
+    dfm2::Mat4_OrthongoalProjection_AffineTrans(
+        sampler.mMV, sampler.mP,
+        dfm2::CVec3d(-elen * 0.5 * nres, -elen * 0.5 * nres, +elen * nres * 0.5).p,
+        dfm2::CVec3d(0, 0, +1).p,
+        dfm2::CVec3d(1, 0, 0).p,
+        nres, nres, elen, elen * nres);
+  }
   sampler.SetPointColor(1, 0, 0);
   sampler.draw_len_axis = 1.0;
 

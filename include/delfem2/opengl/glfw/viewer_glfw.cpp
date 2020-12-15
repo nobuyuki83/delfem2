@@ -221,17 +221,23 @@ void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
 
+  // glnew will skip compilling following section
+#ifdef GL_PROJECTION
 
-  float asp;
+  { // make sure that the stack is clear
+    int n0; ::glGetIntegerv(GL_MODELVIEW_STACK_DEPTH,&n0);
+    int n1; ::glGetIntegerv(GL_PROJECTION_STACK_DEPTH,&n1);
+    assert( n0 == 1 && n1 == 1 );
+  }
+
+  float mMV[16], mP[16];
   {
     int width0, height0;
     glfwGetFramebufferSize(window, &width0, &height0);
-    asp = width0 / (float) height0;
+    float asp = width0 / (float) height0;
+    camera.Mat4_MVP_OpenGL(mMV,mP, asp);
   }
-  float mMV[16], mP[16]; camera.Mat4_MVP_OpenGL(mMV,mP, asp);
-  
-  // glnew will skip compilling following section
-#ifdef GL_PROJECTION
+
   ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGLae
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();

@@ -5,17 +5,15 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include <cmath>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/gizmo_glold.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/points.h"
-// ---
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/gizmo_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cmath>
 
 namespace dfm2 = delfem2;
 
@@ -40,6 +38,7 @@ int main(int argc,char* argv[])
     void key_release(int key, int mods) override{
     }
     void key_press(int key, int mods) override{
+      delfem2::opengl::CViewer_GLFW::key_press(key,mods);
       if( key == GLFW_KEY_R ){ ga.igizmo_mode = 1; }
       if( key == GLFW_KEY_G ){ ga.igizmo_mode = 0; }
     }
