@@ -5,17 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cmath>
-#include "delfem2/mshio.h"
-#include "delfem2/points.h"
-#include "delfem2/srchuni_v3.h"
-
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/r2tglo_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/srchuni_v3.h"
+#include "delfem2/mshio.h"
+#include "delfem2/points.h"
+#include <GLFW/glfw3.h>
+#include <cmath>
 
 namespace dfm2 = delfem2;
 
@@ -35,12 +34,15 @@ int main(int argc,char* argv[])
     unsigned int nresY = 128;
     unsigned int nresZ = 256;
     double elen = 0.02;
+    dfm2::CVec3d origin = dfm2::CVec3d(-0.5 * elen * nresX, +0.5 * elen * nresY, +0.5 * elen * nresZ);
+    dfm2::CVec3d ez = dfm2::CVec3d(0, +1, 0);
+    dfm2::CVec3d ex = dfm2::CVec3d(1, +0, 0);
+    //
     sampler.SetTextureProperty(nresX, nresZ, true);
-    sampler.SetCoord(
-        elen, elen*nresY,
-        dfm2::CVec3d(-0.5*elen*nresX,+0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
-        dfm2::CVec3d(0,+1,0).stlvec(),
-        dfm2::CVec3d(1,+0,0).stlvec() );
+    ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
+        sampler.mMV, sampler.mP,
+        origin.p, ez.p, ex.p,
+        nresX, nresZ, elen, elen * nresY);
     sampler.SetPointColor(0.0, 1.0, 0.0);
     sampler.draw_len_axis = 0.2;
     sampler.isDrawTex = false;
@@ -78,33 +80,29 @@ int main(int argc,char* argv[])
     dfm2::CVec3d dir(cos(iframe*0.003),sin(iframe*0.005),sin(iframe*0.007));
     dfm2::CVec3d src(1.5*cos(iframe*0.005), 1.5*sin(iframe*0.007), 1.5*sin(iframe*0.009) );
     // ----
+
     std::vector<double> aXYZ1;
     {
-      const dfm2::CVec3d ex(sampler.x_axis);
-      const dfm2::CVec3d ez(sampler.z_axis);
-      const dfm2::CVec3d ey = dfm2::Cross(ez,ex);
-      const double lsrc[3] = {
-        (src-dfm2::CVec3d(sampler.origin))*ex - 0.5*sampler.lengrid,
-        (src-dfm2::CVec3d(sampler.origin))*ey - 0.5*sampler.lengrid,
-        (src-dfm2::CVec3d(sampler.origin))*ez };
-      const double ldir[3] = { dir*ex, dir*ey, dir*ez };
+      double mMVPG[16]; sampler.GetMVPG(mMVPG);
+      double mMVPGinv[16]; dfm2::Inverse_Mat4(mMVPGinv, mMVPG);
+      dfm2::CVec3d q0 = src-dir.Normalize();
+      dfm2::CVec3d q1 = src+dir.Normalize();
+      dfm2::CVec3d p0; dfm2::Vec3_Vec3Mat4_AffineProjection(p0.p,q0.p,mMVPG);
+      dfm2::CVec3d p1; dfm2::Vec3_Vec3Mat4_AffineProjection(p1.p,q1.p,mMVPG);
       std::vector<dfm2::CPtElm2<double>> aPES;
       dfm2::IntersectionLine_Hightfield(aPES,
-          -sampler.z_range*0.999, -sampler.z_range*0.001,
-          lsrc, ldir,
+          p0.p, (p1-p0).Normalize().p,
           sampler.nResX, sampler.nResY,
-          sampler.lengrid,
           sampler.aZ);
-      for(auto & pes : aPES){
-        dfm2::CVec3d lpos = pes.Pos_Grid(sampler.nResX, sampler.nResY, sampler.lengrid, sampler.aZ);
-        dfm2::CVec3d offset = dfm2::CVec3d(sampler.origin) + ex * sampler.lengrid*0.5 + ey * sampler.lengrid*0.5;
-        dfm2::CVec3d gp = ex*lpos.x() + ey*lpos.y() + ez*lpos.z() + offset;
-        dfm2::CVec3d gp1 = dfm2::nearest_Line_Point(gp, src, dir);
-        aXYZ1.push_back(gp.x());
-        aXYZ1.push_back(gp.y());
-        aXYZ1.push_back(gp.z());
+      for(const auto & pes : aPES){
+        dfm2::CVec3d lpos = pes.Pos_Grid(sampler.nResX, sampler.nResY, 1.0, sampler.aZ);
+        dfm2::CVec3d q2; dfm2::Vec3_Vec3Mat4_AffineProjection(q2.p, lpos.p, mMVPGinv);
+        aXYZ1.push_back(q2.x());
+        aXYZ1.push_back(q2.y());
+        aXYZ1.push_back(q2.z());
       }
     }
+
     {
       viewer.DrawBegin_oldGL();
       dfm2::opengl::DrawBackground( dfm2::CColor(0.2,0.7,0.7) );
@@ -113,22 +111,26 @@ int main(int argc,char* argv[])
       {
         ::glBegin(GL_POINTS);
         ::glColor3d(1,0,0);
-        ::glVertex3d(src.x(), src.y(), src.z());
-        ::glEnd();
-      }
-      for(unsigned int ixyz=0;ixyz<aXYZ1.size()/3;++ixyz){
-        ::glBegin(GL_POINTS);
-        ::glColor3d(0,0,1);
-        ::glVertex3d(aXYZ1[ixyz*3+0], aXYZ1[ixyz*3+1], aXYZ1[ixyz*3+2]);
+//        ::glVertex3dv((src-dir.Normalize()).p);
+//        ::glColor3d(0,1,0);
+//        ::glVertex3dv((src+dir.Normalize()).p);
+        ::glVertex3dv(src.p);
         ::glEnd();
       }
       {
+        ::glColor3d(1,0,0);
         dfm2::CVec3d p0 = src + 10.0*dir;
         dfm2::CVec3d p1 = src - 10.0*dir;
         ::glLineWidth(1);
         ::glBegin(GL_LINES);
         ::glVertex3d(p0.x(), p0.y(), p0.z());
         ::glVertex3d(p1.x(), p1.y(), p1.z());
+        ::glEnd();
+      }
+      for(unsigned int ixyz=0;ixyz<aXYZ1.size()/3;++ixyz){
+        ::glBegin(GL_POINTS);
+        ::glColor3d(0,0,1);
+        ::glVertex3d(aXYZ1[ixyz*3+0], aXYZ1[ixyz*3+1], aXYZ1[ixyz*3+2]);
         ::glEnd();
       }
       // ----------

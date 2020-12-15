@@ -48,14 +48,12 @@ void draw(GLFWwindow* window)
   ::glPolygonOffset( 1.1f, 4.0f );
 
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float)nw/nh;
-  
+  const float asp = (float)nw/float(nh);
   float mP[16], mMV[16];
   viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
   shdr1.Draw(mP,mMV);
   shdr0.Draw(mP, mMV);
   sampler.Draw(mP,mMV);
-  
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -63,13 +61,15 @@ void draw(GLFWwindow* window)
 int main()
 {
   {
-    int nres = 256;
+    int nres = 200;
     double elen = 0.01;
     sampler.SetTextureProperty(nres, nres, true);
-    sampler.SetCoord(elen, 4.0,
-                     dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
-                     dfm2::CVec3d(0,0,-1).stlvec(),
-                     dfm2::CVec3d(1,0,0).stlvec() );
+    dfm2::Mat4_OrthongoalProjection_AffineTrans(
+        sampler.mMV, sampler.mP,
+        dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).p,
+        dfm2::CVec3d(0,0,-1).p,
+        dfm2::CVec3d(1,0,0).p,
+        nres, nres, elen, 4.0);
     sampler.draw_len_axis = 1.0;
   }
 
@@ -97,8 +97,11 @@ int main()
   ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   ::glDisable(GL_BLEND);
   ::glEnable(GL_DEPTH_TEST);
-  float mMV[16], mP[16]; sampler.AffMatT3f_MVP(mMV,mP);
-  shdr0.Draw(mP,mMV);
+  {
+    float mMVf[16]; dfm2::Copy_Mat4(mMVf, sampler.mMV);
+    float mPf[16]; dfm2::Copy_Mat4(mPf, sampler.mP);
+    shdr0.Draw(mPf, mMVf);
+  }
   sampler.End();
   sampler.SetDepth();
   //

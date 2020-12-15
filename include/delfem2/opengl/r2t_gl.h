@@ -10,27 +10,38 @@
 #ifndef DFM2_RENDER2TEX_GL_H
 #define DFM2_RENDER2TEX_GL_H
 
+#include "delfem2/mat4.h"
 #include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <vector>
 
 namespace delfem2 {
+
+void Mat4_OrthongoalProjection_AffineTrans(
+    double mMV[16],
+    double mP[16],
+    const double origin[3],
+    const double az[3],
+    const double ax[3],
+    unsigned int nResX,
+    unsigned int nResY,
+    double lengrid,
+    double z_range);
+
 namespace opengl {
 
 class CRender2Tex
 {
 public:
-  CRender2Tex()
+  CRender2Tex() :
+      mMV{1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1},
+      mP{1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1}
   {
     nResX=0;
     nResY=0;
     is_rgba_8ui=false;
     id_tex_color = 0;
     id_tex_depth = 0;
-    lengrid = 0.01;
-    origin[0]=0; origin[1]=0; origin[2]=0;
-    z_axis[0]=0; z_axis[1]=0; z_axis[2]=1;
-    x_axis[0]=1; x_axis[1]=0; x_axis[2]=0;
   }
   // --------------------------
   virtual void InitGL();
@@ -40,17 +51,35 @@ public:
     mm[1] = -1;
     return mm;
   }
+  void GetMVPG(double mMVPG[16]) const {
+    double mMVP[16]; MatMat4(mMVP, mMV,mP);
+    double tmp0 = nResX*0.5;
+    double tmp1 = nResY*0.5;
+    double mG[16] = {
+        tmp0,    0,   0, 0,
+        0,    tmp1,   0, 0,
+        0,       0, 0.5, 0,
+        tmp0-0.5, tmp1-0.5, 0.5, 1 };
+    MatMat4(mMVPG, mMVP,mG);
+//    p0.p[0] = (p0.p[0]+1)*sampler.nResX*0.5 - 0.5;
+//    p0.p[1] = (p0.p[1]+1)*sampler.nResY*0.5 - 0.5;
+//    p0.p[2] = (p0.p[2]+1)*0.5;
+  }
   // ----------------------
+  /*
   void AffMatT3f_MVP(
       float mMV[16],
       float p[16]) const;
+      */
   void SaveDepthCSV(
       const std::string& path) const;
+  /*
   void SetCoord(
       double elen, double depth_max,
       const std::vector<double>& orgPrj,
       const std::vector<double>& dirPrj,
       const std::vector<double>& dirWidth);
+      */
   void SetTextureProperty(unsigned int nw, unsigned int nh, bool is_rgba_8ui_)
   {
     this->nResX = nw;
@@ -71,14 +100,8 @@ public:
   unsigned int id_tex_depth;
   unsigned int id_framebuffer;
   //
-  double mMvp[16]; // affine matrix
-  //
-  double lengrid;
-  double z_range;
-  double z_axis[3];
-  double x_axis[3];
-  double origin[3];
-  // --------------
+  double mMV[16]; // affine matrix
+  double mP[16]; // affine matrix
 protected:
   int view[4]; // viewport information
 };

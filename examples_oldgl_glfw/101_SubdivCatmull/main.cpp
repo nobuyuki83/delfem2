@@ -17,8 +17,6 @@
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 
-
-
 namespace dfm2 = delfem2;
 
 // --------------------------------------------------
@@ -37,8 +35,9 @@ int main(int argc,char* argv[])
   {
     const double bbmin[3] = {-1,-1,-1};
     const double bbmax[3] = {+1,+1,+1};
-    delfem2::MeshQuad3_CubeVox(aaXYZ[0],aaQuad[0],
-                               bbmin, bbmax);
+    delfem2::MeshQuad3_CubeVox(
+        aaXYZ[0],aaQuad[0],
+        bbmin, bbmax);
   }
   for(unsigned int il=0;il<nlevel_subdiv;++il){
     const std::vector<double>& aXYZ0 = aaXYZ[il];
@@ -46,7 +45,8 @@ int main(int argc,char* argv[])
     std::vector<unsigned int>& aQuad1 = aaQuad[il+1];
     std::vector<int> aEdgeFace0;
     std::vector<unsigned int> psupIndQuad0, psupQuad0;
-    dfm2::SubdivTopo_MeshQuad(aQuad1,
+    dfm2::SubdivTopo_MeshQuad(
+        aQuad1,
         psupIndQuad0,psupQuad0, aEdgeFace0,
         aQuad0.data(), (unsigned int)(aQuad0.size()/4),
         (unsigned int)(aXYZ0.size()/3));
@@ -83,5 +83,3 @@ int main(int argc,char* argv[])
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }
-
-

@@ -166,13 +166,10 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const delfem2::CVector3& org, const d
 
 DFM2_INLINE void IntersectionLine_Hightfield(
     std::vector<CPtElm2<double>>& aPos,
-    //
-    double hmin, double hmax,
     const double src[3],
     const double dir[3],
     unsigned int nx,
     unsigned int ny,
-    double elen,
     const std::vector<float>& aH);
 
 // above functions for ray interesection

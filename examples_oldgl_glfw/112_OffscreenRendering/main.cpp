@@ -20,51 +20,20 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-double cur_time = 0.0;
-bool is_animation = true;
-bool is_depth = false;
-std::vector<double> aXYZ;
-std::vector<unsigned int> aTri;
-
-// ------------------------------------------------------
-
-void DrawObject(){
+void DrawObject(
+    double cur_time,
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri)
+{
   ::glRotated(+cur_time, 1,0,0);
   dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
   ::glRotated(-cur_time, 1,0,0);
 }
 
-void myGlutDisplay(const dfm2::opengl::CRender2Tex_DrawOldGL& sampler)
-{
-  dfm2::opengl::DrawBackground( dfm2::CColor(0.2f,0.7f,0.7f) );
-  ::glEnable(GL_LIGHTING);
-  ::glColor3d(1,1,1);
-  DrawObject();
-
-  glPointSize(3);
-  float mMV[16]; glGetFloatv(GL_MODELVIEW, mMV);
-  float mP[16]; glGetFloatv(GL_PROJECTION, mP);
-  sampler.Draw();
-}
-
-void myGlutIdle(dfm2::opengl::CRender2Tex_DrawOldGL& sampler){
-  if(is_animation){
-    sampler.Start();
-    ::glClearColor(1.0, 1.0, 1.0, 1.0 );
-    ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    ::glEnable(GL_DEPTH_TEST);
-    ::glDisable(GL_BLEND);
-    ::glEnable(GL_LIGHTING);
-    DrawObject();
-    sampler.End();
-    sampler.GetDepth();
-    sampler.GetColor();
-    cur_time += 1;
-  }
-}
-
 int main(int argc,char* argv[])
 {
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
   dfm2::Read_Obj(
       std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
     aXYZ,aTri);
@@ -72,14 +41,27 @@ int main(int argc,char* argv[])
       aXYZ,
       1.0);
   // ---------------------------------------
-  int nres = 64;
-  double elen = 0.04;
+  int nres = 100;
+  double elen = 0.02;
   dfm2::opengl::CRender2Tex_DrawOldGL sampler;
   sampler.SetTextureProperty(nres, nres, true);
-  sampler.SetCoord(elen, 4.0,
-      dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
-      dfm2::CVec3d(0,0,-1).stlvec(),
-      dfm2::CVec3d(1,0,0).stlvec() );
+
+/*
+  dfm2::Mat4_OrthongoalProjection_AffineTrans(
+      sampler.mMV, sampler.mP,
+      dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).p,
+      dfm2::CVec3d(0,0,-1).p,
+      dfm2::CVec3d(1,0,0).p,
+      nres, nres, elen, 4);
+      */
+
+  ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
+      sampler.mMV, sampler.mP,
+      dfm2::CVec3d(+0.5 * elen * nres, -0.5 * elen * nres, -0.5 * elen * nres).p,
+      dfm2::CVec3d(+1, 0, 0).p,
+      dfm2::CVec3d(0, +1, 0).p,
+      nres, nres, elen, 2);
+
   sampler.SetPointColor(1, 0, 0);
   sampler.draw_len_axis = 1.0;
   // ---------------------------------------
@@ -98,14 +80,27 @@ int main(int argc,char* argv[])
   
   sampler.InitGL(); // move the sampled image to a texture
 
-  cur_time = 0.0;
+  double cur_time = 0.0;
   while (!glfwWindowShouldClose(viewer.window))
   {
-    cur_time += 0.1;
-    myGlutIdle(sampler);
+    sampler.Start();
+    ::glClearColor(1.0, 1.0, 1.0, 1.0 );
+    ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    ::glEnable(GL_DEPTH_TEST);
+    ::glDisable(GL_BLEND);
+    ::glEnable(GL_LIGHTING);
+    DrawObject(cur_time,aXYZ,aTri);
+    sampler.End();
+    sampler.GetDepth();
+    sampler.GetColor();
+    cur_time += 1.0;
     // ----
     viewer.DrawBegin_oldGL();
-    myGlutDisplay(sampler);
+    dfm2::opengl::DrawBackground( dfm2::CColor(0.2f,0.7f,0.7f) );
+    ::glEnable(GL_LIGHTING);
+    ::glColor3d(1,1,1);
+    DrawObject(cur_time,aXYZ,aTri);
+    sampler.Draw();
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();    
   }

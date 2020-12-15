@@ -19,6 +19,11 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransProjection(
     float mP[16],
     float asp) const
 {
+  const float mS[16] = {
+      (float)scale, 0, 0, 0,
+      0, (float)scale, 0, 0,
+      0, 0, (float)scale, 0,
+      0, 0, 0, 1 };
   float depth = (0.5*view_height)/tan(fovy*0.5*(2*M_PI)/360.0);
   float mP0[16];
   if( is_pars ){
@@ -47,9 +52,9 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransProjection(
        0.f, +1.f,  0.f,  0.f,
        0.f,  0.f, -1.f,  0.f,
        0.f,  0.f,  0.f, +1.f };
-  float mTmp[16];
-  ::delfem2::MatMat4(mTmp,mT0,mP0);
-  ::delfem2::MatMat4(mP,mTmp,mRefZ);
+  float mTmp1[16]; ::delfem2::MatMat4(mTmp1,mS,mT0);
+  float mTmp0[16]; ::delfem2::MatMat4(mTmp0,mTmp1,mP0);
+  ::delfem2::MatMat4(mP,mTmp0,mRefZ);
 }
 template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Mat4_AffineTransProjection(
     float mP[16],
@@ -65,11 +70,6 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransModelView(float
     const float transd[3] = { (float)trans[0], (float)trans[1], (float)trans[2] };
     Mat4_AffineTransTranslate(Mt, transd);
   }
-  const float Ms[16] = {
-      (float)scale, 0, 0, 0,
-      0, (float)scale, 0, 0,
-      0, 0, (float)scale, 0,
-      0, 0, 0, 1 };
   float Mr[16];
   {
     if (camera_rot_mode == CAMERA_ROT_MODE::YTOP) {
@@ -95,8 +95,7 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransModelView(float
       Mat4_AffineTransQuat(Mr, q);
     }
   }
-  float Mrt[16]; MatMat4(Mrt, Mr,Mt);
-  MatMat4(mMV, Mrt, Ms);
+  MatMat4(mMV, Mr,Mt);
 }
 template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Mat4_AffineTransModelView(float mMV[16]) const;
 

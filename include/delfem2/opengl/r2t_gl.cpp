@@ -74,13 +74,47 @@ template void MyCross3(double r[3], const double v1[3], const double v2[3]);
 }
 }
 
-// --------------------------------------------
+void delfem2::Mat4_OrthongoalProjection_AffineTrans(
+    double mMV[16],
+    double mP[16],
+    const double origin[3],
+    const double az[3],
+    const double ax[3],
+    unsigned int nResX,
+    unsigned int nResY,
+    double lengrid,
+    double z_range)
+{
+  namespace lcl = delfem2::opengl::render2tex_gl;
+  { // global to local
+    double ay[3]; lcl::MyCross3(ay, az, ax);
+    const double o[3] = { lcl::MyDot3(ax,origin), lcl::MyDot3(ay,origin), lcl::MyDot3(az,origin) };
+    mMV[ 0] = ax[0];  mMV[ 4] = ax[1];  mMV[ 8] = ax[2];  mMV[12] = -o[0];
+    mMV[ 1] = ay[0];  mMV[ 5] = ay[1];  mMV[ 9] = ay[2];  mMV[13] = -o[1];
+    mMV[ 2] = az[0];  mMV[ 6] = az[1];  mMV[10] = az[2];  mMV[14] = -o[2];
+    mMV[ 3] = 0;      mMV[ 7] = 0;      mMV[11] = 0;      mMV[15] = 1;
+  }
+  { //
+    double l = 0.0;
+    double r = +lengrid*nResX;
+    double b = 0.0;
+    double t = +lengrid*nResY;
+    double n = -z_range;
+    double f = 0;
+    mP[0*4+0] = 2.0/(r-l);    mP[1*4+0] = 0.0;         mP[2*4+0] = 0.0;        mP[3*4+0] = -(l+r)/(r-l);
+    mP[0*4+1] = 0.0;          mP[1*4+1] = 2.0/(t-b);   mP[2*4+1] = 0.0;        mP[3*4+1] = -(t+b)/(t-b);
+    mP[0*4+2] = 0.0;          mP[1*4+2] = 0.0;         mP[2*4+2] = 2.0/(n-f);  mP[3*4+2] = -(n+f)/(n-f);
+    mP[0*4+3] = 0.0;          mP[1*4+3] = 0.0;         mP[2*4+3] = 0.0;        mP[3*4+3] = 1.0;
+  }
+}
 
-DFM2_INLINE void delfem2::opengl::CRender2Tex::SetCoord
-(double elen, double depth_max,
- const std::vector<double>& org_prj,
- const std::vector<double>& dir_prj,
- const std::vector<double>& dir_width)
+// --------------------------------------------
+/*
+DFM2_INLINE void delfem2::opengl::CRender2Tex::SetCoord(
+    double elen, double depth_max,
+    const std::vector<double>& org_prj,
+    const std::vector<double>& dir_prj,
+    cost std::vector<double>& dir_width)
 {
   namespace lcl = delfem2::opengl::render2tex_gl;
   this->lengrid = elen;
@@ -120,6 +154,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::AffMatT3f_MVP
     mP[0*4+3] = 0.0;          mP[1*4+3] = 0.0;         mP[2*4+3] = 0.0;        mP[3*4+3] = 1.0;
   }
 }
+ */
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::Start()
 {

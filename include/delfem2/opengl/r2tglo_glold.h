@@ -23,7 +23,6 @@
 namespace delfem2 {
 namespace opengl {
 
-
 class CRender2Tex_DrawOldGL : public CRender2Tex
 {
 public:
@@ -69,7 +68,7 @@ public:
 };
 
 
-  
+
 class CRender2Tex_DrawOldGL_BOX
 {
 public:
@@ -105,13 +104,7 @@ public:
     return n0;
   }
   double edgeLen() const {
-    double l0 = aSampler[0].lengrid;
-    assert( fabs(aSampler[1].lengrid-l0) < 1.0e-10 );
-    assert( fabs(aSampler[2].lengrid-l0) < 1.0e-10 );
-    assert( fabs(aSampler[3].lengrid-l0) < 1.0e-10 );
-    assert( fabs(aSampler[4].lengrid-l0) < 1.0e-10 );
-    assert( fabs(aSampler[5].lengrid-l0) < 1.0e-10 );
-    return l0;
+    return this->lengrid;
   }
   void BoundingBox3(double* pmin, double* pmax) const{
     for(const auto& smplr : aSampler ){
@@ -120,6 +113,7 @@ public:
   }
   
 public:
+  double lengrid;
   std::vector<CRender2Tex_DrawOldGL> aSampler;
 };
 
@@ -129,6 +123,7 @@ void CarveVoxelByDepth(
 
 /**
  * @brief project input point to the depth surface
+ * @param[in] ps the point to project
  */
 bool GetProjectedPoint(
     CVec3d& p0,
