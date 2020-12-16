@@ -122,6 +122,7 @@ int main(int argc,char* argv[])
     for(auto& smplr: sampler_box.aSampler){
       smplr.InitGL(); // move the sampled image to a texture
       smplr.Start();
+      dfm2::opengl::SetView(smplr);
       ::glDisable(GL_POLYGON_OFFSET_FILL );
       ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1, aTri);

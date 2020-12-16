@@ -28,7 +28,8 @@ int main(int argc,char* argv[])
   dfm2::Normalize_Points3(aXYZ,4.0);
   // ---------------------------------------
   
-  dfm2::opengl::CRender2Tex_DrawOldGL sampler;
+  dfm2::opengl::CDrawerOldGL_Render2Tex draw_sampler;
+  dfm2::opengl::CRender2Tex sampler;
   {
     unsigned int nresX = 128;
     unsigned int nresY = 128;
@@ -43,10 +44,10 @@ int main(int argc,char* argv[])
         sampler.mMV, sampler.mP,
         origin.p, ez.p, ex.p,
         nresX, nresZ, elen, elen * nresY);
-    sampler.SetPointColor(0.0, 1.0, 0.0);
-    sampler.draw_len_axis = 0.2;
-    sampler.isDrawTex = false;
-    sampler.isDrawOnlyHitPoints = true;
+    draw_sampler.SetPointColor(0.0, 1.0, 0.0);
+    draw_sampler.draw_len_axis = 0.2;
+    draw_sampler.isDrawTex = false;
+    draw_sampler.isDrawOnlyHitPoints = true;
   }
   // ---------------------------------------
   dfm2::opengl::CViewer_GLFW viewer;
@@ -65,6 +66,7 @@ int main(int argc,char* argv[])
   {
     sampler.InitGL(); // move the sampled image to a texture
     sampler.Start();
+    dfm2::opengl::SetView(sampler);
     ::glClearColor(1.0, 1.0, 1.0, 1.0 );
     ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
@@ -137,7 +139,7 @@ int main(int argc,char* argv[])
       ::glEnable(GL_LIGHTING);
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
       glPointSize(1);
-      sampler.Draw();
+      draw_sampler.Draw(sampler);
       viewer.SwapBuffers();
       glfwPollEvents();
     }

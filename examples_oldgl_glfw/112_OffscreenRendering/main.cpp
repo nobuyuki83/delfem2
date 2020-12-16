@@ -43,8 +43,9 @@ int main(int argc,char* argv[])
   // ---------------------------------------
   int nres = 100;
   double elen = 0.02;
-  dfm2::opengl::CRender2Tex_DrawOldGL sampler;
-  sampler.SetTextureProperty(nres, nres, true);
+  dfm2::opengl::CDrawerOldGL_Render2Tex draw_smpl;
+  dfm2::opengl::CRender2Tex smpl;
+  smpl.SetTextureProperty(nres, nres, true);
 
 /*
   dfm2::Mat4_OrthongoalProjection_AffineTrans(
@@ -56,14 +57,14 @@ int main(int argc,char* argv[])
       */
 
   ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-      sampler.mMV, sampler.mP,
+      smpl.mMV, smpl.mP,
       dfm2::CVec3d(+0.5 * elen * nres, -0.5 * elen * nres, -0.5 * elen * nres).p,
       dfm2::CVec3d(+1, 0, 0).p,
       dfm2::CVec3d(0, +1, 0).p,
       nres, nres, elen, 2);
 
-  sampler.SetPointColor(1, 0, 0);
-  sampler.draw_len_axis = 1.0;
+  draw_smpl.SetPointColor(1, 0, 0);
+  draw_smpl.draw_len_axis = 1.0;
   // ---------------------------------------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
@@ -78,21 +79,22 @@ int main(int argc,char* argv[])
   dfm2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   
-  sampler.InitGL(); // move the sampled image to a texture
+  smpl.InitGL(); // move the sampled image to a texture
 
   double cur_time = 0.0;
   while (!glfwWindowShouldClose(viewer.window))
   {
-    sampler.Start();
+    smpl.Start();
+    SetView(smpl);
     ::glClearColor(1.0, 1.0, 1.0, 1.0 );
     ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
     DrawObject(cur_time,aXYZ,aTri);
-    sampler.End();
-    sampler.GetDepth();
-    sampler.GetColor();
+    smpl.End();
+    smpl.GetDepth();
+    smpl.GetColor();
     cur_time += 1.0;
     // ----
     viewer.DrawBegin_oldGL();
@@ -100,7 +102,7 @@ int main(int argc,char* argv[])
     ::glEnable(GL_LIGHTING);
     ::glColor3d(1,1,1);
     DrawObject(cur_time,aXYZ,aTri);
-    sampler.Draw();
+    draw_smpl.Draw(smpl);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();    
   }

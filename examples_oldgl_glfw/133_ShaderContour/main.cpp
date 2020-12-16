@@ -5,20 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <cmath>
-#include <fstream>
-#include "delfem2/vec3.h"
-#include "delfem2/mshio.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/r2tglo_glold.h"
+#include "delfem2/vec3.h"
+#include "delfem2/mshio.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <cmath>
+#include <fstream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -27,8 +27,9 @@ namespace dfm2 = delfem2;
 
 // -----------------------------
 
-std::string LoadFile
-(const std::string& fname) {
+std::string LoadFile(
+    const std::string& fname)
+{
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
   std::istreambuf_iterator<char> vdataEnd;
@@ -55,7 +56,7 @@ int main(int argc,char* argv[])
 
   unsigned int nres = 256;
   double elen = 0.02;
-  dfm2::opengl::CRender2Tex_DrawOldGL sampler;
+  dfm2::opengl::CRender2Tex sampler;
   sampler.SetTextureProperty(nres, nres, true);
   {
     dfm2::Mat4_OrthongoalProjection_AffineTrans(
@@ -65,8 +66,9 @@ int main(int argc,char* argv[])
         dfm2::CVec3d(1, 0, 0).p,
         nres, nres, elen, elen * nres);
   }
-  sampler.SetPointColor(1, 0, 0);
-  sampler.draw_len_axis = 1.0;
+  dfm2::opengl::CDrawerOldGL_Render2Tex draw_sampler;
+  draw_sampler.SetPointColor(1, 0, 0);
+  draw_sampler.draw_len_axis = 1.0;
 
   // -------------------
   dfm2::opengl::CViewer_GLFW viewer;
@@ -174,7 +176,7 @@ int main(int argc,char* argv[])
   // -----
   sampler.GetDepth();
   sampler.GetColor();
-  sampler.isDrawTex = true;
+  draw_sampler.isDrawTex = true;
 
   while (true)
   {
@@ -190,15 +192,15 @@ int main(int argc,char* argv[])
       ::glBindTexture(GL_TEXTURE_2D, sampler.id_tex_color);
       ::glActiveTexture(GL_TEXTURE1);
       ::glBindTexture(GL_TEXTURE_2D, id_tex_norm);
-      sampler.Draw_Texture();
+      draw_sampler.Draw_Texture(sampler);
     }
     { // draw bounding box
       ::glUseProgram(0);
       ::glDisable(GL_LIGHTING);
       ::glLineWidth(1);
       ::glColor3d(0, 0, 0);
-      sampler.Draw_BoundingBox();
-      sampler.Draw_Axis();
+      draw_sampler.Draw_BoundingBox(sampler);
+      draw_sampler.Draw_Axis(sampler);
     }
     viewer.SwapBuffers();
     glfwPollEvents();
