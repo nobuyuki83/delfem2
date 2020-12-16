@@ -13,52 +13,35 @@
 #define DFM2_OPENGL_R2TGLO_GLOLD_H
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/opengl/r2t_gl.h"
+#include "delfem2/vec3.h"
 #include <stdio.h>
 #include <vector>
 #include <cmath>
 #include <cassert>
-#include "delfem2/vec3.h"
-#include "delfem2/opengl/r2t_gl.h"
 
 namespace delfem2 {
 namespace opengl {
 
-class CRender2Tex_DrawOldGL : public CRender2Tex
+DFM2_INLINE void SetView(const CRender2Tex& r2t);
+
+class CDrawerOldGL_Render2Tex
 {
 public:
-  CRender2Tex_DrawOldGL(){}
-  virtual ~CRender2Tex_DrawOldGL(){}
+  CDrawerOldGL_Render2Tex(){}
+  ~CDrawerOldGL_Render2Tex(){}
   // ------------
-  virtual void InitGL() override; // override function
-  virtual void Start() override; // override function
-  // ----------
-  void Draw() const;
-  void Draw_Axis() const;
-  void Draw_Point() const;
-  void Draw_BoundingBox() const;
+  void Draw(const CRender2Tex& r2t) const;
+  void Draw_Axis(const CRender2Tex& r2t) const;
+  void Draw_Point(const CRender2Tex& r2t) const;
+  void Draw_BoundingBox(const CRender2Tex& r2t) const;
   /**
    * @details before calling this function, bound texture by "glBindTexture" by yourself.
    */
-  void Draw_Texture() const;
-  void getGPos(double* p, 
-               int ix, int iy) const;
-  /**
-   * @brief update the bounding box by adding points
-   * @param pmin (in/out) lower coner
-   * @param pmax (in/out) upper corner
-   * @details if( pmin[0] > pmax[0] ) this bounding box is empty
-   */
-  void BoundingBox3(double* pmin, double* pmax) const;
+  void Draw_Texture(const CRender2Tex& r2t) const;
   // ------------
-  void SetView();
   void SetPointColor(double r, double g, double b);
-  void SetZeroToDepth(){ for(unsigned int i=0;i<aZ.size();++i){ aZ[i] = 0.0; } }
-  void GetDepth();
-  void GetColor();
 public:
-  std::vector<float> aZ;
-  std::vector<unsigned char> aRGBA_8ui;
-  std::vector<float> aRGBA_32f;
   // -------------------
   double draw_len_axis = 1.0;
   unsigned int pointSize = 3;
@@ -73,8 +56,9 @@ class CRender2Tex_DrawOldGL_BOX
 {
 public:
   void Draw() const {
-    for(auto& smplr: aSampler){
-      smplr.Draw();
+    assert( aDrawSampler.size() == aSampler.size() );
+    for(unsigned int is=0;is<aSampler.size();++is){
+      aDrawSampler[is].Draw(aSampler[is]);
     }
   }
   void Initialize(unsigned int nresX,
@@ -114,22 +98,14 @@ public:
   
 public:
   double lengrid;
-  std::vector<CRender2Tex_DrawOldGL> aSampler;
+  std::vector<CDrawerOldGL_Render2Tex> aDrawSampler;
+  std::vector<CRender2Tex> aSampler;
 };
 
 void CarveVoxelByDepth(
     std::vector<int>& aVal,
     const CRender2Tex_DrawOldGL_BOX& sampler_box);
 
-/**
- * @brief project input point to the depth surface
- * @param[in] ps the point to project
- */
-bool GetProjectedPoint(
-    CVec3d& p0,
-    CVec3d& n0,
-    const CVec3d& ps,
-    const CRender2Tex_DrawOldGL& smplr);
 
 }
 }

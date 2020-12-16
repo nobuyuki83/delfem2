@@ -31,7 +31,7 @@ int main(int argc,char* argv[])
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler_box;
   sampler_box.Initialize(128, 128, 256, 0.02);
 
-  for(auto& smplr : sampler_box.aSampler){
+  for(auto& smplr : sampler_box.aDrawSampler){
     smplr.draw_len_axis = 0.2;
     smplr.isDrawTex = false;
     smplr.isDrawOnlyHitPoints = true;
@@ -55,6 +55,7 @@ int main(int argc,char* argv[])
   for(auto& smplr: sampler_box.aSampler){
     smplr.InitGL(); // move the sampled image to a texture
     smplr.Start();
+    dfm2::opengl::SetView(smplr);
     ::glClearColor(1.0, 1.0, 1.0, 1.0 );
     ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
