@@ -288,10 +288,10 @@ void delfem2::opengl::CRender2Tex::BoundingBox3(
 
 
 bool delfem2::opengl::GetProjectedPoint(
-                                        CVec3d& p0,
-                                        CVec3d& n0,
-                                        const CVec3d& ps,
-                                        const CRender2Tex& smplr)
+    CVec3d& p0,
+    CVec3d& n0,
+    const CVec3d& ps,
+    const CRender2Tex& smplr)
 {
   double mMVPG[16]; smplr.GetMVPG(mMVPG);
   double mMVPGinv[16]; Inverse_Mat4(mMVPGinv, mMVPG);

@@ -28,12 +28,12 @@ public:
   }
   // --------------
   void Draw(
-      const dfm2::opengl::CRender2Tex& r2t,
+      const ::delfem2::opengl::CRender2Tex& r2t,
       float mP[16],
       float mMV[16]) const;
   // ------------
   virtual void InitGL(); // override function
-  virtual void SetDepth(const dfm2::opengl::CRender2Tex& r2t);
+  virtual void SetDepth(const ::delfem2::opengl::CRender2Tex& r2t);
 public:
   bool isDrawTex;
   double draw_len_axis;
