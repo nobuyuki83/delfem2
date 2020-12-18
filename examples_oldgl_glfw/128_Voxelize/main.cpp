@@ -127,7 +127,7 @@ int main(int argc,char* argv[])
       ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1, aTri);
       smplr.End();
-      smplr.GetDepth();
+      smplr.CopyToCPU_Depth();
     }
     CarveVoxelByDepth(grid.aVal,
                       sampler_box);

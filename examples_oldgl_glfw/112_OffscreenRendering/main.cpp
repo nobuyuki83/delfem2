@@ -93,8 +93,8 @@ int main(int argc,char* argv[])
     ::glEnable(GL_LIGHTING);
     DrawObject(cur_time,aXYZ,aTri);
     smpl.End();
-    smpl.GetDepth();
-    smpl.GetColor();
+    smpl.CopyToCPU_Depth();
+    smpl.CopyToCPU_RGBA8UI();
     cur_time += 1.0;
     // ----
     viewer.DrawBegin_oldGL();

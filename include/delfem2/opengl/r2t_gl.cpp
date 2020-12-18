@@ -7,11 +7,6 @@
 
 
 #include <iostream>
-#include <cmath>
-#include <stack>
-#include <fstream>
-#include <sstream>
-#include <cstring>
 #include <cstdlib>
 // ------
 #include "glad/glad.h" // gl3.0+
@@ -121,11 +116,10 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::Start()
 DFM2_INLINE void delfem2::opengl::CRender2Tex::End()
 {
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  ::glViewport(view[0], view[1], view[2], view[3]);  
+  ::glViewport(view[0], view[1], view[2], view[3]);
 }
 
-DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_Depth
- (std::vector<float>& aZ)
+DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_Depth()
 {
 #ifdef EMSCRIPTEN
   std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
@@ -141,36 +135,34 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_Depth
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_RGBA8UI
-(std::vector<std::uint8_t>& aRGBA)
+DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_RGBA8UI()
 {
 #ifdef EMSCRIPTEN
   std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
   return;
 #endif
-  aRGBA.resize(nResX*nResY*4);
+  aRGBA_8ui.resize(nResX*nResY*4);
   ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
   ::glGetTexImage(GL_TEXTURE_2D, 0,
                   GL_RGBA, GL_UNSIGNED_BYTE,
-                  (void*)aRGBA.data());
+                  (void*)aRGBA_8ui.data());
   ::glBindTexture(GL_TEXTURE_2D, 0);
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
-DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_RGBA32F
- (std::vector<float>& aRGBA)
+DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_RGBA32F()
 {
 #ifdef EMSCRIPTEN
   std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
   return;
 #endif
-  aRGBA.resize(nResX*nResY*4);
+  aRGBA_32f.resize(nResX*nResY*4);
   std::vector<float> aF_RGBA(nResX*nResY*4);
   ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
   ::glGetTexImage(GL_TEXTURE_2D, 0,
                   GL_RGBA, GL_FLOAT,
-                  (void*)aF_RGBA.data());
+                  (void*)aRGBA_32f.data());
   ::glBindTexture(GL_TEXTURE_2D, 0);
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

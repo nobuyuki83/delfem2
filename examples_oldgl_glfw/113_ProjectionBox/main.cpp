@@ -63,8 +63,8 @@ int main(int argc,char* argv[])
     ::glEnable(GL_LIGHTING);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     smplr.End();
-    smplr.GetDepth();
-    smplr.GetColor();
+    smplr.CopyToCPU_Depth();
+    smplr.CopyToCPU_RGBA8UI();
   }
 
   while (!glfwWindowShouldClose(viewer.window))
