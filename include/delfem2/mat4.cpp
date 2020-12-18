@@ -92,7 +92,7 @@ bool CalcInvMatPivot(REAL* a, unsigned int n, unsigned int* tmp)
   }
 
   // swaping column
-  for(int j=n-1 ; j>=0 ; j--){
+  for(int j=int(n-1); j>=0 ; j--){
     if(j == row[j]){ continue; }
     for(unsigned int i=0 ; i<n ; i++){
       REAL temp = a[i*n+j];
@@ -464,9 +464,9 @@ template void delfem2::Mat4_AffineTransTranslate(double r[], const double t[]);
 // --------------------------
 
 template <typename T>
-DFM2_INLINE void delfem2::Mat4_AffineRotationRodriguez
-(T A[16],
- T dx, T dy, T dz)
+DFM2_INLINE void delfem2::Mat4_AffineRotationRodriguez(
+    T A[16],
+    T dx, T dy, T dz)
 {
   for(int i=0;i<16;++i){ A[i] = 0.0; }
   //
@@ -528,7 +528,7 @@ void delfem2::Rotate_Mat4AffineRodriguez(
 {
   REAL B[16];
   Mat4_AffineRotationRodriguez(B,
-                               V[0],V[1],V[2]);
+      V[0],V[1],V[2]);
   REAL C[16];
   MatMat4(C,
       B,A);
@@ -539,7 +539,51 @@ void delfem2::Rotate_Mat4AffineRodriguez(
 template void delfem2::Rotate_Mat4AffineRodriguez(float A[16], const float V[3]);
 template void delfem2::Rotate_Mat4AffineRodriguez(double A[16], const double V[3]);
 #endif
-  
+
+
+template <typename REAL>
+void delfem2::Mat4_Rotation_Cartesian(
+    REAL mat[16],
+    const REAL vec[3])
+{
+  double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
+  if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
+    mat[0] = 1;        mat[1] = -vec[2];  mat[2] = +vec[1];
+    mat[3] = +vec[2];  mat[4] = 1;        mat[5] = -vec[0];
+    mat[6] = -vec[1];  mat[7] = +vec[0];  mat[8] = 1;
+    return;
+  }
+  double t = sqrt(sqt);
+  double invt = 1.0/t;
+  double n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
+  const double c0 = cos(t);
+  const double s0 = sin(t);
+  mat[0*4+0] = c0        +(1-c0)*n[0]*n[0];
+  mat[0*4+1] =   -n[2]*s0+(1-c0)*n[0]*n[1];
+  mat[0*4+2] =   +n[1]*s0+(1-c0)*n[0]*n[2];
+  mat[0*4+3] = 0.0;
+  //
+  mat[1*4+0] =   +n[2]*s0+(1-c0)*n[1]*n[0];
+  mat[1*4+1] = c0        +(1-c0)*n[1]*n[1];
+  mat[1*4+2] =   -n[0]*s0+(1-c0)*n[1]*n[2];
+  mat[1*4+3] = 0.0;
+  //
+  mat[2*4+0] =   -n[1]*s0+(1-c0)*n[2]*n[0];
+  mat[2*4+1] =   +n[0]*s0+(1-c0)*n[2]*n[1];
+  mat[2*4+2] = c0        +(1-c0)*n[2]*n[2];
+  mat[2*4+3] = 0.0;
+  //
+  mat[3*4+0] = 0.0;
+  mat[3*4+1] = 0.0;
+  mat[3*4+2] = 0.0;
+  mat[3*4+3] = 1.0;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat4_Rotation_Cartesian(float mat[16], const float vec[3]);
+template void delfem2::Mat4_Rotation_Cartesian(double mat[16], const double vec[3]);
+#endif
+
+// ----------------------------
   
 template <typename REAL>
 void delfem2::Translate_Mat4Affine(

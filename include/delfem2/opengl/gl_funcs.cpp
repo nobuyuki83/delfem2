@@ -5,9 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <vector>
-
 // need a function loader because this file cannot be compiled without loaders in linux
 #ifdef USE_GLEW
   #include <GL/glew.h>
@@ -30,9 +27,10 @@
   #include <GL/gl.h>
 #endif
 
-
 #include "delfem2/opengl/gl_funcs.h"
-
+#include <iostream>
+#include <vector>
+#include <fstream>
 
 // ---------------------------------------------------------------------------
 

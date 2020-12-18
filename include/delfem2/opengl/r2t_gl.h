@@ -34,15 +34,16 @@ namespace opengl {
 class CRender2Tex
 {
 public:
-  CRender2Tex() :
+    CRender2Tex() :
       mMV{1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1},
-      mP{1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1}
+      mP{1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1}
   {
     nResX=0;
     nResY=0;
     is_rgba_8ui=false;
     id_tex_color = 0;
     id_tex_depth = 0;
+    id_framebuffer = 0;
   }
   // --------------------------
   void InitGL();
@@ -52,7 +53,7 @@ public:
     mm[1] = -1;
     return mm;
   }
-  void SetZeroToDepth(){ for(unsigned int i=0;i<aZ.size();++i){ aZ[i] = 0.0; } }
+  void SetZeroToDepth(){ for(float & i : aZ){ i = 0.0; } }
   void GetMVPG(double mMVPG[16]) const {
     double mMVP[16]; MatMat4(mMVP, mMV,mP);
     const double tmp0 = nResX*0.5;
@@ -71,9 +72,6 @@ public:
   * @details if( pmin[0] > pmax[0] ) this bounding box is empty
   */
   void BoundingBox3(double* pmin, double* pmax) const;
-  // ----------------------
-  void SaveDepthCSV(
-      const std::string& path) const;
 
   void SetTextureProperty(unsigned int nw, unsigned int nh, bool is_rgba_8ui_)
   {
@@ -116,7 +114,7 @@ public:
   double mMV[16]; // affine matrix
   double mP[16]; // affine matrix
 protected:
-  int view[4]; // viewport information
+  int view[4]{}; // viewport information
 };
 
 /**
@@ -124,10 +122,10 @@ protected:
  * @param[in] ps the point to project
  */
 bool GetProjectedPoint(
-                       CVec3d& p0,
-                       CVec3d& n0,
-                       const CVec3d& ps,
-                       const CRender2Tex& smplr);
+    CVec3d& p0,
+    CVec3d& n0,
+    const CVec3d& ps,
+    const CRender2Tex& smplr);
 
 
 } // opengl
