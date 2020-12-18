@@ -74,8 +74,8 @@ int main(int argc,char* argv[])
     ::glEnable(GL_LIGHTING);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     sampler.End();
-    sampler.GetDepth();
-    sampler.GetColor();
+    sampler.CopyToCPU_Depth();
+    sampler.CopyToCPU_RGBA8UI();
   }
 
   for(int iframe=0;;iframe++){

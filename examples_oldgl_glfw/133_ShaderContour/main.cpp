@@ -114,13 +114,14 @@ int main(int argc,char* argv[])
   unsigned int id_tex_norm;
   { // normal information to norm tex
     sampler.Start();
+    dfm2::opengl::SetView(sampler);
     ::glClearColor(0.0, 0.0, 0.0, 1.0);
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
     ::glUseProgram(id_shader_normal);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri, aNorm);
     sampler.End();
-    sampler.GetColor();
+    sampler.CopyToCPU_RGBA8UI();
     // ---------
     ::glGenTextures(1, &id_tex_norm);
     ::glActiveTexture(1);
@@ -145,7 +146,7 @@ int main(int argc,char* argv[])
     ::glUseProgram(0);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
     sampler.End();
-    sampler.GetColor();
+    sampler.CopyToCPU_RGBA8UI();
   }
 
   int id_shader_edge;
@@ -174,8 +175,8 @@ int main(int argc,char* argv[])
   }
 
   // -----
-  sampler.GetDepth();
-  sampler.GetColor();
+  sampler.CopyToCPU_Depth();
+  sampler.CopyToCPU_RGBA8UI();
   draw_sampler.isDrawTex = true;
 
   while (true)

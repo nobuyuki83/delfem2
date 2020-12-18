@@ -11,6 +11,7 @@
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/r2tglo_glold.h"
+#include "delfem2/opengl/r2t_gl.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/deflap.h"
 #include "delfem2/primitive.h"
@@ -207,12 +208,13 @@ int main(int argc,char* argv[])
         for(auto& smplr: sampler.aSampler){
           smplr.InitGL(); // move the sampled image to a texture
           smplr.Start();
+          dfm2::opengl::SetView(smplr);
           ::glDisable(GL_POLYGON_OFFSET_FILL ); // the depth will be jazzy without this
           ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
           dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
           smplr.End();
-          smplr.GetDepth();
-          smplr.GetColor();
+          smplr.CopyToCPU_Depth();
+          smplr.CopyToCPU_RGBA8UI();
         }
 
         // deformation
@@ -244,12 +246,13 @@ int main(int argc,char* argv[])
         for(auto& smplr: sampler.aSampler){
           smplr.InitGL(); // move the sampled image to a texture
           smplr.Start();
+          dfm2::opengl::SetView(smplr);
           ::glDisable(GL_POLYGON_OFFSET_FILL ); // the depth will be jazzy without this
           ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
           dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
           smplr.End();
-          smplr.GetDepth();
-          smplr.GetColor();
+          smplr.CopyToCPU_Depth();
+          smplr.CopyToCPU_RGBA8UI();
         }
         
         // deformation

@@ -13,7 +13,7 @@
 #include "delfem2/mat4.h"
 #include "delfem2/vec3.h"
 #include "delfem2/dfm2_inline.h"
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 
 namespace delfem2 {
@@ -38,9 +38,9 @@ public:
       mMV{1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1},
       mP{1,0,0,0, 0,1,0,0, 0,0,-1,0, 0,0,0,1}
   {
-    nResX=0;
-    nResY=0;
-    is_rgba_8ui=false;
+    nResX=128;
+    nResY=128;
+    is_rgba_8ui=true;
     id_tex_color = 0;
     id_tex_depth = 0;
     id_framebuffer = 0;
@@ -81,23 +81,9 @@ public:
   }
   void Start();
   void End();
-  void ExtractFromTexture_Depth(std::vector<float>& aZ);
-  void ExtractFromTexture_RGBA8UI(std::vector<std::uint8_t>& aRGBA);
-  void ExtractFromTexture_RGBA32F(std::vector<float>& aRGBA);
-  void GetDepth()
-  {
-    CRender2Tex::ExtractFromTexture_Depth(aZ);
-  }
-
-  void GetColor()
-  {
-    if( is_rgba_8ui ){
-      CRender2Tex::ExtractFromTexture_RGBA8UI(aRGBA_8ui);
-    }
-    else{
-      CRender2Tex::ExtractFromTexture_RGBA32F(aRGBA_32f);
-    }
-  }
+  void CopyToCPU_Depth();
+  void CopyToCPU_RGBA8UI();
+  void CopyToCPU_RGBA32F();
 public:
   unsigned int nResX;
   unsigned int nResY;
@@ -113,7 +99,7 @@ public:
   //
   double mMV[16]; // affine matrix
   double mP[16]; // affine matrix
-protected:
+//protected:
   int view[4]{}; // viewport information
 };
 

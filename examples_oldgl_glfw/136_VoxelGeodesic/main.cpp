@@ -96,6 +96,7 @@ int main(int argc,char* argv[])
   for(auto& smplr: sampler_box.aSampler){
     smplr.InitGL(); // move the sampled image to a texture
     smplr.Start();
+    dfm2::opengl::SetView(smplr);
     ::glClearColor(1.0, 1.0, 1.0, 1.0 );
     ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
@@ -103,7 +104,7 @@ int main(int argc,char* argv[])
     ::glEnable(GL_LIGHTING);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     smplr.End();
-    smplr.GetDepth();
+    smplr.CopyToCPU_Depth();
   }
   
   dfm2::CGrid3<int> grid;

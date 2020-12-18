@@ -32,19 +32,20 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
+DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth(
+    const dfm2::opengl::CRender2Tex& r2t)
 {
-  std::vector<float> aZ;
-  CRender2Tex::ExtractFromTexture_Depth(aZ);
-  assert( aZ.size() == nResX*nResY );
-  std::vector<double> aXYZ(nResX*nResY*3);
-  for(unsigned int iy=0;iy<nResY;++iy){
-    for(unsigned int ix=0;ix<nResX;++ix){
-      const int ip = iy*nResX+ix;
+  assert( r2t.aZ.size() == r2t.nResX*r2t.nResY );
+  unsigned int nx = r2t.nResX;
+  unsigned int ny = r2t.nResY;
+  std::vector<double> aXYZ(nx*ny*3);
+  for(unsigned int iy=0;iy<ny;++iy){
+    for(unsigned int ix=0;ix<nx;++ix){
+      const int ip = iy*nx+ix;
       double q0[3] = {
-          (ix+0.5)/nResX*2.0-1.0,
-          (iy+0.5)/nResY*2.0-1.0,
-          aZ[ip]*2.0-1.0 };
+          (ix+0.5)/nx*2.0-1.0,
+          (iy+0.5)/ny*2.0-1.0,
+          r2t.aZ[ip]*2.0-1.0 };
       aXYZ[ip*3+0] = q0[0];
       aXYZ[ip*3+1] = q0[1];
       aXYZ[ip*3+2] = q0[2];
@@ -55,7 +56,6 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
 
 DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL()
 {
-  CRender2Tex::InitGL();
   //
   { // draw grid
     this->shdr0.Compile();
@@ -113,17 +113,18 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL()
 }
 
 DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::Draw(
+    const dfm2::opengl::CRender2Tex& r2t,
     float mP0[16],
     float mMV0[16]) const
 {
-  double mMVP[16]; dfm2::MatMat4(mMVP,mMV,mP);
+  double mMVP[16]; dfm2::MatMat4(mMVP,r2t.mMV,r2t.mP);
   double mMVPinv[16]; dfm2::Inverse_Mat4(mMVPinv,mMVP);
   float mMVP1[16]; dfm2::MatMat4(mMVP1,mMVPinv,mMV0);
   shdr0.Draw(mP0,mMVP1);
   shdr2.Draw(mP0,mMVP1);
   glEnable(GL_TEXTURE_2D);
   glActiveTexture(0);
-  glBindTexture(GL_TEXTURE_2D, this->id_tex_color);
+  glBindTexture(GL_TEXTURE_2D, r2t.id_tex_color);
   shdr1.Draw(mP0,mMVP1);
   glBindTexture(GL_TEXTURE_2D, 0);
 }
