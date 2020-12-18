@@ -19,6 +19,7 @@
 #include <vector>
 
 namespace delfem2 {
+
 namespace opengl {
 
 DFM2_INLINE int GL24_CompileShader(const char *vert, const char* frag);

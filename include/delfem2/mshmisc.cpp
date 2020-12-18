@@ -358,18 +358,18 @@ void delfem2::RemoveUnreferencedPoints_MeshElem
   }
 }
 
-void delfem2::Normal_MeshTri3D
-(double* aNorm,
- const double* aXYZ,
- unsigned int nXYZ,
- const unsigned int* aTri,
- unsigned int nTri)
+void delfem2::Normal_MeshTri3D(
+    double* aNorm,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTri,
+    unsigned int nTri)
 {
   for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
   for(unsigned int itri=0;itri<nTri;itri++){
-    const unsigned int i0 = aTri[itri*3+0];
-    const unsigned int i1 = aTri[itri*3+1];
-    const unsigned int i2 = aTri[itri*3+2];
+    const unsigned int i0 = aTri[itri*3+0]; assert( i0 < nXYZ );
+    const unsigned int i1 = aTri[itri*3+1]; assert( i1 < nXYZ );
+    const unsigned int i2 = aTri[itri*3+2]; assert( i2 < nXYZ );
     const double* p0 = aXYZ+i0*3;
     const double* p1 = aXYZ+i1*3;
     const double* p2 = aXYZ+i2*3;

@@ -159,6 +159,11 @@ void Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL v[3]);
 
+template <typename REAL>
+void Mat4_Rotation_Cartesian(
+    REAL mat[16],
+    const REAL vec[3]);
+
 // ------------------------
 
 template <typename T>
@@ -253,9 +258,9 @@ CMat4<T> operator + (const CMat4<T>& lhs, const CMat4<T>& rhs);
 template <typename REAL>
 class CMat4 {
 public:
-  CMat4 (){};
-  CMat4 (const float* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
-  CMat4 (const double* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
+  CMat4 ()= default;;
+  explicit CMat4 (const float* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
+  explicit CMat4 (const double* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
 public:
   // ------------------------
   // below: "set" functions
