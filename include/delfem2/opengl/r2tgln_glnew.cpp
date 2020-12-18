@@ -6,13 +6,7 @@
  */
 
 
-#include <iostream>
-#include <cmath>
 #include <stack>
-#include <fstream>
-#include <sstream>
-#include <cstring>
-#include <cstdlib>
 
 // ----------------
 #include "glad/glad.h" // gl3.0+
@@ -28,12 +22,10 @@
 #include "delfem2/mat4.h"
 #include "delfem2/opengl/r2tgln_glnew.h"
 
-namespace dfm2 = delfem2;
-
 // --------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth(
-    const dfm2::opengl::CRender2Tex& r2t)
+DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::SetDepth(
+    const delfem2::opengl::CRender2Tex& r2t)
 {
   assert( r2t.aZ.size() == r2t.nResX*r2t.nResY );
   unsigned int nx = r2t.nResX;
@@ -54,7 +46,7 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth(
   shdr2.Initialize(aXYZ);
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL()
+DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
 {
   //
   { // draw grid
@@ -112,14 +104,14 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL()
   }
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::Draw(
-    const dfm2::opengl::CRender2Tex& r2t,
+DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::Draw(
+    const delfem2::opengl::CRender2Tex& r2t,
     float mP0[16],
     float mMV0[16]) const
 {
-  double mMVP[16]; dfm2::MatMat4(mMVP,r2t.mMV,r2t.mP);
-  double mMVPinv[16]; dfm2::Inverse_Mat4(mMVPinv,mMVP);
-  float mMVP1[16]; dfm2::MatMat4(mMVP1,mMVPinv,mMV0);
+  double mMVP[16]; delfem2::MatMat4(mMVP,r2t.mMV,r2t.mP);
+  double mMVPinv[16]; delfem2::Inverse_Mat4(mMVPinv,mMVP);
+  float mMVP1[16]; delfem2::MatMat4(mMVP1,mMVPinv,mMV0);
   shdr0.Draw(mP0,mMVP1);
   shdr2.Draw(mP0,mMVP1);
   glEnable(GL_TEXTURE_2D);
