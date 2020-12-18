@@ -548,9 +548,26 @@ void delfem2::Mat4_Rotation_Cartesian(
 {
   double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
-    mat[0] = 1;        mat[1] = -vec[2];  mat[2] = +vec[1];
-    mat[3] = +vec[2];  mat[4] = 1;        mat[5] = -vec[0];
-    mat[6] = -vec[1];  mat[7] = +vec[0];  mat[8] = 1;
+    // row0
+    mat[0*4+0] = 1;
+    mat[0*4+1] = -vec[2];
+    mat[0*4+2] = +vec[1];
+    mat[0*4+3] = 0;
+    // row1
+    mat[1*4+0] = +vec[2];
+    mat[1*4+1] = 1;
+    mat[1*4+2] = -vec[0];
+    mat[1*4+3] = 0;
+    // row2
+    mat[2*4+0] = -vec[1];
+    mat[2*4+1] = +vec[0];
+    mat[2*4+2] = 1;
+    mat[2*4+3] = 0;
+    // row3
+    mat[3*4+0] = 0;
+    mat[3*4+1] = 0;
+    mat[3*4+2] = 0;
+    mat[3*4+3] = 1;
     return;
   }
   double t = sqrt(sqt);
@@ -558,21 +575,22 @@ void delfem2::Mat4_Rotation_Cartesian(
   double n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
   const double c0 = cos(t);
   const double s0 = sin(t);
+  // row0
   mat[0*4+0] = c0        +(1-c0)*n[0]*n[0];
   mat[0*4+1] =   -n[2]*s0+(1-c0)*n[0]*n[1];
   mat[0*4+2] =   +n[1]*s0+(1-c0)*n[0]*n[2];
   mat[0*4+3] = 0.0;
-  //
+  // row1
   mat[1*4+0] =   +n[2]*s0+(1-c0)*n[1]*n[0];
   mat[1*4+1] = c0        +(1-c0)*n[1]*n[1];
   mat[1*4+2] =   -n[0]*s0+(1-c0)*n[1]*n[2];
   mat[1*4+3] = 0.0;
-  //
+  // row2
   mat[2*4+0] =   -n[1]*s0+(1-c0)*n[2]*n[0];
   mat[2*4+1] =   +n[0]*s0+(1-c0)*n[2]*n[1];
   mat[2*4+2] = c0        +(1-c0)*n[2]*n[2];
   mat[2*4+3] = 0.0;
-  //
+  // row3
   mat[3*4+0] = 0.0;
   mat[3*4+1] = 0.0;
   mat[3*4+2] = 0.0;
