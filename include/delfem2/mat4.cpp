@@ -93,7 +93,7 @@ bool CalcInvMatPivot(REAL* a, unsigned int n, unsigned int* tmp)
 
   // swaping column
   for(int j=int(n-1); j>=0 ; j--){
-    if(j == row[j]){ continue; }
+    if((unsigned int)j == row[j]){ continue; }
     for(unsigned int i=0 ; i<n ; i++){
       REAL temp = a[i*n+j];
       a[i*n+j]=a[i*n+row[j]];
@@ -277,6 +277,16 @@ DFM2_INLINE void delfem2::Mat4Vec3(
   vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
   vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
   vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
+}
+
+DFM2_INLINE void delfem2::Vec3Mat4(
+    double vo[3],
+    const double vi[3],
+    const double M[16])
+{
+  vo[0] = vi[0]*M[0*4+0] + vi[1]*M[1*4+0] + vi[2]*M[2*4+0];
+  vo[1] = vi[0]*M[0*4+1] + vi[1]*M[1*4+1] + vi[2]*M[2*4+1];
+  vo[2] = vi[0]*M[0*4+2] + vi[1]*M[1*4+2] + vi[2]*M[2*4+2];
 }
 
 template <typename T>
@@ -853,8 +863,7 @@ delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Inverse() const
 {
   CMat4<REAL> m;
   std::memcpy(m.mat, mat, sizeof(REAL)*16);
-  int info;
-  mat4::CalcInvMat(m.mat, 4, info);
+  Inverse_Mat4(m.mat,this->mat);
   return m;
 }
 #ifndef DFM2_HEADER_ONLY

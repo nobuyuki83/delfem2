@@ -18,8 +18,8 @@
 #include "inputs_garment.h"
 #include "inputs_imgboneloc.h"
 #include "delfem2/rigopt.h"
-#include "delfem2/srhbv3aabb.h"
-#include "delfem2/srhbv3sphere.h"
+#include "delfem2/srchbv3aabb.h"
+#include "delfem2/srchbv3sphere.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include <cstdlib>

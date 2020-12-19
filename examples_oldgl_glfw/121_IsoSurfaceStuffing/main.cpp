@@ -15,7 +15,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/iss.h"
-#include "delfem2/srhbv3sphere.h"
+#include "delfem2/srchbv3sphere.h"
 #include <GLFW/glfw3.h>
 #include <cassert>
 #include <string>

@@ -9,8 +9,8 @@
 #include "delfem2/cloth_selfcollision.h"
 #include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/vec3.h"
-#include "delfem2/srhbv3aabb.h"
-#include "delfem2/bvh.h"
+#include "delfem2/srchbv3aabb.h"
+#include "delfem2/srchbvh.h"
 #include <stack>
 #include <map>
 

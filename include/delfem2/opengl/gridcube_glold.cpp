@@ -6,7 +6,7 @@
  */
 
 #include "delfem2/opengl/gridcube_glold.h"
-#include "delfem2/srhbv3aabb.h"
+#include "delfem2/srchbv3aabb.h"
 #include "delfem2/vec3.h"
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac

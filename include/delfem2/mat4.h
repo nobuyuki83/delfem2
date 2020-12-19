@@ -189,6 +189,11 @@ DFM2_INLINE void Mat4Vec3(
      const double M[16],
      const double vi[3]);
 
+DFM2_INLINE void Vec3Mat4(
+    double vo[3],
+    const double vi[3],
+    const double M[16]);
+
 /**
  * @brief multiply translation affine matrix from left to an affine matrix in 3D
  */

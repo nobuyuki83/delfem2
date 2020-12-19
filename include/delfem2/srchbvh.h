@@ -455,7 +455,7 @@ void delfem2::BVH_IndPoint_NearestPoint(
 
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/bvh.cpp"
+#  include "delfem2/srchbvh.cpp"
 #endif
 
 

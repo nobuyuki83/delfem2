@@ -8,7 +8,8 @@
 
 #include "delfem2/cad2_dtri2.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/funcs.h"
+#include "delfem2/str.h"
+#include "delfem2/file.h"
 #include <cstdio>
 #include <deque>
 #include <climits>
