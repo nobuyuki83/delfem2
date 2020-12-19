@@ -8,9 +8,9 @@
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/points.h" // random uniform
-#include "delfem2/bvh.h"
-#include "delfem2/srhbv3aabb.h"
-#include "delfem2/srhbv3sphere.h"
+#include "delfem2/srchbvh.h"
+#include "delfem2/srchbv3aabb.h"
+#include "delfem2/srchbv3sphere.h"
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <algorithm>

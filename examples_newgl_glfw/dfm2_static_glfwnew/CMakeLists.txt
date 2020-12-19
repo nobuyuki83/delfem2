@@ -48,18 +48,20 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
     ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
-    ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
+    ${DELFEM2_INC}/str.h                       ${DELFEM2_INC}/str.cpp
+    ${DELFEM2_INC}/file.h                      ${DELFEM2_INC}/file.cpp
     ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
     ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
     ${DELFEM2_INC}/emat.h                      ${DELFEM2_INC}/emat.cpp
     ${DELFEM2_INC}/mats.h                      ${DELFEM2_INC}/mats.cpp
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
-    ${DELFEM2_INC}/bvh.h                       ${DELFEM2_INC}/bvh.cpp
-    ${DELFEM2_INC}/srhbv3sphere.h
-    ${DELFEM2_INC}/srhbv3aabb.h
+    ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
+    ${DELFEM2_INC}/srchbv3sphere.h
+    ${DELFEM2_INC}/srchbv3aabb.h
     ${DELFEM2_INC}/pgeo.h
-        
+
+    ${DELFEM2_INC}/filenpy_str.h               ${DELFEM2_INC}/filenpy_str.cpp
     ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
     ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
     ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp

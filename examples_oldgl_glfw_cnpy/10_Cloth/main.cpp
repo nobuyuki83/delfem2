@@ -15,7 +15,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/dtri.h"
-#include "delfem2/srhbv3sphere.h"
+#include "delfem2/srchbv3sphere.h"
 #include "delfem2/color.h"
 #include <cstdlib>
 #include <iostream>

@@ -13,7 +13,7 @@
 
 DelFEM2 is a end-to-end framework for geometry processing and FEM simulation covering wide range of components including shape editing, meshing, FEM simulation, linear solver, variational mesh deformer, and visualization. DelFEM2 is aiming to be an interactive digital engineering and authoring tool.
 
-**There is a python binding available**: [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2)
+**There is a python binding available at**: [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2)
 
 The implementation is based on my old open source project [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
@@ -25,19 +25,19 @@ The implementation is based on my old open source project [DelFEM](https://githu
 There are currently no tutorial available for this library. To understand the code, please look at the exaxmples and tests  under following directoris.
 
 + examples using legacy OpenGL
-  + [delfem2/examples_oldgl_glfw](examples_oldgl_glfw):  dependency: GLFW
-  + [delfem2/examples_oldgl_glfw_cnpy](examples_oldgl_glfw_cnpy): dependencies: GLFW and cnpy
-  + [delfem2/examples_oldgl_glfw_thread](examples_oldgl_glfw_thread): dependencies: GLFW and thread
-  + [delfem2/examples_oldgl_glfw_tinygltf](examples_oldgl_glfw_tinygltf): dependencies: GLFW and TinyGLTF
-  + [delfem2/examples_oldgl_glut](examples_oldgl_glut):  dependency: GLUT
+  + [examples_oldgl_glfw](examples_oldgl_glfw):  dependency: GLFW
+  + [examples_oldgl_glfw_cnpy](examples_oldgl_glfw_cnpy): dependencies: GLFW and cnpy
+  + [examples_oldgl_glfw_thread](examples_oldgl_glfw_thread): dependencies: GLFW and thread
+  + [examples_oldgl_glfw_tinygltf](examples_oldgl_glfw_tinygltf): dependencies: GLFW and TinyGLTF
+  + [examples_oldgl_glut](examples_oldgl_glut):  dependency: GLUT
 + examples usigng modern OpenGL
-  + [delfem2/examples_newgl_glfw](examples_newgl_glfw):  dependency: GLFW
-  + [delfem2/examples_newgl_glfw_imgui](examples_newgl_glfw_imgui):  dependencies: GLFW and imgui
+  + [examples_newgl_glfw](examples_newgl_glfw):  dependency: GLFW
+  + [examples_newgl_glfw_imgui](examples_newgl_glfw_imgui):  dependencies: GLFW and imgui
 + examples using CUDA
-  + [delfem2/examples_cuda](examples_cuda): dependency: CUDA
+  + [examples_cuda](examples_cuda): dependency: CUDA
 + C++ test:
-  + [delfem2/test_cpp](test_cpp): tests using C++
-  + [delfem2/test_cuda](test_cuda) : test using cuda
+  + [test_cpp](test_cpp): tests using C++
+  + [test_cuda](test_cuda) : test using cuda
 
 See [docs/coding.md](docs/coding.md) for the coding convention. 
 
@@ -52,13 +52,14 @@ git clone https://github.com/nobuyuki83/delfem2.git
 
 DelFEM2 can be compiled either as a header-only library or as a static library. Nothing complicated is necessary if DelFEM2 is used as a header only library -- just by include header files and compile the code with option ```DFM2_HEADER_ONLY```. To use DelFEM2 as a static library, you may compiles  several dependent DelFEM2 source files and link them manually (this is not very complicated too).
 
-Most of the source code of DelFEM2 does not have any external dependency. However, for some advancd functionality OpenGL or Unit Test, you many need to download dependent repositories and compile them manually. One can download all the dependent C++ repositories with
+
+DelFEM2 does not have **any** external dependency. However, for some functionality such as OpenGL or Unit Test, you many need to download dependent repositories and compile them manually. One can download all the dependent C++ repositories with
 
 ```
 git submodle update --init
 ```
 
-This command downloads all the external third party codes into the directory ```delfem2/3rd_party```. Currently DelFEM have binding to the following C++ open source projects.
+This command downloads all the external third party codes into the directory ```delfem2/3rd_party```. Currently DelFEM has binding to the following C++ open source projects.
 
 - glfw
 - glad
