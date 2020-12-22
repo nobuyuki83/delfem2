@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 // need a function loader because this file cannot be compiled without loaders in linux
@@ -109,9 +110,9 @@ DFM2_INLINE int delfem2::opengl::compileShader
 
 // compile vertex and fragment shader
 // return shader program
-DFM2_INLINE int delfem2::opengl::setUpGLSL
-(const std::string& str_glsl_vert,
- const std::string& str_glsl_frag)
+DFM2_INLINE int delfem2::opengl::setUpGLSL(
+    const std::string& str_glsl_vert,
+    const std::string& str_glsl_frag)
 {
   int vShaderId = compileShader(str_glsl_vert, GL_VERTEX_SHADER);
   int fShaderId = compileShader(str_glsl_frag, GL_FRAGMENT_SHADER);
@@ -140,4 +141,13 @@ DFM2_INLINE int delfem2::opengl::setUpGLSL
     return 0;
   }
   return id_program;
+}
+
+std::string delfem2::LoadFile(
+    const std::string& fname)
+{
+  std::ifstream inputFile1(fname.c_str());
+  std::istreambuf_iterator<char> vdataBegin(inputFile1);
+  std::istreambuf_iterator<char> vdataEnd;
+  return std::string(vdataBegin,vdataEnd);
 }

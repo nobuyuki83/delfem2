@@ -7,6 +7,7 @@
 
 #include <glad/glad.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
@@ -43,7 +44,6 @@ int main(int argc,char* argv[])
   // ---------------------------------------
   int nres = 100;
   double elen = 0.02;
-  dfm2::opengl::CDrawerOldGL_Render2Tex draw_smpl;
   dfm2::opengl::CRender2Tex smpl;
   smpl.SetTextureProperty(nres, nres, true);
 
@@ -63,6 +63,7 @@ int main(int argc,char* argv[])
       dfm2::CVec3d(0, +1, 0).p,
       nres, nres, elen, 2);
 
+  dfm2::opengl::CDrawerOldGL_Render2Tex draw_smpl;
   draw_smpl.SetPointColor(1, 0, 0);
   draw_smpl.draw_len_axis = 1.0;
   // ---------------------------------------
@@ -74,6 +75,15 @@ int main(int argc,char* argv[])
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
+  }
+
+  int shaderProgram;
+  {
+    std::string vrt_path = std::string(PATH_INPUT_DIR) + "/glsl120_normalmap.vert";
+    std::string frg_path = std::string(PATH_INPUT_DIR) + "/glsl120_normalmap.frag";
+    std::string vrt = dfm2::LoadFile(vrt_path);
+    std::string frg = dfm2::LoadFile(frg_path);
+    shaderProgram = dfm2::opengl::setUpGLSL(vrt, frg);
   }
 
   dfm2::opengl::setSomeLighting();
@@ -91,6 +101,7 @@ int main(int argc,char* argv[])
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
+    glUseProgram(shaderProgram);
     DrawObject(cur_time,aXYZ,aTri);
     smpl.End();
     smpl.GetDepth();
@@ -98,10 +109,15 @@ int main(int argc,char* argv[])
     cur_time += 1.0;
     // ----
     viewer.DrawBegin_oldGL();
+    glUseProgram(0);
     dfm2::opengl::DrawBackground( dfm2::CColor(0.2f,0.7f,0.7f) );
     ::glEnable(GL_LIGHTING);
     ::glColor3d(1,1,1);
+    glUseProgram(shaderProgram);
     DrawObject(cur_time,aXYZ,aTri);
+    glUseProgram(0);
+    dfm2::opengl::DrawTorus_Solid(0.1,0.2,1);
+    glUseProgram(0);
     draw_smpl.Draw(smpl);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();    

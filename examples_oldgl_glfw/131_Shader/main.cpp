@@ -5,18 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <fstream>
-#include <cmath>
-#include "delfem2/imgio.h"
-#include "delfem2/primitive.h"
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/tex_gl.h"
 #include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/imgio.h"
+#include "delfem2/primitive.h"
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <fstream>
+#include <cmath>
+
 
 namespace dfm2 = delfem2;
 
@@ -24,8 +25,8 @@ namespace dfm2 = delfem2;
 
 // -----------------------------
 
-std::string LoadFile
-(const std::string& fname)
+std::string LoadFile(
+    const std::string& fname)
 {
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
