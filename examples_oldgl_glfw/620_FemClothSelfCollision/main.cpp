@@ -6,7 +6,8 @@
 #include "delfem2/cloth_selfcollision.h"
 #include "delfem2/vec3.h"
 #include "delfem2/srchbvh.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
+#include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
@@ -18,16 +19,16 @@ namespace dfm2 = delfem2;
 
 
 // Setting problem here
-void SetClothShape_Square
-(std::vector<double>& aXYZ0, // (out) undeformed vertex positions，変形前の頂点の位置配列
- std::vector<int>& aBCFlag, // (out) boundary condition flag (0:free 1:fixed)，境界条件フラグ
- std::vector<unsigned int>& aTri, // (out) index of triangles，三角形の頂点インデックス
- std::vector<unsigned int>& aQuad, // (out) index of 4 vertices required for bending，曲げ計算のための４頂点の配列
- double& total_area, // (out) total area of cloth，布の面積
- ///
- double elem_length, // (in) number of division of the square cloth edge, 一辺の分割数
- double cloth_size_x,
- double cloth_size_z) // (in) size of square cloth，一辺の長さ
+void SetClothShape_Square(
+    std::vector<double>& aXYZ0, // (out) undeformed vertex positions，変形前の頂点の位置配列
+    std::vector<int>& aBCFlag, // (out) boundary condition flag (0:free 1:fixed)，境界条件フラグ
+    std::vector<unsigned int>& aTri, // (out) index of triangles，三角形の頂点インデックス
+    std::vector<unsigned int>& aQuad, // (out) index of 4 vertices required for bending，曲げ計算のための４頂点の配列
+    double& total_area, // (out) total area of cloth，布の面積
+    //
+    double elem_length, // (in) number of division of the square cloth edge, 一辺の分割数
+    double cloth_size_x,
+    double cloth_size_z) // (in) size of square cloth，一辺の長さ
 {
   // make vertex potision array 頂点位置配列を作る
   const int ndiv_x = (int)(cloth_size_x/elem_length); // size of an element

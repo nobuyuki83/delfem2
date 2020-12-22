@@ -4,9 +4,10 @@
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/opengl/funcs.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/mshtopo.h"
 #include "delfem2/cloth_internal.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/mshuni.h"
+#include "delfem2/jagarray.h"
 
 #if defined(_MSC_VER)
   #include <windows.h>

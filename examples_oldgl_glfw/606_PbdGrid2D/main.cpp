@@ -9,8 +9,9 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/primitive.h"
+#include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
 
@@ -18,17 +19,17 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------------------
 
-void stepTime
-(std::vector<double>& aXY1,
- std::vector<double>& aUV1,
- std::vector<double>& aTmp,
- double dt,
- int nitr,
- const std::vector<unsigned int>& clstr_ind,
- const std::vector<unsigned int>& clstr,
- const std::vector<int>& aBC,
- const std::vector<unsigned int>& aQuad,
- const std::vector<double>& aXY0)
+void stepTime(
+    std::vector<double>& aXY1,
+    std::vector<double>& aUV1,
+    std::vector<double>& aTmp,
+    double dt,
+    int nitr,
+    const std::vector<unsigned int>& clstr_ind,
+    const std::vector<unsigned int>& clstr,
+    const std::vector<int>& aBC,
+    const std::vector<unsigned int>& aQuad,
+    const std::vector<double>& aXY0)
 {
   const int ndof = aXY0.size();
   for (int idof=0; idof<ndof; idof++){
@@ -116,12 +117,14 @@ int main(int argc,char* argv[])
   aUV1.resize(aXY0.size());
   
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                                                    aQuad.data(), aQuad.size()/4, 4,
-                                                    aXY0.size()/2);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aQuad.data(), aQuad.size()/4, 4,
+      aXY0.size()/2);
     //  Print_IndexedArray(psup_ind, psup);
-  dfm2::JArray_AddDiagonal(clstr_ind, clstr,
-                           psup_ind.data(), psup_ind.size(),  psup.data(), psup.size());
+  dfm2::JArray_AddDiagonal(
+      clstr_ind, clstr,
+      psup_ind.data(), psup_ind.size(),  psup.data(), psup.size());
     //  JArray_Print(clstr_ind, clstr);
   
   aBC.assign(aXY0.size()/2,0);

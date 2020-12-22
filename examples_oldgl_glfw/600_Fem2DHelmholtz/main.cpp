@@ -9,12 +9,13 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/funcs.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/mats.h"
-#include "delfem2/vecxitrsol.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/cad2_dtri2.h"
+#include "delfem2/mshuni.h"
+#include "delfem2/jagarray.h"
+#include "delfem2/mats.h"
+#include "delfem2/vecxitrsol.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <cmath>
@@ -67,8 +68,10 @@ int main(int argc,char* argv[])
     aBCFlag[ipCenter] = 1;
     aCVal[ipCenter] = 1;
     std::vector<unsigned int> psup_ind, psup;
-    dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                               aTri1.data(), aTri1.size()/3, 3, aXY1.size()/2);
+    dfm2::JArray_PSuP_MeshElem(
+        psup_ind, psup,
+        aTri1.data(), aTri1.size()/3, 3,
+        aXY1.size()/2);
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.Initialize(np, 1, true);
     mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());

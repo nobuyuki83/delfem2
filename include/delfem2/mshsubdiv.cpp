@@ -9,7 +9,7 @@
 #include <cassert>
 #include <climits>
 
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/mshsubdiv.h"
 
 // ----------------------------------------------------

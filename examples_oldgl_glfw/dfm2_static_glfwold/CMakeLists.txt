@@ -46,7 +46,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
     ${DELFEM2_INC}/primitive.h                 ${DELFEM2_INC}/primitive.cpp
     ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
-    ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
+    ${DELFEM2_INC}/jagarray.h                  ${DELFEM2_INC}/jagarray.cpp
+    ${DELFEM2_INC}/mshuni.h                    ${DELFEM2_INC}/mshuni.cpp
     ${DELFEM2_INC}/mshmix.h                    ${DELFEM2_INC}/mshmix.cpp
     ${DELFEM2_INC}/mshsubdiv.h                 ${DELFEM2_INC}/mshsubdiv.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp

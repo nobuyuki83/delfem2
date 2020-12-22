@@ -12,7 +12,7 @@
 #include "delfem2/srchbvh.h"
 #include "delfem2/primitive.h"
 #include "delfem2/points.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>

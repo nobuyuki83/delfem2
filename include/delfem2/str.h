@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file string processing (mainly for file parsing)
+ */
+
 
 #ifndef DFM2_STR_H
 #define DFM2_STR_H

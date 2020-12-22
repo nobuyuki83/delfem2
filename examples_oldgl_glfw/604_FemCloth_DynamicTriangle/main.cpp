@@ -10,9 +10,10 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/mats.h"
 #include "delfem2/emat.h"
+#include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <vector>
@@ -173,8 +174,10 @@ int main(int argc,char* argv[])
     const std::size_t np = aXYZ0.size()/3;
     mat_A.Initialize(np,3,true);
     std::vector<unsigned int> psup_ind,psup;
-    dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                                                      aQuad.data(),aQuad.size()/4, 4, np);
+    dfm2::JArray_PSuP_MeshElem(
+        psup_ind, psup,
+        aQuad.data(),aQuad.size()/4, 4,
+        np);
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.SetPattern(psup_ind.data(),psup_ind.size(), psup.data(),psup.size());
     ilu_A.Initialize_ILU0(mat_A);

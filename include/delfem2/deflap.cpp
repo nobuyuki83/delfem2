@@ -7,9 +7,10 @@
 
 #include <cstring> // memcpy
 #include "delfem2/deflap.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/vecxitrsol.h"
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
+#include "delfem2/mshuni.h"
+#include "delfem2/vecxitrsol.h"
+#include "delfem2/jagarray.h"
 
 namespace delfem2 {
 namespace defarap {
@@ -36,9 +37,9 @@ void SetLinSys_LaplaceGraph_MeshTri3
  
 // ==================================================
 
-void delfem2::CDef_LaplacianLinearAsym::Init
- (const std::vector<double>& aXYZ0,
-  const std::vector<unsigned int>& aTri)
+void delfem2::CDef_LaplacianLinearAsym::Init(
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri)
 {
   std::vector<unsigned int> psup_ind, psup;
   JArray_PSuP_MeshElem(psup_ind, psup,

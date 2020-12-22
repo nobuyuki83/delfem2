@@ -6,10 +6,11 @@
  */
 
 #include "delfem2/femrod.h"
+#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mat3.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
+#include "delfem2/jagarray.h"
 
 namespace delfem2 {
 namespace femrod{

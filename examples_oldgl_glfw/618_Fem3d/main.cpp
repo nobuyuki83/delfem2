@@ -12,16 +12,16 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/mats.h"
 #include "delfem2/primitive.h"
 #include "delfem2/iss.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <cstdlib>
 #include <cmath>
 
 
