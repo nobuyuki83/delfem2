@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <deque>
-#include <set>
+
+#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshmisc.h"
@@ -14,9 +14,8 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/cad3d.h"
 #include "delfem2/pgeo.h"
-
-// -------
-#include "delfem2/opengl/v3q_glold.h"
+#include <deque>
+#include <set>
 
 // =========================================
 

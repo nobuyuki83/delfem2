@@ -6,9 +6,9 @@
  */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/v2_glold.h"
-#include "delfem2/opengl/cad2dtriv2_glold.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v2.h"
+#include "delfem2/opengl/old/cad2dtriv2.h"
 #include "delfem2/cad2_dtri2.h"
 #include <cmath>
 #include <stack>

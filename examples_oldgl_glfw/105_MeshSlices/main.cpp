@@ -6,20 +6,21 @@
  */
 
 
-#include <vector>
-#include <string>
-#include <cassert>
-#include <cstdlib>
-#include <set>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
 #include "delfem2/slice.h"
-
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <vector>
+#include <string>
+#include <cassert>
+#include <cstdlib>
+#include <set>
+
+
 
 namespace dfm2 = delfem2;
 

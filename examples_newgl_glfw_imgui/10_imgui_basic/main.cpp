@@ -10,6 +10,8 @@
 #endif
 
 #include <glad/glad.h>
+#include "delfem2/opengl/new/funcs.h"
+#include "delfem2/opengl/funcs.h"
 #include <GLFW/glfw3.h>// Include glfw3.h after our OpenGL definitions
 
 #ifdef EMSCRIPTEN
@@ -19,8 +21,6 @@
   #define EGL_EGLEXT_PROTOTYPES
 #endif
 
-#include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/glnew_funcs.h"
 
 namespace dfm2 = delfem2;
 

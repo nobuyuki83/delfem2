@@ -8,9 +8,9 @@
 
 #include <glad/glad.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/tex_gl.h"
-#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/funcs.h"
+#include "delfem2/opengl/tex.h"
 #include "delfem2/imgio.h"
 #include "delfem2/primitive.h"
 #include <GLFW/glfw3.h>

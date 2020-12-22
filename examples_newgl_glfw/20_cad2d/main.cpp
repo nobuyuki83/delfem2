@@ -9,16 +9,15 @@
 #endif
 
 #include <glad/glad.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/new/funcs.h"
+#include "delfem2/opengl/new/v23dtricad.h"
 #include <GLFW/glfw3.h>
 
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
 #endif
-
-#include "delfem2/opengl/glnew_funcs.h"
-#include "delfem2/opengl/glnew_v23dtricad.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 // end of header
 // -----------------------------------------------------

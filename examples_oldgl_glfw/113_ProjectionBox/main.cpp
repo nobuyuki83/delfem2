@@ -7,8 +7,8 @@
 
 #include <glad/glad.h> // glad need to be defiend in the begenning
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/r2tglo_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/old/r2tglo.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"

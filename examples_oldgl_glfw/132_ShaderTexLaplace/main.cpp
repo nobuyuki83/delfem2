@@ -5,17 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <glad/glad.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/funcs.h"
+#include "delfem2/opengl/tex.h"
 #include <iostream>
 #include <fstream>
 #include <cmath>
 #include "delfem2/primitive.h"
-
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/tex_gl.h"
-#include "delfem2/opengl/funcs_glold.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

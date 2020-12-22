@@ -5,17 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <glad/glad.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/color.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/gridvoxel.h"
-//
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/r2tglo_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+
 
 namespace dfm2 = delfem2;
 

@@ -21,15 +21,14 @@
 #endif
 
 #include <glad/glad.h>
+#include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include <GLFW/glfw3.h>
 
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
 #endif
-
-#include "delfem2/opengl/glnew_mshcolor.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 

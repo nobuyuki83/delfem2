@@ -11,16 +11,14 @@
  */
 
 // ----------------------
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/vec3.h"
+#include <GLFW/glfw3.h>
 #include <math.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "delfem2/vec3.h"
-
-// -----------------
-#include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 #ifndef M_PI
 #  define M_PI 3.1415926535

@@ -6,9 +6,9 @@
 */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/gizmo_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
+#include "delfem2/opengl/old/gizmo.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/points.h"

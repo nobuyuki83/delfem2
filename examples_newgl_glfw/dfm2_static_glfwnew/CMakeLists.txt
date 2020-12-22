@@ -81,14 +81,15 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/cloth_internal.h
     ${DELFEM2_INC}/rigopt.h
     
-    ${DELFEM2_INC}/opengl/tex_gl.h             ${DELFEM2_INC}/opengl/tex_gl.cpp
-    ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp
-    ${DELFEM2_INC}/opengl/r2t_gl.h             ${DELFEM2_INC}/opengl/r2t_gl.cpp
-    
-    ${DELFEM2_INC}/opengl/glnew_funcs.h        ${DELFEM2_INC}/opengl/glnew_funcs.cpp
-    ${DELFEM2_INC}/opengl/glnew_mshcolor.h     ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
-    ${DELFEM2_INC}/opengl/r2tgln_glnew.h       ${DELFEM2_INC}/opengl/r2tgln_glnew.cpp
-    ${DELFEM2_INC}/opengl/glnew_v23dtricad.h   ${DELFEM2_INC}/opengl/glnew_v23dtricad.cpp    
+    ${DELFEM2_INC}/opengl/tex.h             ${DELFEM2_INC}/opengl/tex.cpp
+    ${DELFEM2_INC}/opengl/funcs.h           ${DELFEM2_INC}/opengl/funcs.cpp
+    ${DELFEM2_INC}/opengl/r2t.h             ${DELFEM2_INC}/opengl/r2t.cpp
+
+    ${DELFEM2_INC}/opengl/new/funcs.h        ${DELFEM2_INC}/opengl/new/funcs.cpp
+    ${DELFEM2_INC}/opengl/new/mshcolor.h     ${DELFEM2_INC}/opengl/new/mshcolor.cpp
+    ${DELFEM2_INC}/opengl/new/r2tgln.h       ${DELFEM2_INC}/opengl/new/r2tgln.cpp
+    ${DELFEM2_INC}/opengl/new/v23dtricad.h   ${DELFEM2_INC}/opengl/new/v23dtricad.cpp
+
     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
 )
 

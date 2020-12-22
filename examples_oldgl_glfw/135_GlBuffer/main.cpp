@@ -12,8 +12,8 @@
 // ------
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 namespace dfm2 = delfem2;
 

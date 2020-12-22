@@ -6,6 +6,8 @@
 #endif
 
 #include <glad/glad.h>
+#include "delfem2/opengl/funcs.h"
+#include "delfem2/opengl/new/funcs.h"
 #include <GLFW/glfw3.h>
 
 #ifdef EMSCRIPTEN
@@ -13,8 +15,6 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/glnew_funcs.h"
 //#include "delfem2/opengl/glnew_funcs.h"
 //#include "delfem2/opengl/glfw/glfw_cam.h"
 

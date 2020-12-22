@@ -6,25 +6,24 @@
  */
 
 
-#include <cassert>
-#include <vector>
-#include <algorithm>
-#include <cstdlib>
-#include <cmath>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/color.h"
+#include "delfem2/opengl/old/v3q.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/ilu_mats.h"
+#include "delfem2/fem_emats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/primitive.h"
 #include "delfem2/iss.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/ilu_mats.h"
-#include "delfem2/fem_emats.h"
-
-// ---------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cassert>
+#include <vector>
+#include <algorithm>
+#include <cstdlib>
+#include <cmath>
+
 
 namespace dfm2 = delfem2;
 

@@ -5,15 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cmath>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/deflap.h"
 #include "delfem2/mat4.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/primitive.h"
-// ----------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cmath>
 
 namespace dfm2 = delfem2;
 

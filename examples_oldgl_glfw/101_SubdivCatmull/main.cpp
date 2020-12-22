@@ -10,7 +10,7 @@
  */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshsubdiv.h"
 #include "delfem2/primitive.h"
