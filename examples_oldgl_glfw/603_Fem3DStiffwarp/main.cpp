@@ -13,17 +13,16 @@
 #include "delfem2/fem_emats.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/mats.h"
 #include "delfem2/dtri.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/jagarray.h"
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
-
-
 
 namespace dfm2 = delfem2;
 
@@ -119,10 +118,11 @@ std::vector<double> aR;
 
 void InitializeProblem_ShellEigenPB()
 {
-  const int np = (int)aXYZ.size()/3;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                                                    aTet.data(), aTet.size()/4, 4,
-                                                    (int)aXYZ.size()/3);
+  const unsigned int np = (int)aXYZ.size()/3;
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTet.data(), aTet.size()/4, 4,
+      (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),

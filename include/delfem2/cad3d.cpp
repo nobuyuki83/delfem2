@@ -8,7 +8,7 @@
 
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/gizmo_geo3.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri2_v2dtri.h"

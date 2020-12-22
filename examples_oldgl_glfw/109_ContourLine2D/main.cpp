@@ -9,7 +9,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/points.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/slice.h"
 #include "delfem2/primitive.h"
 #include "delfem2/color.h"

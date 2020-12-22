@@ -20,8 +20,9 @@
 #include "delfem2/rig_geo3.h"
 #include "delfem2/rigopt.h"
 #include "delfem2/mats.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <random>

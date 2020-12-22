@@ -14,7 +14,7 @@
 
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/primitive.h"
 //
 #include "delfem2/dtri3_v3dtri.h"

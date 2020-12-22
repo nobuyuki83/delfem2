@@ -7,9 +7,10 @@
 
 #include <cstring> // memcpy
 #include "delfem2/defarap.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/vecxitrsol.h"
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
+#include "delfem2/mshuni.h"
+#include "delfem2/vecxitrsol.h"
+#include "delfem2/jagarray.h"
 
 namespace delfem2 {
 namespace deflap {

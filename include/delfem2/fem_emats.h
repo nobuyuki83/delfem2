@@ -13,6 +13,8 @@
  * @details this file only depends on and "emat.h" and "mats.h"
  */
 
+// TODO: use template for sparse global matrix.
+
 
 #ifndef DFM2_FEM_EMATS_H
 #define DFM2_FEM_EMATS_H

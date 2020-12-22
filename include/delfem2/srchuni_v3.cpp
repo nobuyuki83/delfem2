@@ -431,13 +431,13 @@ template void delfem2::IntersectionRay_MeshTri3(
 // ----------------------
 
 template <typename T>
-void delfem2::IntersectionRay_MeshTri3DPart
-(std::map<T,CPtElm2<T>>& mapDepthPES,
- const CVec3<T>& org, const CVec3<T>& dir,
- const std::vector<unsigned int>& aTri,
- const std::vector<T>& aXYZ,
- const std::vector<unsigned int>& aIndTri,
- T eps)
+void delfem2::IntersectionRay_MeshTri3DPart(
+    std::map<T,CPtElm2<T>>& mapDepthPES,
+    const CVec3<T>& org, const CVec3<T>& dir,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aIndTri,
+    T eps)
 {
   mapDepthPES.clear();
   for(int itri : aIndTri){
@@ -569,20 +569,13 @@ DFM2_INLINE void delfem2::IntersectionLine_Hightfield(
     unsigned int ny,
     const std::vector<float>& aH)
 {
+  assert(aH.size()==nx*ny);
   for(unsigned int iey=0;iey<ny-1;++iey){
     for(unsigned int iex=0;iex<nx-1;++iex){
       const double h00 = aH[(iey+0)*nx+(iex+0)];
       const double h10 = aH[(iey+0)*nx+(iex+1)];
       const double h01 = aH[(iey+1)*nx+(iex+0)];
       const double h11 = aH[(iey+1)*nx+(iex+1)];
-      /*
-      if( hmin < hmax ){
-        if( h00 < hmin || h00 > hmax ) continue;
-        if( h10 < hmin || h10 > hmax ) continue;
-        if( h01 < hmin || h01 > hmax ) continue;
-        if( h11 < hmin || h11 > hmax ) continue;
-      }
-       */
       const double p00[3] = {double(iex+0),double(iey+0),h00};
       const double p10[3] = {double(iex+1),double(iey+0),h10};
       const double p01[3] = {double(iex+0),double(iey+1),h01};

@@ -12,10 +12,11 @@
 
 // DONE(2020/12/09): separate mixed elem
 // DONE(2020/12/12): separated mshsubdiv
-// TODO: change name mshuni.h
+// DONE(2020/12/23): change name mshuni.h
+// DODO(2020/12/23): separaete jarray.h
 
-#ifndef DFM2_MSHTOPO_H
-#define DFM2_MSHTOPO_H
+#ifndef DFM2_MSHUNI_H
+#define DFM2_MSHUNI_H
 
 #include "delfem2/mshelm.h"
 #include "delfem2/dfm2_inline.h"
@@ -27,27 +28,6 @@ namespace delfem2 {
 // ---------------------------------------------
 // function related to jagged array
 
-DFM2_INLINE void JArray_Sort(
-    const std::vector<unsigned int>& index,
-    std::vector<unsigned int>& array);
-
-DFM2_INLINE void JArray_Sort(
-    const unsigned int* index,
-    unsigned int size,
-    unsigned int* array);
-
-DFM2_INLINE void JArray_AddDiagonal(
-    std::vector<unsigned int> &psup_ind1,
-    std::vector<unsigned int> &psup1,
-    const unsigned int *psup_ind0,
-    int npsup_ind0,
-    const unsigned int *psup0,
-    int npsup0);
-
-DFM2_INLINE void JArray_Print(
-    const std::vector<int>& index,
-    const std::vector<int>& array);
-
 DFM2_INLINE void JArray_AddMasterSlavePattern(
     std::vector<unsigned int> &index,
     std::vector<unsigned int> &array,
@@ -56,17 +36,6 @@ DFM2_INLINE void JArray_AddMasterSlavePattern(
     const unsigned int *psup_ind0,
     int npsup_ind0,
     const unsigned int *psup0);
-
-/**
- * @details compute 2-ring neighborhood from 1-ring neighborhood
- */
-DFM2_INLINE void JArray_Extend(
-    std::vector<unsigned int>& psup_ind1,
-    std::vector<unsigned int>& psup1,
-    const unsigned int *psup_ind0,
-    unsigned int npsup_ind0,
-    const unsigned int *psup0);
-
 // ---------------------------------------------------
 
 DFM2_INLINE unsigned FindAdjEdgeIndex(
@@ -200,13 +169,6 @@ DFM2_INLINE void makeOneRingNeighborhood_TriFan(
     const std::vector<int>& elsup,
     int np);
 
-DFM2_INLINE void JArrayEdgeUnidir_PointSurPoint(
-    std::vector<unsigned int> &edge_ind,
-    std::vector<unsigned int> &edge,
-    //
-    const std::vector<unsigned int> &psup_ind,
-    const std::vector<unsigned int> &psup);
-
 DFM2_INLINE void JArrayEdge_MeshElem(
     std::vector<unsigned int> &edge_ind,
     std::vector<unsigned int> &edge,
@@ -257,7 +219,7 @@ DFM2_INLINE void MakeGroupElem_Tri(
 } // end namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/mshtopo.cpp"
+#  include "delfem2/mshuni.cpp"
 #endif
  
 #endif /* meshtopo_hpp */

@@ -12,9 +12,9 @@
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/r2t.h"
+#include "delfem2/deflap.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/deflap.h"
 #include "delfem2/primitive.h"
 #include <iostream>
 #include <cmath>

@@ -11,7 +11,7 @@
 #include "delfem2/expmap_geo3dijk.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
-#include "delfem2/mshtopo.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
 #include "delfem2/imgio.h"
 #include <GLFW/glfw3.h>
@@ -108,7 +108,9 @@ int main(int argc,char* argv[])
 //      std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
       aXYZ,aTri);
   delfem2::Normalize_Points3(aXYZ);
-  dfm2::Rotate_Points3(aXYZ,M_PI*1.0,M_PI*1.5,0.);
+  dfm2::Rotate_Points3(
+      aXYZ,
+      M_PI*1.0,M_PI*1.5,0.);
 
   std::vector<unsigned int> elsup_ind, elsup;
   dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
