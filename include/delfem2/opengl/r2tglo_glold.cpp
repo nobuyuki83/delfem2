@@ -64,7 +64,9 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Texture(const CRender2Tex& r
 void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw(const CRender2Tex& r2t) const {
 
   ::glPointSize(this->pointSize);
-  this->Draw_Point(r2t);
+  if(isDrawDepth) {
+    this->Draw_Point(r2t);
+  }
   // -----------
   ::glLineWidth(3);
   this->Draw_Axis(r2t);
