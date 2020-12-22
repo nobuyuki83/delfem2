@@ -18,7 +18,7 @@
 namespace delfem2{
 namespace opengl{
 
-class CRender2Tex_DrawNewGL : public CRender2Tex
+class CRender2Tex_DrawNewGL
 {
 public:
   CRender2Tex_DrawNewGL(){
@@ -27,10 +27,13 @@ public:
     draw_len_axis = 1.0;
   }
   // --------------
-  void Draw(float mP[16], float mMV[16]) const;
+  void Draw(
+      const ::delfem2::opengl::CRender2Tex& r2t,
+      float mP[16],
+      float mMV[16]) const;
   // ------------
   virtual void InitGL(); // override function
-  virtual void SetDepth();
+  virtual void SetDepth(const ::delfem2::opengl::CRender2Tex& r2t);
 public:
   bool isDrawTex;
   double draw_len_axis;

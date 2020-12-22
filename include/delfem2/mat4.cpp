@@ -92,8 +92,8 @@ bool CalcInvMatPivot(REAL* a, unsigned int n, unsigned int* tmp)
   }
 
   // swaping column
-  for(int j=n-1 ; j>=0 ; j--){
-    if(j == row[j]){ continue; }
+  for(int j=int(n-1); j>=0 ; j--){
+    if((unsigned int)j == row[j]){ continue; }
     for(unsigned int i=0 ; i<n ; i++){
       REAL temp = a[i*n+j];
       a[i*n+j]=a[i*n+row[j]];
@@ -277,6 +277,16 @@ DFM2_INLINE void delfem2::Mat4Vec3(
   vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
   vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
   vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
+}
+
+DFM2_INLINE void delfem2::Vec3Mat4(
+    double vo[3],
+    const double vi[3],
+    const double M[16])
+{
+  vo[0] = vi[0]*M[0*4+0] + vi[1]*M[1*4+0] + vi[2]*M[2*4+0];
+  vo[1] = vi[0]*M[0*4+1] + vi[1]*M[1*4+1] + vi[2]*M[2*4+1];
+  vo[2] = vi[0]*M[0*4+2] + vi[1]*M[1*4+2] + vi[2]*M[2*4+2];
 }
 
 template <typename T>
@@ -464,9 +474,9 @@ template void delfem2::Mat4_AffineTransTranslate(double r[], const double t[]);
 // --------------------------
 
 template <typename T>
-DFM2_INLINE void delfem2::Mat4_AffineRotationRodriguez
-(T A[16],
- T dx, T dy, T dz)
+DFM2_INLINE void delfem2::Mat4_AffineRotationRodriguez(
+    T A[16],
+    T dx, T dy, T dz)
 {
   for(int i=0;i<16;++i){ A[i] = 0.0; }
   //
@@ -528,7 +538,7 @@ void delfem2::Rotate_Mat4AffineRodriguez(
 {
   REAL B[16];
   Mat4_AffineRotationRodriguez(B,
-                               V[0],V[1],V[2]);
+      V[0],V[1],V[2]);
   REAL C[16];
   MatMat4(C,
       B,A);
@@ -539,7 +549,69 @@ void delfem2::Rotate_Mat4AffineRodriguez(
 template void delfem2::Rotate_Mat4AffineRodriguez(float A[16], const float V[3]);
 template void delfem2::Rotate_Mat4AffineRodriguez(double A[16], const double V[3]);
 #endif
-  
+
+
+template <typename REAL>
+void delfem2::Mat4_Rotation_Cartesian(
+    REAL mat[16],
+    const REAL vec[3])
+{
+  double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
+  if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
+    // row0
+    mat[0*4+0] = 1;
+    mat[0*4+1] = -vec[2];
+    mat[0*4+2] = +vec[1];
+    mat[0*4+3] = 0;
+    // row1
+    mat[1*4+0] = +vec[2];
+    mat[1*4+1] = 1;
+    mat[1*4+2] = -vec[0];
+    mat[1*4+3] = 0;
+    // row2
+    mat[2*4+0] = -vec[1];
+    mat[2*4+1] = +vec[0];
+    mat[2*4+2] = 1;
+    mat[2*4+3] = 0;
+    // row3
+    mat[3*4+0] = 0;
+    mat[3*4+1] = 0;
+    mat[3*4+2] = 0;
+    mat[3*4+3] = 1;
+    return;
+  }
+  double t = sqrt(sqt);
+  double invt = 1.0/t;
+  double n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
+  const double c0 = cos(t);
+  const double s0 = sin(t);
+  // row0
+  mat[0*4+0] = c0        +(1-c0)*n[0]*n[0];
+  mat[0*4+1] =   -n[2]*s0+(1-c0)*n[0]*n[1];
+  mat[0*4+2] =   +n[1]*s0+(1-c0)*n[0]*n[2];
+  mat[0*4+3] = 0.0;
+  // row1
+  mat[1*4+0] =   +n[2]*s0+(1-c0)*n[1]*n[0];
+  mat[1*4+1] = c0        +(1-c0)*n[1]*n[1];
+  mat[1*4+2] =   -n[0]*s0+(1-c0)*n[1]*n[2];
+  mat[1*4+3] = 0.0;
+  // row2
+  mat[2*4+0] =   -n[1]*s0+(1-c0)*n[2]*n[0];
+  mat[2*4+1] =   +n[0]*s0+(1-c0)*n[2]*n[1];
+  mat[2*4+2] = c0        +(1-c0)*n[2]*n[2];
+  mat[2*4+3] = 0.0;
+  // row3
+  mat[3*4+0] = 0.0;
+  mat[3*4+1] = 0.0;
+  mat[3*4+2] = 0.0;
+  mat[3*4+3] = 1.0;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat4_Rotation_Cartesian(float mat[16], const float vec[3]);
+template void delfem2::Mat4_Rotation_Cartesian(double mat[16], const double vec[3]);
+#endif
+
+// ----------------------------
   
 template <typename REAL>
 void delfem2::Translate_Mat4Affine(
@@ -791,8 +863,7 @@ delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Inverse() const
 {
   CMat4<REAL> m;
   std::memcpy(m.mat, mat, sizeof(REAL)*16);
-  int info;
-  mat4::CalcInvMat(m.mat, 4, info);
+  Inverse_Mat4(m.mat,this->mat);
   return m;
 }
 #ifndef DFM2_HEADER_ONLY

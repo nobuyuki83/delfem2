@@ -5,18 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <vector>
-#include <cstdlib>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/color_glold.h"
 #include "delfem2/points.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/slice.h"
 #include "delfem2/primitive.h"
 #include "delfem2/color.h"
-
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <vector>
+#include <cstdlib>
 
 // -------------------------
 
@@ -60,13 +59,13 @@ void Hoge()
     const int ndiv = 16;
     std::vector<unsigned int> aQuad;
     delfem2::MeshQuad2D_Grid(aXY, aQuad,
-                             ndiv,ndiv);
+        ndiv,ndiv);
     delfem2::convert2Tri_Quad(aTri,
-                              aQuad);
+        aQuad);
     delfem2::Translate_Points2(aXY,
-                               -ndiv*0.5, -ndiv*0.5);
+        -ndiv*0.5, -ndiv*0.5);
     delfem2::Scale_PointsX(aXY,
-                           1.0/ndiv);
+        1.0/ndiv);
   }
   
   { // make value

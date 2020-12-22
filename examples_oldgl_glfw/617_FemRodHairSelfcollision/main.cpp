@@ -8,7 +8,7 @@
 #include "delfem2/femrod.h"
 #include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/mats.h"
-#include "delfem2/srhbv3sphere.h"
+#include "delfem2/srchbv3sphere.h"
 
 // --------------
 #include <GLFW/glfw3.h>

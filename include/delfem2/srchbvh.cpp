@@ -8,7 +8,7 @@
 #include <cmath>
 #include <algorithm>
 #include <climits> // UNINT_MAX
-#include "delfem2/bvh.h"
+#include "delfem2/srchbvh.h"
 
 // ------------------------------------
 

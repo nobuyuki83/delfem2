@@ -18,7 +18,7 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/dtri.h"
-#include "delfem2/srhbv3sphere.h"
+#include "delfem2/srchbv3sphere.h"
 #include "tinygltf/tiny_gltf.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>

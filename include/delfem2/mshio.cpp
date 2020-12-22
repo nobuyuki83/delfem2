@@ -338,7 +338,7 @@ DFM2_INLINE void delfem2::Write_Obj_Quad(
   }
 }
 
-DFM2_INLINE void delfem2::Write_Obj(
+DFM2_INLINE void delfem2::Write_Obj_ElemJArray(
     const std::string& str,
     const std::vector<double>& aXYZ,
     const std::vector<int>& aElemInd,
@@ -351,15 +351,44 @@ DFM2_INLINE void delfem2::Write_Obj(
     fout<<"v "<<aXYZ[ip*3+0]<<" "<<aXYZ[ip*3+1]<<" "<<aXYZ[ip*3+2]<<std::endl;
   }
   const unsigned int ne = aElemInd.size()-1;
-  for (unsigned int ie=0; ie<ne; ie++){
-    const int i0 = aElemInd[ie];
-    const int nnoel = aElemInd[ie+1]-i0;
+  for (unsigned int iie=0; iie<ne; iie++){
+    const int ie0 = aElemInd[iie];
+    const int nnoel = aElemInd[iie+1] - ie0;
     assert( nnoel == 3 || nnoel == 4 );
     if( nnoel == 3 ){
-      fout<<"f "<< aElem[i0+0]+1<<" "<<aElem[i0+1]+1<<" "<<aElem[i0+2]+1<<std::endl;
+      fout << "f " << aElem[ie0 + 0] + 1 << " " << aElem[ie0 + 1] + 1 << " " << aElem[ie0 + 2] + 1 << std::endl;
     }
     else if( nnoel == 4 ){
-      fout<<"f "<< aElem[i0+0]+1<<" "<<aElem[i0+1]+1<<" "<<aElem[i0+2]+1<<" "<<aElem[i0+3]+1<<std::endl;
+      fout << "f " << aElem[ie0 + 0] + 1 << " " << aElem[ie0 + 1] + 1 << " " << aElem[ie0 + 2] + 1 << " " << aElem[ie0 + 3] + 1 << std::endl;
+    }
+  }
+}
+
+
+DFM2_INLINE void delfem2::Write_Obj_TriFlag(
+    const std::string& pathf,
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    std::vector<unsigned int>& aFlgTri)
+{
+  const unsigned int nt = aTri.size()/3;
+//  std::cout << nt << " " << aFlgTri.size() << std::endl;
+  assert( aFlgTri.size() == nt );
+  unsigned int flgmax = 0;
+  for(unsigned int it=0;it<nt;++it){
+    if(aFlgTri[it] > flgmax ){ flgmax = aFlgTri[it]; }
+  }
+//  std::cout << flgmax << std::endl;
+  std::ofstream fout(pathf.c_str(), std::ofstream::out);
+  const unsigned int np = aXYZ.size()/3;
+  for (unsigned int ip = 0; ip<np; ip++){
+    fout<<"v "<<aXYZ[ip*3+0]<<" "<<aXYZ[ip*3+1]<<" "<<aXYZ[ip*3+2]<<std::endl;
+  }
+  for(unsigned int iflg=0;iflg<flgmax+1;++iflg){
+    fout << "g flag" << std::to_string(iflg) << std::endl;
+    for(unsigned int it=0;it<aTri.size()/3;++it){
+      if( aFlgTri[it] != iflg ){ continue; }
+      fout << "f " << aTri[it*3 + 0] + 1 << " " << aTri[it*3 + 1] + 1 << " " << aTri[it*3 + 2] + 1 << std::endl;
     }
   }
 }

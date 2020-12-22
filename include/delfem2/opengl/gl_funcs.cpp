@@ -5,10 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <fstream>
-#include <vector>
-
 // need a function loader because this file cannot be compiled without loaders in linux
 #ifdef USE_GLEW
   #include <GL/glew.h>
@@ -31,9 +27,10 @@
   #include <GL/gl.h>
 #endif
 
-
 #include "delfem2/opengl/gl_funcs.h"
-
+#include <iostream>
+#include <vector>
+#include <fstream>
 
 // ---------------------------------------------------------------------------
 
@@ -141,13 +138,4 @@ DFM2_INLINE int delfem2::opengl::setUpGLSL(
     return 0;
   }
   return id_program;
-}
-
-std::string delfem2::LoadFile(
-    const std::string& fname)
-{
-  std::ifstream inputFile1(fname.c_str());
-  std::istreambuf_iterator<char> vdataBegin(inputFile1);
-  std::istreambuf_iterator<char> vdataEnd;
-  return std::string(vdataBegin,vdataEnd);
 }

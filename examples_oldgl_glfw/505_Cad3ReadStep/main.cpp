@@ -1,12 +1,15 @@
-#include <iostream>
-#include <cmath>
-#include "delfem2/pgeo.h"
-#include "delfem2/funcs.h"
 
-#include <GLFW/glfw3.h>
+
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/pgeo.h"
+#include "delfem2/str.h"
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <cmath>
+#include <fstream>
+
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793
