@@ -46,6 +46,7 @@ public:
   double draw_len_axis = 1.0;
   unsigned int pointSize = 3;
   bool isDrawTex = true;
+  bool isDrawDepth = true;
   bool isDrawOnlyHitPoints = false;
   std::vector<double> colorPoint = {1,1,1,1};
 };
