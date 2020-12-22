@@ -81,19 +81,42 @@ DFM2_INLINE void Read_Ply(
 
 DFM2_INLINE void Write_Obj(
     const std::string &str,
-    const double *aXYZ, int nXYZ,
-    const unsigned int *aTri, int nTri);
+    const double *aXYZ,
+    int nXYZ,
+    const unsigned int *aTri,
+    int nTri);
 
 DFM2_INLINE void Write_Obj_Quad(
     const std::string &str,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aQuad);
 
-DFM2_INLINE void Write_Obj(
+/**
+ * write obj file for the mesh the elemenet is a jagged array (tris and quads are mixed).
+ * @param str
+ * @param aXYZ
+ * @param aElemInd
+ * @param aElem
+ */
+DFM2_INLINE void Write_Obj_ElemJArray(
     const std::string &str, // mixed elem
     const std::vector<double> &aXYZ,
     const std::vector<int> &aElemInd,
     const std::vector<int> &aElem);
+
+
+/**
+ * to open the obj file with Blender, select the option "Split by Group".
+ * @param pathf
+ * @param aXYZ
+ * @param aTri
+ * @param aFlgTri
+ */
+DFM2_INLINE void Write_Obj_TriFlag(
+    const std::string& pathf,
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    std::vector<unsigned int>& aFlgTri);
 
 DFM2_INLINE void Write_Obj(
     const std::string &str,

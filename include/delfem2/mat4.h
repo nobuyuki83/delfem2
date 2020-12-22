@@ -159,6 +159,11 @@ void Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL v[3]);
 
+template <typename REAL>
+void Mat4_Rotation_Cartesian(
+    REAL mat[16],
+    const REAL vec[3]);
+
 // ------------------------
 
 template <typename T>
@@ -183,6 +188,11 @@ DFM2_INLINE void Mat4Vec3(
      double vo[3],
      const double M[16],
      const double vi[3]);
+
+DFM2_INLINE void Vec3Mat4(
+    double vo[3],
+    const double vi[3],
+    const double M[16]);
 
 /**
  * @brief multiply translation affine matrix from left to an affine matrix in 3D
@@ -253,9 +263,9 @@ CMat4<T> operator + (const CMat4<T>& lhs, const CMat4<T>& rhs);
 template <typename REAL>
 class CMat4 {
 public:
-  CMat4 (){};
-  CMat4 (const float* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
-  CMat4 (const double* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
+  CMat4 ()= default;;
+  explicit CMat4 (const float* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
+  explicit CMat4 (const double* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
 public:
   // ------------------------
   // below: "set" functions

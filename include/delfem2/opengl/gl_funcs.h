@@ -20,9 +20,6 @@
 
 namespace delfem2 {
 
-std::string LoadFile(
-    const std::string& fname);
-
 namespace opengl {
 
 DFM2_INLINE int GL24_CompileShader(const char *vert, const char* frag);

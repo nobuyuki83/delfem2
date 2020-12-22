@@ -5,7 +5,7 @@
 #include "delfem2/cloth_internal.h"
 #include "delfem2/cloth_selfcollision.h"
 #include "delfem2/vec3.h"
-#include "delfem2/bvh.h"
+#include "delfem2/srchbvh.h"
 #include "delfem2/mshtopo.h"
 #include <GLFW/glfw3.h>
 #include <iostream>

@@ -15,6 +15,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
+#include "delfem2/file.h"
 #include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
@@ -104,8 +105,8 @@ int main(int argc,char* argv[])
     glUseProgram(shaderProgram);
     DrawObject(cur_time,aXYZ,aTri);
     smpl.End();
-    smpl.GetDepth();
-    smpl.GetColor();
+    smpl.CopyToCPU_Depth();
+    smpl.CopyToCPU_RGBA8UI();
     cur_time += 1.0;
     // ----
     viewer.DrawBegin_oldGL();

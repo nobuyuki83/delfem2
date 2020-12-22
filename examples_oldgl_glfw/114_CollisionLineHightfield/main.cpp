@@ -74,8 +74,8 @@ int main(int argc,char* argv[])
     ::glEnable(GL_LIGHTING);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     sampler.End();
-    sampler.GetDepth();
-    sampler.GetColor();
+    sampler.CopyToCPU_Depth();
+    sampler.CopyToCPU_RGBA8UI();
   }
 
   for(int iframe=0;;iframe++){
@@ -85,20 +85,18 @@ int main(int argc,char* argv[])
 
     std::vector<double> aXYZ1;
     {
-      double mMVPG[16]; sampler.GetMVPG(mMVPG);
-      double mMVPGinv[16]; dfm2::Inverse_Mat4(mMVPGinv, mMVPG);
-      dfm2::CVec3d q0 = src-dir.Normalize();
-      dfm2::CVec3d q1 = src+dir.Normalize();
-      dfm2::CVec3d p0; dfm2::Vec3_Vec3Mat4_AffineProjection(p0.p,q0.p,mMVPG);
-      dfm2::CVec3d p1; dfm2::Vec3_Vec3Mat4_AffineProjection(p1.p,q1.p,mMVPG);
+      dfm2::CMat4d mMVPG; sampler.GetMVPG(mMVPG.mat);
+      const dfm2::CMat4d mMVPGinv = mMVPG.Inverse();
+      dfm2::CVec3d p0; dfm2::Vec3_Vec3Mat4_AffineProjection(p0.p,src.p,mMVPG.mat);
+      dfm2::CVec3d p1; dfm2::Vec3Mat4(p1.p,dir.p,mMVPG.mat);
       std::vector<dfm2::CPtElm2<double>> aPES;
       dfm2::IntersectionLine_Hightfield(aPES,
-          p0.p, (p1-p0).Normalize().p,
+          p0.p, p1.Normalize().p,
           sampler.nResX, sampler.nResY,
           sampler.aZ);
       for(const auto & pes : aPES){
         dfm2::CVec3d lpos = pes.Pos_Grid(sampler.nResX, sampler.nResY, 1.0, sampler.aZ);
-        dfm2::CVec3d q2; dfm2::Vec3_Vec3Mat4_AffineProjection(q2.p, lpos.p, mMVPGinv);
+        dfm2::CVec3d q2; dfm2::Vec3_Vec3Mat4_AffineProjection(q2.p, lpos.p, mMVPGinv.mat);
         aXYZ1.push_back(q2.x());
         aXYZ1.push_back(q2.y());
         aXYZ1.push_back(q2.z());

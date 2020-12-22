@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <glad/glad.h>
 #include <iostream>
 #include <cmath>
 #include "delfem2/noise.h"
@@ -15,7 +16,6 @@
   #include <windows.h>
 #endif
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #ifdef EMSCRIPTEN
@@ -34,7 +34,8 @@ namespace dfm2 = delfem2;
 dfm2::opengl::CShader_TriMesh shdr0;
 dfm2::opengl::CShader_Points shdr1;
 delfem2::opengl::CViewer_GLFW viewer;
-dfm2::opengl::CRender2Tex_DrawNewGL sampler;
+dfm2::opengl::CRender2Tex sampler;
+dfm2::opengl::CRender2Tex_DrawNewGL draw_sampler;
 
 // ---------------------------
 
@@ -53,7 +54,7 @@ void draw(GLFWwindow* window)
   viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
   shdr1.Draw(mP,mMV);
   shdr0.Draw(mP, mMV);
-  sampler.Draw(mP,mMV);
+  draw_sampler.Draw(sampler,mP,mMV);
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -70,7 +71,7 @@ int main()
         dfm2::CVec3d(0,0,-1).p,
         dfm2::CVec3d(1,0,0).p,
         nres, nres, elen, 4.0);
-    sampler.draw_len_axis = 1.0;
+    draw_sampler.draw_len_axis = 1.0;
   }
 
   viewer.Init_newGL();
@@ -84,6 +85,7 @@ int main()
   }
 
   sampler.InitGL();
+  draw_sampler.InitGL();
 
   {
     std::vector<double> aXYZ;
@@ -103,7 +105,8 @@ int main()
     shdr0.Draw(mPf, mMVf);
   }
   sampler.End();
-  sampler.SetDepth();
+  sampler.CopyToCPU_Depth();
+  draw_sampler.SetDepth(sampler);
   //
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
