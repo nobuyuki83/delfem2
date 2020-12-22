@@ -6,14 +6,14 @@
  */
 
 
-#include <iostream>
+
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/bem.h"
 #include "delfem2/primitive.h"
-
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
+#include <iostream>
 
 namespace dfm2 = delfem2;
 

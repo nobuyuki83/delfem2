@@ -5,18 +5,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
-#include <vector>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/emat.h"
-// ------------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cstdlib>
+#include <vector>
+
 
 namespace dfm2 = delfem2;
 

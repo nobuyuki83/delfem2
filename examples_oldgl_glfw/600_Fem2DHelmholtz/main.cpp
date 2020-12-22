@@ -7,14 +7,14 @@
 
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/ilu_mats.h"
-#include "delfem2/fem_emats.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/opengl/old/color.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/ilu_mats.h"
+#include "delfem2/fem_emats.h"
+#include "delfem2/cad2_dtri2.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <cmath>

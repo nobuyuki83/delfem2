@@ -5,15 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v3q.h"
+#include "delfem2/cad3d.h"
+#include <GLFW/glfw3.h>
 #include <cmath>
 #include <algorithm>
-#include "delfem2/cad3d.h"
 
-// ----------
-#include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793

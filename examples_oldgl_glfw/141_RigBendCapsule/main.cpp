@@ -5,18 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <vector>
-#include <cmath>
-#include <cstdlib>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/primitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/rig_geo3.h"
-
-// gl related includes
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/rigv3_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 #ifndef M_PI
 #  define M_PI 3.141592

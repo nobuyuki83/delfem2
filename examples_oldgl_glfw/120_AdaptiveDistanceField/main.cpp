@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/adf.h"
 #include "delfem2/mshmisc.h"

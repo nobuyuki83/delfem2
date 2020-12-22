@@ -5,16 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
-#include <vector>
+
+#include <glad/glad.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/noise.h"
 #include "delfem2/mshio.h"
 #include "delfem2/points.h"
-
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cstdlib>
+#include <vector>
 
 // -----------------------------
 

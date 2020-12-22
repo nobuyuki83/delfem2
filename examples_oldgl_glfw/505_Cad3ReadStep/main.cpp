@@ -1,8 +1,8 @@
 
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/pgeo.h"
 #include "delfem2/str.h"
 #include <GLFW/glfw3.h>

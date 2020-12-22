@@ -6,6 +6,11 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/cad2dtriv2.h"
+#include "delfem2/opengl/old/caddtri_v3.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/color.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/garment.h"
 #include "delfem2/cad2_dtri2.h"
@@ -17,18 +22,13 @@
 #include "delfem2/dtri.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/color.h"
+#include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
 #include <set>
 
 // ----------------------------
-#include "delfem2/opengl/cad2dtriv2_glold.h"
-#include "delfem2/opengl/caddtri_v3_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
-#include <GLFW/glfw3.h>
 
 #ifndef M_PI
 #  define M_PI 3.14159265359

@@ -23,8 +23,8 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/opengl/glnew_mshcolor.h"
-#include "delfem2/opengl/r2tgln_glnew.h"
+#include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/opengl/new/r2tgln.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 

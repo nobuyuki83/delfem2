@@ -6,8 +6,8 @@
  */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/tex_gl.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/tex.h"
 #include "delfem2/expmap_geo3dijk.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"

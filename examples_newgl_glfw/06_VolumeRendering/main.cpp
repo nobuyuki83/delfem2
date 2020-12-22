@@ -1,16 +1,16 @@
 
+
+#include <glad/glad.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/funcs.h"
+#include "delfem2/noise.h"
+#include <GLFW/glfw3.h>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
-
-#include "delfem2/noise.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
  

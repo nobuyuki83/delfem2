@@ -6,9 +6,9 @@
  */
 
 #include "delfem2/tinygltf/io_gltf.h"
-#include "delfem2/opengl/caddtri_v3_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/caddtri_v3.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
 #include "delfem2/dtri2_v2dtri.h"

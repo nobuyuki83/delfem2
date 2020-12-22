@@ -6,8 +6,8 @@
  */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/tex_gl.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/tex.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/points.h"

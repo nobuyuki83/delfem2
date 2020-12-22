@@ -1,7 +1,7 @@
 
 
-#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/cloth_selfcollision.h"
 #include "delfem2/vec3.h"

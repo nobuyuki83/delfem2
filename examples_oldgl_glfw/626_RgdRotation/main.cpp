@@ -6,8 +6,8 @@
 */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/color.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"

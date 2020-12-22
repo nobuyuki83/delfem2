@@ -5,11 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <math.h>
-#include "delfem2/vec3.h"
-//
+#include <glad/glad.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/new/funcs.h"
+#include "delfem2/opengl/new/v23dtricad.h"
+#include "delfem2/opengl/funcs.h"
 #include "delfem2/cad2_dtri2.h"
+#include "delfem2/vec3.h"
 
 // ----
 
@@ -17,7 +19,6 @@
 #  include <windows.h>
 #endif
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #ifdef EMSCRIPTEN
@@ -25,10 +26,8 @@
 #  define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/glnew_funcs.h"
-#include "delfem2/opengl/glnew_v23dtricad.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <iostream>
+#include <math.h>
 
 namespace dfm2 = delfem2;
 

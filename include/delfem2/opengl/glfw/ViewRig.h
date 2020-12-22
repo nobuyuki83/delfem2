@@ -9,7 +9,7 @@
 #define DFM2_OPENGL_GLFW_VIEWRIG_H
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/rigv3_glold.h"
+#include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/gizmo_geo3.h"
 
 namespace delfem2 {

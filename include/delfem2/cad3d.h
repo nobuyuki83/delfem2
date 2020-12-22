@@ -8,12 +8,11 @@
 #ifndef DFM2_CAD3D_H
 #define DFM2_CAD3D_H
 
+#include "delfem2/opengl/old/color.h"
+#include "delfem2/srchuni_v3.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
 #include "delfem2/pgeo.h"
-#include "delfem2/srchuni_v3.h"
-
-#include "delfem2/opengl/color_glold.h"
 
 // -------------------------------------
 

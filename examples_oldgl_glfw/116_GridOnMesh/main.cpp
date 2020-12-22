@@ -5,21 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <vector>
-#include <string>
-#include <cstdlib>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v3q.h"
+#include "delfem2/srchuni_v3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
-#include "delfem2/srchuni_v3.h"
-
-// gl related includes
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <vector>
+#include <string>
+#include <cstdlib>
 
 #ifndef M_PI
 #  define M_PI 3.141592

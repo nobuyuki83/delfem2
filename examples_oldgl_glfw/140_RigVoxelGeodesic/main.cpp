@@ -6,11 +6,11 @@
  */
 
 #include <glad/glad.h>
-#include "delfem2/opengl/rigv3_glold.h"
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/r2tglo_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/rigv3.h"
+#include "delfem2/opengl/old/color.h"
+#include "delfem2/opengl/old/r2tglo.h"
+#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"

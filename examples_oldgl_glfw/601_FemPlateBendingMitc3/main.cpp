@@ -1,17 +1,16 @@
-#include <iostream>
-#include <cmath>
+
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/ilu_mats.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/fem_emats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/vec2.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/ilu_mats.h"
-#include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/fem_emats.h"
-
-// ----------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <iostream>
+#include <cmath>
 
 namespace dfm2 = delfem2;
 

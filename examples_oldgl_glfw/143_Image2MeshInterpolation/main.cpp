@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/imgio.h"
+#include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <vector>
-#include "delfem2/imgio.h"
-#include "delfem2/dtri2_v2dtri.h"
-// --------------
-#include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "delfem2/../../3rd_party/stb_image.h"

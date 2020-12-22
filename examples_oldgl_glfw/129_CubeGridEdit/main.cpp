@@ -5,18 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cmath>
-#include <climits>
+#include <glad/glad.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/gridcube.h"
+#include "delfem2/cam3_m4q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/cam3_m4q.h"
 #include "delfem2/gridcube.h"
-// -------
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/gridcube_glold.h"
+#include <cmath>
+#include <climits>
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793
