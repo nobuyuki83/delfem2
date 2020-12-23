@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// TODO: change name to "mshprimitive.h" (2020/12/23)
+
 #ifndef DFM2_PRIMITIVE_H
 #define DFM2_PRIMITIVE_H
 
@@ -13,12 +15,9 @@
 #include "delfem2/sdf.h"
 #include "delfem2/dfm2_inline.h"
 
-/// <summary>
-/// test fix
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846264338327950288
 #endif
-/// </summary>
 
 namespace delfem2 {
 
@@ -32,7 +31,8 @@ namespace delfem2 {
  * @param nlat numbef of subdivision around the cross section of XZ plane (latitude)
  */
 DFM2_INLINE void MeshTri3D_Sphere(
-    std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
     double radius,
     int nlong, int nlat);
 
@@ -40,7 +40,8 @@ DFM2_INLINE void MeshTri3D_Sphere(
  * @details y axis is the axis of cylinder
  */
 DFM2_INLINE void MeshTri3D_CylinderOpen(
-    std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int> &aTri,
     double r, double l,
     int nr, int nl);
 

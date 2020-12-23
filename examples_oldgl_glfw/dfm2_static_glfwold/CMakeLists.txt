@@ -61,7 +61,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/str.h                       ${DELFEM2_INC}/str.cpp
     ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
     ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
-    ${DELFEM2_INC}/emat.h                      ${DELFEM2_INC}/emat.cpp
+    ${DELFEM2_INC}/femem2.h                    ${DELFEM2_INC}/femem2.cpp
+    ${DELFEM2_INC}/femem3.h                    ${DELFEM2_INC}/femem3.cpp
     ${DELFEM2_INC}/mats.h                      ${DELFEM2_INC}/mats.cpp
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
