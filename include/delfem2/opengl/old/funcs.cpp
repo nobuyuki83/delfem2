@@ -1790,9 +1790,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_FaceNorm
 }
 
 
-DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge
-(const double* aXY, unsigned int nXY,
- const unsigned int* aQuad, unsigned int nQuad)
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge(
+    const double* aXY,
+    unsigned int nXY,
+    const unsigned int* aQuad,
+    unsigned int nQuad)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   // ---------------------
@@ -1827,6 +1829,36 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge
 {
   DrawMeshQuad2D_Edge(aXY.data(), aXY.size()/2,
                       aQuad.data(), aQuad.size()/4);
+}
+
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_EdgeDisp(
+    const double* aXY,
+    unsigned int nXY,
+    const unsigned int* aQuad,
+    unsigned int nQuad,
+    const double* aDisp)
+{
+  GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
+  // ---------------------
+  ::glDisable(GL_LIGHTING);
+  ::glBegin(GL_LINES);
+  ::glColor3d(0, 0, 0);
+  for (unsigned int iq = 0; iq<nQuad; ++iq){
+    const unsigned int i1 = aQuad[iq*4+0]; assert(i1<nXY);
+    const unsigned int i2 = aQuad[iq*4+1]; assert(i2<nXY);
+    const unsigned int i3 = aQuad[iq*4+2]; assert(i3<nXY);
+    const unsigned int i4 = aQuad[iq*4+3]; assert(i4<nXY);
+    const double p1[2] = { aXY[i1*2+0]+aDisp[i1*2+0], aXY[i1*2+1]+aDisp[i1*2+1] };
+    const double p2[2] = { aXY[i2*2+0]+aDisp[i2*2+0], aXY[i2*2+1]+aDisp[i2*2+1] };
+    const double p3[2] = { aXY[i3*2+0]+aDisp[i3*2+0], aXY[i3*2+1]+aDisp[i3*2+1] };
+    const double p4[2] = { aXY[i4*2+0]+aDisp[i4*2+0], aXY[i4*2+1]+aDisp[i4*2+1] };
+    ::glVertex2dv(p1); ::glVertex2dv(p2);
+    ::glVertex2dv(p2); ::glVertex2dv(p3);
+    ::glVertex2dv(p3); ::glVertex2dv(p4);
+    ::glVertex2dv(p4); ::glVertex2dv(p1);
+  }
+  ::glEnd();
+  if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
 // ----------------------------------------------------------------------------

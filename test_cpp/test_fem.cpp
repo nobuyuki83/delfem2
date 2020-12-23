@@ -30,6 +30,29 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------
 
+TEST(femem2,poisson_quad){
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> dist(0.01, 3);
+  double lx = dist(randomEng);
+  double ly = dist(randomEng);
+  double em0[4][4];
+  dfm2::EMat_Poission2_QuadOrth(em0,lx,ly);
+  for(unsigned int ngauss=1;ngauss<3;++ngauss) {
+    double em1[4][4];
+    dfm2::EMat_Poisson2_QuadOrth_GaussInt(em1, lx, ly,ngauss);
+    double diff = 0.0;
+    for(unsigned int i=0;i<16;++i){
+      double v0 = (&em0[0][0])[i];
+      double v1 = (&em1[0][0])[i];
+      diff += (v0-v1)*(v0-v1);
+    }
+    EXPECT_NEAR( diff, 0.0, 1.0e-10);
+  }
+}
+
+
+
 TEST(objfunc_v23, Check_CdC_TriStrain){
   std::random_device randomDevice;
   std::mt19937 randomEng(randomDevice());
@@ -419,7 +442,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                            +ddW_dtdP[1][0]*dP[0]
                            +ddW_dtdP[1][1]*dP[1]
                            +ddW_dtdP[1][2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 3.0e-2*(1.0+fabs(val1)));
+      EXPECT_NEAR(val0, val1, 3.5e-2*(1.0+fabs(val1)));
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[0]-dW_dP[0])/eps;
