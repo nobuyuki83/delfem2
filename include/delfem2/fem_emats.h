@@ -19,11 +19,12 @@
 #ifndef DFM2_FEM_EMATS_H
 #define DFM2_FEM_EMATS_H
 
+#include "delfem2/femem2.h"
+#include "delfem2/femem3.h"
+#include "delfem2/mats.h"
 #include "delfem2/dfm2_inline.h"
 #include <cassert>
 #include <vector>
-#include "delfem2/mats.h"
-#include "delfem2/emat.h"
 
 // ----------------------------------------------------------------
 

@@ -14,7 +14,8 @@
  */
 
 #include <complex>
-#include "delfem2/emat.h"
+#include "delfem2/femem2.h"
+#include "delfem2/femem3.h"
 #include "delfem2/mats.h"
 //
 #include "delfem2/fem_emats.h"
