@@ -4,9 +4,9 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 
 
-## Simple Example without DelFEM2
+## EigenModes
 
-### [000_OpenWin](000_OpenWindowWithGLFW)
-<img src="000_OpenWindowWithGLFW/thumbnail.png" width=200px>
+### [00_EigenModes](00_EigenModes)
+<img src="00_EigenModes/thumbnail.png" width=200px>
 
 

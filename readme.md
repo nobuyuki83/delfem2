@@ -29,6 +29,7 @@ There are currently no tutorial available for this library. To understand the co
   + [examples_oldgl_glfw_cnpy](examples_oldgl_glfw_cnpy): dependencies: GLFW and cnpy
   + [examples_oldgl_glfw_thread](examples_oldgl_glfw_thread): dependencies: GLFW and thread
   + [examples_oldgl_glfw_tinygltf](examples_oldgl_glfw_tinygltf): dependencies: GLFW and TinyGLTF
+  + [examples_oldgl_glfw_eigen](examples_oldgl_glfw_eigen): dependencies: GLFW and Eigen
   + [examples_oldgl_glut](examples_oldgl_glut):  dependency: GLUT
 + examples usigng modern OpenGL
   + [examples_newgl_glfw](examples_newgl_glfw):  dependency: GLFW
