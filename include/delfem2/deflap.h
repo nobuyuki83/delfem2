@@ -20,11 +20,13 @@ namespace delfem2 {
 class CDef_LaplacianLinearAsym
 {
 public:
-  void Init(const std::vector<double>& aXYZ0,
-            const std::vector<unsigned int>& aTri);
-  void Deform(std::vector<double>& aXYZ1,
-              const std::vector<double>& aXYZ0,
-              const std::vector<int>& aBCFlag);
+  void Init(
+      const std::vector<double>& aXYZ0,
+      const std::vector<unsigned int>& aTri);
+  void Deform(
+      std::vector<double>& aXYZ1,
+      const std::vector<double>& aXYZ0,
+      const std::vector<int>& aBCFlag);
 public:
   CMatrixSparse<double> mat_A;
   std::vector<double> aRhs0, aRhs1;
@@ -120,15 +122,17 @@ public:
  */
 class CDef_LaplacianLinearDegenerate{
 public:
-  void Init(const std::vector<double>& aXYZ0,
-            const std::vector<unsigned int>& aTri,
-            bool is_preconditinoner);
-  void Deform(std::vector<double>& aXYZ1,
-              const std::vector<double>& aXYZ0) const;
+  void Init(
+      const std::vector<double>& aXYZ0,
+      const std::vector<unsigned int>& aTri,
+      bool is_preconditinoner);
+  void Deform(
+      std::vector<double>& aXYZ1,
+      const std::vector<double>& aXYZ0) const;
   void SetBoundaryConditionToPreconditioner();
   // -----------
   void MatVec(double* y,
-              double alpha, const double* vec,  double beta) const;
+      double alpha, const double* vec,  double beta) const;
   void SolvePrecond(double* y) const;
 public:
   //! penalty coefficient for the sliding boundary condition

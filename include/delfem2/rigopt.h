@@ -11,6 +11,7 @@
 #include "delfem2/rig_geo3.h"
 #include "delfem2/quat.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/lsitrsol.h"
 
 namespace delfem2 {
 
@@ -216,8 +217,19 @@ Solve_MinRigging(
                 adC0.data(), nC, nsns, aC0.data());
   
   std::vector<double> u(nsns,0.0);
-  std::vector<double> reshist =  Solve_CG(r.data(), u.data(),
-                                               nsns, 1.0e-3, 100, mat);
+  std::vector<double> reshist;
+  {
+    const std::size_t n = nsns;
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = delfem2::CVecXd(r);
+    auto vu = delfem2::CVecXd(u);
+    auto vs = delfem2::CVecXd(tmp0);
+    auto vt = delfem2::CVecXd(tmp1);
+    reshist = Solve_CG(
+        vr, vu,
+        1.0e-3, 100, mat,
+        vs, vt);
+  }
   //  std::cout << "convergence" << reshist.size() << std::endl;
   for(unsigned int ib=0;ib<aBone.size();++ib){
      CVec3d vec_rot(u.data()+ib*3);

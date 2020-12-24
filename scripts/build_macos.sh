@@ -155,7 +155,7 @@ git pull origin master
 cd ../../
 
 echo "################################"
-echo "build examples_smpl"
+echo "build examples_cnpy"
 echo "################################"
 
 cd examples_oldgl_glfw_cnpy
@@ -168,6 +168,17 @@ cd ../../
 cd examples_oldgl_glfw_cnpy
 mkdir buildMakeHdronly
 cd buildMakeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+make 
+cd ../../
+
+echo "################################"
+echo "build examples_eigen"
+echo "################################"
+
+cd examples_oldgl_glfw_eigen
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly
 cmake -DUSE_HEADERONLY=ON ..
 make 
 cd ../../

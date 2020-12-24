@@ -9,6 +9,7 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mat3.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/lsitrsol.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
 
@@ -631,8 +632,16 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
   std::vector<double> vec_x;
   vec_x.assign(nNode*3, 0.0);
   {
-    auto aConvHist = Solve_CG(vec_r.data(),vec_x.data(),
-                              vec_r.size(), 1.0e-4, 300, mats);
+    const std::size_t n = vec_r.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(vec_r);
+    auto vu = CVecXd(vec_x);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
+    auto aConvHist = Solve_CG(
+        vr, vu,
+        1.0e-4, 300, mats,
+        vs, vt);
     if( aConvHist.size() > 0 ){
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
     }
@@ -962,8 +971,16 @@ DFM2_INLINE void delfem2::Solve_RodHair(
   std::vector<double> vec_x;
   vec_x.assign(np*4, 0.0);
   {
-    auto aConvHist = Solve_CG(vec_r.data(),vec_x.data(),
-                              vec_r.size(), 1.0e-4, 300, mats);
+    const std::size_t n = vec_r.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(vec_r);
+    auto vu = CVecXd(vec_x);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
+    auto aConvHist = Solve_CG(
+        vr,vu,
+        1.0e-4, 300, mats,
+        vs,vt);
     if( aConvHist.size() > 0 ){
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
     }
@@ -1082,8 +1099,16 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
   setRHS_Zero(vec_r, aBCFlag,0);
   femrod::CMatContact mc(mats,aContact,stiff_contact);
   {
-    auto aConvHist = Solve_CG(vec_r.data(),vec_x.data(),
-                              vec_r.size(), 1.0e-6, 3000, mc);
+    const std::size_t n = vec_r.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(vec_r);
+    auto vu = CVecXd(vec_x);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
+    auto aConvHist = Solve_CG(
+        vr, vu,
+        1.0e-6, 3000, mc,
+        vs, vt);
     /*
     if( aConvHist.size() > 0 ){
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;

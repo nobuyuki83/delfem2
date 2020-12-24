@@ -6,6 +6,8 @@
 #include "delfem2/mats.h"
 #include "delfem2/femem3.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/lsitrsol.h"
+
 
 namespace dfm2 = delfem2;
 
@@ -14,17 +16,17 @@ namespace dfm2 = delfem2;
 /**
  * @brief compute total energy and its first and second derivatives
  */
-void AddWdW_Cloth
-(double& W, // (out) energy
- std::vector<double>& dW, // (out) first derivative of energy
- ////
- const std::vector<double>& aXYZ, // (in) deformed vertex positions
- const std::vector<double>& aXYZ0, // (in) initial vertex positions
- const std::vector<unsigned int>& aTri, // (in) triangle index
- const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending
- double lambda, // (in) Lame's 1st parameter
- double myu,  // (in) Lame's 2nd parameter
- double stiff_bend // (in) bending stiffness
+void AddWdW_Cloth(
+    double& W, // (out) energy
+    std::vector<double>& dW, // (out) first derivative of energy
+    //
+    const std::vector<double>& aXYZ, // (in) deformed vertex positions
+    const std::vector<double>& aXYZ0, // (in) initial vertex positions
+    const std::vector<unsigned int>& aTri, // (in) triangle index
+    const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending
+    double lambda, // (in) Lame's 1st parameter
+    double myu,  // (in) Lame's 2nd parameter
+    double stiff_bend // (in) bending stiffness
  )
 {
   // marge element in-plane strain energy
@@ -90,24 +92,24 @@ double AddWdW_Gravity
   return W;
 }
 
-void StepTime_InternalDynamics
-(std::vector<double>& aXYZ, // (in,out) deformed vertex positions
- std::vector<double>& aUVW, // (in,out) deformed vertex velocity
- delfem2::CMatrixSparse<double>& mat_A,
- ////
- const std::vector<double>& aXYZ0,// (in) initial vertex positions
- const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)
- const std::vector<unsigned int>& aTri, // (in) triangle index
- const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending
- const double dt, // (in) size of time step
- double lambda, // (in) Lame's 1st parameter
- double myu, // (in) Lame's 2nd parameter
- double stiff_bend, // (in) bending stiffness
- const double gravity[3], // (in) gravitatinal accereration
- double mass_point, // (in) mass for a point
- double stiff_contact,
- double contact_clearance,
- const dfm2::CInput_Contact& input_contact)
+void StepTime_InternalDynamics(
+    std::vector<double>& aXYZ, // (in,out) deformed vertex positions
+    std::vector<double>& aUVW, // (in,out) deformed vertex velocity
+    delfem2::CMatrixSparse<double>& mat_A,
+    //
+    const std::vector<double>& aXYZ0,// (in) initial vertex positions
+    const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)
+    const std::vector<unsigned int>& aTri, // (in) triangle index
+    const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending
+    const double dt, // (in) size of time step
+    double lambda, // (in) Lame's 1st parameter
+    double myu, // (in) Lame's 2nd parameter
+    double stiff_bend, // (in) bending stiffness
+    const double gravity[3], // (in) gravitatinal accereration
+    double mass_point, // (in) mass for a point
+    double stiff_contact,
+    double contact_clearance,
+    const dfm2::CInput_Contact& input_contact)
 {
   const size_t np = aXYZ.size()/3; // number of point，頂点数
   const int nDof = np*3; // degree of freedom，全自由度数
@@ -116,19 +118,23 @@ void StepTime_InternalDynamics
   std::vector<double> vec_b(nDof,0);
 	mat_A.SetZero();
   std::vector<int> tmp_buffer(np,-1);
-  W += delfem2::MergeLinSys_Cloth(mat_A,vec_b.data(),
-                                  lambda,myu,stiff_bend,
-                                  aXYZ0.data(), aXYZ0.size()/3, 3,
-                                  aTri.data(), aTri.size()/3,
-                                  aQuad.data(), aQuad.size()/4,
-                                  aXYZ.data());
-  W += delfem2::MergeLinSys_Contact(mat_A, vec_b.data(),
-                                    stiff_contact,contact_clearance,
-                                    input_contact,
-                                    aXYZ.data(), aXYZ.size()/3);
-  W += AddWdW_Gravity(vec_b,
-                      aXYZ,
-                      gravity,mass_point);
+  W += delfem2::MergeLinSys_Cloth(
+      mat_A,vec_b.data(),
+      lambda,myu,stiff_bend,
+      aXYZ0.data(), aXYZ0.size()/3, 3,
+      aTri.data(), aTri.size()/3,
+      aQuad.data(), aQuad.size()/4,
+      aXYZ.data());
+  W += delfem2::MergeLinSys_Contact(
+      mat_A, vec_b.data(),
+      stiff_contact,contact_clearance,
+      input_contact,
+      aXYZ.data(), aXYZ.size()/3);
+  W += AddWdW_Gravity(
+      vec_b,
+      aXYZ,
+      gravity,
+      mass_point);
   //std::cout << "energy : " << W << std::endl;
   // compute coefficient matrix and left-hand-side vector
   // Back-ward Eular time integration
@@ -151,8 +157,19 @@ void StepTime_InternalDynamics
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  Solve_CG(vec_b.data(),vec_x.data(),
-           vec_b.size(), conv_ratio,iteration,  mat_A);
+  {
+    std::size_t n = vec_b.size();
+    vec_x.resize(n);
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vb = delfem2::CVecXd(vec_b);
+    auto vx = delfem2::CVecXd(vec_x);
+    auto vs = delfem2::CVecXd(tmp0);
+    auto vt = delfem2::CVecXd(tmp1);
+    Solve_CG(
+        vx,vb,
+        conv_ratio, iteration, mat_A,
+        vs,vt);
+  }
   std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position，頂点位置の更新
   for(int i=0;i<nDof;i++){ aXYZ[i] += vec_x[i]; }
@@ -160,25 +177,25 @@ void StepTime_InternalDynamics
   for(int i=0;i<nDof;i++){ aUVW[i] = vec_x[i]/dt; }
 }
 
-void StepTime_InternalDynamicsILU
-(std::vector<double>& aXYZ, // (in,out) deformed vertex positions，現在の頂点位置配列
- std::vector<double>& aUVW, // (in,out) deformed vertex velocity，現在の頂点速度配列
- delfem2::CMatrixSparse<double>& mat_A,
- delfem2::CPreconditionerILU<double>& ilu_A,
- ////
- const std::vector<double>& aXYZ0,// (in) initial vertex positions，変形前の頂点の座標配列
- const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)，境界条件フラグの配列
- const std::vector<unsigned int>& aTri, // (in) triangle index，三角形の頂点インデックス配列
- const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending，曲げ計算のための４頂点のインデックス配列
- const double dt, // (in) size of time step，時間ステップの大きさ
- double lambda, // (in) Lame's 1st parameter，ラメ第一定数
- double myu, // (in) Lame's 2nd parameter，ラメ第二定数
- double stiff_bend, // (in) bending stiffness 曲げ剛性
- const double gravity[3], // (in) gravitatinal accereration，重力加速度
- double mass_point, // (in) mass for a point，頂点あたりの質量
- double stiff_contact,
- double contact_clearance,
- const dfm2::CInput_Contact& input_contact)
+void StepTime_InternalDynamicsILU(
+    std::vector<double>& aXYZ, // (in,out) deformed vertex positions，現在の頂点位置配列
+    std::vector<double>& aUVW, // (in,out) deformed vertex velocity，現在の頂点速度配列
+    delfem2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    //
+    const std::vector<double>& aXYZ0,// (in) initial vertex positions，変形前の頂点の座標配列
+    const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)，境界条件フラグの配列
+    const std::vector<unsigned int>& aTri, // (in) triangle index，三角形の頂点インデックス配列
+    const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending，曲げ計算のための４頂点のインデックス配列
+    const double dt, // (in) size of time step，時間ステップの大きさ
+    double lambda, // (in) Lame's 1st parameter，ラメ第一定数
+    double myu, // (in) Lame's 2nd parameter，ラメ第二定数
+    double stiff_bend, // (in) bending stiffness 曲げ剛性
+    const double gravity[3], // (in) gravitatinal accereration，重力加速度
+    double mass_point, // (in) mass for a point，頂点あたりの質量
+    double stiff_contact,
+    double contact_clearance,
+    const dfm2::CInput_Contact& input_contact)
 {
   const unsigned int np = aXYZ.size()/3; 
   const unsigned int nDof = np*3;
@@ -187,19 +204,22 @@ void StepTime_InternalDynamicsILU
   std::vector<double> vec_b(nDof,0);
 	mat_A.SetZero();
   std::vector<int> tmp_buffer(np,-1);
-  W += delfem2::MergeLinSys_Cloth(mat_A,vec_b.data(),
-                                  lambda,myu,stiff_bend,
-                                  aXYZ0.data(), aXYZ0.size()/3, 3,
-                                  aTri.data(), aTri.size()/3,
-                                  aQuad.data(), aQuad.size()/4,
-                                  aXYZ.data());
-  W += delfem2::MergeLinSys_Contact(mat_A,vec_b.data(),
-                                    stiff_contact,contact_clearance,
-                                    input_contact,
-                                    aXYZ.data(), aXYZ.size()/3);
-  W += AddWdW_Gravity(vec_b,
-                      aXYZ,
-                      gravity,mass_point);
+  W += delfem2::MergeLinSys_Cloth(
+      mat_A,vec_b.data(),
+      lambda,myu,stiff_bend,
+      aXYZ0.data(), aXYZ0.size()/3, 3,
+      aTri.data(), aTri.size()/3,
+      aQuad.data(), aQuad.size()/4,
+      aXYZ.data());
+  W += delfem2::MergeLinSys_Contact(
+      mat_A,vec_b.data(),
+      stiff_contact,contact_clearance,
+      input_contact,
+      aXYZ.data(), aXYZ.size()/3);
+  W += AddWdW_Gravity(
+      vec_b,
+      aXYZ,
+      gravity,mass_point);
 //  std::cout << "energy : " << W << std::endl;
   // compute coefficient matrix and left-hand-side vector
   // Back-ward Eular time integration
@@ -222,8 +242,9 @@ void StepTime_InternalDynamicsILU
   double conv_ratio = 1.0e-4;
   int iteration = 100;
   std::vector<double> vec_x(vec_b.size());
-  Solve_PCG(vec_b.data(),vec_x.data(),
-            vec_b.size(), conv_ratio, iteration, mat_A,ilu_A);
+  Solve_PCG(
+      vec_b.data(),vec_x.data(),
+      vec_b.size(), conv_ratio, iteration, mat_A,ilu_A);
 //  std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position
   for(unsigned int i=0;i<nDof;i++){
