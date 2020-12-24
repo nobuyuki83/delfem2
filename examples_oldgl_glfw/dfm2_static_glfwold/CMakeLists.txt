@@ -106,6 +106,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/old/v3q.h          ${DELFEM2_INC}/opengl/old/v3q.cpp
     ${DELFEM2_INC}/opengl/old/color.h        ${DELFEM2_INC}/opengl/old/color.cpp
     ${DELFEM2_INC}/opengl/old/funcs.h        ${DELFEM2_INC}/opengl/old/funcs.cpp
+    ${DELFEM2_INC}/opengl/old/mshuni.h       ${DELFEM2_INC}/opengl/old/mshuni.cpp
     ${DELFEM2_INC}/opengl/old/cad2dtriv2.h   ${DELFEM2_INC}/opengl/old/cad2dtriv2.cpp
     ${DELFEM2_INC}/opengl/old/caddtri_v3.h   ${DELFEM2_INC}/opengl/old/caddtri_v3.cpp
     ${DELFEM2_INC}/opengl/old/rigv3.h        ${DELFEM2_INC}/opengl/old/rigv3.cpp

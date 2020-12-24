@@ -10,6 +10,7 @@
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"

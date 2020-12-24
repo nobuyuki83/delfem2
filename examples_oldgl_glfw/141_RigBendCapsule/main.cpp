@@ -8,6 +8,7 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/rigv3.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/primitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/rig_geo3.h"

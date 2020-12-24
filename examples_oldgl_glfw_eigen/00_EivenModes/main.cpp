@@ -6,8 +6,8 @@
 */
 
 /**
- * @brief demo for view navigation in 3D
- * @details this demo is for showing CViewer_GLFW funtinoalities
+ * @brief demo for visualizing eigenmodes
+ * @details quality of the eigenmodes is bad if its index is high...
  */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"

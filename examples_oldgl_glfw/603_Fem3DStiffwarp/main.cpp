@@ -8,6 +8,7 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
