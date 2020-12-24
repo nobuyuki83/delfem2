@@ -168,7 +168,7 @@ int main(int argc,char* argv[])
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
         def.Deform(aXYZ1,
-                   aXYZ0);
+            aXYZ0);
         std::cout << "  cg nitr:" << def.aConvHist.size() << std::endl;
         // -------
         viewer.DrawBegin_oldGL();
@@ -185,10 +185,12 @@ int main(int argc,char* argv[])
       def.SetBoundaryConditionToPreconditioner();
       glfwSetWindowTitle(viewer.window, "(4) Def_LaplacianLinearGram with Preconditioner");
       for(;iframe<400;++iframe){
-        SetPositionAtFixedBoundary(aXYZ1,
-                                   iframe, aXYZ0, aBCFlag);
-        def.Deform(aXYZ1,
-                   aXYZ0);
+        SetPositionAtFixedBoundary(
+            aXYZ1,
+            iframe, aXYZ0, aBCFlag);
+        def.Deform(
+            aXYZ1,
+            aXYZ0);
         std::cout << "  pcg nitr:" << def.aConvHist.size() << std::endl;
         // -------
         viewer.DrawBegin_oldGL();
@@ -205,10 +207,12 @@ int main(int argc,char* argv[])
       def.aBCFlag = aBCFlag;
       def.SetValueToPreconditioner();
       for(;iframe<500;++iframe){
-        SetPositionAtFixedBoundary(aXYZ1,
-                                   iframe, aXYZ0, aBCFlag);
-        def.Deform(aXYZ1,
-                   aXYZ0);
+        SetPositionAtFixedBoundary(
+            aXYZ1,
+            iframe, aXYZ0, aBCFlag);
+        def.Deform(
+            aXYZ1,
+            aXYZ0);
         std::cout << "  cg nitr:" << def.aConvHist.size() << std::endl;
         // -------
         viewer.DrawBegin_oldGL();
@@ -225,10 +229,12 @@ int main(int argc,char* argv[])
       def.aBCFlag = aBCFlag;
       def.SetValueToPreconditioner();
       for(;iframe<600;++iframe){
-        SetPositionAtFixedBoundary(aXYZ1,
-                                   iframe, aXYZ0, aBCFlag);
-        def.Deform(aXYZ1,
-                   aXYZ0);
+        SetPositionAtFixedBoundary(
+            aXYZ1,
+            iframe, aXYZ0, aBCFlag);
+        def.Deform(
+            aXYZ1,
+            aXYZ0);
         std::cout << "  pcg nitr:" << def.aConvHist.size() << std::endl;
         // -------
         viewer.DrawBegin_oldGL();

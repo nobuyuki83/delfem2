@@ -99,13 +99,14 @@ void StepTime()
   const double contact_clearance = 0.02;
   ////
   CInput_ContactNothing c1;
-  StepTime_InternalDynamicsILU(aXYZ, aUVW, mat_A, ilu_A,
-                               aXYZ0, aBCFlag,
-                               aTri, aQuad,
-                               time_step_size,
-                               lambda, myu, stiff_bend,
-                               gravity, mass_point,
-                               stiff_contact,contact_clearance,c1);
+  StepTime_InternalDynamicsILU(
+      aXYZ, aUVW, mat_A, ilu_A,
+      aXYZ0, aBCFlag,
+      aTri, aQuad,
+      time_step_size,
+      lambda, myu, stiff_bend,
+      gravity, mass_point,
+      stiff_contact,contact_clearance,c1);
 }
 
 // -----------------------------------------------
@@ -162,15 +163,17 @@ int main(int argc,char* argv[])
     aXYZ0[ip*3+2] = 0.0;
   }
   aXYZ = aXYZ0;
-  /////
+  //
   aTri.resize(aETri.size()*3);
   for(std::size_t it=0;it<aETri.size();++it){
     aTri[it*3+0] = aETri[it].v[0];
     aTri[it*3+1] = aETri[it].v[1];
     aTri[it*3+2] = aETri[it].v[2];
   }
-  dfm2::ElemQuad_DihedralTri(aQuad,
-                             aTri.data(),aTri.size()/3,aXYZ0.size()/3);
+  dfm2::ElemQuad_DihedralTri(
+      aQuad,
+      aTri.data(),aTri.size()/3,
+      aXYZ0.size()/3);
   {
     const std::size_t np = aXYZ0.size()/3;
     mat_A.Initialize(np,3,true);

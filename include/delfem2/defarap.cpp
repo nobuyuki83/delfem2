@@ -10,6 +10,7 @@
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
 #include "delfem2/mshuni.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/lsitrsol.h"
 #include "delfem2/jagarray.h"
 
 namespace delfem2 {
@@ -188,8 +189,18 @@ void delfem2::CDef_ArapEdgeLinearDisponly::Deform(
   this->MakeLinearSystem(aRhs.data(),
                         aXYZ0.data(), aXYZ1.data());
   std::vector<double> aUpd(np*3,0.0);
-  std::vector<double> aRes = Solve_CG(aRhs.data(), aUpd.data(),
-                                      np*3, 1.0e-4, 300, *this);
+  {
+    const std::size_t n = np*3;
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(aRhs);
+    auto vu = CVecXd(aUpd);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
+    std::vector<double> aRes = Solve_CG(
+        vr, vu,
+        1.0e-4, 300, *this,
+        vs, vt);
+  }
 //  std::cout << "iframe: " << iframe << "   nitr:" << aRes.size() << std::endl;
   for(unsigned int i=0;i<np*3;++i){ aXYZ1[i] += aUpd[i]; }
 }
@@ -386,8 +397,16 @@ void delfem2::CDef_ArapEdge::Deform(
                           np*6, 1.0e-4, 400, *this, *this);
   }
   else{
-    aConvHist = Solve_CG(aRhs.data(), aUpd.data(),
-                         np*6, 1.0e-4, 400, *this);
+    const std::size_t n = np*6;
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(aRhs);
+    auto vu = CVecXd(aUpd);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
+    aConvHist = Solve_CG(
+        vr, vu,
+        1.0e-4, 400, *this,
+        vs, vt);
   }
   for(unsigned int ip=0;ip<np;++ip){
     aXYZ1[ip*3+0] += aUpd[ip*3+0];
@@ -490,8 +509,16 @@ void delfem2::CDef_Arap::Deform(
                          aRes1.size(), 1.0e-7, 300, Mat, Prec);
   }
   else{
-    aConvHist = Solve_CG(aRes1.data(), aUpd1.data(),
-                         aRes1.size(), 1.0e-7, 300, Mat);
+    const std::size_t n = aRes1.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(aRes1);
+    auto vu = CVecXd(aUpd1);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
+    aConvHist = Solve_CG(
+        vr,vu,
+        1.0e-7, 300, Mat,
+        vs, vt);
   }
 
   for(unsigned int i=0;i<np*3;++i){ aXYZ1[i] -= aUpd1[i]; }

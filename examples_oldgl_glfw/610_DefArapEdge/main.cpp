@@ -19,11 +19,11 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------
 
-void SetPositionAtFixedBoundary
- (std::vector<double>& aRhs,
-  unsigned int iframe,
-  const std::vector<double>& aXYZ0,
-  const std::vector<int>& aBCFlag)
+void SetPositionAtFixedBoundary(
+    std::vector<double>& aRhs,
+    unsigned int iframe,
+    const std::vector<double>& aXYZ0,
+    const std::vector<int>& aBCFlag)
 {
   double A[16];
   {
@@ -52,10 +52,10 @@ void SetPositionAtFixedBoundary
   }
 }
 
-void myGlutDisplay_Mesh
-(const std::vector<double>& aXYZ0,
-const std::vector<double>& aXYZ1,
-const std::vector<unsigned int>& aTri)
+void myGlutDisplay_Mesh(
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& aTri)
 {
   ::glLineWidth(1);
   ::glDisable(GL_LIGHTING);
@@ -70,8 +70,9 @@ const std::vector<unsigned int>& aTri)
   
 }
 
-void Draw_BCFlag(const std::vector<double>& aXYZ1,
-                 const std::vector<int>& aBCFlag)
+void Draw_BCFlag(
+    const std::vector<double>& aXYZ1,
+    const std::vector<int>& aBCFlag)
 { // draw bc as a point
   ::glPointSize(10);
   ::glBegin(GL_POINTS);

@@ -161,8 +161,19 @@ void Solve_MinEnergyArap(
   }
   
   std::vector<double> u(nsns,0.0);
-  std::vector<double> reshist = dfm2::Solve_CG(r.data(), u.data(),
-      nsns, 1.0e-3, 100, mat);
+  std::vector<double> reshist;
+  {
+    const std::size_t n = nsns;
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(r);
+    auto vu = dfm2::CVecXd(u);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    reshist = dfm2::Solve_CG(
+        vr, vu,
+        1.0e-3, 100, mat,
+        vs, vt);
+  }
   
   std::cout << "convergence: " << reshist.size() << std::endl;
   assert( u.size() == (nb+1)*3 );

@@ -140,56 +140,81 @@ void MatTVec(
     const double* x);
 
 
-// ----------------------------------------------------------------------
-
-/**
- * @brief solve linear system using conjugate gradient method
- * @param mat (in)  a template class with member function "MatVec" with  {y} = alpha*[A]{x} + beta*{y}
- */
-template<typename REAL, typename MAT>
-std::vector<REAL>
-Solve_CG(
-    REAL* r_vec,
-    REAL* u_vec,
-    unsigned int N,
-    REAL conv_ratio_tol,
-    unsigned int max_iteration,
-    const MAT& mat)
+template<typename REAL>
+class CVecX
 {
-  std::vector<REAL> aConv;
-  for(unsigned int i=0;i<N;++i){ u_vec[i] = 0; }
-  REAL sqnorm_res = DotX(r_vec, r_vec, N);
-  if (sqnorm_res < 1.0e-30) { return aConv; }
-  REAL inv_sqnorm_res_ini = 1 / sqnorm_res;
-  std::vector<REAL> Ap_vec(N);
-  std::vector<REAL> p_vec(r_vec,r_vec+N);  // {p} = {r}  (Set Initial Serch Direction)
-  for (unsigned int iitr = 0; iitr < max_iteration; iitr++) {
-    REAL alpha;
-    {  // alpha = (r,r) / (p,Ap)
-      mat.MatVec(Ap_vec.data(),
-                 1.0, p_vec.data(), 0.0);
-      const REAL pAp = Dot(p_vec, Ap_vec);
-      alpha = sqnorm_res / pAp;
+public:
+  CVecX(REAL* p_, std::size_t n_) :
+  p(p_), n(n_) {}
+  CVecX(std::vector<REAL>& v) :
+  p(v.data()), n(v.size()) {}
+  //
+  REAL dot(const CVecX& rhs){
+    assert(n == rhs.n);
+    REAL d = 0;
+    for(unsigned int i=0;i<n;++i){
+      d += p[i]*rhs.p[i];
     }
-    AXPY(alpha, p_vec.data(), u_vec, N);    // {x} = +alpha*{ p} + {x} (update x)
-    AXPY(-alpha, Ap_vec.data(), r_vec, N);  // {r} = -alpha*{Ap} + {r}
-    const REAL sqnorm_res_new = DotX(r_vec, r_vec, N);
-    REAL conv_ratio = sqrt(sqnorm_res_new * inv_sqnorm_res_ini);
-    aConv.push_back(conv_ratio);
-    if (conv_ratio < conv_ratio_tol) { return aConv; }
-    {
-      const REAL beta = sqnorm_res_new / sqnorm_res;      // beta = (r1,r1) / (r0,r0)
-      sqnorm_res = sqnorm_res_new;
-      for (unsigned int i = 0; i < N; i++) { p_vec[i] = r_vec[i] + beta * p_vec[i]; } // {p} = {r} + beta*{p}
+    return d;
+  }
+  void operator = (const CVecX& rhs){
+    assert(n == rhs.n);
+    for(unsigned int i=0;i<n;++i){
+      p[i] = rhs.p[i];
     }
   }
-  return aConv;
+  //
+  void setZero() {
+    for(unsigned int i=0;i<n;++i){ p[0] = 0; }
+  }
+public:
+  REAL* const p;
+  const std::size_t n;
+};
+using CVecXd = CVecX<double>;
+using CVecXf = CVecX<float>;
+
+template <typename REAL>
+void AddScaledVec(
+    CVecX<REAL>& y,
+    REAL alpha,
+    const CVecX<REAL>& x)
+{
+  const std::size_t n = x.n;
+  for (unsigned int i = 0; i < n; i++) { y.p[i] += alpha * x.p[i]; }
 }
+
+template <typename REAL>
+void ScaleAndAddVec(
+    CVecX<REAL>& y,
+    REAL beta,
+    const CVecX<REAL>& x)
+{
+  const std::size_t n = x.n;
+  for (unsigned int i = 0; i < n; i++) { y.p[i] = beta * y.p[i] + x.p[i]; }
+}
+
+template<typename REAL, class MAT, class VEC>
+void AddMatVec(
+    VEC& lhs,
+    REAL scale_lhs,
+    REAL scale_rhs,
+    const MAT& mat,
+    const VEC& rhs)
+{
+  mat.MatVec(lhs.p,
+      scale_rhs, rhs.p, scale_lhs);
+}
+
+
+
+
+// ----------------------------------------------------------------------
 
 /**
  * @brief solve complex linear system using conjugate gradient method
  */
-template<typename REAL, typename MAT>
+template<typename REAL, class MAT>
 std::vector<REAL>
 Solve_CG_Complex(
     std::vector<std::complex<REAL>> &r_vec,
@@ -236,9 +261,8 @@ Solve_CG_Complex(
   return aConv;
 }
 
-template<typename REAL, typename MAT>
-std::vector<REAL>
-Solve_BiCGStab(
+template<typename REAL, class MAT>
+std::vector<REAL> Solve_BiCGStab(
     std::vector<REAL> &r_vec,
     std::vector<REAL> &x_vec,
     REAL conv_ratio_tol,
@@ -317,7 +341,7 @@ Solve_BiCGStab(
   return aConv;
 }
 
-template<typename REAL, typename MAT>
+template<typename REAL, class MAT>
 std::vector<REAL>
 Solve_BiCGSTAB_Complex(
     std::vector<std::complex<REAL>> &r_vec,
@@ -390,7 +414,7 @@ Solve_BiCGSTAB_Complex(
   return aConv;
 }
 
-template <typename REAL, typename MAT, typename PREC>
+template <typename REAL, class MAT, class PREC>
 std::vector<double> Solve_PBiCGStab(
  REAL* r_vec,
  REAL* x_vec,
@@ -479,14 +503,14 @@ std::vector<double> Solve_PBiCGStab(
   return aResHistry;
 }
 
-template <typename REAL, typename MAT, typename PREC>
-std::vector<double> Solve_PBiCGStab_Complex
-(std::complex<REAL>* r_vec,
- std::complex<REAL>* x_vec,
- double conv_ratio_tol,
- unsigned int max_niter,
- const MAT& mat,
- const PREC& ilu)
+template <typename REAL, class MAT, class PREC>
+std::vector<double> Solve_PBiCGStab_Complex(
+    std::complex<REAL>* r_vec,
+    std::complex<REAL>* x_vec,
+    double conv_ratio_tol,
+    unsigned int max_niter,
+    const MAT& mat,
+    const PREC& ilu)
 {
   using COMPLEX = std::complex<REAL>;
   
@@ -564,7 +588,7 @@ std::vector<double> Solve_PBiCGStab_Complex
 /**
  * @brief solve a real-valued linear system using the conjugate gradient method with preconditioner
  */
-template <typename REAL, typename MAT, typename PREC>
+template <typename REAL, class MAT, class PREC>
 std::vector<double> Solve_PCG(
     REAL *r_vec,
     REAL *x_vec,
@@ -598,7 +622,7 @@ std::vector<double> Solve_PCG(
       std::vector<double> &Ap_vec = Pr_vec;
       // {Ap} = [A]{p}
       mat.MatVec(Ap_vec.data(),
-                 1.0, p_vec.data(), 0.0);
+          1.0, p_vec.data(), 0.0);
       // alpha = ({r},{Pr})/({p},{Ap})
       const double pAp = Dot(p_vec, Ap_vec);
       double alpha = rPr / pAp;
@@ -633,7 +657,7 @@ std::vector<double> Solve_PCG(
 }
 
 
-template <typename REAL, typename MAT, typename PREC>
+template <typename REAL, class MAT, class PREC>
 std::vector<double> Solve_PCG_Complex
 (std::complex<REAL> *r_vec,
  std::complex<REAL> *x_vec,
@@ -703,14 +727,14 @@ std::vector<double> Solve_PCG_Complex
   return aResHistry;
 }
 
-template <typename REAL, typename MAT, typename PREC>
-std::vector<double> Solve_PCOCG
-(std::complex<REAL>* r_vec,
- std::complex<REAL>* x_vec,
- double conv_ratio_tol,
- unsigned int max_niter,
- const MAT& mat,
- const PREC& ilu)
+template <typename REAL, class MAT, class PREC>
+std::vector<double> Solve_PCOCG(
+    std::complex<REAL>* r_vec,
+    std::complex<REAL>* x_vec,
+    double conv_ratio_tol,
+    unsigned int max_niter,
+    const MAT& mat,
+    const PREC& ilu)
 {
   using COMPLEX = std::complex<REAL>;
 

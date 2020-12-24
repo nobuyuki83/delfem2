@@ -10,9 +10,10 @@
  * @details quality of the eigenmodes is bad if its index is high...
  */
 
+#include "delfem2/eigen/lsitrsol.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/color.h"
-#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/primitive.h"
 #include "delfem2/points.h"
 #include "delfem2/femem2.h"
@@ -44,24 +45,42 @@ void ShowEigen_Laplace(
     }
   }
 
-  Eigen::EigenSolver<Eigen::MatrixXd> s(A);
-  std::cout << s.eigenvalues() << std::endl;
-  std::cout << s.eigenvectors() << std::endl;
-
-  //
-  delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_oldGL();
-
-  while (!glfwWindowShouldClose(viewer.window))
   {
-    viewer.DrawBegin_oldGL();
-    dfm2::opengl::DrawMeshQuad2D_Edge(aXY,aQuad);
-//    dfm2::opengl::DrawMeshQuad2_ScalarP1(aXY,aQuad,)
-    viewer.SwapBuffers();
-    glfwPollEvents();
+    A(0,0) += 1.0;
+    Eigen::VectorXd r(np), u(np), s(np), t(np);
+    double a = r.dot(r);
+    r.setRandom();
+    u.setRandom();
+    std::cout << "hoge" << std::endl;
+    std::cout << r << std::endl;
+    std::cout << "huga" << std::endl;
+    std::cout << u << std::endl;
+    std::cout << "foo" << r.dot(r) << std::endl;
+    std::vector<double> aResHist = dfm2::Solve_CG(
+        r,u,
+        1.0e-5,1000,A,s,t);
+    for(double & itr : aResHist){
+      std::cout << "a " << itr << std::endl;
+    }
   }
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
+
+
+  {
+    Eigen::EigenSolver<Eigen::MatrixXd> s(A);
+    std::cout << s.eigenvalues() << std::endl;
+    std::cout << s.eigenvectors() << std::endl;
+    delfem2::opengl::CViewer_GLFW viewer;
+    viewer.Init_oldGL();
+    while (!glfwWindowShouldClose(viewer.window)) {
+      viewer.DrawBegin_oldGL();
+      dfm2::opengl::DrawMeshQuad2D_Edge(aXY, aQuad);
+      //    dfm2::opengl::DrawMeshQuad2_ScalarP1(aXY,aQuad,)
+      viewer.SwapBuffers();
+      glfwPollEvents();
+    }
+    glfwDestroyWindow(viewer.window);
+    glfwTerminate();
+  }
 }
 
 void ShowEigen_SolidLinear(
@@ -74,7 +93,7 @@ void ShowEigen_SolidLinear(
   A.setZero();
 
   double emat[4][4][2][2];
-  dfm2::EMat_SolidLinear2_QuadOrth_GaussInt(emat,elen,elen, 1.0, 1.0, 1);
+  dfm2::EMat_SolidLinear2_QuadOrth_GaussInt(emat,elen,elen, 1.0, 1.0, 2);
 
   for(unsigned int iq=0;iq<aQuad.size()/4;++iq){
     const unsigned int aIp[4] = {aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3]};
@@ -94,7 +113,11 @@ void ShowEigen_SolidLinear(
     }
   }
 
-  Eigen::EigenSolver<Eigen::MatrixXd> s(A);
+  A(0,0) += 1.0;
+  A(1,1) += 1.0;
+  A(2,2) += 1.0;
+
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> s(A);
   std::cout << s.eigenvalues() << std::endl;
   std::cout << s.eigenvectors() << std::endl;
   const auto& evec = s.eigenvectors();
@@ -109,9 +132,9 @@ void ShowEigen_SolidLinear(
   while (!glfwWindowShouldClose(viewer.window))
   {
     iframe = (iframe+1)%(np*2);
-    std::cout << s.eigenvalues()(iframe).real() << std::endl;
+    std::cout << s.eigenvalues()(iframe) << std::endl;
     for(unsigned int i=0;i<np*2;++i){
-      aDisp[i] = evec(i,iframe).real();
+      aDisp[i] = evec(i,iframe);
     }
     for(unsigned int i=0;i<10;++i) {
       viewer.DrawBegin_oldGL();
@@ -129,6 +152,20 @@ void ShowEigen_SolidLinear(
 
 int main()
 {
+  std::cout << Eigen::SimdInstructionSetsInUse() << std::endl;
+  Eigen::Matrix3d A;
+  A << 1,2,3,4,5,6,7,8,9;
+  Eigen::MatrixXd v0(3,2);
+  Eigen::MatrixXd b = A*v0;
+  std::cout << b.rows() << " " << b.cols() << std::endl;
+  Eigen::MatrixXd v1(2,3);
+  v1 << 1,2,3,4,5,6;
+  std::cout << v1 << std::endl;
+  std::cout << A*v1.row(0).transpose() << std::endl;
+  //Eigen::MatrixXd b1 = A.;
+  //std::cout << b1.size() << " " << b1.cols() << " " << b1.rows() << std::endl;
+  //std::cout << b1 << std::endl;
+  //
   std::vector<double> aXY;
   std::vector<unsigned int> aQuad;
   dfm2::MeshQuad2D_Grid(aXY,aQuad,

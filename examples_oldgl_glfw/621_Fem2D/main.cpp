@@ -13,10 +13,11 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
+#include "delfem2/lsitrsol.h"
+#include "delfem2/vecxitrsol.h"
+#include "delfem2/mats.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/dtri.h"
-#include "delfem2/mats.h"
-#include "delfem2/vecxitrsol.h"
 #include "delfem2/color.h"
 #include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
@@ -277,8 +278,18 @@ void SolveProblem_Poisson()
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration, mat_A,ilu_A);
    */
-  Solve_CG(vec_b.data(),vec_x.data(),
-           vec_b.size(), conv_ratio,iteration, mat_A);
+  {
+    const std::size_t n = vec_b.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(vec_b);
+    auto vu = dfm2::CVecXd(vec_x);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    Solve_CG(
+        vr, vu,
+        conv_ratio, iteration, mat_A,
+        vs, vt);
+  }
   // ----------------
   dfm2::XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);

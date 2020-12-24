@@ -98,8 +98,9 @@ DFM2_INLINE std::complex<double> DotX(
 // distance
 
 template<typename T>
-T delfem2::Distance(const std::vector<T>& va,
-                 const std::vector<T>& vb)
+T delfem2::Distance(
+    const std::vector<T>& va,
+    const std::vector<T>& vb)
 {
   const unsigned int n = va.size();
   T r = 0.0;
@@ -393,8 +394,7 @@ MatMatX(
   }
 }
 
-DFM2_INLINE void
-MatMatTX(
+DFM2_INLINE void MatMatTX(
     double* M, // [ni, nj]
     unsigned int ni,
     unsigned int nj,

@@ -72,7 +72,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/srchbv3aabb.h
     ${DELFEM2_INC}/pgeo.h
     ${DELFEM2_INC}/sdf.h
-        
+    ${DELFEM2_INC}/lsitrsol.h
+
     ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
     ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
     ${DELFEM2_INC}/gizmo_geo3.h                ${DELFEM2_INC}/gizmo_geo3.cpp

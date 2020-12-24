@@ -19,6 +19,8 @@
 #include "delfem2/dtri.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/jagarray.h"
+namespace dfm2 = delfem2;
+
 #include <iostream>
 #include <vector>
 #include <cstdlib>
@@ -26,9 +28,6 @@
 #include <ctime>
 #include <random>
 #include <GLFW/glfw3.h>
-
-
-namespace dfm2 = delfem2;
 
 // --------------------
 
@@ -53,7 +52,7 @@ void GenMesh
                      elen );
     }
   }
-  ////
+  //
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( elen > 1.0e-10 ){
@@ -180,16 +179,18 @@ void InitializeProblem_ShellEigenPB()
       (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
-  mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
-                   psup.data(),     psup.size());
+  mat_A.SetPattern(
+      psup_ind.data(), psup_ind.size(),
+      psup.data(),     psup.size());
   ilu_A.Initialize_ILU0(mat_A);
   // --------------------------------
   aMassLumpedSqrtInv.resize(np);
   aModesKer.resize(nDoF*6);
-  SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(aMassLumpedSqrtInv.data(),
-                                          aModesKer.data(),
-                                          aXYZ.data(), aXYZ.size()/3,
-                                          aTet.data(), aTet.size()/4);
+  SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
+      aMassLumpedSqrtInv.data(),
+      aModesKer.data(),
+      aXYZ.data(), aXYZ.size()/3,
+      aTet.data(), aTet.size()/4);
   // -----------------------
   double myu = 1.0;
   double lambda = 1.0;
@@ -198,13 +199,15 @@ void InitializeProblem_ShellEigenPB()
   aMode.assign(nDoF, 0.0);
   aTmp0.assign(nDoF, 0.0);
   double gravity[3] = {0,0,0};
-  dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, aMode.data(),
-                                                 myu, lambda, rho, gravity,
-                                                 aXYZ.data(), aXYZ.size()/3,
-                                                 aTet.data(), aTet.size()/4,
-                                                 aTmp0.data());
-  MatSparse_ScaleBlk_LeftRight(mat_A,
-                               aMassLumpedSqrtInv.data());
+  dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
+      mat_A, aMode.data(),
+      myu, lambda, rho, gravity,
+      aXYZ.data(), aXYZ.size()/3,
+      aTet.data(), aTet.size()/4,
+      aTmp0.data());
+  MatSparse_ScaleBlk_LeftRight(
+      mat_A,
+      aMassLumpedSqrtInv.data());
   mat_A.AddDia(0.8);
   
   ilu_A.SetValueILU(mat_A);
@@ -217,17 +220,18 @@ void Solve(){
   const int iteration = 1000;
   std::vector<double> aConv;
   aTmp1 = aTmp0;
-  aConv = Solve_PCG(aTmp1.data(), aMode.data(),
-                    aTmp1.size(),
-                    conv_ratio, iteration,
-                    mat_A, ilu_A);
+  aConv = Solve_PCG(
+      aTmp1.data(), aMode.data(),
+      aTmp1.size(),
+      conv_ratio, iteration,
+      mat_A, ilu_A);
   double lam0 = dfm2::DotX(aTmp0.data(), aMode.data(), aTmp0.size());
   std::cout << 1.0/lam0 << std::endl;
   aTmp0 = aMode;
-  ////
+  //
   RemoveKernel();
 
-  ////
+  //
   for(std::size_t ip=0;ip<aTmp0.size()/3;++ip){
     const double s0 = aMassLumpedSqrtInv[ip];
     for(int idim=0;idim<3;++idim){
