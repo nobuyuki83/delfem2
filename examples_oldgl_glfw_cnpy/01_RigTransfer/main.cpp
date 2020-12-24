@@ -13,6 +13,7 @@
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/quat.h"

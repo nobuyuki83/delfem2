@@ -9,6 +9,7 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/fem_emats.h"

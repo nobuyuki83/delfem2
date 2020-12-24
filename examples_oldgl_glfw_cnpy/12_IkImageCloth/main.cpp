@@ -14,6 +14,7 @@
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/caddtri_v3.h"
 #include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/cnpy/smpl_cnpy.h"

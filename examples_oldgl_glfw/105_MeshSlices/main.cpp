@@ -8,6 +8,7 @@
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshuni.h"
