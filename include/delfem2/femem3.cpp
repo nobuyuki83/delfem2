@@ -213,58 +213,6 @@ DFM2_INLINE void TriDlDx(double dldx[][2],
    */
 }
 
-DFM2_INLINE double TetVolume3D
- (const double v1[3],
-  const double v2[3],
-  const double v3[3],
-  const double v4[3])
-{
-  return
-  ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
-   -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
-   +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
-   ) * 0.16666666666666666666666666666667;
-}
-
-// caluculate Derivative of Area Coord
-DFM2_INLINE void TetDlDx
- (double dldx[][3], double a[],
-  const double p0[], const double p1[], const double p2[], const double p3[])
-{
-  const double vol = TetVolume3D(p0, p1, p2, p3);
-  const double dtmp1 = 1.0/(vol * 6.0);
-  
-  a[0] = +dtmp1*(p1[0]*(p2[1]*p3[2]-p3[1]*p2[2])-p1[1]*(p2[0]*p3[2]-p3[0]*p2[2])+p1[2]*(p2[0]*p3[1]-p3[0]*p2[1]));
-  a[1] = -dtmp1*(p2[0]*(p3[1]*p0[2]-p0[1]*p3[2])-p2[1]*(p3[0]*p0[2]-p0[0]*p3[2])+p2[2]*(p3[0]*p0[1]-p0[0]*p3[1]));
-  a[2] = +dtmp1*(p3[0]*(p0[1]*p1[2]-p1[1]*p0[2])-p3[1]*(p0[0]*p1[2]-p1[0]*p0[2])+p3[2]*(p0[0]*p1[1]-p1[0]*p0[1]));
-  a[3] = -dtmp1*(p0[0]*(p1[1]*p2[2]-p2[1]*p1[2])-p0[1]*(p1[0]*p2[2]-p2[0]*p1[2])+p0[2]*(p1[0]*p2[1]-p2[0]*p1[1]));
-  
-  dldx[0][0] = -dtmp1*((p2[1]-p1[1])*(p3[2]-p1[2])-(p3[1]-p1[1])*(p2[2]-p1[2]));
-  dldx[0][1] = +dtmp1*((p2[0]-p1[0])*(p3[2]-p1[2])-(p3[0]-p1[0])*(p2[2]-p1[2]));
-  dldx[0][2] = -dtmp1*((p2[0]-p1[0])*(p3[1]-p1[1])-(p3[0]-p1[0])*(p2[1]-p1[1]));
-  
-  dldx[1][0] = +dtmp1*((p3[1]-p2[1])*(p0[2]-p2[2])-(p0[1]-p2[1])*(p3[2]-p2[2]));
-  dldx[1][1] = -dtmp1*((p3[0]-p2[0])*(p0[2]-p2[2])-(p0[0]-p2[0])*(p3[2]-p2[2]));
-  dldx[1][2] = +dtmp1*((p3[0]-p2[0])*(p0[1]-p2[1])-(p0[0]-p2[0])*(p3[1]-p2[1]));
-  
-  dldx[2][0] = -dtmp1*((p0[1]-p3[1])*(p1[2]-p3[2])-(p1[1]-p3[1])*(p0[2]-p3[2]));
-  dldx[2][1] = +dtmp1*((p0[0]-p3[0])*(p1[2]-p3[2])-(p1[0]-p3[0])*(p0[2]-p3[2]));
-  dldx[2][2] = -dtmp1*((p0[0]-p3[0])*(p1[1]-p3[1])-(p1[0]-p3[0])*(p0[1]-p3[1]));
-  
-  dldx[3][0] = +dtmp1*((p1[1]-p0[1])*(p2[2]-p0[2])-(p2[1]-p0[1])*(p1[2]-p0[2]));
-  dldx[3][1] = -dtmp1*((p1[0]-p0[0])*(p2[2]-p0[2])-(p2[0]-p0[0])*(p1[2]-p0[2]));
-  dldx[3][2] = +dtmp1*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
-  
-  //  std::cout << dldx[0][0]+dldx[1][0]+dldx[2][0]+dldx[3][0] << std::endl;
-  //  std::cout << dldx[0][1]+dldx[1][1]+dldx[2][1]+dldx[3][1] << std::endl;
-  //  std::cout << dldx[0][2]+dldx[1][2]+dldx[2][2]+dldx[3][2] << std::endl;
-  
-  //  std::cout << a[0]+dldx[0][0]*p0[0]+dldx[0][1]*p0[1]+dldx[0][2]*p0[2] << std::endl;
-  //  std::cout << a[1]+dldx[1][0]*p1[0]+dldx[1][1]*p1[1]+dldx[1][2]*p1[2] << std::endl;
-  //  std::cout << a[2]+dldx[2][0]*p2[0]+dldx[2][1]*p2[1]+dldx[2][2]*p2[2] << std::endl;
-  //  std::cout << a[3]+dldx[3][0]*p3[0]+dldx[3][1]*p3[1]+dldx[3][2]*p3[2] << std::endl;
-}
-
 
 DFM2_INLINE void MakeConstMatrix3D
  (double C[6][6],
@@ -796,10 +744,10 @@ DFM2_INLINE void delfem2::EMat_Poisson_Tet3D
   //
   eres[0] = 0;  eres[1] = 0;  eres[2] = 0;  eres[3] = 0;
   for (int i = 0; i<16; ++i){ (&emat[0][0])[i] = 0.0; }
-  const double area = femem3::TetVolume3D(coords[0], coords[1], coords[2], coords[3]);
+  const double area = femutil::TetVolume3D(coords[0], coords[1], coords[2], coords[3]);
   //
   double dldx[nno][ndim], const_term[nno];
-  femem3::TetDlDx(dldx, const_term, coords[0], coords[1], coords[2], coords[3]);
+  TetDlDx(dldx, const_term, coords[0], coords[1], coords[2], coords[3]);
   
   for (int ino = 0; ino<nno; ino++){
     for (int jno = 0; jno<nno; jno++){
@@ -830,9 +778,9 @@ DFM2_INLINE void delfem2::EMat_Diffusion_Newmark_Tet3D
   eres[0] = 0;  eres[1] = 0;  eres[2] = 0;  eres[3] = 0;
   for (int i=0; i<16; ++i){ (&emat[0][0])[i] = 0.0; }
   
-  const double vol = femem3::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
+  const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
   double dldx[nno][ndim], const_term[nno];
-  femem3::TetDlDx(dldx,const_term,coords[0],coords[1],coords[2],coords[3]);
+  TetDlDx(dldx,const_term,coords[0],coords[1],coords[2],coords[3]);
   
   // ----------------------
   
@@ -1026,11 +974,11 @@ DFM2_INLINE void delfem2::EMat_SolidLinear_Static_Tet
  const double disp[4][3],
  bool is_add)
 {
-  const double vol = femem3::TetVolume3D(P[0], P[1], P[2], P[3]);
+  const double vol = femutil::TetVolume3D(P[0], P[1], P[2], P[3]);
   double dldx[4][3];
   {
     double const_term[4];    
-    femem3::TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
+    TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
   }
   // ----------------------
   ddW_SolidLinear_Tet3D(&emat[0][0][0][0],
@@ -1109,24 +1057,24 @@ DFM2_INLINE void delfem2::MakeMat_LinearSolid3D_Static_Q1
 
 
 
-DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D
-(double eres[4][3],
- double emat[4][4][3][3],
- const double myu, const double lambda,
- const double rho, const double g_x, const double g_y, const double g_z,
- const double dt, const double gamma_newmark,  const double beta_newmark,
- const double disp[4][3], const double velo[4][3], const double acc[4][3],
- const double P[4][3],
- bool is_initial_iter)
+DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D(
+    double eres[4][3],
+    double emat[4][4][3][3],
+    const double myu, const double lambda,
+    const double rho, const double g_x, const double g_y, const double g_z,
+    const double dt, const double gamma_newmark,  const double beta_newmark,
+    const double disp[4][3], const double velo[4][3], const double acc[4][3],
+    const double P[4][3],
+    bool is_initial_iter)
 {
   const int nno = 4;
   const int ndim = 3;
   
-  const double vol = femem3::TetVolume3D(P[0],P[1],P[2],P[3]);
+  const double vol = femutil::TetVolume3D(P[0],P[1],P[2],P[3]);
   double dldx[nno][ndim];		// spatial derivative of linear shape function
   {
     double zero_order_term[nno];	// const term of shape function
-    femem3::TetDlDx(dldx, zero_order_term,   P[0],P[1],P[2],P[3]);
+    TetDlDx(dldx, zero_order_term,   P[0],P[1],P[2],P[3]);
   }
   
   double eKmat[nno][nno][ndim][ndim];
@@ -1193,10 +1141,10 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1P1
   const unsigned int nno = 4;
   const unsigned int ndim = 3;
   
-  const double vol = femem3::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
+  const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
   
   double dldx[nno][ndim], const_term[nno];
-  femem3::TetDlDx(dldx, const_term,   coords[0], coords[1], coords[2], coords[3]);
+  TetDlDx(dldx, const_term,   coords[0], coords[1], coords[2], coords[3]);
   
   // --------------------------------------------------
   
@@ -1332,22 +1280,22 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1
 
 
 
-DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_Newmark_P1P1
-(double alpha, double rho, double g_x, double g_y, double g_z,
- const double dt_timestep, const double gamma_newmark,
- const double coords[4][3],
- const double velo[4][3], const double press[4], const double acc[4][3], const double apress[4],
- double emat_uu[4][4][3][3], double emat_up[4][4][3], double emat_pu[4][4][3], double emat_pp[4][4],
- double eres_u[4][3], double eres_p[4])
+DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_Newmark_P1P1(
+    double alpha, double rho, double g_x, double g_y, double g_z,
+    const double dt_timestep, const double gamma_newmark,
+    const double coords[4][3],
+    const double velo[4][3], const double press[4], const double acc[4][3], const double apress[4],
+    double emat_uu[4][4][3][3], double emat_up[4][4][3], double emat_pu[4][4][3], double emat_pp[4][4],
+    double eres_u[4][3], double eres_p[4])
 {
   //	std::cout << "AddMat_Stokes2D_NonStatic_Newmark_P1P1" << std::endl;
   
   const int nno = 4;
   const int ndim = 3;
   ////
-  const double vol = femem3::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
+  const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
   double dldx[nno][ndim], const_term[nno];
-  femem3::TetDlDx(dldx, const_term,   coords[0],coords[1],coords[2],coords[3]);
+  TetDlDx(dldx, const_term,   coords[0],coords[1],coords[2],coords[3]);
   
   // ------------------------------
   double eCmat_uu[4][4][3][3];
@@ -1500,9 +1448,9 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_P1
   const int nno = 4;
   const int ndim = 4;
   //
-  const double vol = femem3::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
+  const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
   double dldx[nno][3], const_term[nno];
-  femem3::TetDlDx(dldx, const_term,   coords[0], coords[1], coords[2], coords[3]);
+  TetDlDx(dldx, const_term,   coords[0], coords[1], coords[2], coords[3]);
   //
   double tau;
   {
@@ -1564,424 +1512,6 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_P1
     }
   }
 }
-
-
-DFM2_INLINE void delfem2::MakeMat_NavierStokes3D_Dynamic_Newmark_P1P1
-(double rho, double myu, double g_x, double g_y, double g_z,
- double dt, double gamma,
- const double coords[4][3],
- const double velo[4][3], const double press[4], const double acc[4][3], const double apress[4],
- double emat_uu[4][4][3][3], double emat_up[4][4][3], double emat_pu[4][4][3], double emat_pp[4][4],
- double eres_u[4][3], double eres_p[4])
-{
-  const int nno = 4;
-  const int ndim = 3;
-  //
-  const double vol = femem3::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
-  double dldx[nno][ndim], const_term[nno];
-  femem3::TetDlDx(dldx, const_term,   coords[0], coords[1], coords[2], coords[3]);
-
-  const double velo_ave[3] = {
-    (velo[0][0]+velo[1][0]+velo[2][0]+velo[3][0])*0.25,
-    (velo[0][1]+velo[1][1]+velo[2][1]+velo[3][1])*0.25,
-    (velo[0][2]+velo[1][2]+velo[2][2]+velo[3][2])*0.25 };
-
-  ////
-  double tau;
-  {  // Calc Stabilization Parameter
-
-    const double norm_v = sqrt(velo_ave[0]*velo_ave[0]+velo_ave[1]*velo_ave[1]+velo_ave[2]*velo_ave[2]);
-    double tmp = 0.0;
-    for(int ino=0;ino<nno;ino++){
-      double tmp1 = dldx[ino][0]*velo_ave[0]+dldx[ino][1]*velo_ave[1]+dldx[ino][2]*velo_ave[2];
-      tmp += fabs(tmp1);
-    }
-    double h_ugn = 0;
-    if( fabs(tmp) > 1.0e-10 ){
-      h_ugn = 2.0 * norm_v / tmp;
-    }
-    double tau_sugn1 = 0.0;
-    if( fabs(norm_v) > 1.0e-10 ){
-      tau_sugn1 = h_ugn * 0.5 / norm_v;
-    }
-    double tau_sugn2 = dt * 0.50;
-    double tau_sugn3 = h_ugn * h_ugn * 0.25 / myu;
-    double inv1 = 0.0;
-    if( fabs(tau_sugn1) > 1.0e-10 ){
-      inv1 = 1.0 / tau_sugn1;
-    }
-    double inv2 = 0.0;
-    if( fabs(tau_sugn2) > 1.0e-10 ){
-      inv2 = 1.0 / tau_sugn2;
-    }
-    double inv3 = 0.0;
-    if( fabs(tau_sugn3) > 1.0e-10 ){
-      inv3 = 1.0 / tau_sugn3;
-    }
-    double tau_supg = sqrt( inv1*inv1 + inv2*inv2 + inv3*inv3 );
-    tau_supg = 1.0 / tau_supg;
-//    double tau_pspg = tau_supg;
-    tau = tau_supg*0.25;
-//    std::cout << tau << "   " << tau_sugn1 << " " << tau_sugn2 << " " << tau_sugn3 << " " << inv1 << " " << inv2 << " " << inv3 << std::endl;
-    /*
-  ////
-    const double h = pow(vol/3.14, 0.333333333333)*2;
-    const double tau_c = h*0.5/norm_v;
-    const double cou_c = norm_v*dt/h;
-    if( norm_v*h*rho*1.0e-30 > myu ){ // Re = \infty
-      const double dtmp1 = 1/(cou_c*cou_c)+1;
-      tau = tau_c / sqrt(dtmp1);
-    }
-    else if( norm_v*h*rho < myu*1.0e-30 ){ // Re = 0
-      tau = h*h*rho*0.5/myu;
-    }
-    else{
-      const double re_c = 0.5*norm_v*h*rho/myu;	// 0.5*norm_v*h*rho/myu;
-      const double dtmp1 = 1/(cou_c*cou_c)+1+1/(re_c*re_c);
-      tau = tau_c / sqrt(dtmp1);
-    }
-     */
-  }
-
-  /*
-  double ave_velo[3];
-  { // average velocity
-    ave_velo[0] = 0.0;
-    ave_velo[1] = 0.0;
-    ave_velo[2] = 0.0;
-    for(int ino=0;ino<nno;ino++){
-      ave_velo[0] += velo[ino][0];
-      ave_velo[1] += velo[ino][1];
-      ave_velo[2] += velo[ino][2];
-    }
-    ave_velo[0] *= 0.25;
-    ave_velo[1] *= 0.25;
-    ave_velo[2] *= 0.25;
-  }
-  */
-  
-  ///////////////////////////////////////////////////////////////////////////////////////
-  
-  double eCmat_uu[4][4][3][3];
-  // viscousity
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eCmat_uu[ino][jno][0][0] = vol*myu*dldx[ino][0]*dldx[jno][0];
-      eCmat_uu[ino][jno][0][1] = vol*myu*dldx[ino][1]*dldx[jno][0];
-      eCmat_uu[ino][jno][0][2] = vol*myu*dldx[ino][2]*dldx[jno][0];
-      ///
-      eCmat_uu[ino][jno][1][0] = vol*myu*dldx[ino][0]*dldx[jno][1];
-      eCmat_uu[ino][jno][1][1] = vol*myu*dldx[ino][1]*dldx[jno][1];
-      eCmat_uu[ino][jno][1][2] = vol*myu*dldx[ino][2]*dldx[jno][1];
-      ///
-      eCmat_uu[ino][jno][2][0] = vol*myu*dldx[ino][0]*dldx[jno][2];
-      eCmat_uu[ino][jno][2][1] = vol*myu*dldx[ino][1]*dldx[jno][2];
-      eCmat_uu[ino][jno][2][2] = vol*myu*dldx[ino][2]*dldx[jno][2];
-      ////
-      const double dtmp1 = vol*myu*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
-      eCmat_uu[ino][jno][0][0] += dtmp1;
-      eCmat_uu[ino][jno][1][1] += dtmp1;
-      eCmat_uu[ino][jno][2][2] += dtmp1;
-    }
-  }
-  {	// advection
-    const double dtmp0[3] = {
-      velo[0][0]+velo[1][0]+velo[2][0]+velo[3][0],
-      velo[0][1]+velo[1][1]+velo[2][1]+velo[3][1],
-      velo[0][2]+velo[1][2]+velo[2][2]+velo[3][2] };
-    for(int jno=0;jno<nno;jno++){
-      const double dtmp1 = (dldx[jno][0]*dtmp0[0]+dldx[jno][1]*dtmp0[1]+dldx[jno][2]*dtmp0[2]);
-      for(int ino=0;ino<nno;ino++){
-        double dtmp2 = dtmp1 + (dldx[jno][0]*velo[ino][0]+dldx[jno][1]*velo[ino][1]+dldx[jno][2]*velo[ino][2]);
-        dtmp2 *= vol*rho*0.05;
-        eCmat_uu[ino][jno][0][0] += dtmp2;
-        eCmat_uu[ino][jno][1][1] += dtmp2;
-        eCmat_uu[ino][jno][2][2] += dtmp2;
-      }
-    }
-  }
-  {	// SUPG for advection term
-    double tmp_mat[ndim][ndim] = { {0,0,0}, {0,0,0}, {0,0,0} };
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        tmp_mat[0][0] += velo[ino][0]*velo[jno][0];
-        tmp_mat[0][1] += velo[ino][0]*velo[jno][1];
-        tmp_mat[0][2] += velo[ino][0]*velo[jno][2];
-        ////
-        tmp_mat[1][0] += velo[ino][1]*velo[jno][0];
-        tmp_mat[1][1] += velo[ino][1]*velo[jno][1];
-        tmp_mat[1][2] += velo[ino][1]*velo[jno][2];
-        ////
-        tmp_mat[2][0] += velo[ino][2]*velo[jno][0];
-        tmp_mat[2][1] += velo[ino][2]*velo[jno][1];
-        tmp_mat[2][2] += velo[ino][2]*velo[jno][2];
-      }
-      tmp_mat[0][0] += velo[ino][0]*velo[ino][0];
-      tmp_mat[1][1] += velo[ino][1]*velo[ino][1];
-      tmp_mat[2][2] += velo[ino][2]*velo[ino][2];
-    }
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        double dtmp1 = 0.0;
-        dtmp1 +=
-         dldx[ino][0]*dldx[jno][0]*tmp_mat[0][0]
-        +dldx[ino][0]*dldx[jno][1]*tmp_mat[0][1]
-        +dldx[ino][0]*dldx[jno][2]*tmp_mat[0][2]
-        +dldx[ino][1]*dldx[jno][0]*tmp_mat[1][0]
-        +dldx[ino][1]*dldx[jno][1]*tmp_mat[1][1]
-        +dldx[ino][1]*dldx[jno][2]*tmp_mat[1][2]
-        +dldx[ino][2]*dldx[jno][0]*tmp_mat[2][0]
-        +dldx[ino][2]*dldx[jno][1]*tmp_mat[2][1]
-        +dldx[ino][2]*dldx[jno][2]*tmp_mat[2][2];
-        dtmp1 *= tau*rho*vol*0.05;
-        eCmat_uu[ino][jno][0][0] += dtmp1;
-        eCmat_uu[ino][jno][1][1] += dtmp1;
-        eCmat_uu[ino][jno][2][2] += dtmp1;
-      }
-    }
-  }
-  
-  double eCmat_up[4][4][3], eCmat_pu[4][4][3];
-  {   // add pressure gradient, non compression term
-    const double dtmp1 = vol*0.25;
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eCmat_up[ino][jno][0] = -dtmp1*dldx[ino][0];
-        eCmat_up[ino][jno][1] = -dtmp1*dldx[ino][1];
-        eCmat_up[ino][jno][2] = -dtmp1*dldx[ino][2];
-        eCmat_pu[ino][jno][0] = +dtmp1*dldx[jno][0];
-        eCmat_pu[ino][jno][1] = +dtmp1*dldx[jno][1];
-        eCmat_pu[ino][jno][2] = +dtmp1*dldx[jno][2];
-      }
-    }
-  }
-  // SUPG for pressure gradient
-  for(int ino=0;ino<nno;ino++){
-    const double dtmp1 = (dldx[ino][0]*velo_ave[0]+dldx[ino][1]*velo_ave[1]+dldx[ino][2]*velo_ave[2])*tau*vol;
-    for(int jno=0;jno<nno;jno++){
-      eCmat_up[ino][jno][0] += dtmp1*dldx[jno][0];
-      eCmat_up[ino][jno][1] += dtmp1*dldx[jno][1];
-      eCmat_up[ino][jno][2] += dtmp1*dldx[jno][2];
-    }
-  }
-  // PSPG for advection term
-  for(int jno=0;jno<nno;jno++){
-    const double dtmp1 = (dldx[jno][0]*velo_ave[0]+dldx[jno][1]*velo_ave[1]+dldx[jno][2]*velo_ave[2])*tau*vol;
-    for(int ino=0;ino<nno;ino++){
-      eCmat_pu[ino][jno][0] += dtmp1*dldx[ino][0];
-      eCmat_pu[ino][jno][1] += dtmp1*dldx[ino][1];
-      eCmat_pu[ino][jno][2] += dtmp1*dldx[ino][2];
-    }
-  }
-  
-  double eCmat_pp[4][4];
-  // PSPG for pressure term
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eCmat_pp[ino][jno] = vol*tau/rho*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
-    }
-  }
-  
-  ////////////////
-  double eMmat_uu[4][4][3][3];
-  {	// add inertia term
-    const double dtmp1 = vol*rho*0.05;
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eMmat_uu[ino][jno][0][0] = dtmp1;
-        eMmat_uu[ino][jno][0][1] = 0.0;
-        eMmat_uu[ino][jno][0][2] = 0.0;
-        ////
-        eMmat_uu[ino][jno][1][0] = 0.0;
-        eMmat_uu[ino][jno][1][1] = dtmp1;
-        eMmat_uu[ino][jno][1][2] = 0.0;
-        ////
-        eMmat_uu[ino][jno][2][0] = 0.0;
-        eMmat_uu[ino][jno][2][1] = 0.0;
-        eMmat_uu[ino][jno][2][2] = dtmp1;
-      }
-      eMmat_uu[ino][ino][0][0] += dtmp1;
-      eMmat_uu[ino][ino][1][1] += dtmp1;
-      eMmat_uu[ino][ino][2][2] += dtmp1;
-    }
-  }
-  // supg for inertia term
-  for(int jno=0;jno<nno;jno++){
-    double tmp_vec[ndim] = { 0.0, 0.0, 0.0 };
-    for(unsigned int kno=0;kno<nno;kno++){
-      tmp_vec[0] += velo[kno][0];
-      tmp_vec[1] += velo[kno][1];
-      tmp_vec[2] += velo[kno][2];
-    }
-    tmp_vec[0] += velo[jno][0];
-    tmp_vec[1] += velo[jno][1];
-    tmp_vec[2] += velo[jno][2];
-    for(int ino=0;ino<nno;ino++){
-      const double dtmp1 = (dldx[ino][0]*tmp_vec[0]+dldx[ino][1]*tmp_vec[1]+dldx[ino][2]*tmp_vec[2])*rho*tau*vol*0.05;
-      eMmat_uu[ino][jno][0][0] += dtmp1;
-      eMmat_uu[ino][jno][1][1] += dtmp1;
-      eMmat_uu[ino][jno][2][2] += dtmp1;
-    }
-  }
-  
-  // PSPG for inertia term
-  double eMmat_pu[4][4][3];
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eMmat_pu[ino][jno][0] = -tau*vol*0.25*dldx[ino][0];
-      eMmat_pu[ino][jno][1] = -tau*vol*0.25*dldx[ino][1];
-      eMmat_pu[ino][jno][2] = -tau*vol*0.25*dldx[ino][2];
-    }
-  }
-  
-  // eternal force term
-  for(int ino=0;ino<nno;ino++){
-    eres_u[ino][0] = vol*rho*g_x*0.25;
-    eres_u[ino][1] = vol*rho*g_y*0.25;
-    eres_u[ino][2] = vol*rho*g_z*0.25;
-  }
-  for(int ino=0;ino<nno;ino++){
-    eres_p[ino] = 0.0;
-  }
-  
-   // SUPG external force
-//   for(unsigned int ino=0;ino<nno;ino++){
-//			const double dtmp1 = area*tau*rho*(ave_velo[0]*dldx[ino][0]+ave_velo[1]*dldx[ino][1]);
-//			eres_u[ino][0] += dtmp1*g_x;
-//			eres_u[ino][1] += dtmp1*g_y;
-//   }
-  
-  
-   // PSPG external force
-//   for(unsigned int ino=0;ino<nno;ino++){
-//			eres_p[ino] += area*tau*(dldx[ino][0]*g_x+dldx[ino][1]*g_y);
-//   }
-  
-  // ----------------------------------
-  {
-    double dtmp1 = gamma*dt;
-    for(int i=0;i<nno*nno*ndim*ndim;i++){
-      (&emat_uu[0][0][0][0])[i] = (&eMmat_uu[0][0][0][0])[i]+dtmp1*(&eCmat_uu[0][0][0][0])[i];
-    }
-    for(int i=0;i<nno*nno*ndim;i++){
-      (&emat_up[0][0][0])[i] = dtmp1*(&eCmat_up[0][0][0])[i];
-    }
-    for(int i=0;i<nno*nno*ndim;i++){
-      (&emat_pu[0][0][0])[i] = (&eMmat_pu[0][0][0])[i]+dtmp1*(&eCmat_pu[0][0][0])[i];
-    }
-    for(int i=0;i<nno*nno;i++){
-      (&emat_pp[0][0])[i] = dtmp1*(&eCmat_pp[0][0])[i];
-    }
-  }
-  
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eres_u[ino][0]
-      -= eCmat_uu[ino][jno][0][0]*(velo[jno][0]+dt*acc[jno][0])
-      +  eCmat_uu[ino][jno][0][1]*(velo[jno][1]+dt*acc[jno][1])
-      +  eCmat_uu[ino][jno][0][2]*(velo[jno][2]+dt*acc[jno][2])
-      +  eMmat_uu[ino][jno][0][0]*acc[jno][0]
-      +  eMmat_uu[ino][jno][0][1]*acc[jno][1]
-      +  eMmat_uu[ino][jno][0][2]*acc[jno][2]
-      +  eCmat_up[ino][jno][0]*(press[jno]+dt*apress[jno]);
-      eres_u[ino][1]
-      -= eCmat_uu[ino][jno][1][0]*(velo[jno][0]+dt*acc[jno][0])
-      +  eCmat_uu[ino][jno][1][1]*(velo[jno][1]+dt*acc[jno][1])
-      +  eCmat_uu[ino][jno][1][2]*(velo[jno][2]+dt*acc[jno][2])
-      +  eMmat_uu[ino][jno][1][0]*acc[jno][0]
-      +  eMmat_uu[ino][jno][1][1]*acc[jno][1]
-      +  eMmat_uu[ino][jno][1][2]*acc[jno][2]
-      +  eCmat_up[ino][jno][1]*(press[jno]+dt*apress[jno]);
-      eres_u[ino][2]
-      -= eCmat_uu[ino][jno][2][0]*(velo[jno][0]+dt*acc[jno][0])
-      +  eCmat_uu[ino][jno][2][1]*(velo[jno][1]+dt*acc[jno][1])
-      +  eCmat_uu[ino][jno][2][2]*(velo[jno][2]+dt*acc[jno][2])
-      +  eMmat_uu[ino][jno][2][0]*acc[jno][0]
-      +  eMmat_uu[ino][jno][2][1]*acc[jno][1]
-      +  eMmat_uu[ino][jno][2][2]*acc[jno][2]
-      +  eCmat_up[ino][jno][2]*(press[jno]+dt*apress[jno]);
-    }
-  }
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eres_p[ino]
-      -= eCmat_pu[ino][jno][0]*(velo[jno][0]+dt*acc[jno][0])
-      +  eCmat_pu[ino][jno][1]*(velo[jno][1]+dt*acc[jno][1])
-      +  eCmat_pu[ino][jno][2]*(velo[jno][2]+dt*acc[jno][2])
-      +  eMmat_pu[ino][jno][0]*acc[jno][0]
-      +  eMmat_pu[ino][jno][1]*acc[jno][1]
-      +  eMmat_pu[ino][jno][2]*acc[jno][2]
-      +  eCmat_pp[ino][jno]*(press[jno]+dt*apress[jno]);
-    }
-  }
-}
-
-
-DFM2_INLINE void delfem2::MakeMat_NavierStokes3D_Dynamic_P1
-(double myu, double rho, double g_x, double g_y, double g_z,
- const double dt_timestep, const double gamma_newmark,
- const double coords[4][3],
- const double velo_press[4][4], const double acc_apress[4][4],
- double emat[4][4][4][4],
- double eres[4][4])
-{
-  const int nno = 4;
-  const double velo[4][3] = {
-    {velo_press[0][0],velo_press[0][1],velo_press[0][2]},
-    {velo_press[1][0],velo_press[1][1],velo_press[1][2]},
-    {velo_press[2][0],velo_press[2][1],velo_press[2][2]},
-    {velo_press[3][0],velo_press[3][1],velo_press[3][2]} };
-  const double press[4] = { velo_press[0][3], velo_press[1][3], velo_press[2][3], velo_press[3][3] };
-  const double acc[4][3] = {
-    {acc_apress[0][0],acc_apress[0][1],acc_apress[0][2]},
-    {acc_apress[1][0],acc_apress[1][1],acc_apress[1][2]},
-    {acc_apress[2][0],acc_apress[2][1],acc_apress[2][2]},
-    {acc_apress[3][0],acc_apress[3][1],acc_apress[3][2]} };
-  const double apress[4] = { acc_apress[0][3], acc_apress[1][3], acc_apress[2][3], acc_apress[3][3] };
-  ////
-  double emat_uu[4][4][3][3], emat_up[4][4][3], emat_pu[4][4][3], emat_pp[4][4];
-  double eres_u[4][3], eres_p[4];
-  MakeMat_NavierStokes3D_Dynamic_Newmark_P1P1(rho, myu, g_x, g_y,g_z,
-                                              dt_timestep, gamma_newmark,
-                                              coords,
-                                              velo, press, acc, apress,
-                                              emat_uu, emat_up, emat_pu, emat_pp,
-                                              eres_u, eres_p);
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      emat[ino][jno][0][0] = emat_uu[ino][jno][0][0];
-      emat[ino][jno][0][1] = emat_uu[ino][jno][0][1];
-      emat[ino][jno][0][2] = emat_uu[ino][jno][0][2];
-      ////
-      emat[ino][jno][1][0] = emat_uu[ino][jno][1][0];
-      emat[ino][jno][1][1] = emat_uu[ino][jno][1][1];
-      emat[ino][jno][1][2] = emat_uu[ino][jno][1][2];
-      ////
-      emat[ino][jno][2][0] = emat_uu[ino][jno][2][0];
-      emat[ino][jno][2][1] = emat_uu[ino][jno][2][1];
-      emat[ino][jno][2][2] = emat_uu[ino][jno][2][2];
-      ////
-      emat[ino][jno][0][3] = emat_up[ino][jno][0];
-      emat[ino][jno][1][3] = emat_up[ino][jno][1];
-      emat[ino][jno][2][3] = emat_up[ino][jno][2];
-      ////
-      emat[ino][jno][3][0] = emat_pu[ino][jno][0];
-      emat[ino][jno][3][1] = emat_pu[ino][jno][1];
-      emat[ino][jno][3][2] = emat_pu[ino][jno][2];
-      ////
-      emat[ino][jno][3][3] = emat_pp[ino][jno];
-    }
-  }
-  for(int ino=0;ino<nno;ino++){
-    eres[ino][0] = eres_u[ino][0];
-    eres[ino][1] = eres_u[ino][1];
-    eres[ino][2] = eres_u[ino][2];
-    eres[ino][3] = eres_p[ino];
-  }
-}
-
-
-
 
 // ------------------------------
 
@@ -2059,183 +1589,3 @@ DFM2_INLINE void delfem2::MakeMat_PlateBendingDKT
     }
   }
 }
-
-
-
-DFM2_INLINE void delfem2::WdWddW_PlateBendingMITC3
-(double& W,
- double dW[3][3],
- double ddW[3][3][3][3],
- const double C[3][2], // initial XY position
- const double u[3][3], // z displacement + xy axis rotation
- double thk,
- double lambda,
- double myu)
-{
-  const double Area = ::delfem2::femem3::TriArea2D(C[0],C[1],C[2]);
-  const double Gd[3][3] = { // undeformed edge vector
-    { C[1][0]-C[0][0], C[1][1]-C[0][1], 0.0 },
-    { C[2][0]-C[0][0], C[2][1]-C[0][1], 0.0 },
-    { 0.0, 0.0, 0.5*thk } };
-  
-  double Gu[3][3]; // inverse of Gd
-  {
-    femem3::Cross3D(Gu[0], Gd[1], Gd[2]);
-    const double invtmp1 = 1.0/femem3::Dot3D(Gu[0],Gd[0]);
-    Gu[0][0] *= invtmp1;  Gu[0][1] *= invtmp1;  Gu[0][2] *= invtmp1;
-    //
-    femem3::Cross3D(Gu[1], Gd[2], Gd[0]);
-    const double invtmp2 = 1.0/femem3::Dot3D(Gu[1],Gd[1]);
-    Gu[1][0] *= invtmp2;  Gu[1][1] *= invtmp2;  Gu[1][2] *= invtmp2;
-    //
-    femem3::Cross3D(Gu[2], Gd[0], Gd[1]);
-    const double invtmp3 = 1.0/femem3::Dot3D(Gu[2],Gd[2]);
-    Gu[2][0] *= invtmp3;  Gu[2][1] *= invtmp3;  Gu[2][2] *= invtmp3;
-  }
-  
-  const double GuGu2[4] = {
-    femem3::Dot3D(Gu[0],Gu[0]), // rr 0
-    femem3::Dot3D(Gu[1],Gu[1]), // ss 1
-    femem3::Dot3D(Gu[0],Gu[1]), // sr 2
-    femem3::Dot3D(Gu[2],Gu[2]), // tt 3
-  };
-  
-  {
-    const double CnstA[3][3] = { // {rr,ss,sr} x {rr,ss,sr}
-      { lambda*GuGu2[0]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[0]), // 00(0):00(0) 00(0):00(0)
-        lambda*GuGu2[0]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[2]), // 00(0):11(1) 01(2):01(2)
-        lambda*GuGu2[0]*GuGu2[2] + 2*myu*(GuGu2[0]*GuGu2[2])},// 00(0):01(2) 00(0):01(2)
-      { lambda*GuGu2[1]*GuGu2[0] + 2*myu*(GuGu2[2]*GuGu2[2]), // 11(1):00(0) 01(2):01(2)
-        lambda*GuGu2[1]*GuGu2[1] + 2*myu*(GuGu2[1]*GuGu2[1]), // 11(1):11(1) 11(1):11(1)
-        lambda*GuGu2[1]*GuGu2[2] + 2*myu*(GuGu2[1]*GuGu2[2])},// 11(1):01(2) 11(1):01(2)
-      { lambda*GuGu2[2]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[2]), // 01(2):00(0) 00(0):01(2)
-        lambda*GuGu2[2]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[1]), // 01(2):11(1) 11(1):01(2)
-        lambda*GuGu2[2]*GuGu2[2] + 1*myu*(GuGu2[0]*GuGu2[1] + GuGu2[2]*GuGu2[2])} // 01(2):01(2) 00(0):11(1) 01(2):01(2)
-    };
-    const double CnstB[3][3] = { // {rr,ss,sr} x {rr,ss,sr}
-      { 1.0*CnstA[0][0], 1.0*CnstA[0][1], 2.0*CnstA[0][2] },
-      { 1.0*CnstA[1][0], 1.0*CnstA[1][1], 2.0*CnstA[1][2] },
-      { 2.0*CnstA[2][0], 2.0*CnstA[2][1], 4.0*CnstA[2][2] },
-    };
-    const double EA0t = ( Gd[0][0]*(u[1][2]-u[0][2]) - Gd[0][1]*(u[1][1]-u[0][1]) )*0.5*thk;
-    const double EA1t = ( Gd[1][0]*(u[2][2]-u[0][2]) - Gd[1][1]*(u[2][1]-u[0][1]) )*0.5*thk;
-    const double EA2t = ( Gd[0][0]*(u[2][2]-u[0][2]) - Gd[0][1]*(u[2][1]-u[0][1])
-                         +Gd[1][0]*(u[1][2]-u[0][2]) - Gd[1][1]*(u[1][1]-u[0][1]) )*0.25*thk;
-    ////
-    for(int iGauss=0;iGauss<2;++iGauss){
-      const double t0 = (iGauss == 0) ? -1.0/sqrt(3) : +1.0/sqrt(3);
-      const double wGauss = Area*thk/2.0;
-      const double E[3] = { t0*EA0t, t0*EA1t, t0*EA2t };
-      const double dE[3][3][3] = {
-        { {0, +Gd[0][1]*0.5*thk*t0, -Gd[0][0]*0.5*thk*t0},
-          {0, -Gd[0][1]*0.5*thk*t0, +Gd[0][0]*0.5*thk*t0},
-          {0,0,0}                                             },
-        { {0,+Gd[1][1]*0.5*thk*t0, -Gd[1][0]*0.5*thk*t0},
-          {0,0,0},
-          {0,-Gd[1][1]*0.5*thk*t0, +Gd[1][0]*0.5*thk*t0}      },
-        { {0, +(Gd[0][1]+Gd[1][1])*0.25*thk*t0, -(Gd[0][0]+Gd[1][0])*0.25*thk*t0},
-          {0, -Gd[1][1]*0.25*thk*t0, +Gd[1][0]*0.25*thk*t0},
-          {0, -Gd[0][1]*0.25*thk*t0, +Gd[0][0]*0.25*thk*t0}   } };
-      ////
-      const double SB[3] = {
-        CnstB[0][0]*E[0] + CnstB[0][1]*E[1] + CnstB[0][2]*E[2],
-        CnstB[1][0]*E[0] + CnstB[1][1]*E[1] + CnstB[1][2]*E[2],
-        CnstB[2][0]*E[0] + CnstB[2][1]*E[1] + CnstB[2][2]*E[2]};
-      W += wGauss*0.5*(E[0]*SB[0] + E[1]*SB[1] + E[2]*SB[2]);
-      for(int ino=0;ino<3;++ino){
-        for(int idof=0;idof<3;++idof){
-          dW[ino][idof] += wGauss*(SB[0]*dE[0][ino][idof] + SB[1]*dE[1][ino][idof] + SB[2]*dE[2][ino][idof]);
-        }
-      }
-      for(int ino=0;ino<3;++ino){
-        for(int jno=0;jno<3;++jno){
-          for(int idof=0;idof<3;++idof){
-            for(int jdof=0;jdof<3;++jdof){
-              const double dtmp =
-              + dE[0][ino][idof]*CnstB[0][0]*dE[0][jno][jdof]
-              + dE[0][ino][idof]*CnstB[0][1]*dE[1][jno][jdof]
-              + dE[0][ino][idof]*CnstB[0][2]*dE[2][jno][jdof]
-              + dE[1][ino][idof]*CnstB[1][0]*dE[0][jno][jdof]
-              + dE[1][ino][idof]*CnstB[1][1]*dE[1][jno][jdof]
-              + dE[1][ino][idof]*CnstB[1][2]*dE[2][jno][jdof]
-              + dE[2][ino][idof]*CnstB[2][0]*dE[0][jno][jdof]
-              + dE[2][ino][idof]*CnstB[2][1]*dE[1][jno][jdof]
-              + dE[2][ino][idof]*CnstB[2][2]*dE[2][jno][jdof];
-              ddW[ino][jno][idof][jdof] += wGauss*dtmp;
-            }
-          }
-        }
-      }
-    }
-  }
-  {
-    const double CnstA[2][2] = { // {rt,st} x {rt,st}
-      { myu*GuGu2[0]*GuGu2[3],  // rt*rt -> rr(0):tt(3)
-        myu*GuGu2[2]*GuGu2[3]}, // st*rt -> sr(2):tt(3)
-      { myu*GuGu2[2]*GuGu2[3],  // rt*st -> rs(2):tt(3)
-        myu*GuGu2[1]*GuGu2[3]}  // st*st -> ss(1):tt(3)
-    };
-    const double CnstB[2][2] = {
-      { 4.0*CnstA[0][0], 2.0*CnstA[0][1] },
-      { 2.0*CnstA[1][0], 4.0*CnstA[1][1] } };
-    const double Ert_01 = 0.5*thk*(u[1][0]-u[0][0] + 0.5*Gd[0][0]*(u[0][2]+u[1][2]) - 0.5*Gd[0][1]*(u[0][1]+u[1][1]));
-    const double Ert_12 = 0.5*thk*(u[1][0]-u[0][0] + 0.5*Gd[0][0]*(u[1][2]+u[2][2]) - 0.5*Gd[0][1]*(u[1][1]+u[2][1]));
-    const double Est_12 = 0.5*thk*(u[2][0]-u[0][0] + 0.5*Gd[1][0]*(u[1][2]+u[2][2]) - 0.5*Gd[1][1]*(u[1][1]+u[2][1]));
-    const double Est_20 = 0.5*thk*(u[2][0]-u[0][0] + 0.5*Gd[1][0]*(u[2][2]+u[0][2]) - 0.5*Gd[1][1]*(u[2][1]+u[0][1]));
-    const double dErt_01[3][3] = {
-      { -0.5*thk, -0.25*thk*Gd[0][1], +0.25*thk*Gd[0][0] },
-      { +0.5*thk, -0.25*thk*Gd[0][1], +0.25*thk*Gd[0][0] },
-      { 0,0,0 } };
-    const double dEst_20[3][3] = {
-      { -0.5*thk, -0.25*thk*Gd[1][1], +0.25*thk*Gd[1][0] },
-      { 0, 0, 0},
-      { +0.5*thk, -0.25*thk*Gd[1][1], +0.25*thk*Gd[1][0] } };
-    const double dEC[3][3] = {
-      { 0, +0.25*thk*Gd[0][1]-0.25*thk*Gd[1][1], -0.25*thk*Gd[0][0]+0.25*thk*Gd[1][0]},
-      { 0, +0.25*thk*Gd[1][1], -0.25*thk*Gd[1][0]},
-      { 0, -0.25*thk*Gd[0][1], +0.25*thk*Gd[0][0]} };
-    const double CE = (Ert_12-Ert_01) - (Est_12-Est_20);
-    const double pGauss[3][2] = { {0.5,0.0}, {0.5,0.5}, {0.0,0.5} };
-    for(int iGauss=0;iGauss<3;++iGauss){
-      const double r = pGauss[iGauss][0];
-      const double s = pGauss[iGauss][1];
-      const double wGauss = Area*thk/3.0;
-      const double E[2] = { Ert_01 + CE*s, Est_20 - CE*r };
-      double dE[2][3][3];
-      for(int ino=0;ino<3;++ino){
-        for(int idof=0;idof<3;++idof){
-          dE[0][ino][idof] = dErt_01[ino][idof]+dEC[ino][idof]*s;
-          dE[1][ino][idof] = dEst_20[ino][idof]-dEC[ino][idof]*r;
-        }
-      }
-      const double SB[2] = {
-        CnstB[0][0]*E[0] + CnstB[0][1]*E[1],
-        CnstB[1][0]*E[0] + CnstB[1][1]*E[1] };
-      W += wGauss*0.5*(SB[0]*E[0] + SB[1]*E[1]);
-      for(int ino=0;ino<3;++ino){
-        for(int idof=0;idof<3;++idof){
-          dW[ino][idof] += wGauss*(SB[0]*dE[0][ino][idof] + SB[1]*dE[1][ino][idof]);
-        }
-      }
-      for(int ino=0;ino<3;++ino){
-        for(int jno=0;jno<3;++jno){
-          for(int idof=0;idof<3;++idof){
-            for(int jdof=0;jdof<3;++jdof){
-              const double dtmp =
-              + dE[0][ino][idof]*CnstB[0][0]*dE[0][jno][jdof]
-              + dE[0][ino][idof]*CnstB[0][1]*dE[1][jno][jdof]
-              + dE[1][ino][idof]*CnstB[1][0]*dE[0][jno][jdof]
-              + dE[1][ino][idof]*CnstB[1][1]*dE[1][jno][jdof];
-              ddW[ino][jno][idof][jdof] += wGauss*dtmp;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-
-
-
-

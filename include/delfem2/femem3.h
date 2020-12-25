@@ -9,6 +9,7 @@
 #define DFM2_FEMEM3_H
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/femutil.h"
 #include <complex>
 
 namespace delfem2 {

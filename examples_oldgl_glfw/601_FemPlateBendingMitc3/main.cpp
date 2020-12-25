@@ -2,13 +2,13 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsvecx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/fem_emats.h"
+#include "delfem2/femmitc3.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec2.h"
 #include "delfem2/jagarray.h"
@@ -20,14 +20,14 @@ namespace dfm2 = delfem2;
 
 // ------------------------
 
-void InitializeProblem_PlateBendingMITC3
-(dfm2::CMatrixSparse<double>& mat_A,
- dfm2::CPreconditionerILU<double>& ilu_A,
- std::vector<int>& aBCFlag,
- const double lenx,
- const double leny,
- const std::vector<double>& aXY0,
- const std::vector<unsigned int>& aTri)
+void InitializeProblem_PlateBendingMITC3(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    std::vector<int>& aBCFlag,
+    const double lenx,
+    const double leny,
+    const std::vector<double>& aXY0,
+    const std::vector<unsigned int>& aTri)
 {
   const std::size_t np = aXY0.size()/2;
   aBCFlag.assign(np*3, 0);
@@ -53,20 +53,20 @@ void InitializeProblem_PlateBendingMITC3
     ilu_A.Initialize_ILUk(mat_A,0);
 }
 
-void SolveProblem_PlateBendingMITC3
-(std::vector<double>& aVal,
- std::vector<double>& vec_b,
- std::vector<int>& aMSFlag,
- dfm2::CMatrixSparse<double>& mat_A,
- dfm2::CPreconditionerILU<double>& ilu_A,
- const std::vector<int>& aBCFlag,
- const double thickness,
- const double myu,
- const double lambda,
- const double rho,
- const double gravity_z,
- const std::vector<double>& aXY0,
- const std::vector<unsigned int>& aTri)
+void SolveProblem_PlateBendingMITC3(
+    std::vector<double>& aVal,
+    std::vector<double>& vec_b,
+    std::vector<int>& aMSFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<int>& aBCFlag,
+    const double thickness,
+    const double myu,
+    const double lambda,
+    const double rho,
+    const double gravity_z,
+    const std::vector<double>& aXY0,
+    const std::vector<unsigned int>& aTri)
 {
   const std::size_t np = aXY0.size()/2;
   const std::size_t nDoF = np*3;
@@ -107,10 +107,10 @@ void SolveProblem_PlateBendingMITC3
                 1.0,vec_x);
 }
 
-void myGlutDisplay
-(const std::vector<double>& aXY0,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aVal)
+void myGlutDisplay(
+    const std::vector<double>& aXY0,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aVal)
 {
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);

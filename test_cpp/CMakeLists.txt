@@ -78,6 +78,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/femem3.h               ${DELFEM2_INC}/femem3.cpp
       ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
       ${DELFEM2_INC}/femrod.h               ${DELFEM2_INC}/femrod.cpp
+      ${DELFEM2_INC}/femmitc3.h             ${DELFEM2_INC}/femmitc3.cpp
+      ${DELFEM2_INC}/femhelmholtz.h         ${DELFEM2_INC}/femhelmholtz.cpp
       ${DELFEM2_INC}/objf_geo3.h            ${DELFEM2_INC}/objf_geo3.cpp
 
       ${DELFEM2_INC}/srchbvh.h              ${DELFEM2_INC}/srchbvh.cpp

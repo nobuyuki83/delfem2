@@ -52,26 +52,6 @@ DFM2_INLINE void MergeLinSys_Poission_MeshTet3D(
     unsigned int nTet,
     const double* aVal);
 
-DFM2_INLINE void MergeLinSys_Helmholtz_MeshTri2D(
-    CMatrixSparse<std::complex<double> >& mat_A,
-    std::complex<double>* vec_b,
-    const double wave_length,
-    const double* aXY1,
-    unsigned int np,
-    const unsigned int* aTri1,
-    unsigned int nTri,
-    const std::complex<double>* aVal);
-
-DFM2_INLINE void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
-    CMatrixSparse<std::complex<double>> &mat_A,
-    std::complex<double>* vec_b,
-    const double wave_length,
-    const double* aXY1,
-    unsigned int np,
-    const unsigned int* aIPPolyline,
-    unsigned int nIPPolyline,
-    const std::complex<double>* aVal);
-
 DFM2_INLINE void MergeLinSys_Diffusion_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
@@ -160,22 +140,6 @@ DFM2_INLINE void MergeLinSys_StokesDynamic2D(
     unsigned int nXY1,
     const unsigned int* aTri1,
     unsigned int nTri1,
-    const double* aVal,
-    const double* aVelo);
-
-DFM2_INLINE void MergeLinSys_NavierStokes2D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double dt_timestep,
-    const double gamma_newmark,
-    const double* aXY1,
-    unsigned int nXY,
-    const unsigned int* aTri1,
-    unsigned int nTri,
     const double* aVal,
     const double* aVelo);
 
@@ -315,24 +279,6 @@ void MergeLinSys_NavierStokes3D_Dynamic(
     const std::vector<unsigned int>& aTet,
     const std::vector<double>& aVal,
     const std::vector<double>& aVelo);
-
-void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double thick,
-    const double lambda,
-    const double myu,
-    const double rho,
-    const double gravity_z,
-    const double* aXY1, unsigned int nXY,
-    const unsigned int* aTri1, unsigned int nTri,
-    const double* aVal);
-
-void MassLumped_ShellPlateBendingMITC3(
-    double* aM,
-    double rho, double thick,
-    const double* aXY, unsigned int nXY,
-    const unsigned int* aTri, unsigned int nTri);
   
 }
 
