@@ -149,3 +149,31 @@ DFM2_INLINE void delfem2::FetchData(
     }
   }
 }
+
+
+
+DFM2_INLINE void delfem2::ddW_MassConsistentVal3D_Tet3D(
+    double* eMmat,
+    double rho, double vol,
+    bool is_add,
+    unsigned int nstride)
+{
+  if( !is_add ){
+    for(unsigned int i=0;i<4*4*nstride*nstride;++i){ eMmat[i] = 0.0; }
+  }
+  const double dtmp1 = vol*rho*0.05;
+  for(int ino=0;ino<4;ino++){
+    for(int jno=0;jno<4;jno++){
+      double* pM = eMmat+(nstride*nstride)*(ino*4+jno);
+      pM[0*nstride+0] += dtmp1;
+      pM[1*nstride+1] += dtmp1;
+      pM[2*nstride+2] += dtmp1;
+    }
+    {
+      double* pM = eMmat+(nstride*nstride)*(ino*4+ino);
+      pM[0*nstride+0] += dtmp1;
+      pM[1*nstride+1] += dtmp1;
+      pM[2*nstride+2] += dtmp1;
+    }
+  }
+}
