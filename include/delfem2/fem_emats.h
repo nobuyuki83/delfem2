@@ -21,7 +21,7 @@
 
 #include "delfem2/femem2.h"
 #include "delfem2/femem3.h"
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/dfm2_inline.h"
 #include <cassert>
 #include <vector>

@@ -55,13 +55,15 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
     ${DELFEM2_INC}/femem2.h                    ${DELFEM2_INC}/femem2.cpp
     ${DELFEM2_INC}/femem3.h                    ${DELFEM2_INC}/femem3.cpp
-    ${DELFEM2_INC}/mats.h                      ${DELFEM2_INC}/mats.cpp
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
     ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
     ${DELFEM2_INC}/srchbv3sphere.h
     ${DELFEM2_INC}/srchbv3aabb.h
     ${DELFEM2_INC}/pgeo.h
+    
+    ${DELFEM2_INC}/lsmats.h                    ${DELFEM2_INC}/lsmats.cpp
+    ${DELFEM2_INC}/lsilu_mats.h                ${DELFEM2_INC}/lsilu_mats.cpp
 
     ${DELFEM2_INC}/filenpy_str.h               ${DELFEM2_INC}/filenpy_str.cpp
     ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
@@ -70,7 +72,6 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/dtri2_v2dtri.h              ${DELFEM2_INC}/dtri2_v2dtri.cpp
     ${DELFEM2_INC}/dtri3_v3dtri.h              ${DELFEM2_INC}/dtri3_v3dtri.cpp
     ${DELFEM2_INC}/dtet_v3.h                   ${DELFEM2_INC}/dtet_v3.cpp
-    ${DELFEM2_INC}/ilu_mats.h                  ${DELFEM2_INC}/ilu_mats.cpp
     ${DELFEM2_INC}/cad2_dtri2.h                ${DELFEM2_INC}/cad2_dtri2.cpp
     ${DELFEM2_INC}/objf_geo3.h                 ${DELFEM2_INC}/objf_geo3.cpp
     ${DELFEM2_INC}/objfdtri_objfdtri23.h       ${DELFEM2_INC}/objfdtri_objfdtri23.cpp

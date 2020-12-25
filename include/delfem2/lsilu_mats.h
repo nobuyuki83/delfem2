@@ -8,7 +8,7 @@
 #ifndef DFM2_ILU_MATS_H
 #define DFM2_ILU_MATS_H
 
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/dfm2_inline.h"
 #include <iostream>
 
@@ -53,7 +53,7 @@ public:
 } // end namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/ilu_mats.cpp"
+#  include "delfem2/lsilu_mats.cpp"
 #endif
 
 #endif 

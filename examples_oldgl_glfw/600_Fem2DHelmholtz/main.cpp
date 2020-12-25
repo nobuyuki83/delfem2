@@ -10,12 +10,12 @@
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/ilu_mats.h"
+#include "delfem2/lsilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/cad2_dtri2.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/vecxitrsol.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>

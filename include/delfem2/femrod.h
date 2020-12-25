@@ -11,7 +11,7 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 
 namespace delfem2 {
 

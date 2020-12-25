@@ -10,7 +10,7 @@
 #include <vector>
 #include <complex>
 
-#include "delfem2/ilu_mats.h"
+#include "delfem2/lsilu_mats.h"
 
 // ----------------------------------------------------
 

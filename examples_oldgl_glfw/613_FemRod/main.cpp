@@ -10,7 +10,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/femrod.h"
 #include "delfem2/geo3_v23m34q.h"
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>

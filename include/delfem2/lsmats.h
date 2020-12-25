@@ -209,7 +209,7 @@ DFM2_INLINE void MatSparse_ScaleBlkLen_LeftRight(
 } // delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/mats.cpp"
+#  include "delfem2/lsmats.cpp"
 #endif
   
 #endif // MATDIA_CRS_H
