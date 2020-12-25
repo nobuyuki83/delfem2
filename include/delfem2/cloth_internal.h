@@ -1,9 +1,9 @@
 #ifndef CLOTH_INTERNAL_H
 #define CLOTH_INTERNAL_H
 
-#include "delfem2/ilu_mats.h"
+#include "delfem2/lsilu_mats.h"
 #include "delfem2/fem_emats.h"
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/femem3.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsitrsol.h"

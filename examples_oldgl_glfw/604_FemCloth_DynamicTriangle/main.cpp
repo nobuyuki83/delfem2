@@ -8,11 +8,11 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/ilu_mats.h"
+#include "delfem2/lsilu_mats.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/mats.h"
 #include "delfem2/femem3.h"
 #include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>

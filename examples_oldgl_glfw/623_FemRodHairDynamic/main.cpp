@@ -9,7 +9,7 @@
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/femrod.h"
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 #include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;

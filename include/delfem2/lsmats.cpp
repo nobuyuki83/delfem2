@@ -9,7 +9,7 @@
 #include <vector>
 #include <climits>
 #include <complex>
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 
 namespace delfem2 {
 namespace mats {

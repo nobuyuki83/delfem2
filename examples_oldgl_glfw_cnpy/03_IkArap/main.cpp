@@ -20,7 +20,7 @@
 #include "delfem2/objf_geo3.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/rigopt.h"
-#include "delfem2/mats.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/jagarray.h"

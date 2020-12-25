@@ -60,8 +60,11 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/cad2_dtri2.h           ${DELFEM2_INC}/cad2_dtri2.cpp
       ${DELFEM2_INC}/file.h                 ${DELFEM2_INC}/file.cpp
       ${DELFEM2_INC}/str.h                  ${DELFEM2_INC}/str.cpp
-      ${DELFEM2_INC}/mats.h                 ${DELFEM2_INC}/mats.cpp
+      
+      ${DELFEM2_INC}/lsmats.h               ${DELFEM2_INC}/lsmats.cpp
+      ${DELFEM2_INC}/lsilu_mats.h           ${DELFEM2_INC}/lsilu_mats.cpp
       ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp
+      
       ${DELFEM2_INC}/femem2.h               ${DELFEM2_INC}/femem2.cpp
       ${DELFEM2_INC}/femem3.h               ${DELFEM2_INC}/femem3.cpp
       ${DELFEM2_INC}/slice.h                ${DELFEM2_INC}/slice.cpp
@@ -74,7 +77,6 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/geo3_v23m34q.h         ${DELFEM2_INC}/geo3_v23m34q.cpp
       ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
       ${DELFEM2_INC}/dtri2_v2dtri.h         ${DELFEM2_INC}/dtri2_v2dtri.cpp
-      ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp
       ${DELFEM2_INC}/rig_geo3.h             ${DELFEM2_INC}/rig_geo3.cpp
       ${DELFEM2_INC}/objf_geo3.h            ${DELFEM2_INC}/objf_geo3.cpp
       ${DELFEM2_INC}/femrod.h               ${DELFEM2_INC}/femrod.cpp
