@@ -13,143 +13,6 @@
 
 // --------------------------------------------------------
 
-namespace delfem2 {
-namespace femem2 {
-
-
-const static unsigned int NIntLineGauss[4] = {
-  1, 2, 3, 4
-};
-
-const static double LineGauss[4][4][2] =
-{
-  {
-    { 0.0, 2.0 },
-    { 0.0, 0.0 },
-    { 0.0, 0.0 },
-    { 0.0, 0.0 },
-  },
-  {
-    { -0.577350269189626, 1.0 },
-    {  0.577350269189626, 1.0 },
-    {  0.0,               0.0 },
-    {  0.0,               0.0 },
-  },
-  {
-    { -0.774596669241483, 0.555555555555556 },
-    {  0.0,               0.888888888888889 },
-    {  0.774596669241483, 0.555555555555556 },
-    {  0.0,               0.0               },
-  },
-  {
-    { -0.861136311594053, 0.347854845137454 },
-    { -0.339981043584856, 0.652145154862546 },
-    {  0.339981043584856, 0.652145154862546 },
-    {  0.861136311594053, 0.347854845137454 },
-  }
-};
-
-// area of a triangle
-DFM2_INLINE double TriArea2D(const double p0[], const double p1[], const double p2[]){
-  return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
-}
-
-// area coordinate inside a triangle
-DFM2_INLINE void TriAreaCoord(double vc_p[],
-  const double p0[], const double p1[], const double p2[], const double pb[]){
-
-  vc_p[0] = TriArea2D(pb, p1, p2);
-  vc_p[1] = TriArea2D(p0, pb, p2);
-  vc_p[2] = TriArea2D(p0, p1, pb);
-
-  const double area = TriArea2D(p0, p1, p2);
-  const double inv_area = 1.0/area;
-
-  vc_p[0] = vc_p[0]*inv_area;
-  vc_p[1] = vc_p[1]*inv_area;
-  vc_p[2] = vc_p[2]*inv_area;
-
-  assert(fabs(vc_p[0]+vc_p[1]+vc_p[2]-1.0) < 1.0e-15);
-}
-
-}
-}
-
-// =======================================================================
-
-// derivative of a shape function of a triangle and constant compornent 
-DFM2_INLINE void delfem2::TriDlDx(
-    double dldx[][2],
-    double const_term[],
-    const double p0[],
-    const double p1[],
-    const double p2[])
-{
-  const double area = femem2::TriArea2D(p0, p1, p2);
-  const double tmp1 = 0.5/area;
-
-  const_term[0] = tmp1*(p1[0]*p2[1]-p2[0]*p1[1]);
-  const_term[1] = tmp1*(p2[0]*p0[1]-p0[0]*p2[1]);
-  const_term[2] = tmp1*(p0[0]*p1[1]-p1[0]*p0[1]);
-
-  dldx[0][0] = tmp1*(p1[1]-p2[1]);
-  dldx[1][0] = tmp1*(p2[1]-p0[1]);
-  dldx[2][0] = tmp1*(p0[1]-p1[1]);
-
-  dldx[0][1] = tmp1*(p2[0]-p1[0]);
-  dldx[1][1] = tmp1*(p0[0]-p2[0]);
-  dldx[2][1] = tmp1*(p1[0]-p0[0]);
-  /*
-  assert( fabs( dldx[0][0]+dldx[1][0]+dldx[2][0] ) < 1.0e-15 );
-  assert( fabs( dldx[0][1]+dldx[1][1]+dldx[2][1] ) < 1.0e-15 );
-
-  assert( fabs( const_term[0]+dldx[0][0]*p0[0]+dldx[0][1]*p0[1] - 1.0 ) < 1.0e-10 );
-  assert( fabs( const_term[0]+dldx[0][0]*p1[0]+dldx[0][1]*p1[1] ) < 1.0e-10 );
-  assert( fabs( const_term[0]+dldx[0][0]*p2[0]+dldx[0][1]*p2[1] ) < 1.0e-10 );
-
-  assert( fabs( const_term[1]+dldx[1][0]*p0[0]+dldx[1][1]*p0[1] ) < 1.0e-10 );
-  assert( fabs( const_term[1]+dldx[1][0]*p1[0]+dldx[1][1]*p1[1] - 1.0 ) < 1.0e-10 );
-  assert( fabs( const_term[1]+dldx[1][0]*p2[0]+dldx[1][1]*p2[1] ) < 1.0e-10 );
-
-  assert( fabs( const_term[2]+dldx[2][0]*p0[0]+dldx[2][1]*p0[1] ) < 1.0e-10 );
-  assert( fabs( const_term[2]+dldx[2][0]*p1[0]+dldx[2][1]*p1[1] ) < 1.0e-10 );
-  assert( fabs( const_term[2]+dldx[2][0]*p2[0]+dldx[2][1]*p2[1] - 1.0 ) < 1.0e-10 );
-  */
-}
-
-/*
-const static unsigned int NIntTriGauss[3] = { 1, 3, 7 };
-const static double TriGauss[3][7][3] =
-{
-  { // liner
-    { 0.3333333333, 0.3333333333, 1.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-  },
-  { // quadratic
-    { 0.1666666667, 0.1666666667, 0.3333333333 },
-    { 0.6666666667, 0.1666666667, 0.3333333333 },
-    { 0.1666666667, 0.6666666667, 0.3333333333 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-  },
-  { // cubic
-    { 0.1012865073, 0.1012865073, 0.1259391805 },
-    { 0.7974269854, 0.1012865073, 0.1259391805 },
-    { 0.1012865073, 0.7974269854, 0.1259391805 },
-    { 0.4701420641, 0.0597158718, 0.1323941527 },
-    { 0.4701420641, 0.4701420641, 0.1323941527 },
-    { 0.0597158718, 0.4701420641, 0.1323941527 },
-    { 0.3333333333, 0.3333333333, 0.225 },
-  }
-};
- */
-
-
 
 DFM2_INLINE void delfem2::EMat_Poisson_Tri2D
 (double eres[3], double emat[3][3],
@@ -162,7 +25,7 @@ DFM2_INLINE void delfem2::EMat_Poisson_Tri2D
   ////
   eres[0] = 0;  eres[1] = 0;  eres[2] = 0;
   for (int i = 0; i<9; ++i){ (&emat[0][0])[i] = 0.0; }
-  const double area = femem2::TriArea2D(coords[0], coords[1], coords[2]);
+  const double area = femutil::TriArea2D(coords[0], coords[1], coords[2]);
   ////
   double dldx[nno][ndim], const_term[nno];
   TriDlDx(dldx, const_term, coords[0], coords[1], coords[2]);
@@ -201,14 +64,14 @@ void delfem2::EMat_Poisson2_QuadOrth_GaussInt(
     double ly,
     unsigned int ngauss)
 {
-  namespace lcl = delfem2::femem2;
+  namespace lcl = delfem2::femutil;
   for(unsigned int i=0;i<16;++i){ (&emat[0][0])[i] = 0.0; }
-  unsigned int nw = lcl::NIntLineGauss[ngauss];
+  unsigned int nw = NIntLineGauss[ngauss];
   for(unsigned int iw=0;iw<nw;++iw){
     for(unsigned int jw=0;jw<nw;++jw){
-      const double w = lx*ly*0.25*lcl::LineGauss[ngauss][iw][1]*lcl::LineGauss[ngauss][jw][1];
-      const double x1 = (1-lcl::LineGauss[ngauss][iw][0])*0.5;
-      const double y1 = (1-lcl::LineGauss[ngauss][jw][0])*0.5;
+      const double w = lx*ly*0.25*LineGauss[ngauss][iw][1]*LineGauss[ngauss][jw][1];
+      const double x1 = (1-LineGauss[ngauss][iw][0])*0.5;
+      const double y1 = (1-LineGauss[ngauss][jw][0])*0.5;
       const double x2 = 1 - x1;
       const double y2 = 1 - y1;
       // u = u1x1y1 + u2x2y1 + u3x2y2 + u4x1y2
@@ -235,14 +98,14 @@ void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
     double lambda,
     unsigned int ngauss)
 {
-  namespace lcl = delfem2::femem2;
+  namespace lcl = delfem2::femutil;
   for(unsigned int i=0;i<16*4;++i){ (&emat[0][0][0][0])[i] = 0.0; }
-  unsigned int nw = lcl::NIntLineGauss[ngauss];
+  unsigned int nw = NIntLineGauss[ngauss];
   for(unsigned int iw=0;iw<nw;++iw){
     for(unsigned int jw=0;jw<nw;++jw){
-      const double w = lx*ly*0.25*lcl::LineGauss[ngauss][iw][1]*lcl::LineGauss[ngauss][jw][1];
-      const double x1 = (1-lcl::LineGauss[ngauss][iw][0])*0.5;
-      const double y1 = (1-lcl::LineGauss[ngauss][jw][0])*0.5;
+      const double w = lx*ly*0.25*LineGauss[ngauss][iw][1]*LineGauss[ngauss][jw][1];
+      const double x1 = (1-LineGauss[ngauss][iw][0])*0.5;
+      const double y1 = (1-LineGauss[ngauss][jw][0])*0.5;
       const double x2 = 1 - x1;
       const double y2 = 1 - y1;
       // u = u1*(x1y1) + u2*(x2y1) + u3*(x2y2) + u4*(x1y2)
@@ -267,70 +130,6 @@ void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
   }
 }
 
-
-DFM2_INLINE void delfem2::EMat_Helmholtz_Tri2D(
-    std::complex<double> eres[3],
-    std::complex<double> emat[3][3],
-    const double wave_length,
-    const double coords[3][2],
-    const std::complex<double> value[3])
-{
-  const int nno = 3;
-  const int ndim = 2;
-  const double area = femem2::TriArea2D(coords[0],coords[1],coords[2]);
-  double dldx[nno][ndim], const_term[nno];
-  TriDlDx(dldx,const_term,
-          coords[0],coords[1],coords[2]);
-  for(unsigned int ino=0;ino<nno;ino++){
-    for(unsigned int jno=0;jno<nno;jno++){
-      emat[ino][jno] = area*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]);
-    }
-  }
-  {
-    double k = 2*3.1416/wave_length;
-    double tmp_val = k*k*area/12.0;
-    for(unsigned int ino=0;ino<nno;ino++){
-      emat[ino][ino] -= tmp_val;
-      for(unsigned int jno=0;jno<nno;jno++){
-        emat[ino][jno] -= tmp_val;
-      }
-    }
-  }
-  for(unsigned int ino=0;ino<nno;ino++){
-    eres[ino] = 0.0;
-    for(unsigned int jno=0;jno<nno;jno++){
-      eres[ino] -= emat[ino][jno]*value[jno];
-    }
-  }
-}
-
-DFM2_INLINE void delfem2::EMat_SommerfeltRadiationBC_Line2D(
-    std::complex<double> eres[2],
-    std::complex<double> emat[2][2],
-    double wave_length,
-    const double P[2][2],
-    const std::complex<double> val[2])
-{
-  const double elen = sqrt( (P[0][0]-P[1][0])*(P[0][0]-P[1][0]) + (P[0][1]-P[1][1])*(P[0][1]-P[1][1]) );
-  {
-    const double k = 2*3.1416/wave_length;
-    std::complex<double> tmp_val1 = (k/6.0*elen)*std::complex<double>(0,1);
-    std::complex<double> tmp_val2 = -1/(2.0*elen*k)*std::complex<double>(0,1);
-    //      Com::Complex tmp_val2 = 0.0;
-    emat[0][0] = tmp_val1*2.0+tmp_val2;
-    emat[0][1] = tmp_val1    -tmp_val2;
-    emat[1][0] = tmp_val1    -tmp_val2;
-    emat[1][1] = tmp_val1*2.0+tmp_val2;
-  }
-  for(unsigned int ino=0;ino<2;ino++){
-    eres[ino] = 0.0;
-    for(unsigned int jno=0;jno<2;jno++){
-      eres[ino] -= emat[ino][jno]*val[jno];
-    }
-  }
-}
-
-
 DFM2_INLINE void delfem2::EMat_Diffusion_Tri2D(
     double eres[3],
     double emat[3][3],
@@ -349,7 +148,7 @@ DFM2_INLINE void delfem2::EMat_Diffusion_Tri2D(
   eres[0] = 0;  eres[1] = 0;  eres[2] = 0;
   for (int i = 0; i<9; ++i){ (&emat[0][0])[i] = 0.0; }
   
-  const double area = femem2::TriArea2D(coords[0],coords[1],coords[2]);
+  const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[nno][ndim], const_term[nno];
   TriDlDx(dldx,const_term,coords[0],coords[1],coords[2]);
   
@@ -403,7 +202,7 @@ DFM2_INLINE void delfem2::EMat_SolidStaticLinear_Tri2D(
   const int nno = 3;
   const int ndim = 2;
   
-  const double area = femem2::TriArea2D(coords[0],coords[1],coords[2]);
+  const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[nno][ndim], zero_order_term[nno];
   TriDlDx(dldx, zero_order_term, coords[0],coords[1],coords[2]);
   
@@ -447,7 +246,7 @@ DFM2_INLINE void delfem2::EMat_SolidDynamicLinear_Tri2D(
   const int nno = 3;
   const int ndim = 2;
   
-	const double area = femem2::TriArea2D(coords[0],coords[1],coords[2]);
+	const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
 	double dldx[nno][ndim];		// spatial derivative of linear shape function
 	{
     double zero_order_term[nno];	// const term of shape function
@@ -535,7 +334,7 @@ DFM2_INLINE void delfem2::MakeMat_Stokes2D_Static_P1P1(
   const unsigned int nno = 3;
   const unsigned int ndim = 2;
   
-  const double area = femem2::TriArea2D(coords[0],coords[1],coords[2]);
+  const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
   
   double dldx[nno][ndim], const_term[nno];
   TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
@@ -661,7 +460,7 @@ DFM2_INLINE void delfem2::EMat_Stokes2D_Dynamic_P1(
 {
   const int nno = 3;
 
-  const double area = femem2::TriArea2D(coords[0],coords[1],coords[2]);
+  const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[nno][2], const_term[nno];
   TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
   
@@ -759,7 +558,7 @@ DFM2_INLINE void delfem2::MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1(
   const int nno = 3;
   const int ndim = 2;
   
-  const double area = femem2::TriArea2D(coords[0],coords[1],coords[2]);
+  const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[3][2], const_term[3];
   TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
   const double velo_ave[2] = {

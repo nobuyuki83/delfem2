@@ -196,10 +196,10 @@ DFM2_INLINE void delfem2::NormalizeX(
   ScaleX(p0,1.0/sqrt(ss),n);
 }
 
-DFM2_INLINE void delfem2::OrthogonalizeToUnitVectorX
- (double* p1,
-  const double* p0,
-  unsigned int n)
+DFM2_INLINE void delfem2::OrthogonalizeToUnitVectorX(
+    double* p1,
+    const double* p0,
+    unsigned int n)
 {
   double d = delfem2::DotX(p0, p1, n);
   for(unsigned int i=0;i<n;++i){ p1[i] -= d*p0[i]; }

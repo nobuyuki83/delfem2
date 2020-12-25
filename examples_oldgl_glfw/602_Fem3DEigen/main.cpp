@@ -9,16 +9,17 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/lsvecx.h"
+#include "delfem2/lsitrsol.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec2.h"
-#include "delfem2/lsmats.h"
 #include "delfem2/dtri.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/lsitrsol.h"
 #include "delfem2/jagarray.h"
 namespace dfm2 = delfem2;
 
@@ -32,12 +33,12 @@ namespace dfm2 = delfem2;
 
 // --------------------
 
-void GenMesh
-(std::vector<dfm2::CVec2d>& aVec2,
- std::vector<dfm2::CDynPntSur>& aPo2D,
- std::vector<dfm2::CDynTri>& aETri,
- double elen,
- const std::vector< std::vector<double> >& aaXY)
+void GenMesh(
+    std::vector<dfm2::CVec2d>& aVec2,
+    std::vector<dfm2::CDynPntSur>& aPo2D,
+    std::vector<dfm2::CDynTri>& aETri,
+    double elen,
+    const std::vector< std::vector<double> >& aaXY)
 {
   std::vector<int> loopIP_ind, loopIP;
   {

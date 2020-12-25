@@ -12,6 +12,7 @@
 #include "delfem2/jagarray.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsilu_mats.h"
+#include "delfem2/lsvecx.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/dtri2_v2dtri.h"

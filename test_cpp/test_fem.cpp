@@ -19,6 +19,7 @@
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
+#include "delfem2/lsvecx.h"
 
 #include "delfem2/femem2.h"
 #include "delfem2/femem3.h"

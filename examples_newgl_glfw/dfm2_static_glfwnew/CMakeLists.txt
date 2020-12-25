@@ -53,8 +53,6 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/file.h                      ${DELFEM2_INC}/file.cpp
     ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
     ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
-    ${DELFEM2_INC}/femem2.h                    ${DELFEM2_INC}/femem2.cpp
-    ${DELFEM2_INC}/femem3.h                    ${DELFEM2_INC}/femem3.cpp
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
     ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
@@ -64,11 +62,17 @@ add_library(${PROJ_NAME} STATIC
     
     ${DELFEM2_INC}/lsmats.h                    ${DELFEM2_INC}/lsmats.cpp
     ${DELFEM2_INC}/lsilu_mats.h                ${DELFEM2_INC}/lsilu_mats.cpp
+    
+    ${DELFEM2_INC}/femem2.h                    ${DELFEM2_INC}/femem2.cpp
+    ${DELFEM2_INC}/femem3.h                    ${DELFEM2_INC}/femem3.cpp
+    ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
+    ${DELFEM2_INC}/femhelmholtz.h              ${DELFEM2_INC}/femhelmholtz.cpp
+    ${DELFEM2_INC}/femutil.h                   ${DELFEM2_INC}/femutil.cpp
+
 
     ${DELFEM2_INC}/filenpy_str.h               ${DELFEM2_INC}/filenpy_str.cpp
     ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
     ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
-    ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
     ${DELFEM2_INC}/dtri2_v2dtri.h              ${DELFEM2_INC}/dtri2_v2dtri.cpp
     ${DELFEM2_INC}/dtri3_v3dtri.h              ${DELFEM2_INC}/dtri3_v3dtri.cpp
     ${DELFEM2_INC}/dtet_v3.h                   ${DELFEM2_INC}/dtet_v3.cpp
@@ -78,6 +82,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/deflap.h                    ${DELFEM2_INC}/deflap.cpp    
     ${DELFEM2_INC}/defarap.h                   ${DELFEM2_INC}/defarap.cpp        
     ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
+    
     ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
     ${DELFEM2_INC}/srchbi_v3bvh.h
     ${DELFEM2_INC}/srch_v3bvhmshtopo.h

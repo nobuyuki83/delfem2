@@ -9,6 +9,7 @@
 #include "delfem2/defarap.h"
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
 #include "delfem2/mshuni.h"
+#include "delfem2/lsvecx.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/jagarray.h"
