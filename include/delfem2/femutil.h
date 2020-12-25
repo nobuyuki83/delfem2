@@ -128,7 +128,13 @@ DFM2_INLINE void FetchData(
     int nno, int ndim,
     const unsigned int* aIP,
     const double* val_from,
-                           int nstride=-1);
+    int nstride=-1);
+
+DFM2_INLINE void ddW_MassConsistentVal3D_Tet3D(
+    double* eMmat,
+    double rho, double vol,
+    bool is_add,
+    unsigned int nstride);
 
 } // namespace delfem2
 

@@ -115,34 +115,6 @@ DFM2_INLINE void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double* aVelo,
     const double* aAcc);
 
-DFM2_INLINE void MergeLinSys_StokesStatic2D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double g_x,
-    const double g_y,
-    const double* aXY1,
-    unsigned int nXY1,
-    const unsigned int* aTri1,
-    unsigned int nTri1,
-    const double* aVal);
-
-DFM2_INLINE void MergeLinSys_StokesDynamic2D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double dt_timestep,
-    const double gamma_newmark,
-    const double* aXY1,
-    unsigned int nXY1,
-    const unsigned int* aTri1,
-    unsigned int nTri1,
-    const double* aVal,
-    const double* aVelo);
-
 DFM2_INLINE double MergeLinSys_Cloth(
     CMatrixSparse<double>& mat_A, // (out) second derivative of energy
     double* vec_b, // (out) first derivative of energy
@@ -237,49 +209,7 @@ DFM2_INLINE void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
     const double* aVelo,
     const std::vector<double>& aR);
 
-DFM2_INLINE void MergeLinSys_Stokes3D_Static(
-    CMatrixSparse<double>& mat_A,
-    std::vector<double>& vec_b,
-    const double myu,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double g_z,
-    const std::vector<double>& aXYZ,
-    const std::vector<unsigned int>& aTet,
-    const std::vector<double>& aVal,
-    const std::vector<double>& aVelo);
 
-void MergeLinSys_Stokes3D_Dynamic(
-    CMatrixSparse<double>& mat_A,
-    std::vector<double>& vec_b,
-    const double myu,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double g_z,
-    const double dt_timestep,
-    const double gamma_newmark,
-    const std::vector<double>& aXYZ,
-    const std::vector<unsigned int>& aTet,
-    const std::vector<double>& aVal,
-    const std::vector<double>& aVelo);
-
-void MergeLinSys_NavierStokes3D_Dynamic(
-    CMatrixSparse<double>& mat_A,
-    std::vector<double>& vec_b,
-    const double myu,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double g_z,
-    const double dt_timestep,
-    const double gamma_newmark,
-    const std::vector<double>& aXYZ,
-    const std::vector<unsigned int>& aTet,
-    const std::vector<double>& aVal,
-    const std::vector<double>& aVelo);
-  
 }
 
 /* ------------------------------------------------------------------------- */
