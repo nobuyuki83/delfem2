@@ -82,39 +82,6 @@ DFM2_INLINE void MergeLinSys_Diffusion_MeshTet3D(
     const double* aVal,
     const double* aVelo);
 
-DFM2_INLINE void MergeLinSys_SolidLinear_Static_MeshTri2D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double lambda,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double* aXY1,
-    unsigned int nXY,
-    const unsigned int* aTri1,
-    unsigned int nTri,
-    const double* aVal);
-
-DFM2_INLINE void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double lambda,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double dt_timestep,
-    const double gamma_newmark,
-    const double beta_newmark,
-    const double* aXY1,
-    unsigned int nXY1,
-    const unsigned int* aTri1,
-    unsigned int nTri,
-    const double* aVal,
-    const double* aVelo,
-    const double* aAcc);
-
 DFM2_INLINE double MergeLinSys_Cloth(
     CMatrixSparse<double>& mat_A, // (out) second derivative of energy
     double* vec_b, // (out) first derivative of energy
@@ -139,75 +106,6 @@ DFM2_INLINE double MergeLinSys_Contact(
     double contact_clearance,
     const CInput_Contact& input,
     const double* aXYZ,  int nXYZ);
-
-DFM2_INLINE void MergeLinSys_SolidLinear_Static_MeshTet3D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double lambda,
-    const double rho,
-    const double *g,
-    const double* aXYZ, unsigned int nXYZ,
-    const unsigned int* aTet, unsigned int nTet,
-    const double* aDisp);
-
-DFM2_INLINE void MergeLinSys_LinearSolid3D_Static_Q1(
-    CMatrixSparse<double>& mat_A,
-    std::vector<double>& vec_b,
-    const double myu,
-    const double lambda,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double g_z,
-    const std::vector<double>& aXYZ,
-    const std::vector<int>& aHex,
-    const std::vector<double>& aVal);
-
-DFM2_INLINE void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double lambda,
-    const double rho,
-    const double g[3],
-    const double dt_timestep,
-    const double gamma_newmark,
-    const double beta_newmark,
-    const double* aXYZ,
-    unsigned int nXYZ,
-    const unsigned int* aTet,
-    unsigned int nTet,
-    const double* aVal,
-    const double* aVelo,
-    const double* aAcc);
-
-DFM2_INLINE void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double lambda,
-    const double rho,
-    const double *g,
-    const double dt,
-    const double* aXYZ, unsigned int nXYZ,
-    const unsigned int* aTet, unsigned int nTet,
-    const double* aDisp,
-    const double* aVelo);
-
-DFM2_INLINE void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
-    CMatrixSparse<double>& mat_A,
-    double* vec_b,
-    const double myu,
-    const double lambda,
-    const double rho,
-    const double g[3],
-    const double dt,
-    const double* aXYZ, int nXYZ,
-    const unsigned int* aTet, int nTet,
-    const double* aDisp,
-    const double* aVelo,
-    const std::vector<double>& aR);
 
 
 }

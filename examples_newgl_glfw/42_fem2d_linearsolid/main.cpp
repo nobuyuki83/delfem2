@@ -18,7 +18,7 @@
 #include "delfem2/lsmats.h"
 #include "delfem2/lsvecx.h"
 
-#include "delfem2/fem_emats.h"
+#include "delfem2/femsolidlinear.h"
 
 // ----------
 

@@ -18,6 +18,7 @@
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/femnavierstokes.h"
 #include "delfem2/femstokes.h"
+#include "delfem2/femsolidlinear.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/primitive.h"
