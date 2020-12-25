@@ -118,8 +118,7 @@ DFM2_INLINE void OrthogonalizeToUnitVectorX(
 
 // set boundary condition
 
-DFM2_INLINE void
-setRHS_MasterSlave(
+DFM2_INLINE void setRHS_MasterSlave(
     double *vec_b,
     unsigned int nDoF,
     const unsigned int *aMSFlag);
@@ -138,91 +137,6 @@ void MatTVec(
     double* y,
     const double* A, unsigned int ncol, unsigned int nrow,
     const double* x);
-
-
-template<typename REAL>
-class CVecX
-{
-public:
-  CVecX(REAL* p_, std::size_t n_) : p(p_), n(n_) {}
-  CVecX(std::vector<REAL>& v) : p(v.data()), n(v.size()) {}
-  //
-  REAL dot(const CVecX& rhs){
-    assert(n == rhs.n);
-    REAL d = 0;
-    for(unsigned int i=0;i<n;++i){
-      d += p[i]*rhs.p[i];
-    }
-    return d;
-  }
-  /**
-   * deep copy (copying values not the pointer)
-   * @param rhs
-   */
-  void operator = (const CVecX& rhs){
-    assert(n == rhs.n);
-    for(unsigned int i=0;i<n;++i){ p[i] = rhs.p[i]; }
-  }
-  //
-  void setZero() {
-    for(unsigned int i=0;i<n;++i){ p[i] = 0; }
-  }
-public:
-  REAL* const p;
-  const std::size_t n;
-};
-using CVecXd = CVecX<double>;
-using CVecXf = CVecX<float>;
-using CVecXcd = CVecX<std::complex<double> >;
-using CVecXcf = CVecX<std::complex<float> >;
-
-template <typename REAL>
-void AddScaledVec(
-    CVecX<REAL>& y,
-    REAL alpha,
-    const CVecX<REAL>& x)
-{
-  assert(y.n == x.n);
-  const std::size_t n = x.n;
-  for (unsigned int i = 0; i < n; i++) {
-    y.p[i] += alpha * x.p[i];
-  }
-}
-
-template <typename REAL>
-void ScaleAndAddVec(
-    CVecX<REAL>& y,
-    REAL beta,
-    const CVecX<REAL>& x)
-{
-  assert(y.n == x.n);
-  const std::size_t n = x.n;
-  for (unsigned int i = 0; i < n; i++) {
-    y.p[i] = beta * y.p[i] + x.p[i];
-  }
-}
-
-template<typename REAL, class MAT>
-void AddMatVec(
-    CVecX<REAL>& lhs,
-    REAL scale_lhs,
-    REAL scale_rhs,
-    const MAT& mat,
-    const CVecX<REAL>& rhs)
-{
-  assert(lhs.n == rhs.n);
-  mat.MatVec(lhs.p,
-      scale_rhs, rhs.p, scale_lhs);
-}
-
-
-template <class PREC, class VEC>
-void SolvePrecond(
-    VEC& Pr_vec,
-    const PREC& ilu)
-{
-  ilu.SolvePrecond(Pr_vec.p);
-}
 
 
 
@@ -603,13 +517,13 @@ std::vector<double> Solve_PBiCGStab_Complex(
 }
 
 template <typename REAL, class MAT, class PREC>
-std::vector<double> Solve_PCG_Complex
-(std::complex<REAL> *r_vec,
- std::complex<REAL> *x_vec,
- double conv_ratio_tol,
- unsigned int max_nitr,
- const MAT &mat,
- const PREC &ilu)
+std::vector<double> Solve_PCG_Complex(
+    std::complex<REAL> *r_vec,
+    std::complex<REAL> *x_vec,
+    double conv_ratio_tol,
+    unsigned int max_nitr,
+    const MAT &mat,
+    const PREC &ilu)
 {
   using COMPLEX = std::complex<REAL>;
 

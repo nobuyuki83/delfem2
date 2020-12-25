@@ -9,19 +9,12 @@
 #define DFM2_FEMEM2_H
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/femutil.h"
 #include <complex>
 
 namespace delfem2 {
 
-/**
- * @brief derivative of a shape function of a triangle and constant compornent
- */
-void TriDlDx(
-    double dldx[3][2],
-    double const_term[3],
-    const double p0[2],
-    const double p1[2],
-    const double p2[2]);
+
 
 // -------------------------------------------------------------------
 // below: fem element matrix for 2D mesh
