@@ -97,7 +97,7 @@ void StepTime()
   double time_step_size = 0.03; // size of time step
   const double stiff_contact = 1.0e+3;
   const double contact_clearance = 0.02;
-  ////
+  //
   CInput_ContactNothing c1;
   StepTime_InternalDynamicsILU(
       aXYZ, aUVW, mat_A, ilu_A,

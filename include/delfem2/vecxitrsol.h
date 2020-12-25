@@ -144,10 +144,8 @@ template<typename REAL>
 class CVecX
 {
 public:
-  CVecX(REAL* p_, std::size_t n_) :
-  p(p_), n(n_) {}
-  CVecX(std::vector<REAL>& v) :
-  p(v.data()), n(v.size()) {}
+  CVecX(REAL* p_, std::size_t n_) : p(p_), n(n_) {}
+  CVecX(std::vector<REAL>& v) : p(v.data()), n(v.size()) {}
   //
   REAL dot(const CVecX& rhs){
     assert(n == rhs.n);
@@ -157,15 +155,17 @@ public:
     }
     return d;
   }
+  /**
+   * deep copy (copying values not the pointer)
+   * @param rhs
+   */
   void operator = (const CVecX& rhs){
     assert(n == rhs.n);
-    for(unsigned int i=0;i<n;++i){
-      p[i] = rhs.p[i];
-    }
+    for(unsigned int i=0;i<n;++i){ p[i] = rhs.p[i]; }
   }
   //
   void setZero() {
-    for(unsigned int i=0;i<n;++i){ p[0] = 0; }
+    for(unsigned int i=0;i<n;++i){ p[i] = 0; }
   }
 public:
   REAL* const p;
@@ -173,6 +173,8 @@ public:
 };
 using CVecXd = CVecX<double>;
 using CVecXf = CVecX<float>;
+using CVecXcd = CVecX<std::complex<double> >;
+using CVecXcf = CVecX<std::complex<float> >;
 
 template <typename REAL>
 void AddScaledVec(
@@ -180,8 +182,11 @@ void AddScaledVec(
     REAL alpha,
     const CVecX<REAL>& x)
 {
+  assert(y.n == x.n);
   const std::size_t n = x.n;
-  for (unsigned int i = 0; i < n; i++) { y.p[i] += alpha * x.p[i]; }
+  for (unsigned int i = 0; i < n; i++) {
+    y.p[i] += alpha * x.p[i];
+  }
 }
 
 template <typename REAL>
@@ -190,20 +195,33 @@ void ScaleAndAddVec(
     REAL beta,
     const CVecX<REAL>& x)
 {
+  assert(y.n == x.n);
   const std::size_t n = x.n;
-  for (unsigned int i = 0; i < n; i++) { y.p[i] = beta * y.p[i] + x.p[i]; }
+  for (unsigned int i = 0; i < n; i++) {
+    y.p[i] = beta * y.p[i] + x.p[i];
+  }
 }
 
-template<typename REAL, class MAT, class VEC>
+template<typename REAL, class MAT>
 void AddMatVec(
-    VEC& lhs,
+    CVecX<REAL>& lhs,
     REAL scale_lhs,
     REAL scale_rhs,
     const MAT& mat,
-    const VEC& rhs)
+    const CVecX<REAL>& rhs)
 {
+  assert(lhs.n == rhs.n);
   mat.MatVec(lhs.p,
       scale_rhs, rhs.p, scale_lhs);
+}
+
+
+template <class PREC, class VEC>
+void SolvePrecond(
+    VEC& Pr_vec,
+    const PREC& ilu)
+{
+  ilu.SolvePrecond(Pr_vec.p);
 }
 
 
@@ -583,79 +601,6 @@ std::vector<double> Solve_PBiCGStab_Complex(
   
   return aResHistry;
 }
-
-
-/**
- * @brief solve a real-valued linear system using the conjugate gradient method with preconditioner
- */
-template <typename REAL, class MAT, class PREC>
-std::vector<double> Solve_PCG(
-    REAL *r_vec,
-    REAL *x_vec,
-    unsigned int N,
-    double conv_ratio_tol,
-    unsigned int max_nitr,
-    const MAT &mat,
-    const PREC &ilu)
-{
-  std::vector<double> aResHistry;
-  
-  for (unsigned int i = 0; i < N; i++) { x_vec[i] = 0; }    // {x} = 0
-  
-  double inv_sqnorm_res0;
-  {
-    const double sqnorm_res0 = DotX(r_vec, r_vec, N);
-    aResHistry.push_back(sqrt(sqnorm_res0));
-    if (sqnorm_res0 < 1.0e-30) { return aResHistry; }
-    inv_sqnorm_res0 = 1.0 / sqnorm_res0;
-  }
-  
-  // {Pr} = [P]{r}
-  std::vector<double> Pr_vec(r_vec, r_vec + N);
-  ilu.SolvePrecond(Pr_vec.data());
-  // {p} = {Pr}
-  std::vector<double> p_vec = Pr_vec;
-  // rPr = ({r},{Pr})
-  double rPr = DotX(r_vec, Pr_vec.data(), N);
-  for (unsigned int iitr = 0; iitr < max_nitr; iitr++) {
-    {
-      std::vector<double> &Ap_vec = Pr_vec;
-      // {Ap} = [A]{p}
-      mat.MatVec(Ap_vec.data(),
-          1.0, p_vec.data(), 0.0);
-      // alpha = ({r},{Pr})/({p},{Ap})
-      const double pAp = Dot(p_vec, Ap_vec);
-      double alpha = rPr / pAp;
-      AXPY(-alpha, Ap_vec.data(), r_vec, N);       // {r} = -alpha*{Ap} + {r}
-      AXPY(+alpha, p_vec.data(), x_vec, N);       // {x} = +alpha*{p } + {x}
-    }
-    {  // Converge Judgement
-      const double sqnorm_res = DotX(r_vec, r_vec, N);
-      aResHistry.push_back(sqrt(sqnorm_res));
-      const double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
-      if (conv_ratio < conv_ratio_tol) { return aResHistry; }
-    }
-    {  // calc beta
-       // {Pr} = [P]{r}
-      for (unsigned int i = 0; i < N; i++) { Pr_vec[i] = r_vec[i]; }
-      ilu.SolvePrecond(Pr_vec.data());
-      // rPr1 = ({r},{Pr})
-      const double rPr1 = DotX(r_vec, Pr_vec.data(), N);
-      // beta = rPr1/rPr
-      double beta = rPr1 / rPr;
-      rPr = rPr1;
-      // {p} = {Pr} + beta*{p}
-      for (unsigned int i = 0; i < N; i++) { p_vec[i] = Pr_vec[i] + beta * p_vec[i]; }
-    }
-  }
-  {
-    // Converge Judgement
-    double sq_norm_res = DotX(r_vec, r_vec, N);
-    aResHistry.push_back(sqrt(sq_norm_res));
-  }
-  return aResHistry;
-}
-
 
 template <typename REAL, class MAT, class PREC>
 std::vector<double> Solve_PCG_Complex

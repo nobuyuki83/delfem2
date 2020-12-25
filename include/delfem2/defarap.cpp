@@ -197,9 +197,8 @@ void delfem2::CDef_ArapEdgeLinearDisponly::Deform(
     auto vs = CVecXd(tmp0);
     auto vt = CVecXd(tmp1);
     std::vector<double> aRes = Solve_CG(
-        vr, vu,
-        1.0e-4, 300, *this,
-        vs, vt);
+        vr, vu, vs, vt,
+        1.0e-4, 300, *this);
   }
 //  std::cout << "iframe: " << iframe << "   nitr:" << aRes.size() << std::endl;
   for(unsigned int i=0;i<np*3;++i){ aXYZ1[i] += aUpd[i]; }
@@ -392,9 +391,16 @@ void delfem2::CDef_ArapEdge::Deform(
   std::vector<double> aUpd(np*6,0.0);
   std::vector<double> aConvHist;
   if( is_preconditioner ){
+    const std::size_t n = np*6;
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(aRhs);
+    auto vu = CVecXd(aUpd);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
     this->MakePreconditionerJacobi();
-    aConvHist = Solve_PCG(aRhs.data(), aUpd.data(),
-                          np*6, 1.0e-4, 400, *this, *this);
+    aConvHist = Solve_PCG(
+        vr,vu,vs,vt,
+        1.0e-4, 400, *this, *this);
   }
   else{
     const std::size_t n = np*6;
@@ -404,9 +410,8 @@ void delfem2::CDef_ArapEdge::Deform(
     auto vs = CVecXd(tmp0);
     auto vt = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr, vu,
-        1.0e-4, 400, *this,
-        vs, vt);
+        vr, vu, vs, vt,
+        1.0e-4, 400, *this);
   }
   for(unsigned int ip=0;ip<np;++ip){
     aXYZ1[ip*3+0] += aUpd[ip*3+0];
@@ -464,7 +469,6 @@ void delfem2::CDef_Arap::Init(
   
 }
 
-
 void delfem2::CDef_Arap::Deform(
     std::vector<double>& aXYZ1,
     std::vector<double>& aQuat1,
@@ -482,13 +486,15 @@ void delfem2::CDef_Arap::Deform(
     }
     aIP.push_back(ip);
     std::vector<double> eM, eR;
-    deflap::dWddW_ArapEnergy(eM,eR,
-                          Precomp.data()+ip*9,
-                          aIP,aXYZ0,aXYZ1,aQuat1);
-    Mat.Mearge(aIP.size(), aIP.data(),
-               aIP.size(), aIP.data(),
-               9, eM.data(),
-               tmp_buffer);
+    deflap::dWddW_ArapEnergy(
+        eM,eR,
+        Precomp.data()+ip*9,
+        aIP,aXYZ0,aXYZ1,aQuat1);
+    Mat.Mearge(
+        aIP.size(), aIP.data(),
+        aIP.size(), aIP.data(),
+        9, eM.data(),
+        tmp_buffer);
     for(unsigned int iip=0;iip<aIP.size();++iip){
       const int jp0 = aIP[iip];
       aRes1[jp0*3+0] += eR[iip*3+0];
@@ -505,20 +511,27 @@ void delfem2::CDef_Arap::Deform(
   if( is_preconditioner ){
     this->Prec.SetValueILU(Mat);
     this->Prec.DoILUDecomp();
-    aConvHist = Solve_PCG(aRes1.data(), aUpd1.data(),
-                         aRes1.size(), 1.0e-7, 300, Mat, Prec);
+    const std::size_t n = np*3;
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(aRes1);
+    auto vu = CVecXd(aUpd1);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
+    aConvHist = Solve_PCG(
+        vr,vu,vs,vt,
+        1.0e-7, 300, Mat, Prec);
   }
   else{
-    const std::size_t n = aRes1.size();
+    const std::size_t n = np*3;
+    assert( aRes1.size() == n && aUpd1.size() == n );
     std::vector<double> tmp0(n), tmp1(n);
     auto vr = CVecXd(aRes1);
     auto vu = CVecXd(aUpd1);
     auto vs = CVecXd(tmp0);
     auto vt = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr,vu,
-        1.0e-7, 300, Mat,
-        vs, vt);
+        vr,vu,vs,vt,
+        1.0e-7, 300, Mat);
   }
 
   for(unsigned int i=0;i<np*3;++i){ aXYZ1[i] -= aUpd1[i]; }

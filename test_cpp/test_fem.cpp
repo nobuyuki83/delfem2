@@ -926,11 +926,18 @@ TEST(fem,plate_bending_mitc3_cantilever)
         ilu_A.SetValueILU(mat_A);
         ilu_A.DoILUDecomp();
         vec_x.resize(vec_b.size());
-        std::vector<double> conv = Solve_PCG(
-            vec_b.data(), vec_x.data(),
-            vec_b.size(),
-            1.0e-5, 1000,
-            mat_A, ilu_A);
+        std::vector<double> conv;
+        {
+          const std::size_t n = vec_b.size();
+          std::vector<double> tmp0(n), tmp1(n);
+          auto vr = dfm2::CVecXd(vec_b);
+          auto vu = dfm2::CVecXd(vec_x);
+          auto vs = dfm2::CVecXd(tmp0);
+          auto vt = dfm2::CVecXd(tmp1);
+          conv = Solve_PCG(
+              vr,vu,vs,vt,
+              1.0e-5, 1000, mat_A, ilu_A);
+        }
 //        std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
         EXPECT_LT( conv.size(), 1000 );
         EXPECT_LT( conv[conv.size()-1], 1.0e-5);

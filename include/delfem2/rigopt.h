@@ -226,9 +226,8 @@ Solve_MinRigging(
     auto vs = delfem2::CVecXd(tmp0);
     auto vt = delfem2::CVecXd(tmp1);
     reshist = Solve_CG(
-        vr, vu,
-        1.0e-3, 100, mat,
-        vs, vt);
+        vr, vu, vs, vt,
+        1.0e-3, 100, mat);
   }
   //  std::cout << "convergence" << reshist.size() << std::endl;
   for(unsigned int ib=0;ib<aBone.size();++ib){

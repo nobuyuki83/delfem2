@@ -48,7 +48,6 @@ void ShowEigen_Laplace(
   {
     A(0,0) += 1.0;
     Eigen::VectorXd r(np), u(np), s(np), t(np);
-    double a = r.dot(r);
     r.setRandom();
     u.setRandom();
     std::cout << "hoge" << std::endl;
@@ -57,8 +56,8 @@ void ShowEigen_Laplace(
     std::cout << u << std::endl;
     std::cout << "foo" << r.dot(r) << std::endl;
     std::vector<double> aResHist = dfm2::Solve_CG(
-        r,u,
-        1.0e-5,1000,A,s,t);
+        r,u,s,t,
+        1.0e-5,1000,A);
     for(double & itr : aResHist){
       std::cout << "a " << itr << std::endl;
     }

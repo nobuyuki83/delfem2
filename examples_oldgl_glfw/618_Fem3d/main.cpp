@@ -12,6 +12,7 @@
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/ilu_mats.h"
+#include "delfem2/lsitrsol.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mats.h"
@@ -113,10 +114,17 @@ void SolveProblem_Poisson()
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
-  Solve_PCG(vec_b.data(),vec_x.data(),
-            vec_b.size(),
-            conv_ratio,iteration,
-            mat_A,ilu_A);
+  {
+    const std::size_t n = vec_b.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(vec_b);
+    auto vu = dfm2::CVecXd(vec_x);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    dfm2::Solve_PCG(
+        vr,vu,vs,vt,
+        conv_ratio, iteration, mat_A, ilu_A);
+  }
   // ------------------------------
   dfm2::XPlusAY(aVal,nDoF,aBCFlag,
                 1.0,vec_x);
@@ -165,7 +173,7 @@ void SolveProblem_Diffusion()
 {
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np;
-  /////////////////////////////
+  // -----------------
   const double alpha = 1.0;
   const double rho = 1.0;
   const double source = 1.0;
@@ -186,10 +194,17 @@ void SolveProblem_Diffusion()
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
-  Solve_PCG(vec_b.data(),vec_x.data(),
-            vec_b.size(),
-            conv_ratio,iteration,
-            mat_A,ilu_A);
+  {
+    const std::size_t n = vec_b.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(vec_b);
+    auto vu = dfm2::CVecXd(vec_x);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    Solve_PCG(vr,vu,vs,vt,
+              conv_ratio, iteration,
+              mat_A, ilu_A);
+  }
   // ----------------------
   dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
                   dt_timestep*gamma_newmark,vec_x,
@@ -261,10 +276,17 @@ void SolveProblem_LinearSolid_Static()
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
-  Solve_PCG(vec_b.data(),vec_x.data(),
-            vec_b.size(),
-            conv_ratio,iteration,
-            mat_A,ilu_A);
+  {
+    const std::size_t n = vec_b.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(vec_b);
+    auto vu = dfm2::CVecXd(vec_x);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    Solve_PCG(vr,vu,vs,vt,
+        conv_ratio, iteration,
+        mat_A, ilu_A);
+  }
   // ------------------------------
   dfm2::XPlusAY(aVal, nDoF, aBCFlag,
     1.0, vec_x);
@@ -338,10 +360,17 @@ void SolveProblem_LinearSolid_Dynamic()
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
-  Solve_PCG(vec_b.data(),vec_x.data(),
-            vec_b.size(),
-            conv_ratio,iteration,
-            mat_A,ilu_A);
+  {
+    const std::size_t n = vec_b.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(vec_b);
+    auto vu = dfm2::CVecXd(vec_x);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    dfm2::Solve_PCG(vr,vu,vs,vt,
+        conv_ratio, iteration,
+        mat_A, ilu_A);
+  }
   // -----------------------
   dfm2::XPlusAYBZCW(aVal, nDoF, aBCFlag,
                     dt_timestep,aVelo,
@@ -429,10 +458,17 @@ void SolveProblem_Stokes_Static()
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
-  Solve_PCG(vec_b.data(),vec_x.data(),
-            vec_b.size(),
-            conv_ratio,iteration,
-            mat_A,ilu_A);
+  {
+    const std::size_t n = vec_b.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(vec_b);
+    auto vu = dfm2::CVecXd(vec_x);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    Solve_PCG(vr,vu,vs,vt,
+        conv_ratio, iteration,
+        mat_A, ilu_A);
+  }
   // ----------------------
   dfm2::XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
 }
@@ -512,10 +548,17 @@ void SolveProblem_Stokes_Dynamic()
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
-  Solve_PCG(vec_b.data(),vec_x.data(),
-            vec_b.size(),
-            conv_ratio,iteration,
-            mat_A,ilu_A);
+  {
+    const std::size_t n = vec_b.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(vec_b);
+    auto vu = dfm2::CVecXd(vec_x);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    Solve_PCG(
+        vr,vu,vs,vt,
+        conv_ratio, iteration, mat_A, ilu_A);
+  }
   // -----------------------
   dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
             dt_timestep*gamma_newmark,vec_x,

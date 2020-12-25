@@ -166,9 +166,8 @@ void StepTime_InternalDynamics(
     auto vs = delfem2::CVecXd(tmp0);
     auto vt = delfem2::CVecXd(tmp1);
     Solve_CG(
-        vx,vb,
-        conv_ratio, iteration, mat_A,
-        vs,vt);
+        vx,vb,vs,vt,
+        conv_ratio, iteration, mat_A);
   }
   std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position，頂点位置の更新
@@ -242,9 +241,20 @@ void StepTime_InternalDynamicsILU(
   double conv_ratio = 1.0e-4;
   int iteration = 100;
   std::vector<double> vec_x(vec_b.size());
-  Solve_PCG(
-      vec_b.data(),vec_x.data(),
-      vec_b.size(), conv_ratio, iteration, mat_A,ilu_A);
+  {
+    const std::size_t n = vec_b.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(vec_b);
+    auto vu = dfm2::CVecXd(vec_x);
+    auto vt = dfm2::CVecXd(tmp0);
+    auto vs = dfm2::CVecXd(tmp1);
+    Solve_PCG(
+        vr, vu, vt, vs,
+        conv_ratio, iteration, mat_A, ilu_A);
+//    Solve_CG(
+//        vr, vu, vt, vs,
+//        conv_ratio, iteration, mat_A);
+  }
 //  std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position
   for(unsigned int i=0;i<nDof;i++){

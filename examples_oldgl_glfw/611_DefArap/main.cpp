@@ -93,9 +93,10 @@ int main(int argc,char* argv[])
   std::vector<double> aXYZ0;
   std::vector<int> aBCFlag;
   {
-    dfm2::MeshTri3D_CylinderClosed(aXYZ0, aTri,
-                                   0.2, 1.6,
-                                   32, 32);
+    dfm2::MeshTri3D_CylinderClosed(
+        aXYZ0, aTri,
+        0.2, 1.6,
+        32, 32);
     const unsigned int np = aXYZ0.size() / 3;
     aBCFlag.assign(np * 3, 0);
     for(unsigned int ip=0;ip<np;++ip) {
@@ -129,12 +130,11 @@ int main(int argc,char* argv[])
     { // arap edge linear disponly
       dfm2::CDef_Arap def0;
       def0.Init(aXYZ0, aTri, false);
-      glfwSetWindowTitle(viewer.window, "(1) ARAP w.o. Preconditioner");
-      for(;iframe<200;++iframe)
-      {
+      glfwSetWindowTitle(viewer.window, "(1) ARAP without Preconditioner");
+      for(;iframe<200;++iframe){
         SetPositionAtFixedBoundary(
             aXYZ1,
-            iframe,aXYZ0,aBCFlag);
+            0,aXYZ0,aBCFlag);
         def0.Deform(
             aXYZ1,aQuat1,
             aXYZ0,aBCFlag);

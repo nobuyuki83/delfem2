@@ -301,6 +301,7 @@ int main (int argc, char * argv[])
     viewer.DrawBegin_oldGL();
     glutMyDisplay(ngrid,velou,velov,press);
     viewer.SwapBuffers();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
   }
 EXIT:

@@ -170,9 +170,8 @@ void Solve_MinEnergyArap(
     auto vs = dfm2::CVecXd(tmp0);
     auto vt = dfm2::CVecXd(tmp1);
     reshist = dfm2::Solve_CG(
-        vr, vu,
-        1.0e-3, 100, mat,
-        vs, vt);
+        vr, vu, vs, vt,
+        1.0e-3, 100, mat);
   }
   
   std::cout << "convergence: " << reshist.size() << std::endl;

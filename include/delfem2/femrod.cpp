@@ -639,9 +639,8 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
     auto vs = CVecXd(tmp0);
     auto vt = CVecXd(tmp1);
     auto aConvHist = Solve_CG(
-        vr, vu,
-        1.0e-4, 300, mats,
-        vs, vt);
+        vr, vu, vs, vt,
+        1.0e-4, 300, mats);
     if( aConvHist.size() > 0 ){
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
     }
@@ -978,9 +977,8 @@ DFM2_INLINE void delfem2::Solve_RodHair(
     auto vs = CVecXd(tmp0);
     auto vt = CVecXd(tmp1);
     auto aConvHist = Solve_CG(
-        vr,vu,
-        1.0e-4, 300, mats,
-        vs,vt);
+        vr,vu,vs,vt,
+        1.0e-4, 300, mats);
     if( aConvHist.size() > 0 ){
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
     }
@@ -1106,9 +1104,8 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     auto vs = CVecXd(tmp0);
     auto vt = CVecXd(tmp1);
     auto aConvHist = Solve_CG(
-        vr, vu,
-        1.0e-6, 3000, mc,
-        vs, vt);
+        vr, vu, vs, vt,
+        1.0e-6, 3000, mc);
     /*
     if( aConvHist.size() > 0 ){
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
