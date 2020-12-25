@@ -11,7 +11,7 @@
 #include "delfem2/cloth_internal.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
-#include "delfem2/fem_emats.h"
+#include "delfem2/femcloth.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>

@@ -6,9 +6,9 @@
  */
 
 
-#include "delfem2/femem2.h"
-#include <math.h>
-#include <assert.h>
+#include "delfem2/fempoisson.h"
+#include <cmath>
+#include <cassert>
 #include <complex>
 
 // --------------------------------------------------------
@@ -62,68 +62,26 @@ void delfem2::EMat_Poisson2_QuadOrth_GaussInt(
     double emat[4][4],
     double lx,
     double ly,
-    unsigned int ngauss)
-{
+    unsigned int ngauss) {
   namespace lcl = delfem2::femutil;
-  for(unsigned int i=0;i<16;++i){ (&emat[0][0])[i] = 0.0; }
+  for (unsigned int i = 0; i < 16; ++i) { (&emat[0][0])[i] = 0.0; }
   unsigned int nw = NIntLineGauss[ngauss];
-  for(unsigned int iw=0;iw<nw;++iw){
-    for(unsigned int jw=0;jw<nw;++jw){
-      const double w = lx*ly*0.25*LineGauss[ngauss][iw][1]*LineGauss[ngauss][jw][1];
-      const double x1 = (1-LineGauss[ngauss][iw][0])*0.5;
-      const double y1 = (1-LineGauss[ngauss][jw][0])*0.5;
+  for (unsigned int iw = 0; iw < nw; ++iw) {
+    for (unsigned int jw = 0; jw < nw; ++jw) {
+      const double w = lx * ly * 0.25 * LineGauss[ngauss][iw][1] * LineGauss[ngauss][jw][1];
+      const double x1 = (1 - LineGauss[ngauss][iw][0]) * 0.5;
+      const double y1 = (1 - LineGauss[ngauss][jw][0]) * 0.5;
       const double x2 = 1 - x1;
       const double y2 = 1 - y1;
       // u = u1x1y1 + u2x2y1 + u3x2y2 + u4x1y2
       const double dldx[4][2] = {
-          {-y1/lx, -x1/ly},
-          {+y1/lx, -x2/ly},
-          {+y2/lx, +x2/ly},
-          {-y2/lx, +x1/ly} };
-      for(unsigned int in=0;in<4;++in){
-        for(unsigned int jn=0;jn<4;++jn){
-          emat[in][jn] += w*(dldx[in][0]*dldx[jn][0] + dldx[in][1]*dldx[jn][1]);
-        }
-      }
-    }
-  }
-}
-
-
-void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
-    double emat[4][4][2][2],
-    double lx,
-    double ly,
-    double myu,
-    double lambda,
-    unsigned int ngauss)
-{
-  namespace lcl = delfem2::femutil;
-  for(unsigned int i=0;i<16*4;++i){ (&emat[0][0][0][0])[i] = 0.0; }
-  unsigned int nw = NIntLineGauss[ngauss];
-  for(unsigned int iw=0;iw<nw;++iw){
-    for(unsigned int jw=0;jw<nw;++jw){
-      const double w = lx*ly*0.25*LineGauss[ngauss][iw][1]*LineGauss[ngauss][jw][1];
-      const double x1 = (1-LineGauss[ngauss][iw][0])*0.5;
-      const double y1 = (1-LineGauss[ngauss][jw][0])*0.5;
-      const double x2 = 1 - x1;
-      const double y2 = 1 - y1;
-      // u = u1*(x1y1) + u2*(x2y1) + u3*(x2y2) + u4*(x1y2)
-      // l1 = x1y1, l2=x2y1, l3=x2y2, l4=x1y2
-      const double dldx[4][2] = {
-          {-y1/lx, -x1/ly},
-          {+y1/lx, -x2/ly},
-          {+y2/lx, +x2/ly},
-          {-y2/lx, +x1/ly} };
-      for(unsigned int in=0;in<4;++in){
-        for(unsigned int jn=0;jn<4;++jn){
-          emat[in][jn][0][0] = w*(lambda+myu)*dldx[in][0]*dldx[jn][0];
-          emat[in][jn][0][1] = w*(lambda*dldx[in][0]*dldx[jn][1]+myu*dldx[jn][0]*dldx[in][1]);
-          emat[in][jn][1][0] = w*(lambda*dldx[in][1]*dldx[jn][0]+myu*dldx[jn][1]*dldx[in][0]);
-          emat[in][jn][1][1] = w*(lambda+myu)*dldx[in][1]*dldx[jn][1];
-          const double dtmp1 = w*myu*(dldx[in][1]*dldx[jn][1]+dldx[in][0]*dldx[jn][0]);
-          emat[in][jn][0][0] += dtmp1;
-          emat[in][jn][1][1] += dtmp1;
+          {-y1 / lx, -x1 / ly},
+          {+y1 / lx, -x2 / ly},
+          {+y2 / lx, +x2 / ly},
+          {-y2 / lx, +x1 / ly}};
+      for (unsigned int in = 0; in < 4; ++in) {
+        for (unsigned int jn = 0; jn < 4; ++jn) {
+          emat[in][jn] += w * (dldx[in][0] * dldx[jn][0] + dldx[in][1] * dldx[jn][1]);
         }
       }
     }
@@ -187,6 +145,96 @@ DFM2_INLINE void delfem2::EMat_Diffusion_Tri2D(
     }
   }
 }
+
+
+
+DFM2_INLINE void delfem2::EMat_Poisson_Tet3D
+(double eres[4],
+ double emat[4][4],
+ const double alpha, const double source,
+ const double coords[4][3],
+ const double value[4])
+{
+  const int nno = 4;
+  const int ndim = 3;
+  //
+  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;  eres[3] = 0;
+  for (int i = 0; i<16; ++i){ (&emat[0][0])[i] = 0.0; }
+  const double area = femutil::TetVolume3D(coords[0], coords[1], coords[2], coords[3]);
+  //
+  double dldx[nno][ndim], const_term[nno];
+  TetDlDx(dldx, const_term, coords[0], coords[1], coords[2], coords[3]);
+  
+  for (int ino = 0; ino<nno; ino++){
+    for (int jno = 0; jno<nno; jno++){
+      emat[ino][jno] = alpha*area*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]+dldx[ino][2]*dldx[jno][2]);
+    }
+  }
+  for (int ino = 0; ino<nno; ino++){
+    eres[ino] = source*area*0.25;
+  }
+  for (int ino = 0; ino<nno; ino++){
+    for (int jno = 0; jno<nno; jno++){
+      eres[ino] -= emat[ino][jno]*value[jno];
+    }
+  }
+}
+
+DFM2_INLINE void delfem2::EMat_Diffusion_Newmark_Tet3D
+(double eres[4],
+ double emat[4][4],
+ const double alpha, const double source,
+ const double dt_timestep, const double gamma_newmark, const double rho,
+ const double coords[4][3],
+ const double value[4], const double velo[4])
+{
+  const int nno = 4;
+  const int ndim = 3;
+  
+  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;  eres[3] = 0;
+  for (int i=0; i<16; ++i){ (&emat[0][0])[i] = 0.0; }
+  
+  const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
+  double dldx[nno][ndim], const_term[nno];
+  TetDlDx(dldx,const_term,coords[0],coords[1],coords[2],coords[3]);
+  
+  // ----------------------
+  
+  double eCmat[nno][nno];
+  for(int ino=0;ino<nno;ino++){
+    for(int jno=0;jno<nno;jno++){
+      eCmat[ino][jno] = alpha*vol*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]+dldx[ino][2]*dldx[jno][2]);
+    }
+  }
+  double eMmat[nno][nno];
+  {
+    const double dtmp1 = rho*vol*0.05;
+    for(int ino=0;ino<nno;ino++){
+      for(int jno=0;jno<nno;jno++){
+        eMmat[ino][jno] = dtmp1;
+      }
+      eMmat[ino][ino] += dtmp1;
+    }
+  }
+		
+  for(int ino=0;ino<nno;ino++){
+    eres[ino] = source*vol*0.25;
+  }
+  
+  {
+    const double dtmp1 = gamma_newmark*dt_timestep;
+    for(int i=0;i<nno*nno;i++){
+      (&emat[0][0])[i] = (&eMmat[0][0])[i]+dtmp1*(&eCmat[0][0])[i];
+    }
+  }
+  for(int ino=0;ino<nno;ino++){
+    for(int jno=0;jno<nno;jno++){
+      eres[ino]	-= eCmat[ino][jno]*(value[jno]+dt_timestep*velo[jno]) + eMmat[ino][jno]*velo[jno];
+    }
+  }
+}
+
+
 
 
 // above: solid linear

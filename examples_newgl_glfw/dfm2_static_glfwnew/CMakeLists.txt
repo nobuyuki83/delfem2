@@ -70,9 +70,9 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/lsmats.h                    ${DELFEM2_INC}/lsmats.cpp
     ${DELFEM2_INC}/lsilu_mats.h                ${DELFEM2_INC}/lsilu_mats.cpp
     
-    ${DELFEM2_INC}/femem2.h                    ${DELFEM2_INC}/femem2.cpp
-    ${DELFEM2_INC}/femem3.h                    ${DELFEM2_INC}/femem3.cpp
-    ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
+    ${DELFEM2_INC}/fempoisson.h                ${DELFEM2_INC}/fempoisson.cpp
+    ${DELFEM2_INC}/femdkt.h                    ${DELFEM2_INC}/femdkt.cpp
+    ${DELFEM2_INC}/femcloth.h                 ${DELFEM2_INC}/femcloth.cpp
     ${DELFEM2_INC}/femhelmholtz.h              ${DELFEM2_INC}/femhelmholtz.cpp
     ${DELFEM2_INC}/femsolidlinear.h            ${DELFEM2_INC}/femsolidlinear.cpp
     ${DELFEM2_INC}/femstokes.h                 ${DELFEM2_INC}/femstokes.cpp

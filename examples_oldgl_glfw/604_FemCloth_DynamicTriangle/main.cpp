@@ -13,7 +13,7 @@
 #include "delfem2/cloth_internal.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/femem3.h"
+#include "delfem2/femcloth.h"
 #include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>

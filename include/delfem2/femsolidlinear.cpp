@@ -8,6 +8,47 @@
 #include "delfem2/femsolidlinear.h"
 
 
+void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
+                                                  double emat[4][4][2][2],
+                                                  double lx,
+                                                  double ly,
+                                                  double myu,
+                                                  double lambda,
+                                                  unsigned int ngauss)
+{
+  namespace lcl = delfem2::femutil;
+  for(unsigned int i=0;i<16*4;++i){ (&emat[0][0][0][0])[i] = 0.0; }
+  unsigned int nw = NIntLineGauss[ngauss];
+  for(unsigned int iw=0;iw<nw;++iw){
+    for(unsigned int jw=0;jw<nw;++jw){
+      const double w = lx*ly*0.25*LineGauss[ngauss][iw][1]*LineGauss[ngauss][jw][1];
+      const double x1 = (1-LineGauss[ngauss][iw][0])*0.5;
+      const double y1 = (1-LineGauss[ngauss][jw][0])*0.5;
+      const double x2 = 1 - x1;
+      const double y2 = 1 - y1;
+      // u = u1*(x1y1) + u2*(x2y1) + u3*(x2y2) + u4*(x1y2)
+      // l1 = x1y1, l2=x2y1, l3=x2y2, l4=x1y2
+      const double dldx[4][2] = {
+        {-y1/lx, -x1/ly},
+        {+y1/lx, -x2/ly},
+        {+y2/lx, +x2/ly},
+        {-y2/lx, +x1/ly} };
+      for(unsigned int in=0;in<4;++in){
+        for(unsigned int jn=0;jn<4;++jn){
+          emat[in][jn][0][0] = w*(lambda+myu)*dldx[in][0]*dldx[jn][0];
+          emat[in][jn][0][1] = w*(lambda*dldx[in][0]*dldx[jn][1]+myu*dldx[jn][0]*dldx[in][1]);
+          emat[in][jn][1][0] = w*(lambda*dldx[in][1]*dldx[jn][0]+myu*dldx[jn][1]*dldx[in][0]);
+          emat[in][jn][1][1] = w*(lambda+myu)*dldx[in][1]*dldx[jn][1];
+          const double dtmp1 = w*myu*(dldx[in][1]*dldx[jn][1]+dldx[in][0]*dldx[jn][0]);
+          emat[in][jn][0][0] += dtmp1;
+          emat[in][jn][1][1] += dtmp1;
+        }
+      }
+    }
+  }
+}
+
+
 DFM2_INLINE void delfem2::ddW_SolidLinear_Tet3D(
     double* eKmat,
     double lambda,
