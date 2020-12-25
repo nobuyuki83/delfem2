@@ -13,7 +13,7 @@
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsilu_mats.h"
-#include "delfem2/fem_emats.h"
+#include "delfem2/femsolidlinear.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"

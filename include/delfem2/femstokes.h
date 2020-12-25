@@ -10,7 +10,7 @@
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
-#include <complex>
+#include <vector>
 
 namespace delfem2 {
 

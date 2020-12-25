@@ -10,6 +10,7 @@
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
+#include <vector>
 
 namespace delfem2 {
 
@@ -101,9 +102,9 @@ void MakeMat_NavierStokes3D_Dynamic_Newmark_P1P1(
     double emat_uu[4][4][3][3], double emat_up[4][4][3], double emat_pu[4][4][3], double emat_pp[4][4],
     double eres_u[4][3], double eres_p[4]);
 
-
+template <class MAT>
 void MergeLinSys_NavierStokes2D(
-    CMatrixSparse<double>& mat_A,
+    MAT& mat_A,
     double* vec_b,
     const double myu,
     const double rho,
@@ -145,20 +146,21 @@ void MergeLinSys_NavierStokes2D(
   }
 }
 
-void MergeLinSys_NavierStokes3D_Dynamic
-(CMatrixSparse<double>& mat_A,
- std::vector<double>& vec_b,
- const double myu,
- const double rho,
- const double g_x,
- const double g_y,
- const double g_z,
- const double dt_timestep,
- const double gamma_newmark,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTet,
- const std::vector<double>& aVal,
- const std::vector<double>& aVelo)
+template <class MAT>
+void MergeLinSys_NavierStokes3D_Dynamic(
+    MAT& mat_A,
+    std::vector<double>& vec_b,
+    const double myu,
+    const double rho,
+    const double g_x,
+    const double g_y,
+    const double g_z,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aVal,
+    const std::vector<double>& aVelo)
 {
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
