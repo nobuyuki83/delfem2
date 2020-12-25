@@ -17,6 +17,40 @@ DFM2_INLINE double delfem2::femutil::TriArea2D(
   return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
 }
 
+DFM2_INLINE double delfem2::femutil::TriArea3D(
+    const double v1[3],
+    const double v2[3],
+    const double v3[3])
+{
+  double x, y, z;
+  x = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
+  y = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
+  z = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
+  return 0.5*sqrt( x*x + y*y + z*z );
+}
+
+DFM2_INLINE double delfem2::femutil::Distance3D(
+    const double p0[3],
+    const double p1[3])
+{
+  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+
+DFM2_INLINE void delfem2::femutil::UnitNormalAreaTri3D(
+    double n[3],
+    double& a,
+    const double v1[3],
+    const double v2[3],
+    const double v3[3])
+{
+  n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
+  n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
+  n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
+  a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
+  const double invlen = 0.5/a;
+  n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
+}
+
 // area coordinate inside a triangle
 DFM2_INLINE void delfem2::femutil::TriAreaCoord(
     double vc_p[],

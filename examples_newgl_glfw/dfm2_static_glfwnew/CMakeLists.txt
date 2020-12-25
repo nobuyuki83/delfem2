@@ -61,7 +61,6 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
 
-
     ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
     ${DELFEM2_INC}/srchbv3sphere.h
     ${DELFEM2_INC}/srchbv3aabb.h
@@ -77,6 +76,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/femhelmholtz.h              ${DELFEM2_INC}/femhelmholtz.cpp
     ${DELFEM2_INC}/femsolidlinear.h            ${DELFEM2_INC}/femsolidlinear.cpp
     ${DELFEM2_INC}/femstokes.h                 ${DELFEM2_INC}/femstokes.cpp
+    ${DELFEM2_INC}/femcloth.h                  ${DELFEM2_INC}/femcloth.cpp
     ${DELFEM2_INC}/femnavierstokes.h           ${DELFEM2_INC}/femnavierstokes.cpp
     ${DELFEM2_INC}/femutil.h                   ${DELFEM2_INC}/femutil.cpp
 

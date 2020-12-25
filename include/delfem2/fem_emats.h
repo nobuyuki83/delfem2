@@ -82,31 +82,6 @@ DFM2_INLINE void MergeLinSys_Diffusion_MeshTet3D(
     const double* aVal,
     const double* aVelo);
 
-DFM2_INLINE double MergeLinSys_Cloth(
-    CMatrixSparse<double>& mat_A, // (out) second derivative of energy
-    double* vec_b, // (out) first derivative of energy
-    //
-    double lambda, // (in) Lame's 1st parameter
-    double myu,  // (in) Lame's 2nd parameter
-    double stiff_bend, // (in) bending stiffness
-    const double* aPosIni,
-    unsigned int np,
-    unsigned int ndim,
-    const unsigned int* aTri,
-    unsigned int nTri, // (in) triangle index
-    const unsigned int* aQuad,
-    unsigned int nQuad, // (in) index of 4 vertices required for bending
-    const double* aXYZ);
-
-DFM2_INLINE double MergeLinSys_Contact(
-    CMatrixSparse<double>& ddW,
-    double* dW, // (out) first derivative of energy
-    //
-    double stiff_contact,
-    double contact_clearance,
-    const CInput_Contact& input,
-    const double* aXYZ,  int nXYZ);
-
 
 }
 

@@ -137,8 +137,25 @@ DFM2_INLINE void TriAreaCoord(
     const double p2[],
     const double pb[]);
 
+DFM2_INLINE double Distance3D(
+    const double p0[3],
+    const double p1[3]);
 
-DFM2_INLINE double Dot3D(const double a[], const double b[]);
+DFM2_INLINE double TriArea3D(
+    const double v1[3],
+    const double v2[3],
+    const double v3[3]);
+
+DFM2_INLINE void UnitNormalAreaTri3D(
+    double n[3],
+    double& a,
+    const double v1[3],
+    const double v2[3],
+    const double v3[3]);
+
+DFM2_INLINE double Dot3D(
+    const double a[],
+    const double b[]);
 
 DFM2_INLINE void Cross3D(
     double r[3],

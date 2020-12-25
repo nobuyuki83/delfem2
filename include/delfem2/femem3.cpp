@@ -6,626 +6,11 @@
  */
 
 
-#include <math.h>
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 #include <complex>
 
 #include "delfem2/femem3.h"
-
-// --------------------------------------------------------
-
-namespace delfem2 {
-namespace femem3 {
-
-
-const static unsigned int NIntLineGauss[4] = {
-  1, 2, 3, 4
-};
-const static double LineGauss[4][4][2] =
-{
-  {
-    { 0.0, 2.0 },
-    { 0.0, 0.0 },
-    { 0.0, 0.0 },
-    { 0.0, 0.0 },
-  },
-  {
-    { -0.577350269189626, 1.0 },
-    {  0.577350269189626, 1.0 },
-    {  0.0,               0.0 },
-    {  0.0,               0.0 },
-  },
-  {
-    { -0.774596669241483, 0.555555555555556 },
-    {  0.0,               0.888888888888889 },
-    {  0.774596669241483, 0.555555555555556 },
-    {  0.0,               0.0               },
-  },
-  {
-    { -0.861136311594053, 0.347854845137454 },
-    { -0.339981043584856, 0.652145154862546 },
-    {  0.339981043584856, 0.652145154862546 },
-    {  0.861136311594053, 0.347854845137454 },
-  }
-};
-
-
-DFM2_INLINE void ShapeFunc_Hex8
-(const double& r0, const double& r1,	const double& r2,
- const double coords[][3],
- double& detjac,
- double dndx[][3],
- double an[] )
-{
-  an[0] = 0.125*(1.0-r0)*(1.0-r1)*(1.0-r2);
-  an[1] = 0.125*(1.0+r0)*(1.0-r1)*(1.0-r2);
-  an[2] = 0.125*(1.0-r0)*(1.0+r1)*(1.0-r2);
-  an[3] = 0.125*(1.0+r0)*(1.0+r1)*(1.0-r2);
-  an[4] = 0.125*(1.0-r0)*(1.0-r1)*(1.0+r2);
-  an[5] = 0.125*(1.0+r0)*(1.0-r1)*(1.0+r2);
-  an[6] = 0.125*(1.0-r0)*(1.0+r1)*(1.0+r2);
-  an[7] = 0.125*(1.0+r0)*(1.0+r1)*(1.0+r2);
-  
-  double dndr[8][3];
-  dndr[0][0] = -0.125*(1.0-r1)*(1.0-r2);
-  dndr[1][0] = -dndr[0][0];
-  dndr[2][0] = -0.125*(1.0+r1)*(1.0-r2);
-  dndr[3][0] = -dndr[2][0];
-  dndr[4][0] = -0.125*(1.0-r1)*(1.0+r2);
-  dndr[5][0] = -dndr[4][0];
-  dndr[6][0] = -0.125*(1.0+r1)*(1.0+r2);
-  dndr[7][0] = -dndr[6][0];
-  
-  dndr[0][1] = -0.125*(1.0-r0)*(1.0-r2);
-  dndr[1][1] = -0.125*(1.0+r0)*(1.0-r2);
-  dndr[2][1] = -dndr[0][1];
-  dndr[3][1] = -dndr[1][1];
-  dndr[4][1] = -0.125*(1.0-r0)*(1.0+r2);
-  dndr[5][1] = -0.125*(1.0+r0)*(1.0+r2);
-  dndr[6][1] = -dndr[4][1];
-  dndr[7][1] = -dndr[5][1];
-  
-  dndr[0][2] = -0.125*(1.0-r0)*(1.0-r1);
-  dndr[1][2] = -0.125*(1.0+r0)*(1.0-r1);
-  dndr[2][2] = -0.125*(1.0-r0)*(1.0+r1);
-  dndr[3][2] = -0.125*(1.0+r0)*(1.0+r1);
-  dndr[4][2] = -dndr[0][2];
-  dndr[5][2] = -dndr[1][2];
-  dndr[6][2] = -dndr[2][2];
-  dndr[7][2] = -dndr[3][2];
-  
-  double dxdr[3][3]  = {
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-  };
-  
-  for(int inode=0;inode<8;inode++){
-    dxdr[0][0] += coords[inode][0]*dndr[inode][0];
-    dxdr[0][1] += coords[inode][0]*dndr[inode][1];
-    dxdr[0][2] += coords[inode][0]*dndr[inode][2];
-    dxdr[1][0] += coords[inode][1]*dndr[inode][0];
-    dxdr[1][1] += coords[inode][1]*dndr[inode][1];
-    dxdr[1][2] += coords[inode][1]*dndr[inode][2];
-    dxdr[2][0] += coords[inode][2]*dndr[inode][0];
-    dxdr[2][1] += coords[inode][2]*dndr[inode][1];
-    dxdr[2][2] += coords[inode][2]*dndr[inode][2];
-  }
-  
-  detjac = dxdr[0][0]*dxdr[1][1]*dxdr[2][2]
-  + dxdr[1][0]*dxdr[2][1]*dxdr[0][2]
-  + dxdr[2][0]*dxdr[0][1]*dxdr[1][2]
-  - dxdr[0][0]*dxdr[2][1]*dxdr[1][2]
-  - dxdr[1][0]*dxdr[0][1]*dxdr[2][2]
-  - dxdr[2][0]*dxdr[1][1]*dxdr[0][2];
-  
-  const double inv_jac = 1.0 / detjac;
-  
-  double drdx[3][3];
-  drdx[0][0] = inv_jac*( dxdr[1][1]*dxdr[2][2]-dxdr[1][2]*dxdr[2][1] );
-  drdx[0][1] = inv_jac*( dxdr[0][2]*dxdr[2][1]-dxdr[0][1]*dxdr[2][2] );
-  drdx[0][2] = inv_jac*( dxdr[0][1]*dxdr[1][2]-dxdr[0][2]*dxdr[1][1] );
-  drdx[1][0] = inv_jac*( dxdr[1][2]*dxdr[2][0]-dxdr[1][0]*dxdr[2][2] );
-  drdx[1][1] = inv_jac*( dxdr[0][0]*dxdr[2][2]-dxdr[0][2]*dxdr[2][0] );
-  drdx[1][2] = inv_jac*( dxdr[0][2]*dxdr[1][0]-dxdr[0][0]*dxdr[1][2] );
-  drdx[2][0] = inv_jac*( dxdr[1][0]*dxdr[2][1]-dxdr[1][1]*dxdr[2][0] );
-  drdx[2][1] = inv_jac*( dxdr[0][1]*dxdr[2][0]-dxdr[0][0]*dxdr[2][1] );
-  drdx[2][2] = inv_jac*( dxdr[0][0]*dxdr[1][1]-dxdr[0][1]*dxdr[1][0] );
-  
-  for(int inode=0;inode<8;inode++){
-    dndx[inode][0] = dndr[inode][0]*drdx[0][0] + dndr[inode][1]*drdx[1][0] + dndr[inode][2]*drdx[2][0];
-    dndx[inode][1] = dndr[inode][0]*drdx[0][1] + dndr[inode][1]*drdx[1][1] + dndr[inode][2]*drdx[2][1];
-    dndx[inode][2] = dndr[inode][0]*drdx[0][2] + dndr[inode][1]*drdx[1][2] + dndr[inode][2]*drdx[2][2];
-  }
-}
-
-// area of a triangle
-DFM2_INLINE double TriArea2D(const double p0[], const double p1[], const double p2[]){
-  return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
-}
-
-DFM2_INLINE double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
-  double x, y, z;
-  x = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-  y = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-  z = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  return 0.5*sqrt( x*x + y*y + z*z );
-}
-
-DFM2_INLINE double Distance3D(const double p0[3], const double p1[3]){
-  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
-}
-
-DFM2_INLINE double Dot3D(const double a[], const double b[]){
-  return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
-}
-
-DFM2_INLINE void Cross3D(double r[3], const double v1[3], const double v2[3]){
-  r[0] = v1[1]*v2[2] - v2[1]*v1[2];
-  r[1] = v1[2]*v2[0] - v2[2]*v1[0];
-  r[2] = v1[0]*v2[1] - v2[0]*v1[1];
-}
-
-DFM2_INLINE void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
-  n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-  n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-  n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-  const double invlen = 0.5/a;
-  n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
-}
-
-DFM2_INLINE void TriDlDx(double dldx[][2],
-                         double const_term[],
-                         const double p0[],
-                         const double p1[],
-                         const double p2[])
-{
-  const double area = femem3::TriArea2D(p0, p1, p2);
-  const double tmp1 = 0.5/area;
-  
-  const_term[0] = tmp1*(p1[0]*p2[1]-p2[0]*p1[1]);
-  const_term[1] = tmp1*(p2[0]*p0[1]-p0[0]*p2[1]);
-  const_term[2] = tmp1*(p0[0]*p1[1]-p1[0]*p0[1]);
-  
-  dldx[0][0] = tmp1*(p1[1]-p2[1]);
-  dldx[1][0] = tmp1*(p2[1]-p0[1]);
-  dldx[2][0] = tmp1*(p0[1]-p1[1]);
-  
-  dldx[0][1] = tmp1*(p2[0]-p1[0]);
-  dldx[1][1] = tmp1*(p0[0]-p2[0]);
-  dldx[2][1] = tmp1*(p1[0]-p0[0]);
-  /*
-   assert( fabs( dldx[0][0]+dldx[1][0]+dldx[2][0] ) < 1.0e-15 );
-   assert( fabs( dldx[0][1]+dldx[1][1]+dldx[2][1] ) < 1.0e-15 );
-   
-   assert( fabs( const_term[0]+dldx[0][0]*p0[0]+dldx[0][1]*p0[1] - 1.0 ) < 1.0e-10 );
-   assert( fabs( const_term[0]+dldx[0][0]*p1[0]+dldx[0][1]*p1[1] ) < 1.0e-10 );
-   assert( fabs( const_term[0]+dldx[0][0]*p2[0]+dldx[0][1]*p2[1] ) < 1.0e-10 );
-   
-   assert( fabs( const_term[1]+dldx[1][0]*p0[0]+dldx[1][1]*p0[1] ) < 1.0e-10 );
-   assert( fabs( const_term[1]+dldx[1][0]*p1[0]+dldx[1][1]*p1[1] - 1.0 ) < 1.0e-10 );
-   assert( fabs( const_term[1]+dldx[1][0]*p2[0]+dldx[1][1]*p2[1] ) < 1.0e-10 );
-   
-   assert( fabs( const_term[2]+dldx[2][0]*p0[0]+dldx[2][1]*p0[1] ) < 1.0e-10 );
-   assert( fabs( const_term[2]+dldx[2][0]*p1[0]+dldx[2][1]*p1[1] ) < 1.0e-10 );
-   assert( fabs( const_term[2]+dldx[2][0]*p2[0]+dldx[2][1]*p2[1] - 1.0 ) < 1.0e-10 );
-   */
-}
-
-
-DFM2_INLINE void MakeConstMatrix3D
- (double C[6][6],
-  double lambda,
-  double myu,
-  const double Gu[3][3])
-{
-  const double GuGu2[6] = {
-    Dot3D(Gu[0],Gu[0]), // 0 xx
-    Dot3D(Gu[1],Gu[1]), // 1 yy
-    Dot3D(Gu[2],Gu[2]), // 2 zz
-    Dot3D(Gu[0],Gu[1]), // 3 xy
-    Dot3D(Gu[1],Gu[2]), // 4 yz
-    Dot3D(Gu[2],Gu[0])  // 5 zx
-  };
-  C[0][0] = lambda*GuGu2[0]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[0]); // 00(0):00(0) 00(0):00(0)
-  C[0][1] = lambda*GuGu2[0]*GuGu2[1] + 2*myu*(GuGu2[3]*GuGu2[3]); // 00(0):11(1) 01(3):01(3)
-  C[0][2] = lambda*GuGu2[0]*GuGu2[2] + 2*myu*(GuGu2[5]*GuGu2[5]); // 00(0):22(2) 02(5):02(5)
-  C[0][3] = lambda*GuGu2[0]*GuGu2[3] + 2*myu*(GuGu2[0]*GuGu2[3]); // 00(0):01(3) 00(0):01(3)
-  C[0][4] = lambda*GuGu2[0]*GuGu2[4] + 2*myu*(GuGu2[3]*GuGu2[5]); // 00(0):12(4) 01(3):02(5)
-  C[0][5] = lambda*GuGu2[0]*GuGu2[5] + 2*myu*(GuGu2[0]*GuGu2[5]); // 00(0):20(5) 00(0):02(5)
-  C[1][0] = lambda*GuGu2[1]*GuGu2[0] + 2*myu*(GuGu2[3]*GuGu2[3]); // 11(1):00(0) 01(3):01(3)
-  C[1][1] = lambda*GuGu2[1]*GuGu2[1] + 2*myu*(GuGu2[1]*GuGu2[1]); // 11(1):11(1) 11(1):11(1)
-  C[1][2] = lambda*GuGu2[1]*GuGu2[2] + 2*myu*(GuGu2[4]*GuGu2[4]); // 11(1):22(2) 12(4):12(4)
-  C[1][3] = lambda*GuGu2[1]*GuGu2[3] + 2*myu*(GuGu2[1]*GuGu2[3]); // 11(1):01(3) 11(1):01(3)
-  C[1][4] = lambda*GuGu2[1]*GuGu2[4] + 2*myu*(GuGu2[1]*GuGu2[4]); // 11(1):12(4) 11(1):12(4)
-  C[1][5] = lambda*GuGu2[1]*GuGu2[5] + 2*myu*(GuGu2[3]*GuGu2[4]); // 11(1):20(5) 12(4):10(3)
-  C[2][0] = lambda*GuGu2[2]*GuGu2[0] + 2*myu*(GuGu2[5]*GuGu2[5]); // 22(2):00(0) 02(5):02(5)
-  C[2][1] = lambda*GuGu2[2]*GuGu2[1] + 2*myu*(GuGu2[4]*GuGu2[4]); // 22(2):11(1) 12(4):12(4)
-  C[2][2] = lambda*GuGu2[2]*GuGu2[2] + 2*myu*(GuGu2[2]*GuGu2[2]); // 22(2):22(2) 22(2):22(2)
-  C[2][3] = lambda*GuGu2[2]*GuGu2[3] + 2*myu*(GuGu2[4]*GuGu2[5]); // 22(2):01(3) 12(4):02(5)
-  C[2][4] = lambda*GuGu2[2]*GuGu2[4] + 2*myu*(GuGu2[2]*GuGu2[4]); // 22(2):12(4) 22(2):12(4)
-  C[2][5] = lambda*GuGu2[2]*GuGu2[5] + 2*myu*(GuGu2[2]*GuGu2[5]); // 22(2):02(5) 22(2):02(5)
-  C[3][0] = lambda*GuGu2[3]*GuGu2[0] + 2*myu*(GuGu2[3]*GuGu2[0]); // 01(3):00(0) 00(0):01(3)
-  C[3][1] = lambda*GuGu2[3]*GuGu2[1] + 2*myu*(GuGu2[3]*GuGu2[1]); // 01(3):11(1) 11(1):01(3)
-  C[3][2] = lambda*GuGu2[3]*GuGu2[2] + 2*myu*(GuGu2[4]*GuGu2[5]); // 01(3):22(2) 12(4):02(5)
-  C[3][3] = lambda*GuGu2[3]*GuGu2[3] + 1*myu*(GuGu2[0]*GuGu2[1] + GuGu2[3]*GuGu2[3]); // 01(3):01(3) 00(0):11(1) 01(3):01(3)
-  C[3][4] = lambda*GuGu2[3]*GuGu2[4] + 1*myu*(GuGu2[3]*GuGu2[4] + GuGu2[1]*GuGu2[5]); // 01(3):12(4) 01(3):12(4) 11(1):02(5)
-  C[3][5] = lambda*GuGu2[3]*GuGu2[5] + 1*myu*(GuGu2[5]*GuGu2[3] + GuGu2[0]*GuGu2[4]); // 01(3):20(5) 02(5):10(3) 00(0):12(4)
-  C[4][0] = lambda*GuGu2[4]*GuGu2[0] + 2*myu*(GuGu2[3]*GuGu2[5]); // 12(4):00(0) 01(3):02(5)
-  C[4][1] = lambda*GuGu2[4]*GuGu2[1] + 2*myu*(GuGu2[1]*GuGu2[4]); // 12(4):11(1) 11(1):12(4)
-  C[4][2] = lambda*GuGu2[4]*GuGu2[2] + 2*myu*(GuGu2[2]*GuGu2[4]); // 12(4):22(2) 22(2):12(4)
-  C[4][3] = lambda*GuGu2[4]*GuGu2[3] + 1*myu*(GuGu2[3]*GuGu2[4] + GuGu2[1]*GuGu2[5]); // 12(4):01(3) 10(3):21(4) 11(1):20(5)
-  C[4][4] = lambda*GuGu2[4]*GuGu2[4] + 1*myu*(GuGu2[1]*GuGu2[2] + GuGu2[4]*GuGu2[4]); // 12(4):12(4) 11(1):22(2) 12(4):21(4)
-  C[4][5] = lambda*GuGu2[4]*GuGu2[5] + 1*myu*(GuGu2[4]*GuGu2[5] + GuGu2[3]*GuGu2[2]); // 12(4):20(5) 12(4):20(5) 10(3):22(2)
-  C[5][0] = lambda*GuGu2[5]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[5]); // 02(5):00(0) 00(0):02(5)
-  C[5][1] = lambda*GuGu2[5]*GuGu2[1] + 2*myu*(GuGu2[3]*GuGu2[4]); // 02(5):11(1) 10(3):12(4)
-  C[5][2] = lambda*GuGu2[5]*GuGu2[2] + 2*myu*(GuGu2[2]*GuGu2[5]); // 02(5):22(2) 22(2):02(5)
-  C[5][3] = lambda*GuGu2[5]*GuGu2[3] + 1*myu*(GuGu2[0]*GuGu2[4] + GuGu2[3]*GuGu2[5]); // 02(5):01(3) 00(0):21(4) 01(3):20(5)
-  C[5][4] = lambda*GuGu2[5]*GuGu2[4] + 1*myu*(GuGu2[3]*GuGu2[2] + GuGu2[5]*GuGu2[4]); // 02(5):12(4) 01(3):22(2) 02(5):21(4)
-  C[5][5] = lambda*GuGu2[5]*GuGu2[5] + 1*myu*(GuGu2[5]*GuGu2[5] + GuGu2[0]*GuGu2[2]); // 02(5):20(5) 02(5):20(5) 00(0):22(2)
-}
-
-DFM2_INLINE void MakePositiveDefinite_Sim22
- (const double s2[3],double s3[3])
-{
-  const double b = (s2[0]+s2[1])*0.5;
-  const double d = (s2[0]-s2[1])*(s2[0]-s2[1])*0.25 + s2[2]*s2[2];
-  const double e = sqrt(d);
-  if( b-e > 1.0e-20 ){
-    s3[0] = s2[0];
-    s3[1] = s2[1];
-    s3[2] = s2[2];
-    return;
-  }
-  if( b+e < 0 ){
-    s3[0] = 0;
-    s3[1] = 0;
-    s3[2] = 0;
-    return;
-  }
-  const double l = b+e;
-  double t0[2] = { s2[0]-l, s2[2]   };
-  double t1[2] = { s2[2],   s2[1]-l };
-  //  std::cout << t0[0]*t1[1]-t0[1]*t1[0] << std::endl;
-  const double sqlen_t0 = t0[0]*t0[0]+t0[1]*t0[1];
-  const double sqlen_t1 = t1[0]*t1[0]+t1[1]*t1[1];
-  if( sqlen_t0 > sqlen_t1 ){
-    if( sqlen_t0 < 1.0e-20 ){
-      s3[0] = 0;
-      s3[1] = 0;
-      s3[2] = 0;
-      return;
-    }
-    const double invlen_t0 = 1.0/sqrt(sqlen_t0);
-    t0[0] *= invlen_t0;
-    t0[1] *= invlen_t0;
-    s3[0] = l*t0[0]*t0[0];
-    s3[1] = l*t0[1]*t0[1];
-    s3[2] = l*t0[0]*t0[1];
-  }
-  else{
-    if( sqlen_t1 < 1.0e-20 ){
-      s3[0] = 0;
-      s3[1] = 0;
-      s3[2] = 0;
-      return;
-    }
-    const double invlen_t1 = 1.0/sqrt(sqlen_t1);
-    t1[0] *= invlen_t1;
-    t1[1] *= invlen_t1;
-    s3[0] = l*t1[0]*t1[0];
-    s3[1] = l*t1[1]*t1[1];
-    s3[2] = l*t1[0]*t1[1];
-  }
-  return;
-}
-
-DFM2_INLINE void MakeCurvetureDKT
- (double B1[][3], double B2[][3][2],
-  const double coord0[], const double coord1[], const double coord2[],
-  const double l1, const double l2 )
-{
-  const double l0 = 1-l1-l2;
-  const double vec0[2] = { coord2[0]-coord1[0], coord2[1]-coord1[1] };
-  const double vec1[2] = { coord0[0]-coord2[0], coord0[1]-coord2[1] };
-  const double vec2[2] = { coord1[0]-coord0[0], coord1[1]-coord0[1] };
-  const double invsqlen0 = 1.0/(vec0[0]*vec0[0]+vec0[1]*vec0[1]);
-  const double invsqlen1 = 1.0/(vec1[0]*vec1[0]+vec1[1]*vec1[1]);
-  const double invsqlen2 = 1.0/(vec2[0]*vec2[0]+vec2[1]*vec2[1]);
-  double p0=-6*vec0[0]*invsqlen0, q0=3*vec0[0]*vec0[1]*invsqlen0, r0=3*vec0[1]*vec0[1]*invsqlen0, t0=-6*vec0[1]*invsqlen0;
-  double p1=-6*vec1[0]*invsqlen1, q1=3*vec1[0]*vec1[1]*invsqlen1, r1=3*vec1[1]*vec1[1]*invsqlen1, t1=-6*vec1[1]*invsqlen1;
-  double p2=-6*vec2[0]*invsqlen2, q2=3*vec2[0]*vec2[1]*invsqlen2, r2=3*vec2[1]*vec2[1]*invsqlen2, t2=-6*vec2[1]*invsqlen2;
-  
-  double H1[4][3];
-  H1[0][0]=-(l1-l0)*t2+l2*t1;  H1[0][1]=+(l1-l0)*t2+l2*t0;  H1[0][2]=-l2*(t0+t1);
-  H1[1][0]= (l2-l0)*t1-l1*t2;  H1[1][1]=+l1*(t0+t2);    H1[1][2]=-l1*t0-(l2-l0)*t1;
-  H1[2][0]= (l1-l0)*p2-l2*p1;  H1[2][1]=-(l1-l0)*p2-l2*p0;  H1[2][2]=+l2*(p0+p1);
-  H1[3][0]=-(l2-l0)*p1+l1*p2;  H1[3][1]=-l1*(p0+p2);    H1[3][2]=+l1*p0+(l2-l0)*p1;
-  
-  double H2[4][3][2];
-  H2[0][0][0]=-1+(l1-l0)*r2+l2*r1;    H2[0][0][1]=-(l1-l0)*q2-l2*q1;
-  H2[0][1][0]= 1+(l1-l0)*r2-l2*r0;    H2[0][1][1]=-(l1-l0)*q2+l2*q0;
-  H2[0][2][0]=-l2*(r0-r1);        H2[0][2][1]= l2*(q0-q1);
-  
-  H2[1][0][0]=-1+l1*r2+(l2-l0)*r1;    H2[1][0][1]=-l1*q2-(l2-l0)*q1;
-  H2[1][1][0]=-l1*(r0-r2);        H2[1][1][1]= l1*(q0-q2);
-  H2[1][2][0]= 1-l1*r0+(l2-l0)*r1;    H2[1][2][1]= l1*q0-(l2-l0)*q1;
-  
-  H2[2][0][0]=-(l1-l0)*q2-l2*q1;      H2[2][0][1]= 2-6*l0-(l1-l0)*r2-l2*r1;
-  H2[2][1][0]=-(l1-l0)*q2+l2*q0;      H2[2][1][1]=-2+6*l1-(l1-l0)*r2+l2*r0;
-  H2[2][2][0]= l2*(q0-q1);        H2[2][2][1]= l2*(r0-r1);
-  
-  H2[3][0][0]=-l1*q2-(l2-l0)*q1;      H2[3][0][1]= 2-6*l0-l1*r2-(l2-l0)*r1;
-  H2[3][1][0]= l1*(q0-q2);        H2[3][1][1]= l1*(r0-r2);
-  H2[3][2][0]= l1*q0-(l2-l0)*q1;      H2[3][2][1]=-2+6*l2+l1*r0-(l2-l0)*r1;
-  
-  double dldx[3][2];
-  double const_term[3];
-  TriDlDx(dldx,const_term,coord0,coord1,coord2);
-  
-  for(unsigned int i=0;i<3;i++){
-    B1[0][i] =  dldx[1][0]*H1[2][i]+dldx[2][0]*H1[3][i];
-    B1[1][i] = -dldx[1][1]*H1[0][i]-dldx[2][1]*H1[1][i];
-    B1[2][i] =  dldx[1][1]*H1[2][i]+dldx[2][1]*H1[3][i] - dldx[1][0]*H1[0][i]-dldx[2][0]*H1[1][i];
-  }
-  for(unsigned int i=0;i<3;i++){
-    B2[0][i][0] =  dldx[1][0]*H2[2][i][0]+dldx[2][0]*H2[3][i][0];
-    B2[0][i][1] =  dldx[1][0]*H2[2][i][1]+dldx[2][0]*H2[3][i][1];
-    B2[1][i][0] = -dldx[1][1]*H2[0][i][0]-dldx[2][1]*H2[1][i][0];
-    B2[1][i][1] = -dldx[1][1]*H2[0][i][1]-dldx[2][1]*H2[1][i][1];
-    B2[2][i][0] =  dldx[1][1]*H2[2][i][0]+dldx[2][1]*H2[3][i][0] - dldx[1][0]*H2[0][i][0]-dldx[2][0]*H2[1][i][0];
-    B2[2][i][1] =  dldx[1][1]*H2[2][i][1]+dldx[2][1]*H2[3][i][1] - dldx[1][0]*H2[0][i][1]-dldx[2][0]*H2[1][i][1];
-  }
-}
-
-}
-}
-
-
-/*
-const static unsigned int NIntTriGauss[3] = { 1, 3, 7 };
-const static double TriGauss[3][7][3] =
-{
-  { // liner
-    { 0.3333333333, 0.3333333333, 1.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-  },
-  { // quadratic
-    { 0.1666666667, 0.1666666667, 0.3333333333 },
-    { 0.6666666667, 0.1666666667, 0.3333333333 },
-    { 0.1666666667, 0.6666666667, 0.3333333333 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-  },
-  { // cubic
-    { 0.1012865073, 0.1012865073, 0.1259391805 },
-    { 0.7974269854, 0.1012865073, 0.1259391805 },
-    { 0.1012865073, 0.7974269854, 0.1259391805 },
-    { 0.4701420641, 0.0597158718, 0.1323941527 },
-    { 0.4701420641, 0.4701420641, 0.1323941527 },
-    { 0.0597158718, 0.4701420641, 0.1323941527 },
-    { 0.3333333333, 0.3333333333, 0.225 },
-  }
-};
- */
-
-
-
-// compute energy and its 1st and 2nd derivative for cloth bending
-DFM2_INLINE void delfem2::WdWddW_Bend
-(double& W,  // (out) strain energy
- double dW[4][3], // (out) 1st derivative of energy
- double ddW[4][4][3][3], // (out) 2nd derivative of energy
- ////
- const double C[4][3], // (in) undeformed triangle vertex positions
- const double c[4][3], // (in) deformed triangle vertex positions
- double stiff)
-{
-  const double A0 = femem3::TriArea3D(C[0],C[2],C[3]);
-  const double A1 = femem3::TriArea3D(C[1],C[3],C[2]);
-  const double L0 = femem3::Distance3D(C[2],C[3]);
-  const double H0 = A0*2.0/L0;
-  const double H1 = A1*2.0/L0;
-  const double e23[3] = { C[3][0]-C[2][0], C[3][1]-C[2][1], C[3][2]-C[2][2] };
-  const double e02[3] = { C[2][0]-C[0][0], C[2][1]-C[0][1], C[2][2]-C[0][2] };
-  const double e03[3] = { C[3][0]-C[0][0], C[3][1]-C[0][1], C[3][2]-C[0][2] };
-  const double e12[3] = { C[2][0]-C[1][0], C[2][1]-C[1][1], C[2][2]-C[1][2] };
-  const double e13[3] = { C[3][0]-C[1][0], C[3][1]-C[1][1], C[3][2]-C[1][2] };
-  double cot023, cot032;
-  {
-    const double r2 = -femem3::Dot3D(e02,e23);
-    const double r3 = +femem3::Dot3D(e03,e23);
-    cot023 = r2/H0;
-    cot032 = r3/H0;
-  }
-  double cot123, cot132;
-  {
-    const double r2 = -femem3::Dot3D(e12,e23);
-    const double r3 = +femem3::Dot3D(e13,e23);
-    cot123 = r2/H1;
-    cot132 = r3/H1;
-  }
-  const double tmp0 = stiff/((A0+A1)*L0*L0);
-  const double K[4] = { -cot023-cot032, -cot123-cot132, cot032+cot132, cot023+cot123 };
-  
-  // compute 2nd derivative of energy
-  for(int i=0;i<4*4*3*3;i++){ (&ddW[0][0][0][0])[i] = 0; }
-  for(int ino=0;ino<4;ino++){
-    for(int jno=0;jno<4;jno++){
-      const double tmp = K[ino]*K[jno]*tmp0;
-      ddW[ino][jno][0][0] = tmp;
-      ddW[ino][jno][1][1] = tmp;
-      ddW[ino][jno][2][2] = tmp;
-    }
-  }
-  // compute 1st derivative of energy
-  W = 0.0;
-  for(int ino=0;ino<4;ino++){
-    for(int idim=0;idim<3;idim++){
-      dW[ino][idim] = 0;
-      for(int jno=0;jno<4;jno++){
-        for(int jdim=0;jdim<3;jdim++){
-          dW[ino][idim] += ddW[ino][jno][idim][jdim]*c[jno][jdim];
-        }
-      }
-      W += dW[ino][idim]*c[ino][idim];
-    }
-  }
-}
-
-DFM2_INLINE void delfem2::WdWddW_CST
-(double& W, // (out) energy
- double dW[3][3], // (out) 1st derivative of energy
- double ddW[3][3][3][3], // (out) 2nd derivative of energy
- ////
- const double C[3][3], // (in) undeformed triangle vertex positions
- const double c[3][3], // (in) deformed triangle vertex positions
- const double lambda, // (in) Lame's 1st parameter
- const double myu)     // (in) Lame's 2nd parameter
-{
-  double Gd[3][3] = { // undeformed edge vector
-    { C[1][0]-C[0][0], C[1][1]-C[0][1], C[1][2]-C[0][2] },
-    { C[2][0]-C[0][0], C[2][1]-C[0][1], C[2][2]-C[0][2] }, { 0,0,0 } };
-  double Area;
-  femem3::UnitNormalAreaTri3D(Gd[2], Area, C[0], C[1], C[2]);
-  
-  double Gu[2][3]; // inverse of Gd
-  {
-    femem3::Cross3D(Gu[0], Gd[1], Gd[2]);
-    const double invtmp1 = 1.0/femem3::Dot3D(Gu[0],Gd[0]);
-    Gu[0][0] *= invtmp1;	Gu[0][1] *= invtmp1;	Gu[0][2] *= invtmp1;
-    //
-    femem3::Cross3D(Gu[1], Gd[2], Gd[0]);
-    const double invtmp2 = 1.0/femem3::Dot3D(Gu[1],Gd[1]);
-    Gu[1][0] *= invtmp2;	Gu[1][1] *= invtmp2;	Gu[1][2] *= invtmp2;
-  }
-  
-  const double gd[2][3] = { // deformed edge vector
-    { c[1][0]-c[0][0], c[1][1]-c[0][1], c[1][2]-c[0][2] },
-    { c[2][0]-c[0][0], c[2][1]-c[0][1], c[2][2]-c[0][2] } };
-  
-  const double E2[3] = {  // green lagrange strain (with engineer's notation)
-    0.5*( femem3::Dot3D(gd[0],gd[0]) - femem3::Dot3D(Gd[0],Gd[0]) ),
-    0.5*( femem3::Dot3D(gd[1],gd[1]) - femem3::Dot3D(Gd[1],Gd[1]) ),
-    1.0*( femem3::Dot3D(gd[0],gd[1]) - femem3::Dot3D(Gd[0],Gd[1]) ) };
-  const double GuGu2[3] = { femem3::Dot3D(Gu[0],Gu[0]), femem3::Dot3D(Gu[1],Gu[1]), femem3::Dot3D(Gu[1],Gu[0]) };
-  const double Cons2[3][3] = { // constitutive tensor
-    { lambda*GuGu2[0]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[0]),
-      lambda*GuGu2[0]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[2]),
-      lambda*GuGu2[0]*GuGu2[2] + 2*myu*(GuGu2[0]*GuGu2[2]) },
-    { lambda*GuGu2[1]*GuGu2[0] + 2*myu*(GuGu2[2]*GuGu2[2]),
-      lambda*GuGu2[1]*GuGu2[1] + 2*myu*(GuGu2[1]*GuGu2[1]),
-      lambda*GuGu2[1]*GuGu2[2] + 2*myu*(GuGu2[2]*GuGu2[1]) },
-    { lambda*GuGu2[2]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[2]),
-      lambda*GuGu2[2]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[1]),
-      lambda*GuGu2[2]*GuGu2[2] + 1*myu*(GuGu2[0]*GuGu2[1] + GuGu2[2]*GuGu2[2]) } };
-  const double S2[3] = {  // 2nd Piola-Kirchhoff stress
-    Cons2[0][0]*E2[0] + Cons2[0][1]*E2[1] + Cons2[0][2]*E2[2],
-    Cons2[1][0]*E2[0] + Cons2[1][1]*E2[1] + Cons2[1][2]*E2[2],
-    Cons2[2][0]*E2[0] + Cons2[2][1]*E2[1] + Cons2[2][2]*E2[2] };
-  
-  // compute energy
-  W = 0.5*Area*(E2[0]*S2[0] + E2[1]*S2[1] + E2[2]*S2[2]);
-  
-  // compute 1st derivative
-  const double dNdr[3][2] = { {-1.0, -1.0}, {+1.0, +0.0}, {+0.0, +1.0} };
-  for(int ino=0;ino<3;ino++){
-    for(int idim=0;idim<3;idim++){
-      dW[ino][idim] = Area*
-      (+S2[0]*gd[0][idim]*dNdr[ino][0]
-       +S2[2]*gd[0][idim]*dNdr[ino][1]
-       +S2[2]*gd[1][idim]*dNdr[ino][0]
-       +S2[1]*gd[1][idim]*dNdr[ino][1]);
-    }
-  }
-  
-  double S3[3] = { S2[0], S2[1], S2[2] };
-  femem3::MakePositiveDefinite_Sim22(S2,S3);
-  
-  // compute second derivative
-  for(int ino=0;ino<3;ino++){
-    for(int jno=0;jno<3;jno++){
-      for(int idim=0;idim<3;idim++){
-        for(int jdim=0;jdim<3;jdim++){
-          double dtmp0 = 0;
-          dtmp0 += gd[0][idim]*dNdr[ino][0]*Cons2[0][0]*gd[0][jdim]*dNdr[jno][0];
-          dtmp0 += gd[0][idim]*dNdr[ino][0]*Cons2[0][1]*gd[1][jdim]*dNdr[jno][1];
-          dtmp0 += gd[0][idim]*dNdr[ino][0]*Cons2[0][2]*gd[0][jdim]*dNdr[jno][1];
-          dtmp0 += gd[0][idim]*dNdr[ino][0]*Cons2[0][2]*gd[1][jdim]*dNdr[jno][0];
-          dtmp0 += gd[1][idim]*dNdr[ino][1]*Cons2[1][0]*gd[0][jdim]*dNdr[jno][0];
-          dtmp0 += gd[1][idim]*dNdr[ino][1]*Cons2[1][1]*gd[1][jdim]*dNdr[jno][1];
-          dtmp0 += gd[1][idim]*dNdr[ino][1]*Cons2[1][2]*gd[0][jdim]*dNdr[jno][1];
-          dtmp0 += gd[1][idim]*dNdr[ino][1]*Cons2[1][2]*gd[1][jdim]*dNdr[jno][0];
-          dtmp0 += gd[0][idim]*dNdr[ino][1]*Cons2[2][0]*gd[0][jdim]*dNdr[jno][0];
-          dtmp0 += gd[0][idim]*dNdr[ino][1]*Cons2[2][1]*gd[1][jdim]*dNdr[jno][1];
-          dtmp0 += gd[0][idim]*dNdr[ino][1]*Cons2[2][2]*gd[0][jdim]*dNdr[jno][1];
-          dtmp0 += gd[0][idim]*dNdr[ino][1]*Cons2[2][2]*gd[1][jdim]*dNdr[jno][0];
-          dtmp0 += gd[1][idim]*dNdr[ino][0]*Cons2[2][0]*gd[0][jdim]*dNdr[jno][0];
-          dtmp0 += gd[1][idim]*dNdr[ino][0]*Cons2[2][1]*gd[1][jdim]*dNdr[jno][1];
-          dtmp0 += gd[1][idim]*dNdr[ino][0]*Cons2[2][2]*gd[0][jdim]*dNdr[jno][1];
-          dtmp0 += gd[1][idim]*dNdr[ino][0]*Cons2[2][2]*gd[1][jdim]*dNdr[jno][0];
-          ddW[ino][jno][idim][jdim] = dtmp0*Area;
-        }
-      }
-      const double dtmp1 = Area*
-      (+S3[0]*dNdr[ino][0]*dNdr[jno][0]
-       +S3[2]*dNdr[ino][0]*dNdr[jno][1]
-       +S3[2]*dNdr[ino][1]*dNdr[jno][0]
-       +S3[1]*dNdr[ino][1]*dNdr[jno][1]);
-      ddW[ino][jno][0][0] += dtmp1;
-      ddW[ino][jno][1][1] += dtmp1;
-      ddW[ino][jno][2][2] += dtmp1;
-    }
-  }
-}
-
-
-
-// compute energy and its 1st and 2nd derivative for contact against object
-DFM2_INLINE void delfem2::WdWddW_Contact
-(double& W,  // (out) energy
- double dW[3], // (out) 1st derivative of energy
- double ddW[3][3], // (out) 2nd derivative of energy
- ////
- const double c[3], // (in) deformed triangle vertex positions
- double stiff_contact,
- double contact_clearance,
- const CInput_Contact& input )
-{
-  double n[3];
-  double pd = input.penetrationNormal(n[0],n[1],n[2], c[0],c[1],c[2]);
-  pd += contact_clearance;
-  if( pd  < 0 ){
-    W = 0;
-    dW[0] = 0;  dW[1] = 0;  dW[2] = 0;
-    ddW[0][0] = 0;  ddW[0][1] = 0;  ddW[0][2] = 0;
-    ddW[1][0] = 0;  ddW[1][1] = 0;  ddW[1][2] = 0;
-    ddW[2][0] = 0;  ddW[2][1] = 0;  ddW[2][2] = 0;
-    return;
-  }
-  W = 0.5*stiff_contact*pd*pd;
-  
-  dW[0] = -stiff_contact*pd*n[0];
-  dW[1] = -stiff_contact*pd*n[1];
-  dW[2] = -stiff_contact*pd*n[2];
-  
-  ddW[0][0] = stiff_contact*n[0]*n[0];
-  ddW[0][1] = stiff_contact*n[0]*n[1];
-  ddW[0][2] = stiff_contact*n[0]*n[2];
-  ddW[1][0] = stiff_contact*n[1]*n[0];
-  ddW[1][1] = stiff_contact*n[1]*n[1];
-  ddW[1][2] = stiff_contact*n[1]*n[2];
-  ddW[2][0] = stiff_contact*n[2]*n[0];
-  ddW[2][1] = stiff_contact*n[2]*n[1];
-  ddW[2][2] = stiff_contact*n[2]*n[2];
-}
-
 
 // --------------------------------------------------------------------------------------
 
@@ -720,6 +105,65 @@ DFM2_INLINE void delfem2::EMat_Diffusion_Newmark_Tet3D
 // ------------------------------
 
 
+
+DFM2_INLINE void delfem2::MakeCurvetureDKT(
+    double B1[][3], double B2[][3][2],
+    const double coord0[], const double coord1[], const double coord2[],
+    const double l1, const double l2 )
+{
+  const double l0 = 1-l1-l2;
+  const double vec0[2] = { coord2[0]-coord1[0], coord2[1]-coord1[1] };
+  const double vec1[2] = { coord0[0]-coord2[0], coord0[1]-coord2[1] };
+  const double vec2[2] = { coord1[0]-coord0[0], coord1[1]-coord0[1] };
+  const double invsqlen0 = 1.0/(vec0[0]*vec0[0]+vec0[1]*vec0[1]);
+  const double invsqlen1 = 1.0/(vec1[0]*vec1[0]+vec1[1]*vec1[1]);
+  const double invsqlen2 = 1.0/(vec2[0]*vec2[0]+vec2[1]*vec2[1]);
+  double p0=-6*vec0[0]*invsqlen0, q0=3*vec0[0]*vec0[1]*invsqlen0, r0=3*vec0[1]*vec0[1]*invsqlen0, t0=-6*vec0[1]*invsqlen0;
+  double p1=-6*vec1[0]*invsqlen1, q1=3*vec1[0]*vec1[1]*invsqlen1, r1=3*vec1[1]*vec1[1]*invsqlen1, t1=-6*vec1[1]*invsqlen1;
+  double p2=-6*vec2[0]*invsqlen2, q2=3*vec2[0]*vec2[1]*invsqlen2, r2=3*vec2[1]*vec2[1]*invsqlen2, t2=-6*vec2[1]*invsqlen2;
+
+  double H1[4][3];
+  H1[0][0]=-(l1-l0)*t2+l2*t1;  H1[0][1]=+(l1-l0)*t2+l2*t0;  H1[0][2]=-l2*(t0+t1);
+  H1[1][0]= (l2-l0)*t1-l1*t2;  H1[1][1]=+l1*(t0+t2);    H1[1][2]=-l1*t0-(l2-l0)*t1;
+  H1[2][0]= (l1-l0)*p2-l2*p1;  H1[2][1]=-(l1-l0)*p2-l2*p0;  H1[2][2]=+l2*(p0+p1);
+  H1[3][0]=-(l2-l0)*p1+l1*p2;  H1[3][1]=-l1*(p0+p2);    H1[3][2]=+l1*p0+(l2-l0)*p1;
+
+  double H2[4][3][2];
+  H2[0][0][0]=-1+(l1-l0)*r2+l2*r1;    H2[0][0][1]=-(l1-l0)*q2-l2*q1;
+  H2[0][1][0]= 1+(l1-l0)*r2-l2*r0;    H2[0][1][1]=-(l1-l0)*q2+l2*q0;
+  H2[0][2][0]=-l2*(r0-r1);        H2[0][2][1]= l2*(q0-q1);
+
+  H2[1][0][0]=-1+l1*r2+(l2-l0)*r1;    H2[1][0][1]=-l1*q2-(l2-l0)*q1;
+  H2[1][1][0]=-l1*(r0-r2);        H2[1][1][1]= l1*(q0-q2);
+  H2[1][2][0]= 1-l1*r0+(l2-l0)*r1;    H2[1][2][1]= l1*q0-(l2-l0)*q1;
+
+  H2[2][0][0]=-(l1-l0)*q2-l2*q1;      H2[2][0][1]= 2-6*l0-(l1-l0)*r2-l2*r1;
+  H2[2][1][0]=-(l1-l0)*q2+l2*q0;      H2[2][1][1]=-2+6*l1-(l1-l0)*r2+l2*r0;
+  H2[2][2][0]= l2*(q0-q1);        H2[2][2][1]= l2*(r0-r1);
+
+  H2[3][0][0]=-l1*q2-(l2-l0)*q1;      H2[3][0][1]= 2-6*l0-l1*r2-(l2-l0)*r1;
+  H2[3][1][0]= l1*(q0-q2);        H2[3][1][1]= l1*(r0-r2);
+  H2[3][2][0]= l1*q0-(l2-l0)*q1;      H2[3][2][1]=-2+6*l2+l1*r0-(l2-l0)*r1;
+
+  double dldx[3][2];
+  double const_term[3];
+  TriDlDx(dldx,const_term,coord0,coord1,coord2);
+
+  for(unsigned int i=0;i<3;i++){
+    B1[0][i] =  dldx[1][0]*H1[2][i]+dldx[2][0]*H1[3][i];
+    B1[1][i] = -dldx[1][1]*H1[0][i]-dldx[2][1]*H1[1][i];
+    B1[2][i] =  dldx[1][1]*H1[2][i]+dldx[2][1]*H1[3][i] - dldx[1][0]*H1[0][i]-dldx[2][0]*H1[1][i];
+  }
+  for(unsigned int i=0;i<3;i++){
+    B2[0][i][0] =  dldx[1][0]*H2[2][i][0]+dldx[2][0]*H2[3][i][0];
+    B2[0][i][1] =  dldx[1][0]*H2[2][i][1]+dldx[2][0]*H2[3][i][1];
+    B2[1][i][0] = -dldx[1][1]*H2[0][i][0]-dldx[2][1]*H2[1][i][0];
+    B2[1][i][1] = -dldx[1][1]*H2[0][i][1]-dldx[2][1]*H2[1][i][1];
+    B2[2][i][0] =  dldx[1][1]*H2[2][i][0]+dldx[2][1]*H2[3][i][0] - dldx[1][0]*H2[0][i][0]-dldx[2][0]*H2[1][i][0];
+    B2[2][i][1] =  dldx[1][1]*H2[2][i][1]+dldx[2][1]*H2[3][i][1] - dldx[1][0]*H2[0][i][1]-dldx[2][0]*H2[1][i][1];
+  }
+}
+
 DFM2_INLINE void delfem2::MakeMat_PlateBendingDKT
 (double emat_ww[3][3],
  double emat_wr[3][3][2],
@@ -730,15 +174,12 @@ DFM2_INLINE void delfem2::MakeMat_PlateBendingDKT
  const double young, const double poisson, const double thickness,
  const double coord[][2], const double w[], const double rot[][2])
 {
-  namespace lcl = ::delfem2::femem3;
   const unsigned int ndim = 2;
   const unsigned int nno = 3;
-  
   for(unsigned int i=0;i<nno*nno;    i++){ *(&emat_ww[0][0]      +i) = 0.0; }
   for(unsigned int i=0;i<nno*nno*2;  i++){ *(&emat_wr[0][0][0]   +i) = 0.0; }
   for(unsigned int i=0;i<nno*nno*2;  i++){ *(&emat_rw[0][0][0]   +i) = 0.0; }
   for(unsigned int i=0;i<nno*nno*2*2;i++){ *(&emat_rr[0][0][0][0]+i) = 0.0; }
-  
   double dmat[3][3];
   {
     const double dtmp1 = young*thickness*thickness*thickness/(12.0*(1.0-poisson*poisson));
@@ -748,12 +189,12 @@ DFM2_INLINE void delfem2::MakeMat_PlateBendingDKT
   }
   double B1[3][nno];
   double B2[3][nno][ndim];
-  const double area = lcl::TriArea2D(coord[0],coord[1],coord[2]);
+  const double area = femutil::TriArea2D(coord[0],coord[1],coord[2]);
   const double dtmp1 = area/3.0;
   for(unsigned int iw=0;iw<3;iw++){
-    if(      iw == 0 ){ femem3::MakeCurvetureDKT(B1,B2,coord[0],coord[1],coord[2],0.5,0.5); }
-    else if( iw == 1 ){ femem3::MakeCurvetureDKT(B1,B2,coord[0],coord[1],coord[2],0.0,0.5); }
-    else if( iw == 2 ){ femem3::MakeCurvetureDKT(B1,B2,coord[0],coord[1],coord[2],0.5,0.0); }
+    if(      iw == 0 ){ MakeCurvetureDKT(B1,B2,coord[0],coord[1],coord[2],0.5,0.5); }
+    else if( iw == 1 ){ MakeCurvetureDKT(B1,B2,coord[0],coord[1],coord[2],0.0,0.5); }
+    else if( iw == 2 ){ MakeCurvetureDKT(B1,B2,coord[0],coord[1],coord[2],0.5,0.0); }
     for(unsigned int ino=0;ino<nno;ino++){
       for(unsigned int jno=0;jno<nno;jno++){
         for(unsigned int k=0;k<3;k++){
