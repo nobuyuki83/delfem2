@@ -11,6 +11,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/ilu_mats.h"
+#include "delfem2/lsitrsol.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/mshuni.h"
@@ -157,22 +158,25 @@ void InitializeProblem_ShellEigenPB()
   // ------------------------------
   aMassLumpedSqrtInv.resize(nDoF);
   aModesKer.resize(nDoF*3);
-  SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3(aMassLumpedSqrtInv.data(),
-                                                            aModesKer.data(),
-                                                            rho, thickness,
-                                                            aXY0.data(), aXY0.size()/2,
-                                                            aTri.data(), aTri.size()/3);
+  SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3(
+      aMassLumpedSqrtInv.data(),
+      aModesKer.data(),
+      rho, thickness,
+      aXY0.data(), aXY0.size()/2,
+      aTri.data(), aTri.size()/3);
   // -------------------------------
   mat_A.SetZero();
   aMode.assign(nDoF, 0.0);
   aTmp0.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A, aMode.data(),
-                                                           thickness,lambda, myu, 0.0, 0.0,
-                                                           aXY0.data(), aXY0.size()/2,
-                                                           aTri.data(), aTri.size()/3,
-                                                           aTmp0.data());
-  MatSparse_ScaleBlkLen_LeftRight(mat_A,
-                                  aMassLumpedSqrtInv.data());
+  dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
+      mat_A, aMode.data(),
+      thickness,lambda, myu, 0.0, 0.0,
+      aXY0.data(), aXY0.size()/2,
+      aTri.data(), aTri.size()/3,
+      aTmp0.data());
+  MatSparse_ScaleBlkLen_LeftRight(
+      mat_A,
+      aMassLumpedSqrtInv.data());
   mat_A.AddDia(offset_dia);
   
   ilu_A.SetValueILU(mat_A);
@@ -185,10 +189,17 @@ void Solve(){
   const int iteration = 10000;
   std::vector<double> aConv;
   aTmp1 = aTmp0;
-  aConv = Solve_PCG(aTmp1.data(), aMode.data(),
-                    aTmp1.size(),
-                    conv_ratio, iteration,
-                    mat_A, ilu_A);
+  {
+    const std::size_t n = aTmp1.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(aTmp1);
+    auto vu = dfm2::CVecXd(aMode);
+    auto vs = dfm2::CVecXd(tmp0);
+    auto vt = dfm2::CVecXd(tmp1);
+    aConv = dfm2::Solve_PCG(
+        vr,vu,vs,vt,
+        conv_ratio, iteration, mat_A, ilu_A);
+  }
   {
     double lam0 = dfm2::DotX(aTmp0.data(), aMode.data(), aTmp0.size());
     double freq_sim = sqrt(1.0/lam0-offset_dia)/(2*M_PI);

@@ -18,6 +18,7 @@
 #include "delfem2/mats.h"
 #include "delfem2/dtri.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/lsitrsol.h"
 #include "delfem2/jagarray.h"
 namespace dfm2 = delfem2;
 
@@ -220,11 +221,17 @@ void Solve(){
   const int iteration = 1000;
   std::vector<double> aConv;
   aTmp1 = aTmp0;
-  aConv = Solve_PCG(
-      aTmp1.data(), aMode.data(),
-      aTmp1.size(),
-      conv_ratio, iteration,
-      mat_A, ilu_A);
+  {
+    const std::size_t n = aTmp1.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = dfm2::CVecXd(aTmp1);
+    auto vu = dfm2::CVecXd(aMode);
+    auto vs = dfm2::CVecXd(tmp1);
+    auto vt = dfm2::CVecXd(tmp0);
+    aConv = dfm2::Solve_PCG(
+        vr,vu,vs,vt,
+        conv_ratio, iteration, mat_A, ilu_A);
+  }
   double lam0 = dfm2::DotX(aTmp0.data(), aMode.data(), aTmp0.size());
   std::cout << 1.0/lam0 << std::endl;
   aTmp0 = aMode;

@@ -8,7 +8,7 @@
 #ifndef DFM2_ILU_MATS_H
 #define DFM2_ILU_MATS_H
 
-#include "mats.h"
+#include "delfem2/mats.h"
 #include "delfem2/dfm2_inline.h"
 #include <iostream>
 

@@ -81,25 +81,28 @@ void delfem2::CDef_LaplacianLinearAsym::Deform
 // ===================================================
 // below: implementation of CDef_LaplacianLinearGram
 
-void delfem2::CDef_LaplacianLinearGram::Init
- (const std::vector<double>& aXYZ0,
-  const std::vector<unsigned int>& aTri,
-  bool is_preconditioner0)
+void delfem2::CDef_LaplacianLinearGram::Init(
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri,
+    bool is_preconditioner0)
 {
   this->is_preconditioner = is_preconditioner0;
   std::vector<unsigned int> psup_ind, psup;
-  JArray_PSuP_MeshElem(psup_ind, psup,
-                       aTri.data(), aTri.size()/3, 3,
-                       aXYZ0.size()/3);
+  JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTri.data(), aTri.size()/3, 3,
+      aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
   Mat.Initialize(aXYZ0.size()/3, 3, true);
-  Mat.SetPattern(psup_ind.data(), psup_ind.size(),
-                 psup.data(),     psup.size());
+  Mat.SetPattern(
+      psup_ind.data(), psup_ind.size(),
+      psup.data(),     psup.size());
   defarap::SetLinSys_LaplaceGraph_MeshTri3(Mat);
   const unsigned int np = Mat.nrowblk;
   aRes0.assign(np*3,0.0);
-  Mat.MatVec(aRes0.data(),
-             -1.0, aXYZ0.data(), 0.0);
+  Mat.MatVec(
+      aRes0.data(),
+      -1.0, aXYZ0.data(), 0.0);
 }
 
 void delfem2::CDef_LaplacianLinearGram::SetBoundaryConditionToPreconditioner()
@@ -156,9 +159,15 @@ void delfem2::CDef_LaplacianLinearGram::Deform
   std::vector<double>& aUpd = vec_tmp1;
   aUpd.assign(aXYZ0.size(),0.0);
   if( is_preconditioner ){
+    const std::size_t n = aRhs.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(aRhs);
+    auto vu = CVecXd(aUpd);
+    auto vt = CVecXd(tmp0);
+    auto vs = CVecXd(tmp1);
     aConvHist = Solve_PCG(
-        aRhs.data(), aUpd.data(),
-        aRhs.size(), 1.0e-7, 300, *this, *this);
+        vr,vu,vs,vt,
+        1.0e-7, 300, *this, *this);
   }
   else{
     const std::size_t n = aRhs.size();
@@ -168,9 +177,8 @@ void delfem2::CDef_LaplacianLinearGram::Deform
     auto vt = CVecXd(tmp0);
     auto vs = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr, vu,
-        1.0e-7, 300, *this,
-        vt, vs);
+        vr, vu,vs,vt,
+        1.0e-7, 300, *this);
   }
   for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
 }
@@ -358,8 +366,15 @@ void delfem2::CDef_LaplacianLinear::Deform(
   std::vector<double>& aUpd = vec_tmp1;
   aUpd.assign(aXYZ0.size(),0.0);
   if( is_preconditioner ){
-    aConvHist = Solve_PCG(aRhs.data(), aUpd.data(),
-                          aRhs.size(), this->conv_tol, this->max_itr, *this, Prec);
+    std::size_t n = aRhs.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(aRhs);
+    auto vu = CVecXd(aUpd);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
+    aConvHist = Solve_PCG(
+        vr,vu,vs,vt,
+        this->conv_tol, this->max_itr, *this, Prec);
   }
   else{
     std::size_t n = aRhs.size();
@@ -369,9 +384,8 @@ void delfem2::CDef_LaplacianLinear::Deform(
     auto vs = CVecXd(tmp0);
     auto vt = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr, vu,
-        this->conv_tol, this->max_itr, *this,
-        vs, vt);
+        vr, vu, vs, vt,
+        this->conv_tol, this->max_itr, *this);
   }
   for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
 }
@@ -535,9 +549,15 @@ void delfem2::CDef_LaplacianLinearDegenerate::Deform(
   std::vector<double>& aUpd = vec_tmp1;
   aUpd.assign(aXYZ0.size(),0.0);
   if( is_preconditioner ){
+    const std::size_t n = aRhs.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = CVecXd(aRhs);
+    auto vu = CVecXd(aUpd);
+    auto vs = CVecXd(tmp0);
+    auto vt = CVecXd(tmp1);
     aConvHist = Solve_PCG(
-        aRhs.data(), aUpd.data(),
-        aRhs.size(), this->conv_tol, this->max_itr, *this, *this);
+        vr,vu, vs,vt,
+        this->conv_tol, this->max_itr, *this, *this);
   }
   else{
     const std::size_t n = aRhs.size();
@@ -547,9 +567,8 @@ void delfem2::CDef_LaplacianLinearDegenerate::Deform(
     auto vs = CVecXd(tmp0);
     auto vt = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr, vu,
-        this->conv_tol, this->max_itr, *this,
-        vs, vt);
+        vr, vu, vs, vt,
+        this->conv_tol, this->max_itr, *this);
   }
   for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
 }

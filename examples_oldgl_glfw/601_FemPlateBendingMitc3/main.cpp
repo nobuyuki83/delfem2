@@ -9,6 +9,7 @@
 #include "delfem2/mats.h"
 #include "delfem2/vec2.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/lsitrsol.h"
 #include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -71,12 +72,13 @@ void SolveProblem_PlateBendingMITC3
   //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A,vec_b.data(),
-                                                           thickness,lambda,myu,
-                                                           rho,gravity_z,
-                                                           aXY0.data(), aXY0.size()/2,
-                                                           aTri.data(), aTri.size()/3,
-                                                           aVal.data());
+  dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
+      mat_A,vec_b.data(),
+      thickness,lambda,myu,
+      rho,gravity_z,
+      aXY0.data(), aXY0.size()/2,
+      aTri.data(), aTri.size()/3,
+      aVal.data());
   std::cout << dfm2::Dot(vec_b, vec_b) << std::endl;
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
@@ -86,11 +88,18 @@ void SolveProblem_PlateBendingMITC3
     ilu_A.SetValueILU(mat_A);
     ilu_A.DoILUDecomp();
     vec_x.resize(vec_b.size());
-    std::vector<double> conv = Solve_PCG(vec_b.data(), vec_x.data(),
-                                         vec_b.size(),
-                                         1.0e-5, 1000,
-                                         mat_A, ilu_A);
-    std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
+    {
+      const std::size_t n = vec_b.size();
+      std::vector<double> tmp0(n), tmp1(n);
+      auto vr = dfm2::CVecXd(vec_b);
+      auto vu = dfm2::CVecXd(vec_x);
+      auto vt = dfm2::CVecXd(tmp0);
+      auto vs = dfm2::CVecXd(tmp1);
+      std::vector<double> conv = dfm2::Solve_PCG(
+          vr,vu,vt,vs,
+          1.0e-5, 1000, mat_A, ilu_A);
+      std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
+    }
   }
   //
   dfm2::XPlusAY(aVal,nDoF,aBCFlag,
