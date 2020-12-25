@@ -1,0 +1,249 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#ifndef DFM2_FEMEM2_H
+#define DFM2_FEMEM2_H
+
+#include "delfem2/dfm2_inline.h"
+#include "delfem2/femutil.h"
+#include <vector>
+
+namespace delfem2 {
+
+// ------------------------------------------------------------------
+// below: fem element matrix for 2D mesh
+
+// -[\alpha]\nabla^2[value] = [source]
+void EMat_Poisson_Tri2D(
+    double eres[3],
+    double emat[3][3],
+    const double alpha, const double source,
+    const double coords[3][2],
+    const double value[3]);
+
+void EMat_Poission2_QuadOrth(
+    double emat[4][4],
+    double lx,
+    double ly);
+
+/**
+ *
+ * @param emat
+ * @param lx
+ * @param ly
+ * @param[in] ngauss ngauss=1 is enough for analytically exact integration
+ */
+void EMat_Poisson2_QuadOrth_GaussInt(
+    double emat[4][4],
+    double lx,
+    double ly,
+    unsigned int ngauss);
+
+void EMat_SolidLinear2_QuadOrth_GaussInt(
+    double emat[4][4][2][2],
+    double lx,
+    double ly,
+    double myu,
+    double lambda,
+    unsigned int ngauss);
+
+// [\rho][velo] - [\alpha]\nabla^2[value] = [source]
+void EMat_Diffusion_Tri2D(
+    double eres[3],
+    double emat[3][3],
+    const double alpha,
+    const double source,
+    const double dt,
+    const double gamma,
+    const double rho,
+    const double coords[3][2],
+    const double value[3],
+    const double velo[3]);
+
+DFM2_INLINE void EMat_Poisson_Tet3D(
+    double eres[4],
+    double emat[4][4],
+    const double alpha, const double source,
+    const double coords[4][3],
+    const double value[4]);
+
+DFM2_INLINE void EMat_Diffusion_Newmark_Tet3D(
+    double eres[4],
+    double emat[4][4],
+    const double alpha, const double source,
+    const double dt_timestep, const double gamma_newmark, const double rho,
+    const double coords[4][3],
+    const double value[4], const double velo[4]);
+
+
+template <class MAT>
+void MergeLinSys_Poission_MeshTri2D(
+    MAT& mat_A,
+    double* vec_b,
+    const double alpha,
+    const double source,
+    const double* aXY1,
+    unsigned int np,
+    const unsigned int* aTri1,
+    unsigned int nTri,
+    const double* aVal)
+{
+  const unsigned int nDoF = np;
+  //
+  std::vector<int> tmp_buffer(nDoF, -1);
+  for (unsigned int iel = 0; iel<nTri; ++iel){
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    const double value[3] = { aVal[i0], aVal[i1], aVal[i2] };
+    ////
+    double eres[3];
+    double emat[3][3];
+    EMat_Poisson_Tri2D
+        (eres,emat,
+         alpha, source,
+         coords, value);
+    for (int ino = 0; ino<3; ino++){
+      const unsigned int ip = aIP[ino];
+      vec_b[ip] += eres[ino];
+    }
+    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+  }
+}
+
+template <class MAT>
+void MergeLinSys_Poission_MeshTet3D(
+    MAT& mat_A,
+    double* vec_b,
+    const double alpha,
+    const double source,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
+    const double* aVal)
+{
+  const unsigned int np = nXYZ;
+  std::vector<int> tmp_buffer(np, -1);
+  for (unsigned int itet = 0; itet<nTet; ++itet){
+    const unsigned int i0 = aTet[itet*4+0];
+    const unsigned int i1 = aTet[itet*4+1];
+    const unsigned int i2 = aTet[itet*4+2];
+    const unsigned int i3 = aTet[itet*4+3];
+    const unsigned int aIP[4] = {i0,i1,i2,i3};
+    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ);
+    const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
+    //
+    double eres[4], emat[4][4];
+    EMat_Poisson_Tet3D(eres,emat,
+                       alpha, source,
+                       coords, value);
+    for (int ino = 0; ino<4; ino++){
+      const unsigned int ip = aIP[ino];
+      vec_b[ip] += eres[ino];
+    }
+    mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
+  }
+}
+
+template <class MAT>
+void MergeLinSys_Diffusion_MeshTri2D(
+    MAT& mat_A,
+    double* vec_b,
+    const double alpha,
+    const double rho,
+    const double source,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
+    const double* aVal,
+    const double* aVelo)
+{
+//  const int nDoF = nXY;
+  ////
+//  mat_A.SetZero();
+//  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
+  std::vector<int> tmp_buffer(nXY, -1);
+  for (unsigned int iel = 0; iel<nTri; ++iel){
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    const double value[3] = { aVal[ i0], aVal[ i1], aVal[ i2] };
+    const double velo[ 3] = { aVelo[i0], aVelo[i1], aVelo[i2] };
+    ////
+    double eres[3];
+    double emat[3][3];
+    EMat_Diffusion_Tri2D
+        (eres,emat,
+         alpha, source,
+         dt_timestep, gamma_newmark, rho,
+         coords, value, velo);
+    for (int ino = 0; ino<3; ino++){
+      const unsigned int ip = aIP[ino];
+      vec_b[ip] += eres[ino];
+    }
+    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+  }
+}
+
+template <class MAT>
+void MergeLinSys_Diffusion_MeshTet3D(
+    MAT& mat_A,
+    double* vec_b,
+    const double alpha,
+    const double rho,
+    const double source,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
+    const double* aVal,
+    const double* aVelo)
+{
+  const int np = nXYZ;
+  std::vector<int> tmp_buffer(np, -1);
+  for (unsigned int iel = 0; iel<nTet; ++iel){
+    const unsigned int i0 = aTet[iel*4+0];
+    const unsigned int i1 = aTet[iel*4+1];
+    const unsigned int i2 = aTet[iel*4+2];
+    const unsigned int i3 = aTet[iel*4+3];
+    const unsigned int aIP[4] = {i0,i1,i2,i3};
+    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ);
+    const double value[4] = { aVal[ i0], aVal[ i1], aVal[ i2], aVal[ i3] };
+    const double velo[ 4] = { aVelo[i0], aVelo[i1], aVelo[i2], aVelo[i3] };
+    ////
+    double eres[4];
+    double emat[4][4];
+    EMat_Diffusion_Newmark_Tet3D(eres,emat,
+                                 alpha, source,
+                                 dt_timestep, gamma_newmark, rho,
+                                 coords, value, velo);
+    for (int ino = 0; ino<4; ino++){
+      const unsigned int ip = aIP[ino];
+      vec_b[ip] += eres[ino];
+    }
+    mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
+  }
+}
+
+
+} // namespace delfem2
+
+#ifdef DFM2_HEADER_ONLY
+#  include "delfem2/fempoisson.cpp"
+#endif
+  
+#endif /* fem_ematrix_h */

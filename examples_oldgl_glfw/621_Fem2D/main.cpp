@@ -18,7 +18,7 @@
 #include "delfem2/femnavierstokes.h"
 #include "delfem2/femstokes.h"
 #include "delfem2/femsolidlinear.h"
-#include "delfem2/fem_emats.h"
+#include "delfem2/fempoisson.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri.h"

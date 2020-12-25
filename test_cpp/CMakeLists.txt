@@ -74,9 +74,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp
       
       ${DELFEM2_INC}/femutil.h              ${DELFEM2_INC}/femutil.cpp      
-      ${DELFEM2_INC}/femem2.h               ${DELFEM2_INC}/femem2.cpp
-      ${DELFEM2_INC}/femem3.h               ${DELFEM2_INC}/femem3.cpp
-      ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
+      ${DELFEM2_INC}/fempoisson.h           ${DELFEM2_INC}/fempoisson.cpp
+      ${DELFEM2_INC}/femdkt.h               ${DELFEM2_INC}/femdkt.cpp
       ${DELFEM2_INC}/femrod.h               ${DELFEM2_INC}/femrod.cpp
       ${DELFEM2_INC}/femmitc3.h             ${DELFEM2_INC}/femmitc3.cpp
       ${DELFEM2_INC}/femhelmholtz.h         ${DELFEM2_INC}/femhelmholtz.cpp

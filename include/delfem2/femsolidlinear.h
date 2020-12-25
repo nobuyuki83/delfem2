@@ -21,6 +21,14 @@ DFM2_INLINE void ddW_SolidLinear_Tet3D(
     bool is_add,
     unsigned int nstride = 3);
 
+void EMat_SolidLinear2_QuadOrth_GaussInt(
+                                                  double emat[4][4][2][2],
+                                                  double lx,
+                                                  double ly,
+                                                  double myu,
+                                                  double lambda,
+                                                  unsigned int ngauss);
+
 DFM2_INLINE void EMat_SolidLinear_Static_Tet(
     double emat[4][4][3][3],
     double eres[4][3],

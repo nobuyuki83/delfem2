@@ -5,27 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_FEMEM3_H
-#define DFM2_FEMEM3_H
+#ifndef DFM2_FEMDKT_H
+#define DFM2_FEMDKT_H
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
 #include <complex>
 
 namespace delfem2 {
-
-void EMat_Poisson_Tet3D(double eres[4],
-    double emat[][4],
-    const double alpha, const double source,
-    const double coords[4][3],
-    const double value[4]);
-
-void EMat_Diffusion_Newmark_Tet3D(double eres[4],
-    double emat[4][4],
-    const double alpha, const double source,
-    const double dt_timestep, const double gamma_newmark, const double rho,
-    const double coords[4][3],
-    const double value[4], const double velo[4]);
 
 DFM2_INLINE void MakeCurvetureDKT(
     double B1[][3],
@@ -49,7 +36,7 @@ DFM2_INLINE void MakeMat_PlateBendingDKT
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/femem3.cpp"
+#  include "delfem2/femdkt.cpp"
 #endif
   
 #endif /* fem_ematrix_h */

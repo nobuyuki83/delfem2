@@ -16,7 +16,8 @@
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/primitive.h"
 #include "delfem2/points.h"
-#include "delfem2/femem2.h"
+#include "delfem2/femsolidlinear.h"
+#include "delfem2/fempoisson.h"
 namespace dfm2 = delfem2;
 
 #include <Eigen/Eigenvalues>
