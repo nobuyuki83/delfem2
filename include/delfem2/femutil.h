@@ -79,11 +79,29 @@ const static double TriGauss[3][7][3] =
 namespace femutil {    
 
 // area of a triangle
-DFM2_INLINE double TriArea2D(const double p0[], const double p1[], const double p2[]);
+DFM2_INLINE double TriArea2D(
+    const double p0[],
+    const double p1[],
+    const double p2[]);
 
 // area coordinate inside a triangle
-DFM2_INLINE void TriAreaCoord(double vc_p[],
-                              const double p0[], const double p1[], const double p2[], const double pb[]);
+DFM2_INLINE void TriAreaCoord(
+    double vc_p[],
+    const double p0[],
+    const double p1[],
+    const double p2[],
+    const double pb[]);
+
+
+DFM2_INLINE double Dot3D(const double a[], const double b[]);
+
+DFM2_INLINE void Cross3D(double r[3], const double v1[3], const double v2[3]);
+
+DFM2_INLINE double TetVolume3D(
+    const double v1[3],
+    const double v2[3],
+    const double v3[3],
+    const double v4[3]);
 
 }
 
@@ -95,7 +113,15 @@ DFM2_INLINE void TriDlDx(
     double const_term[],
     const double p0[],
     const double p1[],
-                         const double p2[]);
+    const double p2[]);
+
+DFM2_INLINE void TetDlDx(
+    double dldx[][3],
+    double a[],
+    const double p0[],
+    const double p1[],
+    const double p2[],
+    const double p3[]);
 
 DFM2_INLINE void FetchData(
     double* val_to,

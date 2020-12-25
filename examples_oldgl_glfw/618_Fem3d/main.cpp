@@ -15,11 +15,12 @@
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsvecx.h"
+#include "delfem2/vecxitrsol.h"
+#include "delfem2/femnavierstokes.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/primitive.h"
 #include "delfem2/iss.h"
-#include "delfem2/vecxitrsol.h"
 #include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <cassert>
