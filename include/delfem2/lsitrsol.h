@@ -6,8 +6,10 @@
  */
 
 /**
- * @file template for iterative solver
- * DONE(Dec. 25th 2020): splitting this file into "vecx.h" and "itersol.h" in the future
+ * @file template for iterative solver.
+ * @details The template can be used for Eigen::VectorX and CMatSparse class in DelFEM2
+ *
+ * DONE(2020/12/25): splitting this file into "vecx.h" and "itersol.h" in the future
  */
 
 #ifndef DFM2_LSITRSOL_H
@@ -25,14 +27,15 @@ namespace delfem2 {
 
 /**
  * @brief solve linear system using conjugate gradient method
- * @param mat (in)  a template class with member function "MatVec" with  {y} = alpha*[A]{x} + beta*{y}
+ * @detail VEC&& is the "universal reference"
+ * @param[in] mat  a template class with member function "MatVec" with  {y} = alpha*[A]{x} + beta*{y}
  */
 template<class MAT, class VEC>
 std::vector<double> Solve_CG(
-    VEC& r_vec,
-    VEC& u_vec,
-    VEC& Ap_vec,
-    VEC& p_vec,
+    VEC&& r_vec,
+    VEC&& u_vec,
+    VEC&& Ap_vec,
+    VEC&& p_vec,
     double conv_ratio_tol,
     unsigned int max_iteration,
     const MAT& mat)
@@ -63,7 +66,7 @@ std::vector<double> Solve_CG(
       const double beta = sqnorm_res_new / sqnorm_res; // beta = (r1,r1) / (r0,r0)
       sqnorm_res = sqnorm_res_new;
       ScaleAndAddVec(p_vec,beta,r_vec); // {p} = {r} + beta*{p}
-      std::cout << iitr << " alpha:" << alpha << "   beta:" << beta << " " << conv_ratio << " " << u_vec.dot(u_vec) << std::endl;
+//      std::cout << iitr << " alpha:" << alpha << "   beta:" << beta << " " << conv_ratio << " " << u_vec.dot(u_vec) << std::endl;
     }
   }
   return aConv;
@@ -72,13 +75,14 @@ std::vector<double> Solve_CG(
 
 /**
  * @brief solve a real-valued linear system using the conjugate gradient method with preconditioner
+ * @detail VEC&& is the "universal reference"
  */
 template <class MAT, class VEC, class PREC>
 std::vector<double> Solve_PCG(
-    VEC& r_vec,
-    VEC& x_vec,
-    VEC& Pr_vec,
-    VEC& p_vec,
+    VEC&& r_vec,
+    VEC&& x_vec,
+    VEC&& Pr_vec,
+    VEC&& p_vec,
     double conv_ratio_tol,
     unsigned int max_nitr,
     const MAT &mat,

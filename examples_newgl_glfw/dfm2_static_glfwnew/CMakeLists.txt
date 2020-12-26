@@ -79,8 +79,10 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/femcloth.h                  ${DELFEM2_INC}/femcloth.cpp
     ${DELFEM2_INC}/femnavierstokes.h           ${DELFEM2_INC}/femnavierstokes.cpp
     ${DELFEM2_INC}/femutil.h                   ${DELFEM2_INC}/femutil.cpp
-    ${DELFEM2_INC}/objf_geo3.h                 ${DELFEM2_INC}/objf_geo3.cpp
-    ${DELFEM2_INC}/objfdtri_objfdtri23.h       ${DELFEM2_INC}/objfdtri_objfdtri23.cpp
+    ${DELFEM2_INC}/femmips_geo3.h              ${DELFEM2_INC}/femmips_geo3.cpp
+
+    ${DELFEM2_INC}/pbd_geo3dtri23.h            ${DELFEM2_INC}/pbd_geo3dtri23.cpp
+    ${DELFEM2_INC}/pbd_geo3.h                  ${DELFEM2_INC}/pbd_geo3.cpp
 
     ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
     ${DELFEM2_INC}/dtri2_v2dtri.h              ${DELFEM2_INC}/dtri2_v2dtri.cpp
@@ -88,6 +90,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/dtet_v3.h                   ${DELFEM2_INC}/dtet_v3.cpp
     ${DELFEM2_INC}/cad2_dtri2.h                ${DELFEM2_INC}/cad2_dtri2.cpp
 
+    ${DELFEM2_INC}/defarapenergy_geo3.h        ${DELFEM2_INC}/defarapenergy_geo3.cpp
     ${DELFEM2_INC}/deflap.h                    ${DELFEM2_INC}/deflap.cpp
     ${DELFEM2_INC}/defarap.h                   ${DELFEM2_INC}/defarap.cpp
 

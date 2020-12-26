@@ -82,7 +82,11 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/femstokes.h            ${DELFEM2_INC}/femstokes.cpp
       ${DELFEM2_INC}/femnavierstokes.h      ${DELFEM2_INC}/femnavierstokes.cpp
       ${DELFEM2_INC}/femsolidlinear.h       ${DELFEM2_INC}/femsolidlinear.cpp
-      ${DELFEM2_INC}/objf_geo3.h            ${DELFEM2_INC}/objf_geo3.cpp
+      ${DELFEM2_INC}/femmips_geo3.h         ${DELFEM2_INC}/femmips_geo3.cpp
+
+      ${DELFEM2_INC}/pbd_geo3.h            ${DELFEM2_INC}/pbd_geo3.cpp
+
+      ${DELFEM2_INC}/defarapenergy_geo3.h         ${DELFEM2_INC}/defarapenergy_geo3.cpp
 
       ${DELFEM2_INC}/srchbvh.h              ${DELFEM2_INC}/srchbvh.cpp
       ${DELFEM2_INC}/srchbv3aabb.h

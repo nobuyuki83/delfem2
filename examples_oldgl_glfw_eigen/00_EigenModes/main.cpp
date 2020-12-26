@@ -25,32 +25,43 @@ namespace dfm2 = delfem2;
 void ShowEigen_SolidLinear_MeshQuad2(
     const std::vector<double>& aXY,
     const std::vector<unsigned int>& aQuad,
-    double elen)
-{
-  const unsigned int np = aXY.size()/2;
-  Eigen::MatrixXd A(np*2, np*2);
+    double elen) {
+  const unsigned int np = aXY.size() / 2;
+  Eigen::MatrixXd A(np * 2, np * 2);
   A.setZero();
 
   double emat[4][4][2][2];
-  dfm2::EMat_SolidLinear2_QuadOrth_GaussInt(emat,elen,elen, 1.0, 1.0, 2);
+  dfm2::EMat_SolidLinear2_QuadOrth_GaussInt(emat, elen, elen, 1.0, 1.0, 2);
 
-  for(unsigned int iq=0;iq<aQuad.size()/4;++iq){
+  for (unsigned int iq = 0; iq < aQuad.size() / 4; ++iq) {
     const unsigned int aIp[4] = {
-        aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3]};
-    for(unsigned int in=0;in<4;++in){
-      for(unsigned int jn=0;jn<4;++jn) {
+        aQuad[iq * 4 + 0], aQuad[iq * 4 + 1], aQuad[iq * 4 + 2], aQuad[iq * 4 + 3]};
+    for (unsigned int in = 0; in < 4; ++in) {
+      for (unsigned int jn = 0; jn < 4; ++jn) {
         const unsigned int ip = aIp[in];
         const unsigned int jp = aIp[jn];
-        for(unsigned int idim=0;idim<2;++idim){
-          for(unsigned int jdim=0;jdim<2;++jdim) {
-            A(ip*2+0,jp*2+0) += emat[in][jn][0][0];
-            A(ip*2+0,jp*2+1) += emat[in][jn][0][1];
-            A(ip*2+1,jp*2+0) += emat[in][jn][1][0];
-            A(ip*2+1,jp*2+1) += emat[in][jn][1][1];
+        for (unsigned int idim = 0; idim < 2; ++idim) {
+          for (unsigned int jdim = 0; jdim < 2; ++jdim) {
+            A(ip * 2 + 0, jp * 2 + 0) += emat[in][jn][0][0];
+            A(ip * 2 + 0, jp * 2 + 1) += emat[in][jn][0][1];
+            A(ip * 2 + 1, jp * 2 + 0) += emat[in][jn][1][0];
+            A(ip * 2 + 1, jp * 2 + 1) += emat[in][jn][1][1];
           }
         }
       }
     }
+  }
+
+  {
+    auto B = A;
+    B(0,0) += 1.0;
+    B(1,1) += 1.0;
+    B(2,2) += 1.0;
+    B(3,3) += 1.0;
+    Eigen::VectorXd r(np*2), u(np*2), Ap(np*2), p(np*2);
+    r.setRandom();
+    std::vector<double> aConv = dfm2::Solve_CG(r,u,Ap,p,1.0e-5,300,B);
+    std::cout << aConv.size() << std::endl;
   }
 
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> s(A);

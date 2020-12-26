@@ -131,7 +131,8 @@ void MeshTri3_Capsule(
 DFM2_INLINE void MeshQuad2D_Grid(
     std::vector<double>& aXYZ,
     std::vector<unsigned int>& aQuad,
-    int nx, int ny);
+    unsigned int nx,
+    unsigned int ny);
 
 // ========================================
 // primivive classes from here

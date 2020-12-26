@@ -141,7 +141,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::MakeLinearSystem(
     }
   }
   this->JacobiTVecTmp(aRhs,
-                      -1.0, 0.0);
+      -1.0, 0.0);
   /*
   // making RHS vector for fixed boundary condition
   for(int i=0;i<np*3;++i){
@@ -193,12 +193,8 @@ void delfem2::CDef_ArapEdgeLinearDisponly::Deform(
   {
     const std::size_t n = np*3;
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     std::vector<double> aRes = Solve_CG(
-        vr, vu, vs, vt,
+        CVecXd(aRhs), CVecXd(aUpd), CVecXd(tmp0), CVecXd(tmp1),
         1.0e-4, 300, *this);
   }
 //  std::cout << "iframe: " << iframe << "   nitr:" << aRes.size() << std::endl;
@@ -394,24 +390,16 @@ void delfem2::CDef_ArapEdge::Deform(
   if( is_preconditioner ){
     const std::size_t n = np*6;
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     this->MakePreconditionerJacobi();
     aConvHist = Solve_PCG(
-        vr,vu,vs,vt,
+        CVecXd(aRhs),CVecXd(aUpd),CVecXd(tmp0),CVecXd(tmp1),
         1.0e-4, 400, *this, *this);
   }
   else{
     const std::size_t n = np*6;
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr, vu, vs, vt,
+        CVecXd(aRhs), CVecXd(aUpd), CVecXd(tmp0), CVecXd(tmp1),
         1.0e-4, 400, *this);
   }
   for(unsigned int ip=0;ip<np;++ip){
@@ -514,24 +502,16 @@ void delfem2::CDef_Arap::Deform(
     this->Prec.DoILUDecomp();
     const std::size_t n = np*3;
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRes1);
-    auto vu = CVecXd(aUpd1);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     aConvHist = Solve_PCG(
-        vr,vu,vs,vt,
+        CVecXd(aRes1),CVecXd(aUpd1),CVecXd(tmp0),CVecXd(tmp1),
         1.0e-7, 300, Mat, Prec);
   }
   else{
     const std::size_t n = np*3;
     assert( aRes1.size() == n && aUpd1.size() == n );
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRes1);
-    auto vu = CVecXd(aUpd1);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr,vu,vs,vt,
+        CVecXd(aRes1),CVecXd(aUpd1),CVecXd(tmp0),CVecXd(tmp1),
         1.0e-7, 300, Mat);
   }
 

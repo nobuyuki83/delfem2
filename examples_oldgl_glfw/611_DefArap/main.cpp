@@ -134,7 +134,7 @@ int main(int argc,char* argv[])
       for(;iframe<200;++iframe){
         SetPositionAtFixedBoundary(
             aXYZ1,
-            0,aXYZ0,aBCFlag);
+            iframe,aXYZ0,aBCFlag);
         def0.Deform(
             aXYZ1,aQuat1,
             aXYZ0,aBCFlag);

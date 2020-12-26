@@ -9,7 +9,9 @@
 //
 #include "delfem2/femrod.h"
 #include "delfem2/geo3_v23m34q.h"
-#include "delfem2/objf_geo3.h"
+#include "delfem2/femmips_geo3.h"
+#include "delfem2/defarapenergy_geo3.h"
+#include "delfem2/pbd_geo3.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/vec2.h"

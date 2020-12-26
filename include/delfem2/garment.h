@@ -9,13 +9,13 @@
 #define DFM2_GARMENT_H
 
 #include "delfem2/cad2_dtri2.h"
-#include "delfem2/objfdtri_objfdtri23.h"
-#include "delfem2/objf_geo3.h"
+#include "delfem2/pbd_geo3dtri23.h"
+#include "delfem2/pbd_geo3.h"
 #include "delfem2/rig_geo3.h"
-#include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/srchbv3sphere.h"
 
