@@ -5,6 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file make element matrix (EMAT) and merge it to the global matri for linear solid equation
+ *
+ * (2020/12/26) TODO: use template to generalize the merge functions
+ * (2020/12/25) created. separated from "femem3" and "femem2"
+ */
+
 #ifndef DFM2_FEMSOLIDLINEAR_H
 #define DFM2_FEMSOLIDLINEAR_H
 
@@ -22,12 +29,12 @@ DFM2_INLINE void ddW_SolidLinear_Tet3D(
     unsigned int nstride = 3);
 
 void EMat_SolidLinear2_QuadOrth_GaussInt(
-                                                  double emat[4][4][2][2],
-                                                  double lx,
-                                                  double ly,
-                                                  double myu,
-                                                  double lambda,
-                                                  unsigned int ngauss);
+    double emat[4][4][2][2],
+    double lx,
+    double ly,
+    double myu,
+    double lambda,
+    unsigned int ngauss);
 
 DFM2_INLINE void EMat_SolidLinear_Static_Tet(
     double emat[4][4][3][3],
@@ -40,14 +47,24 @@ DFM2_INLINE void EMat_SolidLinear_Static_Tet(
 
 DFM2_INLINE void stress_LinearSolid_TetP2 (
   double stress[3][3],
-  const double l0, const double l1, const double l2, const double l3,
-  const double vol, const double lambda, const double myu,
-  const double g_x, const double g_y, const double g_z,
+  const double l0,
+  const double l1,
+  const double l2,
+  const double l3,
+  const double vol,
+  const double lambda,
+  const double myu,
+  const double g_x,
+  const double g_y,
+  const double g_z,
   const double dldx[4][3],
   const double disp[10][3]);
 
 void MakeMat_LinearSolid3D_Static_Q1(const double myu, const double lambda,
-    const double rho, const double g_x, const double g_y, const double g_z,
+    const double rho,
+    const double g_x,
+    const double g_y,
+    const double g_z,
     const double coords[8][3],
     const double disp[8][3],
     //
@@ -57,8 +74,12 @@ void MakeMat_LinearSolid3D_Static_Q1(const double myu, const double lambda,
 DFM2_INLINE void matRes_LinearSolid_TetP2(
     double emat[10][10][3][3],
     double eres[10][3],
-    const double vol, const double lambda, const double myu,
-    const double g_x, const double g_y, const double g_z,
+    const double vol,
+    const double lambda,
+    const double myu,
+    const double g_x,
+    const double g_y,
+    const double g_z,
     const double rho,
     const double dldx[4][3],
     const double disp[10][3]);
@@ -76,10 +97,17 @@ void EMat_SolidLinear_NewmarkBeta_MeshTet3D(
 DFM2_INLINE void EMat_SolidDynamicLinear_Tri2D(
     double eres[3][2],
     double emat[3][3][2][2],
-    const double myu, const double lambda,
-    const double rho, const double g_x, const double g_y,
-    const double dt_timestep, const double gamma_newmark,  const double beta_newmark,
-    const double disp[3][2], const double velo[3][2], const double acc[3][2],
+    const double myu,
+    const double lambda,
+    const double rho,
+    const double g_x,
+    const double g_y,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double beta_newmark,
+    const double disp[3][2],
+    const double velo[3][2],
+    const double acc[3][2],
     const double coords[3][2],
     bool is_initial);
 
@@ -96,7 +124,7 @@ DFM2_INLINE void EMat_SolidStaticLinear_Tri2D(
 
 
 
-// --------
+// ------------------------------------
 
 template <class MAT>
 void MergeLinSys_SolidLinear_Static_MeshTri2D(
@@ -125,9 +153,10 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
     //
     double eres[3][2];
     double emat[3][3][2][2];
-    EMat_SolidStaticLinear_Tri2D(eres,emat,
-                                 myu, lambda, rho, g_x, g_y,
-                                 disps, coords);
+    EMat_SolidStaticLinear_Tri2D(
+        eres,emat,
+        myu, lambda, rho, g_x, g_y,
+        disps, coords);
     for (int ino = 0; ino<3; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip*2+0] += eres[ino][0];
@@ -137,56 +166,6 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
   }
 }
 
-template <class MAT>
-void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
-    MAT& mat_A,
-    double* vec_b,
-    const double myu,
-    const double lambda,
-    const double rho,
-    const double g_x,
-    const double g_y,
-    const double dt_timestep,
-    const double gamma_newmark,
-    const double beta_newmark,
-    const double* aXY1,
-    unsigned int nXY,
-    const unsigned int* aTri1,
-    unsigned int nTri,
-    const double* aVal,
-    const double* aVelo,
-    const double* aAcc)
-{
-  const unsigned int np = nXY;
-  std::vector<int> tmp_buffer(np, -1);
-  for (unsigned int iel = 0; iel<nTri; ++iel){
-    const unsigned int i0 = aTri1[iel*3+0];
-    const unsigned int i1 = aTri1[iel*3+1];
-    const unsigned int i2 = aTri1[iel*3+2];
-    const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal);
-    double velos[3][2]; FetchData(&velos[0][0],3,2,aIP, aVelo);
-    double accs[3][2]; FetchData(&accs[0][0],3,2,aIP, aAcc);
-    ////
-    double eres[3][2];
-    double emat[3][3][2][2];
-    EMat_SolidDynamicLinear_Tri2D
-    (eres,emat,
-     myu, lambda,
-     rho, g_x, g_y,
-     dt_timestep, gamma_newmark, beta_newmark,
-     disps, velos, accs, coords, 
-     true);
-    for (int ino = 0; ino<3; ino++){
-      const unsigned int ip = aIP[ino];
-      vec_b[ip*2+0] += eres[ino][0];
-      vec_b[ip*2+1] += eres[ino][1];
-    }
-    // marge dde
-    mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
-  }
-}
 
 template <class MAT>
 void MergeLinSys_SolidLinear_Static_MeshTet3D(
@@ -196,8 +175,10 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D(
     const double lambda,
     const double rho,
     const double *g,
-    const double* aXYZ, unsigned int nXYZ,
-    const unsigned int* aTet, unsigned int nTet,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
     const double* aDisp)
 {
   const unsigned int np = nXYZ;
@@ -222,10 +203,11 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D(
         ere[2] = vol*rho*g[2]*0.25;
       }
     }
-    EMat_SolidLinear_Static_Tet(emat,eres,
-                                myu, lambda,
-                                P, disps,
-                                true); // additive
+    EMat_SolidLinear_Static_Tet(
+        emat,eres,
+        myu, lambda,
+        P, disps,
+        true); // additive
     for (int ino = 0; ino<4; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
@@ -286,6 +268,60 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
   }
 }
 
+
+// -----------------------------
+
+template <class MAT>
+void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
+    MAT& mat_A,
+    double* vec_b,
+    const double myu,
+    const double lambda,
+    const double rho,
+    const double g_x,
+    const double g_y,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double beta_newmark,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
+    const double* aVal,
+    const double* aVelo,
+    const double* aAcc)
+{
+  const unsigned int np = nXY;
+  std::vector<int> tmp_buffer(np, -1);
+  for (unsigned int iel = 0; iel<nTri; ++iel){
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal);
+    double velos[3][2]; FetchData(&velos[0][0],3,2,aIP, aVelo);
+    double accs[3][2]; FetchData(&accs[0][0],3,2,aIP, aAcc);
+    ////
+    double eres[3][2];
+    double emat[3][3][2][2];
+    EMat_SolidDynamicLinear_Tri2D(
+        eres,emat,
+        myu, lambda,
+        rho, g_x, g_y,
+        dt_timestep, gamma_newmark, beta_newmark,
+        disps, velos, accs, coords,
+        true);
+    for (int ino = 0; ino<3; ino++){
+      const unsigned int ip = aIP[ino];
+      vec_b[ip*2+0] += eres[ino][0];
+      vec_b[ip*2+1] += eres[ino][1];
+    }
+    // marge dde
+    mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
+  }
+}
+
 template <class MAT>
 void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     MAT& mat_A,
@@ -319,12 +355,13 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     double accs[4][3];  FetchData(&accs[0][0],  4,3,aIP, aAcc);
     //
     double eres[4][3], emat[4][4][3][3];
-    EMat_SolidLinear_NewmarkBeta_MeshTet3D(eres,emat,
-                                                  myu, lambda,
-                                                  rho, g[0], g[1], g[2],
-                                                  dt_timestep, gamma_newmark, beta_newmark,
-                                                  disps, velos, accs, P,
-                                                  true);
+    EMat_SolidLinear_NewmarkBeta_MeshTet3D(
+        eres,emat,
+        myu, lambda,
+        rho, g[0], g[1], g[2],
+        dt_timestep, gamma_newmark, beta_newmark,
+        disps, velos, accs, P,
+        true);
     for (int ino = 0; ino<4; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
@@ -366,8 +403,9 @@ void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     {
       double dldx[4][3], const_term[4];
       TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
-      ddW_SolidLinear_Tet3D(&emat[0][0][0][0],
-                            lambda, myu, vol, dldx, false, 3);
+      ddW_SolidLinear_Tet3D(
+          &emat[0][0][0][0],
+          lambda, myu, vol, dldx, false, 3);
     }
     {
       double u[4][3]; FetchData(&u[0][0], 4, 3, aIP, aDisp);

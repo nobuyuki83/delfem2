@@ -5,6 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file make element matrix (EMAT) and merge it to the global matri for linear solid equation
+ *
+ * (2020/12/26) TODO: use template to generalize the merge functions
+ * (2020/12/25) created. separated from "femem3" and "femem2"
+ */
+
 #ifndef DFM2_FEMEM2_H
 #define DFM2_FEMEM2_H
 
@@ -43,13 +50,12 @@ void EMat_Poisson2_QuadOrth_GaussInt(
     double ly,
     unsigned int ngauss);
 
-void EMat_SolidLinear2_QuadOrth_GaussInt(
-    double emat[4][4][2][2],
-    double lx,
-    double ly,
-    double myu,
-    double lambda,
-    unsigned int ngauss);
+DFM2_INLINE void EMat_Poisson_Tet3D(
+    double eres[4],
+    double emat[4][4],
+    const double alpha, const double source,
+    const double coords[4][3],
+    const double value[4]);
 
 // [\rho][velo] - [\alpha]\nabla^2[value] = [source]
 void EMat_Diffusion_Tri2D(
@@ -64,13 +70,6 @@ void EMat_Diffusion_Tri2D(
     const double value[3],
     const double velo[3]);
 
-DFM2_INLINE void EMat_Poisson_Tet3D(
-    double eres[4],
-    double emat[4][4],
-    const double alpha, const double source,
-    const double coords[4][3],
-    const double value[4]);
-
 DFM2_INLINE void EMat_Diffusion_Newmark_Tet3D(
     double eres[4],
     double emat[4][4],
@@ -78,6 +77,8 @@ DFM2_INLINE void EMat_Diffusion_Newmark_Tet3D(
     const double dt_timestep, const double gamma_newmark, const double rho,
     const double coords[4][3],
     const double value[4], const double velo[4]);
+
+// --------------------------------------------
 
 
 template <class MAT>
@@ -102,7 +103,7 @@ void MergeLinSys_Poission_MeshTri2D(
     const unsigned int aIP[3] = {i0,i1,i2};
     double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
     const double value[3] = { aVal[i0], aVal[i1], aVal[i2] };
-    ////
+    //
     double eres[3];
     double emat[3][3];
     EMat_Poisson_Tri2D
@@ -168,10 +169,6 @@ void MergeLinSys_Diffusion_MeshTri2D(
     const double* aVal,
     const double* aVelo)
 {
-//  const int nDoF = nXY;
-  ////
-//  mat_A.SetZero();
-//  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(nXY, -1);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];

@@ -655,9 +655,10 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl(
     }
     else if(ielemind1-ielemind0 == 4){
       ::glBegin(GL_QUADS);
-      lcl::DrawSingleQuad3D_FaceNorm(aXYZ.data(),
-                                aElem.data()+ielemind0,
-                                pUV);
+      lcl::DrawSingleQuad3D_FaceNorm(
+          aXYZ.data(),
+          aElem.data()+ielemind0,
+          pUV);
       ::glEnd();
     }
   }
@@ -786,11 +787,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTriVtx,
- const std::vector<double>& aNorm,
- const std::vector<unsigned int>& aTriNrm)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTriVtx,
+    const std::vector<double>& aNorm,
+    const std::vector<unsigned int>& aTriNrm)
 {
   namespace lcl = ::delfem2::opengl::old::mshuni;
   const unsigned int nTri = aTriVtx.size()/3;
@@ -827,9 +828,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
 
 // ------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Face
-(const std::vector<unsigned int>& aTri,
- const std::vector<double>& aXY)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Face(
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXY)
 {
   const std::size_t ntri = aTri.size()/3;
   //  const int nxys = (int)aXY.size()/2;
@@ -889,9 +890,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
 }
 
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge
-(const double* aXY, unsigned int nXY,
- const unsigned int* aTri, unsigned int nTri)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge(
+    const double* aXY, unsigned int nXY,
+    const unsigned int* aTri, unsigned int nTri)
 {
   //  const unsigned int nxys = (int)aXY.size()/2;
   ::glColor3d(0,0,0);
@@ -910,9 +911,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge
-(const std::vector<unsigned int>& aTri,
- const std::vector<double>& aXY)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge(
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXY)
 {
   DrawMeshTri2D_Edge(aXY.data(), aXY.size()/2,
                      aTri.data(), aTri.size()/3);
@@ -948,9 +949,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceColor(
 // ===============================================================
 // MeshQuad
 
-DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_Edge
-(const double* aXYZ, unsigned int nXYZ,
- const unsigned int* aQuad, unsigned int nQuad)
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_Edge(
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aQuad,
+    unsigned int nQuad)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
@@ -979,18 +982,19 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_Edge
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aQuad)
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_Edge(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aQuad)
 {
   DrawMeshQuad3D_Edge(aXYZ.data(), aXYZ.size()/3,
                       aQuad.data(), aQuad.size()/4);
 }
 
 
-DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_FaceNorm
-(const double* aXYZ,
- const unsigned int* aQuad, const unsigned int nQuad)
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_FaceNorm(
+    const double* aXYZ,
+    const unsigned int* aQuad,
+    const unsigned int nQuad)
 {
   namespace lcl = ::delfem2::opengl::old::mshuni;
   ::glBegin(GL_QUADS);
@@ -1000,9 +1004,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_FaceNorm
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aQuad)
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_FaceNorm(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aQuad)
 {
   DrawMeshQuad3D_FaceNorm(aXYZ.data(),aQuad.data(),aQuad.size()/4);
 }
@@ -1020,14 +1024,10 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge(
   ::glBegin(GL_LINES);
   ::glColor3d(0, 0, 0);
   for (unsigned int iq = 0; iq<nQuad; ++iq){
-    const unsigned int i1 = aQuad[iq*4+0];
-    const unsigned int i2 = aQuad[iq*4+1];
-    const unsigned int i3 = aQuad[iq*4+2];
-    const unsigned int i4 = aQuad[iq*4+3];
-    assert(i1<nXY);
-    assert(i2<nXY);
-    assert(i3<nXY);
-    assert(i4<nXY);
+    const unsigned int i1 = aQuad[iq*4+0]; assert(i1<nXY);
+    const unsigned int i2 = aQuad[iq*4+1]; assert(i2<nXY);
+    const unsigned int i3 = aQuad[iq*4+2]; assert(i3<nXY);
+    const unsigned int i4 = aQuad[iq*4+3]; assert(i4<nXY);
     double p1[2] = { aXY[i1*2+0], aXY[i1*2+1] };
     double p2[2] = { aXY[i2*2+0], aXY[i2*2+1] };
     double p3[2] = { aXY[i3*2+0], aXY[i3*2+1] };
@@ -1041,12 +1041,13 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge(
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge
-(const std::vector<double>& aXY,
- const std::vector<unsigned int>& aQuad)
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge(
+    const std::vector<double>& aXY,
+    const std::vector<unsigned int>& aQuad)
 {
-  DrawMeshQuad2D_Edge(aXY.data(), aXY.size()/2,
-                      aQuad.data(), aQuad.size()/4);
+  DrawMeshQuad2D_Edge(
+      aXY.data(), aXY.size()/2,
+      aQuad.data(), aQuad.size()/4);
 }
 
 DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_EdgeDisp(
@@ -1054,7 +1055,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_EdgeDisp(
     unsigned int nXY,
     const unsigned int* aQuad,
     unsigned int nQuad,
-    const double* aDisp)
+    const double* aDisp,
+    double scale)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   // ---------------------
@@ -1066,14 +1068,43 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_EdgeDisp(
     const unsigned int i2 = aQuad[iq*4+1]; assert(i2<nXY);
     const unsigned int i3 = aQuad[iq*4+2]; assert(i3<nXY);
     const unsigned int i4 = aQuad[iq*4+3]; assert(i4<nXY);
-    const double p1[2] = { aXY[i1*2+0]+aDisp[i1*2+0], aXY[i1*2+1]+aDisp[i1*2+1] };
-    const double p2[2] = { aXY[i2*2+0]+aDisp[i2*2+0], aXY[i2*2+1]+aDisp[i2*2+1] };
-    const double p3[2] = { aXY[i3*2+0]+aDisp[i3*2+0], aXY[i3*2+1]+aDisp[i3*2+1] };
-    const double p4[2] = { aXY[i4*2+0]+aDisp[i4*2+0], aXY[i4*2+1]+aDisp[i4*2+1] };
+    const double p1[2] = { aXY[i1*2+0]+scale*aDisp[i1*2+0], aXY[i1*2+1]+scale*aDisp[i1*2+1] };
+    const double p2[2] = { aXY[i2*2+0]+scale*aDisp[i2*2+0], aXY[i2*2+1]+scale*aDisp[i2*2+1] };
+    const double p3[2] = { aXY[i3*2+0]+scale*aDisp[i3*2+0], aXY[i3*2+1]+scale*aDisp[i3*2+1] };
+    const double p4[2] = { aXY[i4*2+0]+scale*aDisp[i4*2+0], aXY[i4*2+1]+scale*aDisp[i4*2+1] };
     ::glVertex2dv(p1); ::glVertex2dv(p2);
     ::glVertex2dv(p2); ::glVertex2dv(p3);
     ::glVertex2dv(p3); ::glVertex2dv(p4);
     ::glVertex2dv(p4); ::glVertex2dv(p1);
+  }
+  ::glEnd();
+  if (is_lighting){ ::glEnable(GL_LIGHTING); }
+}
+
+
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_EdgeDisp(
+    const double* aXY,
+    unsigned int nXY,
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* aDisp,
+    double scale)
+{
+  GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
+  // ---------------------
+  ::glDisable(GL_LIGHTING);
+  ::glBegin(GL_LINES);
+  ::glColor3d(0, 0, 0);
+  for (unsigned int iq = 0; iq<nTri; ++iq){
+    const unsigned int i1 = aTri[iq*3+0]; assert(i1<nXY);
+    const unsigned int i2 = aTri[iq*3+1]; assert(i2<nXY);
+    const unsigned int i3 = aTri[iq*3+2]; assert(i3<nXY);
+    const double p1[2] = { aXY[i1*2+0]+scale*aDisp[i1*2+0], aXY[i1*2+1]+scale*aDisp[i1*2+1] };
+    const double p2[2] = { aXY[i2*2+0]+scale*aDisp[i2*2+0], aXY[i2*2+1]+scale*aDisp[i2*2+1] };
+    const double p3[2] = { aXY[i3*2+0]+scale*aDisp[i3*2+0], aXY[i3*2+1]+scale*aDisp[i3*2+1] };
+    ::glVertex2dv(p1); ::glVertex2dv(p2);
+    ::glVertex2dv(p2); ::glVertex2dv(p3);
+    ::glVertex2dv(p3); ::glVertex2dv(p1);
   }
   ::glEnd();
   if (is_lighting){ ::glEnable(GL_LIGHTING); }

@@ -7,14 +7,13 @@
 
 #include "delfem2/femsolidlinear.h"
 
-
 void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
-                                                  double emat[4][4][2][2],
-                                                  double lx,
-                                                  double ly,
-                                                  double myu,
-                                                  double lambda,
-                                                  unsigned int ngauss)
+    double emat[4][4][2][2],
+    double lx,
+    double ly,
+    double myu,
+    double lambda,
+    unsigned int ngauss)
 {
   namespace lcl = delfem2::femutil;
   for(unsigned int i=0;i<16*4;++i){ (&emat[0][0][0][0])[i] = 0.0; }
@@ -35,10 +34,10 @@ void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
         {-y2/lx, +x1/ly} };
       for(unsigned int in=0;in<4;++in){
         for(unsigned int jn=0;jn<4;++jn){
-          emat[in][jn][0][0] = w*(lambda+myu)*dldx[in][0]*dldx[jn][0];
-          emat[in][jn][0][1] = w*(lambda*dldx[in][0]*dldx[jn][1]+myu*dldx[jn][0]*dldx[in][1]);
-          emat[in][jn][1][0] = w*(lambda*dldx[in][1]*dldx[jn][0]+myu*dldx[jn][1]*dldx[in][0]);
-          emat[in][jn][1][1] = w*(lambda+myu)*dldx[in][1]*dldx[jn][1];
+          emat[in][jn][0][0] += w*(lambda+myu)*dldx[in][0]*dldx[jn][0];
+          emat[in][jn][0][1] += w*(lambda*dldx[in][0]*dldx[jn][1]+myu*dldx[jn][0]*dldx[in][1]);
+          emat[in][jn][1][0] += w*(lambda*dldx[in][1]*dldx[jn][0]+myu*dldx[jn][1]*dldx[in][0]);
+          emat[in][jn][1][1] += w*(lambda+myu)*dldx[in][1]*dldx[jn][1];
           const double dtmp1 = w*myu*(dldx[in][1]*dldx[jn][1]+dldx[in][0]*dldx[jn][0]);
           emat[in][jn][0][0] += dtmp1;
           emat[in][jn][1][1] += dtmp1;

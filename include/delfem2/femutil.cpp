@@ -7,6 +7,7 @@
 
 #include "delfem2/femutil.h"
 #include <complex>
+#include <cassert>
 
 // area of a triangle
 DFM2_INLINE double delfem2::femutil::TriArea2D(
