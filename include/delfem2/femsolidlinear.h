@@ -18,6 +18,7 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
 #include <vector>
+#include <cassert>
 
 namespace delfem2 {
 
@@ -447,8 +448,10 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
     const double rho,
     const double g[3],
     const double dt,
-    const double* aXYZ, int nXYZ,
-    const unsigned int* aTet, int nTet,
+    const double* aXYZ,
+    int nXYZ,
+    const unsigned int* aTet,
+    int nTet,
     const double* aDisp,
     const double* aVelo,
     const std::vector<double>& aR)

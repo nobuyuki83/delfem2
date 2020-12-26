@@ -12,7 +12,7 @@
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/defarap.h"
 #include "delfem2/mat4.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include <cmath>
 #include <GLFW/glfw3.h>
 

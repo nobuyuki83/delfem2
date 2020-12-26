@@ -183,6 +183,17 @@ cmake -DUSE_HEADERONLY=ON ..
 make 
 cd ../../
 
+echo "################################"
+echo "build examples_thread"
+echo "################################"
+
+cd examples_oldgl_glfw_thread
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+make 
+cd ../../
+
 
 echo "######################################"
 echo "fetch latest googletest and compile it"
