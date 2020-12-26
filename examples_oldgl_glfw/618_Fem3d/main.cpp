@@ -99,16 +99,17 @@ void SolveProblem_Poisson()
 {
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np;
-  /////////////////////////////
+  // -----------------------
   const double alpha = 1.0;
   const double source = 0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_Poission_MeshTet3D(mat_A,vec_b.data(),
-                                       alpha,source,
-                                       aXYZ.data(), aXYZ.size()/3,
-                                       aTet.data(), aTet.size()/4,
-                                       aVal.data());
+  dfm2::MergeLinSys_Poission_MeshTet3D(
+      mat_A,vec_b.data(),
+      alpha,source,
+      aXYZ.data(), aXYZ.size()/3,
+      aTet.data(), aTet.size()/4,
+      aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // ------------------------
@@ -121,12 +122,8 @@ void SolveProblem_Poisson()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
     dfm2::Solve_PCG(
-        vr,vu,vs,vt,
+        dfm2::CVecXd(vec_b),dfm2::CVecXd(vec_x),dfm2::CVecXd(tmp0),dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
   // ------------------------------
@@ -183,12 +180,13 @@ void SolveProblem_Diffusion()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_Diffusion_MeshTet3D(mat_A,vec_b.data(),
-                                        alpha, rho, source,
-                                        dt_timestep, gamma_newmark,
-                                        aXYZ.data(), aXYZ.size()/3,
-                                        aTet.data(), aTet.size()/4,
-                                        aVal.data(),aVelo.data());
+  dfm2::MergeLinSys_Diffusion_MeshTet3D(
+      mat_A,vec_b.data(),
+      alpha, rho, source,
+      dt_timestep, gamma_newmark,
+      aXYZ.data(), aXYZ.size()/3,
+      aTet.data(), aTet.size()/4,
+      aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // ------------------------
@@ -201,13 +199,9 @@ void SolveProblem_Diffusion()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    Solve_PCG(vr,vu,vs,vt,
-              conv_ratio, iteration,
-              mat_A, ilu_A);
+    Solve_PCG(dfm2::CVecXd(vec_b),dfm2::CVecXd(vec_x),dfm2::CVecXd(tmp0),dfm2::CVecXd(tmp1),
+        conv_ratio, iteration,
+        mat_A, ilu_A);
   }
   // ----------------------
   dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
@@ -266,11 +260,12 @@ void SolveProblem_LinearSolid_Static()
   double g[3] = {0.0, -0.5, 0.0};
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, vec_b.data(),
-                                                 myu, lambda, rho, g,
-                                                 aXYZ.data(), aXYZ.size()/3,
-                                                 aTet.data(), aTet.size()/4,
-                                                 aVal.data());
+  dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
+      mat_A, vec_b.data(),
+      myu, lambda, rho, g,
+      aXYZ.data(), aXYZ.size()/3,
+      aTet.data(), aTet.size()/4,
+      aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // --------------------------------
@@ -283,11 +278,7 @@ void SolveProblem_LinearSolid_Static()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    Solve_PCG(vr,vu,vs,vt,
+    Solve_PCG(dfm2::CVecXd(vec_b),dfm2::CVecXd(vec_x),dfm2::CVecXd(tmp0),dfm2::CVecXd(tmp1),
         conv_ratio, iteration,
         mat_A, ilu_A);
   }
@@ -320,9 +311,10 @@ void InitializeProblem_LinearSolid_Dynamic()
   }
   //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTet.data(), aTet.size()/4, 4,
-                             (int)aXYZ.size()/3);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTet.data(), aTet.size()/4, 4,
+      (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
@@ -349,12 +341,13 @@ void SolveProblem_LinearSolid_Dynamic()
   const double g[3] = {0.0, -0.3, 0.0};
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(mat_A,vec_b.data(),
-                                                      myu,lambda,rho,g,
-                                                      dt_timestep,gamma_newmark,beta_newmark,
-                                                      aXYZ.data(), aXYZ.size()/3,
-                                                      aTet.data(), aTet.size()/4,
-                                                      aVal.data(),aVelo.data(),aAcc.data());
+  dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
+      mat_A,vec_b.data(),
+      myu,lambda,rho,g,
+      dt_timestep,gamma_newmark,beta_newmark,
+      aXYZ.data(), aXYZ.size()/3,
+      aTet.data(), aTet.size()/4,
+      aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // ----------------------
@@ -367,11 +360,8 @@ void SolveProblem_LinearSolid_Dynamic()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    dfm2::Solve_PCG(vr,vu,vs,vt,
+    dfm2::Solve_PCG(
+        dfm2::CVecXd(vec_b),dfm2::CVecXd(vec_x),dfm2::CVecXd(tmp0),dfm2::CVecXd(tmp1),
         conv_ratio, iteration,
         mat_A, ilu_A);
   }
@@ -465,11 +455,11 @@ void SolveProblem_Stokes_Static()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    Solve_PCG(vr,vu,vs,vt,
+    Solve_PCG(
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration,
         mat_A, ilu_A);
   }
@@ -555,20 +545,21 @@ void SolveProblem_Stokes_Dynamic()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
     Solve_PCG(
-        vr,vu,vs,vt,
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
   // -----------------------
-  dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
-            dt_timestep*gamma_newmark,vec_x,
-            dt_timestep,aVelo);
-  dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
-          1.0,vec_x);
+  dfm2::XPlusAYBZ(
+      aVal,nDoF,aBCFlag,
+      dt_timestep*gamma_newmark,vec_x,
+      dt_timestep,aVelo);
+  dfm2::XPlusAY(
+      aVelo,nDoF,aBCFlag,
+      1.0,vec_x);
 }
 
 

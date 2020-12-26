@@ -141,9 +141,9 @@ void delfem2::CDef_LaplacianLinearGram::SetBoundaryConditionToPreconditioner()
   }
 }
 
-void delfem2::CDef_LaplacianLinearGram::Deform
- (std::vector<double>& aXYZ1,
-  const std::vector<double>& aXYZ0) const
+void delfem2::CDef_LaplacianLinearGram::Deform(
+    std::vector<double>& aXYZ1,
+    const std::vector<double>& aXYZ0) const
 {
   vec_tmp0.resize(aXYZ0.size());
   vec_tmp1.resize(aXYZ0.size());
@@ -162,23 +162,15 @@ void delfem2::CDef_LaplacianLinearGram::Deform
   if( is_preconditioner ){
     const std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vt = CVecXd(tmp0);
-    auto vs = CVecXd(tmp1);
     aConvHist = Solve_PCG(
-        vr,vu,vs,vt,
+        CVecXd(aRhs),CVecXd(aUpd),CVecXd(tmp0),CVecXd(tmp1),
         1.0e-7, 300, *this, *this);
   }
   else{
     const std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vt = CVecXd(tmp0);
-    auto vs = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr, vu,vs,vt,
+        CVecXd(aRhs), CVecXd(aUpd),CVecXd(tmp0),CVecXd(tmp1),
         1.0e-7, 300, *this);
   }
   for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
@@ -242,27 +234,30 @@ void DualLaplacianSymbolic_3x3
 }
 }
 
-void delfem2::CDef_LaplacianLinear::Init
-(const std::vector<double>& aXYZ0,
- const std::vector<unsigned int>& aTri,
- bool is_preconditioner_)
+void delfem2::CDef_LaplacianLinear::Init(
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri,
+    bool is_preconditioner_)
 {
   const unsigned int np = aXYZ0.size()/3;
   this->is_preconditioner = is_preconditioner_;
   std::vector<unsigned int> psup_ind, psup;
-  JArray_PSuP_MeshElem(psup_ind, psup,
-                       aTri.data(), aTri.size()/3, 3,
-                       np);
+  JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTri.data(), aTri.size()/3, 3,
+      np);
   JArray_Sort(psup_ind, psup);
   {
     std::vector<unsigned int> psup_ind1, psup1;
-    JArray_Extend(psup_ind1, psup1,
-                  psup_ind.data(), psup_ind.size(), psup.data());
+    JArray_Extend(
+        psup_ind1, psup1,
+        psup_ind.data(), psup_ind.size(), psup.data());
     JArray_Sort(psup_ind1, psup1);
     Mat.Initialize(np, 3, true);
     assert( psup_ind1.size() == np+1 );
-    Mat.SetPattern(psup_ind1.data(), psup_ind1.size(),
-                   psup1.data(), psup1.size());
+    Mat.SetPattern(
+        psup_ind1.data(), psup_ind1.size(),
+        psup1.data(), psup1.size());
   }
     
   std::vector<int> tmp_buffer;
@@ -369,23 +364,15 @@ void delfem2::CDef_LaplacianLinear::Deform(
   if( is_preconditioner ){
     std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     aConvHist = Solve_PCG(
-        vr,vu,vs,vt,
+        CVecXd(aRhs),CVecXd(aUpd),CVecXd(tmp0),CVecXd(tmp1),
         this->conv_tol, this->max_itr, *this, Prec);
   }
   else{
     std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr, vu, vs, vt,
+        CVecXd(aRhs), CVecXd(aUpd), CVecXd(tmp0), CVecXd(tmp1),
         this->conv_tol, this->max_itr, *this);
   }
   for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
@@ -396,7 +383,7 @@ void delfem2::CDef_LaplacianLinear::MatVec(
     double alpha, const double* vec,  double beta) const
 {
   Mat.MatVec(y,
-             alpha, vec, beta);
+      alpha, vec, beta);
   //
   for(unsigned int iip=0;iip<aIdpNrm.size();++iip){
     const unsigned int ip0 = aIdpNrm[iip].first;
@@ -552,23 +539,15 @@ void delfem2::CDef_LaplacianLinearDegenerate::Deform(
   if( is_preconditioner ){
     const std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     aConvHist = Solve_PCG(
-        vr,vu, vs,vt,
+        CVecXd(aRhs), CVecXd(aUpd), CVecXd(tmp0), CVecXd(tmp1),
         this->conv_tol, this->max_itr, *this, *this);
   }
   else{
     const std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(aRhs);
-    auto vu = CVecXd(aUpd);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
     aConvHist = Solve_CG(
-        vr, vu, vs, vt,
+        CVecXd(aRhs), CVecXd(aUpd), CVecXd(tmp0), CVecXd(tmp1),
         this->conv_tol, this->max_itr, *this);
   }
   for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }

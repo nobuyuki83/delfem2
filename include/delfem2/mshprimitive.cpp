@@ -145,24 +145,25 @@ const double e[3]) // end
 */
 
 
-DFM2_INLINE void delfem2::MeshQuad2D_Grid
- (std::vector<double>& aXYZ,
-  std::vector<unsigned int>& aQuad,
-  int nx, int ny)
+DFM2_INLINE void delfem2::MeshQuad2D_Grid(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aQuad,
+    unsigned int nx,
+    unsigned int ny)
 {
-  int np = (nx+1)*(ny+1);
+  unsigned int np = (nx+1)*(ny+1);
   aXYZ.resize(np*2);
-  for(int iy=0;iy<ny+1;++iy){
-    for(int ix=0;ix<nx+1;++ix){
+  for(unsigned int iy=0;iy<ny+1;++iy){
+    for(unsigned int ix=0;ix<nx+1;++ix){
       int ip = iy*(nx+1)+ix;
       aXYZ[ip*2+0] = ix;
       aXYZ[ip*2+1] = iy;
     }
   }
   aQuad.resize(nx*ny*4);
-  for(int iy=0;iy<ny;++iy){
-    for(int ix=0;ix<nx;++ix){
-      int iq = iy*nx+ix;
+  for(unsigned int iy=0;iy<ny;++iy){
+    for(unsigned int ix=0;ix<nx;++ix){
+      unsigned int iq = iy*nx+ix;
       aQuad[iq*4+0] = (iy+0)*(nx+1)+(ix+0);
       aQuad[iq*4+1] = (iy+0)*(nx+1)+(ix+1);
       aQuad[iq*4+2] = (iy+1)*(nx+1)+(ix+1);

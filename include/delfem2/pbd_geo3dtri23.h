@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_OBJFDTRI_V23DTRI_H
-#define DFM2_OBJFDTRI_V23DTRI_H
+#ifndef DFM2_PBD_GEO3DTRI23_H
+#define DFM2_PBD_GEO3DTRI23_H
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/dtri2_v2dtri.h"
@@ -47,7 +47,7 @@ void PBD_Bend(
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/objfdtri_objfdtri23.cpp"
+#  include "delfem2/pbd_geo3dtri23.cpp"
 #endif
 
 #endif /* pbd_v23_h */

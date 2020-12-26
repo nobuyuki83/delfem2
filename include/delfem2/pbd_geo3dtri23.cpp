@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/objfdtri_objfdtri23.h"
+#include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri3_v3dtri.h"
-#include "delfem2/objf_geo3.h"
+#include "delfem2/pbd_geo3.h"
 #include <cstdio>
 
 // -------------------------------------

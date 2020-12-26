@@ -79,11 +79,13 @@ void myGlutDisplay_Mesh(
   ::glColor3d(1,0,0);
   dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1,aTri);
   ::glColor3d(0.8,0.8,0.8);
-  dfm2::opengl::DrawMeshTri3D_Edge(aXYZ0.data(),aXYZ0.size()/3,
-                                   aTri.data(),aTri.size()/3);
+  dfm2::opengl::DrawMeshTri3D_Edge(
+      aXYZ0.data(),aXYZ0.size()/3,
+      aTri.data(),aTri.size()/3);
   ::glColor3d(0,0,0);
-  dfm2::opengl::DrawMeshTri3D_Edge(aXYZ1.data(),aXYZ1.size()/3,
-                                   aTri.data(),aTri.size()/3);
+  dfm2::opengl::DrawMeshTri3D_Edge(
+      aXYZ1.data(),aXYZ1.size()/3,
+      aTri.data(),aTri.size()/3);
   
 }
 

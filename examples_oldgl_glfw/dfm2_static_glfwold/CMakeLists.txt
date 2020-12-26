@@ -76,9 +76,11 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/femsolidlinear.h            ${DELFEM2_INC}/femsolidlinear.cpp
     ${DELFEM2_INC}/femstokes.h                 ${DELFEM2_INC}/femstokes.cpp
     ${DELFEM2_INC}/femnavierstokes.h           ${DELFEM2_INC}/femnavierstokes.cpp
-    ${DELFEM2_INC}/objf_geo3.h                 ${DELFEM2_INC}/objf_geo3.cpp
-    ${DELFEM2_INC}/objfdtri_objfdtri23.h       ${DELFEM2_INC}/objfdtri_objfdtri23.cpp
+    ${DELFEM2_INC}/femmips_geo3.h              ${DELFEM2_INC}/femmips_geo3.cpp
     ${DELFEM2_INC}/cloth_internal.h
+
+    ${DELFEM2_INC}/pbd_geo3.h                  ${DELFEM2_INC}/pbd_geo3.cpp
+    ${DELFEM2_INC}/pbd_geo3dtri23.h            ${DELFEM2_INC}/pbd_geo3dtri23.cpp
 
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp

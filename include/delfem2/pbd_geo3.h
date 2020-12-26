@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_OBJFUNC_v23_H
-#define DFM2_OBJFUNC_v23_H
+#ifndef DFM2_PBD_GEO3_H
+#define DFM2_PBD_GEO3_H
 
 #include "delfem2/dfm2_inline.h"
 #include <vector>
@@ -114,34 +114,6 @@ DFM2_INLINE void PBD_Seam(
     const unsigned int* aLine,
     unsigned int nline);
 
-DFM2_INLINE void WdWddW_MIPS(
-    double& E, double dE[3][3], double ddE[3][3][3][3],
-    const double c[3][3],
-    const double C[3][3]);
-  
-
-DFM2_INLINE double W_ArapEnergy(
-    const std::vector<double>& aXYZ0,
-    const std::vector<double>& aXYZ1,
-    const std::vector<double>& aQuat1,
-    const std::vector<unsigned int>& psup_ind,
-    const std::vector<unsigned int>& psup);
-
-DFM2_INLINE void dW_ArapEnergy(
-    std::vector<double>& aRes,
-    const std::vector<double>& aXYZ0,
-    const std::vector<double>& aXYZ1,
-    const std::vector<double>& aQuat1,
-    const std::vector<unsigned int>& psup_ind,
-    const std::vector<unsigned int>& psup);
-
-DFM2_INLINE void ddW_ArapEnergy(
-    std::vector<double>& eM,
-    const std::vector<unsigned int>& aIP,
-    const std::vector<double>& aXYZ0,
-    const std::vector<double>& aQuat1);
-
-
 template <typename T>
 DFM2_INLINE void GetConstConstDiff_Bend(
     double& C,
@@ -151,11 +123,10 @@ DFM2_INLINE void GetConstConstDiff_Bend(
     const CVec3<T>& p1,
     const CVec3<T>& p2,
     const CVec3<T>& p3);
-
 }
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/objf_geo3.cpp"
+#  include "delfem2/pbd_geo3.cpp"
 #endif
 
 #endif /* pbd_v23_h */

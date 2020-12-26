@@ -19,7 +19,7 @@
 #include "delfem2/opengl/tex.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/objfdtri_objfdtri23.h"
+#include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/garment.h"
 #include "inputs_garment.h"
