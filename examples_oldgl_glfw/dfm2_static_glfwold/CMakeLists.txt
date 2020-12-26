@@ -57,7 +57,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/points.h                    ${DELFEM2_INC}/points.cpp
     ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
-    ${DELFEM2_INC}/primitive.h                 ${DELFEM2_INC}/primitive.cpp
+    ${DELFEM2_INC}/mshprimitive.h              ${DELFEM2_INC}/mshprimitive.cpp
     ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
 
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
@@ -78,6 +78,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/femnavierstokes.h           ${DELFEM2_INC}/femnavierstokes.cpp
     ${DELFEM2_INC}/objf_geo3.h                 ${DELFEM2_INC}/objf_geo3.cpp
     ${DELFEM2_INC}/objfdtri_objfdtri23.h       ${DELFEM2_INC}/objfdtri_objfdtri23.cpp
+    ${DELFEM2_INC}/cloth_internal.h
 
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
@@ -113,7 +114,6 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/gridcube.h                  ${DELFEM2_INC}/gridcube.cpp
 
     ${DELFEM2_INC}/clusterpoints.h             ${DELFEM2_INC}/clusterpoints.cpp
-    ${DELFEM2_INC}/cloth_internal.h
 
     ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
     ${DELFEM2_INC}/rigopt.h

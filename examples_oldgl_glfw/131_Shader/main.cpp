@@ -12,7 +12,7 @@
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/imgio.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <fstream>

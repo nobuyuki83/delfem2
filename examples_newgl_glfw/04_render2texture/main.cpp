@@ -11,7 +11,7 @@
 #include "delfem2/opengl/tex.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/noise.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 
 #if defined(_MSC_VER)
   #include <windows.h>

@@ -8,7 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <cassert>
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 
 /*
 static void Cross3D(double r[3], const double v1[3], const double v2[3]){

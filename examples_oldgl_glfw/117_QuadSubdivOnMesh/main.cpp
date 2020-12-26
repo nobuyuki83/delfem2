@@ -12,7 +12,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshsubdiv.h"
 #include "delfem2/vec3.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <string>

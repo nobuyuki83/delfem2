@@ -9,12 +9,12 @@
 
 #include "delfem2/thread/th.h"
 #include "delfem2/filenpy_str.h"
+#include "delfem2/str.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/mshprimitive.h"
 #include "delfem2/specialfuncs.h"
-#include "delfem2/str.h"
 #include "delfem2/evalmathexp.h"
-#include "delfem2/primitive.h"
 #include <cstring>
 #include <random>
 

@@ -62,7 +62,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/dtri2_v2dtri.h         ${DELFEM2_INC}/dtri2_v2dtri.cpp
       ${DELFEM2_INC}/cad2_dtri2.h           ${DELFEM2_INC}/cad2_dtri2.cpp
 
-      ${DELFEM2_INC}/primitive.h            ${DELFEM2_INC}/primitive.cpp
+      ${DELFEM2_INC}/mshprimitive.h         ${DELFEM2_INC}/mshprimitive.cpp
       ${DELFEM2_INC}/mshuni.h               ${DELFEM2_INC}/mshuni.cpp
       ${DELFEM2_INC}/mshmisc.h              ${DELFEM2_INC}/mshmisc.cpp
       ${DELFEM2_INC}/points.h               ${DELFEM2_INC}/points.cpp

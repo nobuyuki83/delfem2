@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// TODO: change name to "mshprimitive.h" (2020/12/23)
+// (2020/12/26) DONE: change name to "mshprimitive.h" (2020/12/23)
 
-#ifndef DFM2_PRIMITIVE_H
-#define DFM2_PRIMITIVE_H
+#ifndef DFM2_MSHPRIMITIVE_H
+#define DFM2_MSHPRIMITIVE_H
 
 #include <math.h>
 #include <vector>
@@ -370,7 +370,7 @@ public:
 
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/primitive.cpp"
+#  include "delfem2/mshprimitive.cpp"
 #endif
 
 

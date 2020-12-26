@@ -49,8 +49,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/mshuni.h                    ${DELFEM2_INC}/mshuni.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
-    ${DELFEM2_INC}/primitive.h                 ${DELFEM2_INC}/primitive.cpp
-    ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
+    ${DELFEM2_INC}/mshprimitive.h              ${DELFEM2_INC}/mshprimitive.cpp
 
     ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
@@ -69,26 +68,29 @@ add_library(${PROJ_NAME} STATIC
     
     ${DELFEM2_INC}/lsmats.h                    ${DELFEM2_INC}/lsmats.cpp
     ${DELFEM2_INC}/lsilu_mats.h                ${DELFEM2_INC}/lsilu_mats.cpp
-    
+    ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
+
     ${DELFEM2_INC}/fempoisson.h                ${DELFEM2_INC}/fempoisson.cpp
     ${DELFEM2_INC}/femdkt.h                    ${DELFEM2_INC}/femdkt.cpp
-    ${DELFEM2_INC}/femcloth.h                 ${DELFEM2_INC}/femcloth.cpp
+    ${DELFEM2_INC}/femcloth.h                  ${DELFEM2_INC}/femcloth.cpp
     ${DELFEM2_INC}/femhelmholtz.h              ${DELFEM2_INC}/femhelmholtz.cpp
     ${DELFEM2_INC}/femsolidlinear.h            ${DELFEM2_INC}/femsolidlinear.cpp
     ${DELFEM2_INC}/femstokes.h                 ${DELFEM2_INC}/femstokes.cpp
     ${DELFEM2_INC}/femcloth.h                  ${DELFEM2_INC}/femcloth.cpp
     ${DELFEM2_INC}/femnavierstokes.h           ${DELFEM2_INC}/femnavierstokes.cpp
     ${DELFEM2_INC}/femutil.h                   ${DELFEM2_INC}/femutil.cpp
+    ${DELFEM2_INC}/objf_geo3.h                 ${DELFEM2_INC}/objf_geo3.cpp
+    ${DELFEM2_INC}/objfdtri_objfdtri23.h       ${DELFEM2_INC}/objfdtri_objfdtri23.cpp
 
     ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
     ${DELFEM2_INC}/dtri2_v2dtri.h              ${DELFEM2_INC}/dtri2_v2dtri.cpp
     ${DELFEM2_INC}/dtri3_v3dtri.h              ${DELFEM2_INC}/dtri3_v3dtri.cpp
     ${DELFEM2_INC}/dtet_v3.h                   ${DELFEM2_INC}/dtet_v3.cpp
     ${DELFEM2_INC}/cad2_dtri2.h                ${DELFEM2_INC}/cad2_dtri2.cpp
-    ${DELFEM2_INC}/objf_geo3.h                 ${DELFEM2_INC}/objf_geo3.cpp
-    ${DELFEM2_INC}/objfdtri_objfdtri23.h       ${DELFEM2_INC}/objfdtri_objfdtri23.cpp
-    ${DELFEM2_INC}/deflap.h                    ${DELFEM2_INC}/deflap.cpp    
-    ${DELFEM2_INC}/defarap.h                   ${DELFEM2_INC}/defarap.cpp        
+
+    ${DELFEM2_INC}/deflap.h                    ${DELFEM2_INC}/deflap.cpp
+    ${DELFEM2_INC}/defarap.h                   ${DELFEM2_INC}/defarap.cpp
+
     ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
     
     ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp

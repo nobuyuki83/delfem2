@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION

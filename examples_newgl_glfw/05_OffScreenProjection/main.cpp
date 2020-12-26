@@ -9,7 +9,7 @@
 #include <iostream>
 #include <cmath>
 #include "delfem2/noise.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include "delfem2/vec3.h"
 
 #if defined(_MSC_VER)
