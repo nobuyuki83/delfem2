@@ -6,9 +6,8 @@
  */
 
 
-#include <math.h>
-#include <assert.h>
-#include <complex>
+#include <cmath>
+#include <cassert>
 #include "delfem2/femstokes.h"
 
 DFM2_INLINE void delfem2::MakeMat_Stokes2D_Static_P1P1(
@@ -136,7 +135,10 @@ DFM2_INLINE void delfem2::EMat_Stokes2D_Static_P1(
 
 
 DFM2_INLINE void delfem2::EMat_Stokes2D_Dynamic_P1(
-    double alpha, double rho, double g_x, double g_y,
+    double alpha,
+    double rho,
+    double g_x,
+    double g_y,
     const double dt_timestep,
     const double gamma_newmark,
     const double coords[][2],

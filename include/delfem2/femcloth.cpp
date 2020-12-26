@@ -66,8 +66,9 @@ DFM2_INLINE void MakeConstMatrix3D(
   C[5][5] = lambda*GuGu2[5]*GuGu2[5] + 1*myu*(GuGu2[5]*GuGu2[5] + GuGu2[0]*GuGu2[2]); // 02(5):20(5) 02(5):20(5) 00(0):22(2)
 }
 
-DFM2_INLINE void MakePositiveDefinite_Sim22
- (const double s2[3],double s3[3])
+DFM2_INLINE void MakePositiveDefinite_Sim22(
+    const double s2[3],
+    double s3[3])
 {
   const double b = (s2[0]+s2[1])*0.5;
   const double d = (s2[0]-s2[1])*(s2[0]-s2[1])*0.25 + s2[2]*s2[2];
@@ -118,7 +119,6 @@ DFM2_INLINE void MakePositiveDefinite_Sim22
     s3[1] = l*t1[1]*t1[1];
     s3[2] = l*t1[0]*t1[1];
   }
-  return;
 }
 
 // compute energy and its 1st and 2nd derivative for cloth bending

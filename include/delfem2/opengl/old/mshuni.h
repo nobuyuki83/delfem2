@@ -7,7 +7,9 @@
 
 /**
  * @details the file depends on OpenGL 2.x.
- * There are a lot of legacy commands such as glBegin(),glEnd()
+ * There are a lot of legacy OpenGL commands such as glBegin(),glEnd()
+ *
+ * (2020/12/26) TODO: split this file into drawedge, drawface.
  */
 
 #ifndef DFM2_OPENGL_OLD_MSHUNI_H
@@ -78,9 +80,9 @@ DFM2_INLINE void DrawMeshLine3D_Edge
 // =====================================
 // Draw Triangle Mesh
 
-DFM2_INLINE void DrawMeshTri2D_Face
- (const std::vector<unsigned int>& aTri,
-  const std::vector<double>& aXY);
+DFM2_INLINE void DrawMeshTri2D_Face(
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXY);
 
 DFM2_INLINE void DrawMeshTri2D_FaceDisp2D(
     const double* aXY,
@@ -90,13 +92,15 @@ DFM2_INLINE void DrawMeshTri2D_FaceDisp2D(
     const double* aDisp,
     int nstride);
 
-DFM2_INLINE void DrawMeshTri2D_Edge
- (const double* aXY, unsigned int nXY,
-  const unsigned int* aTri, unsigned int nTri);
+DFM2_INLINE void DrawMeshTri2D_Edge(
+    const double* aXY,
+    unsigned int nXY,
+    const unsigned int* aTri,
+    unsigned int nTri);
 
-DFM2_INLINE void DrawMeshTri2D_Edge
- (const std::vector<unsigned int>& aTri,
-  const std::vector<double>& aXY);
+DFM2_INLINE void DrawMeshTri2D_Edge(
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXY);
 
 DFM2_INLINE void DrawMeshTri2D_FaceColor(
     const unsigned int* aTri,
@@ -196,7 +200,16 @@ DFM2_INLINE void DrawMeshQuad2D_EdgeDisp(
     unsigned int nXY,
     const unsigned int* aQuad,
     unsigned int nQuad,
-    const double *aDisp);
+    const double *aDisp,
+    double scale);
+
+DFM2_INLINE void DrawMeshTri2D_EdgeDisp(
+    const double* aXY,
+    unsigned int nXY,
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* aDisp,
+    double scale);
 
 DFM2_INLINE void DrawMeshQuad3D_Edge(
     const double* aXYZ,

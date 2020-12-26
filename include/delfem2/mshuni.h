@@ -10,10 +10,10 @@
  * @details the functions only care about the topology. Geometry (coordinate) information is not handled in this file
  */
 
-// DONE(2020/12/09): separate mixed elem
-// DONE(2020/12/12): separated mshsubdiv
 // DONE(2020/12/23): change name mshuni.h
 // DODO(2020/12/23): separaete jarray.h
+// DONE(2020/12/12): separated mshsubdiv
+// DONE(2020/12/09): separate mixed elem
 
 #ifndef DFM2_MSHUNI_H
 #define DFM2_MSHUNI_H

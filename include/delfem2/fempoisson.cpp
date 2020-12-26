@@ -14,11 +14,13 @@
 // --------------------------------------------------------
 
 
-DFM2_INLINE void delfem2::EMat_Poisson_Tri2D
-(double eres[3], double emat[3][3],
- const double alpha, const double source,
- const double coords[3][2],
- const double value[3])
+DFM2_INLINE void delfem2::EMat_Poisson_Tri2D(
+    double eres[3],
+    double emat[3][3],
+    const double alpha,
+    const double source,
+    const double coords[3][2],
+    const double value[3])
 {
   const int nno = 3;
   const int ndim = 2;
@@ -62,7 +64,8 @@ void delfem2::EMat_Poisson2_QuadOrth_GaussInt(
     double emat[4][4],
     double lx,
     double ly,
-    unsigned int ngauss) {
+    unsigned int ngauss)
+{
   namespace lcl = delfem2::femutil;
   for (unsigned int i = 0; i < 16; ++i) { (&emat[0][0])[i] = 0.0; }
   unsigned int nw = NIntLineGauss[ngauss];
