@@ -12,7 +12,7 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;

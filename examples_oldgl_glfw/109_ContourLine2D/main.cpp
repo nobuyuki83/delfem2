@@ -12,7 +12,7 @@
 #include "delfem2/points.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/slice.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include "delfem2/color.h"
 #include <GLFW/glfw3.h>
 #include <vector>

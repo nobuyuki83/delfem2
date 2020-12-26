@@ -13,7 +13,7 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/points.h"
 #include "delfem2/femsolidlinear.h"

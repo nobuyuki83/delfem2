@@ -12,6 +12,7 @@
 #include "delfem2/femutil.h"
 #include <vector>
 #include <complex>
+#include <cassert>
 
 namespace delfem2 {
 

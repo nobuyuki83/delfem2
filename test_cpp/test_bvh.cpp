@@ -13,7 +13,7 @@
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/srchbvh.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include <random>

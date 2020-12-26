@@ -11,7 +11,7 @@
 #include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbvh.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include "delfem2/points.h"
 #include "delfem2/mshuni.h"
 #include <GLFW/glfw3.h>
