@@ -6,41 +6,25 @@
  */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/opengl/old/color.h"
-#include "delfem2/points.h"
-#include "delfem2/mshuni.h"
-#include "delfem2/slice.h"
-#include "delfem2/mshprimitive.h"
-#include "delfem2/color.h"
 #include <GLFW/glfw3.h>
-#include <vector>
 #include <cstdlib>
 #include <set>
-#include <iostream>
 
 namespace dfm2 = delfem2;
 
-#define ROW_SIZE  200
-#define COL_SIZE  200
-#define GRID_LENGTH 0.01
-
-#define G_WIDTH GRID_LENGTH * COL_SIZE
-#define G_HEIGHT GRID_LENGTH * ROW_SIZE
+const unsigned int ROW_SIZE = 200;
+const unsigned int COL_SIZE = 200;
+const double GRID_LENGTH = 0.01;
 
 #define MAX_VALUE 1.0e38
 
-double phi_fnc[COL_SIZE+1][ROW_SIZE+1];
-bool is_active[COL_SIZE+1][ROW_SIZE+1];
-
 class CPOINT{
 public:
-	int x_co;
-	int y_co;
-	double data;
+	unsigned int x_co = 0;
+	unsigned int y_co = 0;
+	double data = 0.0;
 public:
-	CPOINT(){}
+	CPOINT() = default;
 	CPOINT(int i1, int i2, double d){
 		x_co = i1; y_co = i2; data = d;
 	}
@@ -53,46 +37,40 @@ public:
 	}
 };
 
-std::set<CPOINT> narrow_band;
-
-void init_field(void){
-	int i, j;
-	for(i=0;i<COL_SIZE+1;i++){
-		for(j=0;j<ROW_SIZE+1;j++){
-			phi_fnc[i][j] = MAX_VALUE;
-			is_active[i][j] = false;
-		}
-	}
-}
-
-void add_point_to_band(int i, int j, int direction){
+void add_point_to_band(
+    double phi_fnc[COL_SIZE+1][ROW_SIZE+1],
+    std::set<CPOINT>& narrow_band,
+    unsigned int i,
+    unsigned int j,
+    int direction)
+{
 	double tantative_value;
-	double less_value;
-	double from_value;
+	double less_value = MAX_VALUE;
+	double from_value = MAX_VALUE;
 
 	switch(direction){
 	case 0:
-		if( j == 0 )	less_value = phi_fnc[i][1];
-		else	if( j == ROW_SIZE )	less_value = phi_fnc[i][ROW_SIZE-1];
-		else	less_value = (phi_fnc[i][j+1] < phi_fnc[i][j-1]) ? phi_fnc[i][j+1] : phi_fnc[i][j-1]; 
+		if( j == 0 ){	less_value = phi_fnc[i][1]; }
+		else	if( j == ROW_SIZE ){	less_value = phi_fnc[i][ROW_SIZE-1]; }
+		else{	less_value = (phi_fnc[i][j+1] < phi_fnc[i][j-1]) ? phi_fnc[i][j+1] : phi_fnc[i][j-1]; }
 		from_value = phi_fnc[i-1][j];
 		break;
 	case 1:
-		if( i == 0 )	less_value = phi_fnc[1][j];
-		else	if( i == COL_SIZE )	less_value = phi_fnc[COL_SIZE-1][j];
-		else	less_value = (phi_fnc[i+1][j] < phi_fnc[i-1][j]) ? phi_fnc[i+1][j] : phi_fnc[i-1][j];
+		if( i == 0 ){	less_value = phi_fnc[1][j]; }
+		else	if( i == COL_SIZE ){	less_value = phi_fnc[COL_SIZE-1][j]; }
+		else{	less_value = (phi_fnc[i+1][j] < phi_fnc[i-1][j]) ? phi_fnc[i+1][j] : phi_fnc[i-1][j]; }
 		from_value = phi_fnc[i][j-1];
 		break;
 	case 2:
-		if( j == 0 )	less_value = phi_fnc[i][1];
-		else	if( j == ROW_SIZE )	less_value = phi_fnc[i][ROW_SIZE-1];
-		else	less_value = (phi_fnc[i][j+1] < phi_fnc[i][j-1]) ? phi_fnc[i][j+1] : phi_fnc[i][j-1];
+		if( j == 0 ){	less_value = phi_fnc[i][1]; }
+		else	if( j == ROW_SIZE ){	less_value = phi_fnc[i][ROW_SIZE-1]; }
+		else{ less_value = (phi_fnc[i][j+1] < phi_fnc[i][j-1]) ? phi_fnc[i][j+1] : phi_fnc[i][j-1]; }
 		from_value = phi_fnc[i+1][j];
 		break;
 	case 3:
-		if( i == 0 )	less_value = phi_fnc[1][j];
-		else	if( i == COL_SIZE )	less_value = phi_fnc[COL_SIZE-1][j];
-		else	less_value = (phi_fnc[i+1][j] < phi_fnc[i-1][j]) ? phi_fnc[i+1][j] : phi_fnc[i-1][j];
+		if( i == 0 ){ less_value = phi_fnc[1][j]; }
+		else	if( i == COL_SIZE ){	less_value = phi_fnc[COL_SIZE-1][j]; }
+		else{	less_value = (phi_fnc[i+1][j] < phi_fnc[i-1][j]) ? phi_fnc[i+1][j] : phi_fnc[i-1][j]; }
 		from_value = phi_fnc[i][j+1];
 		break;
 	default:
@@ -109,102 +87,31 @@ void add_point_to_band(int i, int j, int direction){
 	narrow_band.insert( CPOINT(i, j, tantative_value) );
 }
 
-void set_point(int i, int j){
+void set_point(
+    double phi_fnc[COL_SIZE+1][ROW_SIZE+1],
+    std::set<CPOINT>& narrow_band,
+    bool is_active[COL_SIZE+1][ROW_SIZE+1],
+    unsigned int i,
+    unsigned int j)
+{
 	phi_fnc[i][j] = 0.0;
 	is_active[i][j] = true;
 	
-	if( is_active[i+1][j] == false )	add_point_to_band(i+1, j, 0);
-	if( is_active[i][j+1] == false )	add_point_to_band(i, j+1, 1);
-	if( is_active[i-1][j] == false )	add_point_to_band(i-1, j, 2);
-	if( is_active[i][j-1] == false )	add_point_to_band(i, j-1, 3);
+	if( !is_active[i+1][j] )	add_point_to_band(phi_fnc,narrow_band,i+1, j, 0);
+	if( !is_active[i][j+1] )	add_point_to_band(phi_fnc,narrow_band,i, j+1, 1);
+	if( !is_active[i-1][j] )	add_point_to_band(phi_fnc,narrow_band,i-1, j, 2);
+	if( !is_active[i][j-1] )	add_point_to_band(phi_fnc,narrow_band,i, j-1, 3);
 }
 
-void DoFMM(void){
-	std::set<CPOINT>::iterator itr;
-	int i, j;
-
-	while( narrow_band.size() != 0 ){
-		itr = narrow_band.begin();
-		i = (*itr).x_co;
-		j = (*itr).y_co;
-		is_active[i][j] = true;
-		narrow_band.erase(itr);
-
-		if( is_active[i+1][j] == false && i != COL_SIZE )	add_point_to_band(i+1, j, 0);
-		if( is_active[i][j+1] == false && j != ROW_SIZE )	add_point_to_band(i, j+1, 1);
-		if( is_active[i-1][j] == false && i != 0 )	add_point_to_band(i-1, j, 2);
-		if( is_active[i][j-1] == false && j != 0 )	add_point_to_band(i, j-1, 3);
-	}
-}
-
-void point_init_phi(void){
-	init_field();
-	set_point(30, 30);
-	set_point(10, 30);
-	set_point(30, 10);
-	set_point(10, 10);
-	set_point(20, 20);
-	DoFMM();
-}
-
-void cone_init_phi(void){
-	int i, j;
-	for(i=0;i<COL_SIZE+1;i++){
-		for(j=0;j<ROW_SIZE+1;j++){
-			phi_fnc[i][j] = sqrt( double( (ROW_SIZE/2-j)*(ROW_SIZE/2-j)+(COL_SIZE/2-i)*(COL_SIZE/2-i) ) ) - 10.0;
-		}
-	}
-}
-
-void init_phi(void){
-//	cone_init_phi();
-	point_init_phi();
-}
-
-void up_phi(void){
-	int i, j;
-	for(i=0;i<COL_SIZE+1;i++){
-		for(j=0;j<ROW_SIZE+1;j++){
-			phi_fnc[i][j] += 0.005;
-		}
-	}
-}
-
-void down_phi(void){
-	int i, j;
-	for(i=0;i<COL_SIZE+1;i++){
-		for(j=0;j<ROW_SIZE+1;j++){
-			phi_fnc[i][j] -= 0.005;
-		}
-	}
-}
-
-void display(void)
+void display(
+    double phi_fnc[COL_SIZE+1][ROW_SIZE+1])
 {
-	int i,j;
-	int flag;
-
    glClear(GL_COLOR_BUFFER_BIT);
-/*
-   glColor3f( 0.0, 0.0, 0.0);
-   glLineWidth(1);
-   glBegin(GL_LINES);
-   for(i=0;i<=ROW_SIZE;i++){
-	  glVertex2d( G_WIDTH,  GRID_LENGTH*i);
-	  glVertex2d( 0, GRID_LENGTH*i);
-	}
-
-   for(i=0;i<=COL_SIZE;i++){
-	  glVertex2d( GRID_LENGTH * i, G_HEIGHT);
-	  glVertex2d( GRID_LENGTH * i, 0);
-   }
-   glEnd();
-*/
    glColor3d(1.0, 0.0, 0.0);
    glBegin(GL_LINES);
-   for(i=0;i<COL_SIZE;i++){
-	   for(j=0;j<ROW_SIZE;j++){
-		   flag = 0;
+   for(unsigned i=0;i<COL_SIZE;i++){
+	   for(unsigned j=0;j<ROW_SIZE;j++){
+		   unsigned int flag = 0;
 		   if( phi_fnc[i][j] > 0 )	flag += 1;
 		   if( phi_fnc[i+1][j] > 0 ) flag += 2;
 		   if( phi_fnc[i+1][j+1] > 0 ) flag += 4;
@@ -287,61 +194,62 @@ void display(void)
    glFlush();
 }
 
-/*
-void init(void)
-{
-  glClearColor(1.0, 1.0, 1.0, 0.0);
-  init_phi();
-}
-
-void resize(int w, int h)
-{
-  glViewport(0, 0, w, h);
-  glLoadIdentity();
-  glOrtho( -0.1 , G_WIDTH + 0.1, -0.1, G_HEIGHT + 0.1, -1.0, 1.0);
-}
-
-void keyboard(unsigned char key, int x, int y)
-{
-  switch (key) {
-  case 'q':
-  case 'Q':
-  case '\033':
-    exit(0);
-  case 'u':
-	  up_phi();
-	  glutPostRedisplay();
-	  break;
-  case 'd':
-	  down_phi();
-	  glutPostRedisplay();
-	  break;	  
-  default:
-    break;
-  }
-}
-*/
-
 int main(int argc, char *argv[])
 {
-  init_phi();
+  double phi_fnc[COL_SIZE+1][ROW_SIZE+1];
+  bool is_active[COL_SIZE+1][ROW_SIZE+1];
+  for(unsigned i=0;i<COL_SIZE+1;i++){
+    for(unsigned j=0;j<ROW_SIZE+1;j++){
+      phi_fnc[i][j] = MAX_VALUE;
+      is_active[i][j] = false;
+    }
+  }
+  {
+    std::set<CPOINT> narrow_band;
+    set_point(phi_fnc,narrow_band,is_active,10, 30);
+    set_point(phi_fnc,narrow_band,is_active,30, 30);
+    set_point(phi_fnc,narrow_band,is_active,10, 10);
+    set_point(phi_fnc,narrow_band,is_active,30, 10);
+    set_point(phi_fnc,narrow_band,is_active,20, 20);
+    std::set<CPOINT>::iterator itr;
+    while( !narrow_band.empty() ){
+      itr = narrow_band.begin();
+      unsigned int i = (*itr).x_co;
+      unsigned int j = (*itr).y_co;
+      is_active[i][j] = true;
+      narrow_band.erase(itr);
+      if( i != COL_SIZE && !is_active[i + 1][j])	add_point_to_band(phi_fnc, narrow_band, i + 1, j, 0);
+      if( j != ROW_SIZE && !is_active[i][j + 1])	add_point_to_band(phi_fnc, narrow_band, i, j + 1, 1);
+      if( i != 0        && !is_active[i - 1][j])	add_point_to_band(phi_fnc, narrow_band, i - 1, j, 2);
+      if( j != 0        && !is_active[i][j - 1]) add_point_to_band(phi_fnc, narrow_band, i, j - 1, 3);
+    }
+  }
+
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
 
   while( !glfwWindowShouldClose(viewer.window) ){
     for(unsigned int itr=0;itr<100;++itr) {
-      down_phi();
+      for(unsigned int i=0;i<COL_SIZE+1;i++){
+        for(unsigned int j=0;j<ROW_SIZE+1;j++){
+          phi_fnc[i][j] -= 0.005;
+        }
+      }
       //
       viewer.DrawBegin_oldGL();
-      display();
+      display(phi_fnc);
       viewer.SwapBuffers();
       glfwPollEvents();
     }
     for(unsigned int itr=0;itr<100;++itr) {
-      up_phi();
+      for(unsigned int i=0;i<COL_SIZE+1;i++){
+        for(unsigned int j=0;j<ROW_SIZE+1;j++){
+          phi_fnc[i][j] += 0.005;
+        }
+      }
       //
       viewer.DrawBegin_oldGL();
-      display();
+      display(phi_fnc);
       viewer.SwapBuffers();
       glfwPollEvents();
     }
