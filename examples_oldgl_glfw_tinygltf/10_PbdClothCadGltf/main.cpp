@@ -6,21 +6,21 @@
  */
 
 #include "delfem2/tinygltf/io_gltf.h"
+#include "tinygltf/tiny_gltf.h"
+#include "delfem2/rig_geo3.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/old/caddtri_v3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/pbd_geo3dtri23.h"
+#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/cad2_dtri2.h"
-#include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/rig_geo3.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/dtri.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchbv3sphere.h"
-#include "tinygltf/tiny_gltf.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <vector>

@@ -96,91 +96,97 @@ void set_point(
 {
 	phi_fnc[i][j] = 0.0;
 	is_active[i][j] = true;
-	
-	if( !is_active[i+1][j] )	add_point_to_band(phi_fnc,narrow_band,i+1, j, 0);
-	if( !is_active[i][j+1] )	add_point_to_band(phi_fnc,narrow_band,i, j+1, 1);
-	if( !is_active[i-1][j] )	add_point_to_band(phi_fnc,narrow_band,i-1, j, 2);
-	if( !is_active[i][j-1] )	add_point_to_band(phi_fnc,narrow_band,i, j-1, 3);
+	if( !is_active[i+1][j] )	add_point_to_band(phi_fnc,narrow_band,i+1,     j, 0);
+	if( !is_active[i][j+1] )	add_point_to_band(phi_fnc,narrow_band,    i, j+1, 1);
+	if( !is_active[i-1][j] )	add_point_to_band(phi_fnc,narrow_band,i-1,     j, 2);
+	if( !is_active[i][j-1] )	add_point_to_band(phi_fnc,narrow_band,     i,j-1, 3);
 }
 
 void display(
-    double phi_fnc[COL_SIZE+1][ROW_SIZE+1])
+    double phi_fnc[COL_SIZE+1][ROW_SIZE+1],
+    double thres)
 {
-   glClear(GL_COLOR_BUFFER_BIT);
-   glColor3d(1.0, 0.0, 0.0);
    glBegin(GL_LINES);
    for(unsigned i=0;i<COL_SIZE;i++){
 	   for(unsigned j=0;j<ROW_SIZE;j++){
 		   unsigned int flag = 0;
-		   if( phi_fnc[i][j] > 0 )	flag += 1;
-		   if( phi_fnc[i+1][j] > 0 ) flag += 2;
-		   if( phi_fnc[i+1][j+1] > 0 ) flag += 4;
-		   if( phi_fnc[i][j+1] > 0 ) flag += 8;
-		   
+		   const double v00 = phi_fnc[i+0][j+0] - thres;
+       const double v01 = phi_fnc[i+0][j+1] - thres;
+       const double v10 = phi_fnc[i+1][j+0] - thres;
+       const double v11 = phi_fnc[i+1][j+1] - thres;
+		   if( v00 > 0 ){ flag += 1; }
+		   if( v10 > 0 ){ flag += 2; }
+		   if( v11 > 0 ){ flag += 4; }
+		   if( v01 > 0 ){ flag += 8; }
+
+		   const double rx0 = v00 / (v00 - v10);
+		   const double ry0 = v00 / (v00 - v01);
+		   const double ry1 = v10 / (v10 - v11);
+		   const double rx1 = v01 / (v01 - v11);
+
 		   switch( flag ){
 		   case 0:	//0000
 			   break;
-		   case 1:	//0001	
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i+1][j]), GRID_LENGTH*j );
-				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*j + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i][j+1]) );
+		   case 1:	//0001
+         glVertex2d( GRID_LENGTH*(i + rx0), GRID_LENGTH*j ); // 01
+				 glVertex2d( GRID_LENGTH*i, GRID_LENGTH*(j + ry0) );
 			   break;
 		   case 2:  //0010
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i+1][j]), GRID_LENGTH*j );
-				glVertex2d( GRID_LENGTH*i + GRID_LENGTH, GRID_LENGTH*j + phi_fnc[i+1][j]*GRID_LENGTH/(phi_fnc[i+1][j] - phi_fnc[i+1][j+1]) );
+				glVertex2d( GRID_LENGTH*(i + rx0), GRID_LENGTH*j );
+				glVertex2d( GRID_LENGTH*(i + 1), GRID_LENGTH*(j + ry1) );
 			   break;
 		   case 3:	//0011
-				glVertex2d( GRID_LENGTH*i + GRID_LENGTH, GRID_LENGTH*j + phi_fnc[i+1][j]*GRID_LENGTH/(phi_fnc[i+1][j] - phi_fnc[i+1][j+1]) );
-				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*j + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i][j+1]) );
+				glVertex2d( GRID_LENGTH*(i + 1), GRID_LENGTH*(j + ry1) );
+				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*(j + ry0) );
 			   break;
 		   case 4:	//0100
-				glVertex2d( GRID_LENGTH*i + GRID_LENGTH, GRID_LENGTH*j + phi_fnc[i+1][j]*GRID_LENGTH/(phi_fnc[i+1][j] - phi_fnc[i+1][j+1]) );
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j+1]*GRID_LENGTH/(phi_fnc[i][j+1] - phi_fnc[i+1][j+1]) , GRID_LENGTH*j + GRID_LENGTH);
+				glVertex2d( GRID_LENGTH*(i + 1), GRID_LENGTH*(j + ry1) );
+				glVertex2d( GRID_LENGTH*(i + rx1), GRID_LENGTH*(j+1) );
 				break;
 		   case 5:	//0101
-				glVertex2d( GRID_LENGTH*i + GRID_LENGTH, GRID_LENGTH*j + phi_fnc[i+1][j]*GRID_LENGTH/(phi_fnc[i+1][j] - phi_fnc[i+1][j+1]) );
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j+1]*GRID_LENGTH/(phi_fnc[i][j+1] - phi_fnc[i+1][j+1]) , GRID_LENGTH*j + GRID_LENGTH);
+				glVertex2d( GRID_LENGTH*(i + 1), GRID_LENGTH*(j + ry1) );
+				glVertex2d( GRID_LENGTH*(i + rx1), GRID_LENGTH*(j + 1) );
 
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i+1][j]), GRID_LENGTH*j );
-				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*j + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i][j+1]) );
+				glVertex2d( GRID_LENGTH*(i + rx0), GRID_LENGTH*j );
+				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*(j + ry0) );
 				break;
 		   case 6:	//0110
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i+1][j]), GRID_LENGTH*j );
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j+1]*GRID_LENGTH/(phi_fnc[i][j+1] - phi_fnc[i+1][j+1]), GRID_LENGTH*j + GRID_LENGTH);
+				glVertex2d( GRID_LENGTH*(i + rx0), GRID_LENGTH*j );
+				glVertex2d( GRID_LENGTH*(i + rx1), GRID_LENGTH*(j + 1) );
 				break;
 		   case 7:	//0111
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j+1]*GRID_LENGTH/(phi_fnc[i][j+1] - phi_fnc[i+1][j+1]) , GRID_LENGTH*j + GRID_LENGTH);
-				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*j + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i][j+1]));
+				glVertex2d( GRID_LENGTH*(i + rx1), GRID_LENGTH*(j + 1) );
+				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*(j + ry0) );
 				break;
-		   case 8:	//1000
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j+1]*GRID_LENGTH/(phi_fnc[i][j+1] - phi_fnc[i+1][j+1]) , GRID_LENGTH*j + GRID_LENGTH);
-				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*j + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i][j+1]));
+		   case 8:	//0001
+				glVertex2d( GRID_LENGTH*(i + rx1), GRID_LENGTH*(j + 1) );
+				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*(j + ry0) );
 			    break;
 		   case 9:	//1001
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i+1][j]), GRID_LENGTH*j );
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j+1]*GRID_LENGTH/(phi_fnc[i][j+1] - phi_fnc[i+1][j+1]), GRID_LENGTH*j + GRID_LENGTH);
+				glVertex2d( GRID_LENGTH*(i + rx0), GRID_LENGTH*j );
+				glVertex2d( GRID_LENGTH*(i + rx1), GRID_LENGTH*(j + 1) );
 				break;
 		   case 10:	//1010
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j+1]*GRID_LENGTH/(phi_fnc[i][j+1] - phi_fnc[i+1][j+1]) , GRID_LENGTH*j + GRID_LENGTH);
-				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*j + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i][j+1]));
-		
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i+1][j]), GRID_LENGTH*j );
-				glVertex2d( GRID_LENGTH*i + GRID_LENGTH, GRID_LENGTH*j + phi_fnc[i+1][j]*GRID_LENGTH/(phi_fnc[i+1][j] - phi_fnc[i+1][j+1]) );
+				glVertex2d( GRID_LENGTH*(i + rx1), GRID_LENGTH*(j + 1) );
+				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*(j + ry0) );
+				glVertex2d( GRID_LENGTH*(i + rx0), GRID_LENGTH*j );
+				glVertex2d( GRID_LENGTH*(i + 1), GRID_LENGTH*(j + ry1) );
 				break;
 		   case 11:	//1011
-				glVertex2d( GRID_LENGTH*i + GRID_LENGTH, GRID_LENGTH*j + phi_fnc[i+1][j]*GRID_LENGTH/(phi_fnc[i+1][j] - phi_fnc[i+1][j+1]) );
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j+1]*GRID_LENGTH/(phi_fnc[i][j+1] - phi_fnc[i+1][j+1]) , GRID_LENGTH*j + GRID_LENGTH);
+				glVertex2d( GRID_LENGTH*(i + 1), GRID_LENGTH*(j + ry1) );
+				glVertex2d( GRID_LENGTH*(i + rx1), GRID_LENGTH*(j + 1) );
 				break;
 		   case 12:	//1100
-				glVertex2d( GRID_LENGTH*i + GRID_LENGTH, GRID_LENGTH*j + phi_fnc[i+1][j]*GRID_LENGTH/(phi_fnc[i+1][j] - phi_fnc[i+1][j+1]) );
-				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*j + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i][j+1]) );
+				glVertex2d( GRID_LENGTH*(i + 1), GRID_LENGTH*(j + ry1) );
+				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*(j + ry0) );
 			   break;
 		   case 13:	//1101
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i+1][j]), GRID_LENGTH*j );
-				glVertex2d( GRID_LENGTH*i + GRID_LENGTH, GRID_LENGTH*j + phi_fnc[i+1][j]*GRID_LENGTH/(phi_fnc[i+1][j] - phi_fnc[i+1][j+1]) );
+				glVertex2d( GRID_LENGTH*(i + rx0), GRID_LENGTH*j );
+				glVertex2d( GRID_LENGTH*(i + 1), GRID_LENGTH*(j + ry1) );
 				break;
 		   case 14:	//1110
-				glVertex2d( GRID_LENGTH*i + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i+1][j]), GRID_LENGTH*j );
-				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*j + phi_fnc[i][j]*GRID_LENGTH/(phi_fnc[i][j] - phi_fnc[i][j+1]) );
+				glVertex2d( GRID_LENGTH*(i + rx0), GRID_LENGTH*j );
+				glVertex2d( GRID_LENGTH*i, GRID_LENGTH*(j + ry0) );
 				break;
 		   case 15:	//1111
 				break;
@@ -230,26 +236,22 @@ int main(int argc, char *argv[])
 
   while( !glfwWindowShouldClose(viewer.window) ){
     for(unsigned int itr=0;itr<100;++itr) {
-      for(unsigned int i=0;i<COL_SIZE+1;i++){
-        for(unsigned int j=0;j<ROW_SIZE+1;j++){
-          phi_fnc[i][j] -= 0.005;
-        }
-      }
-      //
       viewer.DrawBegin_oldGL();
-      display(phi_fnc);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-    }
-    for(unsigned int itr=0;itr<100;++itr) {
-      for(unsigned int i=0;i<COL_SIZE+1;i++){
-        for(unsigned int j=0;j<ROW_SIZE+1;j++){
-          phi_fnc[i][j] += 0.005;
-        }
-      }
-      //
-      viewer.DrawBegin_oldGL();
-      display(phi_fnc);
+      ::glLineWidth(5);
+      ::glColor3d(0,0,0);
+      display(phi_fnc,0.05);
+      ::glColor3d(1,0,0);
+      display(phi_fnc,0.10);
+      ::glColor3d(0,1,0);
+      display(phi_fnc,0.15);
+      ::glColor3d(0,0,1);
+      display(phi_fnc,0.20);
+      ::glColor3d(0,1,1);
+      display(phi_fnc,0.25);
+      ::glColor3d(1,0,1);
+      display(phi_fnc,0.30);
+      ::glColor3d(1,1,0);
+      display(phi_fnc,0.35);
       viewer.SwapBuffers();
       glfwPollEvents();
     }

@@ -179,7 +179,7 @@ echo "################################"
 cd examples_oldgl_glfw_eigen
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -DUSE_HEADERONLY=ON ..
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
 make 
 cd ../../
 
@@ -190,7 +190,7 @@ echo "################################"
 cd examples_oldgl_glfw_thread
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -DUSE_HEADERONLY=ON ..
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
 make 
 cd ../../
 
