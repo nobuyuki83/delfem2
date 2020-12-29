@@ -103,7 +103,8 @@ double MergeLinSys_Cloth(
       for(int i =0;i<3;i++){ dW[ip*3+i] += de[ino][i]; }
     }
     // marge dde
-    ddW.Mearge(3, aIP, 3, aIP, 9, &dde[0][0][0][0], tmp_buffer);
+//    ddW.Mearge(3, aIP, 3, aIP, 9, &dde[0][0][0][0], tmp_buffer);
+    Merge<3,3,3,3,double>(ddW,aIP,aIP,dde,tmp_buffer);
   }
 //  std::cout << "cst:" << W << std::endl;
   // marge element bending energy
@@ -125,7 +126,8 @@ double MergeLinSys_Cloth(
       for(int i =0;i<3;i++){ dW[ip*3+i] += de[ino][i]; }
     }
     // marge dde
-    ddW.Mearge(4, aIP, 4, aIP, 9, &dde[0][0][0][0], tmp_buffer);
+//    ddW.Mearge(4, aIP, 4, aIP, 9, &dde[0][0][0][0], tmp_buffer);
+    Merge<4,4,3,3,double>(ddW,aIP,aIP,dde,tmp_buffer);
   }
   return W;
 }

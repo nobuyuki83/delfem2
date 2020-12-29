@@ -21,7 +21,8 @@ template <typename T>
 class CPreconditionerILU
 {
 public:
-  CPreconditionerILU(){}
+  CPreconditionerILU() noexcept
+  {}
   CPreconditionerILU(const CPreconditionerILU&); // copy
   ~CPreconditionerILU(){ m_diaInd.clear(); }
   void Clear(){

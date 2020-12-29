@@ -138,7 +138,6 @@ public:
 
 // -----------------------------------------------------------------
 
-
 template <typename T>
 delfem2::CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& p)
 {
@@ -156,9 +155,8 @@ delfem2::CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& 
 namespace delfem2{
 
 // numerical factorization
-template <>
-DFM2_INLINE bool
-CPreconditionerILU<double>::DoILUDecomp()
+template<>
+DFM2_INLINE bool CPreconditionerILU<double>::DoILUDecomp()
 {
   const int nmax_sing = 10;
 	int icnt_sing = 0;

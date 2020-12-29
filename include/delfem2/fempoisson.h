@@ -222,7 +222,7 @@ void MergeLinSys_Diffusion_MeshTet3D(
     double coords[4][3]; FetchData<4,3>(coords, aIP,aXYZ);
     const double value[4] = { aVal[ i0], aVal[ i1], aVal[ i2], aVal[ i3] };
     const double velo[ 4] = { aVelo[i0], aVelo[i1], aVelo[i2], aVelo[i3] };
-    ////
+    // ---------------------
     double eres[4], emat[4][4];
     EMat_Diffusion_Newmark_Tet3D(eres,emat,
                                  alpha, source,

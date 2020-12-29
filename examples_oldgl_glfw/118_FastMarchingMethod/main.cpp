@@ -235,26 +235,24 @@ int main(int argc, char *argv[])
   viewer.Init_oldGL();
 
   while( !glfwWindowShouldClose(viewer.window) ){
-    for(unsigned int itr=0;itr<100;++itr) {
-      viewer.DrawBegin_oldGL();
-      ::glLineWidth(5);
-      ::glColor3d(0,0,0);
-      display(phi_fnc,0.05);
-      ::glColor3d(1,0,0);
-      display(phi_fnc,0.10);
-      ::glColor3d(0,1,0);
-      display(phi_fnc,0.15);
-      ::glColor3d(0,0,1);
-      display(phi_fnc,0.20);
-      ::glColor3d(0,1,1);
-      display(phi_fnc,0.25);
-      ::glColor3d(1,0,1);
-      display(phi_fnc,0.30);
-      ::glColor3d(1,1,0);
-      display(phi_fnc,0.35);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-    }
+    viewer.DrawBegin_oldGL();
+    ::glLineWidth(5);
+    ::glColor3d(0,0,0);
+    display(phi_fnc,0.05);
+    ::glColor3d(1,0,0);
+    display(phi_fnc,0.10);
+    ::glColor3d(0,1,0);
+    display(phi_fnc,0.15);
+    ::glColor3d(0,0,1);
+    display(phi_fnc,0.20);
+    ::glColor3d(0,1,1);
+    display(phi_fnc,0.25);
+    ::glColor3d(1,0,1);
+    display(phi_fnc,0.30);
+    ::glColor3d(1,1,0);
+    display(phi_fnc,0.35);
+    viewer.SwapBuffers();
+    glfwPollEvents();
   }
   return 0;
 }

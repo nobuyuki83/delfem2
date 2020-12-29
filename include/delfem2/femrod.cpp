@@ -552,13 +552,14 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
     W += WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
                                       stiff_stretch, aPE, L0);
     {
-      double eM[2*2*3*3];
+      double eM[2][2][3][3];
       for(int in=0;in<2;++in){
         for(int jn=0;jn<2;++jn){
-          ddW_ddP[in][jn].CopyTo(eM+(in*2+jn)*9);
+          ddW_ddP[in][jn].CopyTo(&eM[in][jn][0][0]);
         }
       }
-      mats.Mearge(2, aINoel, 2, aINoel, 9, eM, tmp_buffer);
+//      mats.Mearge(2, aINoel, 2, aINoel, 9, eM, tmp_buffer);
+      Merge<2,2,3,3,double>(mats,aINoel,aINoel,eM,tmp_buffer);
     }
     {
       for (int inoel=0; inoel<2; inoel++){
@@ -609,7 +610,8 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
           eM[in+3][jn+3][0][0] = ddW_ddt[in][jn];
         }
       }
-      mats.Mearge(5, aINoel, 5, aINoel, 9, &eM[0][0][0][0], tmp_buffer);
+      Merge<5,5,3,3,double>(mats,aINoel,aINoel,eM,tmp_buffer);
+//      mats.Mearge(5, aINoel, 5, aINoel, 9, &eM[0][0][0][0], tmp_buffer);
     }
     {
       for (int inoel=0; inoel<3; inoel++){
@@ -820,13 +822,14 @@ double delfem2::MergeLinSys_Hair(
       W += WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
                                         stiff_stretch, aPE, L0);
       {
-        double eM[2*2*4*4]; for(auto& m : eM){ m = 0.0; }
+        double eM[2][2][4][4]; for(unsigned int i=0;i<2*2*4*4;++i){ (&eM[0][0][0][0])[i] = 0.0; }
         for(int in=0;in<2;++in){
           for(int jn=0;jn<2;++jn){
-            ddW_ddP[in][jn].CopyToMat4( eM+(in*2+jn)*16 );
+            ddW_ddP[in][jn].CopyToMat4( &eM[in][jn][0][0] );
           }
         }
-        mats.Mearge(2, aINoel, 2, aINoel, 16, eM, tmp_buffer);
+        Merge<2,2,4,4,double>(mats,aINoel,aINoel,eM,tmp_buffer);
+//        mats.Mearge(2, aINoel, 2, aINoel, 16, eM, tmp_buffer);
       }
       for (int in=0; in<2; in++){
         const unsigned int ip = aINoel[in];
@@ -863,25 +866,26 @@ double delfem2::MergeLinSys_Hair(
                        stiff_bendtwist,
                        aPE,aSE,Darboux0, false);
       {
-        double eM[3*3*4*4]; for(auto& m: eM){ m = 0.0; }
+        double eM[3][3][4][4]; for(unsigned int i=0;i<3*3*4*4;++i){ (&eM[0][0][0][0])[i] = 0.0; }
         for(int in=0;in<3;++in){
           for(int jn=0;jn<3;++jn){
-            ddW_ddP[in][jn].CopyToMat4(eM+(in*3+jn)*16);
+            ddW_ddP[in][jn].CopyToMat4( &eM[in][jn][0][0] );
           }
         }
         for(int in=0;in<3;++in){
           for(int jn=0;jn<2;++jn){
-            eM[(in*3+jn)*16+0*4+3] = eM[(jn*3+in)*16+3*4+0] = ddW_dtdP[jn][in].x();
-            eM[(in*3+jn)*16+1*4+3] = eM[(jn*3+in)*16+3*4+1] = ddW_dtdP[jn][in].y();
-            eM[(in*3+jn)*16+2*4+3] = eM[(jn*3+in)*16+3*4+2] = ddW_dtdP[jn][in].z();
+            eM[in][jn][0][3] = eM[jn][in][3][0] = ddW_dtdP[jn][in].x();
+            eM[in][jn][1][3] = eM[jn][in][3][1] = ddW_dtdP[jn][in].y();
+            eM[in][jn][2][3] = eM[jn][in][3][2] = ddW_dtdP[jn][in].z();
           }
         }
         for(int in=0;in<2;++in){
           for(int jn=0;jn<2;++jn){
-            eM[(in*3+jn)*16+4*3+3] = ddW_ddt[in][jn];
+            eM[in][jn][3][3] = ddW_ddt[in][jn];
           }
         }
-        mats.Mearge(3, aINoel, 3, aINoel, 16, eM, tmp_buffer);
+//        mats.Mearge(3, aINoel, 3, aINoel, 16, eM, tmp_buffer);
+        Merge<3,3,4,4,double>(mats,aINoel,aINoel,eM,tmp_buffer);
       }
       {
         for (int ino=0; ino<3; ino++){

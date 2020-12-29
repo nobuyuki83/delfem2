@@ -479,7 +479,7 @@ void delfem2::CDef_Arap::Deform(
         eM,eR,
         Precomp.data()+ip*9,
         aIP,aXYZ0,aXYZ1,aQuat1);
-    Mat.Mearge(
+    Mearge(Mat,
         aIP.size(), aIP.data(),
         aIP.size(), aIP.data(),
         9, eM.data(),
