@@ -467,7 +467,7 @@ void delfem2::CDef_Arap::Deform(
   const unsigned int np = aXYZ0.size()/3;
   Mat.SetZero();
   this->aRes1.assign(np*3, 0.0);
-  std::vector<int> tmp_buffer;
+  std::vector<unsigned int> tmp_buffer;
   for(unsigned int ip=0;ip<np;++ip){
     std::vector<unsigned int> aIP;
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){

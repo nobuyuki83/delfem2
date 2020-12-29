@@ -9,7 +9,6 @@
 #include <math.h>
 #include <assert.h>
 #include <complex>
-
 #include "delfem2/femcloth.h"
 
 // --------------------------------------------------------

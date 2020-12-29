@@ -83,7 +83,7 @@ double MergeLinSys_Cloth(
 {
   assert( ndim == 2 || ndim == 3 );
   double W = 0;
-  std::vector<int> tmp_buffer(np,-1);
+  std::vector<unsigned int> tmp_buffer(np,UINT_MAX);
   // marge element in-plane strain energy
   for(unsigned int itri=0;itri<nTri;itri++){
     const unsigned int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
@@ -142,17 +142,16 @@ double MergeLinSys_Contact(
     int nXYZ)
 {
   const unsigned int np = nXYZ;
-  std::vector<int> tmp_buffer(np,-1);
+  std::vector<unsigned int> tmp_buffer(np,UINT_MAX);
   double W = 0;
   for(unsigned int ip=0;ip<np;ip++){
     double c[3] = { aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2] };
-    double e, de[3], dde[3][3];
-    WdWddW_Contact( e,de,dde, c, stiff_contact,contact_clearance, input );
+    double e, de[3], dde[1][1][3][3];
+    WdWddW_Contact( e,de,dde[0][0], c, stiff_contact,contact_clearance, input );
     W += e;  // marge energy
-    // marge de
-    for(int i =0;i<3;i++){ dW[ip*3+i] += de[i]; }
-    // marge dde
-    ddW.Mearge(1, &ip, 1, &ip, 9, &dde[0][0], tmp_buffer);
+    for(int i =0;i<3;i++){ dW[ip*3+i] += de[i]; }     // marge de
+//    ddW.Mearge(1, &ip, 1, &ip, 9, &dde[0][0], tmp_buffer);
+    Merge<1,1,3,3,double>(ddW,&ip,&ip,dde,tmp_buffer);     // marge dde
   }
   return W;
 }

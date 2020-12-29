@@ -120,15 +120,15 @@ void MergeLinSys_NavierStokes2D(
     const double* aDtVal) // ax,ay,apress
 {
   const unsigned int np = nXY;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, -1);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double velo[3][3]; FetchData(&velo[0][0],3,3,aIP, aVal);
-    double acc[3][3]; FetchData(&acc[0][0],3,3,aIP, aDtVal);
+    double coords[3][2]; FetchData<3,2>(coords, aIP,aXY1);
+    double velo[3][3]; FetchData<3,3>(velo, aIP,aVal);
+    double acc[3][3]; FetchData<3,3>(acc, aIP,aDtVal);
     //
     double eres[3][3], emat[3][3][3][3];
     EMat_NavierStokes2D_Dynamic_P1(
@@ -167,16 +167,16 @@ void MergeLinSys_NavierStokes3D_Dynamic(
   //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, -1);
   for (int iel = 0; iel<(int)aTet.size()/4; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data());
-    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data());
-    double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data());
+    double coords[4][3]; FetchData<4,3>(coords, aIP,aXYZ.data());
+    double velo_press[4][4]; FetchData<4,4>(velo_press, aIP,aVal.data());
+    double acc_apress[4][4]; FetchData<4,4>(acc_apress, aIP,aVelo.data());
     ////
     double eres[4][4], emat[4][4][4][4];
     MakeMat_NavierStokes3D_Dynamic_P1(

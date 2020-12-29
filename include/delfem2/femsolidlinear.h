@@ -143,14 +143,14 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
     const double* aVal)
 {
   const unsigned int np = nXY;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, -1);
   for(unsigned int iel=0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal);
+    double coords[3][2]; FetchData<3,2>(coords,aIP, aXY1);
+    double disps[3][2]; FetchData<3,2>(disps,aIP, aVal);
     //
     double eres[3][2];
     double emat[3][3][2][2];
@@ -163,7 +163,8 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
       vec_b[ip*2+0] += eres[ino][0];
       vec_b[ip*2+1] += eres[ino][1];
     }
-    mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
+    Merge<3,3,2,2,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -183,15 +184,15 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D(
     const double* aDisp)
 {
   const unsigned int np = nXYZ;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
-    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
-    double disps[4][3]; FetchData(&disps[0][0], 4, 3, aIP, aDisp);
+    double P[4][3];  FetchData<4,3>(P, aIP, aXYZ);
+    double disps[4][3]; FetchData<4,3>(disps, aIP, aDisp);
     //
     double emat[4][4][3][3];
     for(int i=0;i<144;++i){ (&emat[0][0][0][0])[i] = 0.0; } // zero-clear
@@ -215,7 +216,8 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D(
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
     }
-    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+    Merge<4,4,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -238,7 +240,7 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
   //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (int iel = 0; iel<(int)aHex.size()/8; ++iel){
     const unsigned int i0 = aHex[iel*8+0];
     const unsigned int i1 = aHex[iel*8+1];
@@ -249,9 +251,9 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
     const unsigned int i6 = aHex[iel*8+6];
     const unsigned int i7 = aHex[iel*8+7];
     const unsigned int aIP[8] = { i0, i1, i2, i3, i4, i5, i6, i7 };
-    double coords[8][3]; FetchData(&coords[0][0], 8, 3, aIP, aXYZ.data());
-    double disps[8][3]; FetchData(&disps[0][0], 8, 3, aIP, aVal.data());
-    ////
+    double coords[8][3]; FetchData<8,3>(coords, aIP, aXYZ.data());
+    double disps[8][3]; FetchData<8,3>(disps, aIP, aVal.data());
+    //
     double eres[8][3];
     double emat[8][8][3][3];
     MakeMat_LinearSolid3D_Static_Q1(myu, lambda,
@@ -265,7 +267,8 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
       vec_b[ip*3+2] += eres[ino][2];
     }
     // marge dde
-    mat_A.Mearge(8, aIP, 8, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(8, aIP, 8, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+    Merge<8,8,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -293,17 +296,17 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double* aAcc)
 {
   const unsigned int np = nXY;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal);
-    double velos[3][2]; FetchData(&velos[0][0],3,2,aIP, aVelo);
-    double accs[3][2]; FetchData(&accs[0][0],3,2,aIP, aAcc);
-    ////
+    double coords[3][2]; FetchData<3,2>(coords,aIP, aXY1);
+    double disps[3][2]; FetchData<3,2>(disps,aIP, aVal);
+    double velos[3][2]; FetchData<3,2>(velos,aIP, aVelo);
+    double accs[3][2]; FetchData<3,2>(accs,aIP, aAcc);
+    //
     double eres[3][2];
     double emat[3][3][2][2];
     EMat_SolidDynamicLinear_Tri2D(
@@ -319,7 +322,8 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
       vec_b[ip*2+1] += eres[ino][1];
     }
     // marge dde
-    mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
+    Merge<3,3,2,2,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -343,17 +347,17 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const double* aAcc)
 {
   const unsigned int np = nXYZ;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, -1);
   for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double P[4][3]; FetchData(&P[0][0],4,3,aIP, aXYZ);
-    double disps[4][3]; FetchData(&disps[0][0], 4,3,aIP, aVal);
-    double velos[4][3]; FetchData(&velos[0][0], 4,3,aIP, aVelo);
-    double accs[4][3];  FetchData(&accs[0][0],  4,3,aIP, aAcc);
+    double P[4][3]; FetchData<4,3>(P, aIP, aXYZ);
+    double disps[4][3]; FetchData<4,3>(disps, aIP, aVal);
+    double velos[4][3]; FetchData<4,3>(velos, aIP, aVelo);
+    double accs[4][3];  FetchData<4,3>(accs, aIP, aAcc);
     //
     double eres[4][3], emat[4][4][3][3];
     EMat_SolidLinear_NewmarkBeta_MeshTet3D(
@@ -369,7 +373,8 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
     }
-    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+    Merge<4,4,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -390,14 +395,14 @@ void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     const double* aVelo)
 {
   const unsigned int np = nXYZ;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for(unsigned int iel=0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
-    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
+    double P[4][3]; FetchData<4,3>(P, aIP, aXYZ);
     double emat[4][4][3][3];
     double eres[4][3];
     const double vol = femutil::TetVolume3D(P[0], P[1], P[2], P[3]);
@@ -409,8 +414,8 @@ void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
           lambda, myu, vol, dldx, false, 3);
     }
     {
-      double u[4][3]; FetchData(&u[0][0], 4, 3, aIP, aDisp);
-      double v[4][3]; FetchData(&v[0][0], 4, 3, aIP, aVelo);
+      double u[4][3]; FetchData<4,3>(u, aIP, aDisp);
+      double v[4][3]; FetchData<4,3>(v, aIP, aVelo);
       for(int ino=0;ino<4;++ino){
         for(int idim=0;idim<3;++idim){
           eres[ino][idim] = vol*rho*g[idim]*0.25;
@@ -435,7 +440,8 @@ void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
       vec_b[ip*3+1] += eres[ino][1]/dt;
       vec_b[ip*3+2] += eres[ino][2]/dt;
     }
-    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+    Merge<4,4,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -459,14 +465,14 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
   const int np = nXYZ;
   assert((int)aR.size()==np*9);
   // ----------------------------
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
-    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
+    double P[4][3]; FetchData<4,3>(P, aIP, aXYZ);
     const double vol = femutil::TetVolume3D(P[0], P[1], P[2], P[3]);
     ////
     double emat[4][4][3][3];
@@ -492,8 +498,8 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
         ere[1] = vol*rho*g[1]*0.25;
         ere[2] = vol*rho*g[2]*0.25;
       }
-      double u0[4][3]; FetchData(&u0[0][0], 4, 3, aIP, aDisp);
-      double v0[4][3]; FetchData(&v0[0][0], 4, 3, aIP, aVelo);
+      double u0[4][3]; FetchData<4,3>(u0, aIP, aDisp);
+      double v0[4][3]; FetchData<4,3>(v0, aIP, aVelo);
       for(int ino=0;ino<4;++ino){
         const double* Mi = aR.data()+aIP[ino]*9;
         for(int idim=0;idim<3;++idim){
@@ -521,7 +527,8 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
       vec_b[ip*3+1] += eres[ino][1]/dt;
       vec_b[ip*3+2] += eres[ino][2]/dt;
     }
-    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+    Merge<4,4,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 

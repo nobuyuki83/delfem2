@@ -9,10 +9,10 @@
 
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/vec3.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/srchbvh.h"
+#include "delfem2/vec3.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"

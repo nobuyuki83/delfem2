@@ -40,21 +40,22 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     const double* aVal)
 {
   const unsigned int np = nXY;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for(unsigned int iel=0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double P[3][2]; delfem2::FetchData(&P[0][0],  3,2,aIP, aXY1);
-    double u[3][3]; delfem2::FetchData(&u[0][0],   3,3,aIP, aVal);
+    double P[3][2]; delfem2::FetchData<3,2>(P, aIP,aXY1);
+    double u[3][3]; delfem2::FetchData<3,3>(u, aIP,aVal);
     //
     double W=0.0, dW[3][3], ddW[3][3][3][3];
     for(int i=0;i<9;++i){ (&dW[0][0])[i] = 0.0; }
     for(int i=0;i<81;++i){ (&ddW[0][0][0][0])[i] = 0.0; }
-    WdWddW_PlateBendingMITC3(W,dW,ddW,
-                             P, u,
-                             thick, lambda, myu);
+    WdWddW_PlateBendingMITC3(
+        W,dW,ddW,
+        P, u,
+        thick, lambda, myu);
     {
       const double A = delfem2::femutil::TriArea2D(P[0],P[1],P[2]);
       dW[0][0] = rho*A*thick/3.0*gravity_z;
@@ -68,7 +69,8 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
       vec_b[ip*3+2] += dW[ino][2];
     }
     // marge dde
-    mat_A.Mearge(3, aIP, 3, aIP, 9, &ddW[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(3, aIP, 3, aIP, 9, &ddW[0][0][0][0], tmp_buffer);
+    Merge<3,3,3,3,double>(mat_A,aIP,aIP,ddW,tmp_buffer);
   }
 }
 

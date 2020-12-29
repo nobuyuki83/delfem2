@@ -211,12 +211,22 @@ DFM2_INLINE void ShapeFunc_Hex8
      double dndx[][3],
      double an[] );
 
+template <int nno, int ndim>
 DFM2_INLINE void FetchData(
-    double* val_to,
-    int nno, int ndim,
+    double val_to[nno][ndim],
     const unsigned int* aIP,
     const double* val_from,
-    int nstride=-1);
+    int nstride=-1)
+{
+  if( nstride == -1 ){ nstride = ndim; }
+  assert( nstride >= ndim );
+  for(int ino=0;ino<nno;++ino){
+    unsigned int ip = aIP[ino];
+    for(int idim=0;idim<ndim;++idim){
+      val_to[ino][idim] = val_from[ip*nstride+idim];
+    }
+  }
+}
 
 DFM2_INLINE void ddW_MassConsistentVal3D_Tet3D(
     double* eMmat,

@@ -519,17 +519,17 @@ DFM2_INLINE double delfem2::WdWddW_SquareLengthLineseg3D(
 }
 
 
-DFM2_INLINE void delfem2::Solve_DispRotSeparate
- (std::vector<CVec3d>& aP,
-  std::vector<CVec3d>& aS,
-  CMatrixSparse<double>& mats,
-  const double stiff_stretch,
-  const double stiff_bendtwist[3],
-  const std::vector<CVec3d>& aP0,
-  const std::vector<CVec3d>& aS0,
-  const std::vector<unsigned int>& aElemSeg,
-  const std::vector<unsigned int>& aElemRod,
-  const std::vector<int>& aBCFlag)
+DFM2_INLINE void delfem2::Solve_DispRotSeparate(
+    std::vector<CVec3d>& aP,
+    std::vector<CVec3d>& aS,
+    CMatrixSparse<double>& mats,
+    const double stiff_stretch,
+    const double stiff_bendtwist[3],
+    const std::vector<CVec3d>& aP0,
+    const std::vector<CVec3d>& aS0,
+    const std::vector<unsigned int>& aElemSeg,
+    const std::vector<unsigned int>& aElemRod,
+    const std::vector<int>& aBCFlag)
 {
   assert( mats.nrowdim == 3 );
   assert( mats.ncoldim == 3 );
@@ -538,7 +538,7 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
   mats.SetZero();
   std::vector<double> vec_r;
   vec_r.assign(nNode*3, 0.0);
-  std::vector<int> tmp_buffer;
+  std::vector<unsigned int> tmp_buffer;
   double W = 0;
   for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
     const unsigned int i0 = aElemSeg[iseg*2+0];
@@ -803,7 +803,7 @@ double delfem2::MergeLinSys_Hair(
     const std::vector<CVec3d>& aP0,
     const std::vector<CVec3d>& aS0)
 {
-  std::vector<int> tmp_buffer;
+  std::vector<unsigned int> tmp_buffer;
   double W = 0;
   for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
     unsigned int ips = aIP_HairRoot[ihair];

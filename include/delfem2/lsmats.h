@@ -97,7 +97,7 @@ public:
   bool Mearge(unsigned int nblkel_col, const unsigned int *blkel_col,
               unsigned int nblkel_row, const unsigned int *blkel_row,
               unsigned int blksize, const T *emat,
-              std::vector<int> &m_marge_tmp_buffer);
+              std::vector<unsigned int> &m_marge_tmp_buffer);
 
   /**
    * @func Matrix vector product as: {y} = alpha * [A]{x} + beta * {y}
@@ -190,6 +190,114 @@ public:
   std::vector<T> valCrs;
   std::vector<T> valDia;
 };
+
+
+template <int nrow, int ncol, int ndimrow, int ndimcol, typename T>
+bool Merge(
+    CMatrixSparse<T>& A,
+    const unsigned int* aIpRow,
+    const unsigned int* aIpCol,
+    const T emat[nrow][ncol][ndimrow][ndimcol],
+    std::vector<unsigned int>& merge_buffer)
+{
+  assert(!A.valCrs.empty());
+  assert(!A.valDia.empty());
+  const unsigned int blksize = ndimrow * ndimcol;
+  merge_buffer.resize(A.ncolblk);
+  const unsigned int *colind = A.colInd.data();
+  const unsigned int *rowptr = A.rowPtr.data();
+  T *vcrs = A.valCrs.data();
+  T *vdia = A.valDia.data();
+  for (unsigned int iblkel = 0; iblkel < nrow; iblkel++) {
+    const unsigned int iblk1 = aIpRow[iblkel];
+    assert(iblk1 < A.nrowblk);
+    for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
+      assert(jpsup < A.rowPtr.size());
+      const int jblk1 = rowptr[jpsup];
+      merge_buffer[jblk1] = jpsup;
+    }
+    for (unsigned int jblkel = 0; jblkel < ncol; jblkel++) {
+      const unsigned int jblk1 = aIpCol[jblkel];
+      assert(jblk1 < A.ncolblk);
+      if (iblk1 == jblk1) {  // Marge Diagonal
+        const T *pval_in = &emat[iblkel][iblkel][0][0];
+        T *pval_out = &vdia[iblk1 * blksize];
+        for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
+      }
+      else {  // Marge Non-Diagonal
+        if (merge_buffer[jblk1] == -1) {
+          assert(0);
+          return false;
+        }
+        assert(merge_buffer[jblk1] >= 0 && merge_buffer[jblk1] < (int) A.rowPtr.size());
+        const int jpsup1 = merge_buffer[jblk1];
+        assert(A.rowPtr[jpsup1] == jblk1);
+        const T *pval_in = &emat[iblkel][jblkel][0][0];
+        T *pval_out = &vcrs[jpsup1 * blksize];
+        for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
+      }
+    }
+    for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
+      assert(jpsup < A.rowPtr.size());
+      const int jblk1 = rowptr[jpsup];
+      merge_buffer[jblk1] = -1;
+    }
+  }
+  return true;
+}
+
+template <int nrow, int ncol, typename T>
+bool Merge(
+    CMatrixSparse<T>& A,
+    const unsigned int* aIpRow,
+    const unsigned int* aIpCol,
+    const T emat[nrow][ncol],
+    std::vector<unsigned int>& merge_buffer)
+{
+  assert(!A.valCrs.empty());
+  assert(!A.valDia.empty());
+  merge_buffer.resize(A.ncolblk);
+  const unsigned int *colind = A.colInd.data();
+  const unsigned int *rowptr = A.rowPtr.data();
+  T *vcrs = A.valCrs.data();
+  T *vdia = A.valDia.data();
+  for (unsigned int iblkel = 0; iblkel < nrow; iblkel++) {
+    const unsigned int iblk1 = aIpRow[iblkel];
+    assert(iblk1 < A.nrowblk);
+    for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
+      assert(jpsup < A.rowPtr.size());
+      const int jblk1 = rowptr[jpsup];
+      merge_buffer[jblk1] = jpsup;
+    }
+    for (unsigned int jblkel = 0; jblkel < ncol; jblkel++) {
+      const unsigned int jblk1 = aIpCol[jblkel];
+      assert(jblk1 < A.ncolblk);
+      if (iblk1 == jblk1) {  // Marge Diagonal
+        const T *pval_in = &emat[iblkel][iblkel];
+        T *pval_out = &vdia[iblk1];
+        pval_out[0] += pval_in[0];
+      }
+      else {  // Marge Non-Diagonal
+        if (merge_buffer[jblk1] == UINT_MAX) {
+          assert(0);
+          return false;
+        }
+        assert(merge_buffer[jblk1] >= 0 && merge_buffer[jblk1] < (int) A.rowPtr.size());
+        const int jpsup1 = merge_buffer[jblk1];
+        assert(A.rowPtr[jpsup1] == jblk1);
+        const T *pval_in = &emat[iblkel][jblkel];
+        T *pval_out = &vcrs[jpsup1];
+        pval_out[0] += pval_in[0];
+      }
+    }
+    for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
+      assert(jpsup < A.rowPtr.size());
+      const int jblk1 = rowptr[jpsup];
+      merge_buffer[jblk1] = UINT_MAX;
+    }
+  }
+  return true;
+}
 
 DFM2_INLINE double CheckSymmetry(
     const delfem2::CMatrixSparse<double> &mat);
