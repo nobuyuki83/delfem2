@@ -439,10 +439,11 @@ void SolveProblem_Stokes_Static()
   double g_z = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_Stokes3D_Static(mat_A,vec_b,
-                                    myu,rho,g_x,g_y,g_z,
-                                    aXYZ,aTet,
-                                    aVal,aVelo);
+  dfm2::MergeLinSys_Stokes3D_Static(
+      mat_A,vec_b,
+      myu,rho,g_x,g_y,g_z,
+      aXYZ,aTet,
+      aVal,aVelo);
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // ----------------------

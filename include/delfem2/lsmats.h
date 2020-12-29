@@ -12,6 +12,7 @@
 #include <vector>
 #include <cassert>
 #include <complex>
+#include <climits>
 
 namespace delfem2 {
 
@@ -22,7 +23,9 @@ namespace delfem2 {
 template<typename T>
 class CMatrixSparse {
 public:
-  CMatrixSparse() : nrowblk(0), ncolblk(0), nrowdim(0), ncoldim(0) {}
+  CMatrixSparse() noexcept
+  : nrowblk(0), ncolblk(0), nrowdim(0), ncoldim(0)
+  {}
 
   virtual ~CMatrixSparse() {
     this->Clear();
@@ -51,6 +54,10 @@ public:
     else { valDia.clear(); }
   }
 
+  /**
+   * deep copy (duplicate values) the non-zero pattern and their values
+   * @param m
+   */
   void operator=(const CMatrixSparse &m) {
     this->nrowblk = m.nrowblk;
     this->nrowdim = m.nrowdim;
@@ -94,33 +101,31 @@ public:
     return true;
   }
 
-  bool Mearge(unsigned int nblkel_col, const unsigned int *blkel_col,
-              unsigned int nblkel_row, const unsigned int *blkel_row,
-              unsigned int blksize, const T *emat,
-              std::vector<unsigned int> &m_marge_tmp_buffer);
-
   /**
    * @func Matrix vector product as: {y} = alpha * [A]{x} + beta * {y}
    */
-  void MatVec(T *y,
-              T alpha, const T *x,
-              T beta) const;
+  void MatVec(
+      T *y,
+      T alpha, const T *x,
+      T beta) const;
 
   /**
    * @func Matrix vector product as: {y} = alpha * [A]{x} + beta * {y}.
    *  the sparse matrix is regared as block sparse matrix where each blcok is diagonal
    */
-  void MatVecDegenerate(T *y,
-                        unsigned nlen,
-                        T alpha, const T *x,
-                        T beta) const;
+  void MatVecDegenerate(
+      T *y,
+      unsigned nlen,
+      T alpha, const T *x,
+      T beta) const;
   
   /**
    * @func Matrix vector product as: {y} = alpha * [A]^T{x} + beta * {y}
    */
-  void MatTVec(T *y,
-               T alpha, const T *x,
-               T beta) const;
+  void MatTVec(
+      T *y,
+      T alpha, const T *x,
+      T beta) const;
   
   /**
    * @func set fixed bc for diagonal block matrix where( pBCFlag[i] != 0).
@@ -157,8 +162,8 @@ public:
 
   /**
    * @func add vector to diagonal component
-   * @param lm        (in) a lumped mass vector with size of nblk
-   * @param scale (in) scaling factor for the lumped mass (typically 1/dt^2).
+   * @param[in] lm a lumped mass vector with size of nblk
+   * @param[in] scale scaling factor for the lumped mass (typically 1/dt^2).
    * @details the matrix need to be square matrix
    */
   void AddDia_LumpedMass(const T *lm, double scale) {
@@ -191,6 +196,59 @@ public:
   std::vector<T> valDia;
 };
 
+template <typename T>
+bool Mearge(
+    CMatrixSparse<T>& A,
+    unsigned int nblkel_col, const unsigned int *blkel_col,
+    unsigned int nblkel_row, const unsigned int *blkel_row,
+    unsigned int blksize, const T *emat,
+    std::vector<unsigned int> &marge_buffer)
+{
+  assert(!A.valCrs.empty());
+  assert(!A.valDia.empty());
+  assert(blksize == A.nrowdim * A.ncoldim);
+  marge_buffer.resize(A.ncolblk);
+  const unsigned int *colind = A.colInd.data();
+  const unsigned int *rowptr = A.rowPtr.data();
+  T *vcrs = A.valCrs.data();
+  T *vdia = A.valDia.data();
+  for (unsigned int iblkel = 0; iblkel < nblkel_col; iblkel++) {
+    const unsigned int iblk1 = blkel_col[iblkel];
+    assert(iblk1 < A.nrowblk);
+    for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
+      assert(jpsup < A.rowPtr.size());
+      const int jblk1 = rowptr[jpsup];
+      marge_buffer[jblk1] = jpsup;
+    }
+    for (unsigned int jblkel = 0; jblkel < nblkel_row; jblkel++) {
+      const unsigned int jblk1 = blkel_row[jblkel];
+      assert(jblk1 < A.ncolblk);
+      if (iblk1 == jblk1) {  // Marge Diagonal
+        const T *pval_in = &emat[(iblkel * nblkel_row + iblkel) * blksize];
+        T *pval_out = &vdia[iblk1 * blksize];
+        for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
+      }
+      else {  // Marge Non-Diagonal
+        if (marge_buffer[jblk1] == -1) {
+          assert(0);
+          return false;
+        }
+        assert( marge_buffer[jblk1] < A.rowPtr.size());
+        const unsigned int jpsup1 = marge_buffer[jblk1];
+        assert(A.rowPtr[jpsup1] == jblk1);
+        const T *pval_in = &emat[(iblkel * nblkel_row + jblkel) * blksize];
+        T *pval_out = &vcrs[jpsup1 * blksize];
+        for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
+      }
+    }
+    for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
+      assert(jpsup < A.rowPtr.size());
+      const int jblk1 = rowptr[jpsup];
+      marge_buffer[jblk1] = -1;
+    }
+  }
+  return true;
+}
 
 template <int nrow, int ncol, int ndimrow, int ndimcol, typename T>
 bool Merge(
@@ -203,7 +261,7 @@ bool Merge(
   assert(!A.valCrs.empty());
   assert(!A.valDia.empty());
   const unsigned int blksize = ndimrow * ndimcol;
-  merge_buffer.resize(A.ncolblk);
+  merge_buffer.resize(A.ncolblk,UINT_MAX);
   const unsigned int *colind = A.colInd.data();
   const unsigned int *rowptr = A.rowPtr.data();
   T *vcrs = A.valCrs.data();
@@ -225,7 +283,7 @@ bool Merge(
         for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
       }
       else {  // Marge Non-Diagonal
-        if (merge_buffer[jblk1] == -1) {
+        if (merge_buffer[jblk1] == UINT_MAX) {
           assert(0);
           return false;
         }
@@ -240,7 +298,7 @@ bool Merge(
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
       assert(jpsup < A.rowPtr.size());
       const int jblk1 = rowptr[jpsup];
-      merge_buffer[jblk1] = -1;
+      merge_buffer[jblk1] = UINT_MAX;
     }
   }
   return true;
@@ -266,28 +324,24 @@ bool Merge(
     assert(iblk1 < A.nrowblk);
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
       assert(jpsup < A.rowPtr.size());
-      const int jblk1 = rowptr[jpsup];
+      const unsigned int jblk1 = rowptr[jpsup];
       merge_buffer[jblk1] = jpsup;
     }
     for (unsigned int jblkel = 0; jblkel < ncol; jblkel++) {
       const unsigned int jblk1 = aIpCol[jblkel];
       assert(jblk1 < A.ncolblk);
       if (iblk1 == jblk1) {  // Marge Diagonal
-        const T *pval_in = &emat[iblkel][iblkel];
-        T *pval_out = &vdia[iblk1];
-        pval_out[0] += pval_in[0];
+        vdia[iblk1] += emat[iblkel][iblkel];
       }
       else {  // Marge Non-Diagonal
         if (merge_buffer[jblk1] == UINT_MAX) {
           assert(0);
           return false;
         }
-        assert(merge_buffer[jblk1] >= 0 && merge_buffer[jblk1] < (int) A.rowPtr.size());
-        const int jpsup1 = merge_buffer[jblk1];
+        assert( merge_buffer[jblk1] < A.rowPtr.size() );
+        const unsigned int jpsup1 = merge_buffer[jblk1];
         assert(A.rowPtr[jpsup1] == jblk1);
-        const T *pval_in = &emat[iblkel][jblkel];
-        T *pval_out = &vcrs[jpsup1];
-        pval_out[0] += pval_in[0];
+        vcrs[jpsup1] += emat[iblkel][jblkel];
       }
     }
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
@@ -301,7 +355,7 @@ bool Merge(
 
 DFM2_INLINE double CheckSymmetry(
     const delfem2::CMatrixSparse<double> &mat);
-  
+
 DFM2_INLINE void SetMasterSlave(
     delfem2::CMatrixSparse<double> &mat,
     const unsigned int *aMSFlag);

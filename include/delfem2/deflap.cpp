@@ -270,10 +270,11 @@ void delfem2::CDef_LaplacianLinear::Init(
     aIP.push_back(ip);
     std::vector<double> eM;
     delfem2::defarap::DualLaplacianSymbolic_3x3(eM, aIP);
-    Mat.Mearge(aIP.size(), aIP.data(),
-               aIP.size(), aIP.data(),
-               9, eM.data(),
-               tmp_buffer);
+    Mearge(Mat,
+        aIP.size(), aIP.data(),
+        aIP.size(), aIP.data(),
+        9, eM.data(),
+        tmp_buffer);
   }
   
   aRes0.resize(aXYZ0.size());
@@ -463,7 +464,8 @@ void delfem2::CDef_LaplacianLinearDegenerate::Init(
     aIP.push_back(ip);
     std::vector<double> eM;
     delfem2::defarap::DualLaplacianSymbolic_1x1(eM, aIP);
-    Mat.Mearge(
+    Mearge(
+        Mat,
         aIP.size(), aIP.data(),
         aIP.size(), aIP.data(),
         1, eM.data(),

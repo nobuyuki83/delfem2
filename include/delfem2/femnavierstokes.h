@@ -142,7 +142,8 @@ void MergeLinSys_NavierStokes2D(
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
     }
-    mat_A.Mearge(3, aIP, 3, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(3, aIP, 3, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+    Merge<3,3,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -191,7 +192,8 @@ void MergeLinSys_NavierStokes3D_Dynamic(
       vec_b[ip*4+2] += eres[ino][2];
       vec_b[ip*4+3] += eres[ino][3];
     }
-    mat_A.Mearge(4, aIP, 4, aIP,16, &emat[0][0][0][0], tmp_buffer);
+//    mat_A.Mearge(4, aIP, 4, aIP,16, &emat[0][0][0][0], tmp_buffer);
+    Merge<4,4,4,4,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 

@@ -306,10 +306,12 @@ int main()
         std::vector<double> eM;
         dfm2::ddW_ArapEnergy(eM,
                              aIP,aXYZ0,aQuat1);
-        Mat.Mearge(aIP.size(), aIP.data(),
-                   aIP.size(), aIP.data(),
-                   9, eM.data(),
-                   tmp_buffer);
+        Mearge(
+            Mat,
+            aIP.size(), aIP.data(),
+            aIP.size(), aIP.data(),
+            9, eM.data(),
+            tmp_buffer);
       }
     }
     

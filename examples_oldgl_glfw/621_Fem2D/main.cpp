@@ -227,7 +227,7 @@ void MakeMesh(){
 // iproblem: 0, 1
 void InitializeProblem_Scalar()
 {
-  const int np = (int)aXY1.size()/2;
+  const unsigned int np = aXY1.size()/2;
   aBCFlag.assign(np, 0);
   for(int ip=0;ip<np;++ip){
     const double px = aXY1[ip*2+0];
@@ -244,8 +244,10 @@ void InitializeProblem_Scalar()
    */
   //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTri1.data(), aTri1.size()/3, 3,
+      (int)aXY1.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);
   //
   mat_A.Initialize(np, 1, true);
@@ -257,18 +259,19 @@ void InitializeProblem_Scalar()
 // iproblem: 0
 void SolveProblem_Poisson()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np;
   // -----------------------
   const double alpha = 1.0;
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_Poission_MeshTri2D(mat_A,vec_b.data(),
-                                       alpha,source,
-                                       aXY1.data(),aXY1.size()/2,
-                                       aTri1.data(),aTri1.size()/3,
-                                       aVal.data());
+  dfm2::MergeLinSys_Poission_MeshTri2D(
+      mat_A, vec_b.data(),
+      alpha,source,
+      aXY1.data(),aXY1.size()/2,
+      aTri1.data(),aTri1.size()/3,
+      aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // ------------------
@@ -302,20 +305,21 @@ void SolveProblem_Poisson()
 // iproblem: 1
 void SolveProblem_Diffusion()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np;
-  //////////////////////////
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np;
+  // ------------------
   const double alpha = 1.0;
   const double rho = 1.0;
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_Diffusion_MeshTri2D(mat_A, vec_b.data(),
-                                        alpha, rho, source,
-                                        dt_timestep, gamma_newmark,
-                                        aXY1.data(), aXY1.size()/2,
-                                        aTri1.data(), aTri1.size()/3,
-                                        aVal.data(),aVelo.data());
+  dfm2::MergeLinSys_Diffusion_MeshTri2D(
+      mat_A, vec_b.data(),
+      alpha, rho, source,
+      dt_timestep, gamma_newmark,
+      aXY1.data(), aXY1.size()/2,
+      aTri1.data(), aTri1.size()/3,
+      aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // ------------------
@@ -328,20 +332,19 @@ void SolveProblem_Diffusion()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    Solve_PCG(vr,vu,vs,vt,
+    Solve_PCG(
+        dfm2::CVecXd(vec_b),dfm2::CVecXd(vec_x),dfm2::CVecXd(tmp0),dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   // -----------------
-  dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
-                  dt_timestep*gamma_newmark,vec_x,
-                  dt_timestep,aVelo);
-  dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
-                1.0,vec_x);
+  dfm2::XPlusAYBZ(
+      aVal,nDoF,aBCFlag,
+      dt_timestep*gamma_newmark,vec_x,
+      dt_timestep,aVelo);
+  dfm2::XPlusAY(
+      aVelo,nDoF,aBCFlag,
+      1.0,vec_x);
 }
 
 // -------------------------------
@@ -377,12 +380,15 @@ void InitializeProblem_Solid()
   }
   // -----------
   std::vector<unsigned int> psup_ind0, psup0;
-  dfm2::JArray_PSuP_MeshElem(psup_ind0, psup0,
-                             aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind0, psup0,
+      aTri1.data(), aTri1.size()/3, 3,
+      aXY1.size()/2);
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_AddMasterSlavePattern(psup_ind, psup,
-                        aMSFlag.data(),2,
-                        psup_ind0.data(), psup_ind0.size(), psup0.data());
+  dfm2::JArray_AddMasterSlavePattern(
+      psup_ind, psup,
+      aMSFlag.data(),2,
+      psup_ind0.data(), psup_ind0.size(), psup0.data());
   dfm2::JArray_Sort(psup_ind, psup);
   /*
    CJaggedArray crs;
@@ -410,15 +416,17 @@ void SolveProblem_LinearSolid_Static()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(mat_A,vec_b.data(),
-                                                 myu,lambda,rho,g_x,g_y,
-                                                 aXY1.data(), aXY1.size()/2,
-                                                 aTri1.data(), aTri1.size()/3,
-                                                 aVal.data());
+  dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
+      mat_A,vec_b.data(),
+      myu,lambda,rho,g_x,g_y,
+      aXY1.data(), aXY1.size()/2,
+      aTri1.data(), aTri1.size()/3,
+      aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
-  SetMasterSlave(mat_A,
-                 aMSFlag.data());
+  SetMasterSlave(
+      mat_A,
+      aMSFlag.data());
   dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   // ---------------
   std::vector<double> vec_x;
@@ -430,11 +438,8 @@ void SolveProblem_LinearSolid_Static()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    Solve_PCG(vr,vu,vs,vt,
+    Solve_PCG(
+        dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
@@ -462,12 +467,13 @@ void SolveProblem_LinearSolid_Dynamic()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(mat_A,vec_b.data(),
-                                                      myu,lambda,rho,g_x,g_y,
-                                                      dt_timestep,gamma_newmark,beta_newmark,
-                                                      aXY1.data(), aXY1.size()/2,
-                                                      aTri1.data(), aTri1.size()/3,
-                                                      aVal.data(),aVelo.data(),aAcc.data());
+  dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
+      mat_A,vec_b.data(),
+      myu,lambda,rho,g_x,g_y,
+      dt_timestep,gamma_newmark,beta_newmark,
+      aXY1.data(), aXY1.size()/2,
+      aTri1.data(), aTri1.size()/3,
+      aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,
@@ -611,9 +617,10 @@ void InitializeProblem_Fluid2()
   dfm2::JArray_PSuP_MeshElem(psup_ind0, psup0,
                              aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_AddMasterSlavePattern(psup_ind, psup,
-                        aMSFlag.data(),3,
-                        psup_ind0.data(), psup_ind0.size(), psup0.data());
+  dfm2::JArray_AddMasterSlavePattern(
+      psup_ind, psup,
+      aMSFlag.data(),3,
+      psup_ind0.data(), psup_ind0.size(), psup0.data());
   dfm2::JArray_Sort(psup_ind, psup);
   //
   /*
@@ -696,17 +703,19 @@ void SolveProblem_Stokes_Dynamic()
   double g_y = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_StokesDynamic2D(mat_A,vec_b.data(),
-                                    myu,rho,g_x,g_y,
-                                    dt_timestep,gamma_newmark,
-                                    aXY1.data(), aXY1.size()/2,
-                                    aTri1.data(), aTri1.size()/3,
-                                    aVal.data(),aVelo.data());
+  dfm2::MergeLinSys_StokesDynamic2D(
+      mat_A,vec_b.data(),
+      myu,rho,g_x,g_y,
+      dt_timestep,gamma_newmark,
+      aXY1.data(), aXY1.size()/2,
+      aTri1.data(), aTri1.size()/3,
+      aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
-    SetMasterSlave(mat_A,
-                   aMSFlag.data());
+    SetMasterSlave(
+        mat_A,
+        aMSFlag.data());
     dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
   // -------------------
