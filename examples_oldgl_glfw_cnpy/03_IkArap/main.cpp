@@ -296,7 +296,7 @@ int main()
       assert( psup_ind1.size() == np+1 );
       Mat.SetPattern(psup_ind1.data(), psup_ind1.size(), psup1.data(), psup1.size());
       Mat.SetZero();
-      std::vector<int> tmp_buffer;
+      std::vector<unsigned int> tmp_buffer;
       for(unsigned int ip=0;ip<np;++ip){
         std::vector<unsigned int> aIP;
         for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){

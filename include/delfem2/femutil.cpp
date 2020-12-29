@@ -290,25 +290,6 @@ DFM2_INLINE void delfem2::ShapeFunc_Hex8
   }
 }
 
-DFM2_INLINE void delfem2::FetchData(
-    double* val_to,
-    int nno, int ndim,
-    const unsigned int* aIP,
-    const double* val_from,
-    int nstride)
-{
-  if( nstride == -1 ){ nstride = ndim; }
-  assert( nstride >= ndim );
-  for(int ino=0;ino<nno;++ino){
-    unsigned int ip = aIP[ino];
-    for(int idim=0;idim<ndim;++idim){
-      val_to[ino*ndim+idim] = val_from[ip*nstride+idim];
-    }
-  }
-}
-
-
-
 DFM2_INLINE void delfem2::ddW_MassConsistentVal3D_Tet3D(
     double* eMmat,
     double rho, double vol,

@@ -43,13 +43,13 @@ void MergeLinSys_Helmholtz_MeshTri2D(
 {
   using COMPLEX = std::complex<double>;
   const unsigned int nDoF = np;
-  std::vector<int> tmp_buffer(nDoF, -1);
+  std::vector<unsigned int> tmp_buffer(nDoF, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double coords[3][2]; FetchData<3,2>(coords, aIP,aXY1);
     const COMPLEX value[3] = { aVal[i0], aVal[i1], aVal[i2] };
     //
     COMPLEX eres[3];
@@ -61,7 +61,8 @@ void MergeLinSys_Helmholtz_MeshTri2D(
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+    Merge<3,3,COMPLEX>(mat_A,aIP,aIP,emat,tmp_buffer);
+//    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
   }
 }
 
@@ -78,13 +79,13 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
 {
   using COMPLEX = std::complex<double>;
   const unsigned int nDoF = np;
-  std::vector<int> tmp_buffer(nDoF, -1);
+  std::vector<unsigned int> tmp_buffer(nDoF, UINT_MAX);
   assert( nIPPolyline >= 2 );
   for(unsigned int iel=0; iel < nIPPolyline - 1; ++iel){
     const unsigned int i0 = aIPPolyline[iel + 0];
     const unsigned int i1 = aIPPolyline[iel + 1];
     const unsigned int aip[2] = {i0,i1};
-    double P[2][2]; FetchData(&P[0][0],2,2,aip, aXY1);
+    double P[2][2]; FetchData<2,2>(P, aip,aXY1);
     const COMPLEX val[2] = { aVal[i0], aVal[i1] };
     //
     COMPLEX eres[2], emat[2][2];
@@ -94,7 +95,8 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
       const unsigned int ip = aip[ino];
       vec_b[ip] += eres[ino];
     }
-    mat_A.Mearge(2, aip, 2, aip, 1, &emat[0][0], tmp_buffer);
+//    mat_A.Mearge(2, aip, 2, aip, 1, &emat[0][0], tmp_buffer);
+    Merge<2,2,COMPLEX>(mat_A,aip,aip,emat,tmp_buffer);
   }
 }
 

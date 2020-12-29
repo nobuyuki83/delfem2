@@ -84,17 +84,19 @@ int main(int argc,char* argv[])
     const double wave_length = 0.4;
     mat_A.SetZero();
     vec_b.assign(nDoF, 0.0);
-    dfm2::MergeLinSys_Helmholtz_MeshTri2D(mat_A,vec_b.data(),
-                                          wave_length,
-                                          aXY1.data(),aXY1.size()/2,
-                                          aTri1.data(),aTri1.size()/3,
-                                          aCVal.data());
+    dfm2::MergeLinSys_Helmholtz_MeshTri2D(
+        mat_A,vec_b.data(),
+        wave_length,
+        aXY1.data(),aXY1.size()/2,
+        aTri1.data(),aTri1.size()/3,
+        aCVal.data());
     for(auto & ipl : aaIP){
-      dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(mat_A,vec_b.data(),
-                                                         wave_length,
-                                                         aXY1.data(),aXY1.size()/2,
-                                                         ipl.data(),ipl.size(),
-                                                         aCVal.data());
+      dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
+          mat_A,vec_b.data(),
+          wave_length,
+          aXY1.data(),aXY1.size()/2,
+          ipl.data(),ipl.size(),
+          aCVal.data());
     }
     mat_A.SetFixedBC(aBCFlag.data());
     dfm2::setRHS_Zero(vec_b, aBCFlag,0);

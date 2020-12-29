@@ -95,26 +95,26 @@ void MergeLinSys_Poission_MeshTri2D(
 {
   const unsigned int nDoF = np;
   //
-  std::vector<int> tmp_buffer(nDoF, -1);
+  std::vector<unsigned int> tmp_buffer(nDoF, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double coords[3][2]; FetchData<3,2>(coords, aIP,aXY1);
     const double value[3] = { aVal[i0], aVal[i1], aVal[i2] };
     //
-    double eres[3];
-    double emat[3][3];
-    EMat_Poisson_Tri2D
-        (eres,emat,
-         alpha, source,
-         coords, value);
+    double eres[3], emat[3][3];
+    EMat_Poisson_Tri2D(
+        eres,emat,
+        alpha, source,
+        coords, value);
     for (int ino = 0; ino<3; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+//    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+    Merge<3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -131,14 +131,14 @@ void MergeLinSys_Poission_MeshTet3D(
     const double* aVal)
 {
   const unsigned int np = nXYZ;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int itet = 0; itet<nTet; ++itet){
     const unsigned int i0 = aTet[itet*4+0];
     const unsigned int i1 = aTet[itet*4+1];
     const unsigned int i2 = aTet[itet*4+2];
     const unsigned int i3 = aTet[itet*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ);
+    double coords[4][3]; FetchData<4,3>(coords, aIP,aXYZ);
     const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
     //
     double eres[4], emat[4][4];
@@ -149,7 +149,8 @@ void MergeLinSys_Poission_MeshTet3D(
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-    mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
+//    mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
+    Merge<4,4,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -169,28 +170,28 @@ void MergeLinSys_Diffusion_MeshTri2D(
     const double* aVal,
     const double* aVelo)
 {
-  std::vector<int> tmp_buffer(nXY, -1);
+  std::vector<unsigned int> tmp_buffer(nXY, -1);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double coords[3][2]; FetchData<3,2>(coords, aIP,aXY1);
     const double value[3] = { aVal[ i0], aVal[ i1], aVal[ i2] };
     const double velo[ 3] = { aVelo[i0], aVelo[i1], aVelo[i2] };
-    ////
-    double eres[3];
-    double emat[3][3];
-    EMat_Diffusion_Tri2D
-        (eres,emat,
-         alpha, source,
-         dt_timestep, gamma_newmark, rho,
-         coords, value, velo);
+    // --
+    double eres[3], emat[3][3];
+    EMat_Diffusion_Tri2D(
+        eres,emat,
+        alpha, source,
+        dt_timestep, gamma_newmark, rho,
+        coords, value, velo);
     for (int ino = 0; ino<3; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+//    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+    Merge<3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 
@@ -211,19 +212,18 @@ void MergeLinSys_Diffusion_MeshTet3D(
     const double* aVelo)
 {
   const int np = nXYZ;
-  std::vector<int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ);
+    double coords[4][3]; FetchData<4,3>(coords, aIP,aXYZ);
     const double value[4] = { aVal[ i0], aVal[ i1], aVal[ i2], aVal[ i3] };
     const double velo[ 4] = { aVelo[i0], aVelo[i1], aVelo[i2], aVelo[i3] };
     ////
-    double eres[4];
-    double emat[4][4];
+    double eres[4], emat[4][4];
     EMat_Diffusion_Newmark_Tet3D(eres,emat,
                                  alpha, source,
                                  dt_timestep, gamma_newmark, rho,
@@ -232,7 +232,8 @@ void MergeLinSys_Diffusion_MeshTet3D(
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-    mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
+//    mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
+    Merge<4,4,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
 

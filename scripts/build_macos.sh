@@ -180,8 +180,15 @@ cd examples_oldgl_glfw_eigen
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
-make 
 cd ../../
+
+cd examples_oldgl_glfw_eigen
+mkdir buildMakeHdronly
+cd buildMakeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+make
+cd ../../
+
 
 echo "################################"
 echo "build examples_thread"
@@ -191,7 +198,14 @@ cd examples_oldgl_glfw_thread
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
-make 
+cmake --build .
+cd ../../
+
+cd examples_oldgl_glfw_thread
+mkdir buildMakeHdronly
+cd buildMakeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+make
 cd ../../
 
 

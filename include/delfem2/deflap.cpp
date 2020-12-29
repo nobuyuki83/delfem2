@@ -260,7 +260,7 @@ void delfem2::CDef_LaplacianLinear::Init(
         psup1.data(), psup1.size());
   }
     
-  std::vector<int> tmp_buffer;
+  std::vector<unsigned int> tmp_buffer;
   Mat.SetZero();
   for(unsigned int ip=0;ip<np;++ip){
     std::vector<unsigned int> aIP;
@@ -453,7 +453,7 @@ void delfem2::CDef_LaplacianLinearDegenerate::Init(
                    psup1.data(), psup1.size());
   }
 
-  std::vector<int> tmp_buffer;
+  std::vector<unsigned int> tmp_buffer;
   Mat.SetZero();
   for(unsigned int ip=0;ip<np;++ip){
     std::vector<unsigned int> aIP;

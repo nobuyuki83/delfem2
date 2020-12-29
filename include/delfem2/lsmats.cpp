@@ -435,7 +435,7 @@ bool delfem2::CMatrixSparse<T>::Mearge(
     unsigned int nblkel_col, const unsigned int *blkel_col,
     unsigned int nblkel_row, const unsigned int *blkel_row,
     unsigned int blksize, const T *emat,
-    std::vector<int> &marge_buffer)
+    std::vector<unsigned int> &marge_buffer)
 {
   assert(!valCrs.empty());
   assert(!valDia.empty());
@@ -487,17 +487,17 @@ template bool delfem2::CMatrixSparse<float>::Mearge(
     unsigned int nblkel_col, const unsigned int *blkel_col,
     unsigned int nblkel_row, const unsigned int *blkel_row,
     unsigned int blksize, const float *emat,
-    std::vector<int> &marge_buffer);
+    std::vector<unsigned int> &marge_buffer);
 template bool delfem2::CMatrixSparse<double>::Mearge(
     unsigned int nblkel_col, const unsigned int *blkel_col,
     unsigned int nblkel_row, const unsigned int *blkel_row,
     unsigned int blksize, const double *emat,
-    std::vector<int> &marge_buffer);
+    std::vector<unsigned int> &marge_buffer);
 template bool delfem2::CMatrixSparse<std::complex<double>>::Mearge(
     unsigned int nblkel_col, const unsigned int *blkel_col,
     unsigned int nblkel_row, const unsigned int *blkel_row,
     unsigned int blksize, const std::complex<double> *emat,
-    std::vector<int> &marge_buffer);
+    std::vector<unsigned int> &marge_buffer);
 #endif
 
 // -----------------------------------------------------------------
