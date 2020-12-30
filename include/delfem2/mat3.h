@@ -51,9 +51,21 @@ void Mat3_Identity(
     REAL alpha);
 
 template <typename REAL>
-void Mat3_Identity_ScaleAdd(
+DFM2_INLINE void Mat3_Identity_ScaleAdd(
     REAL* mat,
     REAL alpha=1, REAL beta=0);
+
+template <typename T>
+DFM2_INLINE void Mat3_AffineRotation(
+    T* mat,
+    T theta);
+
+template <typename T>
+void Mat3_AffineTranslation(
+    T* mat,
+    const T transl[2]);
+
+// ------------
 
 template <typename T>
 void Transpose_Mat3(
@@ -184,6 +196,12 @@ DFM2_INLINE void VecMat3(
     double y[3],
     const double x[3],
     const double m[9]);
+
+template <typename T>
+DFM2_INLINE void Vec2_Mat3Vec2_AffineProjection(
+    T y[2],
+    const T Z[9],
+    const T x[2]);
 
 // --------------------------------
 // below: mat3 and quat

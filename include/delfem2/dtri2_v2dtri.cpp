@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/geoplygn2_v2.h"
 #include <set>
 #include <algorithm>
 #include <climits>
-
-#include "delfem2/dtri2_v2dtri.h"
 
 // ===========================================
 // unexposed functions

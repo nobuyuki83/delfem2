@@ -24,6 +24,7 @@
 #include "delfem2/dtri.h"
 #include "delfem2/color.h"
 #include "delfem2/jagarray.h"
+#include "delfem2/geoplygn2_v2.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
 #include <iostream>
