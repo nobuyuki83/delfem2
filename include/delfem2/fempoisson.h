@@ -28,7 +28,8 @@ namespace delfem2 {
 void EMat_Poisson_Tri2D(
     double eres[3],
     double emat[3][3],
-    const double alpha, const double source,
+    const double alpha,
+    const double source,
     const double coords[3][2],
     const double value[3]);
 
@@ -142,9 +143,10 @@ void MergeLinSys_Poission_MeshTet3D(
     const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
     //
     double eres[4], emat[4][4];
-    EMat_Poisson_Tet3D(eres,emat,
-                       alpha, source,
-                       coords, value);
+    EMat_Poisson_Tet3D(
+        eres,emat,
+        alpha, source,
+        coords, value);
     for (int ino = 0; ino<4; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
