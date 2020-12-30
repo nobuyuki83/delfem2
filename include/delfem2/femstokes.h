@@ -12,6 +12,11 @@
 #include "delfem2/femutil.h"
 #include <vector>
 
+#ifndef DFM2_HEADER_ONLY
+// Merge use explicitly use the template so for static library we need to include the template itself.
+#  include "delfem2/lsmats.h"
+#endif
+
 namespace delfem2 {
 
 

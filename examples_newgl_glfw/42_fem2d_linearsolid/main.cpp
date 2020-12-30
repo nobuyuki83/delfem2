@@ -290,8 +290,8 @@ void SolveProblem_Poisson()
 
 void SolveProblem_LinearSolid_Static()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np*2;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np*2;
   //
   double myu = 10.0;
   double lambda = 10.0;

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_MATS_H
-#define DFM2_MATS_H
+#ifndef DFM2_LSMATS_H
+#define DFM2_LSMATS_H
 
 #include "delfem2/dfm2_inline.h"
 #include <vector>

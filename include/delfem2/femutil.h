@@ -10,6 +10,7 @@
 
 #include "delfem2/dfm2_inline.h"
 #include <cassert>
+#include <climits>
 
 namespace delfem2 {
 
