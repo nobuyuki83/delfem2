@@ -102,7 +102,7 @@ void SolveProblem_Poisson()
   // -----------------------
   const double alpha = 1.0;
   const double source = 0.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_Poission_MeshTet3D(
       mat_A,vec_b.data(),
@@ -178,7 +178,7 @@ void SolveProblem_Diffusion()
   const double alpha = 1.0;
   const double rho = 1.0;
   const double source = 1.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_Diffusion_MeshTet3D(
       mat_A,vec_b.data(),
@@ -258,7 +258,7 @@ void SolveProblem_LinearSolid_Static()
   double lambda = 1.0;
   double rho = 1.0;
   double g[3] = {0.0, -0.5, 0.0};
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
       mat_A, vec_b.data(),
@@ -339,7 +339,7 @@ void SolveProblem_LinearSolid_Dynamic()
   double lambda = 1.0;
   double rho = 1.0;
   const double g[3] = {0.0, -0.3, 0.0};
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
       mat_A,vec_b.data(),
@@ -437,7 +437,7 @@ void SolveProblem_Stokes_Static()
   double g_x = 0.0;
   double g_y = -0.0;
   double g_z = -0.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_Stokes3D_Static(
       mat_A,vec_b,
@@ -527,7 +527,7 @@ void SolveProblem_Stokes_Dynamic()
   double g_x = 0.0;
   double g_y = -0.0;
   double g_z = -0.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_Stokes3D_Dynamic(mat_A,vec_b,
                                      myu,rho,g_x,g_y,g_z,
@@ -629,7 +629,7 @@ void SolveProblem_NavierStokes_Dynamic()
   double g_x = 0.0;
   double g_y = -0.0;
   double g_z = -0.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_NavierStokes3D_Dynamic(mat_A,vec_b,
                                            myu,rho,g_x,g_y,g_z,

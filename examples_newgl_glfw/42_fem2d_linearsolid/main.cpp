@@ -298,13 +298,14 @@ void SolveProblem_LinearSolid_Static()
   double rho = 1.0;
   double g_x = 0.0;
   double g_y = -3.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(mat_A,vec_b.data(),
-                                                 myu,lambda,rho,g_x,g_y,
-                                                 aXY1.data(), aXY1.size()/2,
-                                                 aTri1.data(), aTri1.size()/3,
-                                                 aVal.data());
+  dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
+      mat_A,vec_b.data(),
+      myu,lambda,rho,g_x,g_y,
+      aXY1.data(), aXY1.size()/2,
+      aTri1.data(), aTri1.size()/3,
+      aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
 //  SetMasterSlave(mat_A,
@@ -320,12 +321,12 @@ void SolveProblem_LinearSolid_Static()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    Solve_PCG(vr,vu,vs,vt,
-              conv_ratio,iteration, mat_A,ilu_A);
+    Solve_PCG(
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
+        conv_ratio,iteration, mat_A,ilu_A);
   }
   // --------------
   dfm2::XPlusAY(aVal,nDoF,aBCFlag,

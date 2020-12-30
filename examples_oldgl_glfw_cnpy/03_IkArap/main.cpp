@@ -224,9 +224,10 @@ void Draw
     ::glEnd();
   }
   ::glDisable(GL_DEPTH_TEST);
-  delfem2::opengl::DrawBone(aBone,
-                            -1, -1,
-                            0.01, 1.0);
+  delfem2::opengl::DrawBone(
+      aBone,
+      -1, -1,
+      0.01, 1.0);
   ::glEnable(GL_DEPTH_TEST);
   //    dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat1,0.02);
 }
@@ -295,7 +296,7 @@ int main()
       dfm2::JArray_Sort(psup_ind1, psup1);
       assert( psup_ind1.size() == np+1 );
       Mat.SetPattern(psup_ind1.data(), psup_ind1.size(), psup1.data(), psup1.size());
-      Mat.SetZero();
+      Mat.setZero();
       std::vector<unsigned int> tmp_buffer;
       for(unsigned int ip=0;ip<np;++ip){
         std::vector<unsigned int> aIP;
@@ -304,8 +305,9 @@ int main()
         }
         aIP.push_back(ip);
         std::vector<double> eM;
-        dfm2::ddW_ArapEnergy(eM,
-                             aIP,aXYZ0,aQuat1);
+        dfm2::ddW_ArapEnergy(
+            eM,
+            aIP,aXYZ0,aQuat1);
         Mearge(
             Mat,
             aIP.size(), aIP.data(),

@@ -135,7 +135,7 @@ void InitializeProblem_ShellEigenPB()
 
 void Solve_Linear()
 {
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(aXYZ.size(),0.0);
   dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(mat_A, vec_b.data(),
                                                  myu, lambda,
@@ -169,7 +169,7 @@ void Solve_StiffnessWarping()
   RotationAtMeshPoints(aR,
                        aXYZ,aDisp,psup_ind,psup);
   // ----------------------
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(aXYZ.size(),0.0);
   dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(mat_A, vec_b.data(),
                                                     myu, lambda,

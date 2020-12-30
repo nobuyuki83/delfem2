@@ -259,7 +259,7 @@ void SolveProblem_Poisson()
   // -----------------------
   const double alpha = 1.0;
   const double source = 1.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_Poission_MeshTri2D(mat_A,vec_b.data(),
                                        alpha,source,

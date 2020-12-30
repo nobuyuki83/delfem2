@@ -166,7 +166,7 @@ void InitializeProblem_ShellEigenPB()
       aXY0.data(), aXY0.size()/2,
       aTri.data(), aTri.size()/3);
   // -------------------------------
-  mat_A.SetZero();
+  mat_A.setZero();
   aMode.assign(nDoF, 0.0);
   aTmp0.assign(nDoF, 0.0);
   dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(

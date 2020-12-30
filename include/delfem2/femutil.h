@@ -9,7 +9,7 @@
 #define DFM2_FEMUTIL_H
 
 #include "delfem2/dfm2_inline.h"
-#include <complex>
+#include <cassert>
 
 namespace delfem2 {
 

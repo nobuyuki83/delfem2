@@ -535,7 +535,7 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
   assert( mats.ncoldim == 3 );
   const unsigned int nNode = aBCFlag.size()/3;
   assert(aP.size()+aS.size()==nNode);
-  mats.SetZero();
+  mats.setZero();
   std::vector<double> vec_r;
   vec_r.assign(nNode*3, 0.0);
   std::vector<unsigned int> tmp_buffer;
@@ -955,7 +955,7 @@ DFM2_INLINE void delfem2::Solve_RodHair(
   assert( aS0.size() == np );
   assert( aP.size() == np );
   assert( aS.size() == np );
-  mats.SetZero();
+  mats.setZero();
   std::vector<double> vec_r;
   vec_r.assign(np*4, 0.0);
   double W = MergeLinSys_Hair(
@@ -1060,7 +1060,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
   assert( aS0.size() == np );
   assert( aP.size() == np );
   assert( aS.size() == np );
-  mats.SetZero();
+  mats.setZero();
   std::vector<double> vec_r;
   vec_r.assign(np*4, 0.0);
   double W = MergeLinSys_Hair(

@@ -71,7 +71,7 @@ void SolveProblem_PlateBendingMITC3(
   const std::size_t np = aXY0.size()/2;
   const std::size_t nDoF = np*3;
   //
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
       mat_A,vec_b.data(),

@@ -114,7 +114,7 @@ void StepTime_InternalDynamics(
   // compute total energy and its first and second derivatives
   double W = 0;
   std::vector<double> vec_b(nDof,0);
-	mat_A.SetZero();
+	mat_A.setZero();
   std::vector<int> tmp_buffer(np,-1);
   W += delfem2::MergeLinSys_Cloth(
       mat_A,vec_b.data(),
@@ -199,7 +199,7 @@ void StepTime_InternalDynamicsILU(
   // compute total energy and its first and second derivatives
   double W = 0;
   std::vector<double> vec_b(nDof,0);
-	mat_A.SetZero();
+	mat_A.setZero();
   std::vector<int> tmp_buffer(np,-1);
   W += delfem2::MergeLinSys_Cloth(
       mat_A,vec_b.data(),

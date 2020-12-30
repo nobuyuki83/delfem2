@@ -423,14 +423,16 @@ void delfem2::CDef_Arap::Init(
 {
   this->is_preconditioner = is_preconditioner_;
   const unsigned int np = aXYZ0.size()/3;
-  JArray_PSuP_MeshElem(psup_ind, psup,
-                       aTri.data(), aTri.size()/3, 3,
-                       aXYZ0.size()/3);
+  JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTri.data(), aTri.size()/3, 3,
+      aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
   {
     std::vector<unsigned int> psup_ind1, psup1;
-    JArray_Extend(psup_ind1, psup1,
-                  psup_ind.data(), psup_ind.size(), psup.data());
+    JArray_Extend(
+        psup_ind1, psup1,
+        psup_ind.data(), psup_ind.size(), psup.data());
     JArray_Sort(psup_ind1, psup1);
     Mat.Initialize(np, 3, true);
     assert( psup_ind1.size() == np+1 );
@@ -465,7 +467,7 @@ void delfem2::CDef_Arap::Deform(
     const std::vector<int>& aBCFlag)
 {
   const unsigned int np = aXYZ0.size()/3;
-  Mat.SetZero();
+  Mat.setZero();
   this->aRes1.assign(np*3, 0.0);
   std::vector<unsigned int> tmp_buffer;
   for(unsigned int ip=0;ip<np;++ip){
