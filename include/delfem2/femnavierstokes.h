@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_NAVIERSTOKES_H
-#define DFM2_NAVIERSTOKES_H
+#ifndef DFM2_FEMNAVIERSTOKES_H
+#define DFM2_FEMNAVIERSTOKES_H
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
@@ -165,11 +165,10 @@ void MergeLinSys_NavierStokes3D_Dynamic(
 {
   const unsigned int np = aXYZ.size()/3;
   const unsigned int nDoF = np*4;
-  //
   mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
-  std::vector<unsigned int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<(int)aTet.size()/4; ++iel){
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
+  for (unsigned int iel = 0; iel<aTet.size()/4; ++iel){
     const unsigned int aIP[4] = {
       aTet[iel*4+0],
       aTet[iel*4+1],
@@ -178,7 +177,6 @@ void MergeLinSys_NavierStokes3D_Dynamic(
     double coords[4][3]; FetchData<4,3>(coords, aIP,aXYZ.data());
     double velo_press[4][4]; FetchData<4,4>(velo_press, aIP,aVal.data());
     double acc_apress[4][4]; FetchData<4,4>(acc_apress, aIP,aVelo.data());
-    //
     double eres[4][4], emat[4][4][4][4];
     MakeMat_NavierStokes3D_Dynamic_P1(
         myu, rho,  g_x, g_y,g_z,

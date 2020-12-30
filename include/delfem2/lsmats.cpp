@@ -61,6 +61,120 @@ DFM2_INLINE double MatNorm_Assym(
   return s;
 }
 
+template <typename T>
+void MatVec_MatSparseCRS_Blk11(
+    T* y,
+    T alpha,
+    unsigned nrowblk,
+    const T* vcrs,
+    const T* vdia,
+    const unsigned int* colind,
+    const unsigned int* rowptr,
+    const T* x)
+{
+  for(unsigned int iblk=0;iblk<nrowblk;iblk++){
+    const unsigned int colind0 = colind[iblk];
+    const unsigned int colind1 = colind[iblk+1];
+    for(unsigned int icrs=colind0;icrs<colind1;icrs++){
+      const unsigned int jblk0 = rowptr[icrs];
+      y[iblk] += alpha * vcrs[icrs] * x[jblk0];
+    }
+    y[iblk] += alpha * vdia[iblk] * x[iblk];
+  }
+}
+
+template <typename T>
+void MatVec_MatSparseCRS_Blk22(
+    T* y,
+    T alpha,
+    unsigned nrowblk,
+    const T* vcrs,
+    const T* vdia,
+    const unsigned int* colind,
+    const unsigned int* rowptr,
+    const T* x)
+{
+  for(unsigned int iblk=0;iblk<nrowblk;iblk++){
+    const unsigned int icrs0 = colind[iblk];
+    const unsigned int icrs1 = colind[iblk+1];
+    for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
+      const unsigned int jblk0 = rowptr[icrs];
+      y[iblk*2+0] += alpha * ( vcrs[icrs*4  ]*x[jblk0*2+0] + vcrs[icrs*4+1]*x[jblk0*2+1] );
+      y[iblk*2+1] += alpha * ( vcrs[icrs*4+2]*x[jblk0*2+0] + vcrs[icrs*4+3]*x[jblk0*2+1] );
+    }
+    y[iblk*2+0] += alpha * ( vdia[iblk*4+0]*x[iblk*2+0] + vdia[iblk*4+1]*x[iblk*2+1] );
+    y[iblk*2+1] += alpha * ( vdia[iblk*4+2]*x[iblk*2+0] + vdia[iblk*4+3]*x[iblk*2+1] );
+  }
+}
+
+template <typename T>
+void MatVec_MatSparseCRS_Blk33(
+    T* y,
+    T alpha,
+    unsigned nrowblk,
+    const T* vcrs,
+    const T* vdia,
+    const unsigned int* colind,
+    const unsigned int* rowptr,
+    const T* x)
+{
+  for(unsigned int iblk=0;iblk<nrowblk;iblk++){
+    const unsigned int icrs0 = colind[iblk];
+    const unsigned int icrs1 = colind[iblk+1];
+    for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
+      const unsigned int jblk0 = rowptr[icrs];
+      const unsigned int i0 = iblk*3;
+      const unsigned int j0 = jblk0*3;
+      const unsigned int k0 = icrs*9;
+      y[i0+0] += alpha*(vcrs[k0+0]*x[j0+0]+vcrs[k0+1]*x[j0+1]+vcrs[k0+2]*x[j0+2]);
+      y[i0+1] += alpha*(vcrs[k0+3]*x[j0+0]+vcrs[k0+4]*x[j0+1]+vcrs[k0+5]*x[j0+2]);
+      y[i0+2] += alpha*(vcrs[k0+6]*x[j0+0]+vcrs[k0+7]*x[j0+1]+vcrs[k0+8]*x[j0+2]);
+    }
+    {
+      const unsigned int i0 = iblk*3;
+      const unsigned int k0 = iblk*9;
+      y[i0+0] += alpha*(vdia[k0+0]*x[i0+0]+vdia[k0+1]*x[i0+1]+vdia[k0+2]*x[i0+2]);
+      y[i0+1] += alpha*(vdia[k0+3]*x[i0+0]+vdia[k0+4]*x[i0+1]+vdia[k0+5]*x[i0+2]);
+      y[i0+2] += alpha*(vdia[k0+6]*x[i0+0]+vdia[k0+7]*x[i0+1]+vdia[k0+8]*x[i0+2]);
+    }
+  }
+}
+
+template <typename T>
+void MatVec_MatSparseCRS_Blk44(
+    T* y,
+    T alpha,
+    unsigned nrowblk,
+    const T* vcrs,
+    const T* vdia,
+    const unsigned int* colind,
+    const unsigned int* rowptr,
+    const T* x)
+{
+  for(unsigned int iblk=0;iblk<nrowblk;iblk++){
+    const unsigned int icrs0 = colind[iblk];
+    const unsigned int icrs1 = colind[iblk+1];
+    for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
+      const unsigned int jblk0 = rowptr[icrs];
+      const unsigned int i0 = iblk*4;
+      const unsigned int j0 = jblk0*4;
+      const unsigned int k0 = icrs*16;
+      y[i0+0] += alpha*(vcrs[k0+ 0]*x[j0+0]+vcrs[k0+ 1]*x[j0+1]+vcrs[k0+ 2]*x[j0+2]+vcrs[k0+ 3]*x[j0+3]);
+      y[i0+1] += alpha*(vcrs[k0+ 4]*x[j0+0]+vcrs[k0+ 5]*x[j0+1]+vcrs[k0+ 6]*x[j0+2]+vcrs[k0+ 7]*x[j0+3]);
+      y[i0+2] += alpha*(vcrs[k0+ 8]*x[j0+0]+vcrs[k0+ 9]*x[j0+1]+vcrs[k0+10]*x[j0+2]+vcrs[k0+11]*x[j0+3]);
+      y[i0+3] += alpha*(vcrs[k0+12]*x[j0+0]+vcrs[k0+13]*x[j0+1]+vcrs[k0+14]*x[j0+2]+vcrs[k0+15]*x[j0+3]);
+    }
+    {
+      const unsigned int i0 = iblk*4;
+      const unsigned int k0 = iblk*16;
+      y[i0+0] += alpha*(vdia[k0+ 0]*x[i0+0]+vdia[k0+ 1]*x[i0+1]+vdia[k0+ 2]*x[i0+2]+vdia[k0+ 3]*x[i0+3]);
+      y[i0+1] += alpha*(vdia[k0+ 4]*x[i0+0]+vdia[k0+ 5]*x[i0+1]+vdia[k0+ 6]*x[i0+2]+vdia[k0+ 7]*x[i0+3]);
+      y[i0+2] += alpha*(vdia[k0+ 8]*x[i0+0]+vdia[k0+ 9]*x[i0+1]+vdia[k0+10]*x[i0+2]+vdia[k0+11]*x[i0+3]);
+      y[i0+3] += alpha*(vdia[k0+12]*x[i0+0]+vdia[k0+13]*x[i0+1]+vdia[k0+14]*x[i0+2]+vdia[k0+15]*x[i0+3]);
+    }
+  }
+}
+
 }
 }
 
@@ -77,108 +191,29 @@ void delfem2::CMatrixSparse<T>::MatVec(
 {
   const unsigned int ndofcol = nrowdim*nrowblk;
   for(unsigned int i=0;i<ndofcol;++i){ y[i] *= beta; }
-  const unsigned int blksize = nrowdim*ncoldim;
   // --------
 	if( nrowdim == 1 && ncoldim == 1 ){
-		const T* vcrs  = valCrs.data();
-		const T* vdia = valDia.data();
-		const unsigned int* colind = colInd.data();
-		const unsigned int* rowptr = rowPtr.data();
-		//
-		for(unsigned int iblk=0;iblk<nrowblk;iblk++){
-			T& vy = y[iblk];
-			const unsigned int colind0 = colind[iblk];
-			const unsigned int colind1 = colind[iblk+1];
-			for(unsigned int icrs=colind0;icrs<colind1;icrs++){
-				assert( icrs < rowPtr.size() );
-				const unsigned int jblk0 = rowptr[icrs];
-				assert( jblk0 < ncolblk );
-				vy += alpha * vcrs[icrs] * x[jblk0];
-			}
-			vy += alpha * vdia[iblk] * x[iblk];
-		}
+	  mats::MatVec_MatSparseCRS_Blk11(
+	      y,
+	      alpha, nrowblk, valCrs.data(), valDia.data(), colInd.data(), rowPtr.data(), x);
 	}
 	else if( nrowdim == 2 && ncoldim == 2 ){
-		const T* vcrs  = valCrs.data();
-		const T* vdia = valDia.data();
-		const unsigned int* colind = colInd.data();
-		const unsigned int* rowptr = rowPtr.data();
-		//
-		for(unsigned int iblk=0;iblk<nrowblk;iblk++){
-			const unsigned int icrs0 = colind[iblk];
-			const unsigned int icrs1 = colind[iblk+1];
-			for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
-				assert( icrs < rowPtr.size() );
-				const unsigned int jblk0 = rowptr[icrs];
-				assert( jblk0 < ncolblk );
-				y[iblk*2+0] += alpha * ( vcrs[icrs*4  ]*x[jblk0*2+0] + vcrs[icrs*4+1]*x[jblk0*2+1] );
-				y[iblk*2+1] += alpha * ( vcrs[icrs*4+2]*x[jblk0*2+0] + vcrs[icrs*4+3]*x[jblk0*2+1] );
-			}
-			y[iblk*2+0] += alpha * ( vdia[iblk*4+0]*x[iblk*2+0] + vdia[iblk*4+1]*x[iblk*2+1] );
-			y[iblk*2+1] += alpha * ( vdia[iblk*4+2]*x[iblk*2+0] + vdia[iblk*4+3]*x[iblk*2+1] );
-		}
+    mats::MatVec_MatSparseCRS_Blk22(
+        y,
+        alpha, nrowblk, valCrs.data(), valDia.data(), colInd.data(), rowPtr.data(), x);
 	}
 	else if( nrowdim == 3 && ncoldim == 3 ){
-		const T* vcrs  = valCrs.data();
-		const T* vdia = valDia.data();
-		const unsigned int* colind = colInd.data();
-		const unsigned int* rowptr = rowPtr.data();
-		//
-		for(unsigned int iblk=0;iblk<nrowblk;iblk++){
-			const unsigned int icrs0 = colind[iblk];
-			const unsigned int icrs1 = colind[iblk+1];
-			for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
-				assert( icrs < rowPtr.size() );
-				const unsigned int jblk0 = rowptr[icrs];
-				assert( jblk0 < ncolblk );
-        const unsigned int i0 = iblk*3;
-        const unsigned int j0 = jblk0*3;
-        const unsigned int k0 = icrs*9;
-				y[i0+0] += alpha*(vcrs[k0+0]*x[j0+0]+vcrs[k0+1]*x[j0+1]+vcrs[k0+2]*x[j0+2]);
-				y[i0+1] += alpha*(vcrs[k0+3]*x[j0+0]+vcrs[k0+4]*x[j0+1]+vcrs[k0+5]*x[j0+2]);
-				y[i0+2] += alpha*(vcrs[k0+6]*x[j0+0]+vcrs[k0+7]*x[j0+1]+vcrs[k0+8]*x[j0+2]);
-			}
-      {
-        const unsigned int i0 = iblk*3;
-        const unsigned int k0 = iblk*9;
-        y[i0+0] += alpha*(vdia[k0+0]*x[i0+0]+vdia[k0+1]*x[i0+1]+vdia[k0+2]*x[i0+2]);
-        y[i0+1] += alpha*(vdia[k0+3]*x[i0+0]+vdia[k0+4]*x[i0+1]+vdia[k0+5]*x[i0+2]);
-        y[i0+2] += alpha*(vdia[k0+6]*x[i0+0]+vdia[k0+7]*x[i0+1]+vdia[k0+8]*x[i0+2]);
-      }
-		}
+    mats::MatVec_MatSparseCRS_Blk33(
+        y,
+        alpha, nrowblk, valCrs.data(), valDia.data(), colInd.data(), rowPtr.data(), x);
   }
 	else if( nrowdim == 4 && ncoldim == 4 ){
-    const T* vcrs  = valCrs.data();
-    const T* vdia = valDia.data();
-    const unsigned int* colind = colInd.data();
-    const unsigned int* rowptr = rowPtr.data();
-    //
-    for(unsigned int iblk=0;iblk<nrowblk;iblk++){
-      const unsigned int icrs0 = colind[iblk];
-      const unsigned int icrs1 = colind[iblk+1];
-      for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
-        assert( icrs < rowPtr.size() );
-        const unsigned int jblk0 = rowptr[icrs];
-        assert( jblk0 < ncolblk );
-        const unsigned int i0 = iblk*4;
-        const unsigned int j0 = jblk0*4;
-        const unsigned int k0 = icrs*16;
-        y[i0+0] += alpha*(vcrs[k0+ 0]*x[j0+0]+vcrs[k0+ 1]*x[j0+1]+vcrs[k0+ 2]*x[j0+2]+vcrs[k0+ 3]*x[j0+3]);
-        y[i0+1] += alpha*(vcrs[k0+ 4]*x[j0+0]+vcrs[k0+ 5]*x[j0+1]+vcrs[k0+ 6]*x[j0+2]+vcrs[k0+ 7]*x[j0+3]);
-        y[i0+2] += alpha*(vcrs[k0+ 8]*x[j0+0]+vcrs[k0+ 9]*x[j0+1]+vcrs[k0+10]*x[j0+2]+vcrs[k0+11]*x[j0+3]);
-        y[i0+3] += alpha*(vcrs[k0+12]*x[j0+0]+vcrs[k0+13]*x[j0+1]+vcrs[k0+14]*x[j0+2]+vcrs[k0+15]*x[j0+3]);
-      }
-      {
-        const unsigned int i0 = iblk*4;
-        const unsigned int k0 = iblk*16;
-        y[i0+0] += alpha*(vdia[k0+ 0]*x[i0+0]+vdia[k0+ 1]*x[i0+1]+vdia[k0+ 2]*x[i0+2]+vdia[k0+ 3]*x[i0+3]);
-        y[i0+1] += alpha*(vdia[k0+ 4]*x[i0+0]+vdia[k0+ 5]*x[i0+1]+vdia[k0+ 6]*x[i0+2]+vdia[k0+ 7]*x[i0+3]);
-        y[i0+2] += alpha*(vdia[k0+ 8]*x[i0+0]+vdia[k0+ 9]*x[i0+1]+vdia[k0+10]*x[i0+2]+vdia[k0+11]*x[i0+3]);
-        y[i0+3] += alpha*(vdia[k0+12]*x[i0+0]+vdia[k0+13]*x[i0+1]+vdia[k0+14]*x[i0+2]+vdia[k0+15]*x[i0+3]);
-      }
-    }
+    mats::MatVec_MatSparseCRS_Blk44(
+        y,
+        alpha, nrowblk, valCrs.data(), valDia.data(), colInd.data(), rowPtr.data(), x);
   }
 	else{
+    const unsigned int blksize = nrowdim*ncoldim;
 		const T* vcrs  = valCrs.data();
 		const T* vdia = valDia.data();
 		const unsigned int* colind = colInd.data();
@@ -277,119 +312,6 @@ void delfem2::CMatrixSparse<T>::MatTVec(
   const unsigned int ndofrow = ncoldim*ncolblk;
   for(unsigned int i=0;i<ndofrow;++i){ y[i] *= beta; }
   const unsigned int blksize = nrowdim*ncoldim;
-  // ---------
-  /*
-  if( len_col == 1 && len_row == 1 ){
-    const T* vcrs  = valCrs.data();
-    const T* vdia = valDia.data();
-    const unsigned int* colind = colInd.data();
-    const unsigned int* rowptr = rowPtr.data();
-    //
-    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-      T& vy = y[iblk];
-      vy *= beta;
-      const unsigned int colind0 = colind[iblk];
-      const unsigned int colind1 = colind[iblk+1];
-      for(unsigned int icrs=colind0;icrs<colind1;icrs++){
-        assert( icrs < rowPtr.size() );
-        const unsigned int jblk0 = rowptr[icrs];
-        assert( jblk0 < nblk_row );
-        vy += alpha * vcrs[icrs] * x[jblk0];
-      }
-      vy += alpha * vdia[iblk] * x[iblk];
-    }
-  }
-  else if( len_col == 2 && len_row == 2 ){
-    const T* vcrs  = valCrs.data();
-    const T* vdia = valDia.data();
-    const unsigned int* colind = colInd.data();
-    const unsigned int* rowptr = rowPtr.data();
-    //
-    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-      y[iblk*2+0] *= beta;
-      y[iblk*2+1] *= beta;
-      const unsigned int icrs0 = colind[iblk];
-      const unsigned int icrs1 = colind[iblk+1];
-      for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
-        assert( icrs < rowPtr.size() );
-        const unsigned int jblk0 = rowptr[icrs];
-        assert( jblk0 < nblk_row );
-        y[iblk*2+0] += alpha * ( vcrs[icrs*4  ]*x[jblk0*2+0] + vcrs[icrs*4+1]*x[jblk0*2+1] );
-        y[iblk*2+1] += alpha * ( vcrs[icrs*4+2]*x[jblk0*2+0] + vcrs[icrs*4+3]*x[jblk0*2+1] );
-      }
-      y[iblk*2+0] += alpha * ( vdia[iblk*4+0]*x[iblk*2+0] + vdia[iblk*4+1]*x[iblk*2+1] );
-      y[iblk*2+1] += alpha * ( vdia[iblk*4+2]*x[iblk*2+0] + vdia[iblk*4+3]*x[iblk*2+1] );
-    }
-  }
-  else if( len_col == 3 && len_row == 3 ){
-    const T* vcrs  = valCrs.data();
-    const T* vdia = valDia.data();
-    const unsigned int* colind = colInd.data();
-    const unsigned int* rowptr = rowPtr.data();
-    //
-    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-      y[iblk*3+0] *= beta;
-      y[iblk*3+1] *= beta;
-      y[iblk*3+2] *= beta;
-      const unsigned int icrs0 = colind[iblk];
-      const unsigned int icrs1 = colind[iblk+1];
-      for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
-        assert( icrs < rowPtr.size() );
-        const unsigned int jblk0 = rowptr[icrs];
-        assert( jblk0 < nblk_row );
-        const unsigned int i0 = iblk*3;
-        const unsigned int j0 = jblk0*3;
-        const unsigned int k0 = icrs*9;
-        y[i0+0] += alpha*(vcrs[k0+0]*x[j0+0]+vcrs[k0+1]*x[j0+1]+vcrs[k0+2]*x[j0+2]);
-        y[i0+1] += alpha*(vcrs[k0+3]*x[j0+0]+vcrs[k0+4]*x[j0+1]+vcrs[k0+5]*x[j0+2]);
-        y[i0+2] += alpha*(vcrs[k0+6]*x[j0+0]+vcrs[k0+7]*x[j0+1]+vcrs[k0+8]*x[j0+2]);
-      }
-      {
-        const unsigned int i0 = iblk*3;
-        const unsigned int k0 = iblk*9;
-        y[i0+0] += alpha*(vdia[k0+0]*x[i0+0]+vdia[k0+1]*x[i0+1]+vdia[k0+2]*x[i0+2]);
-        y[i0+1] += alpha*(vdia[k0+3]*x[i0+0]+vdia[k0+4]*x[i0+1]+vdia[k0+5]*x[i0+2]);
-        y[i0+2] += alpha*(vdia[k0+6]*x[i0+0]+vdia[k0+7]*x[i0+1]+vdia[k0+8]*x[i0+2]);
-      }
-    }
-  }
-  else if( len_col == 4 && len_row == 4 ){
-    const T* vcrs  = valCrs.data();
-    const T* vdia = valDia.data();
-    const unsigned int* colind = colInd.data();
-    const unsigned int* rowptr = rowPtr.data();
-    //
-    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-      y[iblk*4+0] *= beta;
-      y[iblk*4+1] *= beta;
-      y[iblk*4+2] *= beta;
-      y[iblk*4+3] *= beta;
-      const unsigned int icrs0 = colind[iblk];
-      const unsigned int icrs1 = colind[iblk+1];
-      for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
-        assert( icrs < rowPtr.size() );
-        const unsigned int jblk0 = rowptr[icrs];
-        assert( jblk0 < nblk_row );
-        const unsigned int i0 = iblk*4;
-        const unsigned int j0 = jblk0*4;
-        const unsigned int k0 = icrs*16;
-        y[i0+0] += alpha*(vcrs[k0+ 0]*x[j0+0]+vcrs[k0+ 1]*x[j0+1]+vcrs[k0+ 2]*x[j0+2]+vcrs[k0+ 3]*x[j0+3]);
-        y[i0+1] += alpha*(vcrs[k0+ 4]*x[j0+0]+vcrs[k0+ 5]*x[j0+1]+vcrs[k0+ 6]*x[j0+2]+vcrs[k0+ 7]*x[j0+3]);
-        y[i0+2] += alpha*(vcrs[k0+ 8]*x[j0+0]+vcrs[k0+ 9]*x[j0+1]+vcrs[k0+10]*x[j0+2]+vcrs[k0+11]*x[j0+3]);
-        y[i0+3] += alpha*(vcrs[k0+12]*x[j0+0]+vcrs[k0+13]*x[j0+1]+vcrs[k0+14]*x[j0+2]+vcrs[k0+15]*x[j0+3]);
-      }
-      {
-        const unsigned int i0 = iblk*4;
-        const unsigned int k0 = iblk*16;
-        y[i0+0] += alpha*(vdia[k0+ 0]*x[i0+0]+vdia[k0+ 1]*x[i0+1]+vdia[k0+ 2]*x[i0+2]+vdia[k0+ 3]*x[i0+3]);
-        y[i0+1] += alpha*(vdia[k0+ 4]*x[i0+0]+vdia[k0+ 5]*x[i0+1]+vdia[k0+ 6]*x[i0+2]+vdia[k0+ 7]*x[i0+3]);
-        y[i0+2] += alpha*(vdia[k0+ 8]*x[i0+0]+vdia[k0+ 9]*x[i0+1]+vdia[k0+10]*x[i0+2]+vdia[k0+11]*x[i0+3]);
-        y[i0+3] += alpha*(vdia[k0+12]*x[i0+0]+vdia[k0+13]*x[i0+1]+vdia[k0+14]*x[i0+2]+vdia[k0+15]*x[i0+3]);
-      }
-    }
-  }
-  else{
-   */
   {
     const T* vcrs  = valCrs.data();
     const T* vdia = valDia.data();

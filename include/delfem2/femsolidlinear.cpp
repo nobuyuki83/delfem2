@@ -353,8 +353,8 @@ DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D(
     const double P[4][3],
     bool is_initial_iter)
 {
-  const int nno = 4;
-  const int ndim = 3;
+  constexpr int nno = 4;
+  constexpr int ndim = 3;
   
   const double vol = femutil::TetVolume3D(P[0],P[1],P[2],P[3]);
   double dldx[nno][ndim];		// spatial derivative of linear shape function
@@ -369,8 +369,9 @@ DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D(
                         vol, dldx, false, 3);
   
   double eMmat[nno][nno][ndim][ndim];
-  ddW_MassConsistentVal3D_Tet3D(&eMmat[0][0][0][0],
-                                rho,vol,false,3);
+  ddW_MassConsistentVal3D_Tet3D(
+      &eMmat[0][0][0][0],
+      rho,vol,false,3);
   
   // calc external force
   for(int ino=0;ino<nno;ino++){
@@ -429,8 +430,8 @@ DFM2_INLINE void delfem2::EMat_SolidStaticLinear_Tri2D(
     const double disp[3][2],
     const double coords[3][2])
 {
-  const int nno = 3;
-  const int ndim = 2;
+  constexpr int nno = 3;
+  constexpr int ndim = 2;
   
   const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[nno][ndim], zero_order_term[nno];
@@ -480,8 +481,8 @@ DFM2_INLINE void delfem2::EMat_SolidDynamicLinear_Tri2D(
     const double coords[3][2],
     bool is_initial)
 {
-  const int nno = 3;
-  const int ndim = 2;
+  constexpr int nno = 3;
+  constexpr int ndim = 2;
   
   const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[nno][ndim];   // spatial derivative of linear shape function
