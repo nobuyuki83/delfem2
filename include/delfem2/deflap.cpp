@@ -20,7 +20,7 @@ namespace defarap {
 void SetLinSys_LaplaceGraph_MeshTri3
 (CMatrixSparse<double>& mat_A)
 {
-  mat_A.SetZero();
+  mat_A.setZero();
   for(unsigned int ip=0;ip<mat_A.nrowblk;++ip){
     const double dn = (double)(mat_A.colInd[ip+1] - mat_A.colInd[ip]);
     for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
@@ -261,7 +261,7 @@ void delfem2::CDef_LaplacianLinear::Init(
   }
     
   std::vector<unsigned int> tmp_buffer;
-  Mat.SetZero();
+  Mat.setZero();
   for(unsigned int ip=0;ip<np;++ip){
     std::vector<unsigned int> aIP;
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
@@ -455,7 +455,7 @@ void delfem2::CDef_LaplacianLinearDegenerate::Init(
   }
 
   std::vector<unsigned int> tmp_buffer;
-  Mat.SetZero();
+  Mat.setZero();
   for(unsigned int ip=0;ip<np;++ip){
     std::vector<unsigned int> aIP;
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){

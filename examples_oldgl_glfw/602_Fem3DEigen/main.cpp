@@ -197,7 +197,7 @@ void InitializeProblem_ShellEigenPB()
   double myu = 1.0;
   double lambda = 1.0;
   double rho = 1.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   aMode.assign(nDoF, 0.0);
   aTmp0.assign(nDoF, 0.0);
   double gravity[3] = {0,0,0};

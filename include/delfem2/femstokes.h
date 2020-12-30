@@ -190,10 +190,10 @@ void MergeLinSys_Stokes3D_Static(
     const std::vector<double>& aVal,
     const std::vector<double>& aVelo)
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
   //
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (int itet = 0; itet<(int)aTet.size()/4; ++itet){
@@ -238,10 +238,10 @@ void MergeLinSys_Stokes3D_Dynamic(
     const std::vector<double>& aVal,
     const std::vector<double>& aVelo)
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
   //
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   std::vector<unsigned int> tmp_buffer(np, -1);
   for (int iel = 0; iel<(int)aTet.size()/4; ++iel){

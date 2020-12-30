@@ -154,11 +154,6 @@ void drawCurve
 
 // ------------------------------------------
 
-double len = 1.1;
-std::vector<unsigned int> aTri1;
-std::vector<double> aXY1;
-std::vector<int> loopIP_ind, loopIP; // vtx on loop
-
 std::vector<double> aVal;
 std::vector<double> aVelo;
 std::vector<double> aAcc;
@@ -166,9 +161,7 @@ std::vector<int> aBCFlag; // master slave flag
 std::vector<unsigned int> aMSFlag; // master slave flag
 
 // TODO: make variables non-global
-dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
-dfm2::CPreconditionerILU<double> ilu_A;
 
 double dt_timestep = 0.01;
 double gamma_newmark = 0.6;
@@ -176,7 +169,13 @@ double beta_newmark = 0.36;
 
 // ------------------------------
 
-void MakeMesh(){
+void MakeMesh(
+    std::vector<double>& aXY1,
+    std::vector<unsigned int>& aTri1,
+    std::vector<int>& loopIP_ind,
+    std::vector<int>& loopIP,
+    double len)
+{
   std::vector<double> aCV0; MakeRandomCV(8, aCV0); // current cv
   std::vector<double> aXY0;
   MakeCurveSpline(aCV0, aXY0,20); // current curve
@@ -214,18 +213,25 @@ void MakeMesh(){
       dfm2::CInputTriangulation_Uniform param(1.0);
       std::vector<int> aFlgPnt(aPo2D.size());
       std::vector<unsigned int> aFlgTri(aETri.size(),0);
-      MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
-                    aVec2.size(),0,elen, param);
+      MeshingInside(
+          aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
+          aVec2.size(),0,elen, param);
     }
-    MeshTri2D_Export(aXY1,aTri1,
-                     aVec2,aETri);
+    MeshTri2D_Export(
+        aXY1,aTri1,
+        aVec2,aETri);
   }
   std::cout<<"  ntri;"<<aTri1.size()/3<<"  nXY:"<<aXY1.size()/2<<std::endl;
 }
 
 // ----------------------------------
 // iproblem: 0, 1
-void InitializeProblem_Scalar()
+void InitializeProblem_Scalar(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1,
+    double len)
 {
   const unsigned int np = aXY1.size()/2;
   aBCFlag.assign(np, 0);
@@ -257,14 +263,18 @@ void InitializeProblem_Scalar()
 
 // -----------------------------
 // iproblem: 0
-void SolveProblem_Poisson()
+void SolveProblem_Poisson(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
 {
   const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np;
   // -----------------------
   const double alpha = 1.0;
   const double source = 1.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_Poission_MeshTri2D(
       mat_A, vec_b.data(),
@@ -288,12 +298,8 @@ void SolveProblem_Poisson()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
     Solve_CG(
-        vr, vu, vs, vt,
+        dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A);
   }
   // ----------------
@@ -303,7 +309,11 @@ void SolveProblem_Poisson()
 
 // -------------------------------
 // iproblem: 1
-void SolveProblem_Diffusion()
+void SolveProblem_Diffusion(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
 {
   const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np;
@@ -311,7 +321,7 @@ void SolveProblem_Diffusion()
   const double alpha = 1.0;
   const double rho = 1.0;
   const double source = 1.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_Diffusion_MeshTri2D(
       mat_A, vec_b.data(),
@@ -349,7 +359,12 @@ void SolveProblem_Diffusion()
 
 // -------------------------------
 // iproblem: 2, 3
-void InitializeProblem_Solid()
+void InitializeProblem_Solid(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1,
+    double len)
 {
   const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np*2;
@@ -404,7 +419,11 @@ void InitializeProblem_Solid()
 
 // -------------------------
 // iproblem: 2
-void SolveProblem_LinearSolid_Static()
+void SolveProblem_LinearSolid_Static(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
 {
   const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np*2;
@@ -414,7 +433,7 @@ void SolveProblem_LinearSolid_Static()
   double rho = 1.0;
   double g_x = 0.0;
   double g_y = -3.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
       mat_A,vec_b.data(),
@@ -455,17 +474,21 @@ void SolveProblem_LinearSolid_Static()
 
 // -----------------------------------
 // iproblem: 3
-void SolveProblem_LinearSolid_Dynamic()
+void SolveProblem_LinearSolid_Dynamic(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np*2;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np*2;
   // ------------------
   double myu = 10.0;
   double lambda = 10.0;
   double rho = 1.0;
   double g_x = 0.0;
   double g_y = -3.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
       mat_A,vec_b.data(),
@@ -489,12 +512,8 @@ void SolveProblem_LinearSolid_Dynamic()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
     Solve_PCG(
-        vr,vu,vs,vt,
+        dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
         conv_ratio,iteration, mat_A,ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
@@ -519,7 +538,14 @@ void SolveProblem_LinearSolid_Dynamic()
 
 // -----------------------------
 // iproblem: 4, 5, 6
-void InitializeProblem_Fluid()
+void InitializeProblem_Fluid(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1,
+    const std::vector<int>& loopIP_ind,
+    const std::vector<int>& loopIP,
+    double len)
 {
   // set boundary condition
   const int np = (int)aXY1.size()/2;
@@ -568,7 +594,14 @@ void InitializeProblem_Fluid()
 
 // ---------------------------
 // iproblem: 7,8,9
-void InitializeProblem_Fluid2()
+void InitializeProblem_Fluid2(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1,
+    const std::vector<int>& loopIP_ind,
+    const std::vector<int>& loopIP,
+    double len)
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np*3;
@@ -638,7 +671,11 @@ void InitializeProblem_Fluid2()
 
 // -----------------------------------
 // iproblem: 4
-void SolveProblem_Stokes_Static()
+void SolveProblem_Stokes_Static(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
 {
   const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np*3;
@@ -646,13 +683,14 @@ void SolveProblem_Stokes_Static()
   double myu = 1.0;
   double g_x = 0.0;
   double g_y = -0.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_StokesStatic2D( mat_A,vec_b.data(),
-                                   myu,g_x,g_y,
-                                   aXY1.data(), aXY1.size()/2,
-                                   aTri1.data(), aTri1.size()/3,
-                                   aVal.data());
+  dfm2::MergeLinSys_StokesStatic2D(
+      mat_A,vec_b.data(),
+      myu,g_x,g_y,
+      aXY1.data(), aXY1.size()/2,
+      aTri1.data(), aTri1.size()/3,
+      aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
@@ -670,11 +708,11 @@ void SolveProblem_Stokes_Static()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    Solve_PCG(vr,vu,vs,vt,
+    Solve_PCG(
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
@@ -692,7 +730,11 @@ void SolveProblem_Stokes_Static()
 
 // ----------------------------------
 // iprob:5
-void SolveProblem_Stokes_Dynamic()
+void SolveProblem_Stokes_Dynamic(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
 {
   const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np*3;
@@ -701,7 +743,7 @@ void SolveProblem_Stokes_Dynamic()
   double rho = 10;
   double g_x = 0.0;
   double g_y = -0.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_StokesDynamic2D(
       mat_A,vec_b.data(),
@@ -728,11 +770,7 @@ void SolveProblem_Stokes_Dynamic()
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
-    Solve_PCG(vr,vu,vs,vt,
+    Solve_PCG(dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
@@ -755,7 +793,11 @@ void SolveProblem_Stokes_Dynamic()
 
 // ------------------------
 // iprob: 6
-void SolveProblem_NavierStokes_Dynamic()
+void SolveProblem_NavierStokes_Dynamic(
+    dfm2::CMatrixSparse<double>& mat_A,
+    dfm2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
 {
   const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np*3;
@@ -764,14 +806,15 @@ void SolveProblem_NavierStokes_Dynamic()
   double rho = 1;
   double g_x = 0.0;
   double g_y = -0.0;
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_NavierStokes2D(mat_A,vec_b.data(),
-                                   myu,rho,g_x,g_y,
-                                   dt_timestep,gamma_newmark,
-                                   aXY1.data(), aXY1.size()/2,
-                                   aTri1.data(), aTri1.size()/3,
-                                   aVal.data(),aVelo.data());
+  dfm2::MergeLinSys_NavierStokes2D(
+      mat_A,vec_b.data(),
+      myu,rho,g_x,g_y,
+      dt_timestep,gamma_newmark,
+      aXY1.data(), aXY1.size()/2,
+      aTri1.data(), aTri1.size()/3,
+      aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
@@ -807,14 +850,18 @@ void SolveProblem_NavierStokes_Dynamic()
   }
 }
 
-void DrawScalar(){
+void DrawScalar(
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
+{
   ::glDisable(GL_LIGHTING);
   {
     std::vector< std::pair<double,delfem2::CColor> > colorMap;
     ColorMap_BlueGrayRed(colorMap, 0, +0.1);
-    delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
-                                            aTri1.data(),aTri1.size()/3,
-                                            aVal.data(),1,colorMap);
+    delfem2::opengl::DrawMeshTri2D_ScalarP1(
+        aXY1.data(),aXY1.size()/2,
+        aTri1.data(),aTri1.size()/3,
+        aVal.data(),1,colorMap);
   }
   ::glColor3d(0,0,0);
   delfem2::opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
@@ -823,12 +870,16 @@ void DrawScalar(){
   delfem2::opengl::DrawPoints2d_Points(aXY1);
 }
 
-void DrawVelocityField(){
+void DrawVelocityField(
+    const std::vector<double>& aXY1,
+    const std::vector<unsigned int>& aTri1)
+{
   std::vector< std::pair<double,delfem2::CColor> > colorMap;
   delfem2::ColorMap_BlueGrayRed(colorMap, -30, +30);
-  delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
-                                          aTri1.data(),aTri1.size()/3,
-                                          aVal.data()+2,3,colorMap);
+  delfem2::opengl::DrawMeshTri2D_ScalarP1(
+      aXY1.data(),aXY1.size()/2,
+      aTri1.data(),aTri1.size()/3,
+      aVal.data()+2,3,colorMap);
   ::glColor3d(0,0,0);
   delfem2::opengl::DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2,
       aVal.data(),3,0, 0.1);
@@ -846,154 +897,196 @@ int main(int argc,char* argv[])
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   
-  while (true){
-    MakeMesh();
+  for(unsigned int itr=0;itr<10;++itr){
+    std::vector<unsigned int> aTri1;
+    std::vector<double> aXY1;
+    std::vector<int> loopIP_ind, loopIP; // vtx on loop
+    double len = 1.1;
+    MakeMesh(aXY1,aTri1,loopIP_ind,loopIP,
+        len);
     int iframe = 0;
     const unsigned int np = aXY1.size()/2;
     // ---------------------------
     glfwSetWindowTitle(viewer.window, "Poisson");
     aVal.assign(np, 0.0);
-    InitializeProblem_Scalar();
-    SolveProblem_Poisson();
+    dfm2::CMatrixSparse<double> mat_A;
+    dfm2::CPreconditionerILU<double> ilu_A;
+    InitializeProblem_Scalar(
+        mat_A,ilu_A,
+        aXY1,aTri1,len);
+    //
+    SolveProblem_Poisson(
+        mat_A,ilu_A,
+        aXY1,aTri1);
     for(;iframe<50;++iframe){ // poisson
       viewer.DrawBegin_oldGL();
-      DrawScalar();
+      DrawScalar(aXY1,aTri1);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // ---------------------------
     glfwSetWindowTitle(viewer.window, "Diffusion");
     aVal.assign(np, 0.0);
     aVelo.assign(np, 0.0);
-    InitializeProblem_Scalar();
-    SolveProblem_Diffusion();
+    InitializeProblem_Scalar(
+        mat_A,ilu_A,
+        aXY1,aTri1,len);
+    SolveProblem_Diffusion(
+        mat_A,ilu_A,
+        aXY1,aTri1);
     for(;iframe<150;++iframe){
-      SolveProblem_Diffusion();
+      SolveProblem_Diffusion(
+          mat_A,ilu_A,
+          aXY1,aTri1);
       // -------
       viewer.DrawBegin_oldGL();
-      DrawScalar();
+      DrawScalar(aXY1,aTri1);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // ---------------------------
     glfwSetWindowTitle(viewer.window, "Linear Elastic Static");
     aVal.assign(np*2, 0.0);
-    InitializeProblem_Solid();
-    SolveProblem_LinearSolid_Static();
+    InitializeProblem_Solid(
+        mat_A,ilu_A,
+        aXY1,aTri1,len);
+    SolveProblem_LinearSolid_Static(
+        mat_A,ilu_A,
+        aXY1,aTri1);
     for(;iframe<200;++iframe){
       viewer.DrawBegin_oldGL();
-      delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
-                                                aTri1.data(), aTri1.size()/3,
-                                                aVal.data(), 2);
+      delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
+          aXY1.data(), aXY1.size()/2,
+          aTri1.data(), aTri1.size()/3,
+          aVal.data(), 2);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // ---------------------------
     glfwSetWindowTitle(viewer.window, "Linear Elastic Dynamic");
     aVal.assign(np*2, 0.0);
     aVelo.assign(np*2, 0.0);
     aAcc.assign(np*2, 0.0);
-    InitializeProblem_Solid();
+    InitializeProblem_Solid(
+        mat_A,ilu_A,
+        aXY1,aTri1,len);
     for(;iframe<300;++iframe){
-      SolveProblem_LinearSolid_Dynamic();
-      //
+      SolveProblem_LinearSolid_Dynamic(
+          mat_A,ilu_A,
+          aXY1,aTri1);
       viewer.DrawBegin_oldGL();
-      delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
-                                                aTri1.data(), aTri1.size()/3,
-                                                aVal.data(), 2);
+      delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
+          aXY1.data(), aXY1.size()/2,
+          aTri1.data(), aTri1.size()/3,
+          aVal.data(), 2);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // ----------------------------
     glfwSetWindowTitle(viewer.window, "Stokes Static");
     aVal.assign(np*3, 0.0);
-    InitializeProblem_Fluid();
-    SolveProblem_Stokes_Static();
+    InitializeProblem_Fluid(
+        mat_A,ilu_A,
+        aXY1,aTri1,loopIP_ind,loopIP,len);
+    SolveProblem_Stokes_Static(
+        mat_A,ilu_A,
+        aXY1,aTri1);
     for(;iframe<350;++iframe){
       viewer.DrawBegin_oldGL();
-      DrawVelocityField();
+      DrawVelocityField(aXY1,aTri1);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // ----------------------------
     glfwSetWindowTitle(viewer.window, "Stokes Dynamic");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
-    InitializeProblem_Fluid();
+    InitializeProblem_Fluid(
+        mat_A,ilu_A,
+        aXY1,aTri1,loopIP_ind,loopIP,len);
     for(;iframe<450;++iframe){
-      SolveProblem_Stokes_Dynamic();
-      //
+      SolveProblem_Stokes_Dynamic(
+          mat_A,ilu_A,
+          aXY1,aTri1);
       viewer.DrawBegin_oldGL();
-      DrawVelocityField();
+      DrawVelocityField(aXY1,aTri1);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // -----------------------------
     glfwSetWindowTitle(viewer.window, "Navier-Stokes");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
-    InitializeProblem_Fluid();
+    InitializeProblem_Fluid(
+        mat_A,ilu_A,
+        aXY1,aTri1,loopIP_ind,loopIP,len);
     for(;iframe<550;++iframe){
-      SolveProblem_NavierStokes_Dynamic();
-      //
+      SolveProblem_NavierStokes_Dynamic(
+          mat_A,ilu_A,
+          aXY1,aTri1);
       viewer.DrawBegin_oldGL();
-      DrawVelocityField();
+      DrawVelocityField(aXY1,aTri1);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // ----------------------------
     glfwSetWindowTitle(viewer.window, "Stokes Static");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
-    InitializeProblem_Fluid2();
-    SolveProblem_Stokes_Static();
+    InitializeProblem_Fluid2(
+        mat_A,ilu_A,
+        aXY1,aTri1,loopIP_ind,loopIP,len);
+    SolveProblem_Stokes_Static(
+        mat_A,ilu_A,
+        aXY1,aTri1);
     for(;iframe<600;++iframe){
       viewer.DrawBegin_oldGL();
-      DrawVelocityField();
+      DrawVelocityField(aXY1,aTri1);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // ----------------------------
     glfwSetWindowTitle(viewer.window, "Stokes Dynamic");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
-    InitializeProblem_Fluid2();
+    InitializeProblem_Fluid2(
+        mat_A,ilu_A,
+        aXY1,aTri1,loopIP_ind,loopIP,len);
     for(;iframe<700;++iframe){
-      SolveProblem_Stokes_Dynamic();
-      //
+      SolveProblem_Stokes_Dynamic(mat_A,ilu_A,aXY1,aTri1);
       viewer.DrawBegin_oldGL();
-      DrawVelocityField();
+      DrawVelocityField(aXY1,aTri1);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
     // -----------------------------
     glfwSetWindowTitle(viewer.window, "Navier-Stokes");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
-    InitializeProblem_Fluid2();
-    SolveProblem_NavierStokes_Dynamic();
+    InitializeProblem_Fluid2(
+        mat_A,ilu_A,
+        aXY1,aTri1,loopIP_ind,loopIP,len);
+    SolveProblem_NavierStokes_Dynamic(
+        mat_A,ilu_A,
+        aXY1,aTri1);
     for(;iframe<800;++iframe){
-      SolveProblem_NavierStokes_Dynamic();
-      //
+      SolveProblem_NavierStokes_Dynamic(
+          mat_A,ilu_A,
+          aXY1,aTri1);
       viewer.DrawBegin_oldGL();
-      DrawVelocityField();
+      DrawVelocityField(aXY1,aTri1);
       viewer.SwapBuffers();
       glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      viewer.ExitIfClosed();
     }
   }
-  
-CLOSE:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }

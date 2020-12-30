@@ -96,8 +96,10 @@ void ShowEigen_SolidLinear_MeshTri2(
     double disp[3][2]; dfm2::FetchData<3,2>(disp,aIp,aDisp.data());
     double coord[3][2]; dfm2::FetchData<3,2>(coord,aIp,aXY.data());
     double emat[3][3][2][2], eres[3][2];
-    dfm2::EMat_SolidStaticLinear_Tri2D(eres,emat,
-        1,1,0,0,0,disp,coord);
+    dfm2::EMat_SolidStaticLinear_Tri2D(
+        eres,emat,
+        1,1,0,0,0,
+        disp,coord);
     Merge<3,3,2,2,double>(A,aIp,aIp,emat,tmp_buffer);
   }
 

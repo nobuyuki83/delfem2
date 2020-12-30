@@ -145,15 +145,11 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
   const unsigned int np = nXY;
   std::vector<unsigned int> tmp_buffer(np, -1);
   for(unsigned int iel=0; iel<nTri; ++iel){
-    const unsigned int i0 = aTri1[iel*3+0];
-    const unsigned int i1 = aTri1[iel*3+1];
-    const unsigned int i2 = aTri1[iel*3+2];
-    const unsigned int aIP[3] = {i0,i1,i2};
+    const unsigned int aIP[3] = {aTri1[iel*3+0], aTri1[iel*3+1], aTri1[iel*3+2]};
     double coords[3][2]; FetchData<3,2>(coords,aIP, aXY1);
     double disps[3][2]; FetchData<3,2>(disps,aIP, aVal);
     //
-    double eres[3][2];
-    double emat[3][3][2][2];
+    double eres[3][2], emat[3][3][2][2];
     EMat_SolidStaticLinear_Tri2D(
         eres,emat,
         myu, lambda, rho, g_x, g_y,

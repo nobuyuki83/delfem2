@@ -82,7 +82,7 @@ int main(int argc,char* argv[])
     const unsigned int np = aXY1.size()/2;
     const unsigned int nDoF = np;
     const double wave_length = 0.4;
-    mat_A.SetZero();
+    mat_A.setZero();
     vec_b.assign(nDoF, 0.0);
     dfm2::MergeLinSys_Helmholtz_MeshTri2D(
         mat_A,vec_b.data(),

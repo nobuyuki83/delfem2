@@ -748,7 +748,7 @@ TEST(objfunc_v23, arap)
     dfm2::JArray_Sort(psup_ind1, psup1);
     assert( psup_ind1.size() == np+1 );
     Mat.SetPattern(psup_ind1.data(), psup_ind1.size(), psup1.data(), psup1.size());
-    Mat.SetZero();
+    Mat.setZero();
     std::vector<unsigned int> tmp_buffer;
     for(unsigned int ip=0;ip<np;++ip){
       std::vector<unsigned int> aIP;
@@ -916,10 +916,10 @@ TEST(fem,plate_bending_mitc3_cantilever)
     aVal.assign(aXY0.size()/2*3, 0.0);
     std::vector<double> vec_b;
     {
-      const int np = (int)aXY0.size()/2;
-      const int nDoF = np*3;
+      const unsigned int np = aXY0.size()/2;
+      const unsigned int nDoF = np*3;
       // -------------------
-      mat_A.SetZero();
+      mat_A.setZero();
       vec_b.assign(nDoF, 0.0);
       dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
           mat_A,vec_b.data(),

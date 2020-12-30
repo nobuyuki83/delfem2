@@ -85,10 +85,13 @@ public:
     valCrs.resize(ncrs * nrowdim * ncoldim);
   }
 
-  bool SetZero() {
+  /**
+   * @detail the name is the same as the Eigen library
+   * @return
+   */
+  bool setZero() {
     if (valDia.size() != 0) {
-      assert(nrowdim == ncoldim);
-      assert(nrowblk == ncolblk);
+      assert(nrowdim == ncoldim && nrowblk == ncolblk);
       const unsigned int n = valDia.size();
       assert(n == nrowdim * nrowdim * nrowblk);
       for (unsigned int i = 0; i < n; ++i) { valDia[i] = 0; }
@@ -184,10 +187,12 @@ public:
   unsigned int ncolblk;
   unsigned int nrowdim;
   unsigned int ncoldim;
+  
   /**
    * @param colInd indeces where the row starts in CRS data structure
    */
   std::vector<unsigned int> colInd;
+  
   /**
    * @param rowPtr index of CRS data structure
    */
@@ -196,47 +201,49 @@ public:
   std::vector<T> valDia;
 };
 
+// ----------------------------------------------
+
 template <typename T>
 bool Mearge(
     CMatrixSparse<T>& A,
-    unsigned int nblkel_col, const unsigned int *blkel_col,
-    unsigned int nblkel_row, const unsigned int *blkel_row,
+    unsigned int nrow, const unsigned int *aIpRow,
+    unsigned int ncol, const unsigned int *aIpCol,
     unsigned int blksize, const T *emat,
-    std::vector<unsigned int> &marge_buffer)
+    std::vector<unsigned int> &merge_buffer)
 {
   assert(!A.valCrs.empty());
   assert(!A.valDia.empty());
   assert(blksize == A.nrowdim * A.ncoldim);
-  marge_buffer.resize(A.ncolblk);
+  merge_buffer.resize(A.ncolblk);
   const unsigned int *colind = A.colInd.data();
   const unsigned int *rowptr = A.rowPtr.data();
   T *vcrs = A.valCrs.data();
   T *vdia = A.valDia.data();
-  for (unsigned int iblkel = 0; iblkel < nblkel_col; iblkel++) {
-    const unsigned int iblk1 = blkel_col[iblkel];
+  for (unsigned int irow = 0; irow < nrow; irow++) {
+    const unsigned int iblk1 = aIpRow[irow];
     assert(iblk1 < A.nrowblk);
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
       assert(jpsup < A.rowPtr.size());
       const int jblk1 = rowptr[jpsup];
-      marge_buffer[jblk1] = jpsup;
+      merge_buffer[jblk1] = jpsup;
     }
-    for (unsigned int jblkel = 0; jblkel < nblkel_row; jblkel++) {
-      const unsigned int jblk1 = blkel_row[jblkel];
+    for (unsigned int jcol = 0; jcol < ncol; jcol++) {
+      const unsigned int jblk1 = aIpCol[jcol];
       assert(jblk1 < A.ncolblk);
       if (iblk1 == jblk1) {  // Marge Diagonal
-        const T *pval_in = &emat[(iblkel * nblkel_row + iblkel) * blksize];
+        const T *pval_in = &emat[(irow * ncol + irow) * blksize];
         T *pval_out = &vdia[iblk1 * blksize];
         for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
       }
       else {  // Marge Non-Diagonal
-        if (marge_buffer[jblk1] == -1) {
+        if (merge_buffer[jblk1] == -1) {
           assert(0);
           return false;
         }
-        assert( marge_buffer[jblk1] < A.rowPtr.size());
-        const unsigned int jpsup1 = marge_buffer[jblk1];
+        assert( merge_buffer[jblk1] < A.rowPtr.size());
+        const unsigned int jpsup1 = merge_buffer[jblk1];
         assert(A.rowPtr[jpsup1] == jblk1);
-        const T *pval_in = &emat[(iblkel * nblkel_row + jblkel) * blksize];
+        const T *pval_in = &emat[(irow * ncol + jcol) * blksize];
         T *pval_out = &vcrs[jpsup1 * blksize];
         for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
       }
@@ -244,7 +251,7 @@ bool Mearge(
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
       assert(jpsup < A.rowPtr.size());
       const int jblk1 = rowptr[jpsup];
-      marge_buffer[jblk1] = -1;
+      merge_buffer[jblk1] = -1;
     }
   }
   return true;
@@ -266,19 +273,19 @@ bool Merge(
   const unsigned int *rowptr = A.rowPtr.data();
   T *vcrs = A.valCrs.data();
   T *vdia = A.valDia.data();
-  for (unsigned int iblkel = 0; iblkel < nrow; iblkel++) {
-    const unsigned int iblk1 = aIpRow[iblkel];
+  for (unsigned int irow = 0; irow < nrow; irow++) {
+    const unsigned int iblk1 = aIpRow[irow];
     assert(iblk1 < A.nrowblk);
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
       assert(jpsup < A.rowPtr.size());
       const int jblk1 = rowptr[jpsup];
       merge_buffer[jblk1] = jpsup;
     }
-    for (unsigned int jblkel = 0; jblkel < ncol; jblkel++) {
-      const unsigned int jblk1 = aIpCol[jblkel];
+    for (unsigned int jcol = 0; jcol < ncol; jcol++) {
+      const unsigned int jblk1 = aIpCol[jcol];
       assert(jblk1 < A.ncolblk);
       if (iblk1 == jblk1) {  // Marge Diagonal
-        const T *pval_in = &emat[iblkel][iblkel][0][0];
+        const T *pval_in = &emat[irow][irow][0][0];
         T *pval_out = &vdia[iblk1 * blksize];
         for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
       }
@@ -287,10 +294,10 @@ bool Merge(
           assert(0);
           return false;
         }
-        assert(merge_buffer[jblk1] >= 0 && merge_buffer[jblk1] < (int) A.rowPtr.size());
+        assert( merge_buffer[jblk1] < A.rowPtr.size() );
         const int jpsup1 = merge_buffer[jblk1];
         assert(A.rowPtr[jpsup1] == jblk1);
-        const T *pval_in = &emat[iblkel][jblkel][0][0];
+        const T *pval_in = &emat[irow][jcol][0][0];
         T *pval_out = &vcrs[jpsup1 * blksize];
         for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
       }
@@ -319,19 +326,19 @@ bool Merge(
   const unsigned int *rowptr = A.rowPtr.data();
   T *vcrs = A.valCrs.data();
   T *vdia = A.valDia.data();
-  for (unsigned int iblkel = 0; iblkel < nrow; iblkel++) {
-    const unsigned int iblk1 = aIpRow[iblkel];
+  for (unsigned int irow = 0; irow < nrow; irow++) {
+    const unsigned int iblk1 = aIpRow[irow];
     assert(iblk1 < A.nrowblk);
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
       assert(jpsup < A.rowPtr.size());
       const unsigned int jblk1 = rowptr[jpsup];
       merge_buffer[jblk1] = jpsup;
     }
-    for (unsigned int jblkel = 0; jblkel < ncol; jblkel++) {
-      const unsigned int jblk1 = aIpCol[jblkel];
+    for (unsigned int jcol = 0; jcol < ncol; jcol++) {
+      const unsigned int jblk1 = aIpCol[jcol];
       assert(jblk1 < A.ncolblk);
       if (iblk1 == jblk1) {  // Marge Diagonal
-        vdia[iblk1] += emat[iblkel][iblkel];
+        vdia[iblk1] += emat[irow][irow];
       }
       else {  // Marge Non-Diagonal
         if (merge_buffer[jblk1] == UINT_MAX) {
@@ -341,7 +348,7 @@ bool Merge(
         assert( merge_buffer[jblk1] < A.rowPtr.size() );
         const unsigned int jpsup1 = merge_buffer[jblk1];
         assert(A.rowPtr[jpsup1] == jblk1);
-        vcrs[jpsup1] += emat[iblkel][jblkel];
+        vcrs[jpsup1] += emat[irow][jcol];
       }
     }
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {

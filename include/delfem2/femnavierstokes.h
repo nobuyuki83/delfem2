@@ -163,22 +163,22 @@ void MergeLinSys_NavierStokes3D_Dynamic(
     const std::vector<double>& aVal,
     const std::vector<double>& aVelo)
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
   //
-  mat_A.SetZero();
+  mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   std::vector<unsigned int> tmp_buffer(np, -1);
   for (int iel = 0; iel<(int)aTet.size()/4; ++iel){
-    const unsigned int i0 = aTet[iel*4+0];
-    const unsigned int i1 = aTet[iel*4+1];
-    const unsigned int i2 = aTet[iel*4+2];
-    const unsigned int i3 = aTet[iel*4+3];
-    const unsigned int aIP[4] = {i0,i1,i2,i3};
+    const unsigned int aIP[4] = {
+      aTet[iel*4+0],
+      aTet[iel*4+1],
+      aTet[iel*4+2],
+      aTet[iel*4+3] };
     double coords[4][3]; FetchData<4,3>(coords, aIP,aXYZ.data());
     double velo_press[4][4]; FetchData<4,4>(velo_press, aIP,aVal.data());
     double acc_apress[4][4]; FetchData<4,4>(acc_apress, aIP,aVelo.data());
-    ////
+    //
     double eres[4][4], emat[4][4][4][4];
     MakeMat_NavierStokes3D_Dynamic_P1(
         myu, rho,  g_x, g_y,g_z,
