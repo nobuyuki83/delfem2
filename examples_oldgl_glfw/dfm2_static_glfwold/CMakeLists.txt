@@ -47,6 +47,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
     ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
     ${DELFEM2_INC}/gizmo_geo3.h                ${DELFEM2_INC}/gizmo_geo3.cpp
+    ${DELFEM2_INC}/geoplygn2_v2.h              ${DELFEM2_INC}/geoplygn2_v2.cpp
 
     ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
     ${DELFEM2_INC}/jagarray.h                  ${DELFEM2_INC}/jagarray.cpp
@@ -59,6 +60,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
     ${DELFEM2_INC}/mshprimitive.h              ${DELFEM2_INC}/mshprimitive.cpp
     ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
+    ${DELFEM2_INC}/mshtopoio.h                 ${DELFEM2_INC}/mshtopoio.cpp
 
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
     ${DELFEM2_INC}/file.h                      ${DELFEM2_INC}/file.cpp

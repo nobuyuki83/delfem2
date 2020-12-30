@@ -94,8 +94,9 @@ int main(int argc,char* argv[])
     std::string name_img_in_test_inputs = "lenna.png";
     // -----
     int channels;
-    unsigned char *img = stbi_load((std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
-                                   &width, &height, &channels, 0);
+    unsigned char *img = stbi_load(
+        (std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
+        &width, &height, &channels, 0);
     std::cout << width << " " << height << " " << channels << std::endl;
     dfm2::ImageInterpolation_Bilinear(aColor,
         width,height,img,

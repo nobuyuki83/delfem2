@@ -236,6 +236,65 @@ template void delfem2::Mat3_Identity(float* mat, float alpha);
 template void delfem2::Mat3_Identity(double* mat, double alpha);
 #endif
 
+
+// -------------
+
+namespace delfem2 {
+
+template<>
+DFM2_INLINE void Mat3_AffineRotation(
+    double *mat,
+    double theta) {
+  mat[0] = +cos(theta);
+  mat[1] = -sin(theta);
+  mat[2] = 0;
+  mat[3] = +sin(theta);
+  mat[4] = +cos(theta);
+  mat[5] = 0;
+  mat[6] = 0;
+  mat[7] = 0;
+  mat[8] = 1;
+}
+
+template<>
+DFM2_INLINE void Mat3_AffineRotation(
+    float *mat,
+    float theta) {
+  mat[0] = +cosf(theta);
+  mat[1] = -sinf(theta);
+  mat[2] = 0;
+  mat[3] = +sinf(theta);
+  mat[4] = +cosf(theta);
+  mat[5] = 0;
+  mat[6] = 0;
+  mat[7] = 0;
+  mat[8] = 1;
+}
+
+}
+
+// --------------------
+
+template <typename T>
+void delfem2::Mat3_AffineTranslation(
+    T* mat,
+    const T transl[2])
+{
+  mat[0] = 1;
+  mat[1] = 0;
+  mat[2] = transl[0];
+  mat[3] = 0;
+  mat[4] = 1;
+  mat[5] = transl[1];
+  mat[6] = 0;
+  mat[7] = 0;
+  mat[8] = 1;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat3_AffineTranslation(float*, const float [2]);
+template void delfem2::Mat3_AffineTranslation(double*, const double [2]);
+#endif
+
 // --------------------------------------------------------
 
 
@@ -311,6 +370,24 @@ template void delfem2::MatTVec3_ScaleAdd
 template void delfem2::MatTVec3_ScaleAdd
  (double y[3],
   const double m[9], const double x[3], double alpha, double beta);
+#endif
+
+
+template <typename T>
+DFM2_INLINE void delfem2::Vec2_Mat3Vec2_AffineProjection(
+    T y[2],
+    const T A[9],
+    const T x[2])
+{
+  y[0] = A[0]*x[0] + A[1]*x[1] + A[2];
+  y[1] = A[3]*x[0] + A[4]*x[1] + A[5];
+  const T w = A[6]*x[0] + A[7]*x[1] + A[8];
+  y[0] /= w;
+  y[1] /= w;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Vec2_Mat3Vec2_AffineProjection(float [2], const float [9], const float [2]);
+template void delfem2::Vec2_Mat3Vec2_AffineProjection(double [2], const double [9], const double [2]);
 #endif
 
 // above: mat3 and vec3

@@ -10,9 +10,10 @@
 #define DFM2_CAD2D_H
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/vec2.h"
 #include "delfem2/cadtopo.h"
-#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/srchbv2aabb.h"
 
 namespace delfem2 {
 
