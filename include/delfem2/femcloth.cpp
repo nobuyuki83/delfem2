@@ -5,11 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include <math.h>
-#include <assert.h>
-#include <complex>
+#ifndef DFM2_HEADER_ONLY
+// Merge use explicitly use the template so for static library we need to include the template itself.
+#  include "delfem2/lsmats.h"
+#endif
 #include "delfem2/femcloth.h"
+#include <cmath>
+
 
 // --------------------------------------------------------
 

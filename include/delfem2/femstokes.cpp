@@ -5,10 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include <cmath>
-#include <cassert>
+#ifndef DFM2_HEADER_ONLY
+// Merge use explicitly use the template so for static library we need to include the template itself.
+#  include "delfem2/lsmats.h"
+#endif
 #include "delfem2/femstokes.h"
+#include <cmath>
 
 DFM2_INLINE void delfem2::MakeMat_Stokes2D_Static_P1P1(
     double alpha, double g_x, double g_y,
