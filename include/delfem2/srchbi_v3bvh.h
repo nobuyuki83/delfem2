@@ -13,6 +13,7 @@
 #define DFM2_SRCHBI_V3BVH_H
 
 #include "delfem2/srchbvh.h"
+#include "delfem2/geoproximity3_v3.h"
 #include "delfem2/vec3.h"
 #include <stdio.h>
 

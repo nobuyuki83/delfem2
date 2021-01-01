@@ -12,6 +12,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/v3q.h"
+#include "delfem2/geoproximity3_v3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"

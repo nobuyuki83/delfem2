@@ -6,6 +6,7 @@
  */
 
 #include "delfem2/srchuni_v3.h"
+#include "delfem2/geoproximity3_v3.h"
 #include "delfem2/vec3.h"
 #include <map>
 
