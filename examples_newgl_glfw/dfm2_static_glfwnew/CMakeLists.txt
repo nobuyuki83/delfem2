@@ -46,25 +46,27 @@ add_library(${PROJ_NAME} STATIC
 
     ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
     ${DELFEM2_INC}/jagarray.h                  ${DELFEM2_INC}/jagarray.cpp
-
+    ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
+    
     ${DELFEM2_INC}/points.h                    ${DELFEM2_INC}/points.cpp
     ${DELFEM2_INC}/mshuni.h                    ${DELFEM2_INC}/mshuni.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
     ${DELFEM2_INC}/mshprimitive.h              ${DELFEM2_INC}/mshprimitive.cpp
+    ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
 
-    ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
     ${DELFEM2_INC}/str.h                       ${DELFEM2_INC}/str.cpp
     ${DELFEM2_INC}/file.h                      ${DELFEM2_INC}/file.cpp
     ${DELFEM2_INC}/filenpy_str.h               ${DELFEM2_INC}/filenpy_str.cpp
-    ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
+    
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
 
     ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
     ${DELFEM2_INC}/srchbv3sphere.h
     ${DELFEM2_INC}/srchbv3aabb.h
+    ${DELFEM2_INC}/srchbv2aabb.h    
     ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
     ${DELFEM2_INC}/srchbi_v3bvh.h
     ${DELFEM2_INC}/srch_v3bvhmshtopo.h
@@ -100,9 +102,9 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/defarap.h                   ${DELFEM2_INC}/defarap.cpp
 
     ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
+    ${DELFEM2_INC}/rigopt.h
     
     ${DELFEM2_INC}/cloth_internal.h
-    ${DELFEM2_INC}/rigopt.h
     
     ${DELFEM2_INC}/opengl/tex.h             ${DELFEM2_INC}/opengl/tex.cpp
     ${DELFEM2_INC}/opengl/funcs.h           ${DELFEM2_INC}/opengl/funcs.cpp

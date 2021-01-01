@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <climits>
+#include "delfem2/geoproximity3_v3.h"
 #include "delfem2/dtri3_v3dtri.h"
 
 //namespace dfm2 = delfem2;
