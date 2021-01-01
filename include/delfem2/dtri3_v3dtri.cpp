@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <climits>
 #include "delfem2/geoproximity3_v3.h"
+#include "delfem2/geodelaunay3_v3.h"
 #include "delfem2/dtri3_v3dtri.h"
 
 //namespace dfm2 = delfem2;
@@ -17,13 +18,28 @@
 namespace delfem2{
 namespace dtriv3{
 
-DFM2_INLINE int InsertPoint_Mesh
- (const int itri0,
-  double& r0,
-  double& r1,
-  std::vector<CDynPntSur>& aPo3D,
-  std::vector<CDynTri>& aSTri,
-  std::vector<CVec3d>& aXYZ)
+//! Volume of a tetrahedra
+template <typename T>
+T Volume_Tet(
+    const CVec3<T>& v0,
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3 )
+{
+//  return delfem2::Volume_Tet3(v0.p, v1.p, v2.p, v3.p);
+  double v = (v1.p[0]-v0.p[0])*( (v2.p[1]-v0.p[1])*(v3.p[2]-v0.p[2]) - (v3.p[1]-v0.p[1])*(v2.p[2]-v0.p[2]) )
+             + (v1.p[1]-v0.p[1])*( (v2.p[2]-v0.p[2])*(v3.p[0]-v0.p[0]) - (v3.p[2]-v0.p[2])*(v2.p[0]-v0.p[0]) )
+             + (v1.p[2]-v0.p[2])*( (v2.p[0]-v0.p[0])*(v3.p[1]-v0.p[1]) - (v3.p[0]-v0.p[0])*(v2.p[1]-v0.p[1]) );
+  return v*0.16666666666666666666666666666667;
+}
+
+DFM2_INLINE int InsertPoint_Mesh(
+    const int itri0,
+    double& r0,
+    double& r1,
+    std::vector<CDynPntSur>& aPo3D,
+    std::vector<CDynTri>& aSTri,
+    std::vector<CVec3d>& aXYZ)
 {
   if (itri0==-1) return -1;
   CVec3d pos;
@@ -282,10 +298,11 @@ DFM2_INLINE bool delfem2::DelaunayAroundPoint(
       const unsigned int jn0 = FindAdjEdgeIndex(aTri[it0],in0,aTri);
       assert(aTri[jt0].s2[jn0]==it0);
       const unsigned int jp0 = aTri[jt0].v[jn0];
-      const int ires = DetDelaunay(aVec3[aTri[it0].v[0]],
-                                   aVec3[aTri[it0].v[1]],
-                                   aVec3[aTri[it0].v[2]],
-                                   aVec3[jp0]);
+      const int ires = DetDelaunay(
+          aVec3[aTri[it0].v[0]],
+          aVec3[aTri[it0].v[1]],
+          aVec3[aTri[it0].v[2]],
+          aVec3[jp0]);
       if( ires == 0 ){
         FlipEdge(it0, in0, aPo, aTri);
         in0 = 2;

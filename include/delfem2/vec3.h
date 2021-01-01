@@ -336,108 +336,6 @@ double Height(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3, const 
 template <typename T>
 void GetVertical2Vector (const CVec3<T>& vec_n, CVec3<T>& vec_x, CVec3<T>& vec_y);
 
-// ---------------------------------------------------------
-
-template <typename T>
-bool barycentricCoord_Origin_Tet(
-    double& r0,
-    double& r1,
-    double& r2,
-    const CVec3<T>& p0,
-    const CVec3<T>& p1,
-    const CVec3<T>& p2,
-    const CVec3<T>& p3);
-  
-template <typename T>
-bool barycentricCoord_Origin_Pyramid(
-    double& r0,
-    double& r1,
-    double& r2,
-    const CVec3<T>& p0,
-    const CVec3<T>& p1,
-    const CVec3<T>& p2,
-    const CVec3<T>& p3,
-    const CVec3<T>& p4);
-  
-template <typename T>
-bool barycentricCoord_Origin_Wedge(
-    double& r0,
-    double& r1,
-    double& r2,
-    const CVec3<T>& p0,
-    const CVec3<T>& p1,
-    const CVec3<T>& p2,
-    const CVec3<T>& p3,
-    const CVec3<T>& p4,
-    const CVec3<T>& p5);
-
-template <typename T>
-CVec3<T> positionBarycentricCoord_Pyramid(
-    double r0,
-    double r1,
-    double r2,
-    const CVec3<T>& p0,
-    const CVec3<T>& p1,
-    const CVec3<T>& p2,
-    const CVec3<T>& p3,
-    const CVec3<T>& p4);
-  
-template <typename T>
-CVec3<T> positionBarycentricCoord_Wedge(
-    double r0,
-    double r1,
-    double r2,
-    const CVec3<T>& p0,
-    const CVec3<T>& p1,
-    const CVec3<T>& p2,
-    const CVec3<T>& p3,
-    const CVec3<T>& p4,
-    const CVec3<T>& p5);
-  
-template <typename T>
-void iteration_barycentricCoord_Origin_Solid(
-    double& r0,
-    double& r1,
-    double& r2,
-    const CVec3<T>& q, // q=positionBarycentricCoord_Wedge
-    const CVec3<T>& dpdr0,
-    const CVec3<T>& dpdr1,
-    const CVec3<T>& dpdr2,
-    double damp=1.0);
-
-  
-// -----------------------------------------------
-
-template <typename T>
-T Volume_OrgTet(
-    const CVec3<T>& v1,
-    const CVec3<T>& v2,
-    const CVec3<T>& v3 );
-  
-template <typename T>
-T Volume_Tet(
-    const CVec3<T>& v0,
-    const CVec3<T>& v1,
-    const CVec3<T>& v2,
-    const CVec3<T>& v3 );
-
-template <typename T>
-double Volume_Pyramid(
-    const CVec3<T>& p0,
-    const CVec3<T>& p1,
-    const CVec3<T>& p2,
-    const CVec3<T>& p3,
-    const CVec3<T>& p4);
-
-template <typename T>
-double Volume_Wedge(
-    const CVec3<T>& p0,
-    const CVec3<T>& p1,
-    const CVec3<T>& p2,
-    const CVec3<T>& p3,
-    const CVec3<T>& p4,
-    const CVec3<T>& p5);
-
 // ---------------------------------------------
 
 template <typename T>
@@ -455,7 +353,9 @@ template <typename T>
 double SquareTriArea(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3);
   
 template <typename T>
-double SquareDistance(const CVec3<T>& ipo0, const CVec3<T>& ipo1);
+double SquareDistance(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1);
 
 template <typename T>
 double SquareLength(const CVec3<T>& point);
@@ -499,56 +399,28 @@ double ShortestEdgeLength(
 
 template <typename T>
 void Normal(CVec3<T>& vnorm,
-            const CVec3<T>& v1,
-            const CVec3<T>& v2,
-            const CVec3<T>& v3);
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3);
 
 template <typename T>
-CVec3<T> Normal(const CVec3<T>& v1,
-                const CVec3<T>& v2,
-                const CVec3<T>& v3);
+CVec3<T> Normal(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3);
 
 template <typename T>
-void UnitNormal(CVec3<T>& vnorm,
-                const CVec3<T>& v1,
-                const CVec3<T>& v2,
-                const CVec3<T>& v3);
+void UnitNormal(
+    CVec3<T>& vnorm,
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3);
   
 template <typename T>
-CVec3<T> UnitNormal(const CVec3<T>& v1,
-                    const CVec3<T>& v2,
-                    const CVec3<T>& v3);
-  
-/**
- * @function check if Delaunay condition satisfied
- * @return
- * 0 : p3 is inside circum circle on the p0,p1,p2
- * 1 :       on
- * 2 :       outsdie
- */
-template <typename T>
-int DetDelaunay(const CVec3<T>& p0,
-                const CVec3<T>& p1,
-                const CVec3<T>& p2,
-                const CVec3<T>& p3);
-
-template <typename T>
-double SquareCircumradius(const CVec3<T>& ipo0,
-                          const CVec3<T>& ipo1,
-                          const CVec3<T>& ipo2,
-                          const CVec3<T>& ipo3);
-
-template <typename T>
-CVec3<T> CircumCenter(const CVec3<T>& ipo0,
-                      const CVec3<T>& ipo1,
-                      const CVec3<T>& ipo2,
-                      const CVec3<T>& ipo3);
-
-template <typename T>
-double Circumradius(const CVec3<T>& ipo0,
-                    const CVec3<T>& ipo1,
-                    const CVec3<T>& ipo2,
-                    const CVec3<T>& ipo3);
+CVec3<T> UnitNormal(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3);
 
 template <typename T>
 CVec3<T> RotateVector(const CVec3<T>& vec0, const CVec3<T>& rot );

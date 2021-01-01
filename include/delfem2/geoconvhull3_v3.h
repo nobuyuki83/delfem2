@@ -21,13 +21,6 @@
 namespace delfem2 {
 
 template <typename T>
-bool IsOut(
-    int itri,
-    const CVec3<T>& v,
-    const std::vector<CVec3<T> >& aXYZ,
-    const std::vector<int>& aTri);
-  
-template <typename T>
 void ConvexHull(
     std::vector<int>& aTri,
     const std::vector<CVec3<T> >& aXYZ);
