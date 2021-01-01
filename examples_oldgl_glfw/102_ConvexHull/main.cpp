@@ -6,6 +6,7 @@
  */
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/geoconvhull3_v3.h"
 #include "delfem2/vec3.h"
 #include <GLFW/glfw3.h>
 #include <vector>

@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
@@ -854,15 +854,6 @@ double Volume_Tet(int iv1, int iv2, int iv3, int iv4,
 template <typename T>
 double Area_Tri(const int iv1, const int iv2, const int iv3,
                 const std::vector<CVec3<T> >& node );
-
-template <typename T>
-bool IsOut(int itri, const CVec3<T>& v,
-           const std::vector<CVec3<T> >& aXYZ,
-           const std::vector<int>& aTri);
-  
-template <typename T>
-void ConvexHull(std::vector<int>& aTri,
-                const std::vector<CVec3<T> >& aXYZ);
 
 template <typename T>
 CVec3<T> CG_Tri3(
