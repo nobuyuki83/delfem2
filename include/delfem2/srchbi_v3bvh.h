@@ -14,6 +14,7 @@
 
 #include "delfem2/srchbvh.h"
 #include "delfem2/geoproximity3_v3.h"
+#include "delfem2/geosolidelm_v3.h"
 #include "delfem2/vec3.h"
 #include <stdio.h>
 

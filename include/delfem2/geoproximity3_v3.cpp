@@ -115,16 +115,30 @@ T Volume_OrgTet(
   return v*0.16666666666666666666666666666667;
 };
 
+template <typename T>
+T Volume_Tet3(
+    const T v1[3],
+    const T v2[3],
+    const T v3[3],
+    const T v4[3])
+{
+  return
+      ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
+       -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
+       +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
+      ) * 0.16666666666666666666666666666667;
+}
+
 }
 }
 
 // ------------------------------------------
 
-DFM2_INLINE void delfem2::GetNearest_LineSegPoint3D
-(double pn[3],
- const double p[3], // point
- const double s[3], // source
- const double e[3]) // end
+DFM2_INLINE void delfem2::GetNearest_LineSegPoint3D(
+    double pn[3],
+    const double p[3], // point
+    const double s[3], // source
+    const double e[3]) // end
 {
   const double d[3] = { e[0]-s[0], e[1]-s[1], e[2]-s[2] };
   double t = 0.5;
@@ -142,22 +156,24 @@ DFM2_INLINE void delfem2::GetNearest_LineSegPoint3D
 }
 
 
-DFM2_INLINE void delfem2::GetNearest_TrianglePoint3D
-(double pn[3],
- double& r0, double& r1,
- const double ps[3], // origin point
- const double q0[3],
- const double q1[3],
- const double q2[3])
+DFM2_INLINE void delfem2::GetNearest_TrianglePoint3D(
+    double pn[3],
+    double& r0,
+    double& r1,
+    const double ps[3], // origin point
+    const double q0[3],
+    const double q1[3],
+    const double q2[3])
 {
+  namespace lcl = delfem2::proximity3;
   double area, n012[3]; UnitNormalAreaTri3(n012, area, q0, q1, q2);
   const double pe[3] = { ps[0]+n012[0], ps[1]+n012[1], ps[2]+n012[2] };
-  const double v012 = Volume_Tet3(ps, q0, q1, q2);
+  const double v012 = lcl::Volume_Tet3(ps, q0, q1, q2);
   if (fabs(v012) > 1.0e-10){
     const double sign = (v012 > 0) ? +1 : -1;
-    const double v0 = Volume_Tet3(ps, q1, q2, pe)*sign;
-    const double v1 = Volume_Tet3(ps, q2, q0, pe)*sign;
-    const double v2 = Volume_Tet3(ps, q0, q1, pe)*sign;
+    const double v0 = lcl::Volume_Tet3(ps, q1, q2, pe)*sign;
+    const double v1 = lcl::Volume_Tet3(ps, q2, q0, pe)*sign;
+    const double v2 = lcl::Volume_Tet3(ps, q0, q1, pe)*sign;
     assert(fabs(v0+v1+v2) > 1.0e-10);
     double inv_v012 = 1.0/(v0+v1+v2);
     r0 = v0*inv_v012;
@@ -208,9 +224,13 @@ DFM2_INLINE void delfem2::GetNearest_TrianglePoint3D
     
 template <typename REAL>
 bool delfem2::IntersectRay_Tri3(
-    REAL& r0, REAL& r1,
-    const CVec3<REAL>& org, const CVec3<REAL>& dir,
-    const CVec3<REAL>& p0,  const CVec3<REAL>& p1, const CVec3<REAL>& p2,
+    REAL& r0,
+    REAL& r1,
+    const CVec3<REAL>& org,
+    const CVec3<REAL>& dir,
+    const CVec3<REAL>& p0,
+    const CVec3<REAL>& p1,
+    const CVec3<REAL>& p2,
     REAL eps)
 {
   namespace lcl = delfem2::proximity3;
@@ -237,10 +257,10 @@ template bool delfem2::IntersectRay_Tri3(float& r0, float& r1,
 // --------------------------------------------------------
 
 template <typename T>
-delfem2::CVec3<T> delfem2::nearest_Line_Point
-(const CVec3<T>& p, // point
- const CVec3<T>& s, // source
- const CVec3<T>& d) // direction
+delfem2::CVec3<T> delfem2::nearest_Line_Point(
+    const CVec3<T>& p, // point
+    const CVec3<T>& s, // source
+    const CVec3<T>& d) // direction
 {
   assert( Dot(d,d) > 1.0e-20 );
   const CVec3<T> ps = s-p;
@@ -359,10 +379,13 @@ delfem2::CVec3<T> delfem2::nearest_LineSeg_Point
 // ---------------------------------------------
 
 template <typename T>
-void delfem2::nearest_LineSeg_Line
- (CVec3<T>& a, CVec3<T>& b,
-  const CVec3<T>& ps, const CVec3<T>& pe,
-  const CVec3<T>& pb_, const CVec3<T>& vb)
+void delfem2::nearest_LineSeg_Line(
+    CVec3<T>& a,
+    CVec3<T>& b,
+    const CVec3<T>& ps,
+    const CVec3<T>& pe,
+    const CVec3<T>& pb_,
+    const CVec3<T>& vb)
 {
   T D0, Dta0, Dtb0;
   CVec3<T> Da0, Db0;
@@ -461,10 +484,14 @@ DFM2_INLINE double delfem2::Nearest_LineSeg_LineSeg_CCD_Iteration(
 // ---------------------------------------------
 
 template <typename T>
-void delfem2::nearest_Line_Line
-(T& D, CVec3<T>& Da, CVec3<T>& Db,
- const CVec3<T>& pa_, const CVec3<T>& va,
- const CVec3<T>& pb_, const CVec3<T>& vb)
+void delfem2::nearest_Line_Line(
+    T& D,
+    CVec3<T>& Da,
+    CVec3<T>& Db,
+    const CVec3<T>& pa_,
+    const CVec3<T>& va,
+    const CVec3<T>& pb_,
+    const CVec3<T>& vb)
 {
   T xaa = va*va;
   T xab = vb*va;
@@ -491,12 +518,17 @@ template void delfem2::nearest_Line_Line
 // ---------------------------------------------
 
 template <typename T>
-void delfem2::nearest_Line_Line
-(T& D, CVec3<T>& Da, CVec3<T>& Db,
- T& Dta, T& Dtb,
- //
- const CVec3<T>& pa_, const CVec3<T>& va,
- const CVec3<T>& pb_, const CVec3<T>& vb)
+void delfem2::nearest_Line_Line(
+    T& D,
+    CVec3<T>& Da,
+    CVec3<T>& Db,
+    T& Dta,
+    T& Dtb,
+    //
+    const CVec3<T>& pa_,
+    const CVec3<T>& va,
+    const CVec3<T>& pb_,
+    const CVec3<T>& vb)
 {
   T xaa = va*va;
   T xab = vb*va;

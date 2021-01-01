@@ -422,13 +422,13 @@ double delfem2::Volume_Pyramid
 }
 
 template <typename T>
-double delfem2::Volume_Wedge
-(const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3,
- const CVec3<T>& p4,
- const CVec3<T>& p5)
+double delfem2::Volume_Wedge(
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& p4,
+    const CVec3<T>& p5)
 {
   CVec3<T> pm = (p0+p1+p2+p3+p4+p5)/6.0;
   double vm012 = Volume_Tet(pm,p0,p1,p2);
@@ -442,10 +442,10 @@ double delfem2::Volume_Wedge
 // ---------------------------------------------------------------
 
 template <typename T>
-double delfem2::SolidAngleTri
-(const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3)
+double delfem2::SolidAngleTri(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3)
 {
   double l1 = v1.Length();
   double l2 = v2.Length();
@@ -467,94 +467,11 @@ template double delfem2::SolidAngleTri(const CVec3d& v1, const CVec3d& v2, const
 // ------------------------------------------------------------------
 
 template <typename T>
-void delfem2::Cross
-(CVec3<T>& lhs,
- const CVec3<T>& v1,
- const CVec3<T>& v2 )
-{
-  lhs.p[0] = v1.p[1]*v2.p[2] - v2.p[1]*v1.p[2];
-  lhs.p[1] = v1.p[2]*v2.p[0] - v2.p[2]*v1.p[0];
-  lhs.p[2] = v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Cross(CVec3d& lhs, const CVec3d& v1, const CVec3d& v2 );
-#endif
-  
-// ----------------------
-
-template <typename T>
-double delfem2::Area_Tri
-(const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3)
-{
-  double x, y, z;
-  x = ( v2.p[1] - v1.p[1] )*( v3.p[2] - v1.p[2] ) - ( v3.p[1] - v1.p[1] )*( v2.p[2] - v1.p[2] );
-  y = ( v2.p[2] - v1.p[2] )*( v3.p[0] - v1.p[0] ) - ( v3.p[2] - v1.p[2] )*( v2.p[0] - v1.p[0] );
-  z = ( v2.p[0] - v1.p[0] )*( v3.p[1] - v1.p[1] ) - ( v3.p[0] - v1.p[0] )*( v2.p[1] - v1.p[1] );
-  return 0.5*sqrt( x*x + y*y + z*z );
-}
-#ifndef DFM2_HEADER_ONLY
-template double delfem2::Area_Tri(const CVec3<double>& v1, const CVec3<double>& v2, const CVec3<double>& v3);
-#endif
-
-  
-
-template <typename T>
-double delfem2::SquareTriArea(
-    const CVec3<T>& v1,
-    const CVec3<T>& v2,
-    const CVec3<T>& v3)
-{
-  double dtmp_x = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
-  double dtmp_y = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
-  double dtmp_z = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-  return (dtmp_x*dtmp_x + dtmp_y*dtmp_y + dtmp_z*dtmp_z)*0.25;
-}
-
-template <typename T>
-double delfem2::SquareDistance(
+double delfem2::SqareLongestEdgeLength(
     const CVec3<T>& ipo0,
-    const CVec3<T>& ipo1)
-{
-  return	( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] )
-  + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] )
-  + ( ipo1.p[2] - ipo0.p[2] )*( ipo1.p[2] - ipo0.p[2] );
-}
-
-template <typename T>
-double delfem2::SquareLength(const CVec3<T>& point)
-{
-  return	point.p[0]*point.p[0] + point.p[1]*point.p[1] + point.p[2]*point.p[2];
-}
-
-
-//! length of vector
-template <typename T>
-double delfem2::Length(const CVec3<T>& point)
-{
-  return delfem2::Length3(point.p);
-}
-
-//! distance between two points
-template <typename T>
-double delfem2::Distance
-(const CVec3<T>& p0,
- const CVec3<T>& p1)
-{
-  return delfem2::Distance3(p0.p, p1.p);
-}
-#ifndef DFM2_HEADER_ONLY
-template double delfem2::Distance(const CVec3<double>& p0, const CVec3<double>& p1);
-#endif
-
-
-template <typename T>
-double delfem2::SqareLongestEdgeLength
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3 )
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 )
 {
   double edge1, edge2;
   edge1 = SquareDistance( ipo0, ipo1 );
@@ -574,11 +491,11 @@ double delfem2::SqareLongestEdgeLength
 // --------------------------------------
 
 template <typename T>
-double delfem2::LongestEdgeLength
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3 )
+double delfem2::LongestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 )
 {
   return sqrt( SqareLongestEdgeLength(ipo0,ipo1,ipo2,ipo3) );
 }
@@ -586,11 +503,11 @@ double delfem2::LongestEdgeLength
 // --------------------------------------
 
 template <typename T>
-double delfem2::SqareShortestEdgeLength
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3 )
+double delfem2::SqareShortestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 )
 {
   double edge1, edge2;
   edge1 = SquareDistance( ipo0, ipo1 );
@@ -619,108 +536,6 @@ double delfem2::ShortestEdgeLength
   return sqrt( SqareShortestEdgeLength(ipo0,ipo1,ipo2,ipo3) );
 }
 
-// -------------------------------------------
-
-template <typename T>
-void delfem2::Normal
-(CVec3<T>& vnorm,
- const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3)
-{
-  vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
-  vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
-  vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Normal(CVec3d& vnorm, const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
-#endif
-  
-// -------------------------------------------
-
-template <typename T>
-delfem2::CVec3<T> delfem2::Normal
-(const CVec3<T>& v1,
-const CVec3<T>& v2,
-const CVec3<T>& v3)
-{
-  CVec3<T> vnorm;
-  vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
-  vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
-  vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-  return vnorm;
-}
-#ifndef DFM2_HEADER_ONLY
-template delfem2::CVec3d delfem2::Normal(const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
-#endif
-
-
-// --------------------------------------------
-  
-template <typename T>
-void delfem2::UnitNormal(
-    CVec3<T>& vnorm,
-    const CVec3<T>& v1,
-    const CVec3<T>& v2,
-    const CVec3<T>& v3)
-{
-  vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
-  vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
-  vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-  const double dtmp1 = 1.0 / Length(vnorm);
-  vnorm.p[0] *= dtmp1;
-  vnorm.p[1] *= dtmp1;
-  vnorm.p[2] *= dtmp1;
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::UnitNormal(CVec3f& vnorm, const CVec3f& v1, const CVec3f& v2, const CVec3f& v3);
-template void delfem2::UnitNormal(CVec3d& vnorm, const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
-#endif
-
-// ---------------------------------------
-
-template <typename T>
-delfem2::CVec3<T> delfem2::UnitNormal(
-    const CVec3<T>& v1,
-    const CVec3<T>& v2,
-    const CVec3<T>& v3)
-{
-  CVec3<T> vnorm;
-  vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
-  vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
-  vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-  const double dtmp1 = 1.0/Length(vnorm);
-  vnorm.p[0] *= dtmp1;
-  vnorm.p[1] *= dtmp1;
-  vnorm.p[2] *= dtmp1;
-  return vnorm;
-}
-#ifndef DFM2_HEADER_ONLY
-template delfem2::CVec3f delfem2::UnitNormal
- (const CVec3f& v1,
-  const CVec3f& v2,
-  const CVec3f& v3);
-template delfem2::CVec3d delfem2::UnitNormal
-(const CVec3d& v1,
- const CVec3d& v2,
- const CVec3d& v3);
-#endif
-
-// ----------------------------------------------------------------------------------------
-// using <vector> from here
-
-// --------------------------------------------------
-// TODO: following should be move to mesh class?
-
-template <typename T>
-double delfem2::Area_Tri(
-    const int iv1,
-    const int iv2,
-    const int iv3,
-    const std::vector<CVec3<T>>& aPoint )
-{
-  return Area_Tri(aPoint[iv1],aPoint[iv2],aPoint[iv3]);
-}
 
 template <typename T>
 double delfem2::Volume_Tet(

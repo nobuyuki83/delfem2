@@ -20,6 +20,20 @@
 
 namespace delfem2 {
 
+template <typename T>
+T Volume_Tet3(
+    const T v1[3],
+    const T v2[3],
+    const T v3[3],
+    const T v4[3]);
+
+template <typename T>
+double Height(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3,
+    const CVec3<T>& v4);
+
 // ---------------------------------------------------------
 
 template <typename T>
@@ -162,6 +176,12 @@ double Volume_Tet(
     int iv3,
     int iv4,
     const std::vector<CVec3<T> >& aPoint);
+
+ template <typename T>
+ double SolidAngleTri(
+     const CVec3<T>& v1,
+     const CVec3<T>& v2,
+     const CVec3<T>& v3);
 
 
 } // end namespace delfem2
