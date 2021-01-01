@@ -321,23 +321,25 @@ template CVec2d operator*(const CVec2d& v0, double c);
 //  ---------------------
 
 template <typename T>
-double operator * (const CVec2<T>& lhs, const CVec2<T>& rhs)
+T operator * (const CVec2<T>& lhs, const CVec2<T>& rhs)
 {
-  return Dot2(lhs.p, rhs.p);// lhs.p[0]*rhs.p[0] + lhs.p[1]*rhs.p[1];
+  return lhs.p[0]*rhs.p[0] + lhs.p[1]*rhs.p[1];
 }
 #ifndef DFM2_HEADER_ONLY
 template double operator * (const CVec2d& lhs, const CVec2d& rhs);
+template float  operator * (const CVec2f& lhs, const CVec2f& rhs);
 #endif
   
 //  ---------------------
 
 template <typename T>
-double operator ^ (const CVec2<T>& lhs, const CVec2<T>& rhs)
+T operator ^ (const CVec2<T>& lhs, const CVec2<T>& rhs)
 {
   return lhs.p[0]*rhs.p[1] - lhs.p[1]*rhs.p[0];
 }
 #ifndef DFM2_HEADER_ONLY
-double operator ^ (const CVec2d& lhs, const CVec2d& rhs);
+template double operator ^ (const CVec2d& lhs, const CVec2d& rhs);
+template float  operator ^ (const CVec2f& lhs, const CVec2f& rhs);
 #endif
   
 // -------------------
@@ -496,9 +498,10 @@ double delfem2::FindNearestPointParameter_Line_Point
 // --------------------------------------
 
 template <typename T>
-delfem2::CVec2<T> delfem2::GetNearest_LineSeg_Point
-(const CVec2<T>& po_c,
- const CVec2<T>& po_s, const CVec2<T>& po_e)
+delfem2::CVec2<T> delfem2::GetNearest_LineSeg_Point(
+    const CVec2<T>& po_c,
+    const CVec2<T>& po_s,
+    const CVec2<T>& po_e)
 {
   double t = FindNearestPointParameter_Line_Point(po_c, po_s, po_e);
   if (t < 0){ return po_s; }

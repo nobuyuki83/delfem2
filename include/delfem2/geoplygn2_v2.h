@@ -33,6 +33,22 @@ template <typename T>
 std::vector<CVec2<T> > Polygon_Resample_Polygon(
     const std::vector<CVec2<T> >& stroke0,
     double l);
+
+template <typename T>
+void CgArea_Polygon(
+    CVec2<T>& cg,
+    T& area,
+    const std::vector<CVec2<T>>& aVec2D);
+
+/**
+ *
+ * @tparam T
+ * @return polar rotational inertia around Z-axis at pivotal rotation where the area density is 1
+ */
+template <typename T>
+T RotationalMomentPolar_Polygon2(
+    const std::vector<CVec2<T>>& aVec2,
+    const CVec2<T>& pivot);
   
 template <typename T>
 void SecondMomentOfArea_Polygon(

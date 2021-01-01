@@ -59,16 +59,8 @@ DFM2_INLINE bool IsCrossLines(
     const double po_e1[2]);
 
 template <typename T>
-DFM2_INLINE void GaussianDistribution2(T noise[2]);
-
-DFM2_INLINE void makeSplineLoop(
-    const std::vector<double>& aCV,
-    std::vector<double>& aVecCurve);
-  
-DFM2_INLINE void MeanValueCoordinate2D(
-    double *aW,
-    double px, double py,
-    const double *aXY, unsigned int nXY);
+DFM2_INLINE void GaussianDistribution2(
+    T noise[2]);
 
 DFM2_INLINE bool InverseMat2(
     double invB[4],
@@ -78,14 +70,15 @@ DFM2_INLINE void gramian2(
     double AtA[3],
     const double A[4]);
 
-DFM2_INLINE void VLVt2
- (double A[4],
-  double l0, double l1,
-  const double V[4]);
+DFM2_INLINE void VLVt2(
+    double A[4],
+    double l0,
+    double l1,
+    const double V[4]);
 
-DFM2_INLINE void RotationalComponentOfMatrix2
- (double R[4],
-  const double M[4]);
+DFM2_INLINE void RotationalComponentOfMatrix2(
+    double R[4],
+    const double M[4]);
 
 // ----------------------
 
@@ -111,10 +104,10 @@ template <typename T>
 CVec2<T> operator*(const CVec2<T>& v0, double c);
 
 template <typename T>
-double operator * (const CVec2<T>& lhs, const CVec2<T>& rhs);
+T operator * (const CVec2<T>& lhs, const CVec2<T>& rhs);
 
 template <typename T>
-double operator ^ (const CVec2<T>& lhs, const CVec2<T>& rhs);
+T operator ^ (const CVec2<T>& lhs, const CVec2<T>& rhs);
 
 template <typename T>
 CVec2<T> operator/ (const CVec2<T>& vec, double d); //! divide by real number
@@ -191,6 +184,12 @@ public:
     r.SetNormalizedVector();
     return r;
   }
+  CVec2 Rotate(T t) const {
+    CVec2 r;
+    r.p[0] = cos(t)*p[0] - sin(t)*p[1];
+    r.p[1] = sin(t)*p[0] + cos(t)*p[1];
+    return r;
+  }
 	//! set zero vector
 	inline void SetZero(){
 		p[0] = 0.0;
@@ -257,13 +256,17 @@ double Dot(const CVec2<T>& ipo0, const CVec2<T>& ipo1);
 
 //! @details get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 template <typename T>
-double FindNearestPointParameter_Line_Point(const CVec2<T>& po_c,
-                                            const CVec2<T>& po_s, const CVec2<T>& po_e);
+double FindNearestPointParameter_Line_Point(
+    const CVec2<T>& po_c,
+    const CVec2<T>& po_s,
+    const CVec2<T>& po_e);
 
 //! @details  get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 template <typename T>
-CVec2<T> GetNearest_LineSeg_Point(const CVec2<T>& po_c,
-                                  const CVec2<T>& po_s, const CVec2<T>& po_e);
+CVec2<T> GetNearest_LineSeg_Point(
+    const CVec2<T>& po_c,
+    const CVec2<T>& po_s,
+    const CVec2<T>& po_e);
 
 //! @details  get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 template <typename T>
@@ -293,10 +296,11 @@ double SquareCircumradius(const CVec2<T>& p0,
  * @brief center of the circumcircle
  */
 template <typename T>
-bool CenterCircumcircle(const CVec2<T>& p0,
-                        const CVec2<T>& p1,
-                        const CVec2<T>& p2,
-                        CVec2<T>& center);
+bool CenterCircumcircle(
+    const CVec2<T>& p0,
+    const CVec2<T>& p1,
+    const CVec2<T>& p2,
+    CVec2<T>& center);
 
 /**
  * @brief check if Delaunay condition satisfied
@@ -306,21 +310,27 @@ bool CenterCircumcircle(const CVec2<T>& p0,
  * 2 :       outsdie
  */
 template <typename T>
-int DetDelaunay(const CVec2<T>& p0,
-                const CVec2<T>& p1,
-                const CVec2<T>& p2,
-                const CVec2<T>& p3);
+int DetDelaunay(
+    const CVec2<T>& p0,
+    const CVec2<T>& p1,
+    const CVec2<T>& p2,
+    const CVec2<T>& p3);
 
 // move to paramgeo2d?
 template <typename T>
 CVec2<T> pointCurve_BezierCubic(
     double t,
-    const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3, const CVec2<T>& p4);
+    const CVec2<T>& p1,
+    const CVec2<T>& p2,
+    const CVec2<T>& p3,
+    const CVec2<T>& p4);
 
 template <typename T>
 CVec2<T> pointCurve_BezierQuadratic(
     double t,
-    const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3);
+    const CVec2<T>& p1,
+    const CVec2<T>& p2,
+    const CVec2<T>& p3);
 
 
 // ---------------------------------------------------------------
@@ -360,76 +370,18 @@ void Polyline_BezierCubic(
     const CVec2<T>& p3, const CVec2<T>& p4);
 
 template <typename T>
-void Polyline_BezierQuadratic(std::vector<CVec2<T>>& aP,
-                              const unsigned int n,
-                              const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3);
+void Polyline_BezierQuadratic(
+    std::vector<CVec2<T>>& aP,
+    const unsigned int n,
+    const CVec2<T>& p1,
+    const CVec2<T>& p2,
+    const CVec2<T>& p3);
 
 template <typename T>
-std::vector<CVec2<T> > Polygon_Resample_Polygon(const std::vector<CVec2<T> >& stroke0,
-                                               double l);
+std::vector<CVec2<T> > Polyline_Resample_Polyline(
+    const std::vector<CVec2<T> >& stroke0,
+    double l);
   
-template <typename T>
-std::vector<CVec2<T> > Polyline_Resample_Polyline(const std::vector<CVec2<T> >& stroke0,
-                                                 double l);
-  
-template <typename T>
-void SecondMomentOfArea_Polygon(
-    CVec2<T>& cg,  double& area,
-    CVec2<T>& pa1, double& I1,
-    CVec2<T>& pa2, double& I2,
-    const std::vector<CVec2<T> >& aVec2D);
-  
-template <typename T>
-double Length_Polygon(
-    const std::vector<CVec2<T> >& aP);
-
-template <typename T>
-double Area_Polygon(
-    const std::vector<CVec2<T> >& aP);
-
-template <typename T>
-void MeanValueCoordinate(
-    std::vector<double>& aW,
-    CVec2<T>& p,
-    std::vector<CVec2<T> >& aVtx);
-
-template <typename T>
-void makeRandomLoop(
-    unsigned int nCV,
-    std::vector<double>& aCV);
-
-template <typename T>
-DFM2_INLINE void makeSplineLoop(
-    const std::vector<double>& aCV,
-    std::vector<double>& aVecCurve);
-
-template <typename T>
-void FixLoopOrientation(
-    std::vector<int>& loopIP,
-    const std::vector<int>& loopIP_ind,
-    const std::vector<CVec2<T> >& aXY);
-
-template <typename T>
-std::vector<CVec2<T> > Polygon_Invert(
-    const std::vector<CVec2<T> >& aP);
-
-template <typename T>
-std::vector<double> XY_Polygon(
-    const std::vector<CVec2<T> >& aP);
-
-template <typename T>
-void ResamplingLoop(
-    std::vector<int>& loopIP1_ind,
-    std::vector<int>& loopIP1,
-    std::vector<CVec2<T> >& aXY,
-    double max_edge_length);
-
-template <typename T>
-void JArray_FromVecVec_XY(
-    std::vector<int>& aIndXYs,
-    std::vector<int>& loopIP0,
-    std::vector<CVec2<T> >& aXY,
-    const std::vector< std::vector<double> >& aaXY);
 
 template <typename T>
 void MakeMassMatrixTri(
@@ -437,18 +389,7 @@ void MakeMassMatrixTri(
     double rho,
     const unsigned int aIP[3],
     const std::vector<CVec2<T> >& aVec2);
-  
-template <typename T>
-bool IsInclude_Loop(
-    const double co[],
-    const int ixy_stt, const int ixy_end,
-    const std::vector<CVec2<T> >& aXY);
-
-template <typename T>
-bool CheckInputBoundaryForTriangulation (
-    const std::vector<int>& loopIP_ind,
-    const std::vector<CVec2<T> >& aXY);
-    
+      
 }
 
 #ifdef DFM2_HEADER_ONLY
