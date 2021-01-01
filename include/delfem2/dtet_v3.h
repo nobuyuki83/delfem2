@@ -9,12 +9,14 @@
 #define DFM2_DTET_V3_H
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/geosolidelm_v3.h"
+#include "delfem2/geodelaunay3_v3.h"
+#include "delfem2/vec3.h"
 #include <math.h>
 #include <vector>
 #include <cassert>
 #include <map>
 #include <climits> // for UINT_MAX
-#include "vec3.h"
 
 namespace delfem2 {
 
@@ -361,8 +363,9 @@ struct SQuad3D{
 // ----------------------------------
 
 //! 四面体分割の整合性をチェック
-bool CheckTet(const std::vector<CDynTet>& tet,
-              const std::vector<CDynPointTet>& vertex);
+bool CheckTet(
+    const std::vector<CDynTet>& tet,
+    const std::vector<CDynPointTet>& vertex);
 
 //! 四面体分割の整合性をチェック
 bool CheckTet(const std::vector<CDynTet>& tet);
@@ -648,9 +651,12 @@ bool Reconnect
 // ---------------------------------------------
 
 //! volume of tetrahedra
-inline double TetVolume
-(unsigned int iv1, unsigned int iv2, unsigned int iv3, unsigned int iv4,
- const std::vector<CDynPointTet>& point)
+inline double TetVolume(
+    unsigned int iv1,
+    unsigned int iv2,
+    unsigned int iv3,
+    unsigned int iv4,
+    const std::vector<CDynPointTet>& point)
 {
 	return Volume_Tet( point[iv1].p, point[iv2].p, point[iv3].p, point[iv4].p );
 }

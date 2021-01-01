@@ -87,6 +87,34 @@ DFM2_INLINE void MyMatVec3
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
 }
 
+//! Volume of a tetrahedra
+template <typename T>
+T Volume_Tet(
+    const CVec3<T>& v0,
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3 )
+{
+//  return delfem2::Volume_Tet3(v0.p, v1.p, v2.p, v3.p);
+  double v = (v1.p[0]-v0.p[0])*( (v2.p[1]-v0.p[1])*(v3.p[2]-v0.p[2]) - (v3.p[1]-v0.p[1])*(v2.p[2]-v0.p[2]) )
+           + (v1.p[1]-v0.p[1])*( (v2.p[2]-v0.p[2])*(v3.p[0]-v0.p[0]) - (v3.p[2]-v0.p[2])*(v2.p[0]-v0.p[0]) )
+           + (v1.p[2]-v0.p[2])*( (v2.p[0]-v0.p[0])*(v3.p[1]-v0.p[1]) - (v3.p[0]-v0.p[0])*(v2.p[1]-v0.p[1]) );
+  return v*0.16666666666666666666666666666667;
+}
+
+template <typename T>
+T Volume_OrgTet(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3 )
+{
+  double v =
+        v1.p[0]*(v2.p[1]*v3.p[2]-v3.p[1]*v2.p[2])
+      + v1.p[1]*(v2.p[2]*v3.p[0]-v3.p[2]*v2.p[0])
+      + v1.p[2]*(v2.p[0]*v3.p[1]-v3.p[0]*v2.p[1]);
+  return v*0.16666666666666666666666666666667;
+};
+
 }
 }
 
@@ -185,9 +213,10 @@ bool delfem2::IntersectRay_Tri3(
     const CVec3<REAL>& p0,  const CVec3<REAL>& p1, const CVec3<REAL>& p2,
     REAL eps)
 {
-  const REAL v0 = Volume_Tet(p1, p2, org, org+dir);
-  const REAL v1 = Volume_Tet(p2, p0, org, org+dir);
-  const REAL v2 = Volume_Tet(p0, p1, org, org+dir);
+  namespace lcl = delfem2::proximity3;
+  const REAL v0 = lcl::Volume_Tet(p1, p2, org, org+dir);
+  const REAL v1 = lcl::Volume_Tet(p2, p0, org, org+dir);
+  const REAL v2 = lcl::Volume_Tet(p0, p1, org, org+dir);
   const REAL vt = v0+v1+v2;
   r0 = v0/vt;
   r1 = v1/vt;
@@ -513,10 +542,11 @@ delfem2::CVec3<T> delfem2::Nearest_Orgin_PlaneTri
  const CVec3<T>& q1,
  const CVec3<T>& q2)
 {
+  namespace lcl = delfem2::proximity3;
   const CVec3<T> n1 = ((q1-q0)^(q2-q0)).Normalize();
-  const double v0 = Volume_OrgTet(q1, q2, n1);
-  const double v1 = Volume_OrgTet(q2, q0, n1);
-  const double v2 = Volume_OrgTet(q0, q1, n1);
+  const double v0 = lcl::Volume_OrgTet(q1, q2, n1);
+  const double v1 = lcl::Volume_OrgTet(q2, q0, n1);
+  const double v2 = lcl::Volume_OrgTet(q0, q1, n1);
   assert( fabs(v0+v1+v2) > 1.0e-10 );
   double vt_inv = 1.0/(v0+v1+v2);
   double r2;
@@ -781,15 +811,22 @@ template void delfem2::Nearest_Line_Circle(CVec3d& p0,
 // -----------------------------------------------------
 
 template <typename T>
-bool delfem2::intersection_Plane_Line
-(CVec3<T>& p0, double& r0, double& r1, double& r2,
- double eps,
- const CVec3<T>& src, const CVec3<T>& dir,
- const CVec3<T>& q0, const CVec3<T>& q1, const CVec3<T>& q2)
+bool delfem2::intersection_Plane_Line(
+    CVec3<T>& p0,
+    double& r0,
+    double& r1,
+    double& r2,
+    double eps,
+    const CVec3<T>& src,
+    const CVec3<T>& dir,
+    const CVec3<T>& q0,
+    const CVec3<T>& q1,
+    const CVec3<T>& q2)
 {
-  r0 = Volume_Tet(src, src+dir, q1, q2);
-  r1 = Volume_Tet(src, src+dir, q2, q0);
-  r2 = Volume_Tet(src, src+dir, q0, q1);
+  namespace lcl = delfem2::proximity3;
+  r0 = lcl::Volume_Tet(src, src+dir, q1, q2);
+  r1 = lcl::Volume_Tet(src, src+dir, q2, q0);
+  r2 = lcl::Volume_Tet(src, src+dir, q0, q1);
   double v012 = (r0+r1+r2);
   double v012_inv = 1.0/v012;
   r0 *= v012_inv;

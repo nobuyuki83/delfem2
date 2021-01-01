@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
 #include <cmath>
 #include <stack>
 #include "delfem2/geoconvhull3_v3.h"
@@ -14,27 +13,52 @@
 #  define M_PI 3.14159265358979323846
 #endif
 
-template <typename T>
-bool delfem2::IsOut
-(int itri, const CVec3<T>& v,
- const std::vector<CVec3<T>>& aXYZ,
- const std::vector<int>& aTri)
-{
-  int i0 = aTri[itri*3+0];
-  int i1 = aTri[itri*3+1];
-  int i2 = aTri[itri*3+2];
-  const CVec3<T>& v0 = aXYZ[i0];
-  const CVec3<T>& v1 = aXYZ[i1];
-  const CVec3<T>& v2 = aXYZ[i2];
-  CVec3<T> n; Normal(n,v0,v1,v2);
-  double dot = Dot(v-v0,n);
-  return dot > 0;
-}
+namespace delfem2 {
+namespace convhull3 {
 
 template <typename T>
-void delfem2::ConvexHull
-(std::vector<int>& aTri,
- const std::vector<CVec3<T>>& aXYZ)
+bool IsOut(
+    int itri,
+    const CVec3 <T> &v,
+    const std::vector<CVec3 < T>> & aXYZ,
+    const std::vector<int> &aTri)
+{
+    int i0 = aTri[itri * 3 + 0];
+    int i1 = aTri[itri * 3 + 1];
+    int i2 = aTri[itri * 3 + 2];
+    const CVec3 <T> &v0 = aXYZ[i0];
+    const CVec3 <T> &v1 = aXYZ[i1];
+    const CVec3 <T> &v2 = aXYZ[i2];
+    CVec3 <T> n;
+    Normal(n, v0, v1, v2);
+    double dot = Dot(v - v0, n);
+    return dot > 0;
+}
+
+//! Volume of a tetrahedra
+template <typename T>
+T Volume_Tet(
+    const CVec3<T>& v0,
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3 )
+{
+//  return delfem2::Volume_Tet3(v0.p, v1.p, v2.p, v3.p);
+  double v = (v1.p[0]-v0.p[0])*( (v2.p[1]-v0.p[1])*(v3.p[2]-v0.p[2]) - (v3.p[1]-v0.p[1])*(v2.p[2]-v0.p[2]) )
+             + (v1.p[1]-v0.p[1])*( (v2.p[2]-v0.p[2])*(v3.p[0]-v0.p[0]) - (v3.p[2]-v0.p[2])*(v2.p[0]-v0.p[0]) )
+             + (v1.p[2]-v0.p[2])*( (v2.p[0]-v0.p[0])*(v3.p[1]-v0.p[1]) - (v3.p[0]-v0.p[0])*(v2.p[1]-v0.p[1]) );
+  return v*0.16666666666666666666666666666667;
+}
+
+}
+}
+
+// -------------------------------------
+
+template <typename T>
+void delfem2::ConvexHull(
+    std::vector<int>& aTri,
+    const std::vector<CVec3<T>>& aXYZ)
 {
   std::vector<int> aBflg( aXYZ.size(), -1 );
   aTri.reserve(aXYZ.size()*6);
@@ -58,7 +82,11 @@ void delfem2::ConvexHull
   aTriSur[10] = std::make_pair(2,2);
   aTriSur[11] = std::make_pair(1,1);
   {
-    double vol = delfem2::Volume_Tet(0, 1, 2, 3, aXYZ);
+    double vol = delfem2::convhull3::Volume_Tet(
+        aXYZ[0],
+        aXYZ[1],
+        aXYZ[2],
+        aXYZ[3]);
     if( vol < 0 ){
       aTri[ 0] = 3;  aTri[ 1] = 2;  aTri[ 2] = 1; // 0
       aTri[ 3] = 2;  aTri[ 4] = 3;  aTri[ 5] = 0; // 1
@@ -86,7 +114,7 @@ void delfem2::ConvexHull
     CVec3<T> v = aXYZ[iv];
     int itri_ker = -1;
     for(int itri=0;itri<(int)aTri.size()/3;itri++){
-      if( IsOut(itri,v,aXYZ,aTri) ){ itri_ker = itri; break; }
+      if( delfem2::convhull3::IsOut(itri,v,aXYZ,aTri) ){ itri_ker = itri; break; }
     }
 #ifndef NDEBUG
     {
@@ -129,7 +157,7 @@ void delfem2::ConvexHull
           const std::pair<int,int>& s0 = aTriSur[itri0*3+ied0];
           isLookedEdge[s0.first*3+s0.second] = 1;
         }
-        isDelTri[itri0] = ( IsOut(itri0,v,aXYZ,aTri) ) ? 1 : 0;
+        isDelTri[itri0] = ( ::delfem2::convhull3::IsOut(itri0,v,aXYZ,aTri) ) ? 1 : 0;
         if( isDelTri[itri0] == 1 ){ // expand this boundary
           int ied1 = triEd[ied0][0];
           int ied2 = triEd[ied0][1];
@@ -206,7 +234,7 @@ void delfem2::ConvexHull
     std::vector< std::pair<int,int> > aTriSur1; aTriSur1.reserve(aTriSur.size()+60);
     for(int itri=0;itri<(int)aTri.size()/3;itri++){
       if( isDelTri[itri] ==  1) continue;
-      assert( !IsOut(itri,v,aXYZ,aTri) );
+      assert( !::delfem2::convhull3::IsOut(itri,v,aXYZ,aTri) );
       // itri is inside
       mapOld2New[itri] = (int)aTri1.size()/3;
       aTri1.push_back( aTri[itri*3+0] );
@@ -233,11 +261,11 @@ void delfem2::ConvexHull
       int itn0  = aB[ib].second;
       int itn1 = triEd[itn0][0];
       int itn2 = triEd[itn0][1];
-      assert( !IsOut(itri0,v,aXYZ,aTri) );
+      assert( !::delfem2::convhull3::IsOut(itri0,v,aXYZ,aTri) );
 #ifndef NDEBUG
       {
         int itri_s = aTriSur[itri0*3+itn0].first;
-        assert( IsOut(itri_s,v,aXYZ,aTri) );
+        assert( ::delfem2::convhull3::IsOut(itri_s,v,aXYZ,aTri) );
         int ied_s0 = aTriSur[itri0*3+itn0].second;
         assert( aTriSur[itri_s*3+ied_s0].first == itri0 );
         assert( aTriSur[itri_s*3+ied_s0].second == itn0 );

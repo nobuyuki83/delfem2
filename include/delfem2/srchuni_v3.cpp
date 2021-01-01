@@ -10,6 +10,27 @@
 #include "delfem2/vec3.h"
 #include <map>
 
+namespace delfem2 {
+namespace srchuni {
+
+//! Volume of a tetrahedra
+template<typename T>
+T Volume_Tet(
+    const CVec3<T> &v0,
+    const CVec3<T> &v1,
+    const CVec3<T> &v2,
+    const CVec3<T> &v3)
+{
+  const double v =
+        (v1.p[0] - v0.p[0]) * ((v2.p[1] - v0.p[1]) * (v3.p[2] - v0.p[2]) - (v3.p[1] - v0.p[1]) * (v2.p[2] - v0.p[2]))
+      + (v1.p[1] - v0.p[1]) * ((v2.p[2] - v0.p[2]) * (v3.p[0] - v0.p[0]) - (v3.p[2] - v0.p[2]) * (v2.p[0] - v0.p[0]))
+      + (v1.p[2] - v0.p[2]) * ((v2.p[0] - v0.p[0]) * (v3.p[1] - v0.p[1]) - (v3.p[0] - v0.p[0]) * (v2.p[1] - v0.p[1]));
+  return v * 0.16666666666666666666666666666667;
+}
+
+}
+}
+
 // ----------------------------------------------
 
 template <typename T>
@@ -35,12 +56,13 @@ template delfem2::CVec3d delfem2::CPtElm3<double>::getPos_Tet
 // ----------------------------------------
 
 template <typename T>
-void delfem2::CPtElm3<T>::setPos_Tet
-(int it0,
- const CVec3<T> &q,
- const std::vector<double> &aXYZ,
- const std::vector<int> &aTet)
+void delfem2::CPtElm3<T>::setPos_Tet(
+    int it0,
+    const CVec3<T> &q,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTet)
 {
+  namespace lcl = delfem2::srchuni;
   assert(it0>=0&&it0<(int)aTet.size()/4);
   int ip0 = aTet[it0*4+0];
   int ip1 = aTet[it0*4+1];
@@ -50,11 +72,11 @@ void delfem2::CPtElm3<T>::setPos_Tet
   const CVec3<T> p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
   const CVec3<T> p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
   const CVec3<T> p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
-  double v0 = Volume_Tet( q,p1,p2,p3);
-  double v1 = Volume_Tet(p0, q,p2,p3);
-  double v2 = Volume_Tet(p0,p1, q,p3);
+  double v0 = lcl::Volume_Tet( q,p1,p2,p3);
+  double v1 = lcl::Volume_Tet(p0, q,p2,p3);
+  double v2 = lcl::Volume_Tet(p0,p1, q,p3);
   //    double v3 = volume_Tet(p0,p1,p2, q);
-  double vt = Volume_Tet(p0,p1,p2,p3);
+  double vt = lcl::Volume_Tet(p0,p1,p2,p3);
   this->ielem = it0;
   this->r0 = v0/vt;
   this->r1 = v1/vt;

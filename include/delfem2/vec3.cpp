@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
 #include <cmath>
 #include <stack>
 #include "delfem2/vec3.h"
@@ -820,145 +819,6 @@ template void delfem2::GetVertical2Vector(const CVec3d& vec_n,
 
 // ------------------------------------------------------------------------------
 
-template <typename T>
-delfem2::CVec3<T> delfem2::positionBarycentricCoord_Pyramid
-(double r0,
- double r1,
- double r2,
- const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3,
- const CVec3<T>& p4)
-{
-  return (1.0-r2)*(1.0-r0)*(1.0-r1)*p0
-  + (1.0-r2)*r0*(1.0-r1)*p1
-  + (1.0-r2)*r0*r1*p2
-  + (1.0-r2)*(1.0-r0)*r1*p3
-  + r2*p4;
-}
-
-template <typename T>
-delfem2::CVec3<T> delfem2::positionBarycentricCoord_Wedge
-(double r0,
- double r1,
- double r2,
- const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3,
- const CVec3<T>& p4,
- const CVec3<T>& p5)
-{
-  return (1.0-r2)*r0*p0
-  + (1.0-r2)*r1*p1
-  + (1.0-r2)*(1.0-r0-r1)*p2
-  + r2*r0*p3
-  + r2*r1*p4
-  + r2*(1.0-r0-r1)*p5;
-}
-
-template <typename T>
-void delfem2::iteration_barycentricCoord_Origin_Solid
-(double& r0,
- double& r1,
- double& r2,
- const CVec3<T>& q, // q=positionBarycentricCoord_Wedge
- const CVec3<T>& dpdr0,
- const CVec3<T>& dpdr1,
- const CVec3<T>& dpdr2,
- double damp)
-{
-  const double cxx = dpdr0.p[0]*dpdr0.p[0] + dpdr1.p[0]*dpdr1.p[0] + dpdr2.p[0]*dpdr2.p[0];
-  const double cxy = dpdr0.p[0]*dpdr0.p[1] + dpdr1.p[0]*dpdr1.p[1] + dpdr2.p[0]*dpdr2.p[1];
-  const double cxz = dpdr0.p[0]*dpdr0.p[2] + dpdr1.p[0]*dpdr1.p[2] + dpdr2.p[0]*dpdr2.p[2];
-  const double cyy = dpdr0.p[1]*dpdr0.p[1] + dpdr1.p[1]*dpdr1.p[1] + dpdr2.p[1]*dpdr2.p[1];
-  const double cyz = dpdr0.p[1]*dpdr0.p[2] + dpdr1.p[1]*dpdr1.p[2] + dpdr2.p[1]*dpdr2.p[2];
-  const double czz = dpdr0.p[2]*dpdr0.p[2] + dpdr1.p[2]*dpdr1.p[2] + dpdr2.p[2]*dpdr2.p[2];
-  double C[9] = {cxx,cxy,cxz, cxy,cyy,cyz, cxz,cyz,czz};
-  double Cinv[9]; vec3::MyInverse_Mat3(Cinv, C);
-  const CVec3<T> d = damp*Mat3Vec(Cinv,q);
-  r0 -= dpdr0*d;
-  r1 -= dpdr1*d;
-  r2 -= dpdr2*d;
-}
-
-template <typename T>
-bool delfem2::barycentricCoord_Origin_Tet
-(double& r0,
- double& r1,
- double& r2,
- const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3)
-{
-  double v0 = Volume_OrgTet(p1, p2, p3);
-  double v1 = Volume_OrgTet(p2, p0, p3);
-  double v2 = Volume_OrgTet(p1, p3, p0);
-  double v3 = Volume_OrgTet(p1, p0, p2);
-  double vt_inv = 1.0/(v0+v1+v2+v3);
-  r0 = v0*vt_inv;
-  r1 = v1*vt_inv;
-  r2 = v2*vt_inv;
-  return true;
-}
-
-template <typename T>
-bool delfem2::barycentricCoord_Origin_Pyramid
-(double& r0,
- double& r1,
- double& r2,
- const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3,
- const CVec3<T>& p4)
-{
-  CVec3<T> q = positionBarycentricCoord_Pyramid(r0,r1,r2, p0,p1,p2,p3,p4);
-  for(int itr=0;itr<5;++itr){
-    const CVec3<T> dpdr0 = -(1.0-r2)*(1.0-r1)*p0 + (1.0-r2)*(1.0-r1)*p1 + (1.0-r2)*r1*p2 - (1.0-r2)*r1*p3;
-    const CVec3<T> dpdr1 = -(1.0-r2)*(1.0-r0)*p0 - (1.0-r2)*r0*p1 + (1.0-r2)*r0*p2 + (1.0-r2)*(1.0-r0)*p3;
-    const CVec3<T> dpdr2 = -(1.0-r0)*(1.0-r1)*p0 - r0*(1.0-r1)*p1 - r0*r1*p2 - (1.0-r0)*r1*p3 + p4;
-    iteration_barycentricCoord_Origin_Solid(r0,r1,r2, q,
-                                            dpdr0,dpdr1,dpdr2,
-                                            1.0);
-    q = positionBarycentricCoord_Pyramid(r0,r1,r2, p0,p1,p2,p3,p4);
-  }
-  return true;
-}
-
-template <typename T>
-bool delfem2::barycentricCoord_Origin_Wedge
-(double& r0,
- double& r1,
- double& r2,
- const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3,
- const CVec3<T>& p4,
- const CVec3<T>& p5)
-{
-  CVec3<T> q = positionBarycentricCoord_Wedge(r0,r1,r2, p0,p1,p2,p3,p4,p5);
-  for(int itr=0;itr<5;++itr){
-    const CVec3<T> dpdr0 = (1.0-r2)*(p0-p2)+r2*(p3-p5);
-    const CVec3<T> dpdr1 = (1.0-r2)*(p1-p2)+r2*(p4-p5);
-    const CVec3<T> dpdr2 = r0*(p3-p0)+r1*(p4-p1)+(1.0-r0-r1)*(p5-p2);
-    iteration_barycentricCoord_Origin_Solid(r0,r1,r2, q,
-                                            dpdr0,dpdr1,dpdr2,
-                                            1.0);
-    q = positionBarycentricCoord_Wedge(r0,r1,r2, p0,p1,p2,p3,p4,p5);
-  }
-  return true;
-}
-
-
-// ----------------------------------------------------------------------
-
-// -------------------------------------------------------------------------
-
-
 // matrix are column major
 template <typename T>
 delfem2::CVec3<T> delfem2::mult_GlAffineMatrix
@@ -1094,88 +954,6 @@ delfem2::CVec3<T> delfem2::screenDepthDirection
 
 // ----------------------------------------------------------------------------
 
-//! Volume of a tetrahedra
-template <typename T>
-T delfem2::Volume_Tet
-(const CVec3<T>& v0,
- const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3 )
-{
-  return delfem2::Volume_Tet3(v0.p, v1.p, v2.p, v3.p);
-  /*
-  double v = (v1.p[0]-v0.p[0])*( (v2.p[1]-v0.p[1])*(v3.p[2]-v0.p[2]) - (v3.p[1]-v0.p[1])*(v2.p[2]-v0.p[2]) )
-           + (v1.p[1]-v0.p[1])*( (v2.p[2]-v0.p[2])*(v3.p[0]-v0.p[0]) - (v3.p[2]-v0.p[2])*(v2.p[0]-v0.p[0]) )
-           + (v1.p[2]-v0.p[2])*( (v2.p[0]-v0.p[0])*(v3.p[1]-v0.p[1]) - (v3.p[0]-v0.p[0])*(v2.p[1]-v0.p[1]) );
-  return v*0.16666666666666666666666666666667;
-   */
-}
-#ifndef DFM2_HEADER_ONLY
-template double delfem2::Volume_Tet(const CVec3d& v0, const CVec3d& v1, const CVec3d& v2, const CVec3d& v3 );
-template float delfem2::Volume_Tet(const CVec3f& v0, const CVec3f& v1, const CVec3f& v2, const CVec3f& v3 );
-#endif
-
-
-//! Volume of a tetrahedra v0 is orgin
-template <typename T>
-T delfem2::Volume_OrgTet(
-    const CVec3<T>& v1,
-    const CVec3<T>& v2,
-    const CVec3<T>& v3 )
-{
-  double v = v1.p[0]*(v2.p[1]*v3.p[2]-v3.p[1]*v2.p[2])
-           + v1.p[1]*(v2.p[2]*v3.p[0]-v3.p[2]*v2.p[0])
-           + v1.p[2]*(v2.p[0]*v3.p[1]-v3.p[0]*v2.p[1]);
-  return v*0.16666666666666666666666666666667;
-}
-#ifndef DFM2_HEADER_ONLY
-template double delfem2::Volume_OrgTet(
-    const CVec3d& v1,
-    const CVec3d& v2,
-    const CVec3d& v3 );
-template float delfem2::Volume_OrgTet(
-    const CVec3f& v1,
-    const CVec3f& v2,
-    const CVec3f& v3 );
-#endif
-
-template <typename T>
-double delfem2::Volume_Pyramid
-(const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3,
- const CVec3<T>& p4)
-{
-  double v0124 = Volume_Tet(p0, p1, p2, p4);
-  double v0234 = Volume_Tet(p0, p2, p3, p4);
-  double v0134 = Volume_Tet(p0, p1, p3, p4);
-  double v2314 = Volume_Tet(p2, p3, p1, p4);
-  double v0 = v0124+v0234;
-  double v1 = v0134+v2314;
-  return (v0+v1)*0.5;
-}
-
-template <typename T>
-double delfem2::Volume_Wedge
-(const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3,
- const CVec3<T>& p4,
- const CVec3<T>& p5)
-{
-  CVec3<T> pm = (p0+p1+p2+p3+p4+p5)/6.0;
-  double vm012 = Volume_Tet(pm,p0,p1,p2);
-  double vm435 = Volume_Tet(pm,p4,p3,p5);
-  double vp0143 = Volume_Pyramid(p0,p1,p4,p3,pm);
-  double vp1254 = Volume_Pyramid(p1,p2,p5,p4,pm);
-  double vp2035 = Volume_Pyramid(p2,p2,p3,p5,pm);
-  return vm012+vm435+vp0143+vp1254+vp2035;
-}
-
-// ---------------------------------------------------------------
-
 template <typename T>
 double delfem2::SolidAngleTri
 (const CVec3<T>& v1,
@@ -1236,7 +1014,10 @@ template double delfem2::Area_Tri(const CVec3<double>& v1, const CVec3<double>& 
   
 
 template <typename T>
-double delfem2::SquareTriArea(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3)
+double delfem2::SquareTriArea(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3)
 {
   double dtmp_x = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
   double dtmp_y = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
@@ -1245,15 +1026,27 @@ double delfem2::SquareTriArea(const CVec3<T>& v1, const CVec3<T>& v2, const CVec
 }
 
 template <typename T>
-double delfem2::SquareDistance
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1)
+double delfem2::SquareDistance(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1)
 {
-  return	( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] ) + ( ipo1.p[2] - ipo0.p[2] )*( ipo1.p[2] - ipo0.p[2] );
+  return	( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] )
+  + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] )
+  + ( ipo1.p[2] - ipo0.p[2] )*( ipo1.p[2] - ipo0.p[2] );
 }
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::SquareDistance(
+    const CVec3d& ipo0,
+    const CVec3d& ipo1);
+template double delfem2::SquareDistance(
+    const CVec3f& ipo0,
+    const CVec3f& ipo1);
+#endif
+
 
 template <typename T>
-double delfem2::SquareLength(const CVec3<T>& point)
+double delfem2::SquareLength(
+    const CVec3<T>& point)
 {
   return	point.p[0]*point.p[0] + point.p[1]*point.p[1] + point.p[2]*point.p[2];
 }
@@ -1280,11 +1073,11 @@ template double delfem2::Distance(const CVec3<double>& p0, const CVec3<double>& 
 
 
 template <typename T>
-double delfem2::SqareLongestEdgeLength
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3 )
+double delfem2::SqareLongestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 )
 {
   double edge1, edge2;
   edge1 = SquareDistance( ipo0, ipo1 );
@@ -1304,11 +1097,11 @@ double delfem2::SqareLongestEdgeLength
 // --------------------------------------
 
 template <typename T>
-double delfem2::LongestEdgeLength
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3 )
+double delfem2::LongestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 )
 {
   return sqrt( SqareLongestEdgeLength(ipo0,ipo1,ipo2,ipo3) );
 }
@@ -1316,11 +1109,11 @@ double delfem2::LongestEdgeLength
 // --------------------------------------
 
 template <typename T>
-double delfem2::SqareShortestEdgeLength
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3 )
+double delfem2::SqareShortestEdgeLength(
+    const CVec3<T>& ipo0,
+    const CVec3<T>& ipo1,
+    const CVec3<T>& ipo2,
+    const CVec3<T>& ipo3 )
 {
   double edge1, edge2;
   edge1 = SquareDistance( ipo0, ipo1 );
@@ -1369,10 +1162,10 @@ template void delfem2::Normal(CVec3d& vnorm, const CVec3d& v1, const CVec3d& v2,
 // -------------------------------------------
 
 template <typename T>
-delfem2::CVec3<T> delfem2::Normal
-(const CVec3<T>& v1,
-const CVec3<T>& v2,
-const CVec3<T>& v3)
+delfem2::CVec3<T> delfem2::Normal(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3)
 {
   CVec3<T> vnorm;
   vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
@@ -1388,11 +1181,11 @@ template delfem2::CVec3d delfem2::Normal(const CVec3d& v1, const CVec3d& v2, con
 // --------------------------------------------
   
 template <typename T>
-void delfem2::UnitNormal
-(CVec3<T>& vnorm,
- const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3)
+void delfem2::UnitNormal(
+    CVec3<T>& vnorm,
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3)
 {
   vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
   vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
@@ -1410,10 +1203,10 @@ template void delfem2::UnitNormal(CVec3d& vnorm, const CVec3d& v1, const CVec3d&
 // ---------------------------------------
 
 template <typename T>
-delfem2::CVec3<T> delfem2::UnitNormal
-(const CVec3<T>& v1,
-const CVec3<T>& v2,
-const CVec3<T>& v3)
+delfem2::CVec3<T> delfem2::UnitNormal(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3)
 {
   CVec3<T> vnorm;
   vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
@@ -1439,117 +1232,11 @@ template delfem2::CVec3d delfem2::UnitNormal
 // ---------------------------------------------------
 
 template <typename T>
-double delfem2::SquareCircumradius
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3)
-{
-  double base[3][3] = {
-    { ipo1.p[0]-ipo0.p[0], ipo1.p[1]-ipo0.p[1], ipo1.p[2]-ipo0.p[2] },
-    { ipo2.p[0]-ipo0.p[0], ipo2.p[1]-ipo0.p[1], ipo2.p[2]-ipo0.p[2] },
-    { ipo3.p[0]-ipo0.p[0], ipo3.p[1]-ipo0.p[1], ipo3.p[2]-ipo0.p[2] }
-  };
-  double s[6] = {
-    base[0][0]*base[0][0]+base[0][1]*base[0][1]+base[0][2]*base[0][2],
-    base[1][0]*base[1][0]+base[1][1]*base[1][1]+base[1][2]*base[1][2],
-    base[2][0]*base[2][0]+base[2][1]*base[2][1]+base[2][2]*base[2][2],
-    base[1][0]*base[2][0]+base[1][1]*base[2][1]+base[1][2]*base[2][2],
-    base[2][0]*base[0][0]+base[2][1]*base[0][1]+base[2][2]*base[0][2],
-    base[0][0]*base[1][0]+base[0][1]*base[1][1]+base[0][2]*base[1][2],
-  };
-  const double vol = Volume_Tet(ipo0,ipo1,ipo2,ipo3)*6.0;
-  if( vol < 1.0e-20 ){ assert(0); }
-  const double inv_det = 1.0 / (vol*vol);
-  double t[6] = {
-    (s[1]*s[2]-s[3]*s[3])*0.5*inv_det,
-    (s[2]*s[0]-s[4]*s[4])*0.5*inv_det,
-    (s[0]*s[1]-s[5]*s[5])*0.5*inv_det,
-    (s[4]*s[5]-s[0]*s[3])*0.5*inv_det,
-    (s[5]*s[3]-s[1]*s[4])*0.5*inv_det,
-    (s[3]*s[4]-s[2]*s[5])*0.5*inv_det,
-  };
-  double u[3] = {
-    t[0]*s[0]+t[5]*s[1]+t[4]*s[2],
-    t[5]*s[0]+t[1]*s[1]+t[3]*s[2],
-    t[4]*s[0]+t[3]*s[1]+t[2]*s[2],
-  };
-  return  0.5*(u[0]*s[0]+u[1]*s[1]+u[2]*s[2]);
-  /*
-   const double square_radius = 0.5*(u[0]*s[0]+u[1]*s[1]+u[2]*s[2]);
-   CVector3 vec1;
-   vec1.p[0] = base[0][0]*u[0]+base[1][0]*u[1]+base[2][0]*u[2] + ipo0.p[0];
-   vec1.p[1] = base[0][1]*u[0]+base[1][1]*u[1]+base[2][1]*u[2] + ipo0.p[1];
-   vec1.p[2] = base[0][2]*u[0]+base[1][2]*u[1]+base[2][2]*u[2] + ipo0.p[2];
-   std::cout << square_radius << " ";
-   std::cout << SquareLength(vec1,ipo0) << " ";
-   std::cout << SquareLength(vec1,ipo1) << " ";
-   std::cout << SquareLength(vec1,ipo2) << " ";
-   std::cout << SquareLength(vec1,ipo3) << std::endl;;
-   return square_radius;
-   */
-}
-
-template <typename T>
-delfem2::CVec3<T> delfem2::CircumCenter
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3)
-{
-  
-  double base[3][3] = {
-    { ipo1.p[0]-ipo0.p[0], ipo1.p[1]-ipo0.p[1], ipo1.p[2]-ipo0.p[2] },
-    { ipo2.p[0]-ipo0.p[0], ipo2.p[1]-ipo0.p[1], ipo2.p[2]-ipo0.p[2] },
-    { ipo3.p[0]-ipo0.p[0], ipo3.p[1]-ipo0.p[1], ipo3.p[2]-ipo0.p[2] }
-  };
-  double s[6] = {
-    base[0][0]*base[0][0]+base[0][1]*base[0][1]+base[0][2]*base[0][2],
-    base[1][0]*base[1][0]+base[1][1]*base[1][1]+base[1][2]*base[1][2],
-    base[2][0]*base[2][0]+base[2][1]*base[2][1]+base[2][2]*base[2][2],
-    base[1][0]*base[2][0]+base[1][1]*base[2][1]+base[1][2]*base[2][2],
-    base[2][0]*base[0][0]+base[2][1]*base[0][1]+base[2][2]*base[0][2],
-    base[0][0]*base[1][0]+base[0][1]*base[1][1]+base[0][2]*base[1][2],
-  };
-  const double vol = Volume_Tet(ipo0,ipo1,ipo2,ipo3)*6.0;
-  if( vol < 1.0e-20 ){ assert(0); }
-  const double inv_det = 1.0 / (vol*vol);
-  double t[6] = {
-    (s[1]*s[2]-s[3]*s[3])*0.5*inv_det,
-    (s[2]*s[0]-s[4]*s[4])*0.5*inv_det,
-    (s[0]*s[1]-s[5]*s[5])*0.5*inv_det,
-    (s[4]*s[5]-s[0]*s[3])*0.5*inv_det,
-    (s[5]*s[3]-s[1]*s[4])*0.5*inv_det,
-    (s[3]*s[4]-s[2]*s[5])*0.5*inv_det,
-  };
-  double u[3] = {
-    t[0]*s[0]+t[5]*s[1]+t[4]*s[2],
-    t[5]*s[0]+t[1]*s[1]+t[3]*s[2],
-    t[4]*s[0]+t[3]*s[1]+t[2]*s[2],
-  };
-  //    const double square_radius = 0.5*(u[0]*s[0]+u[1]*s[1]+u[2]*s[2]);
-  CVec3<T> vec1;
-  vec1.p[0] = base[0][0]*u[0]+base[1][0]*u[1]+base[2][0]*u[2] + ipo0.p[0];
-  vec1.p[1] = base[0][1]*u[0]+base[1][1]*u[1]+base[2][1]*u[2] + ipo0.p[1];
-  vec1.p[2] = base[0][2]*u[0]+base[1][2]*u[1]+base[2][2]*u[2] + ipo0.p[2];
-  return vec1;
-}
-#ifndef DFM2_HEADER_ONLY
-template delfem2::CVec3d delfem2::CircumCenter(const CVec3d& ipo0,
-                                         const CVec3d& ipo1,
-                                         const CVec3d& ipo2,
-                                         const CVec3d& ipo3);
-#endif
-  
-  
-// ----------------------
-
-template <typename T>
-void delfem2::MeanValueCoordinate
-(double w[3],
- const CVec3<T>& v0,
- const CVec3<T>& v1,
- const CVec3<T>& v2)
+void delfem2::MeanValueCoordinate(
+    double w[3],
+    const CVec3<T>& v0,
+    const CVec3<T>& v1,
+    const CVec3<T>& v2)
 {
   double eps  = 1.0e-5;
   double d0 = v0.Length();
@@ -1604,73 +1291,10 @@ template void delfem2::MeanValueCoordinate(double w[3],
 
 // ------------------------------------------------
 
-/**
- * @brief check if Delaunay condition satisfied
- * @details
- * 0 : p3 is inside circum circle on the p0,p1,p2
- * 1 :       on
- * 2 :       outsdie
- */
 template <typename T>
-int delfem2::DetDelaunay
-(const CVec3<T>& p0,
-const CVec3<T>& p1,
-const CVec3<T>& p2,
-const CVec3<T>& p3)
-{
-  const double area = Area_Tri(p0, p1, p2);
-  if (fabs(area) < 1.0e-10){
-    return 3;
-  }
-  const double tmp_val = 1.0/(area*area*16.0);
-
-  const double dtmp0 = SquareDistance(p1, p2);
-  const double dtmp1 = SquareDistance(p0, p2);
-  const double dtmp2 = SquareDistance(p0, p1);
-
-  const double etmp0 = tmp_val*dtmp0*(dtmp1+dtmp2-dtmp0);
-  const double etmp1 = tmp_val*dtmp1*(dtmp0+dtmp2-dtmp1);
-  const double etmp2 = tmp_val*dtmp2*(dtmp0+dtmp1-dtmp2);
-
-  const CVec3<T> out_center = etmp0*p0+etmp1*p1+etmp2*p2;
-
-  const double qradius = SquareDistance(out_center, p0);
-  const double qdistance = SquareDistance(out_center, p3);
-
-  const double tol = 1.0e-20;
-  if (qdistance > qradius*(1.0+tol)){ return 2; }	// outside the circumcircle
-  else{
-    if (qdistance < qradius*(1.0-tol)){ return 0; }	// inside the circumcircle
-    else{ return 1; }	// on the circumcircle
-  }
-  return 0;
-}
-#ifndef DFM2_HEADER_ONLY
-template int delfem2::DetDelaunay(const CVec3d& p0,
-                               const CVec3d& p1,
-                               const CVec3d& p2,
-                               const CVec3d& p3);
-#endif
-  
-// -------------------------------------------
-
-/**
- * @brief curcumradius of a tetrahedra
- */
-template <typename T>
-double delfem2::Circumradius
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3)
-{
-  return sqrt( SquareCircumradius(ipo0,ipo1,ipo2,ipo3) );
-}
-  
-// --------------------------------
-
-template <typename T>
-delfem2::CVec3<T> delfem2::RotateVector(const CVec3<T>& vec0, const CVec3<T>& rot )
+delfem2::CVec3<T> delfem2::RotateVector(
+    const CVec3<T>& vec0,
+    const CVec3<T>& rot )
 {
   const double theta = rot.Length();
   if( theta < 1.0e-30 ){
@@ -1742,24 +1366,9 @@ delfem2::CVec3<T> delfem2::RandGaussVector()
 // TODO: following should be move to mesh class?
 
 template <typename T>
-double delfem2::Area_Tri
-(const int iv1, const int iv2, const int iv3,
- const std::vector<CVec3<T>>& aPoint )
+double delfem2::Area_Tri(
+    const int iv1, const int iv2, const int iv3,
+    const std::vector<CVec3<T>>& aPoint )
 {
   return Area_Tri(aPoint[iv1],aPoint[iv2],aPoint[iv3]);
 }
-
-template <typename T>
-double delfem2::Volume_Tet
-(int iv1, int iv2, int iv3, int iv4,
- const std::vector<CVec3<T>>& aPoint)
-{
-  return Volume_Tet(aPoint[iv1],aPoint[iv2],aPoint[iv3],aPoint[iv4]);
-}
-#ifndef DFM2_HEADER_ONLY
-template double delfem2::Volume_Tet
-  (int iv1, int iv2, int iv3, int iv4,
-   const std::vector<CVec3d>& aPoint);
-#endif
-
-
