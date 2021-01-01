@@ -234,30 +234,6 @@ template void delfem2::Add3(double vo[3], const double vi[3]);
 
 // ---------------------------------
 
-template <typename T>
-T delfem2::Volume_Tet3
- (const T v1[3],
-  const T v2[3],
-  const T v3[3],
-  const T v4[3])
-{
-  return
-  ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
-   -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
-   +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
-   ) * 0.16666666666666666666666666666667;
-}
-#ifndef DFM2_HEADER_ONLY
-template float delfem2::Volume_Tet3(const float v1[3],
-                                    const float v2[3],
-                                    const float v3[3],
-                                    const float v4[3]);
-template double delfem2::Volume_Tet3(const double v1[3],
-                                     const double v2[3],
-                                     const double v3[3],
-                                     const double v4[3]);
-#endif
-
 // ---------------------------------
 
 template <typename T>
@@ -760,32 +736,6 @@ template void delfem2::CVec3<float>::SetRandom();
 template void delfem2::CVec3<double>::SetRandom();
 #endif
  */
-  
-// --------------------------------
-
-//! Hight of a tetrahedra
-template <typename T>
-double delfem2::Height
-(const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3,
- const CVec3<T>& v4)
-{
-  T n[3]; NormalTri3(n,
-                     v1.p,v2.p,v3.p);
-  Normalize3(n);
-  return (v4.p[0]-v1.p[0])*n[0]+(v4.p[1]-v1.p[1])*n[1]+(v4.p[2]-v1.p[2])*n[2];
-}
-#ifndef DFM2_HEADER_ONLY
-template double delfem2::Height(const CVec3f& v1,
-                                const CVec3f& v2,
-                                const CVec3f& v3,
-                                const CVec3f& v4);
-template double delfem2::Height(const CVec3d& v1,
-                                const CVec3d& v2,
-                                const CVec3d& v3,
-                                const CVec3d& v4);
-#endif
 
 // -------------------------------------------------------------------------
 
@@ -955,31 +905,6 @@ delfem2::CVec3<T> delfem2::screenDepthDirection
 // ----------------------------------------------------------------------------
 
 template <typename T>
-double delfem2::SolidAngleTri
-(const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3)
-{
-  double l1 = v1.Length();
-  double l2 = v2.Length();
-  double l3 = v3.Length();
-  double den = (v1^v2)*v3;
-  double num = l1*l2*l3+(v1*v2)*l3+(v2*v3)*l1+(v3*v1)*l2;
-  double tho = den/num;
-  double v = atan(tho);
-  if (v<0){ v += 2*M_PI; }
-  v *= 2;
-  return v;
-}
-#ifndef DFM2_HEADER_ONLY
-template double delfem2::SolidAngleTri(const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
-#endif
-
-
-
-// ------------------------------------------------------------------
-
-template <typename T>
 void delfem2::Cross
 (CVec3<T>& lhs,
  const CVec3<T>& v1,
@@ -996,10 +921,10 @@ template void delfem2::Cross(CVec3d& lhs, const CVec3d& v1, const CVec3d& v2 );
 // ----------------------
 
 template <typename T>
-double delfem2::Area_Tri
-(const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3)
+double delfem2::Area_Tri(
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3)
 {
   double x, y, z;
   x = ( v2.p[1] - v1.p[1] )*( v3.p[2] - v1.p[2] ) - ( v3.p[1] - v1.p[1] )*( v2.p[2] - v1.p[2] );
@@ -1071,85 +996,14 @@ double delfem2::Distance
 template double delfem2::Distance(const CVec3<double>& p0, const CVec3<double>& p1);
 #endif
 
-
-template <typename T>
-double delfem2::SqareLongestEdgeLength(
-    const CVec3<T>& ipo0,
-    const CVec3<T>& ipo1,
-    const CVec3<T>& ipo2,
-    const CVec3<T>& ipo3 )
-{
-  double edge1, edge2;
-  edge1 = SquareDistance( ipo0, ipo1 );
-  edge2 = SquareDistance( ipo0, ipo2 );
-  if( edge2 > edge1 ) edge1 = edge2;
-  edge2 = SquareDistance( ipo0, ipo3 );
-  if( edge2 > edge1 ) edge1 = edge2;
-  edge2 = SquareDistance( ipo1, ipo2 );
-  if( edge2 > edge1 ) edge1 = edge2;
-  edge2 = SquareDistance( ipo1, ipo3 );
-  if( edge2 > edge1 ) edge1 = edge2;
-  edge2 = SquareDistance( ipo2, ipo3 );
-  if( edge2 > edge1 ) edge1 = edge2;
-  return edge1;
-}
-
-// --------------------------------------
-
-template <typename T>
-double delfem2::LongestEdgeLength(
-    const CVec3<T>& ipo0,
-    const CVec3<T>& ipo1,
-    const CVec3<T>& ipo2,
-    const CVec3<T>& ipo3 )
-{
-  return sqrt( SqareLongestEdgeLength(ipo0,ipo1,ipo2,ipo3) );
-}
-
-// --------------------------------------
-
-template <typename T>
-double delfem2::SqareShortestEdgeLength(
-    const CVec3<T>& ipo0,
-    const CVec3<T>& ipo1,
-    const CVec3<T>& ipo2,
-    const CVec3<T>& ipo3 )
-{
-  double edge1, edge2;
-  edge1 = SquareDistance( ipo0, ipo1 );
-  edge2 = SquareDistance( ipo0, ipo2 );
-  if( edge2 < edge1 ) edge1 = edge2;
-  edge2 = SquareDistance( ipo0, ipo3 );
-  if( edge2 < edge1 ) edge1 = edge2;
-  edge2 = SquareDistance( ipo1, ipo2 );
-  if( edge2 < edge1 ) edge1 = edge2;
-  edge2 = SquareDistance( ipo1, ipo3 );
-  if( edge2 < edge1 ) edge1 = edge2;
-  edge2 = SquareDistance( ipo2, ipo3 );
-  if( edge2 < edge1 ) edge1 = edge2;
-  return edge1;
-}
-
-// -----------------------------------------
-
-template <typename T>
-double delfem2::ShortestEdgeLength
-(const CVec3<T>& ipo0,
- const CVec3<T>& ipo1,
- const CVec3<T>& ipo2,
- const CVec3<T>& ipo3 )
-{
-  return sqrt( SqareShortestEdgeLength(ipo0,ipo1,ipo2,ipo3) );
-}
-
 // -------------------------------------------
 
 template <typename T>
-void delfem2::Normal
-(CVec3<T>& vnorm,
- const CVec3<T>& v1,
- const CVec3<T>& v2,
- const CVec3<T>& v3)
+void delfem2::Normal(
+    CVec3<T>& vnorm,
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3)
 {
   vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
   vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);

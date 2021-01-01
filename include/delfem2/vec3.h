@@ -61,9 +61,6 @@ DFM2_INLINE void Add3(
 // below: functions specific to 3 dimension
   
 template <typename T>
-T Volume_Tet3(const T v1[3], const T v2[3], const T v3[3], const T v4[3]);
-  
-template <typename T>
 void Cross3(T r[3],
     const T v1[3], const T v2[3]);
 
@@ -329,19 +326,11 @@ bool operator == (const CVec3<T>& lhs, const CVec3<T>& rhs);
   
 template <typename T>
 bool operator != (const CVec3<T>& lhs, const CVec3<T>& rhs);
-  
-template <typename T>
-double Height(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3, const CVec3<T>& v4);
-  
+
 template <typename T>
 void GetVertical2Vector (const CVec3<T>& vec_n, CVec3<T>& vec_x, CVec3<T>& vec_y);
 
 // ---------------------------------------------
-
-template <typename T>
-double SolidAngleTri(const CVec3<T>& v1,
-                     const CVec3<T>& v2,
-                     const CVec3<T>& v3);
 
 template <typename T>
 void Cross( CVec3<T>& lhs, const CVec3<T>& v1, const CVec3<T>& v2 );
