@@ -147,9 +147,9 @@ void delfem2::MeanValueCoordinate(
 
 
 template <typename T>
-void makeRandomLoop
-(unsigned int nCV,
- std::vector<double>& aCV)
+void makeRandomLoop(
+    unsigned int nCV,
+    std::vector<double>& aCV)
 {
   aCV.clear();
   for(unsigned int icv=0;icv<nCV;icv++){
@@ -204,6 +204,69 @@ std::vector<delfem2::CVec2<T>> delfem2::Polygon_Resample_Polygon(
   return stroke;
 }
 
+template <typename T>
+void delfem2::CgArea_Polygon(
+    CVec2<T>& cg,
+    T& area,
+    const std::vector<CVec2<T>>& aVec2D)
+{
+  area = 0;
+  const size_t nseg = aVec2D.size();
+  cg = CVec2<T>(0.0, 0.0);
+  for(unsigned int iseg=0;iseg<nseg;iseg++){
+    unsigned int ip0 = (iseg+0)%nseg;
+    unsigned int ip1 = (iseg+1)%nseg;
+    const T x0 = aVec2D[ip0].p[0];
+    const T y0 = aVec2D[ip0].p[1];
+    const T x1 = aVec2D[ip1].p[0];
+    const T y1 = aVec2D[ip1].p[1];
+    const T ai = x0*y1 - x1*y0;
+    area += ai;
+    cg.p[0] += ai*(x0+x1)/3.0;
+    cg.p[1] += ai*(y0+y1)/3.0;
+  }
+  cg.p[0] /= area;
+  cg.p[1] /= area;
+  area *= 0.5;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CgArea_Polygon(
+    CVec2d& cg,
+    double& area,
+    const std::vector<CVec2d>& aVec2D);
+template void delfem2::CgArea_Polygon(
+    CVec2f& cg,
+    float& area,
+    const std::vector<CVec2f>& aVec2D);
+#endif
+
+// https://en.wikipedia.org/wiki/List_of_moments_of_inertia
+template <typename T>
+T delfem2::RotationalMomentPolar_Polygon2(
+    const std::vector<CVec2<T>>& aVec2,
+    const CVec2<T>& pivot)
+{
+  const unsigned int ne = aVec2.size();
+  T sum_I = 0.0;
+  for(unsigned int ie=0;ie<ne;++ie){
+    const unsigned int ip0 = ie;
+    const unsigned int ip1 = (ie+1)%ne;
+    const CVec2<T> p0 = aVec2[ip0] - pivot;
+    const CVec2<T> p1 = aVec2[ip1] - pivot;
+    T a0 = (p0^p1)*static_cast<T>(0.5);
+    sum_I += a0*(p0*p0+p0*p1+p1*p1);
+  }
+  return sum_I*static_cast<T>(1.0/6.0);
+}
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::RotationalMomentPolar_Polygon2(
+    const std::vector<CVec2d>& aVec2,
+    const CVec2d& pivot);
+template float delfem2::RotationalMomentPolar_Polygon2(
+    const std::vector<CVec2f>& aVec2,
+    const CVec2f& pivot);
+#endif
+
 
 template <typename T>
 void delfem2::SecondMomentOfArea_Polygon(
@@ -256,20 +319,21 @@ void delfem2::SecondMomentOfArea_Polygon(
   I2 = 0.5*(Ix+Iy)-0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::SecondMomentOfArea_Polygon(CVec2d& cg,  double& area,
-                                               CVec2d& pa1, double& I1,
-                                               CVec2d& pa2, double& I2,
-                                               const std::vector<CVec2d>& aVec2D);
+template void delfem2::SecondMomentOfArea_Polygon(
+    CVec2d& cg,  double& area,
+    CVec2d& pa1, double& I1,
+    CVec2d& pa2, double& I2,
+    const std::vector<CVec2d>& aVec2D);
 #endif
 
 // ----------------------------------------
 
 template <typename T>
-void delfem2::JArray_FromVecVec_XY
-(std::vector<int>& aIndXYs,
- std::vector<int>& loopIP0,
- std::vector<CVec2<T>>& aXY,
- const std::vector< std::vector<double> >& aVecAry0)
+void delfem2::JArray_FromVecVec_XY(
+    std::vector<int>& aIndXYs,
+    std::vector<int>& loopIP0,
+    std::vector<CVec2<T>>& aXY,
+    const std::vector< std::vector<double> >& aVecAry0)
 {
   const int nloop = (int)aVecAry0.size();
   aIndXYs.resize(nloop+1);
@@ -376,10 +440,10 @@ template void delfem2::ResamplingLoop(
 #endif
 
 template <typename T>
-bool delfem2::IsInclude_Loop
-(const double co[],
- const int ixy_stt, const int ixy_end,
- const std::vector<CVec2<T>>& aXY)
+bool delfem2::IsInclude_Loop(
+    const double co[],
+    const int ixy_stt, const int ixy_end,
+    const std::vector<CVec2<T>>& aXY)
 {
   int inum_cross = 0;
   for(int itr=0;itr<10;itr++){
@@ -421,9 +485,9 @@ bool delfem2::IsInclude_Loop
 }
 
 template <typename T>
-bool delfem2::CheckInputBoundaryForTriangulation
-(const std::vector<int>& loopIP_ind,
- const std::vector<CVec2<T>>& aXY)
+bool delfem2::CheckInputBoundaryForTriangulation(
+    const std::vector<int>& loopIP_ind,
+    const std::vector<CVec2<T>>& aXY)
 {
   // ------------------------------------
   // enter Input check section
@@ -529,8 +593,8 @@ template bool delfem2::CheckInputBoundaryForTriangulation(
 // -------------------------------------------
 
 template <typename T>
-std::vector<delfem2::CVec2<T>> delfem2::Polygon_Invert
- (const std::vector<CVec2<T>>& aP)
+std::vector<delfem2::CVec2<T>> delfem2::Polygon_Invert(
+    const std::vector<CVec2<T>>& aP)
 {
   std::vector<CVec2<T>> res;
   for(int ip=(int)aP.size()-1;ip>=0;--ip){
@@ -540,8 +604,8 @@ std::vector<delfem2::CVec2<T>> delfem2::Polygon_Invert
 }
 
 template <typename T>
-std::vector<double> delfem2::XY_Polygon
- (const std::vector<CVec2<T>>& aP)
+std::vector<double> delfem2::XY_Polygon(
+    const std::vector<CVec2<T>>& aP)
 {
   std::vector<double> res;
   res.reserve(aP.size()*2);
@@ -553,10 +617,10 @@ std::vector<double> delfem2::XY_Polygon
 }
 
 template <typename T>
-void delfem2::FixLoopOrientation
-(std::vector<int>& loopIP,
- const std::vector<int>& loopIP_ind,
- const std::vector<CVec2<T>>& aXY)
+void delfem2::FixLoopOrientation(
+    std::vector<int>& loopIP,
+    const std::vector<int>& loopIP_ind,
+    const std::vector<CVec2<T>>& aXY)
 {
   const std::vector<int> loop_old = loopIP;
   assert( loopIP_ind.size()>1 );

@@ -750,44 +750,6 @@ void SetMesh(int ishape)
   }
 }
 
-/*
-void Solve(bool is_next)
-{
-  cur_time = 0.0;
-  if( is_next ){ iphysics = (iphysics+1)%7; }
-  if( iphysics == 0 ){
-    InitializeProblem_Poisson();
-    SolveProblem_Poisson();
-  }
-  else if( iphysics == 1 ){
-    InitializeProblem_Diffusion();
-    SolveProblem_Diffusion();
-  }
-  else if( iphysics == 2 ){
-    InitializeProblem_ShellEigenPB();
-    SolveProblem_LinearSolid_Static();
-  }
-  else if( iphysics == 3 ){
-    InitializeProblem_LinearSolid_Dynamic();
-    SolveProblem_LinearSolid_Dynamic();
-  }
-  else if( iphysics == 4 ){
-    InitializeProblem_Stokes_Static();
-    SolveProblem_Stokes_Static();
-  }
-  else if( iphysics == 5 ){
-    InitializeProblem_Stokes_Dynamic();
-    SolveProblem_Stokes_Dynamic();
-  }
-  else if( iphysics == 6 ){
-    InitializeProblem_NavierStokes_Dynamic();
-    SolveProblem_NavierStokes_Dynamic();
-  }
-  std::cout<<"node number:" << aXYZ.size()/3<<std::endl;
-}
- */
-
-
 // ---------------------------------------------
 
 static void myGlVertex3d
@@ -877,70 +839,6 @@ void myGlutDisplay(int iphysics)
 
   ::glColor3d(0,0,0);
 }
-
-/*
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch (Key)
-  {
-  case 'q':
-  case 'Q':
-  case '\033':
-    exit(0);
-  case 'a':
-    {
-      is_animation = !is_animation;
-      break;
-    }
-  case 'd':
-    {
-      ishape = (ishape+1)%3;
-      SetMesh(ishape);
-      Solve(false);
-      break;
-    }
-  case ' ':
-      Solve(true);
-      break;
-  }
-
-//	::glMatrixMode(GL_PROJECTION);
-//	::glLoadIdentity();
-//	Com::View::SetProjectionTransform(camera);
-//	::glutPostRedisplay();
-}
- */
-
-
-/*
-void myGlutIdle(int iphysics){
-  if( is_animation ){
-    bool is_dynamic = false;
-    if( iphysics == 1){
-      is_dynamic = true;
-      SolveProblem_Diffusion();
-    }
-    if( iphysics == 3){
-      is_dynamic = true;
-      SolveProblem_LinearSolid_Dynamic();
-    }
-    if( iphysics == 5){
-      is_dynamic = true;
-      SolveProblem_Stokes_Dynamic();
-    }
-    if( iphysics == 6){
-      is_dynamic = true;
-      SolveProblem_NavierStokes_Dynamic();
-    }
-    if( is_dynamic ){
-      cur_time += dt_timestep;
-      std::cout << "current time: " << cur_time << std::endl;
-    }
-  }
-//  ::glutPostRedisplay();
-}
- */
-
 
 int main(int argc,char* argv[])
 {
