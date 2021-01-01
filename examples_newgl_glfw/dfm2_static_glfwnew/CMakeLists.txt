@@ -42,6 +42,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
     ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
     ${DELFEM2_INC}/geoplygn2_v2.h              ${DELFEM2_INC}/geoplygn2_v2.cpp
+    ${DELFEM2_INC}/geoconvhull3_v3.h           ${DELFEM2_INC}/geoconvhull3_v3.cpp
 
     ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
     ${DELFEM2_INC}/jagarray.h                  ${DELFEM2_INC}/jagarray.cpp
@@ -64,6 +65,9 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
     ${DELFEM2_INC}/srchbv3sphere.h
     ${DELFEM2_INC}/srchbv3aabb.h
+    ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
+    ${DELFEM2_INC}/srchbi_v3bvh.h
+    ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
     ${DELFEM2_INC}/pgeo.h
     
@@ -97,9 +101,6 @@ add_library(${PROJ_NAME} STATIC
 
     ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
     
-    ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
-    ${DELFEM2_INC}/srchbi_v3bvh.h
-    ${DELFEM2_INC}/srch_v3bvhmshtopo.h
     ${DELFEM2_INC}/cloth_internal.h
     ${DELFEM2_INC}/rigopt.h
     

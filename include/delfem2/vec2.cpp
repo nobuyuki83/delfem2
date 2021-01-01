@@ -755,23 +755,27 @@ template void delfem2::Polyline_BezierCubic
 // --------------
 
 template <typename T>
-void delfem2::Polyline_BezierQuadratic
- (std::vector<CVec2<T>>& aP,
-  const unsigned int n,
-  const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3)
+void delfem2::Polyline_BezierQuadratic(
+    std::vector<CVec2<T>>& aP,
+    const unsigned int n,
+    const CVec2<T>& p1,
+    const CVec2<T>& p2,
+    const CVec2<T>& p3)
 {
   aP.resize(n);
   for(unsigned int i=0;i<n;++i){
     const double t = (double)i/(n-1.0);
     aP[i] = pointCurve_BezierQuadratic(t,
-                                       p1, p2, p3);
+        p1, p2, p3);
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Polyline_BezierQuadratic
-(std::vector<CVec2d>& aP,
- const unsigned int n,
- const CVec2d& p1, const CVec2d& p2, const CVec2d& p3);
+template void delfem2::Polyline_BezierQuadratic(
+    std::vector<CVec2d>& aP,
+    const unsigned int n,
+    const CVec2d& p1,
+    const CVec2d& p2,
+    const CVec2d& p3);
 #endif
 
 // ---------------------------------------
