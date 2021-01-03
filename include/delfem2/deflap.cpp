@@ -60,10 +60,10 @@ void delfem2::CDef_LaplacianLinearAsym::Init(
                1.0, aXYZ0.data(), 0.0);
 }
 
-void delfem2::CDef_LaplacianLinearAsym::Deform
- (std::vector<double>& aXYZ1,
-  const std::vector<double>& aXYZ0,
-  const std::vector<int>& aBCFlag)
+void delfem2::CDef_LaplacianLinearAsym::Deform(
+    std::vector<double>& aXYZ1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<int>& aBCFlag)
 {    // ----------
   aRhs1 = aRhs0;
   for(unsigned int i=0;i<aBCFlag.size();++i){
@@ -212,9 +212,9 @@ void delfem2::CDef_LaplacianLinearGram::SolvePrecond(double* v) const
 namespace delfem2 {
 namespace defarap {
 
-void DualLaplacianSymbolic_3x3
-(std::vector<double>& eM,
- const std::vector<unsigned int>& aIP)
+void DualLaplacianSymbolic_3x3(
+    std::vector<double>& eM,
+    const std::vector<unsigned int>& aIP)
 {
   const unsigned int nIP = aIP.size();
   const unsigned int nNg = nIP-1; // number of neighbor
@@ -278,8 +278,9 @@ void delfem2::CDef_LaplacianLinear::Init(
   }
   
   aRes0.resize(aXYZ0.size());
-  Mat.MatVec(aRes0.data(),
-             -1.0, aXYZ0.data(), 0.0);
+  Mat.MatVec(
+      aRes0.data(),
+      -1.0, aXYZ0.data(), 0.0);
   
   aBCFlag.assign(aXYZ0.size(), 0);
   

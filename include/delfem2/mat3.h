@@ -203,6 +203,12 @@ DFM2_INLINE void Vec2_Mat3Vec2_AffineProjection(
     const T Z[9],
     const T x[2]);
 
+template <typename T>
+DFM2_INLINE void Vec2_Mat3Vec2_AffineDirection(
+    T y[2],
+    const T A[9],
+    const T x[2]);
+
 // --------------------------------
 // below: mat3 and quat
 
@@ -285,6 +291,7 @@ public:
 //  CVector3 MatVec(const CVector3& vec0) const;
   void MatVec(const REAL vec0[], REAL vec1[]) const;
   void MatVecTrans(const REAL vec0[], REAL vec1[]) const;
+
 //  CVector3 MatVecTrans(const CVector3& vec0) const;
   CMat3 MatMat(const CMat3& mat0) const;
   CMat3 MatMatTrans(const CMat3& mat0) const;
