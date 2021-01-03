@@ -127,8 +127,10 @@ public:
 	CVec2(double x, double y){
 		this->p[0] = x;
 		this->p[1] = y;
-	}	
-  
+	}
+	// above: constructor / destructor
+	// -------------------------------
+	// below: operator
   CVec2 operator-() const{
     return CVec2(-p[0],-p[1]);
   }
@@ -173,12 +175,28 @@ public:
     assert(0);
     return p[0];
   }
+  // ----------
 	//! @brief normalize length
 	inline void SetNormalizedVector(){
 		const double mag = Length();
 		p[0] /= mag;
 		p[1] /= mag;
 	}
+  CVec2 Mat3Vec2_AffineProjection(const T* A){
+    CVec2<T> y;
+    y.p[0] = A[0]*p[0] + A[1]*p[1] + A[2];
+    y.p[1] = A[3]*p[0] + A[4]*p[1] + A[5];
+    const T w = A[6]*p[0] + A[7]*p[1] + A[8];
+    y.p[0] /= w;
+    y.p[1] /= w;
+    return y;
+  }
+  CVec2 Mat3Vec2_AffineDirection(const T* A){
+    CVec2<T> y;
+    y.p[0] = A[0]*p[0] + A[1]*p[1];
+    y.p[1] = A[3]*p[0] + A[4]*p[1];
+    return y;
+  }
   CVec2 Normalize() const {
     CVec2 r(*this);
     r.SetNormalizedVector();

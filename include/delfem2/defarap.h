@@ -11,7 +11,6 @@
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/lsilu_mats.h"
-#include "delfem2/vec3.h"
 
 // ---------------------------
 
@@ -22,20 +21,28 @@ namespace delfem2 {
  */
 class CDef_ArapEdgeLinearDisponly {
 public:
-  CDef_ArapEdgeLinearDisponly(const std::vector<double>& aXYZ0,
-                          const std::vector<unsigned int>& aTri,
-                          double weight_bc0,
-                          const std::vector<int>& aBCFlag0);
-  void Deform(std::vector<double>& aXYZ1,
-              const std::vector<double>& aXYZ0);
-  void MatVec(double* y,
-              double alpha, const double* vec,  double beta) const;
+  CDef_ArapEdgeLinearDisponly(
+      const std::vector<double>& aXYZ0,
+      const std::vector<unsigned int>& aTri,
+      double weight_bc0,
+      std::vector<int>  aBCFlag0);
+  void Deform(
+      std::vector<double>& aXYZ1,
+      const std::vector<double>& aXYZ0);
+  void MatVec(
+      double* y,
+      double alpha,
+      const double* vec,
+      double beta) const;
 private:
-  void MakeLinearSystem(double* aRhs,
-                        const double* aXYZ0,
-                        const double* aXYZ1) const;
-  void JacobiTVecTmp(double*y ,
-                     double alpha, double beta) const;
+  void MakeLinearSystem(
+      double* aRhs,
+      const double* aXYZ0,
+      const double* aXYZ1) const;
+  void JacobiTVecTmp(
+      double*y ,
+      double alpha,
+      double beta) const;
 public:
   std::vector<unsigned int> psup_ind;
   std::vector<unsigned int> psup;
@@ -53,24 +60,32 @@ public:
 class CDef_ArapEdge {
 public:
   CDef_ArapEdge(){}
-  void Init(const std::vector<double>& aXYZ0,
-            const std::vector<unsigned int>& aTri,
-            double weight_bc0,
-            const std::vector<int>& aBCFlag,
-            bool is_preconditioner);
-  void Deform(std::vector<double>& aXYZ1,
-              std::vector<double>& aQuat,
-              const std::vector<double>& aXYZ0);
-  void MatVec(double* y,
-              double alpha, const double* vec,  double beta) const;
+  void Init(
+      const std::vector<double>& aXYZ0,
+      const std::vector<unsigned int>& aTri,
+      double weight_bc0,
+      const std::vector<int>& aBCFlag,
+      bool is_preconditioner);
+  void Deform(
+      std::vector<double>& aXYZ1,
+      std::vector<double>& aQuat,
+      const std::vector<double>& aXYZ0);
+  void MatVec(
+      double* y,
+      double alpha,
+      const double* vec,
+      double beta) const;
   void SolvePrecond(double* v) const;
 private:
-  void JacobiTVecTmp(double*y,
-                     double alpha, double beta) const;
-  void MakeLinearSystem(double* aRhs,
-                        const double* aXYZ0,
-                        const double* aXYZ1,
-                        const double* aQuat);
+  void JacobiTVecTmp(
+      double*y,
+      double alpha,
+      double beta) const;
+  void MakeLinearSystem(
+      double* aRhs,
+      const double* aXYZ0,
+      const double* aXYZ1,
+      const double* aQuat);
   void MakePreconditionerJacobi();
 public:
   std::vector<unsigned int> psup_ind, psup;
@@ -103,7 +118,7 @@ public:
   void UpdateQuats_SVD(
       std::vector<double>& aXYZ1,
       std::vector<double>& aQuat1,
-      const std::vector<double>& aXYZ0);
+      const std::vector<double>& aXYZ0) const;
 public:
   mutable std::vector<double> aConvHist;
   std::vector<unsigned int> psup_ind, psup;

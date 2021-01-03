@@ -236,7 +236,7 @@ bool Mearge(
         for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
       }
       else {  // Marge Non-Diagonal
-        if (merge_buffer[jblk1] == -1) {
+        if (merge_buffer[jblk1] == UINT_MAX) {
           assert(0);
           return false;
         }
@@ -251,7 +251,7 @@ bool Mearge(
     for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
       assert(jpsup < A.rowPtr.size());
       const int jblk1 = rowptr[jpsup];
-      merge_buffer[jblk1] = -1;
+      merge_buffer[jblk1] = UINT_MAX;
     }
   }
   return true;

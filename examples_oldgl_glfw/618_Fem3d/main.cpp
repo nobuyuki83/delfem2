@@ -35,19 +35,9 @@ namespace dfm2 = delfem2;
 
 // ------------------------
 
-std::vector<unsigned int> aTet;
-std::vector<double> aXYZ;
-std::vector<int> aIsSurf;
-
 std::vector<double> aVal;
 std::vector<double> aVelo;
 std::vector<double> aAcc;
-
-std::vector<int> aBCFlag;
-
-dfm2::CMatrixSparse<double> mat_A;
-std::vector<double> vec_b;
-delfem2::CPreconditionerILU<double>  ilu_A;
 
 double cur_time = 0.0;
 double dt_timestep = 0.01;
@@ -58,9 +48,16 @@ double beta_newmark = 0.5;
 
 // ----------------------------
 
-void InitializeProblem_Poisson()
+void InitializeProblem_Poisson(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
-  const int np = (int)aXYZ.size()/3;
+  const unsigned int np = aXYZ.size()/3;
   aVal.assign(np, 0.0);
   aBCFlag.assign(np, 0);
   for(int ip=0;ip<np;++ip){
@@ -95,10 +92,18 @@ void InitializeProblem_Poisson()
   ilu_A.Initialize_ILUk(mat_A, 0);
 }
 
-void SolveProblem_Poisson()
+void SolveProblem_Poisson(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    std::vector<double>& vec_b,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np;
   // -----------------------
   const double alpha = 1.0;
   const double source = 0.0;
@@ -123,7 +128,10 @@ void SolveProblem_Poisson()
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
     dfm2::Solve_PCG(
-        dfm2::CVecXd(vec_b),dfm2::CVecXd(vec_x),dfm2::CVecXd(tmp0),dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
   // ------------------------------
@@ -132,7 +140,13 @@ void SolveProblem_Poisson()
 }
 
 
-void InitializeProblem_Diffusion()
+void InitializeProblem_Diffusion(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   //double len = 1.1;
   const int np = (int)aXYZ.size()/3;
@@ -170,10 +184,18 @@ void InitializeProblem_Diffusion()
   ilu_A.Initialize_ILU0(mat_A);
 }
 
-void SolveProblem_Diffusion()
+void SolveProblem_Diffusion(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    std::vector<double>& vec_b,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np;
   // -----------------
   const double alpha = 1.0;
   const double rho = 1.0;
@@ -214,11 +236,18 @@ void SolveProblem_Diffusion()
 }
 
 
-void InitializeProblem_ShellEigenPB()
+void InitializeProblem_ShellEigenPB(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   // set boundary condition
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*3;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*3;
   aVal.assign(nDoF, 0.0);
   aBCFlag.assign(nDoF, 0);
   for (int ip = 0; ip<np; ++ip){
@@ -237,11 +266,9 @@ void InitializeProblem_ShellEigenPB()
                              aTet.data(), aTet.size()/4, 4,
                              (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
-  /*
-  CJaggedArray crs;
-  crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, np, false);
-  crs.Sort();
-   */
+//  CJaggedArray crs;
+//  crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, np, false);
+//  crs.Sort();
   ////
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -249,7 +276,16 @@ void InitializeProblem_ShellEigenPB()
   ilu_A.Initialize_ILU0(mat_A);
 }
 
-void SolveProblem_LinearSolid_Static()
+
+void SolveProblem_LinearSolid_Static(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    std::vector<double>& vec_b,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*3;
@@ -288,7 +324,14 @@ void SolveProblem_LinearSolid_Static()
 }
 
 
-void InitializeProblem_LinearSolid_Dynamic()
+void InitializeProblem_LinearSolid_Dynamic(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   const double len = 1.1;
   // set boundary condition
@@ -330,10 +373,18 @@ void InitializeProblem_LinearSolid_Dynamic()
   dt_timestep = 0.03;
 }
 
-void SolveProblem_LinearSolid_Dynamic()
+void SolveProblem_LinearSolid_Dynamic(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    std::vector<double>& vec_b,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*3;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*3;
   // --------
   double myu = 1.0;
   double lambda = 1.0;
@@ -378,7 +429,14 @@ void SolveProblem_LinearSolid_Dynamic()
 }
 
 
-void InitializeProblem_Stokes_Static()
+void InitializeProblem_Stokes_Static(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   // set boundary condition
   const unsigned int np = aXYZ.size()/3;
@@ -427,7 +485,15 @@ void InitializeProblem_Stokes_Static()
 }
 
 
-void SolveProblem_Stokes_Static()
+void SolveProblem_Stokes_Static(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    std::vector<double>& vec_b,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   const unsigned int np = aXYZ.size()/3;
   const unsigned int nDoF = np*4;
@@ -468,7 +534,14 @@ void SolveProblem_Stokes_Static()
   dfm2::XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
 }
 
-void InitializeProblem_Stokes_Dynamic()
+void InitializeProblem_Stokes_Dynamic(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   // set boundary condition
   const unsigned int np = aXYZ.size()/3;
@@ -518,7 +591,15 @@ void InitializeProblem_Stokes_Dynamic()
 }
 
 
-void SolveProblem_Stokes_Dynamic()
+void SolveProblem_Stokes_Dynamic(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    std::vector<double>& vec_b,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   const unsigned int np = aXYZ.size()/3;
   const unsigned int nDoF = np*4;
@@ -564,7 +645,14 @@ void SolveProblem_Stokes_Dynamic()
 }
 
 
-void InitializeProblem_NavierStokes_Dynamic()
+void InitializeProblem_NavierStokes_Dynamic(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   // set boundary condition
   const unsigned int np = aXYZ.size()/3;
@@ -619,7 +707,15 @@ void InitializeProblem_NavierStokes_Dynamic()
 }
 
 
-void SolveProblem_NavierStokes_Dynamic()
+void SolveProblem_NavierStokes_Dynamic(
+    std::vector<int>& aBCFlag,
+    dfm2::CMatrixSparse<double>& mat_A,
+    delfem2::CPreconditionerILU<double>& ilu_A,
+    std::vector<double>& vec_b,
+    //
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
   const unsigned int np = aXYZ.size()/3;
   const unsigned int nDoF = np*4;
@@ -694,7 +790,11 @@ public:
   delfem2::CBox<double> sdf;
 };
 
-void SetMesh(int ishape)
+void SetMesh(
+    std::vector<unsigned int>& aTet,
+    std::vector<double>& aXYZ,
+    std::vector<int>& aIsSurf,
+    int ishape)
 {
   ::glMatrixMode(GL_MODELVIEW);
   
@@ -763,7 +863,11 @@ static void myGlVertex3d
 //  ::glVertex3d(v.x, v.y, v.z);
 //}
 
-void myGlutDisplay(int iphysics)
+void myGlutDisplay(
+    int iphysics,
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
 {
 //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
 	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
@@ -840,6 +944,150 @@ void myGlutDisplay(int iphysics)
   ::glColor3d(0,0,0);
 }
 
+void ProblemScalar(
+    dfm2::opengl::CViewer_GLFW& viewer,
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
+{
+  std::vector<int> aBCFlag;
+  dfm2::CMatrixSparse<double> mat_A;
+  std::vector<double> vec_b;
+  delfem2::CPreconditionerILU<double>  ilu_A;
+  //
+  glfwSetWindowTitle(viewer.window, "Poisson");
+  InitializeProblem_Poisson(
+      aBCFlag,mat_A,ilu_A,
+      aTet,aXYZ,aIsSurf);
+  SolveProblem_Poisson(
+      aBCFlag,mat_A,ilu_A,vec_b,
+      aTet,aXYZ,aIsSurf);
+  for(unsigned int iframe=0;iframe<50;++iframe){ // poisson
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(0,aTet,aXYZ,aIsSurf);
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+  // ---------------------------
+  glfwSetWindowTitle(viewer.window, "Diffusion");
+  InitializeProblem_Diffusion(
+      aBCFlag,mat_A,ilu_A,
+      aTet,aXYZ,aIsSurf);
+  SolveProblem_Diffusion(
+      aBCFlag,mat_A,ilu_A,vec_b,
+      aTet,aXYZ,aIsSurf);
+  for(unsigned int iframe=0;iframe<50;++iframe){
+    SolveProblem_Diffusion(
+        aBCFlag,mat_A,ilu_A,vec_b,
+        aTet,aXYZ,aIsSurf);
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(1,aTet,aXYZ,aIsSurf);
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+}
+
+void ProblemSolidLinear(
+    dfm2::opengl::CViewer_GLFW& viewer,
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
+{
+  std::vector<int> aBCFlag;
+  dfm2::CMatrixSparse<double> mat_A;
+  std::vector<double> vec_b;
+  delfem2::CPreconditionerILU<double>  ilu_A;
+  //
+  glfwSetWindowTitle(viewer.window, "SolidLinearStatic");
+  InitializeProblem_ShellEigenPB(
+      aBCFlag,mat_A,ilu_A,
+      aTet,aXYZ,aIsSurf);
+  SolveProblem_LinearSolid_Static(
+      aBCFlag,mat_A,ilu_A,vec_b,
+      aTet,aXYZ,aIsSurf);
+  for(unsigned int iframe=0;iframe<50;++iframe){
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(2,aTet,aXYZ,aIsSurf);
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+  // ---------------------------
+  glfwSetWindowTitle(viewer.window, "SolidLinearDynamic");
+  InitializeProblem_LinearSolid_Dynamic(
+      aBCFlag,mat_A,ilu_A,
+      aTet,aXYZ,aIsSurf);
+  for(unsigned int iframe=0;iframe<50;++iframe){
+    SolveProblem_LinearSolid_Dynamic(
+        aBCFlag,mat_A,ilu_A,vec_b,
+        aTet,aXYZ,aIsSurf);
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(3,aTet,aXYZ,aIsSurf);
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+}
+
+void ProblemFluid(
+    dfm2::opengl::CViewer_GLFW& viewer,
+    const std::vector<unsigned int>& aTet,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aIsSurf)
+{
+  std::vector<int> aBCFlag;
+  dfm2::CMatrixSparse<double> mat_A;
+  std::vector<double> vec_b;
+  delfem2::CPreconditionerILU<double>  ilu_A;
+  //
+  glfwSetWindowTitle(viewer.window, "StokesStatic");
+  InitializeProblem_Stokes_Static(
+      aBCFlag,mat_A,ilu_A,
+      aTet,aXYZ,aIsSurf);
+  SolveProblem_Stokes_Static(
+      aBCFlag,mat_A,ilu_A,vec_b,
+      aTet,aXYZ,aIsSurf);
+  for(unsigned int iframe=0;iframe<50;++iframe){
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(4,aTet,aXYZ,aIsSurf);
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+  // ---------------------------
+  glfwSetWindowTitle(viewer.window, "StokesDynamic");
+  InitializeProblem_Stokes_Dynamic(
+      aBCFlag,mat_A,ilu_A,
+      aTet,aXYZ,aIsSurf);
+  for(unsigned int iframe=0;iframe<50;++iframe){
+    SolveProblem_Stokes_Dynamic(
+        aBCFlag,mat_A,ilu_A,vec_b,
+        aTet,aXYZ,aIsSurf);
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(5,aTet,aXYZ,aIsSurf);
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+  // ---------------------------
+  glfwSetWindowTitle(viewer.window, "NavierStokesDynamic");
+  InitializeProblem_NavierStokes_Dynamic(
+      aBCFlag,mat_A,ilu_A,
+      aTet,aXYZ,aIsSurf);
+  for(unsigned int iframe=0;iframe<50;++iframe){
+    SolveProblem_NavierStokes_Dynamic(
+        aBCFlag,mat_A,ilu_A,vec_b,
+        aTet,aXYZ,aIsSurf);
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(6,aTet,aXYZ,aIsSurf);
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+}
+
 int main(int argc,char* argv[])
 {
   dfm2::opengl::CViewer_GLFW viewer;
@@ -847,92 +1095,15 @@ int main(int argc,char* argv[])
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
-
   while (true){
-    SetMesh(0);
-    int iframe = 0;
-    // ---------------------------
-    glfwSetWindowTitle(viewer.window, "Poisson");
-    InitializeProblem_Poisson();
-    SolveProblem_Poisson();
-    for(;iframe<50;++iframe){ // poisson
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(0);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
-    }
-    // ---------------------------
-    glfwSetWindowTitle(viewer.window, "Diffusion");
-    InitializeProblem_Diffusion();
-    SolveProblem_Diffusion();
-    for(;iframe<100;++iframe){
-      SolveProblem_Diffusion();
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(1);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
-    }
-    // ---------------------------
-    glfwSetWindowTitle(viewer.window, "SolidLinearStatic");
-    InitializeProblem_ShellEigenPB();
-    SolveProblem_LinearSolid_Static();
-    for(;iframe<150;++iframe){
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(2);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
-    }
-    // ---------------------------
-    glfwSetWindowTitle(viewer.window, "SolidLinearDynamic");
-    InitializeProblem_LinearSolid_Dynamic();
-    for(;iframe<200;++iframe){
-      SolveProblem_LinearSolid_Dynamic();
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(3);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
-    }
-    // ---------------------------
-    glfwSetWindowTitle(viewer.window, "StokesStatic");
-    InitializeProblem_Stokes_Static();
-    SolveProblem_Stokes_Static();
-    for(;iframe<250;++iframe){
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(4);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
-    }
-    // ---------------------------
-    glfwSetWindowTitle(viewer.window, "StokesDynamic");
-    InitializeProblem_Stokes_Dynamic();
-    for(;iframe<300;++iframe){
-      SolveProblem_Stokes_Dynamic();
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(5);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
-    }
-    // ---------------------------
-    glfwSetWindowTitle(viewer.window, "NavierStokesDynamic");
-    InitializeProblem_NavierStokes_Dynamic();
-    for(;iframe<350;++iframe){
-      SolveProblem_NavierStokes_Dynamic();
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(6);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
-    }
+    std::vector<unsigned int> aTet;
+    std::vector<double> aXYZ;
+    std::vector<int> aIsSurf;
+    SetMesh(
+        aTet,aXYZ,aIsSurf,
+        0);
+    ProblemScalar(viewer,aTet,aXYZ,aIsSurf);
+    ProblemSolidLinear(viewer, aTet,aXYZ,aIsSurf);
+    ProblemFluid(viewer, aTet,aXYZ,aIsSurf);
   }
-  
-CLOSE:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }

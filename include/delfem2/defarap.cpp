@@ -6,6 +6,7 @@
  */
 
 #include <cstring> // memcpy
+#include <utility>
 #include "delfem2/defarap.h"
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
 #include "delfem2/mshuni.h"
@@ -76,14 +77,15 @@ delfem2::CDef_ArapEdgeLinearDisponly::CDef_ArapEdgeLinearDisponly (
     const std::vector<double>& aXYZ0,
     const std::vector<unsigned int>& aTri,
     double weight_bc0,
-    const std::vector<int>& aBCFlag0) :
+    std::vector<int>  aBCFlag0) :
   weight_bc(weight_bc0),
-  aBCFlag(aBCFlag0)
+  aBCFlag(std::move(aBCFlag0))
 {
   const unsigned int np = aXYZ0.size()/3;
-  JArray_PSuP_MeshElem(psup_ind, psup,
-                       aTri.data(), aTri.size()/3, 3,
-                       (int)aXYZ0.size()/3);
+  JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTri.data(), aTri.size()/3, 3,
+      aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
   // ------
   const unsigned int ne = psup.size();
@@ -383,8 +385,9 @@ void delfem2::CDef_ArapEdge::Deform(
 {
   const unsigned int np = psup_ind.size()-1;
   std::vector<double> aRhs(np*6,0.0);
-  this->MakeLinearSystem(aRhs.data(),
-                        aXYZ0.data(), aXYZ1.data(), aQuat.data());
+  this->MakeLinearSystem(
+      aRhs.data(),
+      aXYZ0.data(), aXYZ1.data(), aQuat.data());
   std::vector<double> aUpd(np*6,0.0);
   std::vector<double> aConvHist;
   if( is_preconditioner ){
@@ -531,7 +534,7 @@ void delfem2::CDef_Arap::Deform(
 void delfem2::CDef_Arap::UpdateQuats_SVD(
     std::vector<double>& aXYZ1,
     std::vector<double>& aQuat1,
-    const std::vector<double>& aXYZ0)
+    const std::vector<double>& aXYZ0) const
 {
   std::size_t np = aXYZ1.size()/3;
   for(unsigned int ip=0;ip<np;++ip) {

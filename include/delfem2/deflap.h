@@ -78,8 +78,9 @@ public:
               const std::vector<double>& aXYZ0) const;
   void SetValueToPreconditioner();
   // -----------
-  void MatVec(double* y,
-              double alpha, const double* vec,  double beta) const;
+  void MatVec(
+      double* y,
+      double alpha, const double* vec,  double beta) const;
 public:
   //! penalty coefficient for the sliding boundary condition
   double weight_nrm = 100;
@@ -118,7 +119,10 @@ public:
 
 /**
  * @brief Laplacian deformation classs lightweight system matrix
- * @detail because the 3x3 block matrix in the sparse system matrix is diagonal,we just have non-block sparse matrix.
+ * @detail because the 3x3 block matrix in the sparse system matrix is diagonal,
+ * we just have non-block sparse matrix.
+ * functionality is the same as CDef_LaplacianLinear
+ * TODO: probably I can make this faster by introducing ILU preconditioner
  */
 class CDef_LaplacianLinearDegenerate{
 public:

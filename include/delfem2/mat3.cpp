@@ -390,6 +390,23 @@ template void delfem2::Vec2_Mat3Vec2_AffineProjection(float [2], const float [9]
 template void delfem2::Vec2_Mat3Vec2_AffineProjection(double [2], const double [9], const double [2]);
 #endif
 
+// ---------
+
+
+template <typename T>
+DFM2_INLINE void delfem2::Vec2_Mat3Vec2_AffineDirection(
+    T y[2],
+    const T A[9],
+    const T x[2])
+{
+  y[0] = A[0]*x[0] + A[1]*x[1];
+  y[1] = A[3]*x[0] + A[4]*x[1];
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Vec2_Mat3Vec2_AffineDirection(float [2], const float [9], const float [2]);
+template void delfem2::Vec2_Mat3Vec2_AffineDirection(double [2], const double [9], const double [2]);
+#endif
+
 // above: mat3 and vec3
 // ------------------------------------
 // below: mat3 and quaternion
