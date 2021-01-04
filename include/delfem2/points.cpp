@@ -395,8 +395,8 @@ void delfem2::Translate_Points(
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Translate_Points(float*, unsigned int, unsigned int, const float*);
-template void delfem2::Translate_Points(double*, unsigned int, unsigned int, const double*);
+template void delfem2::Translate_Points(float*, size_t, unsigned int, const float*);
+template void delfem2::Translate_Points(double*, size_t, unsigned int, const double*);
 #endif
 
 // --------------

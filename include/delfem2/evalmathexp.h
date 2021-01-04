@@ -6,28 +6,41 @@
  */
 
 
-#ifndef EVALMATHEXP_H
-#define EVALMATHEXP_H
+#ifndef DFM2_EVALMATHEXP_H
+#define DFM2_EVALMATHEXP_H
 
+#include "delfem2/dfm2_inline.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
 namespace delfem2 {
 
-class CCmd;
+namespace evalmathexp {
+
+class CCmd {
+public:
+  virtual ~CCmd() = default;
+  virtual bool DoOperation(std::vector<double> &stack) = 0;
+  virtual void SetValue(const double &val) = 0;
+};
+
+class CKey
+{	// class for storing values of key
+public:
+  CKey(const std::string& name, double val)
+      : m_Name(name), m_Val(val){}
+  std::string m_Name;
+  std::vector<unsigned int> m_aiCmd;
+  double m_Val;
+};
+
+}
+
+// ----------------------
+
 class CMathExpressionEvaluator
 {
-public:
-	class CKey
-	{	// class for storing values of key
-	public:
-		CKey(const std::string& name, double val)
-			: m_Name(name), m_Val(val){}
-		std::string m_Name;
-		std::vector<unsigned int> m_aiCmd;
-		double m_Val;
-	};
 public:
 	CMathExpressionEvaluator(){ m_is_valid = false; }
 	CMathExpressionEvaluator(const std::string& exp){ this->SetExp(exp); }
@@ -49,10 +62,14 @@ public:
 private:
 	bool m_is_valid;
 	std::string m_sExp;
-	std::vector<CCmd*> m_apCmd;	// 逆ポーランド記法された演算子や値の列
-	std::vector<CKey> m_aKey;	// 文字列の名前と値が，どのIndexのコマンドに格納されているか
+	std::vector<evalmathexp::CCmd*> m_apCmd;	// 逆ポーランド記法された演算子や値の列
+	std::vector<evalmathexp::CKey> m_aKey;	// 文字列の名前と値が，どのIndexのコマンドに格納されているか
 };
   
 }
+
+#ifdef DFM2_HEADER_ONLY
+#  include "delfem2/evalmathexp.cpp"
+#endif
 
 #endif	// !defind EVALMATHEXP

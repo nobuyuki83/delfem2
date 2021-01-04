@@ -56,6 +56,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/geoproximity3_v3.h     ${DELFEM2_INC}/geoproximity3_v3.cpp
       ${DELFEM2_INC}/geosolidelm_v3.h       ${DELFEM2_INC}/geosolidelm_v3.cpp
 
+      ${DELFEM2_INC}/lp.h                   ${DELFEM2_INC}/lp.cpp
+      ${DELFEM2_INC}/evalmathexp.h          ${DELFEM2_INC}/evalmathexp.cpp
       ${DELFEM2_INC}/specialfuncs.h         ${DELFEM2_INC}/specialfuncs.cpp      
       ${DELFEM2_INC}/jagarray.h             ${DELFEM2_INC}/jagarray.cpp
       ${DELFEM2_INC}/file.h                 ${DELFEM2_INC}/file.cpp
@@ -88,9 +90,9 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/femsolidlinear.h       ${DELFEM2_INC}/femsolidlinear.cpp
       ${DELFEM2_INC}/femmips_geo3.h         ${DELFEM2_INC}/femmips_geo3.cpp
 
-      ${DELFEM2_INC}/pbd_geo3.h            ${DELFEM2_INC}/pbd_geo3.cpp
+      ${DELFEM2_INC}/pbd_geo3.h             ${DELFEM2_INC}/pbd_geo3.cpp
 
-      ${DELFEM2_INC}/defarapenergy_geo3.h         ${DELFEM2_INC}/defarapenergy_geo3.cpp
+      ${DELFEM2_INC}/defarapenergy_geo3.h   ${DELFEM2_INC}/defarapenergy_geo3.cpp
 
       ${DELFEM2_INC}/srchbvh.h              ${DELFEM2_INC}/srchbvh.cpp
       ${DELFEM2_INC}/srchbv3aabb.h
@@ -109,8 +111,6 @@ ELSE()
 ENDIF()
 
 add_executable(${MY_BINARY_NAME}
-  ${DELFEM2_INC}/evalmathexp.h          ${DELFEM2_INC}/evalmathexp.cpp
-  ${DELFEM2_INC}/lp.h                   ${DELFEM2_INC}/lp.cpp
   ${DELFEM2_INC}/tinygltf/io_gltf.h     ${DELFEM2_INC}/tinygltf/io_gltf.cpp
   ${SRC_DFM2}
   test_bvh.cpp

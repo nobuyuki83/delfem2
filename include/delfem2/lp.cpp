@@ -5,8 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <cassert>
 #include <map>
@@ -14,8 +13,11 @@
 #include "delfem2/lp.h"
 
 
-void Print(const std::vector<double>& A, int ncol, int nrow,
-           const std::vector<int>& map_col2row)
+DFM2_INLINE void Print(
+    const std::vector<double>& A,
+    unsigned int ncol,
+    unsigned int nrow,
+    const std::vector<unsigned int>& map_col2row)
 {
   for(int icol=0;icol<ncol;++icol){
     std::cout << icol << " " << map_col2row[icol] << " --> ";
@@ -26,7 +28,10 @@ void Print(const std::vector<double>& A, int ncol, int nrow,
   }
 }
 
-void Print(const std::vector<double>& A, int ncol, int nrow)
+DFM2_INLINE void Print(
+    const std::vector<double>& A,
+    int ncol,
+    int nrow)
 {
   for(int icol=0;icol<ncol;++icol){
     std::cout << icol << " --> ";
@@ -38,10 +43,11 @@ void Print(const std::vector<double>& A, int ncol, int nrow)
 }
 
 
-bool LinPro_CheckTable
-(std::vector<double>& B,
- std::vector<int>& map_col2row,
- int ncol, int nrow)
+bool LinPro_CheckTable(
+    std::vector<double>& B,
+    std::vector<unsigned int>& map_col2row,
+    int ncol,
+    int nrow)
 {
   { // check if entries of map_col2row are unique
     assert(B.size()==ncol*nrow);
@@ -74,18 +80,19 @@ bool LinPro_CheckTable
       }
     }
   }
-  return true;;
+  return true;
 }
 
 // return value
 // 0: converged
 // 1: input value wrong
 // 2: no bound
-int LinPro_SolveTable
-(int& nitr,
- std::vector<double>& B,
- std::vector<int>& map_col2row,
- int ncol, int nrow)
+int LinPro_SolveTable(
+    int& nitr,
+    std::vector<double>& B,
+    std::vector<unsigned int>& map_col2row,
+    unsigned int ncol,
+    unsigned int nrow)
 {
   for(int icol=0;icol<ncol-1;++icol){
     int jrow = map_col2row[icol];
@@ -94,8 +101,8 @@ int LinPro_SolveTable
     if( fabs(b1)<1.0e-30 ) continue;
     assert( fabs(b0) > 1.0e-30 );
     double ratio = b1/b0;
-    for(int jrow=0;jrow<nrow;++jrow){
-      B[(ncol-1)*nrow+jrow] -= ratio*B[icol*nrow+jrow];
+    for(int krow=0;krow<nrow;++krow){
+      B[(ncol-1)*nrow+krow] -= ratio*B[icol*nrow+krow];
     }
   }
 //  ::Print(B, ncol, nrow, map_col2row);
@@ -124,7 +131,7 @@ int LinPro_SolveTable
         return 0; // converged
       }
     }
-    int icol_min = -1, jrow_min = -1;
+    int icol_min, jrow_min;
     { // find minimum row
       std::map<double, std::pair<int,int> > mapBoundIndex;
       for(int jrow=0;jrow<nrow;++jrow){
@@ -164,9 +171,9 @@ int LinPro_SolveTable
       for(int jrow=0;jrow<nrow;++jrow){ B[icol_min*nrow+jrow] /= vpiv; }
       for(int icol=0;icol<ncol;++icol){
         if( icol == icol_min ) continue;
-        const double vpiv = B[icol*nrow+jrow_min];
+        const double vpiv0 = B[icol*nrow+jrow_min];
         for(int jrow=0;jrow<nrow;jrow++){
-          B[icol*nrow+jrow] -= vpiv*B[icol_min*nrow+jrow];
+          B[icol*nrow+jrow] -= vpiv0*B[icol_min*nrow+jrow];
         }
       }
     }
@@ -182,16 +189,16 @@ int LinPro_SolveTable
 
 
 
-// /////////////////////////////////////////////////////////////////////////////////////
-// /////////////////////////////////////////////////////////////////////////////////////
-// /////////////////////////////////////////////////////////////////////////////////////
+//
+// ---------------------------------------------
+//
 
 
-std::vector<double> CLinPro::GetValid() const
+std::vector<double> delfem2::CLinPro::GetValid() const
 {
   std::vector<double> res(nvar,0.0);
-  const int ncol = neq+1;
-  const int nrow = 1+1+nvar+nslk;
+  const unsigned int ncol = neq+1;
+  const unsigned int nrow = 1+1+nvar+nslk;
 //  Print(A, ncol, nrow, map_col2row);
   assert(A.size()==ncol*nrow);
   for(unsigned int icol=0;icol<neq;++icol){
@@ -206,22 +213,22 @@ std::vector<double> CLinPro::GetValid() const
   return res;
 }
 
-void CLinPro::Print() const{
-  const int ncol = neq+1;
-  const int nrow = 1+1+nvar+nslk;
+void delfem2::CLinPro::Print() const{
+  const unsigned int ncol = neq+1;
+  const unsigned int nrow = 1+1+nvar+nslk;
   ::Print(A, ncol, nrow, map_col2row);
 }
 
-int CLinPro::Solve
+int delfem2::CLinPro::Solve
 (std::vector<double>& solution,
  double& opt_val,
  int& nitr,
  const std::vector<double>& aCoeffTrg) const
 {
-  const int ncol = (neq+1);
-  const int nrow = (1+1+nvar+nslk);
+  const unsigned int ncol = (neq+1);
+  const unsigned int nrow = (1+1+nvar+nslk);
   assert(this->A.size()==ncol*nrow);
-  std::vector<int> map_col2rowB = map_col2row;
+  std::vector<unsigned int> map_col2rowB = map_col2row;
   std::vector<double> B = this->A;
   B[(ncol-1)*nrow+1] = 1;
   for(int ic=0;ic<aCoeffTrg.size();++ic){
@@ -252,7 +259,7 @@ int CLinPro::Solve
 }
 
 
-void CLinPro::AddEqn
+void delfem2::CLinPro::AddEqn
 (const std::vector<double>& aW,
  double rhs,
  EQ_TYPE type)
@@ -268,7 +275,7 @@ void CLinPro::AddEqn
 // 0 converged
 // 2 nobound
 // 3 no valid solution
-int CLinPro::Precomp(int& nitr)
+int delfem2::CLinPro::Precomp(int& nitr)
 {
   neq = aEq.size();
   nvar = 0;
@@ -285,8 +292,8 @@ int CLinPro::Precomp(int& nitr)
     if( aEq[ieq].itype == GE && aEq[ieq].rhs > 0  ){ mapEq2Art[ieq] = nart; nart++; }
     if( aEq[ieq].itype == EQ ){ mapEq2Art[ieq] = nart; nart++; }
   }
-  const int ncol = (neq+1); // neq,trg
-  const int nrow = (1+1+nvar+nslk+nart); // rhs,trg,var,slk,art
+  const unsigned int ncol = (neq+1); // neq,trg
+  const unsigned int nrow = (1+1+nvar+nslk+nart); // rhs,trg,var,slk,art
 //  std::cout << neq << " " << nvar << " " << nslk << " " << nart << "  " << ncol << " " << nrow << std::endl;
   A.resize(ncol*nrow,0.0);
   for(int ieq=0;ieq<neq;++ieq){
@@ -338,7 +345,7 @@ int CLinPro::Precomp(int& nitr)
   for(int ieq=0;ieq<aEq.size();++ieq){
     if( mapEq2Art[ieq] == -1 ) continue;
     int iart = mapEq2Art[ieq];
-    int jrow1 = 1+1+nvar+nslk+iart;
+    unsigned int jrow1 = 1+1+nvar+nslk+iart;
     A[(ncol-1)*nrow+jrow1] = 1;
 //    std::cout << "new entry: " << ieq << " " << jrow1 << std::endl;
     map_col2row[ieq] = jrow1;
@@ -377,7 +384,7 @@ int CLinPro::Precomp(int& nitr)
 //  }
 //  std::cout << "succesfully found a valid solution" << std::endl;
   const std::vector<double> B = A;
-  const int nrow1 = 1+1+nvar+nslk;
+  const unsigned int nrow1 = 1+1+nvar+nslk;
 //  std::cout << "hugahugat" << ncol << " " << nrow1 << std::endl;
   A.resize(ncol*nrow1);
   for(int icol=0;icol<ncol;++icol){

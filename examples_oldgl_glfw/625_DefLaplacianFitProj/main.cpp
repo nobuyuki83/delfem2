@@ -162,6 +162,101 @@ void Draw(
    */
 }
 
+void LaplacianLinear(
+    std::vector<double>& aXYZ1,
+    CCapsuleRigged& trg,
+    dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler,
+    dfm2::opengl::CViewer_GLFW& viewer,
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri)
+{
+  glfwSetWindowTitle(viewer.window,"Laplacian Linear");
+  dfm2::CDef_LaplacianLinear def;
+  def.Init(aXYZ0, aTri, true);
+  def.aBCFlag.assign(aXYZ0.size(),0);
+  def.max_itr = 1000;
+  def.weight_nrm = 1;
+  for(unsigned int iframe=0;iframe<30;iframe++){
+    // deform target mesh
+    trg.Def(0.5*sin(0.1*iframe));
+
+    // sample the space
+    for(auto& smplr: sampler.aSampler){
+      smplr.InitGL(); // move the sampled image to a texture
+      smplr.Start();
+      dfm2::opengl::SetView(smplr);
+      ::glDisable(GL_POLYGON_OFFSET_FILL ); // the depth will be jazzy without this
+      ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+      dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
+      smplr.End();
+      smplr.CopyToCPU_Depth();
+      smplr.CopyToCPU_RGBA8UI();
+    }
+
+    // deformation
+    Project(def.aIdpNrm, aXYZ1, sampler);
+    def.SetValueToPreconditioner();
+    def.Deform(aXYZ1, aXYZ0);
+    std::cout << iframe << " nitr:" << def.aConvHist.size() << " nconst:" << def.aIdpNrm.size() << " np:" << aXYZ0.size()/3 << std::endl;
+
+    // drawing functions
+    viewer.DrawBegin_oldGL();
+    Draw(trg,aXYZ1,aTri);
+    sampler.Draw();
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+}
+
+void LaplacianDegenerate(
+    std::vector<double>& aXYZ1,
+    CCapsuleRigged& trg,
+    dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler,
+    dfm2::opengl::CViewer_GLFW& viewer,
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri)
+{ // test degenerate deformer
+  glfwSetWindowTitle(viewer.window,"Laplacian Degenerate");
+  dfm2::CDef_LaplacianLinearDegenerate def;
+  def.Init(aXYZ0, aTri, true);
+  def.aBCFlag.assign(aXYZ0.size(),0);
+  def.max_itr = 1000;
+  def.weight_nrm = 1;
+  for(unsigned int iframe=0;iframe<30;iframe++){
+    // deform target mesh
+    trg.Def(0.5*sin(0.1*iframe));
+
+    // sample the space
+    for(auto& smplr: sampler.aSampler){
+      smplr.InitGL(); // move the sampled image to a texture
+      smplr.Start();
+      dfm2::opengl::SetView(smplr);
+      ::glDisable(GL_POLYGON_OFFSET_FILL ); // the depth will be jazzy without this
+      ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+      dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
+      smplr.End();
+      smplr.CopyToCPU_Depth();
+      smplr.CopyToCPU_RGBA8UI();
+    }
+
+    // deformation
+    Project(def.aIdpNrm, aXYZ1, sampler);
+    def.SetBoundaryConditionToPreconditioner();
+    def.Deform(aXYZ1, aXYZ0);
+    std::cout << iframe << " nitr:" << def.aConvHist.size() << " nconst:" << def.aIdpNrm.size() << " np:" << aXYZ0.size()/3 << std::endl;
+
+    // ----------------------------
+    // drawing functions
+    viewer.DrawBegin_oldGL();
+    Draw(trg,aXYZ1,aTri);
+    sampler.Draw();
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    viewer.ExitIfClosed();
+  }
+}
+
 int main(int argc,char* argv[])
 {
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler;
@@ -194,84 +289,14 @@ int main(int argc,char* argv[])
 
   // ---------------------
   for(unsigned int itr=0;itr<3;++itr){
-    int iframe = 0;
-    {
-      dfm2::CDef_LaplacianLinear def;
-      def.Init(aXYZ0, aTri, true);
-      def.aBCFlag.assign(aXYZ0.size(),0);
-      def.max_itr = 1000;
-      def.weight_nrm = 1;
-      for(;iframe<30;iframe++){
-        // deform target mesh
-        trg.Def(0.5*sin(0.1*iframe));
-
-        // sample the space
-        for(auto& smplr: sampler.aSampler){
-          smplr.InitGL(); // move the sampled image to a texture
-          smplr.Start();
-          dfm2::opengl::SetView(smplr);
-          ::glDisable(GL_POLYGON_OFFSET_FILL ); // the depth will be jazzy without this
-          ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-          dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
-          smplr.End();
-          smplr.CopyToCPU_Depth();
-          smplr.CopyToCPU_RGBA8UI();
-        }
-
-        // deformation
-        Project(def.aIdpNrm, aXYZ1, sampler);
-        def.SetValueToPreconditioner();
-        def.Deform(aXYZ1, aXYZ0);
-        std::cout << iframe << " nitr:" << def.aConvHist.size() << " nconst:" << def.aIdpNrm.size() << " np:" << aXYZ0.size()/3 << std::endl;
-
-        // drawing functions
-        viewer.DrawBegin_oldGL();
-        Draw(trg,aXYZ1,aTri);
-        sampler.Draw();
-        viewer.SwapBuffers();
-        glfwPollEvents();
-        viewer.ExitIfClosed();
-      }
-    }
-    { // test degenerate deformer
-      dfm2::CDef_LaplacianLinearDegenerate def;
-      def.Init(aXYZ0, aTri, true);
-      def.aBCFlag.assign(aXYZ0.size(),0);
-      def.max_itr = 1000;
-      def.weight_nrm = 1;
-      for(;iframe<60;iframe++){
-        // deform target mesh
-        trg.Def(0.5*sin(0.1*iframe));
-        
-        // sample the space
-        for(auto& smplr: sampler.aSampler){
-          smplr.InitGL(); // move the sampled image to a texture
-          smplr.Start();
-          dfm2::opengl::SetView(smplr);
-          ::glDisable(GL_POLYGON_OFFSET_FILL ); // the depth will be jazzy without this
-          ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-          dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
-          smplr.End();
-          smplr.CopyToCPU_Depth();
-          smplr.CopyToCPU_RGBA8UI();
-        }
-        
-        // deformation
-        Project(def.aIdpNrm, aXYZ1, sampler);
-        def.SetBoundaryConditionToPreconditioner();
-        def.Deform(aXYZ1, aXYZ0);
-        std::cout << iframe << " nitr:" << def.aConvHist.size() << " nconst:" << def.aIdpNrm.size() << " np:" << aXYZ0.size()/3 << std::endl;
-        
-        // ----------------------------
-        // drawing functions
-        viewer.DrawBegin_oldGL();
-        Draw(trg,aXYZ1,aTri);
-        sampler.Draw();
-        viewer.SwapBuffers();
-        glfwPollEvents();
-        viewer.ExitIfClosed();
-      }
-    }
+    aXYZ1 = aXYZ0;
+    LaplacianLinear(
+        aXYZ1,trg,sampler,viewer,
+        aXYZ0,aTri);
+    aXYZ1 = aXYZ0;
+    LaplacianDegenerate(
+        aXYZ1,trg,sampler,viewer,
+        aXYZ0,aTri);
   }
 }
 

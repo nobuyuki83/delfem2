@@ -5,61 +5,73 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef LP_H
-#define LP_H
+#ifndef DFM2_LP_H
+#define DFM2_LP_H
 
+#include "delfem2/dfm2_inline.h"
 #include <math.h>
 #include <vector>
 
+namespace delfem2 {
 
+class CLinPro {
+public:
+  enum EQ_TYPE {
+    LE, GE, EQ
+  };
+public:
+  CLinPro() {}
 
-class CLinPro
-{
-public:
-  enum EQ_TYPE{ LE, GE, EQ };
-public:
-  CLinPro(){}
-  void AddEqn(const std::vector<double>& aW, double rhs, EQ_TYPE type);
-  int Precomp(int& nitr);
-  int Solve(std::vector<double>& solution, double& opt_val, int& nitr,
-             const std::vector<double>& aCoeffTrg) const;
+  void AddEqn(const std::vector<double> &aW, double rhs, EQ_TYPE type);
+
+  int Precomp(int &nitr);
+
+  int Solve(std::vector<double> &solution, double &opt_val, int &nitr,
+            const std::vector<double> &aCoeffTrg) const;
+
   std::vector<double> GetValid() const;
+
   void Print() const;
+
 private:
-  class CEq
-  {
+  class CEq {
   public:
-    bool IsValid(const std::vector<double>& sol, double tol=1.0e-20) const {
+    bool IsValid(const std::vector<double> &sol, double tol = 1.0e-20) const {
       double sum = -rhs;
-      for(unsigned int ic=0;ic<aCoeff.size();++ic){ sum += aCoeff[ic]*sol[ic]; }
-      if( itype == EQ ){
-        if( fabs(sum)<tol ){ return true; }
-        else{
+      for (unsigned int ic = 0; ic < aCoeff.size(); ++ic) { sum += aCoeff[ic] * sol[ic]; }
+      if (itype == EQ) {
+        if (fabs(sum) < tol) { return true; }
+        else {
           std::cout << "  diff:" << fabs(sum) << std::endl;
           return false;
         }
-      }
-      else if( itype == LE ){
-        if( sum<tol ){ return true; }
-        else{ return false; }
-      }
-      else{
-        if( sum>-tol ){ return true; }
-        else{ return false; }
+      } else if (itype == LE) {
+        if (sum < tol) { return true; }
+        else { return false; }
+      } else {
+        if (sum > -tol) { return true; }
+        else { return false; }
       }
     }
+
   public:
     std::vector<double> aCoeff;
     double rhs;
     EQ_TYPE itype; // 0:le, 1:ge 2:eq
   };
+
 public:
   std::vector<CEq> aEq;
-  ////
+  //
   unsigned int neq, nvar, nslk, nart;
-  std::vector<int> map_col2row;
+  std::vector<unsigned int> map_col2row;
   std::vector<double> A;
 };
 
+}
+
+#ifdef DFM2_HEADER_ONLY
+#  include "delfem2/lp.cpp"
+#endif
 
 #endif

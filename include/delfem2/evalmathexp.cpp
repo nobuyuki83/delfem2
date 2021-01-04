@@ -9,27 +9,17 @@
 #include <cerrno>	/* Need for Using "ERANGE" */
 #include <cmath>	/* Need for Using "HUGE_VAL" */
 #include <iostream>
-#include <cstdlib> //(strtod)
+#include <climits>
 
 #include "delfem2/evalmathexp.h"
 
 namespace dfm2 = delfem2;
 
-namespace delfem2{
-class CCmd
+class COperand : public delfem2::evalmathexp::CCmd
 {
 public:
-  virtual ~CCmd() = default;
-  virtual bool DoOperation(std::vector<double>& stack) = 0;
-  virtual void SetValue(const double& val) = 0;
-};
-}
-
-class COperand : public dfm2::CCmd
-{
-public:
-  ~COperand(){}
-  COperand(const double val){ m_Value = val; }
+  ~COperand() override = default;
+  explicit COperand(const double val){ m_Value = val; }
   
   bool DoOperation(std::vector<double>& stack) override{
     stack.push_back(m_Value);
@@ -56,7 +46,7 @@ private:
   double m_Value;
 };
 
-class CBinaryOperator : public dfm2::CCmd
+class CBinaryOperator : public delfem2::evalmathexp::CCmd
 {
 public:
   ~CBinaryOperator() override = default;
@@ -91,10 +81,10 @@ public:
   void SetValue(const double& val) override{
     assert(0);
   };
-  int m_iOpr;
+  unsigned int m_iOpr;
 };
 
-class CUnaryOperator : public dfm2::CCmd
+class CUnaryOperator : public delfem2::evalmathexp::CCmd
 {
 public:
   ~CUnaryOperator() override = default;
@@ -105,7 +95,6 @@ public:
   bool DoOperation(std::vector<double>& stack) override{
     const double dright = stack.back();
     double& dleft = stack.back();
-    
     switch(m_iOpr){
       case 0:    dleft = dright;      return true;
       case 1:    dleft = -dright;    return true;
@@ -124,7 +113,6 @@ public:
         std::cout << "Error!-->Illegal iOpr " << m_iOpr << std::endl;
         assert(0);
     }
-    return true;
   }
   static int MaxOprInd(){ return 8; }
   static int GetOprInd(const std::string& str1){
@@ -191,27 +179,32 @@ static void RemoveExpressionBracket(std::string& exp)
 // itype : 1 --> Argebric variable
 // itype : 2 --> Unary Operator
 // itype : 3 --> Binary Operator
-int GetLowestPriorityOperator(int& ibegin, int& iend, int& itype, int& iopr,
-                              const std::string& exp )
+int GetLowestPriorityOperator(
+    unsigned int& ibegin,
+    unsigned int& iend,
+    int& itype,
+    int& iopr,
+    const std::string& exp )
 {
-  itype = -1; iopr = -1;
+  itype = -1;
+  iopr = -1;
   
   const int ipriority_max = 10;
   
-  int ipos_min = -1;
+  unsigned int ipos_min = UINT_MAX;
   int ipriority_min = ipriority_max;
   int itype_min = -1;
   int iopr_min = -1;
   
   bool is_numeric = true;
   int iBracketDepth = 0;
-  int iFirstBracket = -1;
-  for(std::size_t ipos_curr=0 ;ipos_curr<exp.size(); ipos_curr++ ){
+  unsigned int iFirstBracket = UINT_MAX;
+  for(unsigned int ipos_curr=0 ;ipos_curr<exp.size(); ipos_curr++ ){
     // 括弧内を読み飛ばす
     switch ( exp[ipos_curr] )
     {
       case '(':
-        if( iFirstBracket == -1 ) iFirstBracket = ipos_curr;
+        if( iFirstBracket == UINT_MAX ) iFirstBracket = ipos_curr;
         iBracketDepth++; continue;
       case ')':
         iBracketDepth--; continue;
@@ -226,29 +219,50 @@ int GetLowestPriorityOperator(int& ibegin, int& iend, int& itype, int& iopr,
     int iopr_curr = -1;
     switch( exp[ipos_curr] ){
       case '+':
-        ibegin = ipos_curr; iend = ipos_curr+1;
+        ibegin = ipos_curr;
+        iend = ipos_curr+1;
         if( ipos_curr == 0 ){ // sign operator
-          ipriority_curr=5; itype_curr=2; iopr_curr=0; break;
+          ipriority_curr=5;
+          itype_curr=2;
+          iopr_curr=0;
+          break;
         }
         else if( exp[ipos_curr-1] != '*' && exp[ipos_curr-1] != '/' && exp[ipos_curr-1] != '^' ){
-          iopr=0; itype=3; return 0;  // binary operator
+          iopr=0;
+          itype=3;
+          return 0;  // binary operator
         }
         continue;
       case '-':
-        ibegin = ipos_curr; iend = ipos_curr+1;
+        ibegin = ipos_curr;
+        iend = ipos_curr+1;
         if( ipos_curr == 0 ){ // sign operator
-          ipriority_curr=5; itype_curr=2; iopr_curr=1; break;
+          ipriority_curr=5;
+          itype_curr=2;
+          iopr_curr=1;
+          break;
         }
         else if( exp[ipos_curr-1] != '*' && exp[ipos_curr-1] != '/' && exp[ipos_curr-1] != '^' ){
-          iopr=1; itype=3; return 0;  // binary operator
+          iopr=1;
+          itype=3;
+          return 0;  // binary operator
         }
         continue;
       case '*':
-        ipriority_curr=3; itype_curr=3; iopr_curr=2; break;
+        ipriority_curr=3;
+        itype_curr=3;
+        iopr_curr=2;
+        break;
       case '/':
-        ipriority_curr=4; itype_curr=3; iopr_curr=3; break;
+        ipriority_curr=4;
+        itype_curr=3;
+        iopr_curr=3;
+        break;
       case '^':
-        ipriority_curr=6; itype_curr=3; iopr_curr=4; break;
+        ipriority_curr=6;
+        itype_curr=3;
+        iopr_curr=4;
+        break;
       default:
         ipriority_curr = ipriority_max;
         if( ( exp[ipos_curr] < '0' || exp[ipos_curr] > '9' ) && exp[ipos_curr] != '.' ){
@@ -268,7 +282,7 @@ int GetLowestPriorityOperator(int& ibegin, int& iend, int& itype, int& iopr,
     std::cout << "Error!-->Not corresponding bracket" << std::endl;
     return 2;
   }
-  if( ( ipos_min==0 || ipos_min==(int)exp.size()-1 ) && itype_min==3 ){
+  if( ( ipos_min==0 || ipos_min==exp.size()-1 ) && itype_min==3 ){
     std::cout << "Error!-->Binary operator misplaced " << std::endl;
     return 9;
   }
@@ -277,11 +291,14 @@ int GetLowestPriorityOperator(int& ibegin, int& iend, int& itype, int& iopr,
     return 3;
   }
   // binary operator(+とか-)
-  if( ipos_min > 0 ){
+  if( ipos_min != UINT_MAX ){
+    std::cout << ipos_min << " " << itype_min << std::endl;
     assert( itype_min == 3 );
     assert( iopr_min != -1 );
-    ibegin = ipos_min; iend = ipos_min+1;
-    itype = itype_min; iopr = iopr_min;
+    ibegin = ipos_min;
+    iend = ipos_min+1;
+    itype = itype_min;
+    iopr = iopr_min;
     return 0;
   }
   // sign operator( -hoge )
@@ -293,12 +310,12 @@ int GetLowestPriorityOperator(int& ibegin, int& iend, int& itype, int& iopr,
     return 0;
   }
   // preposition operator ( sin, tanみたいの )
-  if( !is_numeric && iFirstBracket != -1 ){
+  if( !is_numeric && iFirstBracket != UINT_MAX ){
     if( exp[ exp.size()-1 ] != ')' ){  // avoid  sin(x+y)a
       std::cout << "Error!-->hoge1" << std::endl;
       return 1;
     }
-    if( iFirstBracket == (int)exp.size()-2 ){  // avoid sin()
+    if( iFirstBracket == exp.size()-2 ){  // avoid sin()
       std::cout << "Error!-->hoge2" << std::endl;
       return 2;
     }
@@ -315,7 +332,8 @@ int GetLowestPriorityOperator(int& ibegin, int& iend, int& itype, int& iopr,
     }
   }
   // variable
-  ibegin = 0; iend = exp.size();
+  ibegin = 0;
+  iend = exp.size();
   if( is_numeric ){ itype=0; iopr=-1; }  // 数値(5.4321みたいの)
   else{
     int iopr0 = COperand::GetOprInd(exp);
@@ -331,14 +349,18 @@ struct SExpCompo{
   int iOpe;
 };
 
-bool MakeRPN(unsigned int icur_old, std::vector<SExpCompo>& exp_node_vec)
+bool MakeRPN(
+    unsigned int icur_old,
+    std::vector<SExpCompo>& exp_node_vec)
 {
   assert( icur_old < exp_node_vec.size() );
   
-  unsigned int ibegin0,iend0,itype0,iopr0;
+  unsigned int ibegin0,iend0;
+  int itype0,iopr0;
   {
     std::string& cur_exp = exp_node_vec[icur_old].sOpe;
-    int itmp0, itmp1, itmp2, itmp3;
+    unsigned int itmp0, itmp1;
+    int itmp2, itmp3;
     int ierr = GetLowestPriorityOperator(itmp0, itmp1, itmp2, itmp3, cur_exp);
     if( ierr != 0 ){
       std::cout << "Error!-->Cannot interprit this expression : " << cur_exp << std::endl;
@@ -355,16 +377,16 @@ bool MakeRPN(unsigned int icur_old, std::vector<SExpCompo>& exp_node_vec)
     ibegin0 = static_cast<unsigned int>(itmp0);
     iend0 = static_cast<unsigned int>(itmp1);
     assert( itmp2 >=0 && itmp2 <= 3 );
-    itype0 = static_cast<unsigned int>(itmp2);
+    itype0 = itmp2;
     assert( ( itmp2==2 && itmp3>=0 && itmp3<=CUnaryOperator::MaxOprInd() ) ||
            ( itmp2==3 && itmp3>=0 && itmp3<=CBinaryOperator::MaxOprInd() ) );
-    iopr0 = static_cast<unsigned int>(itmp3);
+    iopr0 = itmp3;
   }
   
   std::string cur_old_exp = exp_node_vec[icur_old].sOpe;
   
   {
-    int ileft = icur_old;
+    unsigned int ileft = icur_old;
     SExpCompo& left_compo = exp_node_vec[ileft];
     left_compo.sOpe.assign( cur_old_exp, iend0, cur_old_exp.size()-iend0 );
     RemoveExpressionBracket(left_compo.sOpe);
@@ -395,12 +417,12 @@ bool MakeRPN(unsigned int icur_old, std::vector<SExpCompo>& exp_node_vec)
 }
 
 
-bool MakeCmdAry
-(std::vector<dfm2::CCmd*>& cmd_vec,
- std::vector<dfm2::CMathExpressionEvaluator::CKey>& m_aKey,
- const std::vector<SExpCompo>& exp_node_vec)
+bool MakeCmdAry(
+    std::vector<delfem2::evalmathexp::CCmd*>& cmd_vec,
+    std::vector<dfm2::evalmathexp::CKey>& m_aKey,
+    const std::vector<SExpCompo>& exp_node_vec)
 {
-  cmd_vec.resize( exp_node_vec.size(), 0 );
+  cmd_vec.resize( exp_node_vec.size(), nullptr );
   for(unsigned int iexp=0;iexp<exp_node_vec.size();iexp++){
     const SExpCompo& compo = exp_node_vec[iexp];
     if( compo.iOpeType == 0 ){ // numeric
