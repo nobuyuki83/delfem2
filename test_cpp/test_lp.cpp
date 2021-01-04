@@ -6,16 +6,18 @@
  */
 
 #include "gtest/gtest.h" // need to be defined in the beginning
+
 #include "delfem2/lp.h"
+namespace dfm2 = delfem2;
 
 TEST(linpro,test1)
 {
   // example in https://people.richland.edu/james/ictcm/2006/simplex.html
   // http://www.me.titech.ac.jp/~mizu_lab/text/PDF-LP/LP1-problem.pdf
-  CLinPro lp;
-  lp.AddEqn({ 1.0,  2.0}, 16.0, CLinPro::LE);
-  lp.AddEqn({ 1.0,  1.0},  9.0, CLinPro::LE);
-  lp.AddEqn({ 3.0,  2.0}, 24.0, CLinPro::LE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({ 1.0,  2.0}, 16.0, dfm2::CLinPro::LE);
+  lp.AddEqn({ 1.0,  1.0},  9.0, dfm2::CLinPro::LE);
+  lp.AddEqn({ 3.0,  2.0}, 24.0, dfm2::CLinPro::LE);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res,0);
@@ -43,10 +45,10 @@ TEST(linpro,test1)
 TEST(linpro,test2)
 {
   // example in http://www.bunkyo.ac.jp/~nemoto/lecture/or/99/simplex.pdf
-  CLinPro lp;
-  lp.AddEqn({ 1.0,  2.0},  800, CLinPro::LE);
-  lp.AddEqn({ 3.0,  4.0}, 1800, CLinPro::LE);
-  lp.AddEqn({ 3.0,  1.0}, 1500, CLinPro::LE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({ 1.0,  2.0},  800, dfm2::CLinPro::LE);
+  lp.AddEqn({ 3.0,  4.0}, 1800, dfm2::CLinPro::LE);
+  lp.AddEqn({ 3.0,  1.0}, 1500, dfm2::CLinPro::LE);
   int nitr = 10;
   lp.Precomp(nitr);
   // --------
@@ -67,10 +69,10 @@ TEST(linpro,test3)
 {
   // example in https://people.richland.edu/james/ictcm/2006/simplex.html
   // http://www.me.titech.ac.jp/~mizu_lab/text/PDF-LP/LP1-problem.pdf
-  CLinPro lp;
-  lp.AddEqn({+0.0, +1.0}, +1.0, CLinPro::LE);
-  lp.AddEqn({+1.0, +0.0}, +1.0, CLinPro::LE);
-  lp.AddEqn({-2.0, -1.0}, -1.0, CLinPro::LE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+0.0, +1.0}, +1.0, dfm2::CLinPro::LE);
+  lp.AddEqn({+1.0, +0.0}, +1.0, dfm2::CLinPro::LE);
+  lp.AddEqn({-2.0, -1.0}, -1.0, dfm2::CLinPro::LE);
   int nitr = 10;
   lp.Precomp(nitr);
   EXPECT_LT(nitr, 10);
@@ -93,10 +95,10 @@ TEST(linpro,test3)
 TEST(linpro,test4)
 {
   // http://zeus.mech.kyushu-u.ac.jp/~tsuji/java_edu/TwoPhase.html
-  CLinPro lp;
-  lp.AddEqn({+2.0, +1.0}, +8.0, CLinPro::GE);
-  lp.AddEqn({+1.0, +1.0}, +6.0, CLinPro::GE);
-  lp.AddEqn({+1.0, +2.0}, +8.0, CLinPro::GE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+2.0, +1.0}, +8.0, dfm2::CLinPro::GE);
+  lp.AddEqn({+1.0, +1.0}, +6.0, dfm2::CLinPro::GE);
+  lp.AddEqn({+1.0, +2.0}, +8.0, dfm2::CLinPro::GE);
   int nitr = 10;
   lp.Precomp(nitr);
   EXPECT_LT(nitr, 10);
@@ -121,9 +123,9 @@ TEST(linpro,test4)
 TEST(linpro,test5)
 {
   // http://zeus.mech.kyushu-u.ac.jp/~tsuji/java_edu/TwoPhase.html
-  CLinPro lp;
-  lp.AddEqn({+1.0, +2.0, +0.0}, +12.0, CLinPro::EQ);
-  lp.AddEqn({+1.0, +4.0, +3.0}, +20.0, CLinPro::EQ);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+1.0, +2.0, +0.0}, +12.0, dfm2::CLinPro::EQ);
+  lp.AddEqn({+1.0, +4.0, +3.0}, +20.0, dfm2::CLinPro::EQ);
   int nitr = 10;
   lp.Precomp(nitr);
   EXPECT_LT(nitr, 10);
@@ -148,9 +150,9 @@ TEST(linpro,test5)
 TEST(linpro,test6)
 {
   // http://www.fujilab.dnj.ynu.ac.jp/lecture/system4.pdf
-  CLinPro lp;
-  lp.AddEqn({+1.0, +3.0}, +4.0, CLinPro::GE);
-  lp.AddEqn({+2.0, +1.0}, +3.0, CLinPro::GE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+1.0, +3.0}, +4.0, dfm2::CLinPro::GE);
+  lp.AddEqn({+2.0, +1.0}, +3.0, dfm2::CLinPro::GE);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res,0);
@@ -175,10 +177,10 @@ TEST(linpro,test6)
 TEST(linpro,test7)
 {
   // http://www.bunkyo.ac.jp/~nemoto/lecture/mathpro/2002/2stage-simplex.pdf
-  CLinPro lp;
-  lp.AddEqn({+2.0, +3.0},  +6.0, CLinPro::LE);
-  lp.AddEqn({-5.0, +9.0}, +15.0, CLinPro::EQ);
-  lp.AddEqn({-6.0, +3.0},  +3.0, CLinPro::GE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+2.0, +3.0},  +6.0, dfm2::CLinPro::LE);
+  lp.AddEqn({-5.0, +9.0}, +15.0, dfm2::CLinPro::EQ);
+  lp.AddEqn({-6.0, +3.0},  +3.0, dfm2::CLinPro::GE);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res,0);
@@ -203,10 +205,10 @@ TEST(linpro,test7)
 TEST(linpro,test8)
 {
   // http://www.bunkyo.ac.jp/~nemoto/lecture/mathpro/2002/2stage-simplex.pdf
-  CLinPro lp;
-  lp.AddEqn({-1.0, +1.0, +1.0}, +2.0, CLinPro::LE);
-  lp.AddEqn({+2.0, +1.0, -1.0}, +8.0, CLinPro::EQ);
-  lp.AddEqn({+1.0, +2.0, -1.0}, +1.0, CLinPro::GE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({-1.0, +1.0, +1.0}, +2.0, dfm2::CLinPro::LE);
+  lp.AddEqn({+2.0, +1.0, -1.0}, +8.0, dfm2::CLinPro::EQ);
+  lp.AddEqn({+1.0, +2.0, -1.0}, +1.0, dfm2::CLinPro::GE);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res, 0);
@@ -232,9 +234,9 @@ TEST(linpro,test8)
 TEST(linpro,test9)
 {
   // http://www.bunkyo.ac.jp/~nemoto/lecture/mathpro/2002/2stage-simplex.pdf
-  CLinPro lp;
-  lp.AddEqn({+1.0, +1.0, +2.0}, +10.0, CLinPro::GE);
-  lp.AddEqn({+3.0, +1.0, +1.0}, +20.0, CLinPro::GE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+1.0, +1.0, +2.0}, +10.0, dfm2::CLinPro::GE);
+  lp.AddEqn({+3.0, +1.0, +1.0}, +20.0, dfm2::CLinPro::GE);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res, 0);
@@ -261,9 +263,9 @@ TEST(linpro,test9)
 
 TEST(linpro,test11)
 { // test equality constraint with neative rsh
-  CLinPro lp;
-  lp.AddEqn({+0.0, +1.0 }, +1.0, CLinPro::LE);
-  lp.AddEqn({+1.0, -1.0 }, -0.1, CLinPro::EQ);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+0.0, +1.0 }, +1.0, dfm2::CLinPro::LE);
+  lp.AddEqn({+1.0, -1.0 }, -0.1, dfm2::CLinPro::EQ);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res, 0);
@@ -287,9 +289,9 @@ TEST(linpro,test11)
 
 TEST(linpro,test12)
 { // test equality constraint with positive rsh
-  CLinPro lp;
-  lp.AddEqn({+0.0, +1.0 }, +1.0, CLinPro::LE);
-  lp.AddEqn({+1.0, -1.0 }, +0.1, CLinPro::EQ);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+0.0, +1.0 }, +1.0, dfm2::CLinPro::LE);
+  lp.AddEqn({+1.0, -1.0 }, +0.1, dfm2::CLinPro::EQ);
   ////
   int nitr = 10;
   int res = lp.Precomp(nitr);
@@ -315,9 +317,9 @@ TEST(linpro,test12)
 
 TEST(linpro,test10)
 { // test rsh ==  0
-  CLinPro lp;
-  lp.AddEqn({+0.0, +1.0 }, +1.0, CLinPro::LE);
-  lp.AddEqn({+1.0, -1.0 }, -0.0, CLinPro::EQ);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+0.0, +1.0 }, +1.0, dfm2::CLinPro::LE);
+  lp.AddEqn({+1.0, -1.0 }, -0.0, dfm2::CLinPro::EQ);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res, 0);
@@ -342,8 +344,8 @@ TEST(linpro,test10)
 
 TEST(linpro,test13)
 { // test no solution
-  CLinPro lp;
-  lp.AddEqn({+1.0, +1.0 }, -1.0, CLinPro::LE);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+1.0, +1.0 }, -1.0, dfm2::CLinPro::LE);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res,3); // no solution
@@ -352,8 +354,8 @@ TEST(linpro,test13)
 
 TEST(linpro,test14)
 { // test no bound
-  CLinPro lp;
-  lp.AddEqn({+1.0, -1.0 }, -0.0, CLinPro::EQ);
+  dfm2::CLinPro lp;
+  lp.AddEqn({+1.0, -1.0 }, -0.0, dfm2::CLinPro::EQ);
   int nitr = 10;
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res,0); // no bound
