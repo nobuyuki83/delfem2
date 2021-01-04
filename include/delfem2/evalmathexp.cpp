@@ -333,7 +333,7 @@ int GetLowestPriorityOperator(
   }
   // variable
   ibegin = 0;
-  iend = exp.size();
+  iend = static_cast<unsigned int>(exp.size());
   if( is_numeric ){ itype=0; iopr=-1; }  // 数値(5.4321みたいの)
   else{
     int iopr0 = COperand::GetOprInd(exp);
@@ -395,7 +395,7 @@ bool MakeRPN(
   }
   
   if( ibegin0 > 0 ){
-    int iright = exp_node_vec.size();
+    const unsigned int iright = static_cast<unsigned int>(exp_node_vec.size());
     exp_node_vec.resize( exp_node_vec.size()+1 );
     SExpCompo& right_compo = exp_node_vec[iright];
     right_compo.sOpe.assign( cur_old_exp, 0, ibegin0 );
@@ -405,7 +405,7 @@ bool MakeRPN(
   }
   
   {
-    const int icur_new = exp_node_vec.size();
+    const size_t icur_new = exp_node_vec.size();
     exp_node_vec.resize( exp_node_vec.size()+1 );
     SExpCompo& new_compo = exp_node_vec[icur_new];
     new_compo.sOpe.assign( cur_old_exp, ibegin0, iend0-ibegin0 );

@@ -83,7 +83,7 @@ DFM2_INLINE std::string delfem2::pathGetExtension(const std::string& fpath)
 
 DFM2_INLINE std::string delfem2::getPathDir(const std::string& fpath)
 {
-  const int iloc = fpath.find_last_of('/');
+  const size_t iloc = fpath.find_last_of('/');
   std::string sres = std::string(fpath.begin(),fpath.begin()+iloc);
   return sres;
 }
@@ -102,7 +102,7 @@ DFM2_INLINE bool delfem2::ReadParam(
     double d;
     fin >> d;
     if( fin.eof() ) break;
-    aPara.push_back(d);
+    aPara.push_back(static_cast<float>(d));
   }
   return true;
 }

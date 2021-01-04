@@ -17,7 +17,7 @@ DFM2_INLINE void delfem2::PBD_Post
  const std::vector<double>& aXYZt,
  const std::vector<int>& aBCFlag)
 {
-  const unsigned int np = aXYZ.size()/3;
+  const size_t np = aXYZ.size()/3;
   assert( aBCFlag.size() == np );
   assert( aXYZ.size() == np*3 );
   assert( aUVW.size() == np*3 );
@@ -40,7 +40,7 @@ DFM2_INLINE void delfem2::PBD_Pre3D
  const std::vector<double>& aUVW,
  const std::vector<int>& aBCFlag)
 {
-  const unsigned int np = aXYZ.size()/3;
+  const size_t np = aXYZ.size()/3;
   assert( aBCFlag.size() == np );
   assert( aUVW.size() == np*3 );
   aXYZt.resize(np*3);

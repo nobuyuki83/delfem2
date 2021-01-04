@@ -132,7 +132,7 @@ int main()
 
   const unsigned int nlayer = aLayer.size();
   for(int ilayer=(int)aLayer.size()-1;ilayer>=0;--ilayer){
-    if( ilayer == nlayer-1 ){
+    if( ilayer == (int)nlayer-1 ){
       const double minCoords[3] = {-1, -1, -1};
       const double maxCoords[3] = {+1, +1, +1};
       aLayer[ilayer].aOdir.resize(aLayer[ilayer].aXYZ.size());

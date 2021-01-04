@@ -120,8 +120,8 @@ DFM2_INLINE void GenMeshCadFace
       const std::vector<std::pair<int, bool> > &aIE = topo.aLoop[il0].aIE;
       for (const auto &iie : aIE) {
         const int ie0 = iie.first;
-        const unsigned int np = aEdgeGeo[ie0].aP.size();
-        const unsigned int nseg = np + 1;
+        const size_t np = aEdgeGeo[ie0].aP.size();
+        const size_t nseg = np + 1;
         for (unsigned int iseg = 0; iseg < nseg; ++iseg) {
           const int ip0 = (iseg == 0) ? topo.aEdge[ie0].iv0 : aEdgeGeo[ie0].ip0 + iseg - 1;
           const int ip1 = (iseg == nseg - 1) ? topo.aEdge[ie0].iv1 : aEdgeGeo[ie0].ip0 + iseg;
@@ -138,7 +138,7 @@ DFM2_INLINE void GenMeshCadFace
       const int il0 = topo.aFace[iface0].aIL[0];
       const std::vector<std::pair<int, bool> > &aIE = topo.aLoop[il0].aIE;
       unsigned int ie0 = aIE[0].first;
-      const unsigned int np = aEdgeGeo[ie0].aP.size();
+      const size_t np = aEdgeGeo[ie0].aP.size();
       ip0 = topo.aEdge[ie0].iv0;
       ip1 = (np == 0) ? topo.aEdge[ie0].iv1 : aEdgeGeo[ie0].ip0;
     }
@@ -163,7 +163,7 @@ DFM2_INLINE std::vector<std::string> SVG_Split_Path_d
     (std::string &s0) {
   unsigned int imark = 0;
   std::vector<std::string> aS;
-  for (size_t i = 0; i < s0.size(); ++i) {
+  for (unsigned int i = 0; i < s0.size(); ++i) {
     if (isNumeric(s0[i])) continue;
     if (s0[i] == ',') {
       std::string s1(s0.begin() + imark, s0.begin() + i);
@@ -557,10 +557,11 @@ DFM2_INLINE bool delfem2::CCad2D::Check() const
   return true;
 }
 
-DFM2_INLINE void delfem2::CCad2D::AddPolygon(const std::vector<double>& aXY)
+DFM2_INLINE void delfem2::CCad2D::AddPolygon(
+	const std::vector<double>& aXY)
 {
   const size_t np = aXY.size()/2;
-  topo.AddPolygon(np);
+  topo.AddPolygon(static_cast<unsigned int>(np));
   for(unsigned int ip=0;ip<np;++ip){
     aVtx.emplace_back(CVec2d(aXY[ip*2+0], aXY[ip*2+1]));
   }
@@ -578,12 +579,12 @@ DFM2_INLINE void delfem2::CCad2D::AddPolygon(const std::vector<double>& aXY)
 DFM2_INLINE void delfem2::CCad2D::AddFace(const std::vector<CCad2D_EdgeGeo>& aEdgeIn)
 {
   if( aEdgeIn.empty() ){ return; }
-  const int np = aEdgeIn.size();
-  topo.AddPolygon(np);
-  for(int ip=0;ip<np;++ip){
+  const size_t np = aEdgeIn.size();
+  topo.AddPolygon(static_cast<unsigned int>(np));
+  for(unsigned int ip=0;ip<np;++ip){
     aVtx.emplace_back(aEdgeIn[ip].p0);
   }
-  for(int ie=0;ie<np;++ie){
+  for(unsigned int ie=0;ie<np;++ie){
     aEdge.push_back(aEdgeIn[ie]);
   }
   aFace.emplace_back();
@@ -796,8 +797,8 @@ DFM2_INLINE void delfem2::CCad2D_EdgeGeo::GenMeshLength
     this->GenMeshNDiv(1);
     return;
   }
-  double len = LengthNDiv(20);
-  double ndiv = len/elen+1;
+  const double len = LengthNDiv(20);
+  const unsigned int ndiv = static_cast<unsigned int>(len/elen+1);
   this->GenMeshNDiv(ndiv);
 }
 
@@ -854,23 +855,23 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance
   return 0;
 }
 
-DFM2_INLINE void delfem2::CCad2D::MeshForVisualization
-(std::vector<float>& aXYf,
- std::vector<std::vector<unsigned int> >& aaLine,
- std::vector<unsigned int>& aTri) const
+DFM2_INLINE void delfem2::CCad2D::MeshForVisualization(
+	std::vector<float>& aXYf,
+	std::vector<std::vector<unsigned int> >& aaLine,
+	std::vector<unsigned int>& aTri) const
 {
   const std::vector<CVec2d>& aVec2 = aVec2_Tessellation;
   aXYf.reserve(aVec2.size()*2);
   for(const auto & iv : aVec2){
-    aXYf.push_back(iv.x());
-    aXYf.push_back(iv.y());
+    aXYf.push_back(static_cast<float>(iv.x()));
+    aXYf.push_back(static_cast<float>(iv.y()));
   }
   aaLine.resize(aEdge.size());
   for(size_t ie=0;ie<aEdge.size();++ie){
     std::vector<unsigned int>& aLine = aaLine[ie];
     aLine.clear();
     aLine.push_back(topo.aEdge[ie].iv0);
-    for(size_t ip=0;ip<aEdge[ie].aP.size();++ip){
+    for(unsigned int ip=0;ip<aEdge[ie].aP.size();++ip){
       aLine.push_back(ip+aEdge[ie].ip0);
     }
     aLine.push_back(topo.aEdge[ie].iv1);
@@ -964,12 +965,12 @@ DFM2_INLINE void delfem2::CCad2D::Tessellation()
     aVec2.push_back( iv.pos );
   }
   for(auto & ie : aEdge){
-    ie.ip0 = aVec2.size();
+    ie.ip0 = static_cast<unsigned int>(aVec2.size());
     for(const auto & ip : ie.aP){
       aVec2.push_back(ip);
     }
   }
-  for(size_t ifc=0;ifc<topo.aFace.size();++ifc){
+  for(unsigned int ifc=0;ifc<topo.aFace.size();++ifc){
     std::vector<CDynTri> aETri;
     cad2::GenMeshCadFace(aVec2, aETri,
         aFace[ifc],ifc,
@@ -992,12 +993,12 @@ DFM2_INLINE void delfem2::CCad2D::Tessellation()
 // ======================================================================
 // below: CMesher_Cad2
 
-DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
-(CMeshDynTri2D& dmsh,
- const CCad2D& cad)
+DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing(
+	CMeshDynTri2D& dmsh,
+	const CCad2D& cad)
 {
   std::vector<CCad2D_EdgeGeo> aEdgeGeo = cad.aEdge;
-  for(size_t ie=0;ie<aEdgeGeo.size();++ie){
+  for(unsigned int ie=0;ie<aEdgeGeo.size();++ie){
     const int iv0 = cad.topo.aEdge[ie].iv0;
     const int iv1 = cad.topo.aEdge[ie].iv1;
     aEdgeGeo[ie].p0 = cad.aVtx[iv0].pos;
@@ -1017,21 +1018,21 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
     dmsh.aVec2.push_back( cad.aVtx[iv].pos );
     aFlgPnt.push_back(iv);
   }
-  for(size_t ie=0;ie<aEdgeGeo.size();++ie){
-    aEdgeGeo[ie].ip0 = dmsh.aVec2.size();
-    for(size_t ip=0;ip<aEdgeGeo[ie].aP.size();++ip){
+  for(unsigned int ie=0;ie<aEdgeGeo.size();++ie){
+    aEdgeGeo[ie].ip0 = static_cast<unsigned int>(dmsh.aVec2.size());
+    for(unsigned int ip=0;ip<aEdgeGeo[ie].aP.size();++ip){
       dmsh.aVec2.push_back(aEdgeGeo[ie].aP[ip]);
-      aFlgPnt.push_back(cad.aVtx.size()+ie);
+      aFlgPnt.push_back(static_cast<unsigned int>(cad.aVtx.size()+ie));
     }
   }
   //
   aFlgTri.clear();
-  for(size_t ifc=0;ifc<cad.aFace.size();++ifc){ // add face to dmsh
+  for(unsigned int ifc=0;ifc<cad.aFace.size();++ifc){ // add face to dmsh
     std::vector<CDynTri> aDTri;
     cad2::GenMeshCadFace(dmsh.aVec2, aDTri,
         cad.aFace[ifc], ifc,
         cad.topo,cad.aVtx,aEdgeGeo);
-    const size_t ntri0 = dmsh.aETri.size();
+    const unsigned int ntri0 = static_cast<unsigned int>(dmsh.aETri.size());
     for(auto & tri : aDTri){
       if( tri.s2[0]!=UINT_MAX ){ tri.s2[0] += ntri0; }
       if( tri.s2[1]!=UINT_MAX ){ tri.s2[1] += ntri0; }
@@ -1042,7 +1043,7 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
   }
   { // make EPo
     dmsh.aEPo.resize(dmsh.aVec2.size());
-    for(size_t it=0;it<dmsh.aETri.size();++it){
+    for(unsigned int it=0;it<dmsh.aETri.size();++it){
       for(unsigned int inotri=0;inotri<3;++inotri){
         dmsh.aEPo[ dmsh.aETri[it].v[inotri] ].e = it;
         dmsh.aEPo[ dmsh.aETri[it].v[inotri] ].d = inotri;
@@ -1076,7 +1077,7 @@ DFM2_INLINE std::vector<unsigned int> delfem2::CMesher_Cad2D::IndPoint_IndEdge
   }
   std::vector<int> aIP_E = cad2d.Ind_Vtx_Edge(iedge);
   if( is_end_point ){ res.push_back(aIP_E[0]); }
-  for(size_t ip=0;ip<this->aFlgPnt.size();++ip){
+  for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
     if( iflg >= (int)(nvtx+nedge) ){ break; }
     if( aflg[iflg] == 1 ){ res.push_back(ip); }
@@ -1104,7 +1105,7 @@ DFM2_INLINE std::vector<unsigned int> delfem2::CMesher_Cad2D::IndPoint_IndEdgeAr
     }
   }
   std::vector<unsigned int> res;
-  for(size_t ip=0;ip<this->aFlgPnt.size();++ip){
+  for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
     if( aflg[iflg] == 1 ){ res.push_back(ip); }
   }
@@ -1137,7 +1138,7 @@ DFM2_INLINE std::vector<int> delfem2::CMesher_Cad2D::IndPoint_IndFaceArray
     }
   }
   std::vector<int> res;
-  for(size_t ip=0;ip<this->aFlgPnt.size();++ip){
+  for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
     if( aflg[iflg] == 1 ){ res.push_back(ip); }
   }

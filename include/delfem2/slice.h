@@ -50,7 +50,7 @@ class CSliceTriMesh
     CSliceTriMesh(unsigned int ih): iHeight(ih) {}
     
     int IndHeight() const { return iHeight; } // requirement for MakeReebGraph
-    unsigned int NumSeg() const { return aTriInfo.size(); } // requirement for MakeReebGraph
+    size_t NumSeg() const { return aTriInfo.size(); } // requirement for MakeReebGraph
     unsigned int IndTri_Seg(unsigned int iseg) const { return aTriInfo[iseg].itri; } // requirement for MakeReebGraph
     
   public:

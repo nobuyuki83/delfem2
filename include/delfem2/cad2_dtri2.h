@@ -153,9 +153,9 @@ public:
     assert( iedge >= 0 && iedge< (int)aEdge.size() );
     return aEdge[iedge].type_edge;
   }
-  int nFace() const { return aFace.size(); }
-  int nVtx() const { return aVtx.size(); }
-  int nEdge() const { return aEdge.size(); }
+  size_t nFace() const { return aFace.size(); }
+  size_t nVtx() const { return aVtx.size(); }
+  size_t nEdge() const { return aEdge.size(); }
   /**
    * @brief return std::vector of XY that bounds the face with index iface
    */
@@ -248,9 +248,9 @@ public:
   // --------------
   // output for meshing
   
-  unsigned int nvtx;
-  unsigned int nedge;
-  unsigned int nface;
+  size_t nvtx;
+  size_t nedge;
+  size_t nface;
   std::vector<int> aFlgPnt;
   
   /**

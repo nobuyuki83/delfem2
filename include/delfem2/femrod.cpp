@@ -534,7 +534,7 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
 {
   assert( mats.nrowdim == 3 );
   assert( mats.ncoldim == 3 );
-  const unsigned int nNode = aBCFlag.size()/3;
+  const size_t nNode = aBCFlag.size()/3;
   assert(aP.size()+aS.size()==nNode);
   mats.setZero();
   std::vector<double> vec_r;
@@ -573,7 +573,7 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
   }
   for(unsigned int irod=0;irod<aElemRod.size()/5;++irod){
     const unsigned int* aINoel = aElemRod.data()+irod*5;
-    const unsigned int nP = aP.size();
+    const size_t nP = aP.size();
     const CVec3d aPE[3] = { aP[aINoel[0]], aP[aINoel[1]], aP[aINoel[2]] };
     const CVec3d aSE[2] = { aS[aINoel[3]-nP], aS[aINoel[4]-nP] };
     CVec3d Darboux0;
@@ -666,7 +666,7 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
     CVec3d du(vec_x[i1*3+0]-vec_x[i0*3+0],
                     vec_x[i1*3+1]-vec_x[i0*3+1],
                     vec_x[i1*3+2]-vec_x[i0*3+2]);
-    const unsigned int np = aP.size();
+    const size_t np = aP.size();
     const double dtheta = vec_x[ np*3 + is*3 ];
     CVec3d frm[3];
     RodFrameTrans(frm,
@@ -951,7 +951,7 @@ DFM2_INLINE void delfem2::Solve_RodHair(
 {
   assert( mats.nrowdim == 4 );
   assert( mats.ncoldim == 4 );
-  const unsigned int np = aP.size();
+  const size_t np = aP.size();
   assert( aP0.size() == np );
   assert( aS0.size() == np );
   assert( aP.size() == np );
@@ -1056,7 +1056,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
 {
   assert( mats.nrowdim == 4 );
   assert( mats.ncoldim == 4 );
-  const unsigned int np = aP.size();
+  const size_t np = aP.size();
   assert( aP0.size() == np );
   assert( aS0.size() == np );
   assert( aP.size() == np );

@@ -659,7 +659,6 @@ int delfem2::DetDelaunay
 		if( qdistance < qradius*(1.0-tol) ){ return 0; }	// inside the circumcircle
 		else{ return 1;	}	// on the circumcircle
 	}
-	return 0;
 }
 #ifndef DFM2_HEADER_ONLY
 template int delfem2::DetDelaunay(const CVec2d& p0, const CVec2d& p1, const CVec2d& p2, const CVec2d& p3);

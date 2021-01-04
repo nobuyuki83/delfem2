@@ -54,13 +54,13 @@ bool CalcInvMatPivot(REAL* a, unsigned int n, unsigned int* tmp)
   for(unsigned int ipv=0 ; ipv < n ; ipv++){
     // find maximum
     REAL big=0.0;
-    unsigned int pivot_row;
+	unsigned int pivot_row = UINT_MAX;
     for(unsigned int i=ipv ; i<n ; i++){
       if(fabs(a[i*n+ipv]) < big ){ continue; }
       big = fabs(a[i*n+ipv]);
       pivot_row = i;
     }
-    if(big == 0.0){ return false;}
+    if( pivot_row == UINT_MAX ){ return false;}
     row[ipv] = pivot_row;
 
     // swapping column

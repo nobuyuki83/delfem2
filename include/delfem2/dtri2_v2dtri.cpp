@@ -233,16 +233,16 @@ DFM2_INLINE void delfem2::DelaunayAroundPoint(
   }
 }
 
-DFM2_INLINE void delfem2::MeshingInside
-(std::vector<CDynPntSur>& aPo2D,
- std::vector<CDynTri>& aTri,
- std::vector<CVec2d>& aVec2,
- std::vector<int>& aFlagPnt,
- std::vector<unsigned int>& aFlagTri,
- const int nPointFix,
- const unsigned int nflgpnt_offset,
- const double len,
- const CInputTriangulation& mesh_density)
+DFM2_INLINE void delfem2::MeshingInside(
+	std::vector<CDynPntSur>& aPo2D,
+	std::vector<CDynTri>& aTri,
+	std::vector<CVec2d>& aVec2,
+	std::vector<int>& aFlagPnt,
+	std::vector<unsigned int>& aFlagTri,
+	const size_t nPointFix,
+	const int nflgpnt_offset,
+	const double len,
+	const CInputTriangulation& mesh_density)
 {
   assert( aVec2.size() == aPo2D.size() );
   assert( aFlagPnt.size() == aPo2D.size() );
@@ -274,17 +274,25 @@ DFM2_INLINE void delfem2::MeshingInside
       DelaunayAroundPoint(ipo0,aPo2D,aTri,aVec2);
       nadd++;
     }
-    for(unsigned int ip=nPointFix;ip<aVec2.size();++ip){
-      dtri2::LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
+    for(size_t ip=nPointFix;ip<aVec2.size();++ip){
+      dtri2::LaplacianArroundPoint(
+		  aVec2, 
+		  static_cast<unsigned int>(ip), 
+		  aPo2D,aTri);
     }
     if( nadd != 0 ){ ratio *= 0.8; }
     else{ ratio *= 0.5; }
     if( ratio < 0.65 ) break;
   }
 
-  for(unsigned int ip=nPointFix;ip<aVec2.size();++ip){
-    dtri2::LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
-    DelaunayAroundPoint(ip, aPo2D, aTri, aVec2);
+  for(size_t ip=nPointFix;ip<aVec2.size();++ip){
+    dtri2::LaplacianArroundPoint(
+		aVec2, 
+		static_cast<unsigned int>(ip), 
+		aPo2D,aTri);
+    DelaunayAroundPoint(
+		static_cast<unsigned int>(ip), 
+		aPo2D, aTri, aVec2);
   }
 }
 
@@ -319,9 +327,9 @@ DFM2_INLINE void delfem2::MakeSuperTriangle
   
   aTri.resize(1);
   CDynTri& tri = aTri[0];
-  tri.v[0] = npo+0;
-  tri.v[1] = npo+1;
-  tri.v[2] = npo+2;
+  tri.v[0] = static_cast<unsigned int>(npo+0);
+  tri.v[1] = static_cast<unsigned int>(npo+1);
+  tri.v[2] = static_cast<unsigned int>(npo+2);
   tri.s2[0] =  UINT_MAX;
   tri.s2[1] =  UINT_MAX;
   tri.s2[2] =  UINT_MAX;
@@ -644,9 +652,13 @@ DFM2_INLINE void delfem2::Meshing_Initialize
   {
     const double MIN_TRI_AREA = 1.0e-10;
     for(size_t ip=0;ip<aPo2D.size()-3;++ip){
-      AddPointsMesh(aVec2,aPo2D,aTri,
-                    ip,MIN_TRI_AREA);
-      DelaunayAroundPoint(ip,aPo2D,aTri,aVec2);
+      AddPointsMesh(
+		  aVec2,aPo2D,aTri,                    
+		  static_cast<unsigned int>(ip),
+		  MIN_TRI_AREA);
+      DelaunayAroundPoint(
+		  static_cast<unsigned int>(ip),
+		  aPo2D,aTri,aVec2);
     }
   }
 }
@@ -885,9 +897,9 @@ DFM2_INLINE void delfem2::Meshing_SingleConnectedShape2D
   std::vector<unsigned int> aPoDel;
   {
     const size_t npo = aVec2.size();
-    aPoDel.push_back( npo+0 );
-    aPoDel.push_back( npo+1 );
-    aPoDel.push_back( npo+2 );
+    aPoDel.push_back( static_cast<unsigned int>(npo+0) );
+    aPoDel.push_back( static_cast<unsigned int>(npo+1) );
+    aPoDel.push_back( static_cast<unsigned int>(npo+2) );
   }
   Meshing_Initialize(aPo2D,aDTri,aVec2);
   for(size_t iloop=0;iloop<loopIP_ind.size()-1;++iloop){
@@ -981,7 +993,7 @@ DFM2_INLINE void delfem2::RefineMesh
 {
   assert( aVec2.size() == aEPo2.size() );
   std::stack<int> aIV_free;
-  for(size_t ip=0;ip<aEPo2.size();++ip){
+  for(unsigned int ip=0;ip<aEPo2.size();++ip){
     if( aEPo2[ip].e != UINT_MAX ){ continue; }
     aIV_free.push(ip);
   }
@@ -991,7 +1003,7 @@ DFM2_INLINE void delfem2::RefineMesh
     double r0 = cmd.r0;
     CVec2d v01 = r0*aVec2[i0] + (1.0-r0)*aVec2[i1];
     if( aIV_free.empty() ){
-      int ipo = aVec2.size();
+      unsigned int ipo = static_cast<unsigned int>(aVec2.size());
       aVec2.push_back(v01);
       aEPo2.emplace_back();
       cmd.ipo_new = ipo;

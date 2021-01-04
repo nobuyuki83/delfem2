@@ -72,10 +72,10 @@ DFM2_INLINE delfem2::ReadDictionary_Python(
 {
   std::string buff = RemoveSpace(strIn);
   std::map<std::string, std::string> map0;
-  /////
-  const int n =  buff.length();
+  //
+  const size_t n =  buff.length();
   const char* pbuff = buff.c_str();
-  ////
+  //
   int iend = 1; // first letter is {
   int icolon = -1;
   bool is_parentheses = false;
@@ -183,7 +183,7 @@ DFM2_INLINE bool delfem2::LoadNumpy_1DimF(
   //    std::cout << ndim0 << " " << ndim1 << std::endl;
   
   //////
-  double size = ndim0;
+  unsigned int size = ndim0;
   aData.resize(size);
   //  double* aRes = (double*)malloc( sizeof(double)*size );
   size_t n2 = fread(&aData[0], sizeof(float), size, fp);

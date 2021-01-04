@@ -89,7 +89,7 @@ double delfem2::Length_Polygon(
     const std::vector<CVec2<T>>& aP)
 {
   if( aP.size() < 2 ){ return 0; }
-  const unsigned int np = aP.size();
+  const size_t np = aP.size();
   double len = 0;
   for(unsigned int ip0=0;ip0<np;ip0++){
     const unsigned int ip1 = (ip0+1)%np;
@@ -382,8 +382,9 @@ void delfem2::ResamplingLoop(
   std::vector< std::vector<int> > aPoInEd(loopIP0.size());
   {
     for(unsigned int iloop=0;iloop<nloop;++iloop){
-      const int np = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
-      for(int ip=0;ip<np;ip++){
+	  assert(loopIP0_ind[iloop + 1] > loopIP0_ind[iloop]);
+      const unsigned int np = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
+      for(unsigned int ip=0;ip<np;ip++){
         const int iipo0 = loopIP0_ind[iloop]+(ip+0)%np; assert( iipo0>=0 && iipo0<(int)loopIP0.size() );
         const int iipo1 = loopIP0_ind[iloop]+(ip+1)%np; assert( iipo1>=0 && iipo1<(int)loopIP0.size() );
         const int ipo0 = loopIP0[iipo0]; assert(ipo0>=0&&ipo0<(int)aVec2.size());
@@ -395,7 +396,7 @@ void delfem2::ResamplingLoop(
         for(int iadd=0;iadd<nadd;++iadd){
           double r2 = (double)(iadd+1)/(nadd+1);
           CVec2<T> v2 = (1-r2)*po0 + r2*po1;
-          const size_t ipo2 = aVec2.size();
+          const unsigned int ipo2 = static_cast<unsigned int>(aVec2.size());
           aVec2.push_back(v2);
           assert( iipo0>=0 && iipo0<(int)aPoInEd.size() );
           aPoInEd[ iipo0 ].push_back(ipo2);
