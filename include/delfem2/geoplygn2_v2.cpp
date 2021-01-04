@@ -355,7 +355,7 @@ void delfem2::JArray_FromVecVec_XY(
     }
   }
   loopIP0.resize(aXY.size());
-  for(std::size_t ip=0;ip<aXY.size();++ip){
+  for(unsigned int ip=0;ip<aXY.size();++ip){
     loopIP0[ip] = ip;
   }
 }
@@ -624,7 +624,7 @@ void delfem2::FixLoopOrientation(
 {
   const std::vector<int> loop_old = loopIP;
   assert( loopIP_ind.size()>1 );
-  const unsigned int nloop = loopIP_ind.size()-1;
+  const size_t nloop = loopIP_ind.size()-1;
   int ivtx0 = 0;
   for(unsigned int iloop=0;iloop<nloop;iloop++){
     double area_loop = 0;

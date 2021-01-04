@@ -179,7 +179,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     float zmin,
     float zmax)
 {
-  const float yratio = 0.5/tan(fovyInRad*0.5); // how z change w.r.t. the y change
+  const float yratio = 0.5f/tanf(fovyInRad*0.5f); // how z change w.r.t. the y change
   const float xratio = yratio/aspectRatio;
   // column 0
   mP[0*4+0] = xratio;

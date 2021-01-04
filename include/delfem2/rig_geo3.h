@@ -169,7 +169,7 @@ DFM2_INLINE void PickBone(
 DFM2_INLINE void Skinning_LBS_LocalWeight(
     double *aXYZ,
     const double *aXYZ0,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const std::vector<CRigBone> &aBone,
     const double *aRigWeight,
     const unsigned int *aRigJoint);

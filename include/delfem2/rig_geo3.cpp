@@ -203,8 +203,8 @@ DFM2_INLINE void delfem2::Points3_WeighttranspPosition(
     const std::vector<double>& Weighttransp,
     const std::vector<double>& aXYZ0)
 {
-  const unsigned int nXYZ = aXYZ0.size()/3;
-  const unsigned int nPos = Weighttransp.size()/nXYZ;
+  const size_t nXYZ = aXYZ0.size()/3;
+  const size_t nPos = Weighttransp.size()/nXYZ;
   aPos.assign(nPos*3, 0.0);
   for(unsigned int ib=0;ib<nPos;++ib){
     aPos[ib*3+0] = 0;
@@ -226,7 +226,7 @@ DFM2_INLINE void delfem2::Points3_WeightsparsePosition(
     const std::vector<double>& aXYZ0)
 {
   assert( aSparseW.size() == aSparseIdp.size() );
-  const unsigned int np_sparse = aSparseIdp.size()/nPos;
+  const size_t np_sparse = aSparseIdp.size()/nPos;
   assert( aSparseIdp.size() % np_sparse == 0 );
   aPos0.assign(nPos*3, 0.0);
   for(unsigned int ib=0;ib<nPos;++ib){
@@ -297,7 +297,7 @@ delfem2::UpdateBoneRotTrans(
 void delfem2::SetCurrentBoneRotationAsDefault(
     std::vector<CRigBone>& aBone)
 {
-  const unsigned int nb = aBone.size();
+  const size_t nb = aBone.size();
   std::vector<double> aRot(nb*16);
   for (unsigned int ib = 0; ib < nb; ++ib) {
     const int ibp = aBone[ib].ibone_parent;
@@ -364,7 +364,7 @@ DFM2_INLINE void delfem2::SkinningSparse_LBS(
 {
 //  const size_t nBone = aBone.size();
   const size_t nP = aXYZ0.size()/3;
-  const unsigned int nBW = aWBoneSparse.size()/nP;
+  const size_t nBW = aWBoneSparse.size()/nP;
   assert( aWBoneSparse.size() == nBW*nP );
   assert( aIdBoneSparse.size() == nBW*nP );
   aXYZ1.resize(aXYZ0.size());
@@ -389,7 +389,7 @@ DFM2_INLINE void
 delfem2::Skinning_LBS_LocalWeight(
     double* aXYZ,
     const double* aXYZ0,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const std::vector<CRigBone>& aBone,
     const double* aRigWeight,
     const unsigned int* aRigJoint)
@@ -459,10 +459,10 @@ delfem2::Read_BioVisionHierarchy(
       aBone.push_back(br);
     }
     else if( aToken[0] == "{" ){
-      stackIndBone.push_back(aBone.size()-1);
+      stackIndBone.push_back(static_cast<unsigned int>(aBone.size()-1));
       if( stackIndBone.size() > 1 ){
         int ibp = stackIndBone[stackIndBone.size()-2];
-        int ib = aBone.size()-1;
+        unsigned int ib = static_cast<unsigned int>(aBone.size()-1);
         aBone[ib].ibone_parent  = ibp;
       }
     }
@@ -471,7 +471,7 @@ delfem2::Read_BioVisionHierarchy(
     }
     else if( aToken[0] == "OFFSET"){
       assert( aToken.size()==4 );
-      int ib = aBone.size()-1;
+      size_t ib = aBone.size()-1;
       double org_x = rig_v3q::myStod(aToken[1]);
       double org_y = rig_v3q::myStod(aToken[2]);
       double org_z = rig_v3q::myStod(aToken[3]);
@@ -534,7 +534,7 @@ delfem2::Read_BioVisionHierarchy(
     std::getline(fin,line);
 //    std::cout << "frametime: " << line << std::endl;
   }
-  const int nchannel = aChannelRotTransBone.size();
+  const size_t nchannel = aChannelRotTransBone.size();
   aValueRotTransBone.resize(nframe*nchannel);
   for(int iframe=0;iframe<nframe;++iframe){
     std::getline(fin,line);
@@ -584,7 +584,7 @@ DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy(
     bone.quatRelativeRot[2] = 0.0;
     bone.quatRelativeRot[3] = 0.0;
   }
-  const int nch = aChannelRotTransBone.size();
+  const size_t nch = aChannelRotTransBone.size();
   for(int ich=0;ich<nch;++ich){
     const int ibone = aChannelRotTransBone[ich].ibone;
     const int iaxis = aChannelRotTransBone[ich].iaxis;
@@ -648,7 +648,7 @@ delfem2::SetMat4AffineBone_FromJointRelativeRotation(
     const std::vector<int>& aIndBoneParent,
     const std::vector<double>& aJntPos0)
 {
-  const unsigned int nBone = aIndBoneParent.size();
+  const size_t nBone = aIndBoneParent.size();
   assert( nBone >= 1 );
   assert( aMat4AffineBone.size() == nBone*16 );
   Mat4_ScaleRotTrans(aMat4AffineBone.data(),
@@ -678,8 +678,8 @@ DFM2_INLINE void delfem2::Rig_SkinReferncePositionsBoneWeighted(
     const std::vector<double>& aXYZ0,
     const std::vector<double>& aW)
 {
-  const unsigned int np = aXYZ0.size()/3;
-  const unsigned int nb = aBone1.size();
+  const size_t np = aXYZ0.size()/3;
+  const size_t nb = aBone1.size();
   aRefPosAff.resize(np*nb*4);
   for(unsigned int ip=0;ip<np;++ip){
     double p0a[4] = {aXYZ0[ip*3+0], aXYZ0[ip*3+1], aXYZ0[ip*3+2], 1.0};

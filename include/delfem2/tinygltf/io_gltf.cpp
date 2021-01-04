@@ -56,13 +56,13 @@ bool GetArray_UInt(
   const tinygltf::BufferView& bv = model.bufferViews[ibv];
   const int ibuff = bv.buffer;
   const tinygltf::Buffer& buff = model.buffers[ibuff];
-  const unsigned int ncnt = acc.count;
+  const size_t ncnt = acc.count;
   unsigned int nelem = 0;
   if( acc.type == TINYGLTF_TYPE_SCALAR){ nelem = 1; }
   else if( acc.type == TINYGLTF_TYPE_VEC3 ){ nelem=3; }
   else if( acc.type == TINYGLTF_TYPE_VEC4 ){ nelem=4; }
   else{ std::cout << "Error!->unknown type: " << acc.type << std::endl; assert(0); abort(); }
-  unsigned int ntot = ncnt*nelem;
+  size_t ntot = ncnt*nelem;
   if( acc.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT ){ // unsigned short
     if( bv.byteStride != 0 && bv.byteStride != nelem*sizeof(unsigned short) ){
       std::cout << "Error!-->unsuppoted not packed" << std::endl;
@@ -91,14 +91,14 @@ bool GetArray_Double(
   const tinygltf::BufferView& bv = model.bufferViews[ibv];
   const int ibuff = bv.buffer;
   const tinygltf::Buffer& buff = model.buffers[ibuff];
-  const unsigned int ncnt = acc.count;
+  const size_t ncnt = acc.count;
   unsigned int nelem = 0;
   if( acc.type == TINYGLTF_TYPE_SCALAR){ nelem = 1; }
   else if( acc.type == TINYGLTF_TYPE_VEC3 ){ nelem=3; }
   else if( acc.type == TINYGLTF_TYPE_VEC4 ){ nelem=4; }
   else if( acc.type == TINYGLTF_TYPE_MAT4 ){ nelem=16; }
   else{ std::cout << "Error!->unknown type: " << acc.type << std::endl; assert(0); abort(); }
-  unsigned int ntot = ncnt*nelem;
+  size_t ntot = ncnt*nelem;
   if( acc.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT ){ // signed short
     if( bv.byteStride != 0 && bv.byteStride != nelem*sizeof(float) ){
       std::cout << "Error!-->unsuppoted not packed" << std::endl;
@@ -230,7 +230,7 @@ void dfm2::Print(const tinygltf::Model& model){
     std::vector<double> M; GetArray_Double(M, model, skin.inverseBindMatrices);
     assert( M.size()%16 == 0 );
     assert( M.size()/16 == model.skins[is].joints.size() );
-    const int nj = model.skins[is].joints.size();
+    const size_t nj = model.skins[is].joints.size();
     for(int ij=0;ij<nj;++ij){
       for(int i=0;i<16;++i){ std::cout << "   " << ij << " " << i << " " << M[ij*16+i] << std::endl; }
     }
@@ -375,7 +375,7 @@ void delfem2::GetBone(
   assert( iskin < model.skins.size() );
   aBone.resize( model.skins[iskin].joints.size() );
   std::vector<unsigned int> mapNode2Bone( model.nodes.size(), UINT_MAX);
-  for(size_t ij=0;ij<model.skins[iskin].joints.size();++ij){
+  for(unsigned int ij=0;ij<model.skins[iskin].joints.size();++ij){
     const unsigned int inode = model.skins[iskin].joints[ij];
     assert( inode < model.nodes.size() );
     mapNode2Bone[inode] = ij;
@@ -409,7 +409,7 @@ bool dfm2::CGLTF::Read(
                                        fpath); // for binary glTF(.glb)
   if (!warn.empty()) { printf("Warn: %s\n", warn.c_str()); }
   if (!err.empty()) { printf("Err: %s\n", err.c_str()); }
-  if (!ret) { printf("Failed to parse glTF\n"); return -1; }
+  if (!ret) { printf("Failed to parse glTF\n"); return false; }
   return true;
 }
 

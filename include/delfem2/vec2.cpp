@@ -155,8 +155,8 @@ DFM2_INLINE void GaussianDistribution2(float noise[2])
 {
   float a0 = (float)(rand()/(RAND_MAX+1.0));
   float a1 = (float)(rand()/(RAND_MAX+1.0));
-  noise[0] = (float)(sqrtf(-2.f*logf(a0))*cosf(3.1415*2*a1));
-  noise[1] = (float)(sqrtf(-2.f*logf(a0))*sinf(3.1415*2*a1));
+  noise[0] = (float)(sqrtf(-2.f*logf(a0))*cosf(3.1415f*2.f*a1));
+  noise[1] = (float)(sqrtf(-2.f*logf(a0))*sinf(3.1415f*2.f*a1));
 }
 
 template <>

@@ -25,16 +25,15 @@ namespace delfem2 {
  * @param[in] is_rot is bone change is rotation or translation
  * @param[in] aBone1 current sleleton
  */
-DFM2_INLINE void
-Rig_SensitivityBoneTransform(
+DFM2_INLINE void Rig_SensitivityBoneTransform(
     std::vector<double>& L, // [ nsns, nBone*12 ]
     unsigned int ib_s,
-    double idim_s,
+    unsigned int idim_s,
     bool is_rot,
     const std::vector<CRigBone>& aBone1)
 {
-  const unsigned int nb = aBone1.size();
-  const unsigned int istat0 = L.size();
+  const size_t nb = aBone1.size();
+  const unsigned int istat0 = static_cast<unsigned int>(L.size());
   assert( istat0%12 == 0 );
   L.resize(istat0+nb*12);
   std::vector<double> aM(nb*16);
@@ -102,8 +101,8 @@ void Sensitivity_RigSkinPoint(
     const std::vector<unsigned int>& aSkinSparseI)
 {
   assert( aSkinSparseI.size() == aSkinSparseW.size() );
-  const unsigned int nb = aBone.size();
-  const unsigned int nsns = L.size()/(nb*12);
+  const size_t nb = aBone.size();
+  const size_t nsns = L.size()/(nb*12);
   dP.assign(3*nsns, 0.0);
   const double p0a[4] = { p0[0], p0[1], p0[2], 1.0};
   for (unsigned int jjb = 0; jjb < nb_par_pt; ++jjb) {
@@ -136,8 +135,8 @@ DFM2_INLINE void Rig_WdW_Target(
     const CTarget& target,
     const std::vector<double>& L) // [ nsns, nBone, 12]
 {
-  const unsigned int nb = aBone.size();
-  const unsigned int nsns = L.size()/(nb*12);
+  const size_t nb = aBone.size();
+  const size_t nsns = L.size()/(nb*12);
   assert( L.size() == nsns*nb*12 );
   // --------
   unsigned int ib = target.ib;
@@ -151,7 +150,7 @@ DFM2_INLINE void Rig_WdW_Target(
     aW.push_back(sqx);
     aW.push_back(sqy);
   }
-  const unsigned int istat = adW.size();
+  const unsigned int istat = static_cast<unsigned int>(adW.size());
   adW.resize(istat+ncnst*nsns);
   for(unsigned int isns=0;isns<nsns;++isns){
     double dx = L[isns*(nb*12) + ib*12+3];
@@ -183,14 +182,14 @@ Solve_MinRigging(
          aBone,aTarget[it],L);
   }
   
-  const unsigned int nsns = L.size()/(aBone.size()*12);
-  const unsigned int nC = aC0.size();
+  const size_t nsns = L.size()/(aBone.size()*12);
+  const size_t nC = aC0.size();
   
   class CSystemMatrix{
   public:
     CSystemMatrix(const std::vector<double>& adC_,
-                  unsigned int nC_,
-                  unsigned int nsns_) :
+                  size_t nC_,
+                  size_t nsns_) :
     adC(adC_), nC(nC_), nsns(nsns_)
     {
       //      std::cout << "constructor reduced system matrix " << std::endl;
@@ -200,22 +199,31 @@ Solve_MinRigging(
   public:
     void MatVec(double* y,
                 double alpha, const double* x, double beta) const {
-       ::delfem2::MatVec(tmpC0.data(),
-                         adC.data(), nC, nsns, x);
+       ::delfem2::MatVec(tmpC0.data(),                         
+		   adC.data(), 
+		   static_cast<unsigned int>(nC), 
+		   static_cast<unsigned int>(nsns), 
+		   x);
        MatTVec(y,
-                    adC.data(), nC, nsns, tmpC0.data());
+		   adC.data(),
+		   static_cast<unsigned int>(nC), 
+		   static_cast<unsigned int>(nsns), 
+		   tmpC0.data());
       for(unsigned int i=0;i<nsns;++i){ y[i] += (beta+0.01)*x[i]; }
     }
   public:
     const std::vector<double>& adC;
-    unsigned int nC;
-    unsigned int nsns;
+    size_t nC;
+    size_t nsns;
     mutable std::vector<double> tmpC0;
   } mat(adC0, nC, nsns);
   
   std::vector<double> r(nsns,0.0);
    MatTVec(r.data(),
-                adC0.data(), nC, nsns, aC0.data());
+	   adC0.data(), 
+	   static_cast<unsigned int>(nC), 
+	   static_cast<unsigned int>(nsns), 
+	   aC0.data());
   
   std::vector<double> u(nsns,0.0);
   std::vector<double> reshist;

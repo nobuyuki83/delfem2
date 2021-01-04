@@ -272,7 +272,7 @@ public:
       int i2 = aETri[itri0].v[2];
       v2 = r0*aVec2[i0]+r1*aVec2[i1]+(1-r0-r1)*aVec2[i2];
     }
-    const int ipo0 = aEPo.size();
+    const unsigned int ipo0 = static_cast<unsigned int>(aEPo.size());
     aVec2.push_back(v2);
     aEPo.push_back(CDynPntSur());
     InsertPoint_Elem(ipo0, itri0, aEPo, aETri);
@@ -294,8 +294,9 @@ public:
       FixLoopOrientation(loopIP,
                          loopIP_ind,aVec2);
       if( edge_length > 10e-10 ){
-        ResamplingLoop(loopIP_ind,loopIP,aVec2,
-                       edge_length );
+        ResamplingLoop(
+			loopIP_ind,loopIP,aVec2,
+			edge_length );
       }
     }
     ////
@@ -326,8 +327,8 @@ public:
     aETri.clear();
     aVec2.clear();
   }
-  int nTri() const { return aETri.size(); }
-  int nPoint() const { return aEPo.size(); }
+  size_t nTri() const { return aETri.size(); }
+  size_t nPoint() const { return aEPo.size(); }
   void DeleteTriEdge(int itri, int iedge){ CollapseEdge_MeshDTri(itri, iedge, aEPo, aETri); }
 public:
   std::vector<CDynPntSur> aEPo;

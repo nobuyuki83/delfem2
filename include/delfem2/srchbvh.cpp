@@ -117,8 +117,8 @@ DFM2_INLINE void DevideElemAryConnex
       break;
     }
   }
-  unsigned int inode_ch0 = aNodeBVH.size();
-  unsigned int inode_ch1 = aNodeBVH.size()+1;
+  const unsigned int inode_ch0 = static_cast<unsigned int>(aNodeBVH.size());
+  const unsigned int inode_ch1 = static_cast<unsigned int>(aNodeBVH.size()+1);
   aNodeBVH.resize(aNodeBVH.size()+2);
   aNodeBVH[inode_ch0].iparent = iroot_node;
   aNodeBVH[inode_ch1].iparent = iroot_node;
@@ -177,7 +177,11 @@ DFM2_INLINE void DevideElemAryConnex
   }
 }
 
-DFM2_INLINE int delta(int i, int j, const unsigned int* sorted_morton_code, int length)
+DFM2_INLINE int delta(
+	int i, 
+	int j, 
+	const unsigned int* sorted_morton_code, 
+	size_t length)
 {
   if (j<0 || j >= length){
     return -1;
@@ -259,7 +263,7 @@ DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
  const std::vector<double>& aElemCenter)
 {
   aNodeBVH.clear();
-  const unsigned int nelem = aElemCenter.size()/3;
+  const size_t nelem = aElemCenter.size()/3;
   std::vector<int> list(nelem);
   for(unsigned int ielem=0;ielem<nelem;ielem++){ list[ielem] = ielem; }
   std::vector<unsigned int> aElem2Node;
@@ -295,12 +299,20 @@ template std::uint32_t delfem2::MortonCode(double x, double y, double z);
 
 DFM2_INLINE std::pair<unsigned int,unsigned int> delfem2::MortonCode_DeterminRange(
     const std::uint32_t* sortedMC,
-    unsigned int nMC,
+    size_t nMC,
     unsigned int imc)
 {
   assert( nMC > 0 );
-  if( imc == 0 ){ return std::make_pair(0,nMC-1); }
-  if( imc == nMC-1 ){ return std::make_pair(nMC-1,nMC-1); }
+  if( imc == 0 ){ 
+	  return std::make_pair(
+		  0,
+		  static_cast<unsigned int>(nMC-1) ); 
+  }
+  if( imc == nMC-1 ){ 
+	  return std::make_pair(
+		  static_cast<unsigned int>(nMC-1),
+		  static_cast<unsigned int>(nMC-1) ); 
+  }
   // ----------------------
   const std::uint32_t mc0 = sortedMC[imc-1];
   const std::uint32_t mc1 = sortedMC[imc+0];
@@ -433,7 +445,7 @@ DFM2_INLINE void delfem2::BVHTopology_Morton(
   assert( !aSortedMc.empty() );
   aNodeBVH.resize(aSortedMc.size()*2-1);
   aNodeBVH[0].iparent = UINT_MAX;
-  const unsigned int nni = aSortedMc.size()-1; // number of internal node
+  const unsigned int nni = static_cast<unsigned int>(aSortedMc.size()-1); // number of internal node
   for(unsigned int ini=0;ini<nni;++ini){
     const std::pair<unsigned int, unsigned int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
     unsigned int isplit = MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);

@@ -251,7 +251,7 @@ DFM2_INLINE void delfem2::MeshingInside
   double ratio = 3.0;
   for(;;){
     int nadd = 0;
-    for(size_t itri=0;itri<aTri.size();itri++){
+    for(unsigned int itri=0;itri<aTri.size();itri++){
       const double area = Area_Tri(aVec2[aTri[itri].v[0]],
                                   aVec2[aTri[itri].v[1]],
                                   aVec2[aTri[itri].v[2]]);
@@ -261,7 +261,7 @@ DFM2_INLINE void delfem2::MeshingInside
       };
       double len2 = len*mesh_density.edgeLengthRatio(pcnt[0], pcnt[1]);
       if( area < len2 * len2 * ratio ){ continue; }
-      const unsigned int ipo0 = aPo2D.size();
+      const unsigned int ipo0 = static_cast<unsigned int>(aPo2D.size());
       aPo2D.resize( aPo2D.size()+1 );
       aVec2.resize( aVec2.size()+1 );
       aVec2[ipo0].p[0] = (aVec2[aTri[itri].v[0]].x()+aVec2[aTri[itri].v[1]].x()+aVec2[aTri[itri].v[2]].x())/3.0;
@@ -274,7 +274,7 @@ DFM2_INLINE void delfem2::MeshingInside
       DelaunayAroundPoint(ipo0,aPo2D,aTri,aVec2);
       nadd++;
     }
-    for(std::size_t ip=nPointFix;ip<aVec2.size();++ip){
+    for(unsigned int ip=nPointFix;ip<aVec2.size();++ip){
       dtri2::LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
     }
     if( nadd != 0 ){ ratio *= 0.8; }
@@ -282,7 +282,7 @@ DFM2_INLINE void delfem2::MeshingInside
     if( ratio < 0.65 ) break;
   }
 
-  for(std::size_t ip=nPointFix;ip<aVec2.size();++ip){
+  for(unsigned int ip=nPointFix;ip<aVec2.size();++ip){
     dtri2::LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
     DelaunayAroundPoint(ip, aPo2D, aTri, aVec2);
   }
@@ -307,7 +307,7 @@ DFM2_INLINE void delfem2::MakeSuperTriangle
   const double tri_len = max_len * 4.0;
   const double tmp_len = tri_len * sqrt(3.0) / 6.0;
   
-  const unsigned int npo = aPo2D.size();
+  const size_t npo = aPo2D.size();
   aPo2D.resize(npo+3);
   aVec2.resize(npo+3);
   aVec2[npo+0] = CVec2d(center[0], center[1]+2.0*tmp_len);
@@ -461,7 +461,7 @@ DFM2_INLINE void delfem2::FlagConnected
  int iflag)
 {
 #ifndef NDEBUG
-  const unsigned int ntri = aTri_in.size();
+  const size_t ntri = aTri_in.size();
   assert( inout_flg.size() == ntri );
   assert( itri0_ker<inout_flg.size() );
 #endif
@@ -488,7 +488,7 @@ DFM2_INLINE void delfem2::DeleteTriFlag
  int iflag)
 {
   assert(aFlg1.size()==aTri1.size());
-  const unsigned int ntri0 = aTri1.size();
+  const size_t ntri0 = aTri1.size();
   std::vector<unsigned int> map01(ntri0,UINT_MAX);
   unsigned int ntri1 = 0;
   for(unsigned int itri=0;itri<ntri0;++itri){
@@ -576,7 +576,7 @@ DFM2_INLINE void delfem2::DeletePointsFlag
  std::vector<int>& aFlgPnt1,
  int iflg)
 {
-  const unsigned int np0 = aVec1.size();
+  const size_t np0 = aVec1.size();
   assert( aPo1.size() == np0 );
   assert( aFlgPnt1.size() == np0 );
   std::vector<int> map01;
@@ -699,14 +699,14 @@ DFM2_INLINE void delfem2::MeshTri2D_Export
 {
   aTri_out.clear();
   aXY_out.clear();
-  const unsigned int ntri = aTri_in.size();
+  const size_t ntri = aTri_in.size();
   aTri_out.resize(ntri*3);
   for(unsigned int itri=0;itri<ntri;itri++){
     aTri_out[itri*3+0] = aTri_in[itri].v[0];
     aTri_out[itri*3+1] = aTri_in[itri].v[1];
     aTri_out[itri*3+2] = aTri_in[itri].v[2];
   }
-  const unsigned int nxy_out = aVec2.size();
+  const size_t nxy_out = aVec2.size();
   aXY_out.resize(nxy_out*2);
   for(unsigned int ixy=0;ixy<nxy_out;ixy++){
     aXY_out[ixy*2+0] = aVec2[ixy].x();
@@ -884,7 +884,7 @@ DFM2_INLINE void delfem2::Meshing_SingleConnectedShape2D
 {
   std::vector<unsigned int> aPoDel;
   {
-    const unsigned int npo = aVec2.size();
+    const size_t npo = aVec2.size();
     aPoDel.push_back( npo+0 );
     aPoDel.push_back( npo+1 );
     aPoDel.push_back( npo+2 );

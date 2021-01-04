@@ -97,7 +97,7 @@ public:
       for (unsigned int i = 0; i < n; ++i) { valDia[i] = 0; }
     }
     {
-      const unsigned int n = valCrs.size();
+      const size_t n = valCrs.size();
       assert(n == nrowdim * ncoldim * rowPtr.size());
       for (unsigned int i = 0; i < n; i++) { valCrs[i] = 0.0; }
     }

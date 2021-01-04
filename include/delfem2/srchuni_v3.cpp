@@ -416,12 +416,13 @@ delfem2::IntersectionLine_MeshTri3(
   return aPES;
 }
 template std::vector<delfem2::CPtElm2<double>>
-  delfem2::IntersectionLine_MeshTri3(const CVec3<double>& org, const CVec3<double>& dir,
-                                  const std::vector<unsigned int>& aTri,
-                                  const std::vector<double>& aXYZ,
-                                  double eps);
+  delfem2::IntersectionLine_MeshTri3(
+	  const CVec3<double>& org, 
+	  const CVec3<double>& dir,
+	  const std::vector<unsigned int>& aTri,
+	  const std::vector<double>& aXYZ,
+	  double eps);
 
-  
 // -------------------------------------
 
 template <typename T>
@@ -629,7 +630,7 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTri3D(
 {
   CPtElm2<T> pes;
   double min_dist = -1;
-  const unsigned int nTri = aTri.size()/3;
+  const size_t nTri = aTri.size()/3;
   for(unsigned int it=0;it<nTri;++it){
     const int i0 = aTri[it*3+0];
     const int i1 = aTri[it*3+1];
@@ -905,12 +906,14 @@ template double delfem2::DistanceToTri
 
 
 template <typename T>
-double delfem2::DistanceToTri
-(CPtElm2<T>& pes,
- const CVec3<T>& p,
- unsigned int itri0,
- const double* aXYZ, unsigned int nXYZ,
- const unsigned int* aTri, unsigned int nTri)
+double delfem2::DistanceToTri(
+	CPtElm2<T>& pes,
+	const CVec3<T>& p,
+	unsigned int itri0,
+	const double* aXYZ, 
+	size_t nXYZ,
+	const unsigned int* aTri, 
+	size_t nTri)
 {
   const unsigned int i0 = aTri[itri0*3+0];
   const unsigned int i1 = aTri[itri0*3+1];
@@ -926,9 +929,12 @@ double delfem2::DistanceToTri
   pes.r1 = r1;
   return p_min.Length();
 }
-template double delfem2::DistanceToTri(CPtElm2<double>& pes,
-                                    const CVec3<double>& p,
-                                    unsigned int itri0,
-                                    const double* aXYZ, unsigned int nXYZ,
-                                    const unsigned int* aTri, unsigned int nTri);
+template double delfem2::DistanceToTri(
+	CPtElm2<double>& pes,
+	const CVec3<double>& p,
+	unsigned int itri0,
+	const double* aXYZ, 
+	size_t nXYZ,
+	const unsigned int* aTri, 
+	size_t nTri);
 

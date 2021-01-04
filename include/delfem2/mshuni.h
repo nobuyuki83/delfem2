@@ -74,9 +74,9 @@ DFM2_INLINE void JArray_ElSuP_MeshElem(
     std::vector<unsigned int> &elsup,
     //
     const unsigned int *pElem,
-    unsigned int nElem,
+    size_t nElem,
     unsigned int nPoEl,
-    unsigned int nPo);
+    size_t nPo);
 
 /**
  * @brief make elem surrounding point for triangle mesh
@@ -108,7 +108,7 @@ DFM2_INLINE void JArray_ElSuP_MeshTri(
 DFM2_INLINE void ElSuEl_MeshElem(
     std::vector<unsigned int> &aElSuEl,
     const unsigned int *aEl,
-    unsigned int nEl,
+    size_t nEl,
     int nNoEl,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
@@ -144,7 +144,7 @@ DFM2_INLINE void JArrayPointSurPoint_MeshOneRingNeighborhood(
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     unsigned int nnoel,
-    unsigned int nPoint);
+    size_t nPoint);
 
 /**
  * @brief compute indexes of points surrounding a point as a jagged array

@@ -1022,7 +1022,7 @@ void delfem2::CPreconditionerILU<T>::SetValueILU
   const unsigned int blksize = len*len;
   std::vector<int> row2crs(nblk,-1);
   {
-    const unsigned int n = mat.rowPtr.size()*len*len;
+    const size_t n = mat.rowPtr.size()*len*len;
     for(unsigned int i=0;i<n;++i){ mat.valCrs[i] = 0.0; }
   }
   for(unsigned int iblk=0;iblk<nblk;iblk++){

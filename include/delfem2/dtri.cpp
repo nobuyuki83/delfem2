@@ -27,7 +27,7 @@ DFM2_INLINE void delfem2::MakeInnerRelationTri(
   std::vector<int> tmp_poin(npoin,0);
   unsigned int inpofa[2];
   
-  const unsigned int nTri = aTri.size();
+  const size_t nTri = aTri.size();
   for(unsigned int itri=0;itri<nTri;itri++){
     for(unsigned int iedtri=0;iedtri<3;iedtri++){
       for(unsigned int ipoed=0;ipoed<2;ipoed++){
@@ -79,7 +79,7 @@ DFM2_INLINE bool delfem2::JArray_MakeElSuP(
   }
   const int nelsup = elsup_ind[npoin];
   elsup.resize(nelsup);
-  for(std::size_t itri=0;itri<aTri.size();itri++){
+  for(unsigned int itri=0;itri<aTri.size();itri++){
     for(unsigned int ipoin0 : aTri[itri].v){
       const unsigned int ielsup = elsup_ind[ipoin0];
       elsup[ielsup] = itri;
@@ -153,8 +153,8 @@ DFM2_INLINE bool delfem2::InsertPoint_ElemEdge
   
   const unsigned int itri0 = itri_ins;
   const unsigned int itri1 = itri_adj;
-  const unsigned int itri2 = aTri.size();
-  const unsigned int itri3 = aTri.size()+1;
+  const size_t itri2 = aTri.size();
+  const size_t itri3 = aTri.size()+1;
   
   aTri.resize(aTri.size()+2);
   
@@ -254,8 +254,8 @@ DFM2_INLINE bool delfem2::InsertPoint_Elem
   assert( ipo_ins<aPo.size() );
   
   const unsigned int itA = itri_ins;
-  const unsigned int itB = aTri.size();
-  const unsigned int itC = aTri.size()+1;
+  const size_t itB = aTri.size();
+  const size_t itC = aTri.size()+1;
   
   aTri.resize(aTri.size()+2);
   const CDynTri old = aTri[itri_ins];
@@ -493,7 +493,7 @@ DFM2_INLINE void delfem2::AssertDTri(
     const std::vector<CDynTri>& aTri )
 {
 #if !defined(NDEBUG)
-	const unsigned int ntri = aTri.size();
+	const size_t ntri = aTri.size();
 	for(unsigned int itri=0;itri<ntri;itri++){
     const CDynTri& tri = aTri[itri];
     if( tri.v[0] == UINT_MAX ){
@@ -525,8 +525,8 @@ DFM2_INLINE void delfem2::AssertMeshDTri
  const std::vector<CDynTri>& aSTri)
 {
 #if !defined(NDEBUG)
-  const unsigned int npo = aPo3D.size();
-  const unsigned int ntri = aSTri.size();
+  const size_t npo = aPo3D.size();
+  const size_t ntri = aSTri.size();
   for (unsigned int itri = 0; itri<ntri; itri++){
     assert( aSTri[itri].v[0] < npo);
     assert( aSTri[itri].v[0] < npo);
@@ -630,7 +630,7 @@ DFM2_INLINE bool delfem2::DeleteTri(
   assert(aTri[itri_to].s2[1]==UINT_MAX);
   assert(aTri[itri_to].s2[2]==UINT_MAX);
   assert(aTri.size()>0);
-  const unsigned int itri_from = aTri.size()-1;
+  const size_t itri_from = aTri.size()-1;
   if (itri_to==itri_from){
     aTri.resize(aTri.size()-1);
     return true;
