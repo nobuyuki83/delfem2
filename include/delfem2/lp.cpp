@@ -9,6 +9,7 @@
 #include <iostream>
 #include <cassert>
 #include <map>
+#include <climits>
 
 #include "delfem2/lp.h"
 
