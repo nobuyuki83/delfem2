@@ -6,6 +6,7 @@
  */
 
 #include <cstring>
+#include <climits>
 #include "delfem2/mat4.h"
 
 // ------------------------
