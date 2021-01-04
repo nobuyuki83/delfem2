@@ -23,11 +23,11 @@ public:
     aFace.clear();
   }
 
-  void AddPolygon(int np) {
+  void AddPolygon(unsigned int np) {
     const int iv0 = nVertex;
     nVertex += np;
-    const int ie0 = aEdge.size();
-    for (int iie = 0; iie < np; ++iie) {
+    const unsigned int ie0 = static_cast<unsigned int>(aEdge.size());
+    for (unsigned int iie = 0; iie < np; ++iie) {
       CEdge edge0;
       edge0.iv0 = iv0 + (iie + 0) % np;
       edge0.iv1 = iv0 + (iie + 1) % np;
@@ -35,13 +35,13 @@ public:
     }
     { // loop
       CLoop loop0;
-      for (int iie = 0; iie < np; ++iie) {
+      for (unsigned int iie = 0; iie < np; ++iie) {
         loop0.aIE.push_back(std::make_pair(ie0 + iie, true));
       }
       aLoop.push_back(loop0);
     }
     { // face
-      const int il0 = aLoop.size() - 1;
+      const unsigned int il0 = static_cast<unsigned int>(aLoop.size() - 1);
       CFace face0;
       face0.aIL.push_back(il0);
       aFace.push_back(face0);
@@ -55,7 +55,7 @@ public:
     CLoop loop0;
     loop0.iv = ivn;
     aLoop.push_back(loop0);
-    const unsigned int il0 = aLoop.size() - 1;
+    const unsigned int il0 = static_cast<unsigned int>(aLoop.size() - 1);
     aFace[ifc].aIL.push_back(il0);
     return true;
   }
@@ -66,14 +66,14 @@ public:
     nVertex += 1;
     const int iv0 = aEdge[ieo].iv0;
     const int iv1 = aEdge[ieo].iv1;
-    const int ien = aEdge.size();
+    const unsigned int ien = static_cast<unsigned int>(aEdge.size());
     aEdge.resize(aEdge.size() + 1);
     aEdge[ieo].iv0 = iv0;
     aEdge[ieo].iv1 = ivn;
     aEdge[ien].iv0 = ivn;
     aEdge[ien].iv1 = iv1;
     for (unsigned int il = 0; il < aLoop.size(); ++il) {
-      const int ne = aLoop[il].aIE.size();
+      const size_t ne = aLoop[il].aIE.size();
       int iie = 0;
       for (; iie < ne; ++iie) {
         if (aLoop[il].aIE[iie].first == (int) ieo) { break; }
@@ -134,7 +134,7 @@ public:
         assert(0);
         return false;
       }
-      const unsigned int ne = aIE.size();
+      const size_t ne = aIE.size();
       for (unsigned int iie = 0; iie < ne; ++iie) {
         const int ie0 = aIE[(iie + 0) % ne].first;
         const int ie1 = aIE[(iie + 1) % ne].first;

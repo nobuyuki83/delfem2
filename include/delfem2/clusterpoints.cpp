@@ -23,12 +23,12 @@ double Length3(const double p[3]) {
 }
 
 template<typename VAL>
-VAL min(VAL a, VAL b) {
+VAL myMin(VAL a, VAL b) {
   return (a < b) ? a : b;
 }
 
 template<typename VAL>
-VAL max(VAL a, VAL b) {
+VAL myMax(VAL a, VAL b) {
   return (a > b) ? a : b;
 }
 
@@ -89,7 +89,7 @@ DFM2_INLINE void delfem2::BinaryClustering_Points3d(
 //      const auto nvalencei = (double)(psup_ind0[ip0+1] - psup_ind0[ip0]);
 //      const auto nvalencej = (double)(psup_ind0[jp0+1] - psup_ind0[jp0]);
 //      const double score0 = dot0 * min(ai0 / aj0, aj0 / ai0)*nvalence;
-      const double score0 = cp::min(ai0 / aj0, aj0 / ai0);// * cp::max(nvalencei,nvalencej);
+      const double score0 = cp::myMin(ai0 / aj0, aj0 / ai0);// * cp::max(nvalencei,nvalencej);
 //      const double score0 = min(ai0 / aj0, aj0 / ai0) / min(nvalencei/nvalencej, nvalencej/nvalencei);
       aData.insert(clusterpoints::CData(score0, ipsup0));
     }
@@ -168,7 +168,7 @@ delfem2::BinaryClustering_Points2d(
       if (jp0 < ip0) { continue; }
       const double ai0 = aArea0[ip0];
       const double aj0 = aArea0[jp0];
-      const double score0 = cp::min(ai0 / aj0, aj0 / ai0);
+      const double score0 = cp::myMin(ai0 / aj0, aj0 / ai0);
       aData.insert(clusterpoints::CData(score0, ipsup0));
     }
   }

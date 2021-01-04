@@ -78,14 +78,14 @@ DFM2_INLINE std::vector<std::string> delfem2::Split
   return aToken;
 }
 
-DFM2_INLINE std::vector<std::string> delfem2::Split
-(const std::string& str,
- const std::string& del)
+DFM2_INLINE std::vector<std::string> delfem2::Split(
+	const std::string& str,
+	const std::string& del)
 {
   std::vector<std::string> aToken;
-  int imark = 0;
+  unsigned int imark = 0;
   bool is_del0 = false;
-  for(std::size_t i=0;i<str.size();++i){
+  for(unsigned int i=0;i<str.size();++i){
     bool is_del1 = false;
     for(char j : del){
       if( str[i] == j ){ is_del1 = true; break; }
@@ -102,19 +102,19 @@ DFM2_INLINE std::vector<std::string> delfem2::Split
 }
 
 // "(a,b),c,(d,e)" - > "(a,b)", "c", "(d,e)"
-DFM2_INLINE std::vector<std::string> delfem2::Split_Parentheses
-(const std::string& str,
- char delimiter,
- const std::string& par)
+DFM2_INLINE std::vector<std::string> delfem2::Split_Parentheses(
+	const std::string& str,
+	char delimiter,
+	const std::string& par)
 {
   std::vector<std::string> aToken;
   if( par.size() != 2 ){ aToken.push_back(str); return aToken; }
   char cs = par[0];
   char ce = par[1];
-  ////
+  //
   unsigned int is=0;
   int ilevel = 0;
-  for(std::size_t ie=0;ie<str.size();++ie){
+  for(unsigned int ie=0;ie<str.size();++ie){
     if( ie == str.size()-1 ){
       aToken.emplace_back(str.data()+is,str.data()+ie+1 );
     }
@@ -136,7 +136,7 @@ DFM2_INLINE std::vector<std::string> delfem2::Split_Quote
   std::vector<std::string> aToken;
   unsigned int is=0;
   bool is_in = false;
-  for(std::size_t ie=0;ie<str.size();++ie){
+  for(unsigned int ie=0;ie<str.size();++ie){
     if( ie == str.size()-1 ){
       aToken.emplace_back(str.data()+is,str.data()+ie+1 );
     }
@@ -166,18 +166,18 @@ DFM2_INLINE std::string delfem2::Replace
   return ss;
 }
 
-DFM2_INLINE std::string delfem2::Remove
-(const std::string& str,
- const std::string& del)
+DFM2_INLINE std::string delfem2::Remove(
+	const std::string& str,
+	const std::string& del)
 {
-  const int n = str.size();
-  const int ndel = del.size();
+  const size_t n = str.size();
+  const size_t ndel = del.size();
   //
   std::string ss;
   ss.reserve(n);
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     bool is_del = false;
-    for(int idel=0;idel<ndel;++idel){
+    for(unsigned int idel=0;idel<ndel;++idel){
       if( str[i] != del[idel] ){ continue; }
       is_del = true;
       break;
@@ -201,13 +201,13 @@ DFM2_INLINE std::string delfem2::RemoveBeginning
 (const std::string& str,
  const std::string& del)
 {
-  const int n = str.size();
-  const int ndel = del.size();
+  const size_t n = str.size();
+  const size_t ndel = del.size();
   //
   int istat = 0;
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     bool is_del = false;
-    for(int idel=0;idel<ndel;++idel){
+    for(unsigned int idel=0;idel<ndel;++idel){
       if( str[i] != del[idel] ){ continue; }
       is_del = true;
       break;
@@ -243,22 +243,22 @@ DFM2_INLINE std::string Remove_Quote
 }
 
 // GetEnclosed with "()" --> "(a,(b,c),d)" -> a,(b,c),d
-DFM2_INLINE std::string delfem2::Get_Parentheses
-(const std::string& str,
- const std::string& par)
+DFM2_INLINE std::string delfem2::Get_Parentheses(
+	const std::string& str,
+	const std::string& par)
 {
   if( par.size() != 2 ){ return std::string(); }
   char cs = par[0];
   char ce = par[1];
-  const int n = str.size();
-  ////
+  const size_t n = str.size();
+  //
   int iss = -1;
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     if( str[i] == cs ){ iss = i; break; }
   }
-  ////
+  //
   if( iss == -1 ){ return std::string(); }
-  for(int i=n-1;i>=iss;--i){
+  for(int i=int(n-1);i>=iss;--i){
     if( str[i] == ce ){
       std::string ss(str.begin()+iss+1,str.begin()+i);
       return ss;
@@ -274,7 +274,7 @@ DFM2_INLINE std::map<std::string, std::string>
 delfem2::ReadDictionary_Json(const std::string& strIn)
 {
   const std::string& buff = RemoveSpace(strIn);
-  const int n =  buff.length();
+  const size_t n =  buff.length();
   const char* p = buff.data();
   std::map<std::string, std::string> res;
   assert(p[0]=='{');

@@ -163,8 +163,8 @@ void MeshingInside(
     std::vector<int>& aFlagPnt,
     std::vector<unsigned int>& aFlagTri,
     //
-    const int nPointFix,
-    const unsigned int nflgpnt_offset,
+    const size_t nPointFix,
+    const int nflgpnt_offset,
     const double len,
     const CInputTriangulation& mesh_density);
 

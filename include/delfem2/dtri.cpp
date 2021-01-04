@@ -153,8 +153,8 @@ DFM2_INLINE bool delfem2::InsertPoint_ElemEdge
   
   const unsigned int itri0 = itri_ins;
   const unsigned int itri1 = itri_adj;
-  const size_t itri2 = aTri.size();
-  const size_t itri3 = aTri.size()+1;
+  const unsigned int itri2 = static_cast<unsigned int>(aTri.size());
+  const unsigned int itri3 = static_cast<unsigned int>(aTri.size()+1);
   
   aTri.resize(aTri.size()+2);
   
@@ -244,18 +244,18 @@ DFM2_INLINE bool delfem2::InsertPoint_ElemEdge
 
 
 
-DFM2_INLINE bool delfem2::InsertPoint_Elem
-(const unsigned int ipo_ins,
- const unsigned int itri_ins,
- std::vector<CDynPntSur>& aPo,
- std::vector<CDynTri>& aTri)
+DFM2_INLINE bool delfem2::InsertPoint_Elem(
+	const unsigned int ipo_ins,
+	const unsigned int itri_ins,
+	std::vector<CDynPntSur>& aPo,
+	std::vector<CDynTri>& aTri)
 {
   assert( itri_ins<aTri.size() );
   assert( ipo_ins<aPo.size() );
   
   const unsigned int itA = itri_ins;
-  const size_t itB = aTri.size();
-  const size_t itC = aTri.size()+1;
+  const unsigned int itB = static_cast<unsigned int>(aTri.size());
+  const unsigned int itC = static_cast<unsigned int>(aTri.size()+1);
   
   aTri.resize(aTri.size()+2);
   const CDynTri old = aTri[itri_ins];
@@ -476,7 +476,7 @@ DFM2_INLINE void delfem2::FindEdge_LookAllTriangles
  const unsigned int ipo1,
  const std::vector<CDynTri>& aTri)
 {
-  for(size_t itri=0;itri<aTri.size();++itri){
+  for(unsigned int itri=0;itri<aTri.size();++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
       unsigned int jpo0 = aTri[itri].v[(iedtri+0)%3];
       unsigned int jpo1 = aTri[itri].v[(iedtri+1)%3];

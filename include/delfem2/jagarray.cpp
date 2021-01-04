@@ -220,7 +220,7 @@ DFM2_INLINE void delfem2::JArray_Extend(
       }
     }
   }
-  for(int ip=np;ip>=1;--ip){
+  for(int ip=(int)np;ip>=1;--ip){
     psup_ind1[ip] = psup_ind1[ip-1];
   }
   psup_ind1[0] = 0;

@@ -345,12 +345,12 @@ DFM2_INLINE void delfem2::Write_Obj_ElemJArray(
     const std::vector<int>& aElem)
 {
   assert( !aElemInd.empty() );
-  const unsigned int np = aXYZ.size()/3;
+  const size_t np = aXYZ.size()/3;
   std::ofstream fout(str.c_str(), std::ofstream::out);
   for (unsigned int ip = 0; ip<np; ip++){
     fout<<"v "<<aXYZ[ip*3+0]<<" "<<aXYZ[ip*3+1]<<" "<<aXYZ[ip*3+2]<<std::endl;
   }
-  const unsigned int ne = aElemInd.size()-1;
+  const size_t ne = aElemInd.size()-1;
   for (unsigned int iie=0; iie<ne; iie++){
     const int ie0 = aElemInd[iie];
     const int nnoel = aElemInd[iie+1] - ie0;
@@ -371,7 +371,7 @@ DFM2_INLINE void delfem2::Write_Obj_TriFlag(
     std::vector<unsigned int>& aTri,
     std::vector<unsigned int>& aFlgTri)
 {
-  const unsigned int nt = aTri.size()/3;
+  const size_t nt = aTri.size()/3;
 //  std::cout << nt << " " << aFlgTri.size() << std::endl;
   assert( aFlgTri.size() == nt );
   unsigned int flgmax = 0;
@@ -380,7 +380,7 @@ DFM2_INLINE void delfem2::Write_Obj_TriFlag(
   }
 //  std::cout << flgmax << std::endl;
   std::ofstream fout(pathf.c_str(), std::ofstream::out);
-  const unsigned int np = aXYZ.size()/3;
+  const size_t np = aXYZ.size()/3;
   for (unsigned int ip = 0; ip<np; ip++){
     fout<<"v "<<aXYZ[ip*3+0]<<" "<<aXYZ[ip*3+1]<<" "<<aXYZ[ip*3+2]<<std::endl;
   }
@@ -1154,7 +1154,7 @@ DFM2_INLINE void delfem2::WriteVTK_MapTriScalar(
   fout << name << std::endl;
   fout << "ASCII" << std::endl;
   fout << "DATASET UNSTRUCTURED_GRID" << std::endl;
-  const int np = map.size();
+  const size_t np = map.size();
   fout << "POINTS " << np << " float" << std::endl;
   for(int jp=0;jp<np;++jp){
     int ip = map[jp];
@@ -1324,9 +1324,9 @@ DFM2_INLINE void delfem2::Read_MeshTri3D_Nas(
     np1 = (ip1>np1)?ip1:np1;
   }
   np1 += 1;
-  std::vector<int> map10(np1,-1);
-  for(std::size_t ip0=0;ip0<map01.size();++ip0){
-    int ip1 = map01[ip0];
+  std::vector<unsigned int> map10(np1,UINT_MAX);
+  for(unsigned int ip0=0;ip0<map01.size();++ip0){
+    unsigned int ip1 = map01[ip0];
     map10[ip1] = ip0;
   }
   for(unsigned int & i : aTri){

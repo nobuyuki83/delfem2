@@ -10,14 +10,14 @@
 
 // =======================================
 
-DFM2_INLINE double delfem2::W_ArapEnergy
-(const std::vector<double>& aXYZ0,
- const std::vector<double>& aXYZ1,
- const std::vector<double>& aQuat1,
- const std::vector<unsigned int>& psup_ind,
- const std::vector<unsigned int>& psup)
+DFM2_INLINE double delfem2::W_ArapEnergy(
+	const std::vector<double>& aXYZ0,
+	const std::vector<double>& aXYZ1,
+	const std::vector<double>& aQuat1,
+	const std::vector<unsigned int>& psup_ind,
+	const std::vector<unsigned int>& psup)
 {
-  const unsigned int np = aXYZ0.size()/3;
+  const size_t np = aXYZ0.size()/3;
   assert( aXYZ1.size() == np*3 );
   assert( aQuat1.size() == np*4 );
   assert( psup_ind.size() == np+1 );
@@ -47,7 +47,7 @@ DFM2_INLINE void delfem2::dW_ArapEnergy
  const std::vector<unsigned int>& psup_ind,
  const std::vector<unsigned int>& psup)
 {
-  const unsigned int np = aXYZ0.size()/3;
+  const size_t np = aXYZ0.size()/3;
   assert( aXYZ1.size() == np*3 );
   aRes.assign(np*3, 0.0);
   for(unsigned int ip=0;ip<np;++ip){
@@ -68,14 +68,14 @@ DFM2_INLINE void delfem2::dW_ArapEnergy
   }
 }
 
-DFM2_INLINE void delfem2::ddW_ArapEnergy
- (std::vector<double>& eM,
-  const std::vector<unsigned int>& aIP,
-  const std::vector<double>& aXYZ0,
-  const std::vector<double>& aQuat1)
+DFM2_INLINE void delfem2::ddW_ArapEnergy(
+	std::vector<double>& eM,
+    const std::vector<unsigned int>& aIP,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aQuat1)
 {
-  const unsigned int nIP = aIP.size();
-  const unsigned int nNg = nIP-1; // number of neighbor
+  const size_t nIP = aIP.size();
+  const size_t nNg = nIP-1; // number of neighbor
   unsigned int ip = aIP[nNg];
   const CVec3d Pi(aXYZ0.data()+ip*3);
   CMat3d LM; LM.SetZero();

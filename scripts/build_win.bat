@@ -35,14 +35,14 @@ cd ../..
 : ##############################
 : glfw_oldgl
 
-cd examples_glfwold
+cd examples_oldgl_glfw
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
 cmake -A x64 -DUSE_HEADERONLY=ON ..
 cmake --build . --config Release
 cd ../../
 
-cd examples_glfwold
+cd examples_oldgl_glfw
 mkdir buildVS64Static
 cd buildVS64Static
 cmake -A x64 -DUSE_HEADERONLY=OFF ..
@@ -52,14 +52,14 @@ cd ../../
 : ##############################
 : glfw_newgl
 
-cd examples_glfwnew
+cd examples_newgl_glfw
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
 cmake -A x64 -DUSE_HEADERONLY=ON ..
 cmake --build . --config Release
 cd ../../
 
-cd examples_glfwnew
+cd examples_newgl_glfw
 mkdir buildVS64Static
 cd buildVS64Static
 cmake -A x64 -DUSE_HEADERONLY=OFF ..
@@ -83,7 +83,7 @@ echo %zlib_library%
 : ##############################
 : glfw_smpl
 
-cd examples_smpl
+cd examples_oldgl_glfw_cnpy
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
 cmake -A x64 -DUSE_HEADERONLY=ON -DZLIB_LIBRARY=%zlib_library% -DZLIB_INCLUDE_DIR="..\..\3rd_party\zlib;..\..\3rd_party\zlib\buildMake" ..
