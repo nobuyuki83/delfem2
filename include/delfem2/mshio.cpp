@@ -14,6 +14,7 @@
 #include <string>
 #include <cstring>
 #include <cstdlib>
+#include <climits>
 #include "delfem2/mshio.h"
 
 namespace delfem2 {
