@@ -33,9 +33,9 @@ TEST(linpro,test1)
   EXPECT_EQ(res,0);
   EXPECT_LT(nitr,10);
   EXPECT_EQ(sol.size(),2);
-  EXPECT_FLOAT_EQ(sol[0],   6);
-  EXPECT_FLOAT_EQ(sol[1],   3);
-  EXPECT_FLOAT_EQ(opt_val,     330);
+  EXPECT_DOUBLE_EQ(sol[0],   6);
+  EXPECT_DOUBLE_EQ(sol[1],   3);
+  EXPECT_DOUBLE_EQ(opt_val,     330);
 }
 
 
@@ -57,9 +57,9 @@ TEST(linpro,test2)
            {20.0, 30.0});
   EXPECT_LT(nitr,10);
   EXPECT_EQ(solution.size(),2);
-  EXPECT_FLOAT_EQ(solution[0],   200);
-  EXPECT_FLOAT_EQ(solution[1],   300);
-  EXPECT_FLOAT_EQ(opt_val,     13000);
+  EXPECT_DOUBLE_EQ(solution[0],   200);
+  EXPECT_DOUBLE_EQ(solution[1],   300);
+  EXPECT_DOUBLE_EQ(opt_val,     13000);
 }
 
 
@@ -84,9 +84,9 @@ TEST(linpro,test3)
            {1.0, 1.0});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),2);
-  EXPECT_FLOAT_EQ(sol[0], 1.0);
-  EXPECT_FLOAT_EQ(sol[1], 1.0);
-  EXPECT_FLOAT_EQ(opt_val,    2.0);
+  EXPECT_DOUBLE_EQ(sol[0], 1.0);
+  EXPECT_DOUBLE_EQ(sol[1], 1.0);
+  EXPECT_DOUBLE_EQ(opt_val,    2.0);
 }
 
 
@@ -112,9 +112,9 @@ TEST(linpro,test4)
            {-4.0, -3.0});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),2);
-  EXPECT_FLOAT_EQ(sol[0], 2.0);
-  EXPECT_FLOAT_EQ(sol[1], 4.0);
-  EXPECT_FLOAT_EQ(opt_val,    -20.0);
+  EXPECT_DOUBLE_EQ(sol[0], 2.0);
+  EXPECT_DOUBLE_EQ(sol[1], 4.0);
+  EXPECT_DOUBLE_EQ(opt_val,    -20.0);
 }
 
 
@@ -139,10 +139,10 @@ TEST(linpro,test5)
            {2.0, 1.0, 1.0});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),3);
-  EXPECT_FLOAT_EQ(sol[0], 12.0);
-  EXPECT_FLOAT_EQ(sol[1], 0.0);
-  EXPECT_FLOAT_EQ(sol[2], 8.0/3.0);
-  EXPECT_FLOAT_EQ(opt_val,    +80.0/3.0);
+  EXPECT_DOUBLE_EQ(sol[0], 12.0);
+  EXPECT_DOUBLE_EQ(sol[1], 0.0);
+  EXPECT_DOUBLE_EQ(sol[2], 8.0/3.0);
+  EXPECT_DOUBLE_EQ(opt_val,    +80.0/3.0);
 }
 
 TEST(linpro,test6)
@@ -167,9 +167,9 @@ TEST(linpro,test6)
            {-4.0, -1.0});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),2);
-  EXPECT_FLOAT_EQ(sol[0], +0.0);
-  EXPECT_FLOAT_EQ(sol[1], +3.0);
-  EXPECT_FLOAT_EQ(opt_val,    -3.0);
+  EXPECT_DOUBLE_EQ(sol[0], +0.0);
+  EXPECT_DOUBLE_EQ(sol[1], +3.0);
+  EXPECT_DOUBLE_EQ(opt_val,    -3.0);
 }
 
 TEST(linpro,test7)
@@ -195,9 +195,9 @@ TEST(linpro,test7)
            {-6.0, +6.0});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),2);
-  EXPECT_FLOAT_EQ(sol[0], +0.0);
-  EXPECT_FLOAT_EQ(sol[1], +5.0/3.0);
-  EXPECT_FLOAT_EQ(opt_val,+10);
+  EXPECT_DOUBLE_EQ(sol[0], +0.0);
+  EXPECT_DOUBLE_EQ(sol[1], +5.0/3.0);
+  EXPECT_DOUBLE_EQ(opt_val,+10);
 }
 
 TEST(linpro,test8)
@@ -223,10 +223,10 @@ TEST(linpro,test8)
            {+1.0, +3.0, +5});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),3);
-  EXPECT_FLOAT_EQ(sol[0], +8.0);
-  EXPECT_FLOAT_EQ(sol[1], +1.0);
-  EXPECT_FLOAT_EQ(sol[2], +9.0);
-  EXPECT_FLOAT_EQ(opt_val,    +56.0);
+  EXPECT_DOUBLE_EQ(sol[0], +8.0);
+  EXPECT_DOUBLE_EQ(sol[1], +1.0);
+  EXPECT_DOUBLE_EQ(sol[2], +9.0);
+  EXPECT_DOUBLE_EQ(opt_val,    +56.0);
 }
 
 TEST(linpro,test9)
@@ -251,10 +251,10 @@ TEST(linpro,test9)
            {-12.0, -6.0, -10.0});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),3);
-  EXPECT_FLOAT_EQ(sol[0], +5.0);
-  EXPECT_FLOAT_EQ(sol[1], +5.0);
-  EXPECT_FLOAT_EQ(sol[2], +0.0);
-  EXPECT_FLOAT_EQ(opt_val,    -90.0);
+  EXPECT_DOUBLE_EQ(sol[0], +5.0);
+  EXPECT_DOUBLE_EQ(sol[1], +5.0);
+  EXPECT_DOUBLE_EQ(sol[2], +0.0);
+  EXPECT_DOUBLE_EQ(opt_val,    -90.0);
 }
 
 
@@ -280,9 +280,9 @@ TEST(linpro,test11)
                  {+1.0, +1.0});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),2);
-  EXPECT_FLOAT_EQ(sol[0], +0.9);
-  EXPECT_FLOAT_EQ(sol[1], +1.0);
-  EXPECT_FLOAT_EQ(opt_val,    +1.9);
+  EXPECT_DOUBLE_EQ(sol[0], +0.9);
+  EXPECT_DOUBLE_EQ(sol[1], +1.0);
+  EXPECT_DOUBLE_EQ(opt_val,    +1.9);
 }
 
 TEST(linpro,test12)
@@ -307,9 +307,9 @@ TEST(linpro,test12)
   EXPECT_EQ(res, 0);
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),2);
-  EXPECT_FLOAT_EQ(sol[0], +1.1);
-  EXPECT_FLOAT_EQ(sol[1], +1.0);
-  EXPECT_FLOAT_EQ(opt_val,    +2.1);
+  EXPECT_DOUBLE_EQ(sol[0], +1.1);
+  EXPECT_DOUBLE_EQ(sol[1], +1.0);
+  EXPECT_DOUBLE_EQ(opt_val,    +2.1);
 }
 
 
@@ -334,9 +334,9 @@ TEST(linpro,test10)
                  {+1.0, +1.0});
   EXPECT_LT(nitr, 10);
   EXPECT_EQ(sol.size(),2);
-  EXPECT_FLOAT_EQ(sol[0], +1.0);
-  EXPECT_FLOAT_EQ(sol[1], +1.0);
-  EXPECT_FLOAT_EQ(opt_val,    +2.0);
+  EXPECT_DOUBLE_EQ(sol[0], +1.0);
+  EXPECT_DOUBLE_EQ(sol[1], +1.0);
+  EXPECT_DOUBLE_EQ(opt_val,    +2.0);
 }
 
 

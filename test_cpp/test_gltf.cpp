@@ -92,8 +92,8 @@ TEST(gltf, skin_sensitivity) {
     gltf.GetBone(aBone0, 0);
     dfm2::SetCurrentBoneRotationAsDefault(aBone0);
   }
-  const unsigned int nb = aBone0.size();
-  const unsigned int np = aXYZ0.size() / 3;
+  const size_t nb = aBone0.size();
+  const size_t np = aXYZ0.size() / 3;
   assert( aSkinSparseI.size() == aSkinSparseW.size() );
   assert( aSkinSparseI.size() % np == 0 );
 
@@ -119,7 +119,7 @@ TEST(gltf, skin_sensitivity) {
         L,
         aBone1);
     //
-    const unsigned int nsns = L.size() / (nb * 12);
+    const size_t nsns = L.size() / (nb * 12);
     assert(nsns == (nb + 1) * 3);
     for (int isns = 0; isns < nsns; ++isns) {
       std::vector<dfm2::CRigBone> aBone2 = aBone1;
@@ -180,7 +180,7 @@ TEST(gltf, constraint_sensitivity )
     dfm2::SetCurrentBoneRotationAsDefault(aBone);
   }
   // ------------
-  const unsigned int nb = aBone.size();
+  const size_t nb = aBone.size();
   std::vector<double> L;  // [ nsns, nb*4 ]
   Rig_Sensitivity_Skeleton(
       L,
@@ -190,7 +190,7 @@ TEST(gltf, constraint_sensitivity )
   std::random_device rd;
   std::mt19937 rndeng(rd());
   std::uniform_real_distribution<double> dist_01(+0, +1);
-  std::uniform_int_distribution<unsigned int> rand_ib(+0, nb-1);
+  std::uniform_int_distribution<int> rand_ib(+0, static_cast<int>(nb-1));
   const double eps = 1.0e-4;
 
   { // check sensitivity target
@@ -214,7 +214,7 @@ TEST(gltf, constraint_sensitivity )
           aBone,it,L);
     }
     
-    const unsigned int nsns = L.size()/(nb*12);
+    const size_t nsns = L.size()/(nb*12);
     assert( nsns==(nb+1)*3 );
     for(unsigned int isns=0;isns<nsns;++isns){
       unsigned int ib_s = isns/3;

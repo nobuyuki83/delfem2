@@ -243,9 +243,9 @@ double DistanceToTri(
     const delfem2::CVec3<T>& p,
     unsigned int itri0,
     const double* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aTri,
-    unsigned int nTri);
+    size_t nTri);
 
 }
 

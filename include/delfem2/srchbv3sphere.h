@@ -102,7 +102,7 @@ public:
   }
   bool IsInclude(const CBV3_Sphere& bv, double margin) const {
     const double LL = (bv.c[0]-c[0])*(bv.c[0]-c[0]) + (bv.c[1]-c[1])*(bv.c[1]-c[1]) + (bv.c[2]-c[2])*(bv.c[2]-c[2]);
-    const double L = sqrtf(LL);
+    const double L = sqrt(LL);
     if( L+bv.r <= r+margin ){ return true; }
     return false;
   }

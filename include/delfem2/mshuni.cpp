@@ -20,9 +20,9 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshElem(
     std::vector<unsigned int> &elsup,
     // ----------
     const unsigned int* pElem,
-    unsigned int nElem,
+    size_t nElem,
     unsigned int nPoEl,
-    unsigned int nPo)
+    size_t nPo)
 {
   //  const int nElem = (int)aElem.size()/nPoEl;
   elsup_ind.assign(nPo+1,0);
@@ -105,7 +105,7 @@ DFM2_INLINE void delfem2::convert2Tri_Quad(
     std::vector<unsigned int>& aTri,
     const std::vector<unsigned int>& aQuad)
 {
-  const unsigned long nq = aQuad.size()/4;
+  const size_t nq = aQuad.size()/4;
   aTri.resize(nq*6);
   for(unsigned int iq=0;iq<nq;++iq){
     const unsigned int i0 = aQuad[iq*4+0];
@@ -139,8 +139,10 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshTri(
     const std::vector<unsigned int>& aTri,
     int nXYZ)
 {
-  JArray_ElSuP_MeshElem(elsup_ind, elsup,
-                           aTri.data(), aTri.size()/3, 3, nXYZ);
+  JArray_ElSuP_MeshElem(
+	  elsup_ind, elsup,
+	  aTri.data(), static_cast<unsigned int>(aTri.size()/3), 3, 
+	  nXYZ);
 }
 
 // ----------------------------------------------------------------------------------------------------------
@@ -148,7 +150,7 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshTri(
 DFM2_INLINE void delfem2::ElSuEl_MeshElem(
     std::vector<unsigned int>& aElSuEl,
     const unsigned int* aEl,
-    unsigned int nEl,
+    size_t nEl,
     int nNoEl,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
@@ -250,7 +252,7 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     unsigned int nnoel,
-    unsigned int nPoint)
+    size_t nPoint)
 {
   std::vector<int> aflg(nPoint,-1);
   psup_ind.assign(nPoint+1,0);
@@ -288,7 +290,7 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
       }
     }
   }
-  for(unsigned int ipoint=nPoint;ipoint>0;ipoint--){
+  for(int ipoint=(int)nPoint;ipoint>0;ipoint--){
     psup_ind[ipoint] = psup_ind[ipoint-1];
   }
   psup_ind[0] = 0;
@@ -304,10 +306,12 @@ DFM2_INLINE void delfem2::JArray_PSuP_MeshElem(
     size_t nPo)
 {
   std::vector<unsigned int> elsup_ind, elsup;
-  JArray_ElSuP_MeshElem(elsup_ind, elsup,
+  JArray_ElSuP_MeshElem(
+	  elsup_ind, elsup,
       pElem, nEl, nPoEl, nPo);
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                          pElem, elsup_ind,elsup, nPoEl, nPo);
+  JArrayPointSurPoint_MeshOneRingNeighborhood(
+	  psup_ind, psup,
+	  pElem, elsup_ind,elsup, nPoEl, nPo);
 }
 
 DFM2_INLINE void delfem2::makeOneRingNeighborhood_TriFan(

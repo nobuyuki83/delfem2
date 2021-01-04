@@ -77,7 +77,7 @@ unsigned int MortonCode_FindSplit(
  */
 std::pair<unsigned int,unsigned int> MortonCode_DeterminRange(
     const std::uint32_t* sortedMC,
-    unsigned int nMC,
+    size_t nMC,
     unsigned int i);
 
 /**
@@ -135,9 +135,9 @@ public:
   CLeafVolumeMaker_Mesh(
       REAL margin,
       const REAL* aXYZ,
-      unsigned int nXYZ,
+      size_t nXYZ,
       const unsigned int* aElem,
-      unsigned int nElem,
+      size_t nElem,
       unsigned int nnoel)
       : margin(margin),
         aXYZ(aXYZ), nXYZ(nXYZ),
@@ -155,9 +155,9 @@ public:
 public:
   REAL margin;
   const REAL* aXYZ;
-  unsigned int nXYZ;
+  size_t nXYZ;
   const unsigned int* aElem;
-  unsigned int nElem;
+  size_t nElem;
   unsigned int nnoel;
 };
 
@@ -166,16 +166,19 @@ class CLeafVolumeMaker_Point {
 public:
   CLeafVolumeMaker_Point(
       const REAL* aXYZ,
-      unsigned int nXYZ) : aXYZ(aXYZ), nXYZ(nXYZ) {}
+      size_t nXYZ) : 
+	  aXYZ(aXYZ), 
+	  nXYZ(nXYZ) {
+  }
   void SetVolume(BBOX& bb,
-                 unsigned int ielem) const {
+	  unsigned int ielem) const {
     assert( ielem < nXYZ );
     bb.AddPoint(aXYZ+ielem*3, 0.0);
     return;
   }
 public:
   const REAL* aXYZ;
-  unsigned int nXYZ;
+  size_t nXYZ;
 };
 
 template <typename BBOX, typename REAL>

@@ -94,7 +94,7 @@ DFM2_INLINE void Rotate_Points3(
 template <typename T>
 DFM2_INLINE void Translate_Points(
     T* paVec,
-    unsigned int np,
+    size_t np,
     unsigned int ndim,
     const T* trns);
 
@@ -134,7 +134,7 @@ DFM2_INLINE void Scale_Points(
 template <typename REAL>
 DFM2_INLINE void Normalize_Points3(
     std::vector<REAL>& aXYZ,
-    REAL length_longest_aabb_edge = 1.0);
+    REAL length_longest_aabb_edge=1);
 
 
 /**
@@ -162,7 +162,7 @@ DFM2_INLINE void CG_Point3(
 
 DFM2_INLINE double EnergyKinetic(
     const double* aUVW,
-    unsigned int np);
+    size_t np);
 
 template <typename T>
 DFM2_INLINE void Points_RandomUniform(

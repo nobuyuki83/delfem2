@@ -111,8 +111,10 @@ DFM2_INLINE void RemoveUnreferencedPoints_MeshElem(
  */
 DFM2_INLINE void Normal_MeshTri3D(
     double *aNorm,
-    const double *aXYZ, unsigned int nXYZ,
-    const unsigned int *aTri, unsigned int nTri);
+    const double *aXYZ, 
+	size_t nXYZ,
+    const unsigned int *aTri, 
+	size_t nTri);
  
 /**
  * @brief Normal at the vertex of a quad mesh. Defined for "float" and "double"

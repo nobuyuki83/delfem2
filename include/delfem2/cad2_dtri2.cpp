@@ -900,7 +900,7 @@ DFM2_INLINE double delfem2::AreaLoop
   CVec2d qo(0,0);
   for(const auto & ie : aEdge){
     const std::vector<CVec2d>& aP = ie.aP;
-    const unsigned int nseg = aP.size()+1;
+    const size_t nseg = aP.size()+1;
     for(unsigned int iseg=0;iseg<nseg;++iseg){
       const CVec2d q0 = (iseg==0) ? ie.p0 : aP[iseg-1];
       const CVec2d q1 = (iseg==nseg-1) ?ie.p1 : aP[iseg];
@@ -914,7 +914,7 @@ DFM2_INLINE double delfem2::AreaLoop
 DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::InvertLoop
 (const std::vector<CCad2D_EdgeGeo>& aEdge)
 {
-  const unsigned int ne = aEdge.size();
+  const size_t ne = aEdge.size();
   std::vector<CCad2D_EdgeGeo> aEdgeOut(ne);
   for(unsigned int ie=0;ie<ne;++ie){
     const CCad2D_EdgeGeo& ei = aEdge[ie];
@@ -933,10 +933,10 @@ DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::InvertLoop
 }
 
 
-DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::RemoveEdgeWithZeroLength
-(const std::vector<CCad2D_EdgeGeo>& aEdge)
+DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::RemoveEdgeWithZeroLength(
+	const std::vector<CCad2D_EdgeGeo>& aEdge)
 {
-  const unsigned int ne = aEdge.size();
+  const size_t ne = aEdge.size();
   std::vector<CCad2D_EdgeGeo> aEdgeOut;
   aEdgeOut.reserve(ne);
   for(unsigned int ie=0;ie<ne;++ie){
@@ -1013,7 +1013,7 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
   //
   aFlgPnt.clear();
   dmsh.Clear();
-  for(size_t iv=0;iv<cad.aVtx.size();++iv){
+  for(unsigned int iv=0;iv<cad.aVtx.size();++iv){
     dmsh.aVec2.push_back( cad.aVtx[iv].pos );
     aFlgPnt.push_back(iv);
   }
@@ -1031,7 +1031,7 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
     cad2::GenMeshCadFace(dmsh.aVec2, aDTri,
         cad.aFace[ifc], ifc,
         cad.topo,cad.aVtx,aEdgeGeo);
-    const unsigned int ntri0 = dmsh.aETri.size();
+    const size_t ntri0 = dmsh.aETri.size();
     for(auto & tri : aDTri){
       if( tri.s2[0]!=UINT_MAX ){ tri.s2[0] += ntri0; }
       if( tri.s2[1]!=UINT_MAX ){ tri.s2[1] += ntri0; }

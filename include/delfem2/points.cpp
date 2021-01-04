@@ -384,7 +384,7 @@ template void delfem2::Scale_Points(double*, unsigned int, unsigned int, double)
 template <typename T>
 void delfem2::Translate_Points(
     T* pVec,
-    const unsigned int np,
+    const size_t np,
     const unsigned int ndim,
     const T* trns)
 {
@@ -443,7 +443,7 @@ void delfem2::Rotate_Points3(
 {
   T mat[9]; points::Mat3_Bryant(mat, radx, rady, radz);
   T* pXYZ = aXYZ.data();
-  const unsigned int nXYZ = aXYZ.size()/3;
+  const size_t nXYZ = aXYZ.size()/3;
   for (unsigned int ixyz = 0; ixyz<nXYZ; ++ixyz){
     const T p[3] = { aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] };
     points::MatVec3(pXYZ+ixyz*3,  mat, p);
@@ -469,18 +469,21 @@ double delfem2::Size_Points3D_LongestAABBEdge(
 // ---------------------------------------
 
 template <typename T>
-void delfem2::Normalize_Points3(
+DFM2_INLINE void delfem2::Normalize_Points3(
     std::vector<T>& aXYZ,
-    const T s)
+    T s)
 {
   T c[3], w[3];
-  CenterWidth_Points3(c,w,
-                      aXYZ);
-  Translate_Points3(aXYZ,
-                    -c[0], -c[1], -c[2]);
+  CenterWidth_Points3(
+	  c,w,
+	  aXYZ);
+  Translate_Points3(
+	  aXYZ,
+	  -c[0], -c[1], -c[2]);
   T wmax = points::largest(w[0], w[1], w[2]);
-  Scale_PointsX(aXYZ,
-                s/wmax);
+  Scale_PointsX(
+	  aXYZ,
+	  s/wmax);
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Normalize_Points3 (std::vector<float>&,  float);
@@ -529,7 +532,7 @@ template void delfem2::NormalizeVector_Points(double*, unsigned int, unsigned in
 
 double delfem2::EnergyKinetic(
     const double* aUVW,
-    unsigned int np)
+    size_t np)
 {
   double E = 0.0;
   for(unsigned int ip=0;ip<np;++ip){
@@ -606,7 +609,7 @@ void delfem2::TangentVector_Points3(
     const std::vector<double>& aNorm)
 {
   assert(aOdir.size()==aNorm.size());
-  const unsigned int np = aNorm.size()/3;
+  const size_t np = aNorm.size()/3;
   aOdir.resize(np*3);
   for(unsigned int ip=0;ip<np;++ip){
     const double* n = aNorm.data()+ip*3;

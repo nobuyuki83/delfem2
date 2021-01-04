@@ -87,7 +87,7 @@ TEST(slice,test1){
   // ----------------------
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
                     aXYZ,aTri);
-  delfem2::Normalize_Points3(aXYZ);
+  delfem2::Normalize_Points3(aXYZ,1.0);
   std::vector<unsigned int> aTriSuTri;
   dfm2::ElSuEl_MeshElem(aTriSuTri,
                         aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI,

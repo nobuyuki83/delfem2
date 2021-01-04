@@ -331,7 +331,7 @@ void delfem2::RemoveUnreferencedPoints_MeshElem
   const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aElem0)
 {
-  unsigned int np0 = aXYZ0.size()/ndim;
+  const size_t np0 = aXYZ0.size()/ndim;
   aMap01.assign(np0,-2);
   for(int ip : aElem0){
     aMap01[ip] = -1;
@@ -361,9 +361,9 @@ void delfem2::RemoveUnreferencedPoints_MeshElem
 void delfem2::Normal_MeshTri3D(
     double* aNorm,
     const double* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aTri,
-    unsigned int nTri)
+    size_t nTri)
 {
   for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
   for(unsigned int itri=0;itri<nTri;itri++){
@@ -887,7 +887,7 @@ void delfem2::makeSolidAngle
  std::vector<int>& elsup_ind,
  std::vector<int>& elsup)
 {
-  const unsigned int nXYZ = aXYZ.size()/3;
+  const size_t nXYZ = aXYZ.size()/3;
   aSolidAngle.resize(nXYZ);
   for(unsigned int ip=0;ip<nXYZ;++ip){
     const double n0[3] = {aNorm[ip*3+0], aNorm[ip*3+1], aNorm[ip*3+2]};

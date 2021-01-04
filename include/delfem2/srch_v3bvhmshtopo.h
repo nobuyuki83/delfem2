@@ -71,10 +71,14 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     double& dist_bv, // minimum distance to leaf bounding volume
     CPtElm2<REAL>& pes,
     //
-    double px, double py, double pz,
+    double px, 
+	double py, 
+	double pz,
     double rad_exp, // exploring distance
-    const double* aXYZ, unsigned int nXYZ,
-    const unsigned int* aTri, unsigned int nTri,
+    const double* aXYZ, 
+	size_t nXYZ,
+    const unsigned int* aTri, 
+	size_t nTri,
     unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aBVH,
     const std::vector<BV>& aBB)
@@ -126,9 +130,12 @@ public:
   CBVH_MeshTri3D() :
   iroot_bvh(0)
   {}
-  void Init(const double* pXYZ, unsigned int nXYZ,
-            const unsigned int* pTri, unsigned int nTri,
-            double margin)
+  void Init(
+	  const double* pXYZ, 
+	  size_t nXYZ,
+      const unsigned int* pTri, 
+	  size_t nTri,
+	  double margin)
   {
     assert( margin >= 0 );
     { // make BVH topology
@@ -159,9 +166,12 @@ public:
                          margin);
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
-  void UpdateGeometry(const double* pXYZ, unsigned int nXYZ,
-                      const unsigned int* pTri, unsigned int nTri,
-                      double margin)
+  void UpdateGeometry(
+	  const double* pXYZ, 
+	  size_t nXYZ,
+	  const unsigned int* pTri,
+	  size_t nTri,
+	  double margin)
   {
     assert( margin >= 0 );
     CLeafVolumeMaker_Mesh<BV,REAL> lvm(
@@ -179,8 +189,11 @@ public:
       CPtElm2<REAL>& pes,
       const CVec3<REAL>& p0,
       double rad_exp, // look leaf inside this radius
-      const double* aXYZ, unsigned int nXYZ,
-      const unsigned int* aTri, unsigned int nTri) const{
+      const double* aXYZ, 
+	  size_t nXYZ,
+      const unsigned int* aTri, 
+	  size_t nTri) const
+  {
     assert( aBB_BVH.size() == aNodeBVH.size() );
     double dist = -1, dist_min = rad_exp;
     pes.itri = UINT_MAX;

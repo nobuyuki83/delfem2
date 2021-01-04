@@ -32,8 +32,9 @@ TEST(bvh,inclusion_sphere)
   std::vector<unsigned int> aTri;
   { // make a unit sphere
     dfm2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    dfm2::Rotate_Points3(aXYZ,
-                            0.2, 0.3, 0.4);
+    dfm2::Rotate_Points3(
+		aXYZ,
+		0.2, 0.3, 0.4);
   }
   dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
@@ -116,11 +117,13 @@ TEST(bvh,nearestinc_sphere)
 //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
   std::vector<double> aNorm(aXYZ.size());
   dfm2::Normal_MeshTri3D(aNorm.data(),
-                   aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
+	  aXYZ.data(), aXYZ.size()/3, 
+	  aTri.data(), aTri.size()/3);
   dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
-  bvh.Init(aXYZ.data(), aXYZ.size()/3,
-           aTri.data(), aTri.size()/3,
-           0.03);
+  bvh.Init(
+	  aXYZ.data(), aXYZ.size()/3,
+	  aTri.data(), aTri.size()/3,
+	  0.03);
   std::random_device dev;
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(-5.0, 5.0);
@@ -132,9 +135,10 @@ TEST(bvh,nearestinc_sphere)
       else{               p0 *= 0.98; } // inside in included in bvh
     }
     dfm2::CPtElm2<double> pes1;
-    double dist1 = bvh.Nearest_Point_IncludedInBVH(pes1,p0,0.1,
-                                                   aXYZ.data(), aXYZ.size()/3,
-                                                   aTri.data(), aTri.size()/3);
+    double dist1 = bvh.Nearest_Point_IncludedInBVH(
+		pes1,p0,0.1,
+		aXYZ.data(), aXYZ.size()/3,
+		aTri.data(), aTri.size()/3);
     EXPECT_LE( dist1, 0.1 );
     EXPECT_GE( dist1, 0.0 );
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
@@ -422,11 +426,11 @@ TEST(bvh,rayintersection)
           aTri, aXYZ, aIndElem,
           0.0);
       EXPECT_EQ(mapDepthPES0.size(),mapDepthPES1.size());
-      int N = mapDepthPES0.size();
+      size_t N = mapDepthPES0.size();
       auto itr0 = mapDepthPES0.begin();
       auto itr1 = mapDepthPES0.begin();
       for(int i=0;i<N;++i){
-        EXPECT_FLOAT_EQ(itr0->first,itr1->first);
+        EXPECT_DOUBLE_EQ(itr0->first,itr1->first);
         dfm2::CPtElm2d pes0 = itr0->second;
         dfm2::CPtElm2d pes1 = itr1->second;
         const dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
@@ -437,12 +441,13 @@ TEST(bvh,rayintersection)
   }
 }
 
-void mark_child(std::vector<int>& aFlgBranch,
-                std::vector<int>& aFlgLeaf,
-                std::vector<int>& aFlgID,
-                unsigned int nID,
-                unsigned int inode0,
-                const std::vector<dfm2::CNodeBVH2>& aNode)
+void mark_child(
+	std::vector<int>& aFlgBranch,
+	std::vector<int>& aFlgLeaf,
+	std::vector<int>& aFlgID,
+	size_t nID,
+	unsigned int inode0,
+	const std::vector<dfm2::CNodeBVH2>& aNode)
 {
   EXPECT_TRUE( inode0 < aNode.size() );
   if( aNode[inode0].ichild[1] == -1 ){ // leaf
@@ -519,17 +524,19 @@ TEST(bvh,morton_code)
   dfm2::BVHTopology_Morton(aNodeBVH,
                            aSortedId,aSortedMc);
   {
-    const unsigned int N = aXYZ.size()/3;
+    const size_t N = aXYZ.size()/3;
     std::vector<int> aFlgBranch(N-1,0);
     std::vector<int> aFlgLeaf(N,0);
     std::vector<int> aFlgID(N,0);
-    mark_child(aFlgBranch,aFlgLeaf,aFlgID, N,
-               0,aNodeBVH);
+    mark_child(
+		aFlgBranch,aFlgLeaf,aFlgID, N,
+		0,aNodeBVH);
     for(unsigned int i=0;i<N;++i){
       EXPECT_EQ(aFlgLeaf[i],1);
       EXPECT_EQ(aFlgID[i],1);
     }
-    for(int i=0;i<N-1;++i){
+	EXPECT_GT(N, 0);
+    for(size_t i=0;i<N-1;++i){
       EXPECT_EQ(aFlgBranch[i],1);
     }
   }
