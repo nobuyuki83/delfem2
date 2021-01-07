@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_RIG_V3Q_H
-#define DFM2_RIG_V3Q_H
+#ifndef DFM2_RIG_GEO3_H
+#define DFM2_RIG_GEO3_H
 
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dfm2_inline.h"
@@ -218,14 +218,14 @@ DFM2_INLINE void Rig_SkinReferncePositionsBoneWeighted(
 
 class CChannel_BioVisionHierarchy {
 public:
-  CChannel_BioVisionHierarchy(int ib, int ia, bool br) {
+  CChannel_BioVisionHierarchy(unsigned int ib, int ia, bool br) {
     this->ibone = ib;
     this->iaxis = ia;
     this->isrot = br;
   }
 
 public:
-  int ibone;
+  unsigned int ibone;
   int iaxis;
   bool isrot;
 };

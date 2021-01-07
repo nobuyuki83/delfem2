@@ -206,8 +206,8 @@ public:
 template <typename T>
 bool Mearge(
     CMatrixSparse<T>& A,
-    unsigned int nrow, const unsigned int *aIpRow,
-    unsigned int ncol, const unsigned int *aIpCol,
+    size_t nrow, const unsigned int *aIpRow,
+    size_t ncol, const unsigned int *aIpCol,
     unsigned int blksize, const T *emat,
     std::vector<unsigned int> &merge_buffer)
 {

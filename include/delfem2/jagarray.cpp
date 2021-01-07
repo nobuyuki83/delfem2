@@ -183,7 +183,7 @@ DFM2_INLINE void delfem2::JArray_Extend(
     std::vector<unsigned int>& psup_ind1,
     std::vector<unsigned int>& psup1,
     const unsigned int *psup_ind0,
-    unsigned int npsup_ind0,
+    size_t npsup_ind0,
     const unsigned int *psup0)
 {
   const size_t np = npsup_ind0-1;

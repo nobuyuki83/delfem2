@@ -55,7 +55,7 @@ DFM2_INLINE void JArray_Extend(
     std::vector<unsigned int>& psup_ind1,
     std::vector<unsigned int>& psup1,
     const unsigned int *psup_ind0,
-    unsigned int npsup_ind0,
+    size_t npsup_ind0,
     const unsigned int *psup0);
 
 DFM2_INLINE void JArrayEdgeUnidir_PointSurPoint(
