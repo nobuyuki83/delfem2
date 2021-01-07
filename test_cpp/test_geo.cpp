@@ -14,14 +14,17 @@ namespace dfm2 = delfem2;
 
 TEST(vec2,second_moment_of_area)
 {
+  std::random_device randomDevice;
+  std::mt19937 rdeng(randomDevice());
+  std::uniform_real_distribution<double> dist01(0.0,1.0);
   for(int itr=0;itr<100;itr++){
-    double r0 = (double)rand()/(RAND_MAX+1.0);
-    double r1 = (double)rand()/(RAND_MAX+1.0);
-    double r2 = (double)rand()/(RAND_MAX+1.0);
-    double r3 = (double)rand()/(RAND_MAX+1.0);
-    double r4 = (double)rand()/(RAND_MAX+1.0);
-    double a = 10*r0;
-    double b = a*(3*r1+1);
+    const double r0 = dist01(rdeng);
+    const double r1 = dist01(rdeng);
+    const double r2 = dist01(rdeng);
+    const double r3 = dist01(rdeng);
+    const double r4 = dist01(rdeng);
+    const double a = 10*r0;
+    const double b = a*(3*r1+1);
     std::vector<dfm2::CVec2d> aVec2;
     {
       aVec2.emplace_back(-a*0.5,-b*0.5 );
@@ -52,11 +55,13 @@ TEST(vec2,second_moment_of_area)
 
 TEST(mat3, eigen3)
 {
-
+  std::random_device randomDevice;
+  std::mt19937 rdeng(randomDevice());
+  std::uniform_real_distribution<double> dist(-50.0,50.0);
   for(int itr=0;itr<10000;itr++){
     double sm[6];
     for(double & v : sm){
-      v = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
+      v = dist(rdeng);
     }
     double l[3];
     dfm2::CMat3d U;
@@ -79,7 +84,7 @@ TEST(mat3, eigen3)
   for(int itr=0;itr<100;itr++){
     double sm[6];
     for(double & v : sm){
-      v = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
+      v = dist(rdeng);
     }
     sm[5] = -sm[4];
     double l[3];
@@ -153,8 +158,9 @@ TEST(mat3, rot_comp)
 
 TEST(mat3, quat)
 {
+  std::random_device randomDevice;
   std::uniform_real_distribution<double> dist(-50.0, +50.0);
-  std::mt19937 mtd(0);
+  std::mt19937 mtd(randomDevice());
   for(int itr=0;itr<10000;itr++){
     double quat0[4] = { dist(mtd), dist(mtd), dist(mtd), dist(mtd) };
     dfm2::Normalize_Quat(quat0);
