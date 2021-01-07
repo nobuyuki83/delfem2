@@ -10,4 +10,6 @@ For the testing, DelFEM2 used following data, images and 3D models:
 - ```uglysweater.jpg``` from https://www.flickr.com/photos/74812695@N00/6516495819
 - ```bolt.STEP``` from https://grabcad.com/library/anchor-bolt-2
 - ```epping_forest_01_1k.hdr``` from https://hdrihaven.com/hdri/?h=epping_forest_01
-- ```female_basemesh.obj``` from https://www.blendswap.com/blend/4458
+- ```basemesh_female.obj``` from https://www.blendswap.com/blend/4458
+- ```basemesh_hand.obj``` from https://www.blendswap.com/blend/11262
+

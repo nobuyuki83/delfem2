@@ -741,10 +741,10 @@ TEST(objfunc_v23, arap)
 
   dfm2::CMatrixSparse<double> Mat;
   {
-    Mat.Initialize(np, 3, true);
+    Mat.Initialize(static_cast<unsigned int>(np), 3, true);
     std::vector<unsigned int> psup_ind1, psup1;
     dfm2::JArray_Extend(psup_ind1, psup1,
-                        psup_ind.data(), psup_ind.size(), psup.data());
+        psup_ind.data(), psup_ind.size(), psup.data());
     dfm2::JArray_Sort(psup_ind1, psup1);
     assert( psup_ind1.size() == np+1 );
     Mat.SetPattern(psup_ind1.data(), psup_ind1.size(), psup1.data(), psup1.size());
@@ -916,8 +916,8 @@ TEST(fem,plate_bending_mitc3_cantilever)
     aVal.assign(aXY0.size()/2*3, 0.0);
     std::vector<double> vec_b;
     {
-      const unsigned int np = aXY0.size()/2;
-      const unsigned int nDoF = np*3;
+      const size_t np = aXY0.size()/2;
+      const size_t nDoF = np*3;
       // -------------------
       mat_A.setZero();
       vec_b.assign(nDoF, 0.0);

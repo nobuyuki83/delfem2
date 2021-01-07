@@ -491,7 +491,7 @@ delfem2::Read_BioVisionHierarchy(
       int nch = rig_v3q::myStoi(aToken[1]);
       assert((int)aToken.size()==nch+2);
       assert( !aBone.empty() );
-      const std::size_t ib = aBone.size()-1;
+      const unsigned int ib = static_cast<unsigned int>(aBone.size()-1);
       for(int ich=0;ich<nch;++ich){
         const std::string& type_ch = aToken[ich+2];
         if(      type_ch == "Xposition" ){ aChannelRotTransBone.emplace_back(ib,0,false ); }
@@ -549,7 +549,7 @@ delfem2::Read_BioVisionHierarchy(
     }
   }
   // ---------------
-  for(std::size_t ibone=0;ibone<aBone.size();++ibone){
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     CRigBone& bone = aBone[ibone];
     bone.scale = 1.0;
     bone.quatRelativeRot[0] = 1.0;

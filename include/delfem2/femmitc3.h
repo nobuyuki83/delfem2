@@ -34,9 +34,9 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     const double rho,
     const double gravity_z,
     const double* aXY1,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal)
 {
   const unsigned int np = nXY;
