@@ -127,10 +127,16 @@ DFM2_INLINE void Read_Obj(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aTri);
 
-DFM2_INLINE void Read_Obj_Quad(
-    const std::string &fname,
+/**
+ * Read Obj file for quad-only mesh
+ * @param fname
+ * @param aXYZ
+ * @param aQuad
+ */
+DFM2_INLINE void Read_Obj_MeshQuad3(
     std::vector<double> &aXYZ,
-    std::vector<int> &aQuad);
+    std::vector<unsigned int> &aQuad,
+    const std::string &fname);
 
 DFM2_INLINE void Read_Obj(
     std::stringstream &ssobj,
@@ -156,6 +162,14 @@ public:
   std::vector<unsigned int> aTriNrm;
 };
 
+/**
+ * Load wavefront Obj file with triangle group
+ * @param[in] fname
+ * @param[out] fname_mtl
+ * @param[out] aXYZ
+ * @param[out] aNorm
+ * @param[out] aTriGroup
+ */
 DFM2_INLINE void Load_Obj(
     const std::string &fname,
     std::string &fname_mtl,

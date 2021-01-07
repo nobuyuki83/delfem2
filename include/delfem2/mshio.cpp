@@ -13,7 +13,6 @@
 #include <cassert>
 #include <string>
 #include <cstring>
-#include <cstdlib>
 #include <climits>
 #include "delfem2/mshio.h"
 
@@ -64,22 +63,26 @@ DFM2_INLINE void ParseVtx(
     aloc[icnt] = i;
     icnt++;
   }
-  sscanf(str,"%d",&ip);
+  ip = std::stoi(str);
+//  sscanf(str,"%d",&ip);
   ip--;
   if( icnt == 0 ){
     return;
   }
   if( icnt == 1 ){
-    sscanf(str+aloc[0]+1,"%d",&it);
+    it = std::stoi(str+aloc[0]+1);
+//    sscanf(str+aloc[0]+1,"%d",&it);
     it--;
     return;
   }
   if( icnt == 2 ){
     if( aloc[1]-aloc[0] != 1 ){
-      sscanf(str+aloc[0]+1,"%d",&it);
+      it = std::stoi(str+aloc[0]+1);
+//      sscanf(str+aloc[0]+1,"%d",&it);
       it--;
     }
-    sscanf(str+aloc[1]+1,"%d",&in);
+    in = std::stoi(str+aloc[1]+1);
+//    sscanf(str+aloc[1]+1,"%d",&in);
     in--;
     return;
   }
@@ -137,14 +140,22 @@ DFM2_INLINE void delfem2::Read_Ply(
   }
   // ----
   int nno;
-  sscanf(buff, "%s %s %d", buff1, buff2, &nno);
+  {
+    std::istringstream is(buff);
+    is >> buff1 >> buff2 >> nno;
+//    sscanf(buff, "%s %s %d", buff1, buff2, &nno);
+  }
   // ----
   for (;;){
     fin.getline(buff, nbuff);
     if (strncmp(buff, "property ", 9)!=0){ break; }
   }
   int ntri;
-  sscanf(buff, "%s %s %d", buff1, buff2, &ntri);
+  {
+    std::istringstream is(buff);
+    is >> buff1 >> buff2 >> ntri;
+//    sscanf(buff, "%s %s %d", buff1, buff2, &ntri);
+  }
   aTri.resize(ntri*3);
   // ----
   fin.getline(buff, nbuff);  // property list int int vertex_indices
@@ -265,7 +276,7 @@ DFM2_INLINE void delfem2::Read_Ply(
   { // read number of points
     //    sscanf(buff, "%s %s %d", buff1, buff2, &nnode_);
     std::stringstream ss(buff);
-    ss>>sbuff1>>sbuff2>>nnode_;
+    ss >> sbuff1 >> sbuff2 >> nnode_;
     std::cout<<"Nnode "<<nnode_<<std::endl;
   }
   ////
@@ -276,7 +287,7 @@ DFM2_INLINE void delfem2::Read_Ply(
   { // read number of triangles
     //    sscanf(buff, "%s %s %d", buff1, buff2, &ntri_);
     std::stringstream ss(buff);
-    ss>>sbuff1>>sbuff2>>ntri_;
+    ss >> sbuff1 >> sbuff2 >> ntri_;
     std::cout<<"NTri "<<ntri_<<std::endl;
   }
   /////
@@ -440,14 +451,22 @@ DFM2_INLINE void delfem2::Read_Obj(
     if (buff[0]=='#'){ continue; }
     if (buff[0]=='v' && buff[1]==' '){
       char str[256]; double x, y, z;
-      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
+      {
+        std::istringstream is(buff);
+        is >> str >> x >> y >> z;
+//        sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
+      }
       aXYZ.push_back(x);
       aXYZ.push_back(y);
       aXYZ.push_back(z);
     }
     if (buff[0]=='f'){
       char str[256]; int i0, i1, i2;
-      sscanf(buff, "%s %d %d %d", str, &i0, &i1, &i2);
+      {
+        std::istringstream is(buff);
+        is >> str >> i0 >> i1 >> i2;
+//       sscanf(buff, "%s %d %d %d", str, &i0, &i1, &i2);
+      }
       aTri.push_back(i0-1);
       aTri.push_back(i1-1);
       aTri.push_back(i2-1);
@@ -455,10 +474,10 @@ DFM2_INLINE void delfem2::Read_Obj(
   }
 }
 
-DFM2_INLINE void delfem2::Read_Obj_Quad(
-    const std::string& fname,
+DFM2_INLINE void delfem2::Read_Obj_MeshQuad3(
     std::vector<double>& aXYZ,
-    std::vector<int>& aQuad)
+    std::vector<unsigned int>& aQuad,
+    const std::string& fname)
 {
   std::ifstream fin;
   fin.open(fname.c_str());
@@ -476,14 +495,18 @@ DFM2_INLINE void delfem2::Read_Obj_Quad(
     if (buff[0]=='#'){ continue; }
     if (buff[0]=='v' && buff[1]==' '){
       char str[256]; double x, y, z;
-      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
+      std::istringstream is(buff);
+      is >> str >> x >> y >> z;
+//      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
       aXYZ.push_back(x);
       aXYZ.push_back(y);
       aXYZ.push_back(z);
     }
     if (buff[0]=='f'){
       char str[256]; int i0, i1, i2, i3;
-      sscanf(buff, "%s %d %d %d %d", str, &i0, &i1, &i2, &i3);
+      std::istringstream is(buff);
+      is >> str >> i0 >> i1 >> i2 >> i3;
+//      sscanf(buff, "%s %d %d %d %d", str, &i0, &i1, &i2, &i3);
       aQuad.push_back(i0-1);
       aQuad.push_back(i1-1);
       aQuad.push_back(i2-1);
@@ -513,21 +536,29 @@ DFM2_INLINE void delfem2::Read_Obj2(
     if (buff[0]=='#'){ continue; }
     if (buff[0]=='v' && buff[1]==' '){
       char str[256]; double x, y, z;
-      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
+      std::istringstream is(buff);
+      is >> str >> x >> y >> z;
+//      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
       aXYZ.push_back(x);
       aXYZ.push_back(y);
       aXYZ.push_back(z);
     }
     if (buff[0]=='f'){
       char str[256], str0[256], str1[256], str2[256];
-      sscanf(buff, "%s %s %s %s", str, str0, str1, str2);
-      for(int i=0;i<(int)strlen(str0);++i){ if(str0[i]=='/'){ str0[i] = '\0'; } }
-      for(int i=0;i<(int)strlen(str1);++i){ if(str1[i]=='/'){ str1[i] = '\0'; } }
-      for(int i=0;i<(int)strlen(str2);++i){ if(str2[i]=='/'){ str2[i] = '\0'; } }
-      int i0,i1,i2;
-      sscanf(str0,"%d",&i0);
-      sscanf(str1,"%d",&i1);
-      sscanf(str2,"%d",&i2);
+      {
+        std::istringstream is(buff);
+        is >> str >> str0 >> str1 >> str2;
+//        sscanf(buff, "%s %s %s %s", str, str0, str1, str2);
+      }
+      for(unsigned int i=0;i<strlen(str0);++i){ if(str0[i]=='/'){ str0[i] = '\0'; } }
+      for(unsigned int i=0;i<strlen(str1);++i){ if(str1[i]=='/'){ str1[i] = '\0'; } }
+      for(unsigned int i=0;i<strlen(str2);++i){ if(str2[i]=='/'){ str2[i] = '\0'; } }
+      const int i0 = std::stoi(str0);
+      const int i1 = std::stoi(str1);
+      const int i2 = std::stoi(str2);
+//      sscanf(str0,"%d",&i0);
+//      sscanf(str1,"%d",&i1);
+//      sscanf(str2,"%d",&i2);
       aTri.push_back(i0-1);
       aTri.push_back(i1-1);
       aTri.push_back(i2-1);
@@ -535,10 +566,10 @@ DFM2_INLINE void delfem2::Read_Obj2(
   }
 }
 
-DFM2_INLINE void delfem2::Read_Obj
-(std::stringstream& ssobj,
- std::vector<double>& aXYZ,
- std::vector<int>& aTri)
+DFM2_INLINE void delfem2::Read_Obj(
+    std::stringstream& ssobj,
+    std::vector<double>& aXYZ,
+    std::vector<int>& aTri)
 {
   aXYZ.clear();
   aTri.clear();
@@ -551,14 +582,18 @@ DFM2_INLINE void delfem2::Read_Obj
     if (buff[0]=='#'){ continue; }
     if (buff[0]=='v' && buff[1]==' '){
       char str[256]; double x, y, z;
-      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
+      std::istringstream is(buff);
+      is >> str >> x >> y >> z;
+//      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
       aXYZ.push_back(x);
       aXYZ.push_back(y);
       aXYZ.push_back(z);
     }
     if (buff[0]=='f'){
       char str[256]; int i0, i1, i2;
-      sscanf(buff, "%s %d %d %d", str, &i0, &i1, &i2);
+      std::istringstream is(buff);
+      is >> str >> i0 >> i1 >> i2;
+//      sscanf(buff, "%s %d %d %d", str, &i0, &i1, &i2);
       aTri.push_back(i0-1);
       aTri.push_back(i1-1);
       aTri.push_back(i2-1);
@@ -587,7 +622,9 @@ DFM2_INLINE void delfem2::Read_Obj3(
     if (buff[0]=='#'){ continue; }
     if (buff[0]=='v' && buff[1]==' '){
       char str[256]; double x, y, z;
-      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
+      std::istringstream is(buff);
+      is >> str >> x >> y >> z;
+//      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
       aXYZ.push_back(x);
       aXYZ.push_back(y);
       aXYZ.push_back(z);
@@ -613,8 +650,10 @@ DFM2_INLINE void delfem2::Read_Obj3(
             break;
           }
         }
-        int i0;
-        sscanf(aPtr[iv],"%d",&i0);
+        const int i0 = std::stoi(aPtr[iv]);
+//        std::istringstream is(aPtr[iv]);
+//        is >> i0;
+//        sscanf(aPtr[iv],"%d",&i0);
         aI[iv] = i0-1;
       }
       if( nv == 3 ){
@@ -669,7 +708,9 @@ DFM2_INLINE void delfem2::Load_Obj(
     }
     if (buff[0]=='v'){
       char str[256]; double x, y, z;
-      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
+      std::istringstream is(buff);
+      is >> str >> x >> y >> z;
+//      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
       if( buff[1] == ' ' ){ // vertex
         aXYZ.push_back(x);
         aXYZ.push_back(y);
@@ -708,8 +749,12 @@ DFM2_INLINE void delfem2::Load_Obj(
       }
       const std::size_t iogt0 = aTriGroup.size()-1;
       char str[256], str0[256], str1[256], str2[256];
-      sscanf(buff, "%s %s %s %s", str, str0, str1, str2);
-//      std::cout << str0 << " " << str1 << " " << str2 << std::endl;
+      {
+//      sscanf(buff, "%s %s %s %s", str, str0, str1, str2);
+        std::istringstream is(buff);
+        is >> str >> str0 >> str1 >> str2;
+        //      std::cout << str0 << " " << str1 << " " << str2 << std::endl;
+      }
       int ip0,it0,in0; mshio::ParseVtx(ip0,it0,in0, str0);
       int ip1,it1,in1; mshio::ParseVtx(ip1,it1,in1, str1);
       int ip2,it2,in2; mshio::ParseVtx(ip2,it2,in2, str2);

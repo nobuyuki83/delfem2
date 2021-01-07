@@ -55,10 +55,10 @@ DFM2_INLINE bool delfem2::isNumeric(int iascii){
   return false;
 }
 
-DFM2_INLINE void delfem2::Split
-(std::vector<std::string>& aToken,
- const std::string& str,
- char delimiter)
+DFM2_INLINE void delfem2::Split(
+    std::vector<std::string>& aToken,
+    const std::string& str,
+    char delimiter)
 {
   aToken.clear();
   std::stringstream data(str);
@@ -69,9 +69,9 @@ DFM2_INLINE void delfem2::Split
   }
 }
 
-DFM2_INLINE std::vector<std::string> delfem2::Split
-(const std::string& str,
- char delimiter)
+DFM2_INLINE std::vector<std::string> delfem2::Split(
+    const std::string& str,
+    char delimiter)
 {
   std::vector<std::string> aToken;
   Split(aToken,str,delimiter);
@@ -128,10 +128,10 @@ DFM2_INLINE std::vector<std::string> delfem2::Split_Parentheses(
   return aToken;
 }
 
-DFM2_INLINE std::vector<std::string> delfem2::Split_Quote
-(const std::string& str,
- char delimiter,
- char quote)
+DFM2_INLINE std::vector<std::string> delfem2::Split_Quote(
+    const std::string& str,
+    char delimiter,
+    char quote)
 {
   std::vector<std::string> aToken;
   unsigned int is=0;
@@ -151,10 +151,10 @@ DFM2_INLINE std::vector<std::string> delfem2::Split_Quote
   return aToken;
 }
 
-DFM2_INLINE std::string delfem2::Replace
-(const std::string& str,
- const char cf,
- const char ct)
+DFM2_INLINE std::string delfem2::Replace(
+    const std::string& str,
+    const char cf,
+    const char ct)
 {
   const size_t n = str.size();
   //
@@ -191,15 +191,15 @@ DFM2_INLINE std::string delfem2::Remove(
   return ss;
 }
 
-DFM2_INLINE std::string delfem2::RemoveSpace
-(const std::string& str)
+DFM2_INLINE std::string delfem2::RemoveSpace(
+    const std::string& str)
 {
   return Remove(str," ");
 }
 
-DFM2_INLINE std::string delfem2::RemoveBeginning
-(const std::string& str,
- const std::string& del)
+DFM2_INLINE std::string delfem2::RemoveBeginning(
+    const std::string& str,
+    const std::string& del)
 {
   const size_t n = str.size();
   const size_t ndel = del.size();
@@ -219,9 +219,9 @@ DFM2_INLINE std::string delfem2::RemoveBeginning
   return std::string(str.begin()+istat,str.end());
 }
 
-DFM2_INLINE std::string Remove_Quote
-(const std::string& str,
- char quat)
+DFM2_INLINE std::string Remove_Quote(
+    const std::string& str,
+    char quat)
 {
   const size_t n = str.size();
   {
@@ -312,14 +312,16 @@ DFM2_INLINE void delfem2::ReadVector_CSV
   for(unsigned int i=0;i<n;++i){
     if( p[i] == ',' ){
       std::string sval(p+ipos0,p+i);
-      sscanf(sval.c_str(),"%lf",&val);
+//      sscanf(sval.c_str(),"%lf",&val);
+      val = std::stod(sval);
       aVal.push_back(val);
       ipos0 = i+1;
     }
   }
   if( ipos0 < n ){
     std::string sval(p+ipos0,p+n);
-    sscanf(sval.c_str(),"%lf",&val);
+//    sscanf(sval.c_str(),"%lf",&val);
+    val = std::stod(sval);
     aVal.push_back(val);
   }
 }

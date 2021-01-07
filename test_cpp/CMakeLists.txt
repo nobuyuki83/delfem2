@@ -102,6 +102,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/srchuni_v3.h           ${DELFEM2_INC}/srchuni_v3.cpp
 
       ${DELFEM2_INC}/rig_geo3.h             ${DELFEM2_INC}/rig_geo3.cpp
+      ${DELFEM2_INC}/rigopt.h
+
       ${DELFEM2_INC}/gridvoxel.h            ${DELFEM2_INC}/gridvoxel.cpp
       ${DELFEM2_INC}/gridcube.h             ${DELFEM2_INC}/gridcube.cpp
       )
