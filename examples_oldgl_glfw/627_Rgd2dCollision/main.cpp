@@ -170,11 +170,11 @@ void Steptime_Rgd2(
   for(CContact& c : aContact ){
     CRigidState2& ri = aRS[c.ir];
     CRigidState2& rj = aRS[c.jr];
-    dfm2::CVec2d vi = ri.omega*(c.Pi - ri.posl).Rotate(ri.theta + M_PI*0.5) + ri.velo;
-    dfm2::CVec2d vj = rj.omega*(c.Pjn - rj.posl).Rotate(rj.theta + M_PI*0.5) + rj.velo;
-    dfm2::CVec2d pi = (c.Pi - ri.posl).Rotate(ri.theta) + ri.posg;
-    dfm2::CVec2d pj = (c.Pjn - rj.posl).Rotate(rj.theta) + rj.posg;
-    dfm2::CVec2d tj = c.Njn.Rotate(rj.theta - M_PI*0.5);
+    const dfm2::CVec2d vi = ri.omega*(c.Pi - ri.posl).Rotate(ri.theta + M_PI*0.5) + ri.velo;
+    const dfm2::CVec2d vj = rj.omega*(c.Pjn - rj.posl).Rotate(rj.theta + M_PI*0.5) + rj.velo;
+    const dfm2::CVec2d pi = (c.Pi - ri.posl).Rotate(ri.theta) + ri.posg;
+    const dfm2::CVec2d pj = (c.Pjn - rj.posl).Rotate(rj.theta) + rj.posg;
+    const dfm2::CVec2d tj = c.Njn.Rotate(rj.theta - M_PI*0.5);
     double vslip = (vi-vj)*tj;
     double force = c.lambda/(dt*dt);
     double deno = 0.0;

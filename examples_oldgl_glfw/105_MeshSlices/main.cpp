@@ -21,8 +21,6 @@
 #include <cstdlib>
 #include <set>
 
-
-
 namespace dfm2 = delfem2;
 
 // -------------------------

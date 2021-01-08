@@ -240,7 +240,7 @@ DFM2_INLINE void delfem2::MeshingInside(
 	std::vector<int>& aFlagPnt,
 	std::vector<unsigned int>& aFlagTri,
 	const size_t nPointFix,
-	const int nflgpnt_offset,
+	const unsigned int nflgpnt_offset,
 	const double len,
 	const CInputTriangulation& mesh_density)
 {
