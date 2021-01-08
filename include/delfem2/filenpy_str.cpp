@@ -121,10 +121,11 @@ DFM2_INLINE delfem2::ReadDictionary_Python(
 
 //bool isNaN(double x) { return x!=x; }
 
-DFM2_INLINE bool delfem2::LoadNumpy_2DimF(
+template <typename REAL>
+DFM2_INLINE bool delfem2::LoadNumpy_2Dim(
     int& ndim0,
     int& ndim1,
-    std::vector<float>& aData,
+    std::vector<REAL>& aData,
     const std::string& path)
 {
 //  FILE* fp = fopen(path.c_str(),"rb");
@@ -135,28 +136,17 @@ DFM2_INLINE bool delfem2::LoadNumpy_2DimF(
   aData.resize(size);
 //  size_t n0 = fread(&aData[0], sizeof(float), size, fp);
 //  return (int) n0 == size;
-  fin.read( (char*)&aData[0], sizeof(float)*size );
+  fin.read( (char*)&aData[0], sizeof(REAL)*size );
   return !fin.fail();
 }
+#ifndef DFM2_HEADER_ONLY
+template bool delfem2::LoadNumpy_2Dim(
+    int&, int&, std::vector<float>& aData, const std::string& path);
+template bool delfem2::LoadNumpy_2Dim(
+    int&, int&, std::vector<double>& aData, const std::string& path);
+#endif
 
-DFM2_INLINE bool delfem2::LoadNumpy_2DimD(
-    int& ndim0,
-    int& ndim1,
-    std::vector<double>& aData,
-    const std::string& path)
-{
-//  FILE* fp = fopen(path.c_str(),"rb");
-//  if( fp == nullptr ) { return false; }
-  std::ifstream fin(path,std::ios::in | std::ios::binary);
-  if( fin.fail() ) { return false; }
-  funcs::LoadNumpy(ndim0, ndim1, fin);
-  int size = ndim0*ndim1;
-  aData.resize(size);
-//  size_t n0 = fread(&aData[0], sizeof(double), size, fp);
-//  return (int) n0 == size;
-  fin.read( (char*)&aData[0], sizeof(double)*size );
-  return !fin.fail();
-}
+
 
 DFM2_INLINE bool delfem2::LoadNumpy_1DimF(
     int& ndim0,

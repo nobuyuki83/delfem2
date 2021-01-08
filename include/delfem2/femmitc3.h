@@ -39,7 +39,7 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     size_t nTri,
     const double* aVal)
 {
-  const unsigned int np = nXY;
+  const size_t np = nXY;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for(unsigned int iel=0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];

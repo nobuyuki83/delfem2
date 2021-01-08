@@ -20,16 +20,12 @@ namespace delfem2 {
 DFM2_INLINE std::map<std::string, std::string> ReadDictionary_Python(
     const std::string& buff);
 
-DFM2_INLINE bool LoadNumpy_2DimF(
-    int& ndim0,
-    int& ndim1,
-    std::vector<float>& aData,
-    const std::string& path);
 
-DFM2_INLINE bool LoadNumpy_2DimD(
+template <typename REAL>
+DFM2_INLINE bool LoadNumpy_2Dim(
     int& ndim0,
     int& ndim1,
-    std::vector<double>& aData,
+    std::vector<REAL>& aData,
     const std::string& path);
 
 DFM2_INLINE bool LoadNumpy_1DimF(

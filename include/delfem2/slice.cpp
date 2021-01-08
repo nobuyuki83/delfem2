@@ -249,13 +249,13 @@ void delfem2::Slice_MeshTri3D_Heights
   std::vector<int> Tri2Seg;
   Tri2Seg.resize(ntri,-1);
   for(unsigned int ih=0;ih<nH;ih++){ // h loop
-    for(std::size_t isg=0;isg<aCST[ih].size();isg++){
+    for(unsigned int isg=0;isg<aCST[ih].size();isg++){
       unsigned int itri = aCST[ih][isg];
       Tri2Seg[itri] = isg;
     }
     std::vector<int> aFlgSeg;
     aFlgSeg.resize(aCST[ih].size(),0);
-    std::size_t iseg_ker = 0;
+    unsigned int iseg_ker = 0;
     for(;;){ // cs loop
       for(;iseg_ker<aCST[ih].size();iseg_ker++){
         if( aFlgSeg[iseg_ker] == 0 ){ break; }
