@@ -154,7 +154,8 @@ TEST(gltf, skin_sensitivity) {
           std::vector<double> dP;
           Sensitivity_RigSkinPoint(dP,
               ip, aXYZ0.data()+ip*3, aBone1, L,
-              aSkinSparseW.size()/np, aSkinSparseW, aSkinSparseI);
+              static_cast<unsigned int>(aSkinSparseW.size()/np),
+              aSkinSparseW, aSkinSparseI);
           val1[0] = dP[0*nsns+isns];
           val1[1] = dP[1*nsns+isns];
           val1[2] = dP[2*nsns+isns];

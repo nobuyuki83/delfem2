@@ -92,7 +92,7 @@ public:
   bool setZero() {
     if (valDia.size() != 0) {
       assert(nrowdim == ncoldim && nrowblk == ncolblk);
-      const unsigned int n = valDia.size();
+      const size_t n = valDia.size();
       assert(n == nrowdim * nrowdim * nrowblk);
       for (unsigned int i = 0; i < n; ++i) { valDia[i] = 0; }
     }

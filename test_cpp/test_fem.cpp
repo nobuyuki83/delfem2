@@ -670,9 +670,10 @@ TEST(objfunc_v23, arap)
   
   std::vector<unsigned int> psup_ind, psup;
   {
-    dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                               aTri.data(), aTri.size()/3, 3,
-                               aXYZ0.size()/3);
+    dfm2::JArray_PSuP_MeshElem(
+        psup_ind, psup,
+        aTri.data(), aTri.size()/3, 3,
+        aXYZ0.size()/3);
     dfm2::JArray_Sort(psup_ind, psup);
   }
   
@@ -953,8 +954,12 @@ TEST(fem,plate_bending_mitc3_cantilever)
         EXPECT_LT( conv[conv.size()-1], 1.0e-5);
       }
       // -------------------------
-      dfm2::XPlusAY(aVal,nDoF,aBCFlag,
-                    1.0,vec_x);
+      dfm2::XPlusAY(
+          aVal,
+          static_cast<unsigned int>(nDoF),
+          aBCFlag,
+          1.0,
+          vec_x);
     }
     {
       assert( fabs(lambda)<1.0e-10 );
@@ -964,7 +969,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
       const double w = W/lenx;
       const double disp = w*(lenx*lenx*lenx*lenx)/(8.0*E*I);
 //      std::cout << "disp:" << disp << std::endl;
-      for(int ip=0;ip<aXY0.size()/2;++ip){
+      for(unsigned int ip=0;ip<aXY0.size()/2;++ip){
         const double px = aXY0[ip*2+0];
         if( fabs(px-(+lenx*0.5)) > 0.0001 ){ continue; }
         EXPECT_LE( fabs(aVal[ip*3+0] - disp), 0.002*fabs(disp) );

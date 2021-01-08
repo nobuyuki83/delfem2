@@ -28,8 +28,9 @@ TEST(mshio,load_obj)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  delfem2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
-                    aXYZ, aTri);
+  delfem2::Read_Obj(
+      std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
+      aXYZ, aTri);
   EXPECT_EQ(aTri.size(),1000*3);
 }
 

@@ -399,7 +399,7 @@ delfem2::IntersectionLine_MeshTri3(
     T eps)
 {
   std::vector<CPtElm2<T>> aPES;
-  for(size_t itri=0;itri<aTri.size()/3;++itri){
+  for(unsigned int itri=0;itri<aTri.size()/3;++itri){
     const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
     const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
     const unsigned int ip2 = aTri[itri*3+2];  assert(ip2<aXYZ.size()/3);
@@ -415,13 +415,15 @@ delfem2::IntersectionLine_MeshTri3(
   }
   return aPES;
 }
-template std::vector<delfem2::CPtElm2<double>>
-  delfem2::IntersectionLine_MeshTri3(
+#ifndef DFM2_HEADER_ONLY
+template 
+std::vector<delfem2::CPtElm2<double>> delfem2::IntersectionLine_MeshTri3(
 	  const CVec3<double>& org, 
 	  const CVec3<double>& dir,
 	  const std::vector<unsigned int>& aTri,
 	  const std::vector<double>& aXYZ,
 	  double eps);
+#endif
 
 // -------------------------------------
 
@@ -445,12 +447,15 @@ void delfem2::IntersectionRay_MeshTri3 (
     mapDepthPES.insert( std::make_pair(depth, pes) );
   }
 }
-template void delfem2::IntersectionRay_MeshTri3(
+#ifndef DFM2_HEADER_ONLY
+template 
+void delfem2::IntersectionRay_MeshTri3(
     std::map<double,CPtElm2<double>>& mapDepthPES,
     const CVec3<double>& org, const CVec3<double>& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<double>& aXYZ,
     double eps);
+#endif
 
 // ----------------------
 
@@ -483,7 +488,9 @@ void delfem2::IntersectionRay_MeshTri3DPart(
     mapDepthPES.insert( std::make_pair(depth,CPtElm2<T>(itri,r0,r1)) );
   }
 }
-template void delfem2::IntersectionRay_MeshTri3DPart(
+#ifndef DFM2_HEADER_ONLY
+template 
+void delfem2::IntersectionRay_MeshTri3DPart(
     std::map<double,CPtElm2<double>>&,
     const CVec3<double>&,
     const CVec3<double>&,
@@ -491,6 +498,7 @@ template void delfem2::IntersectionRay_MeshTri3DPart(
     const std::vector<double>&,
     const std::vector<unsigned int>&,
     double);
+#endif
   
 // -----------------------------------------------
 

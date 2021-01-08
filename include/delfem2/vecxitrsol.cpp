@@ -226,8 +226,7 @@ delfem2::MultSumX(
 namespace delfem2 {
 
 template<>
-DFM2_INLINE void
-XPlusAY(
+DFM2_INLINE void XPlusAY(
     std::vector<double> &X,
     const unsigned int nDoF,
     const std::vector<int> &aBCFlag,

@@ -29,11 +29,13 @@ struct NPY
 DFM2_INLINE bool LoadNumpy(
     int& ndim0,
     int& ndim1,
-    FILE* fp)
+    std::ifstream& fp)
 {
   NPY npy;
-  size_t n0 = fread(&npy, sizeof(npy), 1, fp);
-  if( n0 != 1 ){ return false; }
+//  size_t n0 = fread(&npy, sizeof(npy), 1, fp);
+//  if( n0 != 1 ){ return false; }
+  fp.read((char*)&npy, sizeof(npy));
+  if( fp.fail() ){ return false; }
 
   { // check magic string
     unsigned char sMagic[7] = {0x93,'N','U','M','P','Y'};
@@ -44,8 +46,10 @@ DFM2_INLINE bool LoadNumpy(
   ndim1 = 0;
   { // format
     char buff[256];
-    size_t n1 = fread(buff, 1, npy.header_len, fp);
-    if( n1 != npy.header_len ){ return false; }
+//    size_t n1 = fread(buff, 1, npy.header_len, fp);
+//    if( n1 != npy.header_len ){ return false; }
+    fp.read(buff,npy.header_len);
+    if( fp.fail() ){ return false; }
     std::map<std::string, std::string> map0 = ReadDictionary_Python(std::string(buff));
     std::string str_shape = map0["'shape'"];
     str_shape = Get_Parentheses(str_shape,"()");
@@ -123,13 +127,16 @@ DFM2_INLINE bool delfem2::LoadNumpy_2DimF(
     std::vector<float>& aData,
     const std::string& path)
 {
-  FILE* fp = fopen(path.c_str(),"rb");
-  if( fp == nullptr ) { return false; }
-  funcs::LoadNumpy(ndim0, ndim1, fp);
+//  FILE* fp = fopen(path.c_str(),"rb");
+  std::ifstream fin(path,std::ios::in | std::ios::binary);
+  if( fin.fail() ) { return false; }
+  funcs::LoadNumpy(ndim0, ndim1, fin);
   int size = ndim0*ndim1;
   aData.resize(size);
-  size_t n0 = fread(&aData[0], sizeof(float), size, fp);
-  return (int) n0 == size;
+//  size_t n0 = fread(&aData[0], sizeof(float), size, fp);
+//  return (int) n0 == size;
+  fin.read( (char*)&aData[0], sizeof(float)*size );
+  return !fin.fail();
 }
 
 DFM2_INLINE bool delfem2::LoadNumpy_2DimD(
@@ -138,13 +145,17 @@ DFM2_INLINE bool delfem2::LoadNumpy_2DimD(
     std::vector<double>& aData,
     const std::string& path)
 {
-  FILE* fp = fopen(path.c_str(),"rb");
-  if( fp == nullptr ) { return false; }
-  funcs::LoadNumpy(ndim0, ndim1, fp);
+//  FILE* fp = fopen(path.c_str(),"rb");
+//  if( fp == nullptr ) { return false; }
+  std::ifstream fin(path,std::ios::in | std::ios::binary);
+  if( fin.fail() ) { return false; }
+  funcs::LoadNumpy(ndim0, ndim1, fin);
   int size = ndim0*ndim1;
   aData.resize(size);
-  size_t n0 = fread(&aData[0], sizeof(double), size, fp);
-  return (int) n0 == size;
+//  size_t n0 = fread(&aData[0], sizeof(double), size, fp);
+//  return (int) n0 == size;
+  fin.read( (char*)&aData[0], sizeof(double)*size );
+  return !fin.fail();
 }
 
 DFM2_INLINE bool delfem2::LoadNumpy_1DimF(
@@ -152,12 +163,17 @@ DFM2_INLINE bool delfem2::LoadNumpy_1DimF(
     std::vector<float>& aData,
     const std::string& path)
 {
-  FILE* fp = fopen(path.c_str(),"r");
-  if( fp == nullptr ) { return false; }
+//  FILE* fp = fopen(path.c_str(),"r");
+//  if( fp == nullptr ) { return false; }
+
+  std::ifstream fin(path,std::ios::in | std::ios::binary);
+  if( fin.fail() ) { return false; }
   
   funcs::NPY npy;
-  size_t n0 = fread(&npy, sizeof(npy), 1, fp);
-  if( n0 != 1 ){ return false; }
+//  size_t n0 = fread(&npy, sizeof(npy), 1, fp);
+//  if( n0 != 1 ){ return false; }
+  fin.read((char*)&npy,sizeof(npy));
+  if( fin.fail() ){ return false; }
   
   { // check magic string
     unsigned char sMagic[7] = {0x93,'N','U','M','P','Y'};
@@ -171,8 +187,10 @@ DFM2_INLINE bool delfem2::LoadNumpy_1DimF(
   ndim0 = 0;
   { // format
     char buff[256];
-    size_t n1 = fread(buff, 1, npy.header_len, fp);
-    if( n1 != npy.header_len ){ return false; }
+//    size_t n1 = fread(buff, 1, npy.header_len, fp);
+//    if( n1 != npy.header_len ){ return false; }
+    fin.read(buff,npy.header_len);
+    if(fin.fail()){ return false; }
     //    std::cout << buff << "###" << strlen(buff) << std::endl;
     std::map<std::string, std::string> map0 = ReadDictionary_Python(std::string(buff));
     //    for(std::map<std::string, std::string>::iterator itr=map0.begin();itr!=map0.end();++itr){
@@ -190,6 +208,8 @@ DFM2_INLINE bool delfem2::LoadNumpy_1DimF(
   unsigned int size = ndim0;
   aData.resize(size);
   //  double* aRes = (double*)malloc( sizeof(double)*size );
-  size_t n2 = fread(&aData[0], sizeof(float), size, fp);
-  return n2 == size;
+//  size_t n2 = fread(&aData[0], sizeof(float), size, fp);
+//  return n2 == size;
+  fin.read( (char*)&aData[0], sizeof(float)*size );
+  return !fin.fail();
 }
