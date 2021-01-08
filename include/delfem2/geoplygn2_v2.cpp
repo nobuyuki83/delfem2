@@ -412,7 +412,7 @@ void delfem2::ResamplingLoop(
     int nbar1 = nbar0;
     for(int ibar=0;ibar<nbar0;ibar++){
       const int iip_loop = loopIP0_ind[iloop]+ibar;
-      nbar1 += aPoInEd[iip_loop].size();
+      nbar1 += static_cast<int>(aPoInEd[iip_loop].size());
     }
     loopIP1_ind[iloop+1] = loopIP1_ind[iloop] + nbar1;
   }

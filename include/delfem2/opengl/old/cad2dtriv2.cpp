@@ -8,6 +8,7 @@
 #include "delfem2/opengl/old/v2.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
+#include <climits>
 
 #if defined(__APPLE__) && defined(__MACH__)
   #include <OpenGL/gl.h>
@@ -20,19 +21,19 @@
 
 // -------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm
-(const std::vector<CDynTri>& aSTri,
- const std::vector<CVec2d>& aVec2)
+DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm(
+    const std::vector<CDynTri>& aSTri,
+    const std::vector<CVec2d>& aVec2)
 {
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_TRIANGLES);
   for (const auto & itri : aSTri){
-    const int i0 = itri.v[0];
-    const int i1 = itri.v[1];
-    const int i2 = itri.v[2];
-    if( i0 == -1 ){
-      assert( i1 == -1 );
-      assert( i2 == -1 );
+    const unsigned int i0 = itri.v[0];
+    const unsigned int i1 = itri.v[1];
+    const unsigned int i2 = itri.v[2];
+    if( i0 == UINT_MAX ){
+      assert( i1 == UINT_MAX );
+      assert( i2 == UINT_MAX );
       continue;
     }
     const CVec2d& p0 = aVec2[i0];

@@ -49,7 +49,7 @@ TEST(funcs,numpy_load_2df){
   std::string path = std::string(PATH_INPUT_DIR)+"/numpy_array4x4_float.npy";
   int ndim0,ndim1;
   std::vector<float> aData;
-  bool res = dfm2::LoadNumpy_2DimF(
+  bool res = dfm2::LoadNumpy_2Dim(
       ndim0,ndim1,aData,
       path);
   EXPECT_TRUE(res);
@@ -62,7 +62,7 @@ TEST(funcs,numpy_load_2dd){
   std::string path = std::string(PATH_INPUT_DIR)+"/numpy_array4x4_double.npy";
   int ndim0,ndim1;
   std::vector<double> aData;
-  bool res = dfm2::LoadNumpy_2DimD(
+  bool res = dfm2::LoadNumpy_2Dim(
       ndim0,ndim1,aData,
       path);
   EXPECT_TRUE(res);

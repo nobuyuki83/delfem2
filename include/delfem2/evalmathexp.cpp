@@ -96,13 +96,13 @@ public:
     const double dright = stack.back();
     double& dleft = stack.back();
     switch(m_iOpr){
-      case 0:    dleft = dright;      return true;
-      case 1:    dleft = -dright;    return true;
-      case 2:    dleft = fabs(dright);  return true;
-      case 8:    dleft = floor(dright);  return true;
-      case 3:    dleft = exp(dright);  return true;
-      case 4:    dleft = sin(dright);  return true;
-      case 5:    dleft = cos(dright);  return true;
+      case 0: dleft = dright; return true;
+      case 1: dleft = -dright; return true;
+      case 2: dleft = fabs(dright); return true;
+      case 8: dleft = floor(dright); return true;
+      case 3: dleft = exp(dright);  return true;
+      case 4: dleft = sin(dright);  return true;
+      case 5: dleft = cos(dright);  return true;
       case 6:
         if( dright > 1.0e-30 ){ dleft = sqrt(dright); return true; }
         else{ dleft = 0.0; return false; }
@@ -113,6 +113,7 @@ public:
         std::cout << "Error!-->Illegal iOpr " << m_iOpr << std::endl;
         assert(0);
     }
+    return false;
   }
   static int MaxOprInd(){ return 8; }
   static int GetOprInd(const std::string& str1){
