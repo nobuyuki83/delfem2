@@ -32,9 +32,17 @@ TEST(mathexpeval,test1){
   delfem2::CMathExpressionEvaluator e;
   e.SetKey("x", 3.0);
   e.SetExp("x+3.0");
-  EXPECT_EQ(e.Eval(),6);
+  EXPECT_DOUBLE_EQ(e.Eval(),6);
   e.SetKey("x", 5.0);
-  EXPECT_EQ(e.Eval(),8);
+  EXPECT_DOUBLE_EQ(e.Eval(),8.0);
+  //
+  e.SetKey("x", 1.0);
+  e.SetKey("y", 2.0);
+  e.SetExp("x+y");
+  EXPECT_DOUBLE_EQ(e.Eval(),3.0);
+  //
+  e.SetExp("sin(PI*0.5*x)");
+  EXPECT_DOUBLE_EQ(e.Eval(),1.0);
 }
 
 TEST(funcs,numpy_load_2df){

@@ -292,7 +292,7 @@ int GetLowestPriorityOperator(
   }
   // binary operator(+とか-)
   if( ipos_min != UINT_MAX ){
-    std::cout << ipos_min << " " << itype_min << std::endl;
+//    std::cout << ipos_min << " " << itype_min << std::endl;
     assert( itype_min == 3 );
     assert( iopr_min != -1 );
     ibegin = ipos_min;
