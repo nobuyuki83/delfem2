@@ -579,10 +579,11 @@ DFM2_INLINE void delfem2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
 }
 
 template<typename REAL>
-void delfem2::MeshQuad3_CubeVox
-(std::vector<REAL>& aXYZ,
- std::vector<unsigned int>& aQuad,
- const REAL bbmin[3], const REAL bbmax[3])
+void delfem2::MeshQuad3_CubeVox(
+    std::vector<REAL>& aXYZ,
+    std::vector<unsigned int>& aQuad,
+    const REAL bbmin[3],
+    const REAL bbmax[3])
 {
   aXYZ.resize(0);
   aXYZ.reserve(8*3);

@@ -12,7 +12,7 @@
 
 // DONE(2020/12/09): separate mixed elem
 // DONE(2020/12/12): separeted from mshtopo.h
-// TODO: change name mshuni.h
+
 
 #ifndef DFM2_MSHSUBDIV_H
 #define DFM2_MSHSUBDIV_H
@@ -35,10 +35,10 @@ DFM2_INLINE void SubdivTopo_MeshQuad(
     std::vector<unsigned int> &aQuad1,
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
-    std::vector<int> &aEdgeFace0,
+    std::vector<unsigned int> &aEdgeFace0,
     const unsigned int *aQuad0,
-    unsigned int nQuad0,
-    unsigned int nPoint0);
+    size_t nQuad0,
+    size_t nPoint0);
 
 DFM2_INLINE void SubdivTopo_MeshHex(
     std::vector<unsigned int> &aHex1,
@@ -57,8 +57,9 @@ DFM2_INLINE void SubdivTopo_MeshTet(
     int nTet0,
     unsigned int nPoint0);
 
-DFM2_INLINE int findEdge(
-    unsigned int ip0, unsigned int ip1,
+DFM2_INLINE unsigned int findEdge(
+    unsigned int ip0,
+    unsigned int ip1,
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup);
 
@@ -72,13 +73,13 @@ DFM2_INLINE void SubdivisionPoints_QuadCatmullClark(
     std::vector<double>& aXYZ1,
     //
     const std::vector<unsigned int>& aQuad1,
-    const std::vector<int>& aEdgeFace0,
+    const std::vector<unsigned int>& aEdgeFace0,
     const std::vector<unsigned int> &psupIndQuad0,
     const std::vector<unsigned int> &psupQuad0,
     const unsigned int* aQuad0,
-    unsigned int nQuad0,
+    size_t nQuad0,
     const double* aXYZ0,
-    unsigned int nXYZ0);
+    size_t nXYZ0);
 
 DFM2_INLINE void SubdivPoints3_MeshQuad(
     std::vector<double>& aXYZ1,

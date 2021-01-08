@@ -19,28 +19,34 @@ namespace delfem2 {
   
 class CSegInfo{
 public:
-  void Initialize(int jtri0,
-                  const unsigned int* aTri,
-                  unsigned int nTri,
-                  const double* aLevelVtx,
-                  double height);
-  void Pos3D(double pA[3], double pB[3],
-             const std::vector<double>& aXYZ,
-             const std::vector<unsigned int>& aTri) const ;
-  void Pos2D(double pA[2], double pB[2],
-             const double* aXY,
-             const unsigned int* aTri) const ;
+  void Initialize(
+      int jtri0,
+      const unsigned int* aTri,
+      size_t nTri,
+      const double* aLevelVtx,
+      double height);
+  void Pos3D(
+      double pA[3],
+      double pB[3],
+      const std::vector<double>& aXYZ,
+      const std::vector<unsigned int>& aTri) const ;
+  void Pos2D(
+      double pA[2],
+      double pB[2],
+      const double* aXY,
+      const unsigned int* aTri) const ;
 public:
   int itri;
   int iedA, iedB;
   double r0A, r0B;
 };
 
-void AddContour(std::vector<CSegInfo>& aSeg,
-                double thres,
-                const unsigned int* aTri,
-                unsigned int nTri,
-                const double* aVal);
+void AddContour(
+    std::vector<CSegInfo>& aSeg,
+    double thres,
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* aVal);
 
 // ---------------------------------------
   

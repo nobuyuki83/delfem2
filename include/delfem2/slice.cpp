@@ -61,9 +61,10 @@ DFM2_INLINE bool TraverseBoundaryLoop
     int jtri0 = aCST[iseg_next];
     aFlgSeg[iseg_next] = 1;
     CSegInfo info;
-    info.Initialize(jtri0,
-                    aTri.data(),aTri.size()/3,
-                    aLevelVtx.data(),height);
+    info.Initialize(
+        jtri0,
+        aTri.data(),aTri.size()/3,
+        aLevelVtx.data(),height);
     cs.aTriInfo.push_back(info);
     unsigned int iedge_next = info.iedB;
     int itri_next1 = aTriSuTri[jtri0*3+iedge_next];
@@ -114,12 +115,12 @@ DFM2_INLINE bool TraverseBoundaryLoop
 
 // ----------------------------------------------
 
-void delfem2::CSegInfo::Initialize
-(int jtri0,
- const unsigned int* aTri,
- unsigned int nTri,
- const double* aLevelVtx,
- double height)
+void delfem2::CSegInfo::Initialize(
+    int jtri0,
+    const unsigned int* aTri,
+    size_t nTri,
+    const double* aLevelVtx,
+    double height)
 {
   this->itri = jtri0;
   unsigned int iflg = 0;

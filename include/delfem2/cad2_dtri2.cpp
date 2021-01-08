@@ -99,7 +99,7 @@ DFM2_INLINE void GenMeshCadFace
       for (const auto &iie : aIE) {
         const int ie = iie.first;
         aIP.push_back(topo.aEdge[ie].iv0);
-        for (size_t iip = 0; iip < aEdgeGeo[ie].aP.size(); ++iip) {
+        for (unsigned int iip = 0; iip < aEdgeGeo[ie].aP.size(); ++iip) {
           aIP.push_back(aEdgeGeo[ie].ip0 + iip);
         }
       }
@@ -925,7 +925,7 @@ DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::InvertLoop
     eo.type_edge = ei.type_edge;
     eo.param.resize(ei.param.size());
     for(unsigned int ip=0;ip<ei.param.size()/2;++ip){
-      int jp = ei.param.size()/2-1-ip;
+      const int jp = static_cast<int>(ei.param.size()/2-1-ip);
       eo.param[ip*2+0] = 1-ei.param[jp*2+0];
       eo.param[ip*2+1] = -ei.param[jp*2+1];
     }
@@ -1052,10 +1052,12 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing(
   }
   if( edge_length > 1.0e-10 ){
     CInputTriangulation_Uniform param(1.0);
-    MeshingInside(dmsh.aEPo,dmsh.aETri,dmsh.aVec2,
-                  aFlgPnt,aFlgTri,
-                  dmsh.aVec2.size(), cad.aVtx.size()+cad.aEdge.size(),
-                  edge_length, param);
+    MeshingInside(
+        dmsh.aEPo,dmsh.aETri,dmsh.aVec2,
+        aFlgPnt,aFlgTri,
+        dmsh.aVec2.size(),
+        static_cast<unsigned int>(cad.aVtx.size()+cad.aEdge.size()),
+        edge_length, param);
   }
   nvtx = cad.aVtx.size();
   nedge = cad.aEdge.size();

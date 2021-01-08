@@ -85,7 +85,7 @@ public:
       em.elem_type = delfem2::MESHELEM_QUAD;
       em.ndim = 3;
       std::vector<unsigned int>& aQuad1 = em.aElem;
-      std::vector<int> aEdgeFace0;
+      std::vector<unsigned int> aEdgeFace0;
       std::vector<unsigned int> psupIndQuad0, psupQuad0;
       delfem2::SubdivTopo_MeshQuad(
           aQuad1,

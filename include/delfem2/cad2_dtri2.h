@@ -203,18 +203,18 @@ public:
   bool is_draw_face;
 };
 
-
-void ReadSVG_Cad2D(CCad2D& cad,
-                   const std::string& fpath,
-                   double scale);
-
+void ReadSVG_Cad2D(
+    CCad2D& cad,
+    const std::string& fpath,
+    double scale);
 
 /**
  * @brief  write the shape of cad into DXF file
  */
-bool WriteCAD_DXF(const std::string& file_name,
-                  const CCad2D& cad,
-                  double scale);
+bool WriteCAD_DXF(
+    const std::string& file_name,
+    const CCad2D& cad,
+    double scale);
 
 /**
  * @brief mesher for 2 dimensional CAD
@@ -229,13 +229,16 @@ public:
   }
   void Meshing(CMeshDynTri2D& dmesh,
                const CCad2D& cad2d);
-  std::vector<unsigned int> IndPoint_IndEdgeArray(const std::vector<int>& aIndEd,
-                                                  const CCad2D& cad2d);
-  std::vector<int> IndPoint_IndFaceArray(const std::vector<int>& aIndFc,
-                                         const CCad2D& cad2d);
-  std::vector<unsigned int> IndPoint_IndEdge(const unsigned int ie,
-                                             bool is_end_point,
-                                             const CCad2D& cad2d);
+  std::vector<unsigned int> IndPoint_IndEdgeArray(
+      const std::vector<int>& aIndEd,
+      const CCad2D& cad2d);
+  std::vector<int> IndPoint_IndFaceArray(
+      const std::vector<int>& aIndFc,
+      const CCad2D& cad2d);
+  std::vector<unsigned int> IndPoint_IndEdge(
+      const unsigned int ie,
+      bool is_end_point,
+      const CCad2D& cad2d);
 public:
   // inputs for meshing
   double edge_length;

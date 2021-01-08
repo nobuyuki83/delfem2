@@ -191,7 +191,10 @@ TEST(thread,parallel_for0)
     std::vector<int> aOut(aIn.size());
     auto func0 = [&aIn, &aOut](int i) { aOut[i] = aIn[i] * aIn[i]; }; // square
     const unsigned int nthread = dist1(rdeng);
-    dfm2::thread::parallel_for(aIn.size(), func0, nthread);
+    dfm2::thread::parallel_for(
+        static_cast<unsigned int>(aIn.size()),
+        func0,
+        nthread);
     std::vector<int> aTrg(N); for(unsigned int i=0;i<N;++i){ aTrg[i] = i*i; }
     EXPECT_TRUE(0 == std::memcmp(aOut.data(), aTrg.data(), aIn.size() * sizeof(int)));
   }

@@ -14,7 +14,7 @@
 
 // ----------------------------------------------------
 
-DFM2_INLINE int delfem2::findEdge(
+DFM2_INLINE unsigned int delfem2::findEdge(
     unsigned int ip0,
     unsigned int ip1,
     const std::vector<unsigned int> &psup_ind,
@@ -23,17 +23,18 @@ DFM2_INLINE int delfem2::findEdge(
   if( ip1 > ip0 ){
     for(unsigned int ipsup=psup_ind[ip0];ipsup<psup_ind[ip0+1];++ipsup){
       unsigned int ip2 = psup[ipsup];
-      if( ip2 == ip1 ){ return (int)ipsup; }
+      if( ip2 == ip1 ){ return ipsup; }
     }
   }
   else{
     for(unsigned int ipsup=psup_ind[ip1];ipsup<psup_ind[ip1+1];++ipsup){
       unsigned int ip2 = psup[ipsup];
-      if( ip2 == ip0 ){ return (int)ipsup; }
+      if( ip2 == ip0 ){ return ipsup; }
     }
   }
-  return -1;
+  return UINT_MAX;
 }
+
 
 DFM2_INLINE int delfem2::findFace(
     unsigned int ip0,
@@ -65,39 +66,39 @@ DFM2_INLINE void delfem2::SubdivTopo_MeshQuad(
     std::vector<unsigned int>& aQuad1,
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
-    std::vector<int>& aEdgeFace0, // two points on the edge and two quads touching the edge
+    std::vector<unsigned int>& aEdgeFace0, // two points on the edge and two quads touching the edge
     const unsigned int* aQuad0,
-    unsigned int nQuad0,
-    unsigned int nPoint0)
+    size_t nQuad0,
+    size_t nPoint0)
 {
-  const unsigned int nq0 = nQuad0;
+  const size_t nq0 = nQuad0;
   std::vector<unsigned int> elsup_ind, elsup;
   JArray_ElSuP_MeshElem(elsup_ind,elsup,
       aQuad0,nQuad0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
       aQuad0, MESHELEM_QUAD, elsup_ind, elsup,
       false); // is_bidirectional = false
-  const unsigned int ne0 = psup.size();
+  const size_t ne0 = psup.size();
   aEdgeFace0.resize(0);
   aEdgeFace0.reserve(ne0*4);
-  for(int ip=0;ip<(int)nPoint0;++ip){
+  for(unsigned int ip=0;ip<nPoint0;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
-      int ip1 = psup[ipsup];
+      const unsigned int ip1 = psup[ipsup];
       aEdgeFace0.push_back(ip);
       aEdgeFace0.push_back(ip1);
-      int iq0=-1, iq1=-1;
+      unsigned int iq0=UINT_MAX, iq1=UINT_MAX;
       for(unsigned int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
-        int jq0 = elsup[ielsup];
-        unsigned int jp0 = aQuad0[jq0*4+0];
-        unsigned int jp1 = aQuad0[jq0*4+1];
-        unsigned int jp2 = aQuad0[jq0*4+2];
-        unsigned int jp3 = aQuad0[jq0*4+3];
-        if( ((int)jp0!=ip) && ((int)jp1!=ip) && ((int)jp2!=ip) && ((int)jp3!=ip) ){ continue; }
-        if( ((int)jp0!=ip1) && ((int)jp1!=ip1) && ((int)jp2!=ip1) && ((int)jp3!=ip1) ){ continue; }
+        const unsigned int jq0 = elsup[ielsup];
+        const unsigned int jp0 = aQuad0[jq0*4+0];
+        const unsigned int jp1 = aQuad0[jq0*4+1];
+        const unsigned int jp2 = aQuad0[jq0*4+2];
+        const unsigned int jp3 = aQuad0[jq0*4+3];
+        if( (jp0!=ip) && (jp1!=ip) && (jp2!=ip) && (jp3!=ip) ){ continue; }
+        if( (jp0!=ip1) && (jp1!=ip1) && (jp2!=ip1) && (jp3!=ip1) ){ continue; }
         // ----------------------------
-        if( iq0 == -1 ){ iq0 = jq0; }
+        if( iq0 == UINT_MAX ){ iq0 = jq0; }
         else{
-          assert( iq1 == -1 );
+          assert( iq1 == UINT_MAX );
           iq1 = jq0;
         }
       }
@@ -108,19 +109,19 @@ DFM2_INLINE void delfem2::SubdivTopo_MeshQuad(
   aQuad1.resize(0);
   aQuad1.reserve(nQuad0*4);
   for(unsigned int iq=0;iq<nq0;++iq){
-    unsigned int ip0 = aQuad0[iq*4+0];
-    unsigned int ip1 = aQuad0[iq*4+1];
-    unsigned int ip2 = aQuad0[iq*4+2];
-    unsigned int ip3 = aQuad0[iq*4+3];
-    int ie01 = findEdge(ip0,ip1, psup_ind,psup); assert( ie01 != -1 );
-    int ie12 = findEdge(ip1,ip2, psup_ind,psup); assert( ie12 != -1 );
-    int ie23 = findEdge(ip2,ip3, psup_ind,psup); assert( ie23 != -1 );
-    int ie30 = findEdge(ip3,ip0, psup_ind,psup); assert( ie30 != -1 );
-    unsigned int ip01 = ie01 + nPoint0;
-    unsigned int ip12 = ie12 + nPoint0;
-    unsigned int ip23 = ie23 + nPoint0;
-    unsigned int ip30 = ie30 + nPoint0;
-    unsigned int ip0123 = iq + nPoint0 + ne0;
+    const unsigned int ip0 = aQuad0[iq*4+0];
+    const unsigned int ip1 = aQuad0[iq*4+1];
+    const unsigned int ip2 = aQuad0[iq*4+2];
+    const unsigned int ip3 = aQuad0[iq*4+3];
+    const unsigned int ie01 = findEdge(ip0,ip1, psup_ind,psup); assert( ie01 != UINT_MAX );
+    const unsigned int ie12 = findEdge(ip1,ip2, psup_ind,psup); assert( ie12 != UINT_MAX );
+    const unsigned int ie23 = findEdge(ip2,ip3, psup_ind,psup); assert( ie23 != UINT_MAX );
+    const unsigned int ie30 = findEdge(ip3,ip0, psup_ind,psup); assert( ie30 != UINT_MAX );
+    const unsigned int ip01 = ie01 + nPoint0;
+    const unsigned int ip12 = ie12 + nPoint0;
+    const unsigned int ip23 = ie23 + nPoint0;
+    const unsigned int ip30 = ie30 + nPoint0;
+    const unsigned int ip0123 = iq + nPoint0 + ne0;
     aQuad1.push_back(ip0);   aQuad1.push_back(ip01); aQuad1.push_back(ip0123); aQuad1.push_back(ip30);
     aQuad1.push_back(ip1);   aQuad1.push_back(ip12); aQuad1.push_back(ip0123); aQuad1.push_back(ip01);
     aQuad1.push_back(ip2);   aQuad1.push_back(ip23); aQuad1.push_back(ip0123); aQuad1.push_back(ip12);
@@ -152,12 +153,12 @@ DFM2_INLINE void delfem2::SubdivTopo_MeshTet(
     unsigned int ip1 = aTet0[it*4+1];
     unsigned int ip2 = aTet0[it*4+2];
     unsigned int ip3 = aTet0[it*4+3];
-    int ie01 = findEdge(ip0,ip1, psup_ind,psup); assert( ie01 != -1 );
-    int ie02 = findEdge(ip0,ip2, psup_ind,psup); assert( ie02 != -1 );
-    int ie03 = findEdge(ip0,ip3, psup_ind,psup); assert( ie03 != -1 );
-    int ie12 = findEdge(ip1,ip2, psup_ind,psup); assert( ie12 != -1 );
-    int ie13 = findEdge(ip1,ip3, psup_ind,psup); assert( ie13 != -1 );
-    int ie23 = findEdge(ip2,ip3, psup_ind,psup); assert( ie23 != -1 );
+    const unsigned int ie01 = findEdge(ip0,ip1, psup_ind,psup); assert( ie01 != UINT_MAX );
+    const unsigned int ie02 = findEdge(ip0,ip2, psup_ind,psup); assert( ie02 != UINT_MAX );
+    const unsigned int ie03 = findEdge(ip0,ip3, psup_ind,psup); assert( ie03 != UINT_MAX );
+    const unsigned int ie12 = findEdge(ip1,ip2, psup_ind,psup); assert( ie12 != UINT_MAX );
+    const unsigned int ie13 = findEdge(ip1,ip3, psup_ind,psup); assert( ie13 != UINT_MAX );
+    const unsigned int ie23 = findEdge(ip2,ip3, psup_ind,psup); assert( ie23 != UINT_MAX );
     unsigned int ip01 = ie01 + nPoint0;
     unsigned int ip02 = ie02 + nPoint0;
     unsigned int ip03 = ie03 + nPoint0;
@@ -408,18 +409,18 @@ void delfem2::SubdivTopo_MeshHex
     unsigned int ihc5 = aHex0[ih*8+5];
     unsigned int ihc6 = aHex0[ih*8+6];
     unsigned int ihc7 = aHex0[ih*8+7];
-    int ihc01 = findEdge(ihc0,ihc1, psupIndHex0,psupHex0)+nhp0; assert(ihc01>=nhp0&&ihc01<nhp0+neh0);
-    int ihc12 = findEdge(ihc1,ihc2, psupIndHex0,psupHex0)+nhp0; assert(ihc12>=nhp0&&ihc12<nhp0+neh0);
-    int ihc23 = findEdge(ihc2,ihc3, psupIndHex0,psupHex0)+nhp0; assert(ihc23>=nhp0&&ihc23<nhp0+neh0);
-    int ihc30 = findEdge(ihc3,ihc0, psupIndHex0,psupHex0)+nhp0; assert(ihc30>=nhp0&&ihc30<nhp0+neh0);
-    int ihc45 = findEdge(ihc4,ihc5, psupIndHex0,psupHex0)+nhp0; assert(ihc45>=nhp0&&ihc45<nhp0+neh0);
-    int ihc56 = findEdge(ihc5,ihc6, psupIndHex0,psupHex0)+nhp0; assert(ihc56>=nhp0&&ihc56<nhp0+neh0);
-    int ihc67 = findEdge(ihc6,ihc7, psupIndHex0,psupHex0)+nhp0; assert(ihc67>=nhp0&&ihc67<nhp0+neh0);
-    int ihc74 = findEdge(ihc7,ihc4, psupIndHex0,psupHex0)+nhp0; assert(ihc74>=nhp0&&ihc74<nhp0+neh0);
-    int ihc04 = findEdge(ihc0,ihc4, psupIndHex0,psupHex0)+nhp0; assert(ihc04>=nhp0&&ihc04<nhp0+neh0);
-    int ihc15 = findEdge(ihc1,ihc5, psupIndHex0,psupHex0)+nhp0; assert(ihc15>=nhp0&&ihc15<nhp0+neh0);
-    int ihc26 = findEdge(ihc2,ihc6, psupIndHex0,psupHex0)+nhp0; assert(ihc26>=nhp0&&ihc26<nhp0+neh0);
-    int ihc37 = findEdge(ihc3,ihc7, psupIndHex0,psupHex0)+nhp0; assert(ihc37>=nhp0&&ihc37<nhp0+neh0);
+    const unsigned int ihc01 = findEdge(ihc0,ihc1, psupIndHex0,psupHex0)+nhp0; assert(ihc01>=nhp0&&ihc01<nhp0+neh0);
+    const unsigned int ihc12 = findEdge(ihc1,ihc2, psupIndHex0,psupHex0)+nhp0; assert(ihc12>=nhp0&&ihc12<nhp0+neh0);
+    const unsigned int ihc23 = findEdge(ihc2,ihc3, psupIndHex0,psupHex0)+nhp0; assert(ihc23>=nhp0&&ihc23<nhp0+neh0);
+    const unsigned int ihc30 = findEdge(ihc3,ihc0, psupIndHex0,psupHex0)+nhp0; assert(ihc30>=nhp0&&ihc30<nhp0+neh0);
+    const unsigned int ihc45 = findEdge(ihc4,ihc5, psupIndHex0,psupHex0)+nhp0; assert(ihc45>=nhp0&&ihc45<nhp0+neh0);
+    const unsigned int ihc56 = findEdge(ihc5,ihc6, psupIndHex0,psupHex0)+nhp0; assert(ihc56>=nhp0&&ihc56<nhp0+neh0);
+    const unsigned int ihc67 = findEdge(ihc6,ihc7, psupIndHex0,psupHex0)+nhp0; assert(ihc67>=nhp0&&ihc67<nhp0+neh0);
+    const unsigned int ihc74 = findEdge(ihc7,ihc4, psupIndHex0,psupHex0)+nhp0; assert(ihc74>=nhp0&&ihc74<nhp0+neh0);
+    const unsigned int ihc04 = findEdge(ihc0,ihc4, psupIndHex0,psupHex0)+nhp0; assert(ihc04>=nhp0&&ihc04<nhp0+neh0);
+    const unsigned int ihc15 = findEdge(ihc1,ihc5, psupIndHex0,psupHex0)+nhp0; assert(ihc15>=nhp0&&ihc15<nhp0+neh0);
+    const unsigned int ihc26 = findEdge(ihc2,ihc6, psupIndHex0,psupHex0)+nhp0; assert(ihc26>=nhp0&&ihc26<nhp0+neh0);
+    const unsigned int ihc37 = findEdge(ihc3,ihc7, psupIndHex0,psupHex0)+nhp0; assert(ihc37>=nhp0&&ihc37<nhp0+neh0);
     int ihc0473 = findFace(ihc0,ihc4,ihc7,ihc3, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc0473>=nhp0+neh0&&ihc0473<nhp0+neh0+nfh0);
     int ihc1265 = findFace(ihc1,ihc2,ihc6,ihc5, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc1265>=nhp0+neh0&&ihc1265<nhp0+neh0+nfh0);
     int ihc0154 = findFace(ihc0,ihc1,ihc5,ihc4, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc0154>=nhp0+neh0&&ihc0154<nhp0+neh0+nfh0);
@@ -504,37 +505,38 @@ void delfem2::SubdivTopo_MeshHex
 
 
 // TODO: make this handle open surface (average face & edge independently)
-void delfem2::SubdivisionPoints_QuadCatmullClark
-    (std::vector<double>& aXYZ1,
-        // ------------------------
-     const std::vector<unsigned int>& aQuad1,
-     const std::vector<int>& aEdgeFace0,
-     const std::vector<unsigned int> &psupIndQuad0,
-     const std::vector<unsigned int> &psupQuad0,
-     const unsigned int* aQuad0,
-     unsigned int nQuad0,
-     const double* aXYZ0,
-     unsigned int nXYZ0)
+void delfem2::SubdivisionPoints_QuadCatmullClark(
+    std::vector<double>& aXYZ1,
+    // ------------------------
+    const std::vector<unsigned int>& aQuad1,
+    const std::vector<unsigned int>& aEdgeFace0,
+    const std::vector<unsigned int> &psupIndQuad0,
+    const std::vector<unsigned int> &psupQuad0,
+    const unsigned int* aQuad0,
+    size_t nQuad0,
+    const double* aXYZ0,
+    size_t nXYZ0)
 {
   const unsigned int nv0 = nXYZ0;
   const unsigned int ne0 = psupQuad0.size();
   const unsigned int nq0 = nQuad0;
   assert( aEdgeFace0.size() == ne0*4 );
-  aXYZ1.resize((nv0+ne0+nq0)*3);
-  std::vector<int> aW(nv0,0);
+  const unsigned int nv1 = nv0+ne0+nq0;
+  aXYZ1.resize(nv1*3);
+  std::vector<unsigned int> aNFace(nv0,0); // number of faces touching vertex
   for(unsigned int iv=0;iv<nv0;++iv){
     aXYZ1[iv*3+0] = 0;
     aXYZ1[iv*3+1] = 0;
     aXYZ1[iv*3+2] = 0;
   }
-  for(unsigned int iq=0;iq<nq0;++iq){
+  for(unsigned int iq=0;iq<nq0;++iq){ // face
     const unsigned int iv0 = aQuad0[iq*4+0];
     const unsigned int iv1 = aQuad0[iq*4+1];
     const unsigned int iv2 = aQuad0[iq*4+2];
     const unsigned int iv3 = aQuad0[iq*4+3];
-    double p0x = (aXYZ0[iv0*3+0] + aXYZ0[iv1*3+0] + aXYZ0[iv2*3+0] + aXYZ0[iv3*3+0])*0.25;
-    double p0y = (aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1] + aXYZ0[iv2*3+1] + aXYZ0[iv3*3+1])*0.25;
-    double p0z = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2] + aXYZ0[iv2*3+2] + aXYZ0[iv3*3+2])*0.25;
+    const double p0x = (aXYZ0[iv0*3+0] + aXYZ0[iv1*3+0] + aXYZ0[iv2*3+0] + aXYZ0[iv3*3+0])*0.25;
+    const double p0y = (aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1] + aXYZ0[iv2*3+1] + aXYZ0[iv3*3+1])*0.25;
+    const double p0z = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2] + aXYZ0[iv2*3+2] + aXYZ0[iv3*3+2])*0.25;
     aXYZ1[(nv0+ne0+iq)*3+0] = p0x;
     aXYZ1[(nv0+ne0+iq)*3+1] = p0y;
     aXYZ1[(nv0+ne0+iq)*3+2] = p0z;
@@ -543,17 +545,29 @@ void delfem2::SubdivisionPoints_QuadCatmullClark
       aXYZ1[jv0*3+0] += p0x;
       aXYZ1[jv0*3+1] += p0y;
       aXYZ1[jv0*3+2] += p0z;
-      aW[jv0] += 1;
+      aNFace[jv0] += 1;
     }
   }
-  for(unsigned int ie=0;ie<ne0;++ie){
-    int iv0 = aEdgeFace0[ie*4+0];
-    int iv1 = aEdgeFace0[ie*4+1];
-    int iq0 = aEdgeFace0[ie*4+2];
-    int iq1 = aEdgeFace0[ie*4+3];
-    aXYZ1[(nv0+ie)*3+0] = (aXYZ0[iv0*3+0]+aXYZ0[iv1*3+0]+aXYZ1[(nv0+ne0+iq0)*3+0]+aXYZ1[(nv0+ne0+iq1)*3+0])*0.25;
-    aXYZ1[(nv0+ie)*3+1] = (aXYZ0[iv0*3+1]+aXYZ0[iv1*3+1]+aXYZ1[(nv0+ne0+iq0)*3+1]+aXYZ1[(nv0+ne0+iq1)*3+1])*0.25;
-    aXYZ1[(nv0+ie)*3+2] = (aXYZ0[iv0*3+2]+aXYZ0[iv1*3+2]+aXYZ1[(nv0+ne0+iq0)*3+2]+aXYZ1[(nv0+ne0+iq1)*3+2])*0.25;
+  for(unsigned int ie=0;ie<ne0;++ie){ // edge
+    const unsigned int iv0 = aEdgeFace0[ie*4+0];
+    const unsigned int iv1 = aEdgeFace0[ie*4+1];
+    const unsigned int iq0 = aEdgeFace0[ie*4+2];
+    const unsigned int iq1 = aEdgeFace0[ie*4+3];
+    if( iq1 != UINT_MAX ) {
+      const unsigned int iv1e = nv0 + ie; assert(iv1e<nv1);
+      const unsigned int iv1q0 = nv0+ne0+iq0; assert(iv1q0<nv1);
+      const unsigned int iv1q1 = nv0+ne0+iq1; assert(iv1q1<nv1);
+      aXYZ1[iv1e * 3 + 0] = (aXYZ0[iv0 * 3 + 0] + aXYZ0[iv1 * 3 + 0] + aXYZ1[iv1q0 * 3 + 0] + aXYZ1[iv1q1 * 3 + 0]) * 0.25;
+      aXYZ1[iv1e * 3 + 1] = (aXYZ0[iv0 * 3 + 1] + aXYZ0[iv1 * 3 + 1] + aXYZ1[iv1q0 * 3 + 1] + aXYZ1[iv1q1 * 3 + 1]) * 0.25;
+      aXYZ1[iv1e * 3 + 2] = (aXYZ0[iv0 * 3 + 2] + aXYZ0[iv1 * 3 + 2] + aXYZ1[iv1q0 * 3 + 2] + aXYZ1[iv1q1 * 3 + 2]) * 0.25;
+    }
+    else{
+      const unsigned int iv1e = nv0 + ie; assert(iv1e<nv1);
+      const unsigned int iv1q0 = nv0+ne0+iq0; assert(iv1q0<nv1);
+      aXYZ1[iv1e * 3 + 0] = (aXYZ0[iv0 * 3 + 0] + aXYZ0[iv1 * 3 + 0] ) * 0.5;
+      aXYZ1[iv1e * 3 + 1] = (aXYZ0[iv0 * 3 + 1] + aXYZ0[iv1 * 3 + 1] ) * 0.5;
+      aXYZ1[iv1e * 3 + 2] = (aXYZ0[iv0 * 3 + 2] + aXYZ0[iv1 * 3 + 2] ) * 0.5;
+    }
     aXYZ1[iv0*3+0] += aXYZ0[iv0*3+0] + aXYZ0[iv1*3+0];
     aXYZ1[iv0*3+1] += aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1];
     aXYZ1[iv0*3+2] += aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2];
@@ -562,16 +576,30 @@ void delfem2::SubdivisionPoints_QuadCatmullClark
     aXYZ1[iv1*3+2] += aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2];
   }
   for(unsigned int iv=0;iv<nv0;++iv){
-    const int iw = aW[iv];
-    if( iw == 0 ){ continue; }
-    const double tmp0 = 1.0/(iw*iw);
+    const int nf = aNFace[iv]; // number of faces touching this vertex
+    if( nf == 0 ){ continue; }
+    // add face
+    const double tmp0 = 1.0/(nf*nf);
     aXYZ1[iv*3+0] *= tmp0;
     aXYZ1[iv*3+1] *= tmp0;
     aXYZ1[iv*3+2] *= tmp0;
-    const double tmp1 = (iw-3.0)/(iw);
+    // add vertex
+    const double tmp1 = (nf-3.0)/(nf);
     aXYZ1[iv*3+0] += tmp1*aXYZ0[iv*3+0];
     aXYZ1[iv*3+1] += tmp1*aXYZ0[iv*3+1];
     aXYZ1[iv*3+2] += tmp1*aXYZ0[iv*3+2];
+  }
+  for(unsigned int ie=0;ie<ne0;++ie) { // edge
+    const unsigned int iv0 = aEdgeFace0[ie*4+0];
+    const unsigned int iv1 = aEdgeFace0[ie*4+1];
+    const unsigned int ie1 = aEdgeFace0[ie * 4 + 3];
+    if( ie1 != UINT_MAX ){ continue; }
+    aXYZ1[iv0*3+0] = aXYZ0[iv0*3+0];
+    aXYZ1[iv0*3+1] = aXYZ0[iv0*3+1];
+    aXYZ1[iv0*3+2] = aXYZ0[iv0*3+2];
+    aXYZ1[iv1*3+0] = aXYZ0[iv1*3+0];
+    aXYZ1[iv1*3+1] = aXYZ0[iv1*3+1];
+    aXYZ1[iv1*3+2] = aXYZ0[iv1*3+2];
   }
 }
 

@@ -35,9 +35,9 @@ std::vector< std::vector<unsigned int>> aaQuad;
 
 void InitializeProblem() {
     
-  dfm2::MeshTri3D_Sphere(aXYZ, aTri,
-                         1.0, 12, 34);
-                
+  dfm2::MeshTri3D_Sphere(
+      aXYZ, aTri,
+      1.0, 12, 34);
   {
     const double bbmin[3] = {-1,-1,-1};
     const double bbmax[3] = {+1,+1,+1};
@@ -62,7 +62,7 @@ void InitializeProblem() {
   aaQuad.resize(nsubdiv+1);
   for(unsigned int isubdiv=0;isubdiv<nsubdiv;++isubdiv){
     std::vector<unsigned int> psup_ind, psup;
-    std::vector<int> aEdgeFace0;
+    std::vector<unsigned int> aEdgeFace0;
     dfm2::SubdivTopo_MeshQuad(
         aaQuad[isubdiv+1], psup_ind, psup, aEdgeFace0,
         aaQuad[isubdiv].data(), aaQuad[isubdiv].size()/4,
@@ -77,8 +77,8 @@ void InitializeProblem() {
       const std::vector<double>& aXYZ0 = aXYZ_Quad;
       std::vector<double>& aXYZ1 = aXYZ_Quad;
       for(unsigned int ie=0;ie<ne0;++ie){
-        const int iv0 = aEdgeFace0[ie*4+0];
-        const int iv1 = aEdgeFace0[ie*4+1];
+        const unsigned int iv0 = aEdgeFace0[ie*4+0];
+        const unsigned int iv1 = aEdgeFace0[ie*4+1];
         dfm2::AverageTwo3(aXYZ1.data()+(nv0+ie)*3,
                           aXYZ0.data()+iv0*3, aXYZ0.data()+iv1*3);
         dfm2::AverageTwo3(aNorm_Quad.data()+(nv0+ie)*3,
@@ -100,14 +100,15 @@ void InitializeProblem() {
     for(unsigned int ip=nv0;ip<nv0+ne0+nq0;++ip){
       const dfm2::CVec3d p0( aXYZ_Quad[ip*3+0], aXYZ_Quad[ip*3+1], aXYZ_Quad[ip*3+2] );
       const dfm2::CVec3d n0( aNorm_Quad[ip*3+0], aNorm_Quad[ip*3+1], aNorm_Quad[ip*3+2] );
-      std::vector<dfm2::CPtElm2<double>> aPES = IntersectionLine_MeshTri3(p0, n0,
-                                                                                 aTri, aXYZ,
-                                                                                 1.0e-3);
+      std::vector<dfm2::CPtElm2<double>> aPES = IntersectionLine_MeshTri3(
+          p0, n0,
+          aTri, aXYZ,
+          1.0e-3);
       std::map<double, dfm2::CPtElm2<double>> mapPES;
-      for(unsigned int ipes=0;ipes<aPES.size();++ipes){
-        dfm2::CVec3d q0 = aPES[ipes].Pos_Tri(aXYZ, aTri);
+      for(auto & pes : aPES){
+        dfm2::CVec3d q0 = pes.Pos_Tri(aXYZ, aTri);
         double h = (q0-p0)*n0;
-        mapPES.insert( std::make_pair(-h,aPES[ipes]) );
+        mapPES.insert( std::make_pair(-h, pes) );
       }
       if( !aPES.empty() ){
         dfm2::CPtElm2<double>& pes0 = mapPES.begin()->second;
