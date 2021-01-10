@@ -1193,7 +1193,8 @@ DFM2_INLINE void delfem2::WriteVTK_MapTriScalar(
     const std::vector<int>& map,
     const std::vector<int>& aTri,
     const std::vector<double>& aVal,
-    int nStrideVal, int nOffset)
+    int nStrideVal,
+    int nOffset)
 {
   std::ofstream fout(fpath.c_str());
   fout << "# vtk DataFile Version 2.0" << std::endl;
@@ -1202,7 +1203,7 @@ DFM2_INLINE void delfem2::WriteVTK_MapTriScalar(
   fout << "DATASET UNSTRUCTURED_GRID" << std::endl;
   const size_t np = map.size();
   fout << "POINTS " << np << " float" << std::endl;
-  for(int jp=0;jp<np;++jp){
+  for(unsigned int jp=0;jp<np;++jp){
     int ip = map[jp];
     fout << aXYZ[ip*3+0] << " " << aXYZ[ip*3+1] << " " << aXYZ[ip*3+2] << std::endl;
   }
@@ -1220,7 +1221,7 @@ DFM2_INLINE void delfem2::WriteVTK_MapTriScalar(
   fout << "POINT_DATA " << np << std::endl;
   fout << "SCALARS point_scalars float 1" << std::endl;
   fout << "LOOKUP_TABLE default" << std::endl;
-  for(int jp=0;jp<np;++jp){
+  for(unsigned int jp=0;jp<np;++jp){
     int ip = map[jp];
     fout << aVal[ip*nStrideVal+nOffset] << std::endl;
   }

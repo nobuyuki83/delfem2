@@ -46,8 +46,8 @@ DFM2_INLINE void SubdivTopo_MeshHex(
     std::vector<unsigned int> &psupHex0,
     std::vector<unsigned int> &aQuadHex0,
     const unsigned int *aHex0,
-    int nHex0,
-    int nhp0);
+    size_t nHex0,
+    size_t nhp0);
 
 DFM2_INLINE void SubdivTopo_MeshTet(
     std::vector<unsigned int> &aTet1,

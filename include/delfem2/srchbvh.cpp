@@ -178,12 +178,12 @@ DFM2_INLINE void DevideElemAryConnex
 }
 
 DFM2_INLINE int delta(
-	int i, 
-	int j, 
+	int i,
+	int j,
 	const unsigned int* sorted_morton_code, 
 	size_t length)
 {
-  if (j<0 || j >= length){
+  if (j<0 || j >= (int)length){
     return -1;
   }
   else{

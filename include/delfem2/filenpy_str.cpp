@@ -84,11 +84,11 @@ DFM2_INLINE delfem2::ReadDictionary_Python(
   int icolon = -1;
   bool is_parentheses = false;
   std::string skey;
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     if( buff[i] == ':' ){
       char str[256];
 //      strncpy(str, pbuff+iend,i-iend);
-      for(int j=0;j<i-iend;++j){ str[j] = pbuff[iend+j]; }
+      for(unsigned int j=0;j<i-iend;++j){ str[j] = pbuff[iend+j]; }
       str[i-iend] = '\0';
       //      std::cout << "key:" << str << "#" << std::endl;
       skey = std::string(str);
@@ -100,7 +100,7 @@ DFM2_INLINE delfem2::ReadDictionary_Python(
       if( is_parentheses ){ continue; }
       char str[256];
 //      strncpy(str, pbuff+icolon+1,i-icolon-1);
-      for(int j=0;j<i-icolon-1;++j){ str[j] = pbuff[icolon+1+j]; }
+      for(unsigned int j=0;j<i-icolon-1;++j){ str[j] = pbuff[icolon+1+j]; }
       str[i-icolon-1] = '\0';
       //      std::cout << "val:" << str << "#" << std::endl;
       std::string svalue(str);

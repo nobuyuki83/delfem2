@@ -282,7 +282,7 @@ delfem2::ReadDictionary_Json(const std::string& strIn)
   int ipos_begin = 1;
   int ipos_middle = -1;
   int ipos_end = -1;
-  for(int i=1;i<n;++i){
+  for(unsigned int i=1;i<n;++i){
     if( p[i]==':' && p[i-1]=='"' ){
       ipos_middle = i;
     }

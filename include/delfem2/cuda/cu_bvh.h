@@ -5,8 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/bv.h"
-#include "delfem2/bvh.h"
+#include "delfem2/srchbv3aabb.h"
+#include "delfem2/srchbv3sphere.h"
+#include "delfem2/srchbvh.h"
 
 namespace delfem2 {
 namespace cuda{

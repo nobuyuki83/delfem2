@@ -1,7 +1,7 @@
 echo "#######################"
 echo "# glut"
 
-cd examples_glut
+cd examples_oldgl_glut
 mkdir buildMake
 cd buildMake
 cmake ..
@@ -51,13 +51,12 @@ cmake .
 make
 cd ../..
 
-cd examples_glfwold
+cd examples_oldgl_glfw
 mkdir buildMake
 cd buildMake
 cmake ..
 make
 cd ../../
-
 
 
 git submodule update --init -- 3rd_party/imgui
@@ -68,15 +67,12 @@ cmake .
 make
 cd ../..
 
-cd examples_glfwnew
+cd examples_newgl_glfw
 mkdir buildMake
 cd buildMake
 cmake ..
 make
 cd ../../
-
-
-
 
 
 #######################

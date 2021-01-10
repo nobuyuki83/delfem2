@@ -5,18 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdio>
-#include <cstdlib>
+
 #include <vector>
 #include <random>
 #include <bitset>
 #include "gtest/gtest.h"
 #include "delfem2/points.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/primitive.h"
+#include "delfem2/mshprimitive.h"
 #include "delfem2/vec3.h"
-#include "delfem2/bv.h"
-#include "delfem2/bvh.h"
+#include "delfem2/srchbv3sphere.h"
+#include "delfem2/srchbvh.h"
 
 #include "delfem2/cuda/cu_matvec.h"
 #include "delfem2/cuda/cu_bvh.h"
