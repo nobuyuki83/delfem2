@@ -74,7 +74,7 @@ public:
     aEdge[ien].iv1 = iv1;
     for (unsigned int il = 0; il < aLoop.size(); ++il) {
       const size_t ne = aLoop[il].aIE.size();
-      int iie = 0;
+      unsigned int iie = 0;
       for (; iie < ne; ++iie) {
         if (aLoop[il].aIE[iie].first == (int) ieo) { break; }
       }

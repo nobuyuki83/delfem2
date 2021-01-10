@@ -332,14 +332,15 @@ void VoxSubdiv
 
 // -------------------------------------
 
-void delfem2::SubdivTopo_MeshHex
-(std::vector<unsigned int>& aHex1,
- std::vector<unsigned int> &psupIndHex0,
- std::vector<unsigned int> &psupHex0,
- std::vector<unsigned int>& aQuadHex0,
- //
- const unsigned int* aHex0, int nHex0,
- const int nhp0)
+void delfem2::SubdivTopo_MeshHex(
+    std::vector<unsigned int>& aHex1,
+    std::vector<unsigned int> &psupIndHex0,
+    std::vector<unsigned int> &psupHex0,
+    std::vector<unsigned int>& aQuadHex0,
+    //
+    const unsigned int* aHex0,
+    size_t nHex0,
+    const size_t nhp0)
 {
   //  int nhp0 = (int)aHexPoint0.size(); // hex point
   std::vector<unsigned int> elsupIndHex0, elsupHex0;
@@ -377,8 +378,8 @@ void delfem2::SubdivTopo_MeshHex
   JArray_ElSuP_MeshElem(elsupIndQuadHex0,elsupQuadHex0,
       aQuadHex0.data(),aQuadHex0.size()/4,4,nhp0);
   
-  const int neh0 = (int)psupHex0.size();
-  const int nfh0 = (int)aQuadHex0.size()/4;
+  const size_t neh0 = psupHex0.size();
+  const size_t nfh0 = aQuadHex0.size()/4;
 //  std::cout << nfh0 << " " << aQuadHex0.size() << std::endl;
 
   /*
@@ -400,7 +401,7 @@ void delfem2::SubdivTopo_MeshHex
   
   // making hex
   aHex1.clear();
-  for(int ih=0;ih<nHex0;++ih){
+  for(unsigned int ih=0;ih<nHex0;++ih){
     unsigned int ihc0 = aHex0[ih*8+0];
     unsigned int ihc1 = aHex0[ih*8+1];
     unsigned int ihc2 = aHex0[ih*8+2];
@@ -421,13 +422,13 @@ void delfem2::SubdivTopo_MeshHex
     const unsigned int ihc15 = findEdge(ihc1,ihc5, psupIndHex0,psupHex0)+nhp0; assert(ihc15>=nhp0&&ihc15<nhp0+neh0);
     const unsigned int ihc26 = findEdge(ihc2,ihc6, psupIndHex0,psupHex0)+nhp0; assert(ihc26>=nhp0&&ihc26<nhp0+neh0);
     const unsigned int ihc37 = findEdge(ihc3,ihc7, psupIndHex0,psupHex0)+nhp0; assert(ihc37>=nhp0&&ihc37<nhp0+neh0);
-    int ihc0473 = findFace(ihc0,ihc4,ihc7,ihc3, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc0473>=nhp0+neh0&&ihc0473<nhp0+neh0+nfh0);
-    int ihc1265 = findFace(ihc1,ihc2,ihc6,ihc5, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc1265>=nhp0+neh0&&ihc1265<nhp0+neh0+nfh0);
-    int ihc0154 = findFace(ihc0,ihc1,ihc5,ihc4, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc0154>=nhp0+neh0&&ihc0154<nhp0+neh0+nfh0);
-    int ihc3762 = findFace(ihc3,ihc7,ihc6,ihc2, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc3762>=nhp0+neh0&&ihc3762<nhp0+neh0+nfh0);
-    int ihc0321 = findFace(ihc0,ihc3,ihc2,ihc1, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc0321>=nhp0+neh0&&ihc0321<nhp0+neh0+nfh0);
-    int ihc4567 = findFace(ihc4,ihc5,ihc6,ihc7, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc4567>=nhp0+neh0&&ihc4567<nhp0+neh0+nfh0);
-    int ihc01234567 = ih + nhp0 + neh0 + nfh0;
+    unsigned int ihc0473 = findFace(ihc0,ihc4,ihc7,ihc3, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc0473>=nhp0+neh0&&ihc0473<nhp0+neh0+nfh0);
+    unsigned int ihc1265 = findFace(ihc1,ihc2,ihc6,ihc5, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc1265>=nhp0+neh0&&ihc1265<nhp0+neh0+nfh0);
+    unsigned int ihc0154 = findFace(ihc0,ihc1,ihc5,ihc4, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc0154>=nhp0+neh0&&ihc0154<nhp0+neh0+nfh0);
+    unsigned int ihc3762 = findFace(ihc3,ihc7,ihc6,ihc2, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc3762>=nhp0+neh0&&ihc3762<nhp0+neh0+nfh0);
+    unsigned int ihc0321 = findFace(ihc0,ihc3,ihc2,ihc1, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc0321>=nhp0+neh0&&ihc0321<nhp0+neh0+nfh0);
+    unsigned int ihc4567 = findFace(ihc4,ihc5,ihc6,ihc7, aQuadHex0,elsupIndQuadHex0,elsupQuadHex0)+nhp0+neh0; assert(ihc4567>=nhp0+neh0&&ihc4567<nhp0+neh0+nfh0);
+    unsigned int ihc01234567 = ih + nhp0 + neh0 + nfh0;
     //0
     aHex1.push_back(ihc0);
     aHex1.push_back(ihc01);

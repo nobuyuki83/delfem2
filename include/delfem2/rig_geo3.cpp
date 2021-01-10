@@ -544,7 +544,7 @@ delfem2::Read_BioVisionHierarchy(
     std::vector<std::string> aToken = rig_v3q::MySplit(line,' ');
 //    std::cout << aToken.size() << " " << aChannelRotTransBone.size() << std::endl;
     assert(aToken.size()==aChannelRotTransBone.size());
-    for(int ich=0;ich<nchannel;++ich){
+    for(unsigned int ich=0;ich<nchannel;++ich){
       aValueRotTransBone[iframe*nchannel+ich] = rig_v3q::myStod(aToken[ich]);
     }
   }
@@ -585,7 +585,7 @@ DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy(
     bone.quatRelativeRot[3] = 0.0;
   }
   const size_t nch = aChannelRotTransBone.size();
-  for(int ich=0;ich<nch;++ich){
+  for(unsigned int ich=0;ich<nch;++ich){
     const int ibone = aChannelRotTransBone[ich].ibone;
     const int iaxis = aChannelRotTransBone[ich].iaxis;
     const bool isrot = aChannelRotTransBone[ich].isrot;
