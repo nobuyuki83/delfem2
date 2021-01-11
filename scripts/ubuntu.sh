@@ -63,8 +63,6 @@ git submodule update --init -- 3rd_party/imgui
 cd 3rd_party/imgui
 git checkout master
 git pull origin master
-cmake .
-make
 cd ../..
 
 cd examples_newgl_glfw

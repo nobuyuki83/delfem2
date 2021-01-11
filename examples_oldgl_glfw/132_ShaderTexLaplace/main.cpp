@@ -23,8 +23,8 @@ namespace dfm2 = delfem2;
 
 // -----------------------------
 
-std::string LoadFile
-(const std::string& fname)
+std::string LoadFile(
+    const std::string& fname)
 {
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
