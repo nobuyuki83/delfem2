@@ -45,7 +45,7 @@ void dfm2::cuda::cuda_VecScale(
   thrust::device_vector<float> dOut(n);
   {
     const unsigned int tpb = 64;
-    const unsigned int nblk = (unsigned int) ((n - 1) / tpb + 1);
+    const auto nblk = (unsigned int) ((n - 1) / tpb + 1);
     kernel_VecScale <<< nblk, tpb >>> (
         thrust::raw_pointer_cast(dOut.data()),
         thrust::raw_pointer_cast(dIn.data()),
@@ -65,12 +65,12 @@ void kernel_Dot_TPB64(
     float* d_res,
     const float* d_A,
     const float* d_B,
-    int n)
+    unsigned int n)
 {
-  const int idx = blockDim.x * blockIdx.x + threadIdx.x;
+  const unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
   if( idx >= n ){ return; }
 
-  const int s_idx = threadIdx.x;
+  const unsigned int s_idx = threadIdx.x;
 
   const unsigned int TPB = 64;
   __shared__ float s_prod[TPB];

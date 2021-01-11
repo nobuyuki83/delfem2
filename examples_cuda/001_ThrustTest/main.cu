@@ -1,11 +1,10 @@
-#include "cuda_runtime.h"
 #include "thrust/host_vector.h"
 #include "thrust/device_vector.h"
 
 
 __global__ void kernel(int *out, int *in, const int n)
 {
-  int i = threadIdx.x;
+  unsigned int i = threadIdx.x;
   if (i < n) {
     out[i] = in[i] * 2;
   }
