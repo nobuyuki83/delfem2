@@ -66,5 +66,6 @@ test_inputs/smpl_model_m.npz
 examples_oldgl_glfw_cnpy/14_ClothPoseTexture/body.obj
 examples_oldgl_glfw_cnpy/14_ClothPoseTexture/cloth.obj
 examples_oldgl_glfw/dfm2_static_glfwold/libdfm2_static_glfwold.a*
-
-examples_cuda/005_GrayscaleImage/lenna_gray.png
+examples_cuda/005_ImageGrayscaleSobel/lenna_gray.png
+examples_cuda/005_ImageGrayscaleSobel/lenna_dx.png
+examples_cuda/005_ImageGrayscaleSobel/lenna_dy.png
