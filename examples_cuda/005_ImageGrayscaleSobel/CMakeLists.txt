@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(005_GrayscaleImage)
+project(005_ImageGrayscaleSobel)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 add_definitions(-DPATH_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
