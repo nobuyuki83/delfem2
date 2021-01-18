@@ -2,6 +2,33 @@
 namespace delfem2 {
 
 template<typename T>
+class ViewTensor3 {
+public:
+  ViewTensor3(
+      T *ptr_,
+      unsigned int n0_, unsigned int n1_, unsigned int n2_)
+      : ptr(ptr_), s0(n1_ * n2_), s1(n2_) {}
+
+  T &operator()(
+      unsigned int i0, unsigned int i1, unsigned int i2) {
+    return ptr[i0 * s0 + i1 * s1 + i2];
+  }
+
+  const T &operator()(
+      unsigned int i0, unsigned int i1, unsigned int i2) const {
+    return ptr[i0 * s0 + i1 * s1 + i2];
+  }
+
+  const T *data(unsigned int i0, unsigned int i1) const {
+    return ptr + i0 * s0 + i1 * s1;
+  }
+
+public:
+  T *const ptr;
+  const unsigned int s0 = 0, s1 = 0;
+};
+
+template<typename T>
 class ViewTensor4 {
 public:
   ViewTensor4(
