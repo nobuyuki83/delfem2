@@ -58,7 +58,9 @@ DFM2_INLINE bool isPickQuad(
 CVec3d operator* (const CVec3d& v, const CMat3d& m);
 CVec3d operator* (const CMat3d& m, const CVec3d& v);
 
-CVec3d MatVec(const CMat3d& m, const CVec3d& vec0);
+template <typename T>
+CVec3<T> MatVec(const CMat3<T>& m, const CVec3<T>& vec0);
+
 CVec3d MatVecTrans(const CMat3d& m, const CVec3d& vec0);
 
 void SetProjection(CMat3d& m, const CVec3d& vec0);
