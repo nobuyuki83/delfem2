@@ -441,9 +441,10 @@ template void delfem2::Mat3_Quat(double r[], const double q[]);
 #endif
 
 template <typename T>
-void delfem2::MatMat3
-(T* C,
- const T* A, const T* B)
+void delfem2::MatMat3(
+    T* C,
+    const T* A,
+    const T* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
@@ -968,8 +969,9 @@ template void delfem2::CMat3<double>::MatVecTrans(const double vec0[], double ve
 template <typename T>
 delfem2::CMat3<T> delfem2::CMat3<T>::MatMat(const CMat3<T>& mat0) const{
   CMat3 m;
-  ::delfem2::MatMat3(m.mat,
-                  this->mat, mat0.mat);
+  ::delfem2::MatMat3(
+      m.mat,
+      this->mat, mat0.mat);
   return m;
 }
 #ifndef DFM2_HEADER_ONLY

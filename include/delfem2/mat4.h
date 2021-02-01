@@ -63,6 +63,30 @@ void Transpose_Mat4(
   }
 }
 
+template <typename T>
+void Mat4_AffineTrans_RotTransl(
+    T A[16],
+    const T R[9],
+    const T t[3])
+{
+  A[0*4+0] = R[0*3+0];
+  A[0*4+1] = R[1*3+0];
+  A[0*4+2] = R[2*3+0];
+  A[0*4+3] = 0;
+  A[1*4+0] = R[0*3+1];
+  A[1*4+1] = R[1*3+1];
+  A[1*4+2] = R[2*3+1];
+  A[1*4+3] = 0;
+  A[2*4+0] = R[0*3+2];
+  A[2*4+1] = R[1*3+2];
+  A[2*4+2] = R[2*3+2];
+  A[2*4+3] = 0;
+  A[3*4+0] = t[0];
+  A[3*4+1] = t[1];
+  A[3*4+2] = t[2];
+  A[3*4+3] = 1;
+}
+
 template <typename REAL>
 DFM2_INLINE void Inverse_Mat4(
   REAL minv[16],

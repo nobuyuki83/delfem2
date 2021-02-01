@@ -69,6 +69,7 @@ int delfem2::opengl::SetTexture_RGB
   GLuint m_texName = 0;
   glGenTextures(1 , &m_texName);
   glBindTexture(GL_TEXTURE_2D , m_texName);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glTexImage2D(GL_TEXTURE_2D , 0 , GL_RGB , w, h,
                0 , GL_RGB , GL_UNSIGNED_BYTE , image.data() );
   
@@ -87,11 +88,13 @@ GLuint delfem2::opengl::LoadTexture
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   if( bpp == 3 ){
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexImage2D(GL_TEXTURE_2D,
                  0, GL_RGBA, (GLsizei)width, (GLsizei)height,
                  0, GL_RGB, GL_UNSIGNED_BYTE, image);
   }
   if( bpp == 4 ){
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     glTexImage2D(GL_TEXTURE_2D,
                  0, GL_RGBA, (GLsizei)width, (GLsizei)height,
                  0, GL_RGBA, GL_UNSIGNED_BYTE, image);

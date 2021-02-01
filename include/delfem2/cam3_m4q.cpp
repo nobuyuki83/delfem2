@@ -16,7 +16,7 @@
 #endif
 
 // =================================================
-// implementation of CCamera class starts here
+// implementation of CCvCamera class starts here
 
 template <typename REAL>
 void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransProjection(
@@ -185,7 +185,7 @@ std::istream &operator>>(std::istream &input, delfem2::CCam3_OnAxisZplusLookOrig
   {
     int imode;
     input >> imode;
-    c.camera_rot_mode = imode;//(delfem2::CCamera<REAL>::CAMERA_ROT_MODE)imode;
+    c.camera_rot_mode = imode;//(delfem2::CCvCamera<REAL>::CAMERA_ROT_MODE)imode;
   }
   input >> c.theta >> c.psi;
   input >> c.Quat_tball[0] >> c.Quat_tball[1] >> c.Quat_tball[2] >> c.Quat_tball[3];

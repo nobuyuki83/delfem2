@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// DONE(2020/12/11): rename the class "CCam3_OnAxisZplus" from CCamera
+// DONE(2020/12/11): rename the class "CCam3_OnAxisZplus" from CCvCamera
 // DONE(2020/12/--): rename this file "cam3_m4q.h"
 // DONE(2020/11/29): make this file dependent on mat4.h and quat.h
 
