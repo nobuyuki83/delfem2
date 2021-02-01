@@ -145,7 +145,8 @@ public:
     return d;
   }
 	void SetVector(double vx, double vy, double vz){ p[0] = vx; p[1] = vy; p[2] = vz; }
-  void CopyTo(double* v) const { v[0]=p[0]; v[1]=p[1]; v[2]=p[2]; }
+	template <typename T1>
+  void CopyTo(T1* v) const { v[0]=p[0]; v[1]=p[1]; v[2]=p[2]; }
   void CopyToScale(double* v, double s) const { v[0]=p[0]*s; v[1]=p[1]*s; v[2]=p[2]*s; }
   void AddToScale(double* v, double s) const { v[0]+=p[0]*s; v[1]+=p[1]*s; v[2]+=p[2]*s; }
 

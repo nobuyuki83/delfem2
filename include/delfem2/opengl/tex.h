@@ -5,6 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * - this code should be compilable for both modern and legacy OpenGL.
+ * - This code should not have any dependencies.
+ */
+
 #ifndef DFM2_TEX_GL_H
 #define DFM2_TEX_GL_H
 

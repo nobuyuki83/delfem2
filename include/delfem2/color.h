@@ -25,9 +25,9 @@
 
 namespace delfem2{
 
-DFM2_INLINE void GetRGB_HSV
- (float&r, float& g, float& b,
-  float h, float s, float v);
+DFM2_INLINE void GetRGB_HSV(
+    float&r, float& g, float& b,
+    float h, float s, float v);
 
 
 DFM2_INLINE void heatmap(double input, double* color);
