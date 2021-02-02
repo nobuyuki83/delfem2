@@ -33,9 +33,8 @@ bool ReadCamera(
   return true;
 }
 
-
-void SetCamMat(
-    float K[9],
+void SetCameraInteriorMat(
+    float *K,
     unsigned int width,
     unsigned int height,
     float sensor_width,
