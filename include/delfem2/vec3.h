@@ -196,9 +196,9 @@ public:
   }  
 	inline CVec3 operator+(){ return *this; }
 	inline CVec3 operator-(){ return CVec3(-p[0],-p[1],-p[2]); }
-  inline double x() const { return p[0]; }
-  inline double y() const { return p[1]; }
-  inline double z() const { return p[2]; }
+  inline T x() const { return p[0]; }
+  inline T y() const { return p[1]; }
+  inline T z() const { return p[2]; }
 
   CVec3 Normalize() const {
     CVec3 r = (*this);

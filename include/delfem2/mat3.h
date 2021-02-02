@@ -159,10 +159,11 @@ DFM2_INLINE void GetRotPolarDecomp(
 // ------------------------------------------------
 // below: mat3 and vec3
 
+template <typename T>
 DFM2_INLINE void MatTVec3(
-    double y[3],
-    const double m[9],
-    const double x[3]);
+    T y[3],
+    const T m[9],
+    const T x[3]);
 
 /**
  * @func {y} = beta*{y} + alpha*[M]^T{x}

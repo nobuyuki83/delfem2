@@ -20,7 +20,7 @@
 #include "mat4.h"
 #include "quat.h"
 #include "delfem2/dfm2_inline.h"
-#include <stdio.h>
+#include <cstdio>
 
 namespace delfem2 {
 
@@ -61,7 +61,8 @@ CVec3d operator* (const CMat3d& m, const CVec3d& v);
 template <typename T>
 CVec3<T> MatVec(const CMat3<T>& m, const CVec3<T>& vec0);
 
-CVec3d MatVecTrans(const CMat3d& m, const CVec3d& vec0);
+template <typename T>
+CVec3<T> MatVecTrans(const CMat3<T>& m, const CVec3<T>& vec0);
 
 void SetProjection(CMat3d& m, const CVec3d& vec0);
 

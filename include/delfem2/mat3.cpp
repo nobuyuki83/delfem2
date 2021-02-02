@@ -343,15 +343,21 @@ DFM2_INLINE void delfem2::VecMat3
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
 
-DFM2_INLINE void delfem2::MatTVec3
- (double y[3],
-  const double m[9], const double x[3])
+
+template <typename T>
+DFM2_INLINE void delfem2::MatTVec3(
+    T y[3],
+    const T m[9],
+    const T x[3])
 {
   y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
   y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
-
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatTVec3(float y[3], const float m[9], const float x[3]);
+template void delfem2::MatTVec3(double y[3], const double m[9], const double x[3]);
+#endif
 
 template <typename T>
 void delfem2::MatTVec3_ScaleAdd(
@@ -961,8 +967,8 @@ void delfem2::CMat3<T>::MatVecTrans(const T vec0[], T vec1[]) const
   vec1[2] = mat[2]*vec0[0] + mat[5]*vec0[1] + mat[8]*vec0[2];
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CMat3<float>::MatVecTrans(const float vec0[], float vec1[]) const;
-template void delfem2::CMat3<double>::MatVecTrans(const double vec0[], double vec1[]) const;
+template void delfem2::CMat3f::MatVecTrans(const float vec0[], float vec1[]) const;
+template void delfem2::CMat3d::MatVecTrans(const double vec0[], double vec1[]) const;
 #endif
 
 
