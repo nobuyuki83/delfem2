@@ -1,4 +1,7 @@
 
+#ifndef DFM2_VIEWTENSOR_H
+#define DFM2_VIEWTENSOR_H
+
 namespace delfem2 {
 
 template<typename T>
@@ -119,3 +122,6 @@ public:
 };
 
 }
+
+
+#endif

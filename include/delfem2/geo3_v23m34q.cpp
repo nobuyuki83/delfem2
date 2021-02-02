@@ -67,13 +67,19 @@ template delfem2::CVec3d delfem2::MatVec(const CMat3d& m, const CVec3d& vec0);
 template delfem2::CVec3f delfem2::MatVec(const CMat3f& m, const CVec3f& vec0);
 #endif
 
-DFM2_INLINE delfem2::CVec3d delfem2::MatVecTrans
- (const CMat3d& m, const CVec3d& vec0)
+template <typename T>
+DFM2_INLINE delfem2::CVec3<T> delfem2::MatVecTrans(
+    const CMat3<T>& m,
+    const CVec3<T>& vec0)
 {
-  CVec3d vec1;
+  CVec3<T> vec1;
   MatTVec3(vec1.p, m.mat,vec0.p);
   return vec1;
 }
+#if !defined(DFM2_HEADER_ONLY)
+template delfem2::CVec3d delfem2::MatVecTrans(const CMat3d&, const CVec3d&);
+template delfem2::CVec3f delfem2::MatVecTrans(const CMat3f&, const CVec3f&);
+#endif
 
 // ---------------------------------------------------------------------
 
