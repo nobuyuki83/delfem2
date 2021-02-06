@@ -236,8 +236,12 @@ template void delfem2::Add3(double vo[3], const double vi[3]);
 
 // ---------------------------------
 
-template <typename T>
-void delfem2::Cross3(T r[3], const T v1[3], const T v2[3]){
+template <typename T0, typename T1, typename T2>
+void delfem2::Cross3(
+    T0 r[3],
+    const T1 v1[3],
+    const T2 v2[3])
+{
   r[0] = v1[1]*v2[2] - v2[1]*v1[2];
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];

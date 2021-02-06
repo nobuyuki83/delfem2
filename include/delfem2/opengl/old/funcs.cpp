@@ -19,9 +19,8 @@
   #include <GL/gl.h>
 #endif
 
-#include <cstdlib>
 #include <cassert>
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <climits>
 

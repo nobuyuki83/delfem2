@@ -60,9 +60,11 @@ DFM2_INLINE void Add3(
 // ------------------------------------------------
 // below: functions specific to 3 dimension
   
-template <typename T>
-void Cross3(T r[3],
-    const T v1[3], const T v2[3]);
+template <typename T0, typename T1, typename T2>
+void Cross3(
+    T0 r[3],
+    const T1 v1[3],
+    const T2 v2[3]);
 
 template <typename T>
 T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
