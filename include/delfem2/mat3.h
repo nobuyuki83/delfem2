@@ -33,37 +33,45 @@ namespace delfem2 {
  * @param mat pointer of 3x3 matrix
  * @param v ponter of 3 vector
  */
-template <typename REAL>
+template<typename REAL>
 void Mat3_Spin(
-    REAL* mat,
-    const REAL* v);
+    REAL *mat,
+    const REAL *v);
 
-template <typename REAL>
+template<typename REAL>
 void Mat3_Spin_ScaleAdd(
-    REAL* mat,
-    const REAL* v,
+    REAL *mat,
+    const REAL *v,
     REAL alpha, REAL beta);
 
 
-template <typename REAL>
+template<typename REAL>
 void Mat3_Identity(
-    REAL* mat,
+    REAL *mat,
     REAL alpha);
 
-template <typename REAL>
+template<typename REAL>
 DFM2_INLINE void Mat3_Identity_ScaleAdd(
-    REAL* mat,
-    REAL alpha=1, REAL beta=0);
+    REAL *mat,
+    REAL alpha = 1, REAL beta = 0);
 
-template <typename T>
+template<typename T>
 DFM2_INLINE void Mat3_AffineRotation(
-    T* mat,
+    T *mat,
     T theta);
 
-template <typename T>
+template<typename T>
 void Mat3_AffineTranslation(
-    T* mat,
+    T *mat,
     const T transl[2]);
+
+template<typename T0, typename T1>
+void Copy_Mat3(
+    T0 m0[9],
+    const T1 m1[9])
+{
+  for(int i=0;i<9;++i){ m0[i] = m1[i]; }
+}
 
 // ------------
 
@@ -72,37 +80,38 @@ void Transpose_Mat3(
     T At[],
     const T A[]);
 
-template <typename REAL>
+template <typename T0, typename T1>
 void Inverse_Mat3(
-    REAL Ainv[],
-    const REAL A[]);
+    T0 Ainv[],
+    const T1 A[]);
 
 template <typename REAL>
 void Inverse_Mat3(
     REAL Ainv[9]);
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void MatMat3(
-    T* UL,
-    const T* U,
-    const T* L);
-  
-template <typename T>
+    T0* UL,
+    const T1* U,
+    const T2* L);
+
+
+template <typename T0, typename T1, typename T2>
 void MatMatT3(
-    T* ULUt,
-    const T* UL,
-    const T* U);
+    T0* ULUt,
+    const T1* UL,
+    const T2* U);
   
 /**
  * @func product of a transposed 3x3 matrix and another 3x3 matrix.
  * [C] = [A]^T[B}
  * @details row major data structure
  */
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void MatTMat3(
-    T* C,
-    const T* A,
-    const T* B);
+    T0* C,
+    const T1* A,
+    const T2* B);
 
 /**
  * @func adding scaled product of a transposed 3x3 matrix and another 3x3 matrix.
@@ -159,31 +168,31 @@ DFM2_INLINE void GetRotPolarDecomp(
 // ------------------------------------------------
 // below: mat3 and vec3
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 DFM2_INLINE void MatTVec3(
-    T y[3],
-    const T m[9],
-    const T x[3]);
+    T0 y[3],
+    const T1 m[9],
+    const T2 x[3]);
 
 /**
  * @func {y} = beta*{y} + alpha*[M]^T{x}
  */
-template <typename T>
+template <typename T0, typename T1, typename T2, typename T3, typename T4>
 void MatTVec3_ScaleAdd(
-    T y[3],
-    const T m[9],
-    const T x[3],
-    T alpha,
-    T beta);
+    T0 y[3],
+    const T1 m[9],
+    const T2 x[3],
+    T3 alpha,
+    T4 beta);
 
 /**
  * @func matrix vector product for 3x3 matrix {y} := [m]{x}
  */
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void MatVec3(
-    T y[3],
-    const T m[9],
-    const T x[3]);
+    T0 y[3],
+    const T1 m[9],
+    const T2 x[3]);
 
 template <typename T>
 void MatVec3_ScaleAdd(

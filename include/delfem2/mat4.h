@@ -50,6 +50,29 @@ void Copy_Mat4(
   for(int i=0;i<16;++i){ M0[i] = static_cast<T0>(M1[i]); }
 }
 
+template <typename T0, typename T1>
+void Mat4_Mat3(
+    T0 B[16],
+    T1 K[9])
+{
+  B[0] = K[0];
+  B[1] = K[1];
+  B[2] = K[2];
+  B[3] = 0;
+  B[4] = K[3];
+  B[5] = K[4];
+  B[6] = K[5];
+  B[7] = 0;
+  B[8] = K[6];
+  B[9] = K[7];
+  B[10] = K[8];
+  B[11] = 0;
+  B[12] = 0;
+  B[13] = 0;
+  B[14] = 0;
+  B[15] = 1;
+}
+
 
 template <typename REAL>
 void Transpose_Mat4(

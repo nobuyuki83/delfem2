@@ -102,15 +102,15 @@ template void delfem2::Transpose_Mat3(double t[], const double a[]);
 
 // --------------------------------------
 
-template <typename REAL>
+template <typename T0, typename T1>
 void delfem2::Inverse_Mat3(
-    REAL Ainv[9],
-    const REAL A[9])
+    T0 Ainv[9],
+    const T1 A[9])
 {
-  const REAL det =
+  const T0 det =
   + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
   - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
-  const REAL inv_det = 1.0/det;
+  const T0 inv_det = 1.0/det;
   Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
   Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
   Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
@@ -298,10 +298,11 @@ template void delfem2::Mat3_AffineTranslation(double*, const double [2]);
 // --------------------------------------------------------
 
 
-template <typename T>
-void delfem2::MatVec3
-(T y[3],
- const T m[9], const T x[3])
+template <typename T0, typename T1, typename T2>
+void delfem2::MatVec3(
+    T0 y[3],
+    const T1 m[9],
+    const T2 x[3])
 {
   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
@@ -344,11 +345,11 @@ DFM2_INLINE void delfem2::VecMat3
 }
 
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 DFM2_INLINE void delfem2::MatTVec3(
-    T y[3],
-    const T m[9],
-    const T x[3])
+    T0 y[3],
+    const T1 m[9],
+    const T2 x[3])
 {
   y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
   y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
@@ -359,11 +360,11 @@ template void delfem2::MatTVec3(float y[3], const float m[9], const float x[3]);
 template void delfem2::MatTVec3(double y[3], const double m[9], const double x[3]);
 #endif
 
-template <typename T>
+template <typename T0, typename T1, typename T2, typename T3, typename T4>
 void delfem2::MatTVec3_ScaleAdd(
-    T y[3],
-    const T m[9], const T x[3],
-    T alpha, T beta)
+    T0 y[3],
+    const T1 m[9], const T2 x[3],
+    T3 alpha, T4 beta)
 {
   y[0] = beta*y[0] + alpha*(m[0]*x[0] + m[3]*x[1] + m[6]*x[2]);
   y[1] = beta*y[1] + alpha*(m[1]*x[0] + m[4]*x[1] + m[7]*x[2]);
@@ -446,11 +447,11 @@ template void delfem2::Mat3_Quat(float r[], const float q[]);
 template void delfem2::Mat3_Quat(double r[], const double q[]);
 #endif
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void delfem2::MatMat3(
-    T* C,
-    const T* A,
-    const T* B)
+    T0* C,
+    const T1* A,
+    const T2* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
@@ -465,11 +466,11 @@ template void delfem2::MatMat3(double* C, const double* A, const double* B);
 
 // ---------------------------------------
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void delfem2::MatMatT3(
-    T* C,
-    const T* A,
-    const T* B)
+    T0* C,
+    const T1* A,
+    const T2* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
@@ -484,10 +485,10 @@ template void delfem2::MatMatT3(double* C, const double* A, const double* B);
 
 // ---------------------------------------
 
-template <typename T>
+template <typename T0, typename T1, typename T2>
 void delfem2::MatTMat3(
-    T* C,
-    const T* A, const T* B)
+    T0* C,
+    const T1* A, const T2* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
