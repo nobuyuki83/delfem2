@@ -1,8 +1,8 @@
-
+#ifndef DFM2_CUDA_VIEWTENSOR_H
+#define DFM2_CUDA_VIEWTENSOR_H
 
 namespace delfem2 {
 namespace cuda {
-
 
 template<typename T>
 class ViewTensor3 {
@@ -175,3 +175,5 @@ public:
 
 }
 }
+
+#endif

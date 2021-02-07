@@ -52,16 +52,18 @@ void WriteImage(
     float scale,
     int ny,
     int nx,
-    const std::string &path) {
-  std::vector<char> aImg(nx * ny);
+    const std::string &path)
+{
+  assert( aDisp.size() == ny*nx );
+  std::vector<unsigned char> aImg(nx * ny);
   for (int iy = 0; iy < ny; ++iy) {
     for (int ix = 0; ix < nx; ++ix) {
-      aImg[iy * nx + ix] = aDisp[iy * nx + ix] * scale;
+      aImg[iy * nx + ix] = char(aDisp[iy * nx + ix] * scale);
     }
-  }
+  }  
   stbi_write_png(
       path.c_str(),
-      nx, ny, 1, aImg.data(), sizeof(char) * 0);
+      nx, ny, 1, aImg.data(), sizeof(unsigned char) * 0);
 }
 
 
