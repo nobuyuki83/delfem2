@@ -1,44 +1,42 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 #if defined(_MSC_VER)
-  #include <windows.h>
+#  include <windows.h>
 #endif
 
-#include <glad/glad.h>
+#ifdef EMSCRIPTEN
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
+#else
+#  include <glad/glad.h> // emscripten and glad didn't work together
+#endif
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/opengl/new/funcs.h"
 #include <GLFW/glfw3.h>
 
-#ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
-#endif
-
-//#include "delfem2/opengl/glnew_funcs.h"
-//#include "delfem2/opengl/glfw/glfw_cam.h"
 
 namespace dfm2 = delfem2;
 
 static void callback_error(int error, const char* description)
 {
-    fputs(description, stderr);
+  fputs(description, stderr);
 }
 
-static GLFWwindow* myGLFW_OpenWindow
-        (const unsigned int SCR_WIDTH,
-         const unsigned int SCR_HEIGHT)
+static GLFWwindow* myGLFW_OpenWindow(
+    const unsigned int SCR_WIDTH,
+    const unsigned int SCR_HEIGHT)
 {
-    glfwSetErrorCallback(callback_error);
-    if (!glfwInit()){
-        exit(EXIT_FAILURE);
-    }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwSetErrorCallback(callback_error);
+  if (!glfwInit()){
+    exit(EXIT_FAILURE);
+  }
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
 /*
     // Decide GL+GLSL versions
@@ -60,18 +58,14 @@ static GLFWwindow* myGLFW_OpenWindow
 */
 // glfw window creation
 // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH,
-                                          SCR_HEIGHT,
-                                          "LearnOpenGL",
-                                          NULL,
-                                          NULL);
-    if (window == NULL)
-    {
+  GLFWwindow* window = glfwCreateWindow( SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+  if (window == NULL)
+  {
 //    std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return 0;
-    }
-    return window;
+    glfwTerminate();
+    return 0;
+  }
+  return window;
 }
 
 
@@ -88,15 +82,15 @@ void draw(GLFWwindow* window)
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
   glViewport(0, 0, width, height);
-  
+
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT);
-  
+
   glUseProgram(shaderProgram);
   glBindVertexArray(VAO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-  
+
   glfwSwapBuffers(window);
   glfwPollEvents();
 }
@@ -122,25 +116,27 @@ int main()
   glfwSetFramebufferSizeCallback(window, callback_resize);
   glfwMakeContextCurrent(window);
   glfwSetKeyCallback(window, callback_key);
-  
+
   // glad: load all OpenGL function pointers
   // ---------------------------------------
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
+#ifndef EMSCRIPTEN
+  // emscripten and glad didn't work well together
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
+#endif
 
   {
     float vertices[] = {
-      0.5f,  0.5f, 0.0f,  // top right
-      0.5f, -0.5f, 0.0f,  // bottom right
-      -0.5f, -0.5f, 0.0f,  // bottom left
-      -0.5f,  0.5f, 0.0f   // top left
+        0.5f,  0.5f, 0.0f,  // top right
+        0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left
     };
     unsigned int indices[] = {  // note that we start from 0!
-      0, 1, 3,  // first Triangle
-      1, 2, 3   // second Triangle
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
     };
     dfm2::opengl::GL4_VAO_Pos(VAO, VBO_Tri,
                               vertices,4,3);
@@ -154,18 +150,18 @@ int main()
 
   {
     const std::string glslvrt_simplest =
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-    
+        "layout (location = 0) in vec3 aPos;\n"
+        "void main()\n"
+        "{\n"
+        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "}\0";
+
     const std::string glslfrg_simplest =
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "  FragColor = vec4(1.0f, 0.5f, 0.5f, 1.0f);\n"
-    "}\n\0";
+        "out vec4 FragColor;\n"
+        "void main()\n"
+        "{\n"
+        "  FragColor = vec4(1.0f, 0.5f, 0.5f, 1.0f);\n"
+        "}\n\0";
 #ifdef EMSCRIPTEN
     shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 300 es\n")+
                                                       glslvrt_simplest).c_str(),
@@ -177,17 +173,13 @@ int main()
                                                      ("#version 330 core\n"+glslfrg_simplest).c_str());
 #endif
   }
-  
-  
-  
-  
+
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 60, 1);
 #else
   while (!glfwWindowShouldClose(window)) { draw(window); }
 #endif
-  
-  
+
   glfwDestroyWindow(window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
