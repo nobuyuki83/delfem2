@@ -7,7 +7,6 @@
 
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/imgio.h"
@@ -16,7 +15,7 @@
 #include <vector>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "delfem2/../../3rd_party/stb_image.h"
+#include "stb/stb_image.h"
 
 namespace dfm2 = delfem2;
 
