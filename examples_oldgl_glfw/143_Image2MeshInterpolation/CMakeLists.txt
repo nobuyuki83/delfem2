@@ -19,6 +19,8 @@ ENDIF()
 
 project(143_Image2MeshInterpolation)
 
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+
 # glfw
 IF(MSVC)
   set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
@@ -35,14 +37,13 @@ find_package(OpenGL REQUIRED)
 add_definitions(-DDFM2_HEADER_ONLY=ON)
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
-
 ##############################################
 
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
+  ../../3rd_party
 )
 
 add_executable(${PROJECT_NAME}

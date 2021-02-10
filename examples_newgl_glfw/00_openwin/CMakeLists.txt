@@ -20,10 +20,10 @@ ENDIF()
 
 project(00_openwin)
 
-set(3RD_PARTY           "../../3rd_party")
+##########################################
 
 # glfw
-set(GLFW_DIR "${3RD_PARTY}/glfw")
+set(GLFW_DIR "../../3rd_party/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE) # get absolute path
 
 # opengl
@@ -35,6 +35,7 @@ include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_DIR}/include
   ${DELFEM2_INCLUDE_DIR}
+  #/Users/nobuyuki/emsdk/fastcomp/emscripten/system/include/compat
 )
 
 add_executable(${PROJECT_NAME}
@@ -67,10 +68,10 @@ if (NOT EMSCRIPTEN)
     ) 
   ENDIF()
 else()
-    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
-    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
-    set(CMAKE_C_COMPILER "emcc")
+#    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
+#    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+#    set(CMAKE_C_COMPILER "emcc")
     set(CMAKE_CXX_COMPILER "em++")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC -DEMSCRIPTEN=1)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
+#    target_compile_definitions(${PROJECT_NAME} PUBLIC -DEMSCRIPTEN=1)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-o index.html -s USE_GLFW=3 -s USE_WEBGL2=1 -s WASM=1 -std=c++11")
 endif()
