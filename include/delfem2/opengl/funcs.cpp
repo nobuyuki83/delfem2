@@ -9,10 +9,12 @@
 #ifdef USE_GLEW
   #include <GL/glew.h>
 #else
-  #include <glad/glad.h>
   #ifdef EMSCRIPTEN
     #include <emscripten/emscripten.h>
     #define GLFW_INCLUDE_ES3
+    #include <GLFW/glfw3.h>
+  #else
+    #include <glad/glad.h>
   #endif
 #endif
 

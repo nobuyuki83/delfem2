@@ -83,9 +83,9 @@ public:
     }
   }
   void setRandomColor(){
-    r = (float)rand()/(RAND_MAX+1.0f);
-    g = (float)rand()/(RAND_MAX+1.0f);
-    b = (float)rand()/(RAND_MAX+1.0f);
+    r = (float)rand()/(float(RAND_MAX)+1.0f);
+    g = (float)rand()/(float(RAND_MAX)+1.0f);
+    b = (float)rand()/(float(RAND_MAX)+1.0f);
   }
   void setRandomVividColor(){
     double h = (double)rand()/(RAND_MAX+1.0);

@@ -10,11 +10,12 @@
 #ifdef USE_GLEW
   #include <GL/glew.h>
 #else
-  #include <glad/glad.h>
-  #ifdef EMSCRIPTEN
-    #include <emscripten/emscripten.h>
-    #define GLFW_INCLUDE_ES3
-  #endif
+#  ifdef EMSCRIPTEN
+#    include <emscripten/emscripten.h>
+#    define GLFW_INCLUDE_ES3
+#  else
+#    include <glad/glad.h>
+#  endif
 #endif
 
 #include "delfem2/opengl/new/funcs.h"

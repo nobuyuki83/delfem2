@@ -1,9 +1,13 @@
 
-#include <glad/glad.h>
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+#else
+  #include <glad/glad.h>
+#endif
+
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/new/mshcolor.h"
-#include "delfem2/opengl/funcs.h"
 #include "delfem2/mshprimitive.h"
 
 #if defined(_MSC_VER)
@@ -11,10 +15,6 @@
 #endif
 #include <GLFW/glfw3.h>
 
-#ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
-#endif
 
 #include <iostream>
 #include <cmath>
@@ -52,11 +52,13 @@ int main()
   
   // glad: load all OpenGL function pointers
   // ---------------------------------------
+#ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
+#endif
 
   shdr.Compile();
   {
