@@ -6,23 +6,29 @@
  */
 
 
-#ifndef DFM2_GLNEW_FUNCS_H
-#define DFM2_GLNEW_FUNCS_H
+#ifndef DFM2_OPENGL_NEW_FUNCS_H
+#define DFM2_OPENGL_NEW_FUNCS_H
 
 #include "delfem2/dfm2_inline.h"
 
+// -----------
+#ifdef EMSCRIPTEN
+  #include <GLFW/glfw3.h>
+#endif
+// -----------
+#ifdef _WIN32
+  #include <windows.h>
+#endif
+// -----------
 #if defined(__APPLE__) && defined(__MACH__) // Mac
-#include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
-#include <windows.h>
-  #include <GL/gl.h>
+  #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
-
+// -----------
 #include <vector>
 #include <assert.h>
-#include <iostream> // this must be delated in future
+#include <iostream>
 
 namespace delfem2 {
 namespace opengl {

@@ -6,10 +6,10 @@
  */
 
 
-#ifndef DFM2_RENDER2TEX_GLNEW_H
-#define DFM2_RENDER2TEX_GLNEW_H
+#ifndef DFM2_OPENGL_NEW_R2TGLN_H
+#define DFM2_OPENGL_NEW_R2TGLN_H
 
-#include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/opengl/new/mshcolor.h" // shader definitions
 #include "delfem2/opengl/r2t.h"
 #include "delfem2/dfm2_inline.h"
 #include <stdio.h>

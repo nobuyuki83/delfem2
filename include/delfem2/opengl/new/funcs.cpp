@@ -5,27 +5,25 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdio>
-
-#ifdef USE_GLEW
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+  #include <GLFW/glfw3.h>
+#elif defined(USE_GLEW)
   #include <GL/glew.h>
 #else
-#  ifdef EMSCRIPTEN
-#    include <emscripten/emscripten.h>
-#    define GLFW_INCLUDE_ES3
-#  else
-#    include <glad/glad.h>
-#  endif
+  #include <glad/glad.h>
 #endif
-
+//
 #include "delfem2/opengl/new/funcs.h"
 
 // ---------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::GL4_VAO_Pos
-(unsigned int& VAO,
- unsigned int& VBO,
- const float* aP, int nP, int nDim)
+DFM2_INLINE void delfem2::opengl::GL4_VAO_Pos(
+    unsigned int& VAO,
+    unsigned int& VBO,
+    const float* aP,
+    int nP, int nDim)
 {
   glGenVertexArrays(1, &VAO); // opengl4
   glBindVertexArray(VAO); // opengl4

@@ -5,29 +5,34 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include <stack>
-
 // ----------------
-#include "glad/glad.h" // gl3.0+
+#ifdef EMSCRIPTEN
+  #include <GLFW/glfw3.h>
+#else
+  #include "glad/glad.h" // gl3.0+
+#endif
+// ----------------
+#ifdef _WIN32
+  #include <windows.h>
+#endif
+// ----------------
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
-  #include <windows.h>
-  #include <GL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
-
+// ----------------
 #include "delfem2/mat4.h"
 #include "delfem2/opengl/new/r2tgln.h"
+#include <stack>
 
 // --------------------------------------------
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::SetDepth(
     const delfem2::opengl::CRender2Tex& r2t)
 {
-  assert( r2t.aZ.size() == r2t.nResX*r2t.nResY );
+  if( r2t.aZ.size() != r2t.nResX*r2t.nResY ){ return; }
+  //
   unsigned int nx = r2t.nResX;
   unsigned int ny = r2t.nResY;
   std::vector<double> aXYZ(nx*ny*3);
