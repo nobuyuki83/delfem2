@@ -5,18 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <glad/glad.h>
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+#else
+  #include <glad/glad.h>
+#endif
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/new/v23dtricad.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/cad2_dtri2.h"
 #include <GLFW/glfw3.h>
-
-#ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
-#endif
-
 #include <stdio.h>
 
 namespace dfm2 = delfem2;

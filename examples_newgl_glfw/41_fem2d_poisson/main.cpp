@@ -23,16 +23,16 @@
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
-
-#include <glad/glad.h>
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+#else
+  #include <glad/glad.h>
+#endif
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include <GLFW/glfw3.h>
 
-#ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
-#endif
 
 namespace dfm2 = delfem2;
 
@@ -326,11 +326,12 @@ int main()
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
     
-  // glad: load all OpenGL function pointers
+#ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
+#endif
 
   shdr0.Compile();
   shdr0.Initialize(aXY1, 2, aTri1, aVal);

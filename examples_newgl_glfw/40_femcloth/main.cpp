@@ -1,24 +1,22 @@
 
-#include <glad/glad.h>
+#if defined(_MSC_VER)
+  #include <windows.h>
+#endif
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+#else
+  #include <glad/glad.h>
+#endif
+#include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/new/mshcolor.h"
-#include "delfem2/opengl/funcs.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
 
-#if defined(_MSC_VER)
-  #include <windows.h>
-#endif
 
-#include <GLFW/glfw3.h>
-
-#ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
-#endif
 
 #include <iostream>
 #include <cmath>
@@ -162,13 +160,12 @@ int main()
   
   viewer.Init_newGL();
       
-  // glad: load all OpenGL function pointers
-  // ---------------------------------------
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
+#ifndef EMSCRIPTEN
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
+#endif
   
   shdr_trimsh.Compile();
   shdr_trimsh.Initialize(aXYZ, aTri);  

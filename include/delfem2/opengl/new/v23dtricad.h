@@ -10,8 +10,8 @@
  */
 
 
-#ifndef gl4_v23dtricad_h
-#define gl4_v23dtricad_h
+#ifndef DFM2_OPENGL_NEW_V23DTRICAD_H
+#define DFM2_OPENGL_NEW_V23DTRICAD_H
 
 #include "delfem2/opengl/new/funcs.h" // for CGL4_VAO_Mesh
 #include "delfem2/vec2.h"
