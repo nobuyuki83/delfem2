@@ -3,21 +3,20 @@
 
 // ------------------------
 // opengl dependent header
-
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
-
-#include <glad/glad.h>
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+#else
+  #include <glad/glad.h>
+#endif
+//
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/new/v23dtricad.h"
 #include <GLFW/glfw3.h>
-
-#ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
-#endif
 
 // end of header
 // -----------------------------------------------------
@@ -75,11 +74,12 @@ int main()
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.Init_newGL();
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  { // glad: load all OpenGL function pointers
+#ifndef EMSCRIPTEN
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
+#endif
   viewer.shdr_cad.Compile();
   viewer.shdr_cad.MakeBuffer(viewer.cad);
   
