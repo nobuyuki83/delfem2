@@ -7,8 +7,8 @@
 
 // TODO: having MVP matrix instead of axes
 
-#ifndef DFM2_RENDER2TEX_GL_H
-#define DFM2_RENDER2TEX_GL_H
+#ifndef DFM2_OPENGL_R2T_H
+#define DFM2_OPENGL_R2T_H
 
 #include "delfem2/mat4.h"
 #include "delfem2/vec3.h"

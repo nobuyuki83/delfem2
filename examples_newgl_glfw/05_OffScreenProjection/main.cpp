@@ -5,28 +5,25 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <glad/glad.h>
-#include <iostream>
-#include <cmath>
-#include "delfem2/noise.h"
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+#else
+  #include <glad/glad.h>
+#endif
 #include "delfem2/mshprimitive.h"
 #include "delfem2/vec3.h"
+#include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/opengl/new/r2tgln.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <iostream>
+#include <cmath>
 
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
 
 #include <GLFW/glfw3.h>
-
-#ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
-#endif
-
-#include "delfem2/opengl/new/mshcolor.h"
-#include "delfem2/opengl/new/r2tgln.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
-
 
 namespace dfm2 = delfem2;
 
@@ -75,14 +72,14 @@ int main()
   }
 
   viewer.Init_newGL();
-  
-  // glad: load all OpenGL function pointers
-  // ---------------------------------------
+
+#ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
+#endif
 
   sampler.InitGL();
   draw_sampler.InitGL();

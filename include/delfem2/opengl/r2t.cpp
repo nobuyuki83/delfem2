@@ -9,18 +9,22 @@
 #include <iostream>
 #include <cstdlib>
 // ------
-#include "glad/glad.h" // gl3.0+
+#ifdef _WIN32
+  #include <windows.h>
+#endif
+// -------
+#ifdef EMSCRIPTEN
+  #include <GLFW/glfw3.h>
+#else
+  #include "glad/glad.h" // gl3.0+
+#endif
+// ------
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
-  #include <windows.h>
-  #include <GL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
 #include "delfem2/opengl/r2t.h"
-
-//namespace dfm2 = delfem2;
 
 // ---------------------------------------------
 
@@ -121,10 +125,13 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::End()
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_Depth()
 {
+
 #ifdef EMSCRIPTEN
+  std::cout << "In delfem2::opengl::CRender2Tex::CopyToCPU_Depth()" << std::endl;
   std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
   return;
 #endif
+  //
   aZ.resize(nResX*nResY);
   ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
   ::glBindTexture(GL_TEXTURE_2D, id_tex_depth);

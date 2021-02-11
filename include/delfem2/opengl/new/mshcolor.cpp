@@ -5,24 +5,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/mshuni.h"
-#include "delfem2/mshmisc.h"
-
-#ifdef USE_GLEW
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+  #include <GLFW/glfw3.h>
+#elif defined(USE_GLEW)
   #include <GL/glew.h>
 #else
-  #ifdef EMSCRIPTEN
-    #include <emscripten/emscripten.h>
-    #define GLFW_INCLUDE_ES3
-    #include <GLFW/glfw3.h>
-  #else
-    #include <glad/glad.h>
-  #endif
+  #include <glad/glad.h>
 #endif
-
+//
 #include "delfem2/opengl/funcs.h" // compile shader
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/mshuni.h"
+#include "delfem2/mshmisc.h"
+
 
 namespace dfm2 = delfem2;
 
@@ -100,7 +98,7 @@ void delfem2::opengl::CShader_Points::Draw(float mP[16], float mMV[16]) const
   ::glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
   ::glUniform3f(Loc_Color, color_face.r,color_face.g, color_face.b);
   ::glBindVertexArray(this->vao.VAO);
-  ::glPointSize(1);
+//  ::glPointSize(1);
   ::glDrawArrays(GL_POINTS, 0, nPoint);
 }
 
@@ -108,9 +106,9 @@ void delfem2::opengl::CShader_Points::Draw(float mP[16], float mMV[16]) const
 // ------------------------------------------
 
 
-void delfem2::opengl::CShader_TriMesh::Initialize
- (std::vector<double>& aXYZd,
-  std::vector<unsigned int>& aTri)
+void delfem2::opengl::CShader_TriMesh::Initialize(
+    std::vector<double>& aXYZd,
+    std::vector<unsigned int>& aTri)
 {
   std::vector<unsigned int> aLine;
   MeshLine_MeshElem(aLine,

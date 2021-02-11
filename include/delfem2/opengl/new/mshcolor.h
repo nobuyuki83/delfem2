@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef GL4_MSHCOLOR_H
-#define GL4_MSHCOLOR_H
+#ifndef DFM2_OPENGL_NEW_MSHCOLOR_H
+#define DFM2_OPENGL_NEW_MSHCOLOR_H
 
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/color.h"
