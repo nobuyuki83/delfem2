@@ -1,26 +1,25 @@
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include <stdio.h>
-#include <iostream>
-#include <vector>
 
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
-
-#include <glad/glad.h>
-#include "delfem2/opengl/new/funcs.h"
-#include "delfem2/opengl/funcs.h"
-#include <GLFW/glfw3.h>// Include glfw3.h after our OpenGL definitions
-
+//
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
   #define GL_GLEXT_PROTOTYPES
   #define EGL_EGLEXT_PROTOTYPES
+#else
+  #include <glad/glad.h>
 #endif
-
+//
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include "delfem2/opengl/funcs.h"
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -59,7 +58,7 @@ public:
                                                      (std::string("#version 330 core\n")+
                                                       glsl33frag).c_str());
 #endif
-    
+
     if( !glIsProgram(shaderProgram) ){
       std::cout << "shader doesnot exist" << std::endl;
     }
@@ -211,12 +210,12 @@ int main(int, char **)
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Enable vsync
   
-  // glad: load all OpenGL function pointers
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
+#ifndef EMSCRIPTEN
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
+#endif
 
 	int screen_width, screen_height;
 	glfwGetFramebufferSize(window, &screen_width, &screen_height);

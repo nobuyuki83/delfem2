@@ -8,6 +8,7 @@
 #include "delfem2/noise.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <vector>
 #include <string>
