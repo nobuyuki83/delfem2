@@ -10,8 +10,8 @@
  * - This code should not have any dependencies.
  */
 
-#ifndef DFM2_TEX_GL_H
-#define DFM2_TEX_GL_H
+#ifndef DFM2_OPENGL_TEX_H
+#define DFM2_OPENGL_TEX_H
 
 #include <vector>
 #include <string>
