@@ -11,8 +11,8 @@
  * compile with -USE_GLEW if you want to use GLEW, otherwise it use GLAD
  */
 
-#ifndef DFM2_GL_FUNCS_H
-#define DFM2_GL_FUNCS_H
+#ifndef DFM2_OPENGL_FUNCS_H
+#define DFM2_OPENGL_FUNCS_H
 
 #include "delfem2/dfm2_inline.h"
 #include <string>

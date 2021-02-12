@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_GLFW_VIEWER_GLFW_H
-#define DFM2_GLFW_VIEWER_GLFW_H
+#ifndef DFM2_OPENGL_GLFW_VIEWER_GLFW_H
+#define DFM2_OPENGL_GLFW_VIEWER_GLFW_H
 
 #include "delfem2/cam3_m4q.h" // for CNav3D_GLFW
 #include "delfem2/dfm2_inline.h"

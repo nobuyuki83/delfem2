@@ -74,6 +74,13 @@ em++  ../../examples_newgl_glfw/20_cad2d/main.cpp -o index.html \
 	-s USE_WEBGL2=1 -s USE_GLFW=3 -s WASM=1
 cd ../../
 
+echo "30_cadmsh2d"
+cd docs/30_cadmsh2d
+em++  ../../examples_newgl_glfw/30_cadmsh2d/main.cpp -o index.html \
+	-std=c++11 -DDFM2_HEADER_ONLY=ON  -I"../../include" \
+	-s USE_WEBGL2=1 -s USE_GLFW=3 -s WASM=1
+cd ../../
+
 echo "40_femcloth"
 cd docs/40_femcloth
 em++  ../../examples_newgl_glfw/40_femcloth/main.cpp -o index.html \

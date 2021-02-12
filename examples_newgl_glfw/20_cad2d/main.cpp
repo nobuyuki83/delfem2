@@ -1,11 +1,8 @@
-#include <iostream>
-#include "delfem2/cad2_dtri2.h"
 
-// ------------------------
-// opengl dependent header
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
+//
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
@@ -16,7 +13,9 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/new/v23dtricad.h"
+#include "delfem2/cad2_dtri2.h"
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 // end of header
 // -----------------------------------------------------

@@ -1,7 +1,6 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include <stdio.h>
 #include <iostream>
 #include <vector>
 
@@ -19,10 +18,8 @@
   #define EGL_EGLEXT_PROTOTYPES
 #endif
 
-#include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/glnew_funcs.h"
-//
-#include "delfem2/opengl/glfw/cam_glfw.h"
+#include "delfem2/opengl/funcs.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 
@@ -109,14 +106,9 @@ public:
   unsigned int ebo;
 };
 
-static void callback_error(int error, const char* description)
-{
-    fputs(description, stderr);
-}
-
-static GLFWwindow* myGLFW_OpenWindow
-        (const unsigned int SCR_WIDTH,
-         const unsigned int SCR_HEIGHT)
+static GLFWwindow* myGLFW_OpenWindow(
+    const unsigned int SCR_WIDTH,
+    const unsigned int SCR_HEIGHT)
 {
     glfwSetErrorCallback(callback_error);
     if (!glfwInit()){

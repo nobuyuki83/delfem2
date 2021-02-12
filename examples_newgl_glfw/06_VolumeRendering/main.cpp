@@ -1,14 +1,14 @@
 
-
+#if defined(_MSC_VER)
+  #include <windows.h>
+#endif
 #include <glad/glad.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/noise.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
-#include <cstdlib>
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
 
@@ -126,14 +126,13 @@ int main(int argc, const char * argv[])
   viewer.camera.Rot_Camera(-0.2, -0.2);
   //
   viewer.Init_newGL();
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
+
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
 
-  // making VAO for slice
-  const GLuint idVaoSlice = MakeVAO_Slice();
+  const GLuint idVaoSlice = MakeVAO_Slice(); // making VAO for slice
 
   const GLsizei texWidth = 32;
   const GLsizei texHeight = 32;
