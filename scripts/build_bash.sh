@@ -73,21 +73,3 @@ make
 cd ../../
 
 
-#######################
-# cuda
-
-cd examples_cuda
-mkdir buildMake
-cd buildMake
-cmake ..
-make
-cd ../../
-
-cd test_cuda
-mkdir buildMake
-cd buildMake
-cmake ..
-make
-./test_cuda
-cd ../../
-

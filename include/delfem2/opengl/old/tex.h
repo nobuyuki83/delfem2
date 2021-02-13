@@ -90,12 +90,16 @@ void DrawCam(
   ::glPopMatrix();
 }
 
-void DrawTex_CvDepth(
-    const std::vector<float> &aZ,
+void DrawTex_CvNormDist(
+    const std::vector<float> &aNormDist,
     const delfem2::opengl::CTexRGB &tex0,
     const float *R,
     const float *t,
-    const float *K) {
+    const float *K)
+{
+  const unsigned int nw = tex0.w;
+  const unsigned int nh = tex0.h;
+  assert(aNormDist.size()==nw*nh*4);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
   float A[16];
@@ -114,19 +118,17 @@ void DrawTex_CvDepth(
   delfem2::Transpose_Mat4(C, B);
   ::glMultMatrixf(C);
   //
-  const unsigned int nw = tex0.w;
-  const unsigned int nh = tex0.h;
   ::glDisable(GL_POLYGON_OFFSET_FILL);
   ::glEnable(GL_TEXTURE_2D);
   ::glBindTexture(GL_TEXTURE_2D, tex0.id_tex);
   ::glColor3d(1, 1, 1);
   ::glBegin(GL_QUADS);
-  for (int iw = 0; iw < nw - 1; ++iw) {
-    for (int ih = 0; ih < nh - 1; ++ih) {
-      double z0 = aZ[(ih + 0) * nw + (iw + 0)] * ratio0;
-      double z1 = aZ[(ih + 0) * nw + (iw + 1)] * ratio0;
-      double z2 = aZ[(ih + 1) * nw + (iw + 1)] * ratio0;
-      double z3 = aZ[(ih + 1) * nw + (iw + 0)] * ratio0;
+  for (unsigned int iw = 0; iw < nw - 1; ++iw) {
+    for (unsigned int ih = 0; ih < nh - 1; ++ih) {
+      double z0 = -aNormDist[((ih + 0) * nw + (iw + 0))*4+3] * ratio0;
+      double z1 = -aNormDist[((ih + 0) * nw + (iw + 1))*4+3] * ratio0;
+      double z2 = -aNormDist[((ih + 1) * nw + (iw + 1))*4+3] * ratio0;
+      double z3 = -aNormDist[((ih + 1) * nw + (iw + 0))*4+3] * ratio0;
       ::glTexCoord2d((iw + 0.5) / nw, (ih + 0.5) / nh);
       ::glVertex3d(z0 * (iw + 0.5), z0 * (ih + 0.5), z0);
       ::glTexCoord2d((iw + 1.5) / nw, (ih + 0.5) / nh);

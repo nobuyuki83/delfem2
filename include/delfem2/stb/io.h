@@ -3,6 +3,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 #include <fstream>
+#include <iostream>
 #include <vector>
 
 namespace delfem2 {
