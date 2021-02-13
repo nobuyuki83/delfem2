@@ -83,7 +83,7 @@ double ReprojectionEnergy(
   F.resize(np * 2);
   dF.resize(np * 2 * 7);
   double eng = 0.0;
-  for (int ipc = 0; ipc < np; ++ipc) {
+  for (unsigned int ipc = 0; ipc < np; ++ipc) {
     double f0i[2], df0i[2][7];
     ReprojectionEnergyPoint(
         f0i, df0i,
@@ -174,8 +174,9 @@ void BundleAdjust_CheckGrad(
     double *R01,
     double *t01,
     const double *K1,
-    const std::vector<double> &aPnt1) {
-  const int np = aPnt0.size() / 2;
+    const std::vector<double> &aPnt1)
+ {
+  const unsigned int np = aPnt0.size() / 2;
   assert(aPnt1.size() == np * 2);
   namespace dfm2 = delfem2;
   double K1Rt01[9];

@@ -33,25 +33,25 @@ double BundleAdjust_ImgPair_NewtonIter(
   assert(dF.size() == np * 2 * 7);
   Eigen::MatrixXd A(M, M);
   A.setZero();
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     A(ip, ip) = dF[ip * 14 + 0] * dF[ip * 14 + 0] + dF[ip * 14 + 7] * dF[ip * 14 + 7];
     for (int j = 0; j < 6; ++j) {
       A(ip, np + j) = dF[ip * 14 + 0] * dF[ip * 14 + 1 + j] + dF[ip * 14 + 7] * dF[ip * 14 + 8 + j];
     }
   }
   for (int i = 0; i < 6; ++i) {
-    for (int jp = 0; jp < np; ++jp) {
+    for (unsigned int jp = 0; jp < np; ++jp) {
       A(np + i, jp) = dF[jp * 14 + 1 + i] * dF[jp * 14 + 0] + dF[jp * 14 + 8 + i] * dF[jp * 14 + 7];
     }
     for (int j = 0; j < 6; ++j) {
-      for (int kp = 0; kp < np; ++kp) {
+      for (unsigned int kp = 0; kp < np; ++kp) {
         A(np + i, np + j) += dF[kp * 14 + 1 + i] * dF[kp * 14 + 1 + j] + dF[kp * 14 + 8 + i] * dF[kp * 14 + 8 + j];
       }
     }
   }
-  for (int i = 0; i < M; ++i) { A(i, i) += eps; }
+  for (unsigned int i = 0; i < M; ++i) { A(i, i) += eps; }
   Eigen::VectorXd b = Eigen::VectorXd::Zero(M);
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     b(ip) = F[ip * 2 + 0] * dF[ip * 14 + 0] + F[ip * 2 + 1] * dF[ip * 14 + 7];
     for (int i = 0; i < 6; ++i) {
       b(np + i) += F[ip * 2 + 0] * dF[ip * 14 + 1 + i] + F[ip * 2 + 1] * dF[ip * 14 + 8 + i];
@@ -61,7 +61,7 @@ double BundleAdjust_ImgPair_NewtonIter(
   Eigen::FullPivLU<Eigen::MatrixXd> lu(A);
   Eigen::VectorXd x = lu.solve(b);
   //std::cout << E << std::endl;
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     aZ0[ip] += x(ip);
   }
   t01[0] += x(np + 0);
