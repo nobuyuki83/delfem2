@@ -205,7 +205,8 @@ void kernel_DiffusionPatchMatchStereoNormDist(
     float gamma,
     float tau_col,
     float tau_grad,
-    float alpha) {
+    float alpha)
+{
   const int ixc = int(blockIdx.x * blockDim.x + threadIdx.x);
   int itmp = int(blockIdx.y * blockDim.y + threadIdx.y);
   assert(blockIdx.z * blockDim.z + threadIdx.z == 0);
@@ -249,9 +250,11 @@ void kernel_RefinePlanePatchMatchStereoNormDist(
     float tau_col,
     float tau_grad,
     float alpha,
-    int iseedrand) {
+    int iseedrand)
+{
   const uint ix0 = blockIdx.x * blockDim.x + threadIdx.x;
   const uint iy0 = blockIdx.y * blockDim.y + threadIdx.y;
+  if (ix0 >= nx || iy0 >= ny) { return; }
   assert(blockIdx.z * blockDim.z + threadIdx.z == 0);
   const uint i0 = iy0 * nx + ix0;
   uint4 seed = {
@@ -259,24 +262,23 @@ void kernel_RefinePlanePatchMatchStereoNormDist(
       i0 * 536529611 + 93660977 + 70001881 * iseedrand,
       i0 * 536527793 + 93655207 + 70003321 * iseedrand,
       i0 * 536522887 + 93652997 + 70001011 * iseedrand};
-  const float aParamCost[4] = {gamma, tau_col, tau_grad, alpha};\
-  double mag_dn = 1.0;
-  double mag_dz = 1.0;
-  for (int itr = 0; itr < 15; ++itr) {
+  const float aParamCost[4] = {gamma, tau_col, tau_grad, alpha};
+  float mag_dn = 0.1;
+  float mag_dz = 0.1;
+  for (int itr = 0; itr < 10; ++itr) {
     const float4 nd0 = aNormDist[iy0 * nx + ix0];
     float4 nd1;
     {
-      const float3 x0 = {float(ix0), float(iy0), 1.f};
+      const float3 x0 = {float(ix0+0.5), float(iy0+0.5), 1.f};
       const float3 K0invx0 = device_MatVec3(camTransf->K0inv, x0);
       const float n0tK0invx0 = K0invx0.x * nd0.x + K0invx0.y * nd0.y + K0invx0.z * nd0.z;
       const float z0 = nd0.w / n0tK0invx0;
-//      printf("%d %d %lf\n",ix0,iy0,z0);
       seed = delfem2::cuda::device_Xorshift128(seed);
-      float nx1 = nd0.x + delfem2::cuda::device_RandomRange(seed.w, -mag_dn, +mag_dn);
+      const float nx1 = nd0.x + delfem2::cuda::device_RandomRange(seed.w, -mag_dn, +mag_dn);
       seed = delfem2::cuda::device_Xorshift128(seed);
-      float ny1 = nd0.y + delfem2::cuda::device_RandomRange(seed.w, -mag_dn, +mag_dn);
+      const float ny1 = nd0.y + delfem2::cuda::device_RandomRange(seed.w, -mag_dn, +mag_dn);
       seed = delfem2::cuda::device_Xorshift128(seed);
-      float nz1 = nd0.z + delfem2::cuda::device_RandomRange(seed.w, -mag_dn, +mag_dn);
+      const float nz1 = nd0.z + delfem2::cuda::device_RandomRange(seed.w, -mag_dn, +mag_dn);
       seed = delfem2::cuda::device_Xorshift128(seed);
       const float z1 = z0 + delfem2::cuda::device_RandomRange(seed.w, -mag_dz, +mag_dz);
       const float linv = 1.f / sqrtf(nx1 * nx1 + ny1 * ny1 + nz1 * nz1);
@@ -285,14 +287,15 @@ void kernel_RefinePlanePatchMatchStereoNormDist(
       nd1.z = nz1 * linv;
       const float n1tK0invx0 = K0invx0.x * nd1.x + K0invx0.y * nd1.y + K0invx0.z * nd1.z;
       nd1.w = z1 * n1tK0invx0;
+//      printf("%d %d %d --> %lf,  %lf\n",iseedrand,ix0,iy0,z0,z1);
 //      printf("%lf %lf %lf %lf\n",nd1.x,nd1.y,nd1.z,nd1.w);
     }
-    float cost_new = device_CostPatchMatchStereoNormDist(
+    const float cost_new = device_CostPatchMatchStereoNormDist(
         nd1,
         ix0, iy0, nx, ny, nrad,
         texi, camTransf, texj,
         aParamCost);
-    if (cost_new < aCost[iy0 * nx + ix0]) {
+    if (cost_new < aCost[iy0 * nx + ix0]*0.6) {
       aNormDist[iy0 * nx + ix0] = nd1;
       aCost[iy0 * nx + ix0] = cost_new;
     }
