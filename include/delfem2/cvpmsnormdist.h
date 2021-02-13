@@ -2,8 +2,7 @@
 #ifndef PMS_NORMDIST_H
 #define PMS_NORMDIST_H
 
-class CamTransform{
-public:
+struct CamTransform{
   float K0inv[9];
   float R01[9];
   float t01[3];

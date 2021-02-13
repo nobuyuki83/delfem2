@@ -894,7 +894,7 @@ std::istream &operator>>(std::istream &input, CMat3<T>& m)
 // -------------------------------------------------------------------
   
 template <typename T>
-delfem2::CMat3<T>::CMat3(): mat{0.,0.,0., 0.,0.,0., 0.,0.,0.} {}
+delfem2::CMat3<T>::CMat3(): mat{0,0,0, 0,0,0, 0,0,0} {}
 #ifndef DFM2_HEADER_ONLY
 template delfem2::CMat3<float>::CMat3();
 template delfem2::CMat3<double>::CMat3();
