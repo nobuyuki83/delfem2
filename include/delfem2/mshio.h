@@ -120,7 +120,7 @@ DFM2_INLINE void Write_Obj_TriFlag(
 
 DFM2_INLINE void Write_Obj(
     const std::string &str,
-    const std::vector<std::pair<std::vector<double>, std::vector<int> > > &aMesh);
+    const std::vector<std::pair<std::vector<double>, std::vector<unsigned int> > > &aMesh);
 
 DFM2_INLINE void Read_Obj(
     const std::string &fname,

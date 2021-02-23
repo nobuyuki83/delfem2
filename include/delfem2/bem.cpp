@@ -733,7 +733,7 @@ const CVec3d& p0,
 const std::vector<CVortexParticle>& aVortexParticle,
 int ivp_self)
 {
-  CMat3d m_res; m_res.SetZero();
+  CMat3d m_res; m_res.setZero();
   velo = CVec3d(0, 0, 0);
   for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     if ((int)ivp==ivp_self) continue;

@@ -408,13 +408,13 @@ DFM2_INLINE void delfem2::Write_Obj_TriFlag(
 
 DFM2_INLINE void delfem2::Write_Obj(
     const std::string& str,
-    const std::vector< std::pair< std::vector<double>, std::vector<int> > >& aMesh)
+    const std::vector< std::pair< std::vector<double>, std::vector<unsigned int> > >& aMesh)
 {
   std::ofstream fout(str.c_str(), std::ofstream::out);
   int ipsum = 0;
   for (int im = 0; im<(int)aMesh.size(); im++){
     const std::vector<double>& aXYZ = aMesh[im].first;
-    const std::vector<int>& aTri = aMesh[im].second;
+    const std::vector<unsigned int>& aTri = aMesh[im].second;
     int np = (int)aXYZ.size()/3;
     int nt = (int)aTri.size()/3;
     { // group id

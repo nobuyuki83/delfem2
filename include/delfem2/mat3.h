@@ -346,7 +346,7 @@ public:
   // function whose name starts with "Set" changes itself
   void SetInverse();
   void SetSymetric(const REAL sm[6]);
-  void SetZero();
+  void setZero();
   void SetRandom();
   void SetRotMatrix_Cartesian(const REAL vec[]);
   void SetRotMatrix_Cartesian(REAL x, REAL y, REAL z);
@@ -366,7 +366,7 @@ public:
   void GetCRV_RotMatrix(REAL crv[]) const;
   void GetQuat_RotMatrix(REAL quat[]) const;
   // ------------------------
-  CMat3 Trans() const {
+  CMat3 transpose() const {
     CMat3 m;
     m.mat[0] = mat[0]; m.mat[1] = mat[3]; m.mat[2] = mat[6];
     m.mat[3] = mat[1]; m.mat[4] = mat[4]; m.mat[5] = mat[7];
@@ -377,7 +377,7 @@ public:
     double s=mat[0]+mat[1]+mat[2]+mat[3]+mat[4]+mat[5]+mat[6]+mat[7]+mat[8];
     return myIsNAN_Matrix3( s ) != 0;
   }
-  double Det() const {
+  double determinant() const {
     return
     + mat[0]*mat[4]*mat[8] + mat[3]*mat[7]*mat[2] + mat[6]*mat[1]*mat[5]
     - mat[0]*mat[7]*mat[5] - mat[6]*mat[4]*mat[2] - mat[3]*mat[1]*mat[8];
@@ -415,7 +415,7 @@ public:
   }
   static CMat3 Zero(){
     CMat3 m;
-    m.SetZero();
+    m.setZero();
     return m;
   }
   static CMat3 Spin(const REAL* v){

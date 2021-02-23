@@ -35,7 +35,7 @@ public:
     rb_out.Omega   = Omega + dt*vOpA[1];
     rb_out.pos     = pos   + dt*vOpA[2];
     CMat3d dR = dfm2::Mat3_RotCartesian(dt*vOpA[3]);
-    if( dR.isNaN() ) dR.SetZero();
+    if( dR.isNaN() ) dR.setZero();
     rb_out.R  = R*dR;
     return rb_out;
   }
