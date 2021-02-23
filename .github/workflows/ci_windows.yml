@@ -28,6 +28,17 @@ jobs:
         git branch -a
         git submodule update --init --recursive    
 
+    - name: build examples (no-dependency)
+      run: |
+        echo "###############################"
+        echo "## build examples no-dependency
+        cd examples
+        mkdir buildVS64Static
+        cd buildVS64Static
+        cmake -A x64 ..
+        cmake --build .
+        cd ../../
+
     - name: running test_cpp
       run: |
         echo "###################"
