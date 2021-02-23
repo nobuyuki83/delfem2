@@ -26,6 +26,17 @@ jobs:
       run: |
         git submodule update --init --recursive       
 
+    - name: build_examples
+      run: |
+        echo ########################################
+        echo ## build examples
+
+        cd examples
+        mkdir buildMakeHdronly && cd buildMakeHdronly
+        cmake -DUSE_HEADERONLY=ON ..
+        make
+        cd ../..
+
     - name: test_cpp
       run: |
         echo "###########################"
@@ -71,7 +82,7 @@ jobs:
         make
         cd ../..
 
-    - name: test_glfw_glold
+    - name: build examples (glfw legacy opengl)
       run: |
         echo ########################################
         echo ## build C++ glfw legacy Opengl examples
@@ -88,7 +99,7 @@ jobs:
         make
         cd ../..
 
-    - name: test_glfw_glnew
+    - name: build examples (glfw modern opengl)
       run: |
         echo ########################################
         echo ## build C++ glfw modern Opengl examples
@@ -105,7 +116,7 @@ jobs:
         make
         cd ../..
 
-    - name: test_glut
+    - name: build examples (glut)
       run: |
         echo ##########################
         echo ## build c++ glut examples
@@ -118,7 +129,7 @@ jobs:
         make
         cd ../..
 
-    - name: test_tinygl
+    - name: build examples (tinygltf)
       run: |
         echo ########################
         echo ## build tinygl examples
@@ -129,7 +140,7 @@ jobs:
         make
         cd ../../
 
-    - name: test_thread
+    - name: build examples (thread)
       run: |
         echo ########################
         echo ## build thread examples
@@ -139,7 +150,7 @@ jobs:
         make
         cd ../../
 
-    - name: test_imgui
+    - name: build examples (imgui)
       run: |
         echo ########################
         echo ## build imgui examples

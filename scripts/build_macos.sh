@@ -1,3 +1,21 @@
+echo "################################"
+echo "build examples"
+echo "################################"
+
+cd examples
+mkdir buildMake 
+cd buildMake
+cmake ..
+make
+cd ../../
+
+cd examples
+mkdir buildXcode 
+cd buildXcode
+cmake -G Xcode ..
+cmake --build .
+cd ../../
+
 
 echo "################################"
 echo "build examples_glut"
