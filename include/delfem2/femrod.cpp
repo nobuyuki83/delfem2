@@ -69,7 +69,7 @@ DFM2_INLINE void AddDiffDiff_DotFrameRod
     ddV_dtdP[0][2] += c*(+dF0_dt[i0]*dF1_dv[i1]);
     ddV_ddt[0][0] += c*ddW_ddt;
     ddV_ddt[0][1] += c*dF0_dt[i0]*dF1_dt[i1];
-    const CMat3d T = dF0_dv[i0].Trans()*dF1_dv[i1];
+    const CMat3d T = dF0_dv[i0].transpose()*dF1_dv[i1];
     ddV_ddP[0][0] += c*ddW_ddv;
     ddV_ddP[0][1] += c*(-ddW_ddv + T);
     ddV_ddP[0][2] += c*(-T);
@@ -87,7 +87,7 @@ DFM2_INLINE void AddDiffDiff_DotFrameRod
     ddV_dtdP[1][2] += c*+ddW_dvdt;
     ddV_ddt[1][0] += c*dF0_dt[i0]*dF1_dt[i1];
     ddV_ddt[1][1] += c*ddW_ddt;
-    const CMat3d T = dF1_dv[i1].Trans()*dF0_dv[i0];
+    const CMat3d T = dF1_dv[i1].transpose()*dF0_dv[i0];
     ddV_ddP[1][0] += c*+T;
     ddV_ddP[1][1] += c*(+ddW_ddv - T);
     ddV_ddP[1][2] += c*(-ddW_ddv);
@@ -231,10 +231,10 @@ DFM2_INLINE void delfem2::DifDifFrameRod
     CMat3d S = Mat3_Spin(Frm[2]);
     CMat3d A = Mat3_Spin(Frm[iaxis])*Mat3_Spin(Q);
     CMat3d M0a = -S*(A*S);
-    CVec3d b0 = (-A+A.Trans())*Frm[2];
+    CVec3d b0 = (-A+A.transpose())*Frm[2];
     CMat3d M1 = Mat3_OuterProduct(Frm[2], b0);
     CMat3d M3 = (b0*Frm[2])*(3*Mat3_OuterProduct(Frm[2], Frm[2])-Mat3_Identity(1.0));
-    ddW_ddv = (1.0/(l01*l01))*( M0a + M1 + M1.Trans() + M3 );
+    ddW_ddv = (1.0/(l01*l01))*( M0a + M1 + M1.transpose() + M3 );
   }
 }
 
@@ -279,7 +279,7 @@ DFM2_INLINE double delfem2::WdWddW_DotFrame(
   for(int i=0;i<2;++i){ dV_dt[i] = 0.0; }
   for(int i=0;i<4;++i){ (&ddV_ddt[0][0])[i] = 0.0; }
   for(int i=0;i<6;++i){ (&ddV_dtdP[0][0])[i].SetZero(); }
-  for(int i=0;i<9;++i){ (&ddV_ddP[0][0])[i].SetZero(); }
+  for(int i=0;i<9;++i){ (&ddV_ddP[0][0])[i].setZero(); }
   // ---------------------
   for(int i=0;i<3;++i){
     for(int j=0;j<3;++j){
@@ -370,7 +370,7 @@ DFM2_INLINE double delfem2::WdWddW_Rod
   for(int i=0;i<2;++i){ dW_dt[i] = 0.0; }
   for(int i=0;i<4;++i){ (&ddW_ddt[0][0])[i] = 0.0; }
   for(int i=0;i<6;++i){ (&ddW_dtdP[0][0])[i].SetZero(); }
-  for(int i=0;i<9;++i){ (&ddW_ddP[0][0])[i].SetZero(); }
+  for(int i=0;i<9;++i){ (&ddW_ddP[0][0])[i].setZero(); }
   // ------------
   const double Y = 1 + F0[0]*F1[0] + F0[1]*F1[1] + F0[2]*F1[2];
   CVec3d dY_dp[3];

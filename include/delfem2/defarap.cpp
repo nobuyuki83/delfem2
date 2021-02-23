@@ -38,7 +38,7 @@ DFM2_INLINE void dWddW_ArapEnergy(
     for(unsigned int kkp=0;kkp<nNg;++kkp){ // nonlinear component
       const CVec3d vj = (CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
       const CVec3d vk = (CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
-      CMat3d L1 = Mrot*CMat3d::Spin(vk.p)*LMi*CMat3d::Spin(vj.p)*Mrot.Trans();
+      CMat3d L1 = Mrot*CMat3d::Spin(vk.p)*LMi*CMat3d::Spin(vj.p)*Mrot.transpose();
       L1.AddToScale(eM.data()+(kkp*nIP+jjp)*9, -1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, -1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, +1.0);
@@ -56,7 +56,7 @@ DFM2_INLINE void dWddW_ArapEnergy(
   //
   eR.assign(nIP*3, 0.0);
   const CVec3d pi(aXYZ1.data()+ip*3);
-  CMat3d LM; LM.SetZero();
+  CMat3d LM; LM.setZero();
   for(unsigned int jjp=0;jjp<nNg;++jjp){
     const unsigned int jp = aIP[jjp];
     const CVec3d v0 = Mrot*(CVec3d(aXYZ0.data()+jp*3)-Pi);
@@ -446,7 +446,7 @@ void delfem2::CDef_Arap::Init(
   Precomp.resize(np*9);
   for(unsigned int ip=0;ip<np;++ip){
     const CVec3d Pi(aXYZ0.data()+ip*3);
-    CMat3d LM; LM.SetZero();
+    CMat3d LM; LM.setZero();
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       const unsigned int jp = psup[ipsup];
       const CVec3d v0 = (CVec3d(aXYZ0.data()+jp*3)-Pi);

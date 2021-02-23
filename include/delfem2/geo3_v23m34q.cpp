@@ -394,7 +394,7 @@ DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_Linear
     const CVec3d Pi(aXYZ0.data()+ip*3);
     const CVec3d pi(aXYZ1.data()+ip*3);
     const CQuatd Qi(aQuat1.data()+ip*4);
-    CMat3d Mat; Mat.SetZero();
+    CMat3d Mat; Mat.setZero();
     CVec3d rhs; rhs.SetZero();
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       const unsigned int jp = psup[ipsup];

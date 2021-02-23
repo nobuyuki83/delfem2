@@ -592,10 +592,11 @@ template void delfem2::Mat3_Rotation_Cartesian(double mat[9], const double vec[3
 // sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
 // M = ULU^T
 // u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
-DFM2_INLINE bool delfem2::eigenSym3
-(double u[9], double l[3],
- const double sm[6],
- int nitr)
+DFM2_INLINE bool delfem2::eigenSym3(
+    double u[9],
+    double l[3],
+    const double sm[6],
+    int nitr)
 {
   // initialize u as identity matrix
   u[0]=u[4]=u[8]=1.0;
@@ -700,10 +701,12 @@ DFM2_INLINE void SortEigen3
 }
 
 // m = UGV^T
-DFM2_INLINE void delfem2::svd3
-(double U[9], double G[3], double V[9],
- const double m[9],
- int nitr)
+DFM2_INLINE void delfem2::svd3(
+    double U[9],
+    double G[3],
+    double V[9],
+    const double m[9],
+    int nitr)
 {
   // M^TM = VGGV^T
   const double mtm[6] = {
@@ -1048,13 +1051,13 @@ template void delfem2::CMat3<double>::SetSymetric(const double sm[6]);
 // --------------------------------
 
 template <typename T>
-void delfem2::CMat3<T>::SetZero()
+void delfem2::CMat3<T>::setZero()
 {
   for(auto& v : mat){ v = 0.0; }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CMat3<float>::SetZero();
-template void delfem2::CMat3<double>::SetZero();
+template void delfem2::CMat3<float>::setZero();
+template void delfem2::CMat3<double>::setZero();
 #endif
   
 // --------------------
