@@ -28,11 +28,20 @@ jobs:
         git branch -a
         git submodule update --init --recursive    
 
-    - name: build examples (no-dependency)
+    - name: build examples_alembic
       run: |
         echo "###############################"
-        echo "## build examples no-dependency"
-        cd examples
+        echo "## build examples alembic"
+
+        git submodule update --init -- 3rd_party/alembic
+        cd 3rd_party/alembic
+        git checkout master
+        git pull origin master
+        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
+        make
+        cd ../..
+
+        cd examples_alembic
         mkdir buildVS64Static
         cd buildVS64Static
         cmake -A x64 ..
@@ -103,9 +112,8 @@ jobs:
       run: |
         echo "##############################"
         echo "## build zlib"
-        cd 3rd_party
-        git clone https://github.com/madler/zlib.git
-        cd zlib
+        git submodule update --init -- 3rd_party/zlib
+        cd 3rd_party/zlib
         mkdir buildMake
         cd buildMake
         cmake -A x64 ..

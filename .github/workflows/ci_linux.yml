@@ -26,12 +26,20 @@ jobs:
       run: |
         git submodule update --init --recursive       
 
-    - name: build_examples
+    - name: build_examples_alembic
       run: |
         echo ########################################
-        echo ## build examples
+        echo ## build examples alembic
 
-        cd examples
+        git submodule update --init -- 3rd_party/alembic
+        cd 3rd_party/alembic
+        git checkout master
+        git pull origin master
+        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
+        make
+        cd ../..
+
+        cd examples_alembic
         mkdir buildMakeHdronly && cd buildMakeHdronly
         cmake -DUSE_HEADERONLY=ON ..
         make
