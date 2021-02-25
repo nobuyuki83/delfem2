@@ -34,8 +34,10 @@ There are currently no tutorial available for this library. To understand the co
 + examples usigng modern OpenGL
   + [examples_newgl_glfw](examples_newgl_glfw):  dependency: GLFW
   + [examples_newgl_glfw_imgui](examples_newgl_glfw_imgui):  dependencies: GLFW and imgui
-+ examples using CUDA
-  + [examples_cuda](examples_cuda): dependency: CUDA
++ examples using CUDA (GPU parallerism)
+  + [examples_cuda](examples_cuda)
++ examples using Alembic (offline simulation)
+  + [examples_alembic](examples_alembic)
 + C++ test:
   + [test_cpp](test_cpp): tests using C++
   + [test_cuda](test_cuda) : test using cuda
@@ -43,6 +45,8 @@ There are currently no tutorial available for this library. To understand the co
 Several demos in "examples_newgl_glfw" can be run on the browser. Please take a look at https://nobuyuki83.github.io/delfem2/
 
 See [docs/coding.md](docs/coding.md) for the coding convention. 
+
+Please also checkout  these alternative opensource projects [CGAL](https://www.cgal.org/), [libIGL](https://github.com/libigl/libigl).
 
 
 
@@ -58,26 +62,39 @@ git clone https://github.com/nobuyuki83/delfem2.git
 DelFEM2 can be compiled either as a header-only library or as a static library. Nothing complicated is necessary if DelFEM2 is used as a header only library -- just by include header files and compile the code with option ```DFM2_HEADER_ONLY```. To use DelFEM2 as a static library, you may compiles  several dependent DelFEM2 source files and link them manually (this is not very complicated too).
 
 
-DelFEM2 does not have **any** external dependency. However, for some functionality such as OpenGL or Unit Test, you many need to download dependent repositories and compile them manually. One can download all the dependent C++ repositories with
 
-```
-git submodle update --init
-```
+### Dependency & Binding
 
-This command downloads all the external third party codes into the directory ```delfem2/3rd_party```. Currently DelFEM has binding to the following C++ open source projects.
+DelFEM2 does not have **any** external dependency. However, for some functionality such as OpenGL or Unit Test, you many need to download dependent repositories and compile them together. 
+
+Currently DelFEM support binding to the following C++ open source projects.
 
 - glfw
 - glad
 - cereal
+- alembic
 - googletest
 - cnpy
+- zlib
 - imgui
 - tinygltf
-- stb_image.h
+- stb
 
-These projects are awesome and I would like to express huge appreciation for contributers of these projects.
+One can download **all** the dependent C++ repositories with
 
-Please also checkout  these alternative opensource projects [CGAL](https://www.cgal.org/), [libIGL](https://github.com/libigl/libigl).
+```bash
+git submodle update --init
+```
+
+This command downloads all the external third party codes into the directory ```delfem2/3rd_party``` (This operation might take few minutes).  Or, one can download a specific dependent repository one-by-one with command
+
+```bash
+git submodule update --init 3rd_party/<name_of_repository>
+```
+
+Note that, DelFEM2 is distributed under the MIT licence, but these dependent libraries may affect the license. 
+
+
 
 ***
 # Licence, Copyright & Contact

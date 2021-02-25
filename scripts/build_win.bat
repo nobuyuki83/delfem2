@@ -69,9 +69,8 @@ cd ../../
 : ##############################
 : build zlib
 
-cd 3rd_party
-git clone https://github.com/madler/zlib.git
-cd zlib
+git submodule update --init 3rd_party/zlib
+cd 3rd_party/zlib
 mkdir buildMake
 cd buildMake
 cmake -A x64 ..

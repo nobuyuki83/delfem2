@@ -16,3 +16,6 @@
 [submodule "3rd_party/cereal"]
 	path = 3rd_party/cereal
 	url = https://github.com/USCiLab/cereal.git
+[submodule "3rd_party/alembic"]
+	path = 3rd_party/alembic
+	url = https://github.com/alembic/alembic

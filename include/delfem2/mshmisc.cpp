@@ -8,6 +8,7 @@
 #include <cassert>
 #include <cmath>
 #include <vector>
+#include <cstddef> // size_t
 #include "delfem2/mshmisc.h"
 
 #ifndef M_PI
