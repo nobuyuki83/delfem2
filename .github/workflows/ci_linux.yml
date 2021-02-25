@@ -26,25 +26,6 @@ jobs:
       run: |
         git submodule update --init --recursive       
 
-    - name: build_examples_alembic
-      run: |
-        echo ########################################
-        echo ## build examples alembic
-
-        git submodule update --init -- 3rd_party/alembic
-        cd 3rd_party/alembic
-        git checkout master
-        git pull origin master
-        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
-        make
-        cd ../..
-
-        cd examples_alembic
-        mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake -DUSE_HEADERONLY=ON ..
-        make
-        cd ../..
-
     - name: test_cpp
       run: |
         echo "###########################"
@@ -168,3 +149,25 @@ jobs:
         cmake -DUSE_HEADERONLY=ON ..
         make
         cd ../../
+
+    - name: build_examples (alembic)
+      run: |
+        echo ########################################
+        echo ## build examples alembic
+
+        sudo apt-get update -y
+        sudo apt-get install -y openexr
+
+        git submodule update --init -- 3rd_party/alembic
+        cd 3rd_party/alembic
+        git checkout master
+        git pull origin master
+        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
+        make
+        cd ../..
+
+        cd examples_alembic
+        mkdir buildMakeHdronly && cd buildMakeHdronly
+        cmake -DUSE_HEADERONLY=ON ..
+        make
+        cd ../.. 

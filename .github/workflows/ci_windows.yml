@@ -28,26 +28,6 @@ jobs:
         git branch -a
         git submodule update --init --recursive    
 
-    - name: build examples_alembic
-      run: |
-        echo "###############################"
-        echo "## build examples alembic"
-
-        git submodule update --init -- 3rd_party/alembic
-        cd 3rd_party/alembic
-        git checkout master
-        git pull origin master
-        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
-        make
-        cd ../..
-
-        cd examples_alembic
-        mkdir buildVS64Static
-        cd buildVS64Static
-        cmake -A x64 ..
-        cmake --build .
-        cd ../../
-
     - name: running test_cpp
       run: |
         echo "###################"
@@ -132,3 +112,24 @@ jobs:
         cmake -A x64 -DUSE_HEADERONLY=ON -DZLIB_LIBRARY="$zlib_library" -DZLIB_INCLUDE_DIR="..\..\3rd_party\zlib;..\..\3rd_party\zlib\buildMake" ..
         cmake --build . --config Release
         cd ../../
+
+
+    - name: build examples_alembic
+      run: |
+        echo "###############################"
+        echo "## build examples alembic"
+
+        git submodule update --init -- 3rd_party/alembic
+        cd 3rd_party/alembic
+        git checkout master
+        git pull origin master
+        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
+        make
+        cd ../..
+
+        cd examples_alembic
+        mkdir buildVS64Static
+        cd buildVS64Static
+        cmake -A x64 ..
+        cmake --build .
+        cd ../../        

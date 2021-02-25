@@ -2,6 +2,8 @@ echo "################################"
 echo "build examples alembic"
 echo "################################"
 
+brew install openexr
+
 git submodule update --init -- 3rd_party/alembic
 cd 3rd_party/alembic
 git checkout master
