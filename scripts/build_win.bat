@@ -1,3 +1,59 @@
+
+: ##############################
+: build zlib
+
+set path3rdparty=%~dp0..\3rd_party
+
+cd 3rd_party
+git clone https://github.com/madler/zlib.git
+cd zlib
+mkdir buildMake
+cd buildMake
+cmake -A x64 ..
+cmake --build . --config Release
+copy zconf.h ..
+cd ../../../
+set zlib_root=%~dp0..\3rd_party\zlib\
+set zlib_library=%zlib_root%\buildMake\Release\zlib.lib
+echo "zlib_root: %zlib_root%"
+echo "zlib_library: %zlib_library%"
+
+
+: ##############################
+: build OpenEXR
+
+cd 3rd_party
+curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
+7z x openexr.zip -y
+cd openexr-2.5.2
+cmake -A x64 . -DZLIB_ROOT=%zlib_root% -DZLIB_LIBRARY=%zlib_library% -DPYILMBASE_ENABLE=OFF -DBUILD_TESTING=OFF
+cmake --build . --config Release
+mkdir %path3rdparty%\OpenEXR
+cmake --install . --prefix %path3rdparty%\OpenEXR
+cd ../../
+
+: ##############################
+: build Alembic
+
+git submodule update --init 3rd_party/alembic
+cd 3rd_party/alembic
+git checkout master
+git pull origin master
+: cmake -A x64 . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=ON -DALEMBIC_ILMBASE_ROOT=%pathopenexr%\bin\Release -DILMBASE_INCLUDE_DIR=%pathopenexr%\bin\Release -DILMBASE_ROOT=%pathopenexr%\bin\Release
+: cmake -A x64 . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=ON -DALEMBIC_ILMBASE_ROOT=%pathopenexr%\bin\Release -DILMBASE_ROOT=%pathopenexr%\bin\Release
+cmake -A x64 . ^
+  -DUSE_TESTS=OFF ^
+  -DALEMBIC_SHARED_LIBS=ON ^
+  -DILMBASE_ROOT=%path3rdparty%\OpenEXR 
+cmake --build . --config Release
+cd ../../
+
+exit /b
+
+
+
+
+
 git submodule update --init --recursive
 
 : ################################
@@ -98,41 +154,4 @@ cd ../../
 : ##############################
 
 goto :END
-: ##############################
-: build OpenEXR
-
-cd 3rd_party
-curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
-7z x openexr.zip -y
-cd openexr-2.5.2
-cmake -A x64 . -DZLIB_ROOT=%zlib_root% -DZLIB_LIBRARY=%zlib_library% -DPYILMBASE_ENABLE=OFF -DBUILD_TESTING=OFF
-cmake --build . --config Release
-cd ../../
-set pathopenexr=%~dp0..\3rd_party\openexr-2.5.2
-copy %pathopenexr%\IlmBase\Half\Release\*.lib %pathopenexr%\bin\Release
-copy %pathopenexr%\IlmBase\Iex\Release\*.lib %pathopenexr%\bin\Release
-copy %pathopenexr%\IlmBase\IexMath\Release\*.lib %pathopenexr%\bin\Release
-copy %pathopenexr%\IlmBase\IlmThread\Release\*.lib %pathopenexr%\bin\Release
-copy %pathopenexr%\IlmBase\IMath\Release\*.lib %pathopenexr%\bin\Release
-copy %pathopenexr%\IlmBase\config\IlmBaseConfig.h %pathopenexr%\bin\Release
-
-: ##############################
-: build Alembic
-
-git submodule update --init 3rd_party/alembic
-cd 3rd_party/alembic
-git checkout master
-git pull origin master
-: cmake -A x64 . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=ON -DALEMBIC_ILMBASE_ROOT=%pathopenexr%\bin\Release -DILMBASE_INCLUDE_DIR=%pathopenexr%\bin\Release -DILMBASE_ROOT=%pathopenexr%\bin\Release
-: cmake -A x64 . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=ON -DALEMBIC_ILMBASE_ROOT=%pathopenexr%\bin\Release -DILMBASE_ROOT=%pathopenexr%\bin\Release
-cmake -A x64 . ^
-  -DUSE_TESTS=OFF ^
-  -DALEMBIC_SHARED_LIBS=ON ^
-  -DILMBASE_ROOT=%pathopenexr%\bin\Release ^
-  -DILMBASE_INCLUDE_DIR=%pathopenexr%\IlmBase\Half
-:  -DALEMBIC_ILMBASE_ROOT=%pathopenexr%\bin\Release
-cmake --build . --config Release
-cd ../../
-
-exit /b
 :END
