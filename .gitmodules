@@ -19,3 +19,6 @@
 [submodule "3rd_party/alembic"]
 	path = 3rd_party/alembic
 	url = https://github.com/alembic/alembic
+[submodule "3rd_party/zlib"]
+	path = 3rd_party/zlib
+	url = https://github.com/madler/zlib.git
