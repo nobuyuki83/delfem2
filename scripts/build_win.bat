@@ -100,7 +100,11 @@ cd 3rd_party
 curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
 7z x openexr.zip -y
 cd openexr-2.5.2
-cmake -A x64 . -DZLIB_ROOT=%zlib_root% -DZLIB_LIBRARY=%zlib_library% -DPYILMBASE_ENABLE=OFF -DBUILD_TESTING=OFF
+cmake . -A x64 ^ 
+  -DZLIB_ROOT=%zlib_root% ^
+  -DZLIB_LIBRARY=%zlib_library% ^
+  -DPYILMBASE_ENABLE=OFF ^ 
+  -DBUILD_TESTING=OFF
 cmake --build . --config Release
 mkdir %path3rdparty%\OpenEXR
 cmake --install . --prefix %path3rdparty%\OpenEXR
