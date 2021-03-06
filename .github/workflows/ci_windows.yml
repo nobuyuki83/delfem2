@@ -116,7 +116,7 @@ jobs:
         git submodule update --init -- 3rd_party/cnpy
 
         $zlib_library=Convert-Path 3rd_party\zlib\buildMake\Release\zlib.lib
-        $zlib_include_dir=Convert-Path 3rd_prty\zlib
+        $zlib_include_dir=Convert-Path 3rd_party\zlib
         echo "zlib_library: $zlib_library"
         echo "zlib_include_dir: $zlib_include_dir"
 
