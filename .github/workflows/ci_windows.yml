@@ -175,7 +175,7 @@ jobs:
         cd alembic
         $alembic_root=Convert-Path ../Alembic_Lib
         echo "alembic_root: $alembic_root"        
-        cmake --install . --prefix $alembic_root$
+        cmake --install . --prefix "$alembic_root"
         cd ../..
 
     - name: build examples (alembic)
