@@ -147,8 +147,15 @@ jobs:
             -DPYILMBASE_ENABLE=OFF `
             -DBUILD_TESTING=OFF
         cmake --build . --config Release
-        mkdir ../OpenEXR
+        echo "build finished"
+        cd ..
+        mkdir OpenEXR
+        echo "mkdir finished"
+        echo Get-ChildItem
+        cd openexr-2.5.2
+        echo "display 3rd_party finished"
         cmake --install . --prefix ../OpenEXR
+        echo "install finished"
         cd ../../
 
     - name: build alembic 
@@ -164,7 +171,7 @@ jobs:
         cmake . `
             -DUSE_TESTS=OFF `
             -DALEMBIC_SHARED_LIBS=OFF `
-            -DILMBASE_ROOT=$openexr_root
+            -DILMBASE_ROOT="$openexr_root"
         cmake --build --config Release
         cd ../..
 
