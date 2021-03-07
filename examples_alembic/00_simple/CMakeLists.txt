@@ -19,7 +19,11 @@ ENDIF()
 project(00_simple)
 
 include(../../3rd_party/alembic/cmake/Modules/FindIlmBase.cmake)
-get_filename_component(ALEMBIC_LIBRARY ../../3rd_party/alembic/lib/Alembic/libAlembic.a ABSOLUTE)
+IF(MSVC)
+  get_filename_component(ALEMBIC_LIBRARY ../../3rd_party/Alembic_Lib/lib/Alembic.lib ABSOLUTE)
+ELSE()
+  get_filename_component(ALEMBIC_LIBRARY ../../3rd_party/alembic/lib/Alembic libAlembic.a ABSOLUTE)
+ENDIF()
 
 
 ####################################
