@@ -147,19 +147,13 @@ jobs:
             -DPYILMBASE_ENABLE=OFF `
             -DBUILD_TESTING=OFF
         cmake --build . --config Release
-        echo "build finished"
         cd ..
         mkdir OpenEXR
-        echo "mkdir finished"
-        Get-ChildItem
         ls
-        dir
         cd openexr-2.5.2
         $openexr_root=Convert-Path ../OpenEXR
-        echo "$openexr_root"
-        echo "display 3rd_party finished"
+        echo "openexr_root: $openexr_root"
         cmake --install . --prefix "$openexr_root"
-        echo "install finished"
         cd ../../
 
     - name: build alembic 
@@ -167,7 +161,7 @@ jobs:
         echo "###############################"
         echo "## build alembic"
 
-        $openexr_root=Convert-Path 3rd_party\OpenEXR
+        $openexr_root=Convert-Path 3rd_party/OpenEXR
         echo "openexr_root: $oepnexr_root"
 
         git submodule update --init -- 3rd_party/alembic        
