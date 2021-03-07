@@ -142,11 +142,11 @@ jobs:
         7z x openexr.zip -y
         cd openexr-2.5.2
         cmake . -A x64 `
-            -DZLIB_ROOT=$zlib_root `
-            -DZLIB_LIBRARY=$zlib_library `
+            -DZLIB_ROOT="$zlib_root" `
+            -DZLIB_LIBRARY="$zlib_library" `
             -DPYILMBASE_ENABLE=OFF `
             -DBUILD_TESTING=OFF
-        cmake --build . --config Release        
+        cmake --build . --config Release
         mkdir ../OpenEXR
         cmake --install . --prefix ../OpenEXR
         cd ../../
