@@ -183,9 +183,12 @@ jobs:
         echo "###############################"
         echo "## build examples alembic"
 
+        $openexr_root=Convert-Path 3rd_party/OpenEXR_Lib
+        echo "openexr_root: $openexr_root"
+
         cd examples_alembic
         mkdir buildVS64Static
         cd buildVS64Static
-        cmake -A x64 .. -DILMBASE_ROOT=%path3rdparty%\OpenEXR_Lib
+        cmake -A x64 .. -DILMBASE_ROOT=%openexr_root%
         cmake --build .
         cd ../..
