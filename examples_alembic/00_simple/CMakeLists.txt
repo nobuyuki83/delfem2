@@ -22,7 +22,7 @@ include(../../3rd_party/alembic/cmake/Modules/FindIlmBase.cmake)
 IF(MSVC)
   get_filename_component(ALEMBIC_LIBRARY ../../3rd_party/Alembic_Lib/lib/Alembic.lib ABSOLUTE)
 ELSE()
-  get_filename_component(ALEMBIC_LIBRARY ../../3rd_party/alembic/lib/Alembic libAlembic.a ABSOLUTE)
+  get_filename_component(ALEMBIC_LIBRARY ../../3rd_party/alembic/lib/Alembic/libAlembic.a ABSOLUTE)
 ENDIF()
 
 
