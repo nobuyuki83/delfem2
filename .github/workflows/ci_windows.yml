@@ -154,6 +154,8 @@ jobs:
         $openexr_root=Convert-Path ../OpenEXR
         echo "openexr_root: $openexr_root"
         cmake --install . --prefix "$openexr_root"
+        cd ../OpenEXR
+        ls
         cd ../../
 
     - name: build alembic 
@@ -163,6 +165,7 @@ jobs:
 
         $openexr_root=Convert-Path 3rd_party/OpenEXR
         echo "openexr_root: $oepnexr_root"
+        pwd
 
         git submodule update --init -- 3rd_party/alembic        
         cd 3rd_party/alembic
