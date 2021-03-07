@@ -189,6 +189,6 @@ jobs:
         cd examples_alembic
         mkdir buildVS64Static
         cd buildVS64Static
-        cmake -A x64 .. -DILMBASE_ROOT=%openexr_root%
+        cmake -A x64 .. -DILMBASE_ROOT="$openexr_root"
         cmake --build .
         cd ../..
