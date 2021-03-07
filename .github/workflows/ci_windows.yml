@@ -151,10 +151,14 @@ jobs:
         cd ..
         mkdir OpenEXR
         echo "mkdir finished"
-        echo Get-ChildItem
+        Get-ChildItem
+        ls
+        dir
         cd openexr-2.5.2
+        $openexr_root=Convert-Path ../OpenEXR
+        echo "$openexr_root"
         echo "display 3rd_party finished"
-        cmake --install . --prefix ../OpenEXR
+        cmake --install . --prefix "$openexr_root"
         echo "install finished"
         cd ../../
 
