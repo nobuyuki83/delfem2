@@ -190,5 +190,5 @@ jobs:
         mkdir buildVS64Static
         cd buildVS64Static
         cmake -A x64 .. -DILMBASE_ROOT="$openexr_root"
-        cmake --build .
+        cmake --build . --config Release
         cd ../..
