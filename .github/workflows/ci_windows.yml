@@ -123,9 +123,9 @@ jobs:
         cd examples_oldgl_glfw_cnpy
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
-        cmake .. -A x64 \
-          -DUSE_HEADERONLY=ON \
-          -DZLIB_LIBRARY="$zlib_library" \
+        cmake .. -A x64 `
+          -DUSE_HEADERONLY=ON `
+          -DZLIB_LIBRARY="$zlib_library" `
           -DZLIB_INCLUDE_DIR="$zlib_include_dir"
         cmake --build . --config Release
         cd ../../
@@ -141,10 +141,10 @@ jobs:
         curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
         7z x openexr.zip -y
         cd openexr-2.5.2
-        cmake . -A x64 \
-            -DZLIB_ROOT=$zlib_root \
-            -DZLIB_LIBRARY=$zlib_library \
-            -DPYILMBASE_ENABLE=OFF \
+        cmake . -A x64 `
+            -DZLIB_ROOT=$zlib_root `
+            -DZLIB_LIBRARY=$zlib_library `
+            -DPYILMBASE_ENABLE=OFF `
             -DBUILD_TESTING=OFF
         cmake --build . --config Release        
         mkdir ../OpenEXR
@@ -161,9 +161,9 @@ jobs:
 
         git submodule update --init -- 3rd_party/alembic        
         cd 3rd_party/alembic
-        cmake . \
-            -DUSE_TESTS=OFF \
-            -DALEMBIC_SHARED_LIBS=OFF \
+        cmake . `
+            -DUSE_TESTS=OFF `
+            -DALEMBIC_SHARED_LIBS=OFF `
             -DILMBASE_ROOT=$openexr_root
         cmake --build --config Release
         cd ../..
