@@ -148,9 +148,9 @@ jobs:
             -DBUILD_TESTING=OFF
         cmake --build . --config Release
         cd ..
-        mkdir OpenEXR        
+        mkdir OpenEXR_Lib     
         cd openexr-2.5.2
-        $openexr_root=Convert-Path ../OpenEXR
+        $openexr_root=Convert-Path ../OpenEXR_Lib
         echo "openexr_root: $openexr_root"
         cmake --install . --prefix "$openexr_root"
         cd ../../
@@ -160,7 +160,7 @@ jobs:
         echo "###############################"
         echo "## build alembic"
 
-        $openexr_root=Convert-Path 3rd_party/OpenEXR
+        $openexr_root=Convert-Path 3rd_party/OpenEXR_Lib
         echo "openexr_root: $openexr_root"
 
         git submodule update --init -- 3rd_party/alembic        
@@ -170,6 +170,12 @@ jobs:
             -DALEMBIC_SHARED_LIBS=OFF `
             -DILMBASE_ROOT="$openexr_root"
         cmake --build . --config Release
+        cd ..
+        mkdir Alembic_Lib
+        cd alembic
+        $alembic_root=Convert-Path ../Alembic_Lib
+        echo "alembic_root: $alembic_root"        
+        cmake --install . --prefix $alembic_root$
         cd ../..
 
     - name: build examples (alembic)
@@ -180,6 +186,6 @@ jobs:
         cd examples_alembic
         mkdir buildVS64Static
         cd buildVS64Static
-        cmake -A x64 ..
+        cmake -A x64 .. -DILMBASE_ROOT=%path3rdparty%\OpenEXR_Lib
         cmake --build .
         cd ../..
