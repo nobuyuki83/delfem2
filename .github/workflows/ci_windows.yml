@@ -32,6 +32,9 @@ jobs:
       run: |
         echo "###################"
         echo "## build googletest"
+
+        git submodule update --init -- 3rd_party/googletest
+
         cd 3rd_party/googletest
         mkdir buildVS64
         cd buildVS64
@@ -61,15 +64,20 @@ jobs:
       run: |
         echo "################################"
         echo "## build glfw"
+
+        git submodule update --init -- 3rd_party/glfw
         cd 3rd_party/glfw
         cmake . -A x64
         cmake --build . --config Release
         cd ../..
 
-    - name: build tinygltf
+    - name: build examples (tinygltf)
       run: |
         echo "######################"
         echo "## build tinygltf demo"
+
+        git submodule update --init -- 3rd_party/tinygltf
+
         cd examples_oldgl_glfw_tinygltf
         mkdir buildVS64Static
         cd buildVS64Static
@@ -77,10 +85,11 @@ jobs:
         cmake --build .
         cd ../../
 
-    - name: build thread
+    - name: build examples (thread)
       run: |
         echo "######################"
         echo "## build thread demo"
+
         cd examples_oldgl_glfw_thread
         mkdir buildVS64Static
         cd buildVS64Static
@@ -100,7 +109,7 @@ jobs:
         cmake --build . --config Release
         cd ../../../  
 
-    - name: build examples_oldgl_glfw_cnpy
+    - name: build examples (cnpy)
       run: |
         echo "##############################"
         echo "## examples_oldgl_glfw_cnpy"
@@ -113,8 +122,22 @@ jobs:
         cmake --build . --config Release
         cd ../../
 
+    - name: build OpenEXR
+      run: |
+        echo "##############################""
+        echo "## build OpenEXR"
 
-    - name: build examples_alembic
+        cd 3rd_party
+        curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
+        7z x openexr.zip -y
+        cd openexr-2.5.2
+        cmake -A x64 . -DZLIB_ROOT=%zlib_root% -DZLIB_LIBRARY=%zlib_library% -DPYILMBASE_ENABLE=OFF -DBUILD_TESTING=OFF
+        cmake --build . --config Release
+        mkdir %path3rdparty%\OpenEXR
+        cmake --install . --prefix %path3rdparty%\OpenEXR
+        cd ../../
+
+    - name: build examples (alembic)
       run: |
         echo "###############################"
         echo "## build examples alembic"

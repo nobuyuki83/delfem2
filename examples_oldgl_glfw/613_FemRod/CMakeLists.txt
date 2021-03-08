@@ -21,6 +21,8 @@ project(613_FemRod)
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
+# glfw
 IF(MSVC)
   set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
 ELSE()

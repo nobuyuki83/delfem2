@@ -26,6 +26,8 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 
 # glfw
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
+# glfw
 IF(MSVC)
   set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
 ELSE()
