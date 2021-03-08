@@ -12,12 +12,17 @@ mkdir buildVS64
 cd buildVS64
 cmake -A x64 -Dgtest_force_shared_crt=ON ..
 cmake --build . --config Release
+mkdir ../GTest_Lib
+cmake --install . --prefix ../GTest_Lib
 cd ../../..
+
+set path_gtest_root=%~dp0..\3rd_party\GTEST_Lib
+echo "path_gtest_root: %path_gtest_root%"
 
 cd test_cpp
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake -A x64 -DUSE_HEADERONLY=ON ..
+cmake .. -A x64 -DUSE_HEADERONLY=ON  -DGTEST_ROOT="%path_gtest_root%"
 cmake --build . --config Release
 "Release/runUnitTests.exe"
 cd ../../
@@ -25,7 +30,7 @@ cd ../../
 cd test_cpp
 mkdir buildVS64Static
 cd buildVS64Static
-cmake -A x64 -DUSE_HEADERONLY=OFF ..
+cmake .. -A x64 -DUSE_HEADERONLY=OFF -DGTEST_ROOT="%path_gtest_root%"
 cd ../../
 
 : ################################

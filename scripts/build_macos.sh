@@ -218,7 +218,9 @@ cd 3rd_party/googletest
 git checkout master
 git pull origin master
 cmake .
-make
+cmake --build . 
+mkdir ../GTest_Lib
+cmake  --install . --prefix ../GTest_Lib
 cd ../../
 
 echo "###############################"

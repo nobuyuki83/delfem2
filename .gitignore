@@ -67,6 +67,7 @@ test_inputs/smpl_model_m.npz
 3rd_party/openexr-2.5.2
 3rd_party/openexr.zip
 3rd_party/Alembic_Lib
+3rd_party/GTest_Lib
 examples_oldgl_glfw_cnpy/14_ClothPoseTexture/body.obj
 examples_oldgl_glfw_cnpy/14_ClothPoseTexture/cloth.obj
 examples_oldgl_glfw/dfm2_static_glfwold/libdfm2_static_glfwold.a*
