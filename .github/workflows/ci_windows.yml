@@ -120,8 +120,10 @@ jobs:
 
         $zlib_library=Convert-Path 3rd_party\zlib\buildMake\Release\zlib.lib
         $zlib_include_dir=Convert-Path 3rd_party\zlib
+        $glfw_root=Convert-Path 3rd_party\GLFW_Lib
         echo "zlib_library: $zlib_library"
         echo "zlib_include_dir: $zlib_include_dir"
+        echo "glfw_root: $glfw_root"
 
         cd examples_oldgl_glfw_cnpy
         mkdir buildVS64Hdronly
@@ -129,7 +131,8 @@ jobs:
         cmake .. -A x64 `
           -DUSE_HEADERONLY=ON `
           -DZLIB_LIBRARY="$zlib_library" `
-          -DZLIB_INCLUDE_DIR="$zlib_include_dir"
+          -DZLIB_INCLUDE_DIR="$zlib_include_dir" `
+          -DGLFW_ROOT="$glfw_root"
         cmake --build . --config Release
         cd ../../
 
