@@ -26,13 +26,7 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 
 # glfw
-IF(MSVC)
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
-ELSE()
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
-ENDIF()
-get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
-get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # opengl
 find_package(OpenGL REQUIRED)
@@ -67,35 +61,8 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-#####################################
-
-IF(APPLE)
-  find_library( COCOA_LIBRARY Cocoa )
-  find_library( IOKIT_LIBRARY IOKit )
-  find_library( COREVIDEO_LIBRARY CoreVideo )
-  target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      ${COCOA_LIBRARY}
-      ${IOKIT_LIBRARY}
-      ${COREVIDEO_LIBRARY}
-      )
-ELSEIF(UNIX)
-  message(STATUS "opengl: ${OPENGL_LIBRARY}")
-  message(STATUS "glfw: ${GLFW_LIBRARY}")
-  message(STATUS "dfm2: ${DFM2_LIBRARY}")
-  target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-      )
-ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${OPENGL_LIBRARY}
-  )
-ENDIF()
-
+target_link_libraries(${PROJECT_NAME}
+  ${DFM2_LIBRARY}
+  ${OPENGL_LIBRARY}
+  ${GLFW_LIBRARIES}
+)
