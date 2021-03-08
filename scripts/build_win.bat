@@ -35,39 +35,47 @@ git submodule update --init 3rd_party/glfw
 cd 3rd_party/glfw
 cmake . -A x64
 cmake --build . --config Release
+mkdir ../GLFW_Lib
+cmake --install . --prefix ../GLFW_Lib
 cd ../..
 
 : ##############################
 : glfw_oldgl
 
+set path_glfw_root=%~dp0..\3rd_party\GLFW_Lib
+echo "path_glfw_root: %path_glfw_root%"
+
 cd examples_oldgl_glfw
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake -A x64 -DUSE_HEADERONLY=ON ..
+cmake .. -A x64 -DUSE_HEADERONLY=ON -DGLFW_ROOT=%path_glfw_root%
 cmake --build . --config Release
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildVS64Static
 cd buildVS64Static
-cmake -A x64 -DUSE_HEADERONLY=OFF ..
+cmake .. -A x64 -DUSE_HEADERONLY=OFF -DGLFW_ROOT=%path_glfw_root%
 cmake --build . --config Release
 cd ../../
 
 : ##############################
 : glfw_newgl
 
+set path_glfw_root=%~dp0..\3rd_party\GLFW_Lib
+echo "path_glfw_root: %path_glfw_root%"
+
 cd examples_newgl_glfw
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake -A x64 -DUSE_HEADERONLY=ON ..
+cmake .. -A x64 -DUSE_HEADERONLY=ON -DGLFW_ROOT=%path_glfw_root%
 cmake --build . --config Release
 cd ../../
 
 cd examples_newgl_glfw
 mkdir buildVS64Static
 cd buildVS64Static
-cmake -A x64 -DUSE_HEADERONLY=OFF ..
+cmake .. -A x64 -DUSE_HEADERONLY=OFF -DGLFW_ROOT=%path_glfw_root%
 cmake --build . --config Release
 cd ../../
 
@@ -86,15 +94,18 @@ cd ../../../
 : ##############################
 : glfw_cnpy
 
+set path_glfw_root=%~dp0..\3rd_party\GLFW_Lib
 set path_zlib_lib=%~dp0..\3rd_party\zlib\buildMake\Release\zlib.lib
 set path_zlib_inc=%~dp0..\3rd_party\zlib
+echo "path_glfw_root: %path_glfw_root%"
 cd examples_oldgl_glfw_cnpy
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
 cmake .. -A x64 ^
   -DUSE_HEADERONLY=ON ^
   -DZLIB_LIBRARY="%path_zlib_lib%" ^
-  -DZLIB_INCLUDE_DIR="%path_zlib_inc%"
+  -DZLIB_INCLUDE_DIR="%path_zlib_inc%" ^
+  -DGLFW_ROOT=%path_glfw_root%
 cmake --build . --config Release
 cd ../../
 
