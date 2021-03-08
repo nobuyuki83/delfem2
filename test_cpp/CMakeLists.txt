@@ -29,12 +29,12 @@ set(DELFEM2_INCLUDE_DIR "../include")
 set(DELFEM2_INC         "../include/delfem2")
 set(3RD_PARTY           "../3rd_party")
 
-get_filename_component(GTEST_DIR ${3RD_PARTY}/googletest ABSOLUTE)
+find_package( GTest REQUIRED )
 
 enable_testing()
 
 include_directories(
-  ${GTEST_DIR}/googletest/include
+  ${GTEST_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
 )
@@ -125,23 +125,10 @@ add_executable(${MY_BINARY_NAME}
   main.cpp  
 )
 
-if(MSVC)
-  if(CMAKE_CL_64)
-    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/buildVS64/lib/Release/gtest_main.lib)
-    set(GTEST_LIBRARY      ${GTEST_DIR}/buildVS64/lib/Release/gtest.lib)
-  else()
-    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/buildVS32/lib/Release/gtest_main.lib)
-    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/buildVS32/lib/Release/gtest.lib)
-  endif()
-  target_link_libraries(${MY_BINARY_NAME}
-    ${GTEST_LIBRARY}
-    ${GTEST_MAIN_LIBRARY})  
-else()
-  target_link_libraries(${MY_BINARY_NAME}
-      ${GTEST_DIR}/lib/libgtest.a
-      ${GTEST_DIR}/lib/libgtest_main.a
-      -pthread)
-endif()    
+target_link_libraries(${MY_BINARY_NAME}
+  ${GTEST_LIBRARY}
+  ${GTEST_MAIN_LIBRARY}
+)
 
 add_test(
   NAME ${MY_BINARY_NAME}

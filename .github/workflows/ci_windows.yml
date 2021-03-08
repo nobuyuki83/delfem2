@@ -34,6 +34,8 @@ jobs:
         cd buildVS64
         cmake -A x64 -Dgtest_force_shared_crt=ON ..
         cmake --build . --config Release
+        mkdir ../GTest_Lib
+        cmake --install . --prefix ../GTest_Lib
         cd ../../..
 
     - name: build & run test_cpp    
@@ -42,10 +44,14 @@ jobs:
         echo "## build test hdronly and run"
 
         git submodule update --init -- 3rd_party/tinygltf
+        $gtest_root=Convert-Path 3rd_party\GTest_Lib
+
         cd test_cpp
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
-        cmake -A x64 -DUSE_HEADERONLY=ON ..
+        cmake .. -A x64 `
+          -DUSE_HEADERONLY=ON `
+          -DGTEST_ROOT="$gtest_root"
         cmake --build . --config Release
         ./Release/runUnitTests.exe 
         cd ../../
@@ -56,7 +62,9 @@ jobs:
         cd test_cpp        
         mkdir buildVS64Static
         cd buildVS64Static
-        cmake -A x64 -DUSE_HEADERONLY=OFF ..
+        cmake .. -A x64 `
+          -DUSE_HEADERONLY=OFF `
+          -DGTEST_ROOT="$gtest_root"
         cd ../../
 
     - name: build glfw
@@ -77,11 +85,16 @@ jobs:
         echo "######################"
         echo "## build tinygltf demo"
 
+        $glfw_root=Convert-Path 3rd_party\GLFW_Lib
+        echo "glfw_root: $glfw_root"
+
         git submodule update --init -- 3rd_party/tinygltf
         cd examples_oldgl_glfw_tinygltf
         mkdir buildVS64Static
         cd buildVS64Static
-        cmake -A x64 -DUSE_HEADERONLY=ON ..
+        cmake .. -A x64 `
+          -DUSE_HEADERONLY=ON `
+          -DGLFW_ROOT=$glfw_root
         cmake --build .
         cd ../../
 
@@ -90,10 +103,15 @@ jobs:
         echo "######################"
         echo "## build thread demo"
 
+        $glfw_root=Convert-Path 3rd_party\GLFW_Lib
+        echo "glfw_root: $glfw_root"
+
         cd examples_oldgl_glfw_thread
         mkdir buildVS64Static
         cd buildVS64Static
-        cmake -A x64 -DUSE_HEADERONLY=ON ..
+        cmake .. -A x64 `
+          -DUSE_HEADERONLY=ON `
+          -DGLFW_ROOT=$glfw_root
         cmake --build .
         cd ../../        
 
