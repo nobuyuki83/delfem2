@@ -21,7 +21,7 @@ project(${PROJ_NAME})
 add_definitions(-DDFM2_STATIC_LIBRARY=ON)
 
 # glfw
-get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # glad
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
