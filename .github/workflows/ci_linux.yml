@@ -35,15 +35,16 @@ jobs:
         cmake .
         cmake --build .
         mkdir ../GTest_Lib
-        cmake --install --prefix ../GTest_Lib
+        cmake --install . --prefix ../GTest_Lib
         cd ../../
 
         echo "#####################################"
         echo "## build delfem2 test hdronly and run"
+        $gtest_root=
         cd test_cpp
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake -DUSE_HEADERONLY=OFF ..
-        make
+        cmake .. -DUSE_HEADERONLY=OFF
+        cmake --build .
         ./runUnitTests
         cd ../../
 
@@ -51,8 +52,8 @@ jobs:
         echo "## build delfem test static" 
         cd test_cpp
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake -DUSE_HEADERONLY=ON ..
-        make
+        cmake .. -DUSE_HEADERONLY=ON -DGTEST_ROOT=$gtest_root
+        cmake --build .
         ./runUnitTests
         cd ../../    
 

@@ -44,7 +44,7 @@ jobs:
         echo "## build test hdronly and run"
 
         git submodule update --init -- 3rd_party/tinygltf
-        $gtest_root=Convert-Path 3rd_party\GTest_Lib
+        $gtest_root=Convert-Path 3rd_party/GTest_Lib
 
         cd test_cpp
         mkdir buildVS64Hdronly
@@ -76,7 +76,7 @@ jobs:
         cd 3rd_party/glfw
         cmake . -A x64
         cmake --build . --config Release
-        mkdir GLFW_Lib
+        mkdir ../GLFW_Lib
         cmake --install . --prefix ../GLFW_Lib
         cd ../..
 
