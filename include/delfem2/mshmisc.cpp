@@ -987,3 +987,17 @@ void delfem2::MassPoint_Tri3D(
   }
 }
 
+
+DFM2_INLINE void delfem2::AddMesh(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri0)
+{
+  const unsigned int np0 = aXYZ.size()/3;
+  aXYZ.reserve( aXYZ.size()+aXYZ0.size() );
+  aTri.reserve( aTri.size()+aTri0.size() );
+  for(double p: aXYZ0){ aXYZ.push_back(p); }
+  for(double i: aTri0){ aTri.push_back(i+np0); }
+}
+

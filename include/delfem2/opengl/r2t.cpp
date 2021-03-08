@@ -309,10 +309,10 @@ bool delfem2::opengl::GetProjectedPoint(
   const int iy0 = (int)floor(pg[1]);
   const int ix1 = ix0+1;
   const int iy1 = iy0+1;
-  if( ix0 < 0 && ix0 >= (int)nx ){ return false; }
-  if( ix1 < 0 && ix1 >= (int)nx ){ return false; }
-  if( iy0 < 0 && iy0 >= (int)ny ){ return false; }
-  if( iy1 < 0 && iy1 >= (int)ny ){ return false; }
+  if( ix0 < 0 || ix0 >= (int)nx ){ return false; }
+  if( ix1 < 0 || ix1 >= (int)nx ){ return false; }
+  if( iy0 < 0 || iy0 >= (int)ny ){ return false; }
+  if( iy1 < 0 || iy1 >= (int)ny ){ return false; }
   if( smplr.aZ[iy0*nx+ix0] > 0.99 ) return false;
   if( smplr.aZ[iy0*nx+ix1] > 0.99 ) return false;
   if( smplr.aZ[iy1*nx+ix0] > 0.99 ) return false;

@@ -193,17 +193,22 @@ void Dijkstra_FillFromBoundary(
     //
     unsigned int iflg0,
     const std::vector<unsigned int> &aFlgTri,
-    const std::vector<unsigned int> &aTriSuTri) {
+    const std::vector<unsigned int> &aTriSuTri)
+{
   const unsigned int ntri = aFlgTri.size();
   const unsigned int nedge = aTriSuTri.size() / ntri;
   aDist.assign(ntri, UINT_MAX);
   std::priority_queue<dijkstra::CNode<unsigned int>> que;
-  for (unsigned int it = 0; it < ntri; ++it) {
+  for (unsigned int it = 0; it < ntri; ++it)
+  {
     if (aFlgTri[it] != iflg0) { continue; }
     bool is_boundary = false;
     for (unsigned int ied = 0; ied < nedge; ++ied) {
       unsigned int jt = aTriSuTri[it * nedge + ied];
-      if (jt == UINT_MAX) continue;
+      if (jt == UINT_MAX){
+        is_boundary = true;
+        break;
+      }
       if (aFlgTri[jt] != iflg0) {
         is_boundary = true;
         break;
@@ -213,7 +218,9 @@ void Dijkstra_FillFromBoundary(
     //
     aDist[it] = 0;
     que.push(dijkstra::CNode<unsigned int>(it, 0));
+    std::cout << "boundary: " << it << std::endl;
   }
+  std::cout << "boundary_size: " << que.size() << std::endl;
   //
   aOrder.assign(ntri, UINT_MAX);
   unsigned int icnt = 0;
@@ -234,6 +241,7 @@ void Dijkstra_FillFromBoundary(
       const unsigned int idist1 = idist0 + 1;
       if (idist1 < aDist[ielm1]) {
         aDist[ielm1] = idist1; // Found the shortest path so far
+        std::cout << ielm1 << " " << idist1 << std::endl;
         que.push(dijkstra::CNode<unsigned int>(ielm1, idist1)); // candidate of shortest path
       }
     }

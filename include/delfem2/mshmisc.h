@@ -201,6 +201,12 @@ DFM2_INLINE void LaplacianSmoothing(
 
 // ---------------------------------------------------------
 
+DFM2_INLINE void AddMesh(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri0);
+
 
 } // delfem2
 

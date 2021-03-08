@@ -8,12 +8,12 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 These demo depends on OpenGL and GLFW libraries.
 
-### Install GLFW to the computer and build
+### Install GLFW to the computer
 
 for MacOS
 ```bash
-brew install glfw 
-``` 
+brew install glfw
+```
 
 for Ubuntu
 

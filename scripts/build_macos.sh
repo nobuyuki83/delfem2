@@ -1,31 +1,3 @@
-echo "################################"
-echo "build examples alembic"
-echo "################################"
-
-brew install openexr
-
-git submodule update --init -- 3rd_party/alembic
-cd 3rd_party/alembic
-git checkout master
-git pull origin master
-cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
-make
-cd ../..
-
-cd examples_alembic
-mkdir buildMake 
-cd buildMake
-cmake ..
-make
-cd ../../
-
-cd examples_alembic
-mkdir buildXcode 
-cd buildXcode
-cmake -G Xcode ..
-cmake --build .
-cd ../../
-
 
 echo "################################"
 echo "build examples_glut"
@@ -280,3 +252,32 @@ make
 ./runUnitTests
 cd ../../
 
+
+
+echo "################################"
+echo "build examples alembic"
+echo "################################"
+
+brew install openexr
+
+git submodule update --init -- 3rd_party/alembic
+cd 3rd_party/alembic
+git checkout master
+git pull origin master
+cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
+make
+cd ../..
+
+cd examples_alembic
+mkdir buildMake 
+cd buildMake
+cmake ..
+make
+cd ../../
+
+cd examples_alembic
+mkdir buildXcode 
+cd buildXcode
+cmake -G Xcode ..
+cmake --build .
+cd ../../

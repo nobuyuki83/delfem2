@@ -110,6 +110,7 @@ public:
       aTex(aTex_), aXYZ(aXYZ_), aTri(aTri_), aTriSuTri(aTriSuTri_)
   {
     const unsigned int ntri = aTri.size() / 3;
+    assert(it_ker<ntri);
     aAxisX.resize(ntri, CVec3d(0, 0, 0));
     aTex.resize(ntri * 2);
     aW.assign(ntri, 0.0);
@@ -252,6 +253,7 @@ void FlatteringPattern(
         aOrder, aDist,
         proc, iflg0, aFlgTri, aTriSuTri);
     ielm_ker = proc.ie0;
+    assert(ielm_ker<aTri.size()/3);
   }
   {
     std::vector<double> aTexE; // element-wise texture coordinate
