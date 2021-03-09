@@ -30,6 +30,7 @@ set(DELFEM2_INC         "../include/delfem2")
 set(3RD_PARTY           "../3rd_party")
 
 find_package( GTest REQUIRED )
+find_package(Threads REQUIRED)
 
 enable_testing()
 
@@ -128,6 +129,7 @@ add_executable(${MY_BINARY_NAME}
 target_link_libraries(${MY_BINARY_NAME}
   ${GTEST_LIBRARY}
   ${GTEST_MAIN_LIBRARY}
+  Threads::Threads
 )
 
 add_test(
