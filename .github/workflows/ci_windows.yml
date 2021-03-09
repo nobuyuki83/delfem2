@@ -75,6 +75,7 @@ jobs:
         echo "## build glfw"
 
         git submodule update --init -- 3rd_party/glfw
+
         cd 3rd_party/glfw
         cmake . -A x64
         cmake --build . --config Release
@@ -91,12 +92,13 @@ jobs:
         echo "glfw_root: $glfw_root"
 
         git submodule update --init -- 3rd_party/tinygltf
+
         cd examples_oldgl_glfw_tinygltf
         mkdir buildVS64Static
         cd buildVS64Static
         cmake .. -A x64 `
           -DUSE_HEADERONLY=ON `
-          -DGLFW_ROOT=$glfw_root
+          -DGLFW_ROOT="$glfw_root"
         cmake --build .
         cd ../../
 
@@ -113,7 +115,7 @@ jobs:
         cd buildVS64Static
         cmake .. -A x64 `
           -DUSE_HEADERONLY=ON `
-          -DGLFW_ROOT=$glfw_root
+          -DGLFW_ROOT="$glfw_root"
         cmake --build .
         cd ../../        
 
