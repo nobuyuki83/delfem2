@@ -1,4 +1,3 @@
-
 echo "################################"
 echo "build examples_glut"
 echo "################################"
@@ -7,7 +6,7 @@ cd examples_oldgl_glut
 mkdir buildMake 
 cd buildMake
 cmake ..
-make
+cmake --build .
 cd ../../
 
 cd examples_oldgl_glut
@@ -27,7 +26,9 @@ cd 3rd_party/glfw
 git checkout master
 git pull origin master
 cmake .
-make
+cmake --build .
+mkdir ../GLFW_Lib
+cmake --install . --prefix ../GLFW_Lib
 cd ../..
 
 
@@ -35,33 +36,35 @@ echo "################################"
 echo "build examples_glfwold"
 echo "################################"
 
+glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
+echo "glfw_root: $glfw_root"
+
 cd examples_oldgl_glfw
 mkdir buildXcodeHdronly 
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
-# cmake --build . # skip build to save time
+cmake .. -G Xcode -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildXcodeStatic 
 cd buildXcodeStatic
-cmake -G Xcode -DUSE_HEADERONLY=OFF ..
-# cmake --build . # skip build to save time
+cmake .. -G Xcode -DUSE_HEADERONLY=OFF -DGLFW_ROOT=$glfw_root
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake -DUSE_HEADERONLY=ON ..
-make
+cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+cmake --build .
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildMakeStatic 
 cd buildMakeStatic
-cmake -DUSE_HEADERONLY=OFF ..
-make
+cmake .. -DUSE_HEADERONLY=OFF -DGLFW_ROOT=$glfw_root
+cmake --build .
 cd ../../
+
 
 echo "################################"
 echo "build examples_glfwnew"
@@ -70,14 +73,14 @@ echo "################################"
 cd examples_newgl_glfw
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake .. -G Xcode -DUSE_HEADERONLY=ON
 cmake --build .
 cd ../../
 
 cd examples_newgl_glfw
 mkdir buildXcodeStatic
 cd buildXcodeStatic
-cmake -G Xcode -DUSE_HEADERONLY=OFF ..
+cmake .. -G Xcode -DUSE_HEADERONLY=OFF
 cmake --build .
 cd ../../
 
@@ -88,8 +91,7 @@ echo "################################"
 cd examples_oldgl_glfw_thread
 mkdir buildXcodeHdronly 
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
-# cmake --build . # skip build to save time
+cmake .. -G Xcode -DUSE_HEADERONLY=ON
 cd ../../
 
 
@@ -110,7 +112,7 @@ echo "################################"
 cd examples_newgl_glfw_imgui
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake .. -G Xcode -DUSE_HEADERONLY=ON
 cmake --build .
 cd ../../
 
@@ -132,14 +134,14 @@ echo "################################"
 cd examples_oldgl_glfw_tinygltf
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake .. -G Xcode -DUSE_HEADERONLY=ON
 cmake --build .
 cd ../../
 
 cd examples_oldgl_glfw_tinygltf
 mkdir buildXcodeStatic
 cd buildXcodeStatic
-cmake -G Xcode -DUSE_HEADERONLY=OFF ..
+cmake .. -G Xcode -DUSE_HEADERONLY=OFF
 cmake --build .
 cd ../../
 
@@ -161,15 +163,14 @@ echo "################################"
 cd examples_oldgl_glfw_cnpy
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
-# cmake --build . # skip build to save time
+cmake .. -G Xcode -DUSE_HEADERONLY=ON
 cd ../../
 
 cd examples_oldgl_glfw_cnpy
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake -DUSE_HEADERONLY=ON ..
-make 
+cmake .. -DUSE_HEADERONLY=ON
+cmake --build .
 cd ../../
 
 echo "################################"
@@ -179,14 +180,14 @@ echo "################################"
 cd examples_oldgl_glfw_eigen
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake .. -G Xcode -DUSE_HEADERONLY=ON
 cd ../../
 
 cd examples_oldgl_glfw_eigen
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake -DUSE_HEADERONLY=ON ..
-make
+cmake .. -DUSE_HEADERONLY=ON
+cmake --build .
 cd ../../
 
 
@@ -197,15 +198,15 @@ echo "################################"
 cd examples_oldgl_glfw_thread
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake .. -G Xcode -DUSE_HEADERONLY=ON
 cmake --build .
 cd ../../
 
 cd examples_oldgl_glfw_thread
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake -DUSE_HEADERONLY=ON ..
-make
+cmake .. -DUSE_HEADERONLY=ON
+cmake --build .
 cd ../../
 
 
@@ -220,37 +221,40 @@ git pull origin master
 cmake .
 cmake --build . 
 mkdir ../GTest_Lib
-cmake  --install . --prefix ../GTest_Lib
+cmake --install . --prefix ../GTest_Lib
 cd ../../
 
 echo "###############################"
 echo "test cpp"
 echo "###############################"
 
+gtest_root=$(pwd)"/3rd_party/GTest_Lib"
+echo "gtest_root: $gtest_root"
+
 cd test_cpp
 mkdir buildXcodeStatic
 cd buildXcodeStatic
-cmake -G Xcode -DUSE_HEADERONLY=OFF ..
+cmake .. -G Xcode -DUSE_HEADERONLY=OFF -DGTEST_ROOT=$gtest_root
 cd ../../
 
 cd test_cpp
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake .. -G Xcode -DUSE_HEADERONLY=ON -DGTEST_ROOT=$gtest_root
 cd ../../
 
 cd test_cpp
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake -DUSE_HEADERONLY=ON ..
-make
+cmake .. -DUSE_HEADERONLY=ON -DGTEST_ROOT=$gtest_root
+cmake --build .
 cd ../../
 
 cd test_cpp
 mkdir buildMakeStatic
 cd buildMakeStatic
-cmake -DUSE_HEADERONLY=OFF ..
-make
+cmake .. -DUSE_HEADERONLY=OFF -DGTEST_ROOT=$gtest_root
+cmake --build .
 ./runUnitTests
 cd ../../
 
@@ -267,14 +271,16 @@ cd 3rd_party/alembic
 git checkout master
 git pull origin master
 cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
-make
+cmake --build .
+mkdir ../Alembic_Lib
+cmake --install . --prefix ../Alembic_Lib
 cd ../..
 
 cd examples_alembic
 mkdir buildMake 
 cd buildMake
 cmake ..
-make
+cmake --build .
 cd ../../
 
 cd examples_alembic
