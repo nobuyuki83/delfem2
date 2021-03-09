@@ -109,7 +109,7 @@ jobs:
 
         cd examples_newgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DUSE_HEADERONLY=ON  -DGLFW_ROOT=$glfw_root
+        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
         cmake --build .
         cd ../..
 

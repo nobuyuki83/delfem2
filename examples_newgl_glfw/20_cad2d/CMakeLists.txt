@@ -28,13 +28,7 @@ project(20_cad2d)
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
-IF(MSVC)
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
-ELSE()
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
-ENDIF()
-get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
-get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # opengl
 find_package(OpenGL REQUIRED)
@@ -73,45 +67,8 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-#######################
-
-if (NOT EMSCRIPTEN)
-  IF(APPLE)
-    find_library( COCOA_LIBRARY Cocoa )
-    find_library( OpenGL_LIBRARY OpenGL )
-    find_library( IOKIT_LIBRARY IOKit )
-    find_library( COREVIDEO_LIBRARY CoreVideo )
-    target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY}
-    )
-  ELSEIF(UNIX)
-    target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}    
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-    )
-  ELSEIF(MSVC)
-    target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}    
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-    )
-  endif()
-else()
-  set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
-  set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
-  set(CMAKE_C_COMPILER "emcc")
-  set(CMAKE_CXX_COMPILER "em++")
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DEMSCRIPTEN=1)
-  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
-#  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s FULL_ES3=1")
-  include_directories(
-    ${GLAD_INCLUDE_DIR}
-    ${DELFEM2_INCLUDE_DIR}
-  )
-endif()
-
+target_link_libraries(${PROJECT_NAME}
+  ${DFM2_LIBRARY}
+  ${OPENGL_LIBRARY}
+  ${GLFW_LIBRARIES}
+)
