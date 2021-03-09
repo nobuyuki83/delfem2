@@ -74,7 +74,9 @@ jobs:
         git submodule update --init -- 3rd_party/glfw
         cd 3rd_party/glfw
         cmake .
-        make
+        cmake --build . 
+        mkdir ../GLFW_Lib
+        cmake --install . --prefix ../GLFW_Lib
         cd ../..
 
     - name: build examples (glfw legacy opengl)
@@ -82,16 +84,19 @@ jobs:
         echo ########################################
         echo ## build C++ glfw legacy Opengl examples
 
+        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
+        echo "glfw_root: $glfw_root"
+
         cd examples_oldgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake -DUSE_HEADERONLY=ON ..
-        make
+        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+        cmake --build .
         cd ../..
 
         cd examples_oldgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake -DUSE_HEADERONLY=OFF ..
-        make
+        cmake .. -DUSE_HEADERONLY=OFF -DGLFW_ROOT=$glfw_root
+        cmake --build .
         cd ../..
 
     - name: build examples (glfw modern opengl)
@@ -99,16 +104,19 @@ jobs:
         echo ########################################
         echo ## build C++ glfw modern Opengl examples
 
+        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
+        echo "glfw_root: $glfw_root"
+
         cd examples_newgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake -DUSE_HEADERONLY=ON ..
-        make
+        cmake .. -DUSE_HEADERONLY=ON  -DGLFW_ROOT=$glfw_root
+        cmake --build .
         cd ../..
 
         cd examples_newgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake -DUSE_HEADERONLY=OFF ..
-        make
+        cmake .. -DUSE_HEADERONLY=OFF -DGLFW_ROOT=$glfw_root
+        cmake --build .
         cd ../..
 
     - name: build examples (glut)
@@ -124,36 +132,50 @@ jobs:
         make
         cd ../..
 
-    - name: build examples (tinygltf)
+    - name: build examples (glfw, tinygltf)
       run: |
         echo ########################
         echo ## build tinygl examples
+
+        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
+        echo "glfw_root: $glfw_root"
+
         git submodule update --init -- 3rd_party/tinygltf
+
         cd examples_oldgl_glfw_tinygltf
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake -DUSE_HEADERONLY=ON ..
+        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
         make
         cd ../../
 
-    - name: build examples (thread)
+    - name: build examples (glfw,thread)
       run: |
         echo ########################
         echo ## build thread examples
+
+        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
+        echo "glfw_root: $glfw_root"
+
         cd examples_oldgl_glfw_thread
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake -DUSE_HEADERONLY=ON ..
-        make
+        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+        cmake --build .
         cd ../../
 
-    - name: build examples (imgui)
+    - name: build examples (glfw, imgui)
       run: |
         echo ########################
         echo ## build imgui examples
+
+        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
+        echo "glfw_root: $glfw_root"
+
         git submodule update --init -- 3rd_party/imgui
+
         cd examples_newgl_glfw_imgui
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake -DUSE_HEADERONLY=ON ..
-        make
+        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+        cmake --build .
         cd ../../
 
     - name: build_examples (alembic)
