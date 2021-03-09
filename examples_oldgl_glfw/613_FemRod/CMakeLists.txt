@@ -62,29 +62,8 @@ add_executable(${PROJECT_NAME}
 
 ###############################################
 
-IF(APPLE)
-  find_library( COCOA_LIBRARY Cocoa )
-  find_library( IOKIT_LIBRARY IOKit )
-  find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${COCOA_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${COREVIDEO_LIBRARY}
+    ${GLFW_LIBRARIES}
   )
-ELSEIF(UNIX)
-  target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-  )
-ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${OPENGL_LIBRARY}
-  )
-ENDIF()

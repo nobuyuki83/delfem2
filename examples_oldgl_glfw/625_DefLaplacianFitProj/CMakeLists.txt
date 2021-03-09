@@ -60,7 +60,7 @@ add_executable(${PROJECT_NAME}
     )
 
 target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARIES}
-    ${DFM2_LIBRARY}
     )
