@@ -5374,8 +5374,6 @@ var ASM_CONSTS = {
 
   function _glBlendEquationSeparate(x0, x1) { GLctx['blendEquationSeparate'](x0, x1) }
 
-  function _glBlendFunc(x0, x1) { GLctx['blendFunc'](x0, x1) }
-
   function _glBlendFuncSeparate(x0, x1, x2, x3) { GLctx['blendFuncSeparate'](x0, x1, x2, x3) }
 
   function _glBufferData(target, size, data, usage) {
@@ -7379,7 +7377,6 @@ var asmLibraryArg = {
   "glBindVertexArray": _glBindVertexArray,
   "glBlendEquation": _glBlendEquation,
   "glBlendEquationSeparate": _glBlendEquationSeparate,
-  "glBlendFunc": _glBlendFunc,
   "glBlendFuncSeparate": _glBlendFuncSeparate,
   "glBufferData": _glBufferData,
   "glClear": _glClear,
