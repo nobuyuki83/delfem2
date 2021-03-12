@@ -30,7 +30,9 @@ jobs:
       run: |
         echo "###########################"
         echo "## fetch & build googletest"
+
         git submodule update --init -- 3rd_party/googletest
+
         cd 3rd_party/googletest
         cmake .
         cmake --build .
@@ -38,12 +40,12 @@ jobs:
         cmake --install . --prefix ../GTest_Lib
         cd ../../
 
-
         gtest_root=$(pwd)"/3rd_party/GTest_Lib"
         echo "gtest_root: $gtest_root"
 
         echo "#####################################"
         echo "## build delfem2 test hdronly and run"
+
         cd test_cpp
         mkdir buildMakeHdronly && cd buildMakeHdronly
         cmake .. -DUSE_HEADERONLY=OFF -DGTEST_ROOT=$gtest_root
@@ -53,6 +55,7 @@ jobs:
 
         echo "###########################"
         echo "## build delfem test static" 
+        
         cd test_cpp
         mkdir buildMakeStatic && cd buildMakeStatic
         cmake .. -DUSE_HEADERONLY=ON -DGTEST_ROOT=$gtest_root
