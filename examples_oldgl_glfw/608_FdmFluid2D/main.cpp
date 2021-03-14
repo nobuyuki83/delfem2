@@ -12,7 +12,7 @@
 #include <random>
 // ------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 
 template <typename VAL>
 VAL max(VAL i, VAL j) { return (i>j?i:j); }
@@ -276,7 +276,7 @@ int main (int argc, char * argv[])
   std::mt19937 mt(rd());
   std::uniform_real_distribution<> dist(-1.0, 1.0);
 
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   
   int iframe = -1;

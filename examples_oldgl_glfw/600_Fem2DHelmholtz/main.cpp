@@ -6,7 +6,7 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -127,7 +127,7 @@ int main(int argc,char* argv[])
   std::vector<double> aVal(aCVal.size(),0.1);
   for(size_t ip=0;ip<aVal.size();++ip){ aVal[ip] = aCVal[ip].real(); }
   
-  dfm2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer3 viewer;
   viewer.camera.view_height = 1.5;
   viewer.Init_oldGL();
   while(!glfwWindowShouldClose(viewer.window)){

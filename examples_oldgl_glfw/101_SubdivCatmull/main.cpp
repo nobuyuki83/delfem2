@@ -9,7 +9,7 @@
  * @brief simple demo of subdivision surface
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/mshmisc.h"
@@ -25,7 +25,7 @@ namespace dfm2 = delfem2;
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.view_height = 2.0;
   delfem2::opengl::setSomeLighting();

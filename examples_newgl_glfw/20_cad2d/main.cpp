@@ -10,7 +10,7 @@
   #include <glad/glad.h>
 #endif
 //
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/new/v23dtricad.h"
 #include "delfem2/cad2_dtri2.h"
@@ -20,7 +20,7 @@
 // end of header
 // -----------------------------------------------------
 
-class CCAD2D_Viewer : public delfem2::opengl::CViewer_GLFW
+class CCAD2D_Viewer : public delfem2::opengl::CViewer3
 {
 public:
   CCAD2D_Viewer(){

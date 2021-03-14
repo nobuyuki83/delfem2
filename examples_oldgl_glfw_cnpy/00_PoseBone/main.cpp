@@ -10,7 +10,7 @@
  * @details skinning
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/rigv3.h"
@@ -79,7 +79,7 @@ int main()
   std::vector<double> aXYZ1 = aXYZ0;
     
   // -----------
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   dfm2::opengl::setSomeLighting();
 

@@ -6,7 +6,7 @@
  */
 
 #include "delfem2/opengl/old/v3q.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/geodelaunay3_v3.h"
 #include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/mshmisc.h"
@@ -100,7 +100,7 @@ int main(int argc,char* argv[])
     AssertMeshDTri2(aPo, aTri, aVec3);
   }
   // -----------
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.view_height = 1.5;
   while (!glfwWindowShouldClose(viewer.window))

@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/gizmo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -22,7 +22,7 @@ namespace dfm2 = delfem2;
 
 int main(int argc,char* argv[])
 {
-  class CMyViewer : public delfem2::opengl::CViewer_GLFW {
+  class CMyViewer : public delfem2::opengl::CViewer3 {
   public:
     CMyViewer(){
       delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
@@ -39,7 +39,7 @@ int main(int argc,char* argv[])
     void key_release(int key, int mods) override{
     }
     void key_press(int key, int mods) override{
-      delfem2::opengl::CViewer_GLFW::key_press(key,mods);
+      delfem2::opengl::CViewer3::key_press(key,mods);
       if( key == GLFW_KEY_R ){ ga.igizmo_mode = 1; }
       if( key == GLFW_KEY_G ){ ga.igizmo_mode = 0; }
     }

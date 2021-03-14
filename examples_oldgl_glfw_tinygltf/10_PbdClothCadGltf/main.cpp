@@ -8,7 +8,7 @@
 #include "delfem2/tinygltf/io_gltf.h"
 #include "tinygltf/tiny_gltf.h"
 #include "delfem2/rig_geo3.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/caddtri_v3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -250,7 +250,7 @@ int main(int argc,char* argv[])
         0.01);
   }
 
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.view_height = 1.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;

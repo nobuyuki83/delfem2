@@ -30,7 +30,7 @@
   #include <glad/glad.h>
 #endif
 #include "delfem2/opengl/new/mshcolor.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include <GLFW/glfw3.h>
 
 
@@ -172,7 +172,7 @@ dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
 dfm2::CPreconditionerILU<double> ilu_A;
 
-dfm2::opengl::CViewer_GLFW viewer;
+dfm2::opengl::CViewer3 viewer;
 dfm2::opengl::CShader_TriMesh_Scalar shdr0;
 
 

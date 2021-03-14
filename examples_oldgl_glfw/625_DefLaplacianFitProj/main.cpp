@@ -6,7 +6,7 @@
  */
 
 #include <glad/glad.h> // this should come first
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/v3q.h"
@@ -166,7 +166,7 @@ void LaplacianLinear(
     std::vector<double>& aXYZ1,
     CCapsuleRigged& trg,
     dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler,
-    dfm2::opengl::CViewer_GLFW& viewer,
+    dfm2::opengl::CViewer3& viewer,
     const std::vector<double>& aXYZ0,
     const std::vector<unsigned int>& aTri)
 {
@@ -213,7 +213,7 @@ void LaplacianDegenerate(
     std::vector<double>& aXYZ1,
     CCapsuleRigged& trg,
     dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler,
-    dfm2::opengl::CViewer_GLFW& viewer,
+    dfm2::opengl::CViewer3& viewer,
     const std::vector<double>& aXYZ0,
     const std::vector<unsigned int>& aTri)
 { // test degenerate deformer
@@ -267,7 +267,7 @@ int main(int argc,char* argv[])
   trg.Init();
  
   // ---------------------------------------
-  dfm2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;

@@ -6,7 +6,7 @@
  */
 
 #include <glad/glad.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/gridcube.h"
 #include "delfem2/cam3_m4q.h"
@@ -28,7 +28,7 @@ namespace dfm2 = delfem2;
 int main(int argc,char* argv[])
 {
   // -------------
-  class CViewer_CubeGrid : public dfm2::opengl::CViewer_GLFW
+  class CViewer_CubeGrid : public dfm2::opengl::CViewer3
   {
   public:
     CViewer_CubeGrid(){

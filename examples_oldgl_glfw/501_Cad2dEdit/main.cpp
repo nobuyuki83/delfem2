@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
 #include "delfem2/cad2_dtri2.h"
@@ -20,7 +20,7 @@
 
 int main(int argc,char* argv[])
 {
-  class CCAD2DViewer : public delfem2::opengl::CViewer_GLFW {
+  class CCAD2DViewer : public delfem2::opengl::CViewer3 {
   public:
     CCAD2DViewer(){
       const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};

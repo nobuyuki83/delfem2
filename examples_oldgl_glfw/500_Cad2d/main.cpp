@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v2.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
@@ -26,7 +26,7 @@ int main(int argc,char* argv[])
 {
   delfem2::CCad2D cad;
   // --------------------
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
   int iframe = 0;

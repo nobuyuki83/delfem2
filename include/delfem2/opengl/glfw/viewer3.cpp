@@ -10,11 +10,11 @@
 #include <cassert>
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 
 // ---------------
 
-static delfem2::opengl::CViewer_GLFW* pViewer = 0;
+static delfem2::opengl::CViewer3* pViewer3 = 0;
 
 // ---------------
 
@@ -33,8 +33,8 @@ static void glfw_callback_key(GLFWwindow* window, int key, int scancode, int act
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
-  if(      action == GLFW_PRESS ){   pViewer->key_press(key,mods);   }
-  else if( action == GLFW_RELEASE ){ pViewer->key_release(key,mods); }
+  if(      action == GLFW_PRESS ){   pViewer3->key_press(key,mods);   }
+  else if( action == GLFW_RELEASE ){ pViewer3->key_release(key,mods); }
 }
 
 static void glfw_callback_resize(GLFWwindow* window, int width, int height)
@@ -44,12 +44,12 @@ static void glfw_callback_resize(GLFWwindow* window, int width, int height)
 
 static void glfw_callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
-  assert( pViewer != 0 );
+  assert( pViewer3 != 0 );
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   const float asp = width / (float) height;
   {
-    ::delfem2::CNav3& nav = pViewer->nav;
+    ::delfem2::CNav3& nav = pViewer3->nav;
     nav.imodifier = mods;
     double x, y;  glfwGetCursorPos (window, &x,&y);
     nav.mouse_x = (2.0*x-width)/width;
@@ -68,24 +68,24 @@ static void glfw_callback_mouse_button(GLFWwindow* window, int button, int actio
     float mMVP[16];
     {
       float mMV[16], mP[16];
-      pViewer->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+      pViewer3->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
       ::delfem2::MatMat4(mMVP, mMV,mP);
     }
-    pViewer->nav.MouseRay(src, dir, asp, mMVP);
-    pViewer->mouse_press(src,dir);
+    pViewer3->nav.MouseRay(src, dir, asp, mMVP);
+    pViewer3->mouse_press(src,dir);
   }
 }
 
 static void glfw_callback_cursor_position(GLFWwindow* window, double xpos, double ypos)
 {
-  assert( pViewer != 0 );
+  assert( pViewer3 != 0 );
 //  pViewer->nav.Motion(window,xpos,ypos);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   const float asp = width / (float) height;
   {
-    ::delfem2::CNav3& nav = pViewer->nav;
-    ::delfem2::CCam3_OnAxisZplusLookOrigin<double>& camera = pViewer->camera;
+    ::delfem2::CNav3& nav = pViewer3->nav;
+    ::delfem2::CCam3_OnAxisZplusLookOrigin<double>& camera = pViewer3->camera;
     const double mov_end_x = (2.0*xpos-width)/width;
     const double mov_end_y = (height-2.0*ypos)/height;
     nav.dx = mov_end_x - nav.mouse_x;
@@ -103,29 +103,29 @@ static void glfw_callback_cursor_position(GLFWwindow* window, double xpos, doubl
     nav.mouse_x = mov_end_x;
     nav.mouse_y = mov_end_y;
   }
-  if( pViewer->nav.ibutton == 0 ){
+  if( pViewer3->nav.ibutton == 0 ){
     float src0[3], src1[3], dir0[3], dir1[3];
     float mMVP[16];
     {
       float mMV[16], mP[16];
-      pViewer->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+      pViewer3->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
       ::delfem2::MatMat4(mMVP, mMV,mP);
     }
-    pViewer->nav.RayMouseMove(src0, src1, dir0, dir1, asp,mMVP);
-    pViewer->mouse_drag(src0,src1,dir0);
+    pViewer3->nav.RayMouseMove(src0, src1, dir0, dir1, asp,mMVP);
+    pViewer3->mouse_drag(src0,src1,dir0);
   }
 }
 
 static void glfw_callback_scroll(GLFWwindow* window, double xoffset, double yoffset)
 {
-  assert( pViewer != nullptr );
-  pViewer->camera.scale *= pow(1.01,yoffset);
+  assert( pViewer3 != nullptr );
+  pViewer3->camera.scale *= pow(1.01,yoffset);
 }
 
 
-void delfem2::opengl::CViewer_GLFW::Init_oldGL()
+void delfem2::opengl::CViewer3::Init_oldGL()
 {
-  pViewer = this;
+  pViewer3 = this;
   // -----
   glfwSetErrorCallback(glfw_callback_error);
   if (!glfwInit()){
@@ -150,9 +150,9 @@ void delfem2::opengl::CViewer_GLFW::Init_oldGL()
 }
 
 
-void delfem2::opengl::CViewer_GLFW::Init_newGL()
+void delfem2::opengl::CViewer3::Init_newGL()
 {
-  pViewer = this;
+  pViewer3 = this;
   // -----
   glfwSetErrorCallback(callback_error);
   if (!glfwInit()){
@@ -206,7 +206,7 @@ void delfem2::opengl::CViewer_GLFW::Init_newGL()
 }
 
 
-void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
+void delfem2::opengl::CViewer3::DrawBegin_oldGL() const
 {
   ::glfwMakeContextCurrent(window);
   //::glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
@@ -249,12 +249,12 @@ void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
   
 }
 
-void delfem2::opengl::CViewer_GLFW::SwapBuffers() const
+void delfem2::opengl::CViewer3::SwapBuffers() const
 {
   glfwSwapBuffers(this->window);
 }
 
-void delfem2::opengl::CViewer_GLFW::ExitIfClosed() const
+void delfem2::opengl::CViewer3::ExitIfClosed() const
 {
   if ( !glfwWindowShouldClose(this->window) ) { return; }
   glfwDestroyWindow(this->window);

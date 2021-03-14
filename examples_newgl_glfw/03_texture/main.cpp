@@ -12,7 +12,7 @@
   #include <glad/glad.h>
 #endif
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/noise.h"
@@ -33,7 +33,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------
 dfm2::opengl::CShader_TriMesh_Tex shdr;
-delfem2::opengl::CViewer_GLFW viewer;
+delfem2::opengl::CViewer3 viewer;
 GLuint m_texName = -1;
 
 // ---------------------------

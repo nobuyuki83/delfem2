@@ -19,7 +19,7 @@
 // ------------
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 
 namespace dfm2 = delfem2;
 
@@ -272,7 +272,7 @@ void AddRandomPoint(
 
 int main(int argc, char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.camera.view_height = 2.5;
   viewer.Init_oldGL();
 

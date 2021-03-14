@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include <GLFW/glfw3.h>
@@ -251,7 +251,7 @@ void myGlutDisplay()
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   while (!glfwWindowShouldClose(viewer.window))
   {

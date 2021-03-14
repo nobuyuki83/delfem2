@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
@@ -269,7 +269,7 @@ void DrawVtxEdgeHandler
 
 int main(int argc,char* argv[])
 {
-  class CCAD3DViewer : public delfem2::opengl::CViewer_GLFW {
+  class CCAD3DViewer : public delfem2::opengl::CViewer3 {
   public:
     CCAD3DViewer(){
       cad.Initialize_Sphere();

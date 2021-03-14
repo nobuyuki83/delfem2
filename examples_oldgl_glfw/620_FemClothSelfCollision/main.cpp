@@ -1,6 +1,6 @@
 
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/cloth_selfcollision.h"
@@ -397,7 +397,7 @@ int main(int argc,char* argv[])
   // ---------------------------
   
   
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
   viewer.camera.psi = 3.1415*0.2;
   viewer.camera.theta = 3.1415*0.1;

@@ -6,7 +6,7 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
@@ -945,7 +945,7 @@ void myGlutDisplay(
 }
 
 void ProblemScalar(
-    dfm2::opengl::CViewer_GLFW& viewer,
+    dfm2::opengl::CViewer3& viewer,
     const std::vector<unsigned int>& aTet,
     const std::vector<double>& aXYZ,
     const std::vector<int>& aIsSurf)
@@ -990,7 +990,7 @@ void ProblemScalar(
 }
 
 void ProblemSolidLinear(
-    dfm2::opengl::CViewer_GLFW& viewer,
+    dfm2::opengl::CViewer3& viewer,
     const std::vector<unsigned int>& aTet,
     const std::vector<double>& aXYZ,
     const std::vector<int>& aIsSurf)
@@ -1032,7 +1032,7 @@ void ProblemSolidLinear(
 }
 
 void ProblemFluid(
-    dfm2::opengl::CViewer_GLFW& viewer,
+    dfm2::opengl::CViewer3& viewer,
     const std::vector<unsigned int>& aTet,
     const std::vector<double>& aXYZ,
     const std::vector<int>& aIsSurf)
@@ -1090,7 +1090,7 @@ void ProblemFluid(
 
 int main(int argc,char* argv[])
 {
-  dfm2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
