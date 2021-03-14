@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -294,7 +294,7 @@ int main(int argc,char* argv[])
   RotationAtMeshPoints(aR,
                        aXYZ,aDisp,psup_ind,psup);
 
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.Init_oldGL();

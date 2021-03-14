@@ -5,8 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v2.h"
@@ -26,7 +25,7 @@ namespace dfm2 = delfem2;
 
 int main(int argc,char* argv[])
 {
-  class CCadMesh2DVeiwer : public delfem2::opengl::CViewer_GLFW
+  class CCadMesh2DVeiwer : public delfem2::opengl::CViewer3
   {
   public:
     CCadMesh2DVeiwer(){

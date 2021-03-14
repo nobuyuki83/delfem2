@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
@@ -85,7 +85,7 @@ void Hoge()
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   
   viewer.camera.view_height = 1.0;

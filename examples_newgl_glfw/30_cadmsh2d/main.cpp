@@ -16,7 +16,7 @@
   #include <glad/glad.h>
 #endif
 //
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/new/v23dtricad.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/cad2_dtri2.h"
@@ -28,7 +28,7 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------
 
-class CCadDtri_Viewer : public delfem2::opengl::CViewer_GLFW {
+class CCadDtri_Viewer : public delfem2::opengl::CViewer3 {
 public:
   CCadDtri_Viewer(){
     {

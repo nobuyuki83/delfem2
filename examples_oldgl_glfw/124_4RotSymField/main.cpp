@@ -10,7 +10,7 @@
  * @details implementation is based on "Wenzel Jakob, Marco Tarini, Daniele Panozzo, and Olga Sorkine-Hornung. Instant field-aligned meshes. Siggraph Asia 2015"
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
@@ -55,7 +55,7 @@ int main()
       aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
   
   // ------------------
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   dfm2::opengl::setSomeLighting();

@@ -7,7 +7,7 @@
 
 
 #include <glad/glad.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -106,7 +106,7 @@ void Draw_CGrid3
 
 int main(int argc,char* argv[])
 {
-  dfm2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.view_height = 1.0;
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;

@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/gizmo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -24,7 +24,7 @@ namespace dfm2 = delfem2;
 
 int main(int argc,char* argv[])
 {
-  class CMyViewer : public delfem2::opengl::CViewer_GLFW {
+  class CMyViewer : public delfem2::opengl::CViewer3 {
   public:
     CMyViewer(){
       dfm2::MeshTri3D_CylinderClosed(

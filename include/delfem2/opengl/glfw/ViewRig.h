@@ -8,7 +8,7 @@
 #ifndef DFM2_OPENGL_GLFW_VIEWRIG_H
 #define DFM2_OPENGL_GLFW_VIEWRIG_H
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/gizmo_geo3.h"
@@ -130,7 +130,7 @@ DFM2_INLINE void Draw(
   }
 }
 
-class CViewerGlfw_RiggedMesh : public CViewer_GLFW {
+class CViewerGlfw_RiggedMesh : public CViewer3 {
 public:
   CViewerGlfw_RiggedMesh() {
     gizmo.SetSize(0.3);

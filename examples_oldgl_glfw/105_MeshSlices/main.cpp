@@ -6,7 +6,7 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/points.h"
@@ -137,7 +137,7 @@ void Hoge(){
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   
   delfem2::opengl::setSomeLighting();

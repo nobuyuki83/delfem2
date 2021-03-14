@@ -6,7 +6,7 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/imgio.h"
@@ -105,7 +105,7 @@ int main(int argc,char* argv[])
   std::cout << aXY.size()/2 << " " << 220*220 << std::endl;
 
 
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.trans[0] = -0.5;
   viewer.camera.trans[1] = -0.5;

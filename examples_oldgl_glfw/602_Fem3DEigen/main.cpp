@@ -6,7 +6,7 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/lsvecx.h"
@@ -339,7 +339,7 @@ int main(int argc,char* argv[])
   }
   RemoveKernel();
 
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.Init_oldGL();

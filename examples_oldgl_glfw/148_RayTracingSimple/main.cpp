@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/tex.h"
@@ -119,7 +119,7 @@ int main(int argc,char* argv[])
     tex.aRGB.resize(tex.w*tex.h*3);
   }
 
-  dfm2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer3 viewer;
   viewer.width = 400;
   viewer.height = 400;
   viewer.camera.view_height = 2;

@@ -9,7 +9,7 @@
   #include <glad/glad.h>
 #endif
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/mshmisc.h"
@@ -64,7 +64,7 @@ class CInput_ContactSphere: public dfm2::CInput_Contact
 
 // ---------------------------------------------------------
 
-dfm2::opengl::CViewer_GLFW viewer;
+dfm2::opengl::CViewer3 viewer;
 dfm2::opengl::CShader_TriMesh shdr_trimsh;
 
 std::vector<double> aXYZ0; // (out) undeformed vertex positions

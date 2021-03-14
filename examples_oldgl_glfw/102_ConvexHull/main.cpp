@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/geoconvhull3_v3.h"
 #include "delfem2/vec3.h"
 #include <GLFW/glfw3.h>
@@ -31,7 +31,7 @@ static void myGlVertex3d
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   
   viewer.camera.view_height = 1.5;

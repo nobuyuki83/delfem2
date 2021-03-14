@@ -1,5 +1,5 @@
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/dtri2_v2dtri.h"
@@ -180,7 +180,7 @@ int main(int argc,char* argv[])
                                  thickness,myu,lambda,rho,gravity_z,
                                  aXY0,aTri);
  
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.view_height = 0.8;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;

@@ -6,7 +6,7 @@
   #include <glad/glad.h>
 #endif
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/mshprimitive.h"
 
@@ -15,18 +15,17 @@
 #endif
 #include <GLFW/glfw3.h>
 
-
 #include <iostream>
 #include <cmath>
-
 
 namespace dfm2 = delfem2;
 
 // ---------------------------
+// global variables
 dfm2::opengl::CShader_TriMesh shdr;
-delfem2::opengl::CViewer_GLFW viewer;
-// ---------------------------
+delfem2::opengl::CViewer3 viewer;
 
+// ---------------------------
 
 void draw(GLFWwindow* window)
 {

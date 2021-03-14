@@ -11,7 +11,7 @@
 #else
   #include <glad/glad.h>
 #endif
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/noise.h"
 #include "delfem2/mshprimitive.h"
@@ -21,8 +21,6 @@
 #endif
 
 #include <GLFW/glfw3.h>
-
-
 #include <iostream>
 #include <cmath>
 
@@ -31,7 +29,7 @@ namespace dfm2 = delfem2;
 // ---------------------------
 dfm2::opengl::CShader_TriMesh shdr0;
 dfm2::opengl::CShader_TriMesh_Tex shdr;
-delfem2::opengl::CViewer_GLFW viewer;
+delfem2::opengl::CViewer3 viewer;
 unsigned int idTexColor = 0;
 unsigned int idTexDepth = 0;
 

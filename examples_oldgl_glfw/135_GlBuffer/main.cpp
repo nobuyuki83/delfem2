@@ -14,7 +14,7 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 namespace dfm2 = delfem2;
 
 // -------------------------------
@@ -161,7 +161,7 @@ int main(int argc,char* argv[])
 
   // ---------------------------
 
-  dfm2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer3 viewer;
   viewer.camera.view_height = 1.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.camera.Rot_Camera(-0.5,-0.5);

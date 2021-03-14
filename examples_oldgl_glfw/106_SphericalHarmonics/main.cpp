@@ -6,7 +6,7 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/v3q.h"
@@ -134,7 +134,7 @@ double evaluateSH(double x, double y, double z)
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   
   // -----------------------------

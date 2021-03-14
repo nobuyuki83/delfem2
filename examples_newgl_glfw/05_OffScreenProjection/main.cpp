@@ -15,7 +15,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/opengl/new/r2tgln.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include <iostream>
 #include <cmath>
 
@@ -27,17 +27,13 @@
 
 namespace dfm2 = delfem2;
 
-// ---------------------------
-dfm2::opengl::CShader_TriMesh shdr0;
-dfm2::opengl::CShader_Points shdr1;
-delfem2::opengl::CViewer_GLFW viewer;
-dfm2::opengl::CRender2Tex sampler;
-dfm2::opengl::CRender2Tex_DrawNewGL draw_sampler;
-
-// ---------------------------
+delfem2::opengl::CViewer3 viewer;
+dfm2::opengl::CRender2Tex r2t;
+dfm2::opengl::CShader_TriMesh shdr_trimsh;
+dfm2::opengl::CShader_Points shdr_points;
+dfm2::opengl::CRender2Tex_DrawNewGL draw_r2t;
 
 void draw(GLFWwindow* window)
-
 {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -49,9 +45,9 @@ void draw(GLFWwindow* window)
   const float asp = (float)nw/float(nh);
   float mP[16], mMV[16];
   viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-  shdr1.Draw(mP,mMV);
-  shdr0.Draw(mP, mMV);
-  draw_sampler.Draw(sampler,mP,mMV);
+  shdr_points.Draw(mP,mMV);
+  shdr_trimsh.Draw(mP, mMV);
+  draw_r2t.Draw(r2t,mP,mMV);
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -61,14 +57,14 @@ int main()
   {
     int nres = 200;
     double elen = 0.01;
-    sampler.SetTextureProperty(nres, nres, true);
+    r2t.SetTextureProperty(nres, nres, true);
     dfm2::Mat4_OrthongoalProjection_AffineTrans(
-        sampler.mMV, sampler.mP,
+        r2t.mMV, r2t.mP,
         dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).p,
         dfm2::CVec3d(0,0,-1).p,
         dfm2::CVec3d(1,0,0).p,
         nres, nres, elen, 4.0);
-    draw_sampler.draw_len_axis = 1.0;
+    draw_r2t.draw_len_axis = 1.0;
   }
 
   viewer.Init_newGL();
@@ -81,29 +77,29 @@ int main()
   }
 #endif
 
-  sampler.InitGL();
-  draw_sampler.InitGL();
+  r2t.InitGL();
+  draw_r2t.InitGL();
 
   {
     std::vector<double> aXYZ;
     std::vector<unsigned int> aTri;
     dfm2::MeshTri3_Torus(aXYZ, aTri, 0.8, 0.1, 8, 8);
-    shdr0.Compile();
-    shdr0.Initialize(aXYZ, aTri);
+    shdr_trimsh.Compile();
+    shdr_trimsh.Initialize(aXYZ, aTri);
   }
-  sampler.Start();
+  r2t.Start();
   ::glClearColor(1.0, 1.0, 1.0, 1.0 );
   ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   ::glDisable(GL_BLEND);
   ::glEnable(GL_DEPTH_TEST);
   {
-    float mMVf[16]; dfm2::Copy_Mat4(mMVf, sampler.mMV);
-    float mPf[16]; dfm2::Copy_Mat4(mPf, sampler.mP);
-    shdr0.Draw(mPf, mMVf);
+    float mMVf[16]; dfm2::Copy_Mat4(mMVf, r2t.mMV);
+    float mPf[16]; dfm2::Copy_Mat4(mPf, r2t.mP);
+    shdr_trimsh.Draw(mPf, mMVf);
   }
-  sampler.End();
-  sampler.CopyToCPU_Depth();
-  draw_sampler.SetDepth(sampler);
+  r2t.End();
+  r2t.CopyToCPU_Depth();
+  draw_r2t.SetDepth(r2t);
   //
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;

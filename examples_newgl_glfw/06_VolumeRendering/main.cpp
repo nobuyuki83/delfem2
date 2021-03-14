@@ -3,7 +3,7 @@
   #include <windows.h>
 #endif
 #include <glad/glad.h>
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/noise.h"
 #include <GLFW/glfw3.h>
@@ -122,7 +122,7 @@ std::string LoadFile
 
 int main(int argc, const char * argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  delfem2::opengl::CViewer3 viewer;
   viewer.camera.view_height = 0.5;
   viewer.camera.Rot_Camera(-0.2, -0.2);
   //

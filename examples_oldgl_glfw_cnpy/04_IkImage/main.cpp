@@ -11,7 +11,7 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
@@ -152,7 +152,7 @@ int main()
 //  Check(aBone, aTarget);
      
   // -----------
-  dfm2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer3 viewer;
   viewer.Init_oldGL();
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   viewer.camera.view_height = 1.0;
