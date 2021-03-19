@@ -22,9 +22,11 @@ project(104_Noise3d)
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glad
-get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
+get_filename_component(GLAD_INCLUDE_DIR
+    ${PROJECT_SOURCE_DIR}/../../3rd_party/glad3/include ABSOLUTE)
 
 # glfw
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # opengl

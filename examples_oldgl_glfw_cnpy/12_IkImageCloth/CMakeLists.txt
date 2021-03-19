@@ -25,6 +25,7 @@ set(TEST_INPUTS         "../../test_inputs")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
 
 # glfw
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # opengl

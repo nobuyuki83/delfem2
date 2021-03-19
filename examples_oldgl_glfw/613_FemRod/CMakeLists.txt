@@ -21,15 +21,8 @@ project(613_FemRod)
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
-# glfw
-IF(MSVC)
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
-ELSE()
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
-ENDIF()
-get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
-get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
 # opengl
 find_package(OpenGL REQUIRED)

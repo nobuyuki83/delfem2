@@ -23,6 +23,7 @@ project(627_Rgd2dCollision)
 find_package(OpenGL REQUIRED)
 
 # glfw
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # dfm2

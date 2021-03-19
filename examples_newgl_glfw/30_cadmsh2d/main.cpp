@@ -8,15 +8,15 @@
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
-//
+
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
 #else
   #include <glad/glad.h>
 #endif
-//
-#include "delfem2/opengl/glfw/viewer3.h"
+
+#include "delfem2/opengl/glfw/viewer2.h"
 #include "delfem2/opengl/new/v23dtricad.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/cad2_dtri2.h"
@@ -28,7 +28,7 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------
 
-class CCadDtri_Viewer : public delfem2::opengl::CViewer3 {
+class CCadDtri_Viewer : public delfem2::opengl::CViewer2 {
 public:
   CCadDtri_Viewer(){
     {
@@ -68,13 +68,12 @@ public:
     
     shdr_cad.is_show_face = false;
     
-    camera.view_height = 1.5;
-    camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+    view_height = 1.5;
   }
-  void mouse_press(const float src[3], const float dir[3]) override {
-    cad.Pick(src[0], src[1], camera.view_height);
+  void mouse_press(const float src[2]) override {
+    cad.Pick(src[0], src[1], view_height);
   }
-  void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
+  void mouse_drag(const float src0[2], const float src1[2]) override {
     if( nav.ibutton == 0 ){
       cad.DragPicked(src1[0],src1[1], src0[0],src0[1]);
       shdr_cad.MakeBuffer(cad);
@@ -117,7 +116,7 @@ void draw(GLFWwindow* window)
   
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float)nw/nh;
-  float mMV[16], mP[16]; viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+  float mMV[16], mP[16]; viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
   viewer.shdr_cad.Draw(mP, mMV, viewer.cad);
   viewer.shdr_dmsh.Draw(mP, mMV);
   

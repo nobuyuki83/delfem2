@@ -300,10 +300,10 @@ void dfm2::opengl::CShader_Cad2D::Compile_Edge()
   std::cout << "  LocColor: " << shdr1_Loc_Color << std::endl;
 }
 
-void dfm2::opengl::CShader_Cad2D::Draw
- (const float mP[16],
-  const float mMV[16],
-  const CCad2D& cad) const
+void dfm2::opengl::CShader_Cad2D::Draw(
+    const float mP[16],
+    const float mMV[16],
+    const CCad2D& cad) const
 {
 //  assert( vao_face.aElem.size() >= 2 );
   if( is_show_face ){

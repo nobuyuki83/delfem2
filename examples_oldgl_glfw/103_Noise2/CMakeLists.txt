@@ -19,7 +19,11 @@ ENDIF()
 
 project(103_Noise2d)
 
+# glfw
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
+
+# opengl
 find_package(OpenGL REQUIRED)
 
 # dfm2

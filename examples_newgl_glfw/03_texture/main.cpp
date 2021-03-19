@@ -12,7 +12,7 @@
   #include <glad/glad.h>
 #endif
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/opengl/glfw/viewer2.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/noise.h"
@@ -22,18 +22,14 @@
 #endif
 
 #include <GLFW/glfw3.h>
-
-
-
 #include <iostream>
 #include <cmath>
-
 
 namespace dfm2 = delfem2;
 
 // ---------------------------
 dfm2::opengl::CShader_TriMesh_Tex shdr;
-delfem2::opengl::CViewer3 viewer;
+delfem2::opengl::CViewer2 viewer;
 GLuint m_texName = -1;
 
 // ---------------------------
@@ -58,7 +54,7 @@ void draw(GLFWwindow* window)
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float)nw/nh;
   float mP[16], mMV[16];
-  viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+  viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
   shdr.Draw(mP, mMV);
   
   viewer.SwapBuffers();
@@ -67,6 +63,7 @@ void draw(GLFWwindow* window)
 
 int main()
 {
+  viewer.view_height = 1.0;
   viewer.Init_newGL();
 
 #ifndef EMSCRIPTEN
@@ -119,9 +116,6 @@ int main()
     m_texName = dfm2::opengl::SetTexture_RGB(nSize,nSize,image);
     glGenerateMipmap(GL_TEXTURE_2D);
   }
-
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
