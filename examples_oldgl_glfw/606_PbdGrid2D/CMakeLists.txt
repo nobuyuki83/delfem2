@@ -22,15 +22,8 @@ project(606_PbdDeform2D)
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
-# glfw
-IF(MSVC)
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
-ELSE()
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
-ENDIF()
-get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
-get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
 # opengl
 find_package(OpenGL REQUIRED)
@@ -61,35 +54,8 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-###############################################
-
-IF(APPLE)
-  find_library( COCOA_LIBRARY Cocoa )
-  find_library( IOKIT_LIBRARY IOKit )
-  find_library( COREVIDEO_LIBRARY CoreVideo )
-  target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${COCOA_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${COREVIDEO_LIBRARY}
-  )
-ELSEIF(UNIX)
-  target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-  )
-ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${OPENGL_LIBRARY}
-  )
-ENDIF()
-
-
-
-
+    ${GLFW_LIBRARIES}
+)

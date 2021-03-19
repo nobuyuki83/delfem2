@@ -24,6 +24,7 @@ project(01_RigTransfer)
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # opengl
@@ -48,6 +49,7 @@ find_package(ZLIB REQUIRED)
 message(STATUS "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
 message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 
+
 ##########################################
 
 set(3RD_PARTY           "../../3rd_party")
@@ -66,11 +68,9 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-###############################################
-
-  target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARIES}
-      ${ZLIB_LIBRARIES}
-  )
+target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+)

@@ -11,7 +11,7 @@
 #else
   #include <glad/glad.h>
 #endif
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/opengl/glfw/viewer2.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/noise.h"
 #include "delfem2/mshprimitive.h"
@@ -29,7 +29,7 @@ namespace dfm2 = delfem2;
 // ---------------------------
 dfm2::opengl::CShader_TriMesh shdr0;
 dfm2::opengl::CShader_TriMesh_Tex shdr;
-delfem2::opengl::CViewer3 viewer;
+delfem2::opengl::CViewer2 viewer;
 unsigned int idTexColor = 0;
 unsigned int idTexDepth = 0;
 
@@ -57,7 +57,7 @@ void draw(GLFWwindow* window)
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexColor);
     float mP[16], mMV[16];
-    viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+    viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
     mMV[3*4+0] -= 0.5;
     shdr.Draw(mP, mMV);
   }
@@ -66,7 +66,7 @@ void draw(GLFWwindow* window)
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexDepth);
     float mP[16], mMV[16];
-    viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+    viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
     mMV[3*4+0] += 0.5;
     shdr.Draw(mP, mMV);
   }
@@ -243,9 +243,6 @@ int main()
   }
    */
 
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else

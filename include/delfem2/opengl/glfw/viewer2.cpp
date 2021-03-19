@@ -8,13 +8,13 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
-
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/opengl/glfw/viewer2.h"
+#include "delfem2/mat4.h"
 
 // ---------------
 
-static delfem2::opengl::CViewer3* pViewer3 = 0;
+static delfem2::opengl::CViewer2* pViewer2 = 0;
 
 // ---------------
 
@@ -33,8 +33,8 @@ static void glfw_callback_key(GLFWwindow* window, int key, int scancode, int act
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
-  if(      action == GLFW_PRESS ){   pViewer3->key_press(key,mods);   }
-  else if( action == GLFW_RELEASE ){ pViewer3->key_release(key,mods); }
+  if(      action == GLFW_PRESS ){   pViewer2->key_press(key,mods);   }
+  else if( action == GLFW_RELEASE ){ pViewer2->key_release(key,mods); }
 }
 
 static void glfw_callback_resize(GLFWwindow* window, int width, int height)
@@ -44,17 +44,17 @@ static void glfw_callback_resize(GLFWwindow* window, int width, int height)
 
 static void glfw_callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
-  assert( pViewer3 != 0 );
+  assert( pViewer2 != 0 );
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   const float asp = width / (float) height;
   {
-    ::delfem2::CMouseInput& nav = pViewer3->nav;
+    ::delfem2::CMouseInput& nav = pViewer2->nav;
     nav.imodifier = mods;
     double x, y;  glfwGetCursorPos (window, &x,&y);
     nav.mouse_x = (2.0*x-width)/width;
     nav.mouse_y = (height-2.0*y)/height;
-    if( action == 0 ){
+    if( action == 0 ){ // mouse up
       nav.ibutton = -1;
     }
     else if( action == 1 ){ // mouse down
@@ -63,28 +63,27 @@ static void glfw_callback_mouse_button(GLFWwindow* window, int button, int actio
       nav.mouse_y_down = nav.mouse_y;
     }
   }
-  if( action == GLFW_PRESS ){
-    float src[3], dir[3];
+  if( action == GLFW_PRESS ) {
     float mMVP[16];
     {
       float mMV[16], mP[16];
-      pViewer3->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-      ::delfem2::MatMat4(mMVP, mMV,mP);
+      pViewer2->Mat4_MVP_OpenGL(mMV, mP, asp);
+      ::delfem2::MatMat4(mMVP, mMV, mP);
     }
-    pViewer3->nav.MouseRay(src, dir, asp, mMVP);
-    pViewer3->mouse_press(src,dir);
+    float src[3], dir[3];
+    pViewer2->nav.MouseRay(src, dir, asp, mMVP);
+    pViewer2->mouse_press(src);
   }
 }
 
 static void glfw_callback_cursor_position(GLFWwindow* window, double xpos, double ypos)
 {
-  assert( pViewer3 != 0 );
-//  pViewer->nav.Motion(window,xpos,ypos);
+  assert( pViewer2 != 0 );
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   const float asp = width / (float) height;
   { // update nav
-    ::delfem2::CMouseInput& nav = pViewer3->nav;
+    ::delfem2::CMouseInput& nav = pViewer2->nav;
     const double mov_end_x = (2.0*xpos-width)/width;
     const double mov_end_y = (height-2.0*ypos)/height;
     nav.dx = mov_end_x - nav.mouse_x;
@@ -92,43 +91,35 @@ static void glfw_callback_cursor_position(GLFWwindow* window, double xpos, doubl
     nav.mouse_x = mov_end_x;
     nav.mouse_y = mov_end_y;
   }
-  {
-    ::delfem2::CMouseInput& nav = pViewer3->nav;
-    if( nav.ibutton == -1 ){
-    }
-    else{
-      ::delfem2::CCam3_OnAxisZplusLookOrigin<double>& camera = pViewer3->camera;
-      if(      nav.imodifier == 4  ){
-        camera.Rot_Camera(nav.dx, nav.dy);
-      }
-      else if( nav.imodifier == 1 ){
-        camera.Pan_Camera(nav.dx, nav.dy);
-      }
-    }
+  if( pViewer2->nav.ibutton == 0 && pViewer2->nav.imodifier == GLFW_MOD_SHIFT ){
+    ::delfem2::CMouseInput& nav = pViewer2->nav;
+    const float si = 1.f/pViewer2->scale;
+    pViewer2->trans[0] += nav.dx*asp*si;
+    pViewer2->trans[1] += nav.dy*si;
   }
-  if( pViewer3->nav.ibutton == 0 ){
-    float src0[3], src1[3], dir0[3], dir1[3];
+  if( pViewer2->nav.ibutton == 0 ) {
     float mMVP[16];
     {
       float mMV[16], mP[16];
-      pViewer3->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-      ::delfem2::MatMat4(mMVP, mMV,mP);
+      pViewer2->Mat4_MVP_OpenGL(mMV, mP, asp);
+      ::delfem2::MatMat4(mMVP, mMV, mP);
     }
-    pViewer3->nav.RayMouseMove(src0, src1, dir0, dir1, asp,mMVP);
-    pViewer3->mouse_drag(src0,src1,dir0);
+    float src0[3], src1[3], dir0[3], dir1[3];
+    pViewer2->nav.RayMouseMove(src0, src1, dir0, dir1, asp, mMVP);
+    pViewer2->mouse_drag(src0, src1);
   }
 }
 
 static void glfw_callback_scroll(GLFWwindow* window, double xoffset, double yoffset)
 {
-  assert( pViewer3 != nullptr );
-  pViewer3->camera.scale *= pow(1.01,yoffset);
+  assert( pViewer2 != nullptr );
+  pViewer2->scale *= pow(1.01,yoffset);
 }
 
 
-void delfem2::opengl::CViewer3::Init_oldGL()
+void delfem2::opengl::CViewer2::Init_oldGL()
 {
-  pViewer3 = this;
+  pViewer2 = this;
   // -----
   glfwSetErrorCallback(glfw_callback_error);
   if (!glfwInit()){
@@ -153,9 +144,9 @@ void delfem2::opengl::CViewer3::Init_oldGL()
 }
 
 
-void delfem2::opengl::CViewer3::Init_newGL()
+void delfem2::opengl::CViewer2::Init_newGL()
 {
-  pViewer3 = this;
+  pViewer2 = this;
   // -----
   glfwSetErrorCallback(callback_error);
   if (!glfwInit()){
@@ -164,11 +155,11 @@ void delfem2::opengl::CViewer3::Init_newGL()
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  
+
 #ifdef __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
-  
+
   /*
    // Decide GL+GLSL versions
    #if __APPLE__
@@ -187,9 +178,9 @@ void delfem2::opengl::CViewer3::Init_newGL()
    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
    #endif
    */
-  
-    // glfw window creation
-    // --------------------
+
+  // glfw window creation
+  // --------------------
   this->window = glfwCreateWindow(width,
                                   height,
                                   "LearnOpenGL",
@@ -199,7 +190,7 @@ void delfem2::opengl::CViewer3::Init_newGL()
   {
     glfwTerminate();
   }
-  
+
   glfwMakeContextCurrent(this->window);
   glfwSetFramebufferSizeCallback(this->window, glfw_callback_resize);
   glfwSetKeyCallback(            this->window, glfw_callback_key);
@@ -209,7 +200,7 @@ void delfem2::opengl::CViewer3::Init_newGL()
 }
 
 
-void delfem2::opengl::CViewer3::DrawBegin_oldGL() const
+void delfem2::opengl::CViewer2::DrawBegin_oldGL() const
 {
   ::glfwMakeContextCurrent(window);
   //::glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
@@ -238,7 +229,8 @@ void delfem2::opengl::CViewer3::DrawBegin_oldGL() const
     int width0, height0;
     glfwGetFramebufferSize(window, &width0, &height0);
     float asp = width0 / (float) height0;
-    camera.Mat4_MVP_OpenGL(mMV,mP, asp);
+    this->Mat4_MVP_OpenGL(mMV, mP, asp);
+//    camera.Mat4_MVP_OpenGL(mMV,mP, asp);
   }
 
   ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGLae
@@ -249,15 +241,15 @@ void delfem2::opengl::CViewer3::DrawBegin_oldGL() const
   glLoadIdentity();
   glMultMatrixf(mMV);
 #endif
-  
+
 }
 
-void delfem2::opengl::CViewer3::SwapBuffers() const
+void delfem2::opengl::CViewer2::SwapBuffers() const
 {
   glfwSwapBuffers(this->window);
 }
 
-void delfem2::opengl::CViewer3::ExitIfClosed() const
+void delfem2::opengl::CViewer2::ExitIfClosed() const
 {
   if ( !glfwWindowShouldClose(this->window) ) { return; }
   glfwDestroyWindow(this->window);
@@ -265,3 +257,15 @@ void delfem2::opengl::CViewer3::ExitIfClosed() const
   exit(EXIT_SUCCESS);
 }
 
+void delfem2::opengl::CViewer2::Mat4_MVP_OpenGL(float mMV[16], float mP[16], float asp) const
+{
+  delfem2::Mat4_Identity(mMV);
+  mMV[4*3+0] += this->trans[0];
+  mMV[4*3+1] += this->trans[1];
+  //
+  float si = view_height/scale;
+  delfem2::Mat4_AffineTransProjectionOrtho(mP,
+      -asp*si, +asp*si,
+      -1*si, +1*si,
+      -1, +1);
+}

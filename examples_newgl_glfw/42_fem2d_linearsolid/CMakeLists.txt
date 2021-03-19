@@ -6,24 +6,21 @@ option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-IF(NOT EMSCRIPTEN)
-  IF(MSVC)
-    set(CMAKE_CXX_FLAGS "-O2 -std=c++11 /W4 \
-        /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 \
-        /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 \
-        /wd4838 /wd4305 /wd4505 /wd4456 /wd4055")
-  ELSE()
-    set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
-  ENDIF()
+IF(MSVC)
+  set(CMAKE_CXX_FLAGS "-O2 -std=c++11 /W4 \
+      /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 \
+      /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 \
+      /wd4838 /wd4305 /wd4505 /wd4456 /wd4055")
+ELSE()
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
 ENDIF()
-
 
 ##############################################
 
 project(42_fem2d_linearsolid)
 
 # glad
-set(GLAD_INCLUDE_DIR "../../3rd_party/glad4/include")
+set(GLAD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 # dfm2
@@ -41,6 +38,7 @@ endif()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 # glfw
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # opengl

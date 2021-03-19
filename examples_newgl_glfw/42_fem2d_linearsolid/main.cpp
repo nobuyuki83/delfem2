@@ -22,6 +22,7 @@
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
+
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
@@ -29,7 +30,7 @@
   #include <glad/glad.h>
 #endif
 #include "delfem2/opengl/new/mshcolor.h"
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/opengl/glfw/viewer2.h"
 #include <GLFW/glfw3.h>
 
 
@@ -171,7 +172,7 @@ dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
 dfm2::CPreconditionerILU<double> ilu_A;
 
-dfm2::opengl::CViewer3 viewer;
+dfm2::opengl::CViewer2 viewer;
 dfm2::opengl::CShader_TriMesh_Disp shdr0;
 
 
@@ -344,7 +345,7 @@ void draw(GLFWwindow* window)
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float)nw/nh;
   float mP[16], mMV[16];
-  viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+  viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
   shdr0.Draw(mP,mMV);
   
   viewer.SwapBuffers();
@@ -361,8 +362,7 @@ int main()
   }
   
   viewer.Init_newGL();
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.view_height = 1.5;
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
