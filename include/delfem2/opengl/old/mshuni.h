@@ -316,7 +316,7 @@ DFM2_INLINE void DrawMeshElemPart3D_FaceNorm_TexPoEl(
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/opengl/old/mshuni.cpp"
+  #include "delfem2/opengl/old/mshuni.cpp"
 #endif
 
 #endif /* utility_gl_h */

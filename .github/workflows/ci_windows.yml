@@ -43,17 +43,13 @@ jobs:
         echo "#############################"
         echo "## build test hdronly and run"
 
-        $gtest_root=Convert-Path 3rd_party\GTest_Lib
-        echo "gtest_root: $gtest_root"
-
         git submodule update --init -- 3rd_party/tinygltf
 
         cd test_cpp
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
         cmake .. -A x64 `
-          -DUSE_HEADERONLY=ON `
-          -DGTEST_ROOT="$gtest_root"
+          -DUSE_HEADERONLY=ON
         cmake --build . --config Release
         ./Release/runUnitTests.exe 
         cd ../../
@@ -65,8 +61,7 @@ jobs:
         mkdir buildVS64Static
         cd buildVS64Static
         cmake .. -A x64 `
-          -DUSE_HEADERONLY=OFF `
-          -DGTEST_ROOT="$gtest_root"
+          -DUSE_HEADERONLY=OFF
         cd ../../
 
     - name: build glfw

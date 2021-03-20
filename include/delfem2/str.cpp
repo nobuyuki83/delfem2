@@ -84,19 +84,22 @@ DFM2_INLINE std::vector<std::string> delfem2::Split(
 {
   std::vector<std::string> aToken;
   unsigned int imark = 0;
-  bool is_del0 = false;
+  bool is_del0 = true;
   for(unsigned int i=0;i<str.size();++i){
     bool is_del1 = false;
     for(char j : del){
       if( str[i] == j ){ is_del1 = true; break; }
     }
-    if( !is_del0 && is_del1 ){ // just got delimitner
+    if( !is_del0 && is_del1 ){ // just got delimitner after text
       aToken.emplace_back(str.data()+imark,str.data()+i );
     }
-    if( is_del0 && !is_del1 ){ // just got delimitner
+    if( is_del0 && !is_del1 ){ // sequence of delimitner
       imark = i;
     }
     is_del0 = is_del1;
+  }
+  if( !is_del0 ){ // just got delimitner after text
+    aToken.emplace_back(str.data()+imark,str.data()+str.size() );
   }
   return aToken;
 }
