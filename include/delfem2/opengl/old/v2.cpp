@@ -5,21 +5,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdio>
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
 
 #if defined(__APPLE__) && defined(__MACH__) // mac
   #include <OpenGL/gl.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-  #include <GL/glu.h>
-#elif defined(_WIN32) // windows
-  #include <windows.h>
-  #include <GL/gl.h>
-#else // linux
+#else
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/vec2.h"
 #include "delfem2/opengl/old/v2.h"
+#include "delfem2/vec2.h"
 
 //----------------------------------------------------
 

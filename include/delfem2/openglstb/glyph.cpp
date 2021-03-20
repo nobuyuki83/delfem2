@@ -1,4 +1,16 @@
 
+
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
+
+#include <iostream>
 #include <fstream>
 #include "delfem2/openglstb/glyph.h"
 #include "delfem2/str.h"
@@ -6,7 +18,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-delfem2::openglstb::CGlyph::CGlyph(const std::string &fpath) {
+ delfem2::openglstb::CGlyph::CGlyph(const std::string &fpath) {
   int channels;
   unsigned char *img = stbi_load(
       fpath.c_str(),

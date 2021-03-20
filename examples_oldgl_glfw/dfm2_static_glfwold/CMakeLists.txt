@@ -25,17 +25,22 @@ SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # glad
-get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
+get_filename_component(GLAD_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/glad3/include ABSOLUTE)
 
 # opengl
 find_package(OpenGL REQUIRED)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
+
+#####################################
+
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${GLAD_INCLUDE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party
 )
 
 set(DELFEM2_INC         "../../include/delfem2")

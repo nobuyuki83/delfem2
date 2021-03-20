@@ -20,9 +20,6 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-
-// ------------------------------------------------------
-
 int main(int argc,char* argv[])
 {
   delfem2::openglstb::CGlyph glyph(std::string(PATH_INPUT_DIR)+"/myFont.png");
