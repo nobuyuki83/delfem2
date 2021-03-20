@@ -6,17 +6,17 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/opengl/glfw/viewer2.h"
 #include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/v2.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
+#include "delfem2/openglstb/glyph.h"
 #include "delfem2/cad2_dtri2.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
 #include <stack>
 
 #ifndef M_PI
-#  define M_PI 3.141592653589793
+  #define M_PI 3.141592653589793
 #endif
 
 namespace dfm2 = delfem2;
@@ -25,10 +25,13 @@ namespace dfm2 = delfem2;
 
 int main(int argc,char* argv[])
 {
+  delfem2::openglstb::CGlyph glyph(std::string(PATH_INPUT_DIR)+"/myFont.png");
+  glyph.ParseGlyphInfo(std::string(PATH_INPUT_DIR)+"/myFont.fnt");
   delfem2::CCad2D cad;
   // --------------------
-  delfem2::opengl::CViewer3 viewer;
+  delfem2::opengl::CViewer2 viewer;
   viewer.Init_oldGL();
+  glyph.InitGL();
   delfem2::opengl::setSomeLighting();
   unsigned int iframe = 0;
   const unsigned int nframe_interval = 30;
@@ -45,22 +48,30 @@ int main(int argc,char* argv[])
                           path_svg, 1.0);
 //      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       dfm2::CBoundingBox2D bb = cad.BB();
-      viewer.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
-      viewer.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
-      viewer.camera.trans[2] = 0.0;
-      viewer.camera.view_height = 0.5*bb.LengthDiagonal();
-      viewer.camera.scale = 1.0;
+      viewer.trans[0] = -(bb.x_min+bb.x_max)*0.5;
+      viewer.trans[1] = -(bb.y_min+bb.y_max)*0.5;
+      viewer.view_height = 0.5*bb.LengthDiagonal();
+      viewer.scale = 1.0;
       cad.iedge_picked = 22;
     }
     iframe = (iframe+1)%(nframe_interval*6);
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    if( glfwWindowShouldClose(viewer.window) ){ break; }
     // --------------------
     viewer.DrawBegin_oldGL();
     delfem2::opengl::Draw_CCad2D(cad);
+    {
+      ::glTranslated(0,0,-0.9);
+      for(int ie=0;ie<cad.topo.aEdge.size();++ie){
+        unsigned int iv0 = cad.topo.aEdge[ie].iv0;
+        unsigned int iv1 = cad.topo.aEdge[ie].iv1;
+        dfm2::CVec2d p = (cad.aVtx[iv0].pos+cad.aVtx[iv1].pos)*0.5;
+        glyph.DrawStringAt(std::to_string(ie),0.8, p.x(), p.y());
+      }
+      ::glTranslated(0,0,+0.9);
+    }
     viewer.SwapBuffers();
     glfwPollEvents();
   }
-EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

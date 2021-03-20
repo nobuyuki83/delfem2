@@ -10,11 +10,12 @@
 #include "delfem2/opengl/old/cad2dtriv2.h"
 #include <climits>
 
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
+
 #if defined(__APPLE__) && defined(__MACH__)
   #include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
-  #include <windows.h>
-  #include <GL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
@@ -147,6 +148,7 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
   bool is_draw_face = cad2d.is_draw_face;
   ///
   ::glDisable(GL_LIGHTING);
+  ::glDisable(GL_TEXTURE_2D);
   ::glPointSize(6);
   ::glBegin(GL_POINTS);
   for(size_t iv=0;iv<aVtx.size();++iv){

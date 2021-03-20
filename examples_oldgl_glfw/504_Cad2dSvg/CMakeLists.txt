@@ -48,6 +48,7 @@ include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLFW_INCLUDE_DIR}
     ${DELFEM2_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party
 )
 
 add_executable(${PROJECT_NAME}
