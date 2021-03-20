@@ -53,7 +53,9 @@ Finally, build the demos specifying the location of the `glfw` library
 
 ```
 cd examples_oldgl_glfw
-cmake . -DGLFW_ROOT=../GLFW_Lib
+mkdir build 
+cd build
+cmake ..
 cmake --build .
 ```
 
@@ -127,6 +129,9 @@ cmake --build .
 
 ### [118_FastMarchingMethod](118_FastMarchingMethod)
 <img src="118_FastMarchingMethod/thumbnail.png" width=200>
+
+### [119_Glyph](119_Glyph)
+<img src="119_Glyph/thumbnail.png" width=200>
 
 ### [120_Adf3](120_AdaptiveDistanceField)
 <img src="120_AdaptiveDistanceField/thumbnail.png" width=200>

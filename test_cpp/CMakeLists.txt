@@ -29,7 +29,11 @@ set(DELFEM2_INCLUDE_DIR "../include")
 set(DELFEM2_INC         "../include/delfem2")
 set(3RD_PARTY           "../3rd_party")
 
+# google test
+set(GTEST_ROOT ${PROJECT_SOURCE_DIR}/../3rd_party/GTest_Lib)
 find_package( GTest REQUIRED )
+
+# thread
 find_package(Threads REQUIRED)
 
 enable_testing()

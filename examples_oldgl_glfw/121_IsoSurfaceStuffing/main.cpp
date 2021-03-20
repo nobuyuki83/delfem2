@@ -25,7 +25,6 @@
 #include <cmath>
 #include <ctime>
 
-
 namespace dfm2 = delfem2;
 
 // ------------------------------------------

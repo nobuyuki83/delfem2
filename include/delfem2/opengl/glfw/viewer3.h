@@ -67,7 +67,7 @@ public:
 } // delfem2
 
 #ifdef DFM2_HEADER_ONLY
-# include "delfem2/opengl/glfw/viewer3.cpp"
+  #include "delfem2/opengl/glfw/viewer3.cpp"
 #endif
 
 #endif /* viewer3_hpp */

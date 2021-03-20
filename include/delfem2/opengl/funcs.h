@@ -22,24 +22,28 @@ namespace delfem2 {
 
 namespace opengl {
 
-DFM2_INLINE int GL24_CompileShader(const char *vert, const char* frag);
+DFM2_INLINE int GL24_CompileShader(
+    const char *vert,
+    const char* frag);
 
-DFM2_INLINE int compileShader(const std::string& str_glsl_vert,
-                              int shaderType);
+DFM2_INLINE int compileShader(
+    const std::string& str_glsl_vert,
+    int shaderType);
 
 /**
  * @function compile vertex and fragment shader
  * @return id of the shader program
  */
-DFM2_INLINE int setUpGLSL(const std::string& str_glsl_vert,
-                          const std::string& str_glsl_frag);
+DFM2_INLINE int setUpGLSL(
+    const std::string& str_glsl_vert,
+    const std::string& str_glsl_frag);
 
 
 }
 }
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/opengl/funcs.cpp"
+  #include "delfem2/opengl/funcs.cpp"
 #endif
 
 

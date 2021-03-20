@@ -127,6 +127,25 @@ TEST(funcs,split_quote){
   }
 }
 
+TEST(funcs,split){
+  std::vector<std::string> aToken;
+  aToken = dfm2::Split("chr count=80"," =");
+  EXPECT_EQ(aToken.size(), 3);
+  EXPECT_EQ(aToken[0],"chr");
+  EXPECT_EQ(aToken[1],"count");
+  EXPECT_EQ(aToken[2],"80");
+  //
+  aToken = dfm2::Split("chr = 80"," =");
+  EXPECT_EQ(aToken.size(), 2);
+  EXPECT_EQ(aToken[0],"chr");
+  EXPECT_EQ(aToken[1],"80");
+  //
+  aToken = dfm2::Split("=chr = 80="," =");
+  EXPECT_EQ(aToken.size(), 2);
+  EXPECT_EQ(aToken[0],"chr");
+  EXPECT_EQ(aToken[1],"80");
+}
+
 TEST(mathfunc,sherical_harmonics_orthgonality)
 {
   std::vector<double> aXYZ,aVal;

@@ -228,32 +228,29 @@ echo "###############################"
 echo "test cpp"
 echo "###############################"
 
-gtest_root=$(pwd)"/3rd_party/GTest_Lib"
-echo "gtest_root: $gtest_root"
-
 cd test_cpp
 mkdir buildXcodeStatic
 cd buildXcodeStatic
-cmake .. -G Xcode -DUSE_HEADERONLY=OFF -DGTEST_ROOT=$gtest_root
+cmake .. -G Xcode -DUSE_HEADERONLY=OFF
 cd ../../
 
 cd test_cpp
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake .. -G Xcode -DUSE_HEADERONLY=ON -DGTEST_ROOT=$gtest_root
+cmake .. -G Xcode -DUSE_HEADERONLY=ON
 cd ../../
 
 cd test_cpp
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake .. -DUSE_HEADERONLY=ON -DGTEST_ROOT=$gtest_root
+cmake .. -DUSE_HEADERONLY=ON
 cmake --build .
 cd ../../
 
 cd test_cpp
 mkdir buildMakeStatic
 cd buildMakeStatic
-cmake .. -DUSE_HEADERONLY=OFF -DGTEST_ROOT=$gtest_root
+cmake .. -DUSE_HEADERONLY=OFF
 cmake --build .
 ./runUnitTests
 cd ../../
