@@ -6,60 +6,18 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ## How To Build
 
-These demo depends on OpenGL and GLFW libraries.
+These demos depend on the GLFW library to open an OpenGL window. If you haven't install `glfw` in your computer, please read following Document to set up GLFW.
 
-### Install GLFW to the computer
+- [How to Set Up GLFW Library](../docs/setup_glfw.md)
+- [GLFWライブラリの設定方法](../docs/setup_glfw_jp.md)
 
-for MacOS
-```bash
-brew install glfw
-```
-
-for Ubuntu
+With `glfw` installed, you can build the demos simply by 
 
 ```bash
-sudo apt-get update
-sudo apt-get install libglfw3
-sudo apt-get install libglfw3-dev
-```
-
-Finally, build the demos using cmake
-
-```
-cd examples_oldgl_glfw
-cmake . 
-cmake --build .
-```
-
-### Build GLFW from source
-
-first downloard the `glfw` library intro `3rd_party` folder
-
-```bash
-submodule git update --init -- 3rd_party/glfw
-```
-
-Then, build `glfw` library and install it to `3rd_party/GLFW_Lib`
-
-```
-cd 3rd_party/glfw
-cmake .
-cmake --build .
-mkdir ../GLFW_Lib
-cmake --install . --prefix ../GLFW_Lib
-```
-
-Finally, build the demos specifying the location of the `glfw` library
-
-```
-cd examples_oldgl_glfw
-mkdir build 
-cd build
+mkdir build && cd build
 cmake ..
 cmake --build .
 ```
-
-
 
 
 

@@ -21,8 +21,13 @@ project(119_Glyph)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
+#######################
+
+set(3RD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party")
+
 # glad
-get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
+get_filename_component(GLAD_INCLUDE_DIR
+    ${3RD_PARTY}/glad3/include ABSOLUTE)
 
 # glfw
 SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
@@ -48,7 +53,6 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 
 #####################################
 
-set(3RD_PARTY "../../3rd_party")
 include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLAD_INCLUDE_DIR}
