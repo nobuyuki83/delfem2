@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
+option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 
 ######################################################
 
@@ -29,8 +29,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 find_package(OpenGL REQUIRED)
 
 # dfm2
-set(DELFEM2_INCLUDE_DIR "../../include")
-IF (USE_HEADERONLY)
+IF (DFM2_HEADER_ONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)
 else ()
   if (MSVC)
@@ -41,6 +40,7 @@ else ()
         ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a)
   endif ()
 ENDIF ()
+set(DELFEM2_INCLUDE_DIR "../../include")
 
 ############################################
 

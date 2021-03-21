@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-# compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
-option(EMSCRIPTEN "Use Emscripten:" OFF)
-
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
-
 #####################################
 
 set(CMAKE_CXX_STANDARD 11)
@@ -26,17 +21,14 @@ project(10_imgui_basic)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
+#####################################
+
 # opengl
 find_package(OpenGL REQUIRED)
 
 # glfw
-IF(MSVC)
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
-ELSE()
-  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
-ENDIF()
-get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
-get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 
 # imgui
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
@@ -77,50 +69,8 @@ add_executable(${PROJECT_NAME}
     main.cpp
     )
 
-###########################
-
-if (NOT EMSCRIPTEN)
-  IF(APPLE)
-    find_library( COCOA_LIBRARY Cocoa )
-    find_library( IOKIT_LIBRARY IOKit )
-    find_library( COREVIDEO_LIBRARY CoreVideo )
-    target_link_libraries(${PROJECT_NAME}
-        ${DFM2_LIBRARY}
-        ${OPENGL_LIBRARY}
-        ${COCOA_LIBRARY}
-        ${IOKIT_LIBRARY}
-        ${COREVIDEO_LIBRARY}
-        ${GLFW_LIBRARY}
-        )
-  ELSEIF(UNIX)
-    target_link_libraries(${PROJECT_NAME}
-        ${DFM2_LIBRARY}
-        ${OPENGL_LIBRARY}
-        ${GLEW_LIBRARY}
-        ${GLFW_LIBRARY}
-        -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-        )
-  ELSEIF(MSVC)
-    target_link_libraries(${PROJECT_NAME}
-        ${DFM2_LIBRARY}
-        ${OPENGL_LIBRARY}
-        ${GLFW_LIBRARY}
-        )
-  ENDIF()
-else()
-  set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
-  set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
-  set(CMAKE_C_COMPILER "emcc")
-  set(CMAKE_CXX_COMPILER "em++")
-  target_compile_definitions(${PROJECT_NAME} PUBLIC -DEMSCRIPTEN=1)
-  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
-  #  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s FULL_ES3=1")
-  include_directories(
-      ${OPENGL_INCLUDE_DIR}
-      ${GLFW_DIR}/include
-      ${GLAD_INCLUDE_DIR}
-      ${IMGUI_DIR}
-      ${IMGUI_DIR}/examples
-      ${DELFEM2_INCLUDE_DIR}
-  )
-endif()
+target_link_libraries(${PROJECT_NAME}
+  ${DFM2_LIBRARY}
+  ${OPENGL_LIBRARY}
+  ${GLFW_LIBRARIES}
+)

@@ -18,8 +18,6 @@ ENDIF()
 set(PROJ_NAME dfm2_static_glfwold)
 project(${PROJ_NAME})
 
-add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-
 # glfw
 SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
