@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
+option(DFM2_HEADER_ONLY "compile delfem2 as a header only library" ON)
 
 ################################
 
@@ -16,7 +16,7 @@ endif()
 
 ################################
 
-if(USE_HEADERONLY)
+if(DFM2_HEADER_ONLY)
   project(test_hdronly)
 ELSE()
   project(test_static)
@@ -46,8 +46,8 @@ include_directories(
 
 # Add test cpp file
 
-IF(NOT USE_HEADERONLY)
-  message("compile as STATIC libary: ${PROJECT_NAME} USE_HEADERONLY=${USE_HEADERONLY}")
+IF(NOT DFM2_HEADER_ONLY)
+  message("compile as STATIC libary: ${PROJECT_NAME} DFM2_HEADER_ONLY=${DFM2_HEADER_ONLY}")
   set(SRC_DFM2
       ${DELFEM2_INC}/vec2.h                 ${DELFEM2_INC}/vec2.cpp
       ${DELFEM2_INC}/vec3.h                 ${DELFEM2_INC}/vec3.cpp
@@ -114,7 +114,7 @@ IF(NOT USE_HEADERONLY)
       )
 ELSE()
   add_definitions(-DDFM2_HEADER_ONLY=ON)
-  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
+  message("compile delfem2 as HEADER-ONLY library: ${PROJECT_NAME} ${DFM2_HEADER_ONLY}")
 ENDIF()
 
 add_executable(${MY_BINARY_NAME}

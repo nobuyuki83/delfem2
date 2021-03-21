@@ -229,26 +229,26 @@ echo "###############################"
 cd test_cpp
 mkdir buildXcodeStatic
 cd buildXcodeStatic
-cmake .. -G Xcode -DUSE_HEADERONLY=OFF
+cmake .. -G Xcode -DDFM2_HEADER_ONLY=OFF
 cd ../../
 
 cd test_cpp
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake .. -G Xcode -DUSE_HEADERONLY=ON
+cmake .. -G Xcode -DDFM2_HEADER_ONLY=ON
 cd ../../
 
 cd test_cpp
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake .. -DUSE_HEADERONLY=ON
+cmake .. -DDFM2_HEADER_ONLY=ON
 cmake --build .
 cd ../../
 
 cd test_cpp
 mkdir buildMakeStatic
 cd buildMakeStatic
-cmake .. -DUSE_HEADERONLY=OFF
+cmake .. -DDFM2_HEADER_ONLY=OFF
 cmake --build .
 ./runUnitTests
 cd ../../

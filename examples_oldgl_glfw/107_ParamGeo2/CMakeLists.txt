@@ -30,7 +30,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 find_package(OpenGL REQUIRED)
 
 # dfm2
-IF(USE_HEADERONLY)
+IF(DFM2_HEADER_ONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)            
 else()
   if(MSVC)

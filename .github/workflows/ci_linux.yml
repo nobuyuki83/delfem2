@@ -45,7 +45,7 @@ jobs:
 
         cd test_cpp
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DUSE_HEADERONLY=OFF
+        cmake .. -DDFM2_HEADER_ONLY=OFF
         cmake --build .
         ./runUnitTests
         cd ../../
@@ -55,7 +55,7 @@ jobs:
         
         cd test_cpp
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake .. -DUSE_HEADERONLY=ON
+        cmake .. -DDFM2_HEADER_ONLY=ON
         cmake --build .
         ./runUnitTests
         cd ../../    
