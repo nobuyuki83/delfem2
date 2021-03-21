@@ -32,22 +32,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
 find_package(OpenGL REQUIRED)
 
 # dfm2
-IF(USE_HEADERONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)            
-else()
-  if(MSVC)
-    set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib )
-  else()
-    set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
-  endif()
-ENDIF()
+add_definitions(-DDFM2_HEADER_ONLY=ON)            
 set(DELFEM2_INCLUDE_DIR "../../include")
 
+# zlib
 find_package(ZLIB REQUIRED)
-message(STATUS "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
-message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 
 ###############################################
 
@@ -69,9 +58,9 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-  target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARIES}
-      ${ZLIB_LIBRARIES}
-  )
+target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+)

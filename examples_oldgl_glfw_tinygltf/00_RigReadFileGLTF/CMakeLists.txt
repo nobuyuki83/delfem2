@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
-
 ######################################################
 
 enable_language(CXX)

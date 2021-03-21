@@ -84,18 +84,15 @@ jobs:
         echo ########################################
         echo ## build C++ glfw legacy Opengl examples
 
-        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
-        echo "glfw_root: $glfw_root"
-
         cd examples_oldgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+        cmake .. -DDFM2_HEADER_ONLY=ON
         cmake --build .
         cd ../..
 
         cd examples_oldgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake .. -DUSE_HEADERONLY=OFF -DGLFW_ROOT=$glfw_root
+        cmake .. -DDFM2_HEADER_ONLY=OFF
         cmake --build .
         cd ../..
 
@@ -137,28 +134,22 @@ jobs:
         echo ########################
         echo ## build tinygl examples
 
-        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
-        echo "glfw_root: $glfw_root"
-
         git submodule update --init -- 3rd_party/tinygltf
 
         cd examples_oldgl_glfw_tinygltf
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+        cmake .. 
         make
         cd ../../
 
-    - name: build examples (glfw,thread)
+    - name: build examples (glfw,　thread)
       run: |
         echo ########################
         echo ## build thread examples
 
-        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
-        echo "glfw_root: $glfw_root"
-
         cd examples_oldgl_glfw_thread
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+        cmake ..
         cmake --build .
         cd ../../
 
@@ -167,14 +158,11 @@ jobs:
         echo ########################
         echo ## build imgui examples
 
-        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
-        echo "glfw_root: $glfw_root"
-
         git submodule update --init -- 3rd_party/imgui
 
         cd examples_newgl_glfw_imgui
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+        cmake ..
         cmake --build .
         cd ../../
 

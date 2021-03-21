@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
+option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 
 ######################################################
 

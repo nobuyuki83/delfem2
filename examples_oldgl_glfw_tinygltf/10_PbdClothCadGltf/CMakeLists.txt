@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
-
 ######################################################
 
 set(CMAKE_CXX_STANDARD 11)
@@ -47,7 +45,7 @@ add_executable(${PROJECT_NAME}
   main.cpp  
 )
 
-  target_link_libraries(${PROJECT_NAME}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARIES}
-  )
+target_link_libraries(${PROJECT_NAME}
+  ${OPENGL_LIBRARY}
+  ${GLFW_LIBRARIES}
+)

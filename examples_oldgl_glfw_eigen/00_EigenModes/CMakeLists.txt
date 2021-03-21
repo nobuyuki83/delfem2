@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
-
 ####################################
 
 enable_language(CXX)
@@ -30,17 +28,7 @@ find_package(OpenGL REQUIRED)
 find_package( Eigen3 REQUIRED )
 
 # dfm2
-if(USE_HEADERONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)      
-else()
-  if(MSVC)
-    set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)
-  else()
-    set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a)
-  endif()
-endif()
+add_definitions(-DDFM2_HEADER_ONLY=ON)
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 #######################################################

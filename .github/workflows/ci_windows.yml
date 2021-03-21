@@ -83,17 +83,12 @@ jobs:
         echo "######################"
         echo "## build tinygltf demo"
 
-        $glfw_root=Convert-Path 3rd_party\GLFW_Lib
-        echo "glfw_root: $glfw_root"
-
         git submodule update --init -- 3rd_party/tinygltf
 
         cd examples_oldgl_glfw_tinygltf
         mkdir buildVS64Static
         cd buildVS64Static
-        cmake .. -A x64 `
-          -DUSE_HEADERONLY=ON `
-          -DGLFW_ROOT="$glfw_root"
+        cmake .. -A x64
         cmake --build .
         cd ../../
 
@@ -102,17 +97,12 @@ jobs:
         echo "######################"
         echo "## build thread demo"
 
-        $glfw_root=Convert-Path 3rd_party\GLFW_Lib
-        echo "glfw_root: $glfw_root"
-
         cd examples_oldgl_glfw_thread
         mkdir buildVS64Static
         cd buildVS64Static
-        cmake .. -A x64 `
-          -DUSE_HEADERONLY=ON `
-          -DGLFW_ROOT="$glfw_root"
+        cmake .. -A x64
         cmake --build .
-        cd ../../        
+        cd ../../   
 
     - name: build zlib
       run: |
@@ -137,7 +127,6 @@ jobs:
 
         $zlib_library=Convert-Path 3rd_party\zlib\buildMake\Release\zlib.lib
         $zlib_include_dir=Convert-Path 3rd_party\zlib
-        $glfw_root=Convert-Path 3rd_party\GLFW_Lib
         echo "zlib_library: $zlib_library"
         echo "zlib_include_dir: $zlib_include_dir"
         echo "glfw_root: $glfw_root"
@@ -146,10 +135,8 @@ jobs:
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
         cmake .. -A x64 `
-          -DUSE_HEADERONLY=ON `
           -DZLIB_LIBRARY="$zlib_library" `
           -DZLIB_INCLUDE_DIR="$zlib_include_dir" `
-          -DGLFW_ROOT="$glfw_root"
         cmake --build . --config Release
         cd ../../
 
