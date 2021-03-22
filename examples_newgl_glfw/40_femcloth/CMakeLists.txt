@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
+option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 
 ###############################################
 
@@ -22,8 +22,10 @@ project(40_femcloth)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
+###############################################
+
 # dfm2
-if(USE_HEADERONLY)
+if(DFM2_HEADER_ONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)
 else()
   if(MSVC)

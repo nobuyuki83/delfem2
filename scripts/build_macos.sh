@@ -276,7 +276,7 @@ cd buildMake
 cmake ..
 cmake --build .
 cd ../../
-
+;
 cd examples_alembic
 mkdir buildXcode 
 cd buildXcode
