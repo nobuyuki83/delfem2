@@ -113,9 +113,12 @@ jobs:
         cd 3rd_party/zlib
         mkdir buildMake
         cd buildMake
-        cmake -A x64 ..
+        cmake .. -A x64
         cmake --build . --config Release
         cp zconf.h ..
+        mkdir ../../ZLib_Lib
+        cmake --install . --prefix ../../ZLib_Lib 
+        ls ../../ZLib_Lib
         cd ../../../  
 
     - name: build examples (glfw,cnpy)
@@ -123,12 +126,17 @@ jobs:
         echo "##############################"
         echo "## examples_oldgl_glfw_cnpy"
 
+        set path_zlib_lib=%~dp0..\3rd_party\zlib\buildMake\Release\zlib.lib
+        set path_zlib_inc=%~dp0..\3rd_party\zlib
+
         git submodule update --init -- 3rd_party/cnpy
 
         cd examples_oldgl_glfw_cnpy
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
-        cmake .. -A x64
+        cmake .. -A x64 ^        
+          -DZLIB_LIBRARY="%path_zlib_lib%" ^
+          -DZLIB_INCLUDE_DIR="%path_zlib_inc%"
         cmake --build . --config Release
         cd ../../
 
