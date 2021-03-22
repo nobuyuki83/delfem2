@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
-
 ##########################################
 
 set(CMAKE_CXX_STANDARD 11)
