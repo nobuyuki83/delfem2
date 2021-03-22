@@ -32,7 +32,6 @@ add_definitions(-DDFM2_HEADER_ONLY=ON)
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 # zlib
-SET(ZLIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/zlib)
 find_package(ZLIB REQUIRED)
 
 ######################################
