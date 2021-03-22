@@ -134,8 +134,8 @@ jobs:
         cd examples_oldgl_glfw_cnpy
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
-        cmake .. -A x64 ^        
-          -DZLIB_LIBRARY="%path_zlib_lib%" ^
+        cmake .. -A x64 `
+          -DZLIB_LIBRARY="%path_zlib_lib%" `
           -DZLIB_INCLUDE_DIR="%path_zlib_inc%"
         cmake --build . --config Release
         cd ../../
