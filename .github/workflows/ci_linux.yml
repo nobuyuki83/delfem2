@@ -101,18 +101,15 @@ jobs:
         echo ########################################
         echo ## build C++ glfw modern Opengl examples
 
-        glfw_root=$(pwd)"/3rd_party/GLFW_Lib"
-        echo "glfw_root: $glfw_root"
-
         cd examples_newgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DUSE_HEADERONLY=ON -DGLFW_ROOT=$glfw_root
+        cmake .. -DDFM2_HEADER_ONLY=ON
         cmake --build .
         cd ../..
 
         cd examples_newgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake .. -DUSE_HEADERONLY=OFF -DGLFW_ROOT=$glfw_root
+        cmake .. -DDFM2_HEADER_ONLY=OFF
         cmake --build .
         cd ../..
 
@@ -184,6 +181,6 @@ jobs:
 
         cd examples_alembic
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake -DUSE_HEADERONLY=ON ..
+        cmake ..
         make
         cd ../.. 

@@ -125,14 +125,10 @@ jobs:
 
         git submodule update --init -- 3rd_party/cnpy
 
-        $zlib_root=Convert-Path 3rd_party\zlib
-        echo "zlib_root: $zlib_root"
-
         cd examples_oldgl_glfw_cnpy
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
-        cmake .. -A x64 `
-          -DZLIB_ROOT="$zlib_root"
+        cmake .. -A x64
         cmake --build . --config Release
         cd ../../
 
