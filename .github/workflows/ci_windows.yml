@@ -134,7 +134,7 @@ jobs:
         cd examples_oldgl_glfw_cnpy
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
-        cmake .. -A x64 `        
+        cmake .. -A x64 `
           -DZLIB_LIBRARY="$zlib_library" `
           -DZLIB_INCLUDE_DIR="$zlib_include_dir"
         cmake --build . --config Release
@@ -149,15 +149,16 @@ jobs:
         $zlib_root=Convert-Path 3rd_party\zlib
         echo "zlib_library: $zlib_library"
         echo "zlib_root: $zlib_root"
+
         cd 3rd_party
         curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
         7z x openexr.zip -y
         cd openexr-2.5.2
         cmake . -A x64 `
-            -DZLIB_ROOT="$zlib_root" `
-            -DZLIB_LIBRARY="$zlib_library" `
-            -DPYILMBASE_ENABLE=OFF `
-            -DBUILD_TESTING=OFF
+          -DZLIB_ROOT="$zlib_root" `
+          -DZLIB_LIBRARY="$zlib_library" `
+          -DPYILMBASE_ENABLE=OFF `
+          -DBUILD_TESTING=OFF
         cmake --build . --config Release
         cd ..
         mkdir OpenEXR_Lib     
