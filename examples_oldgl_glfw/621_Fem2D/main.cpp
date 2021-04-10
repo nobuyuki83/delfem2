@@ -6,7 +6,8 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -380,7 +381,7 @@ void DrawScalar(
 }
 
 void ProblemScalar(
-    dfm2::opengl::CViewer3& viewer,
+    dfm2::glfw::CViewer3& viewer,
     const std::vector<double>& aXY1,
     const std::vector<unsigned int>& aTri1,
     double len)
@@ -606,7 +607,7 @@ void SolveProblem_LinearSolid_Dynamic(
 }
 
 void ProblemSolid(
-    dfm2::opengl::CViewer3& viewer,
+    dfm2::glfw::CViewer3& viewer,
     const std::vector<double>& aXY1,
     const std::vector<unsigned int>& aTri1,
     double len)
@@ -994,7 +995,7 @@ void DrawVelocityField(
 
 
 void ProblemFluidCavity(
-    dfm2::opengl::CViewer3& viewer,
+    dfm2::glfw::CViewer3& viewer,
     const std::vector<double>& aXY1,
     const std::vector<unsigned int>& aTri1,
     const std::vector<int>& loopIP_ind,
@@ -1056,7 +1057,7 @@ void ProblemFluidCavity(
 }
 
 void ProblemFluidTunnel(
-    dfm2::opengl::CViewer3& viewer,
+    dfm2::glfw::CViewer3& viewer,
     const std::vector<double>& aXY1,
     const std::vector<unsigned int>& aTri1,
     const std::vector<int>& loopIP_ind,
@@ -1122,8 +1123,9 @@ void ProblemFluidTunnel(
 
 int main(int argc,char* argv[])
 {
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();

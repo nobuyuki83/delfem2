@@ -1,6 +1,7 @@
 
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/pgeo.h"
@@ -859,8 +860,9 @@ int main(int argc, char* argv[])
   //  LoadStep("grabcad/bumper/BUMPER.stp",aCP,aBSCWK);
   //  LoadStep("bolt.STEP",aCP,aBSCWK);
   
-  delfem2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.view_height = 100;
   
   while(!glfwWindowShouldClose(viewer.window)){

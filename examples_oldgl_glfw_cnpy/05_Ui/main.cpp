@@ -11,7 +11,8 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/opengl/glfw/ViewRig.h"
+#include "delfem2/glfw/ViewRig.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/rig_geo3.h"
@@ -29,7 +30,7 @@ namespace dfm2 = delfem2;
 
 int main()
 {
-  dfm2::opengl::CViewerGlfw_RiggedMesh viewer;
+  dfm2::glfw::CViewerGlfw_RiggedMesh viewer;
   {
     std::vector<double> aXYZ0, aXYZ1;
     std::vector<unsigned int> aTri;
@@ -79,8 +80,10 @@ int main()
     tex.z = -0.5;
     std::cout << width << " " << height << std::endl;
   }
-  // -------------------
-  viewer.Init_oldGL();
+  // -------------------------
+  // below: opengl window open
+  delfem2::glfw::InitGLOld();
+  viewer.InitGL();
   tex.InitGL();
   dfm2::opengl::setSomeLighting();
   while ( !glfwWindowShouldClose(viewer.window) )

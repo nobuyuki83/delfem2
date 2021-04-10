@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
@@ -101,10 +102,11 @@ int main(int argc,char* argv[])
     }
   }
   
-  dfm2::opengl::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer;
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.Init_oldGL();
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   delfem2::opengl::setSomeLighting();
 
   double cur_time = 0.0;

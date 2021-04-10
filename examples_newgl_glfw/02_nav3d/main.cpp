@@ -6,7 +6,8 @@
   #include <glad/glad.h>
 #endif
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/mshprimitive.h"
 
@@ -23,7 +24,7 @@ namespace dfm2 = delfem2;
 // ---------------------------
 // global variables
 dfm2::opengl::CShader_TriMesh shdr;
-delfem2::opengl::CViewer3 viewer;
+delfem2::glfw::CViewer3 viewer;
 
 // ---------------------------
 
@@ -47,7 +48,8 @@ void draw(GLFWwindow* window)
 
 int main()
 {
-  viewer.Init_newGL();
+  dfm2::glfw::InitGLNew();
+  viewer.InitGL();
   
   // glad: load all OpenGL function pointers
   // ---------------------------------------

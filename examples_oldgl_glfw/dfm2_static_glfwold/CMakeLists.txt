@@ -146,8 +146,12 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/old/r2tglo.h       ${DELFEM2_INC}/opengl/old/r2tglo.cpp
     ${DELFEM2_INC}/opengl/old/gridcube.h     ${DELFEM2_INC}/opengl/old/gridcube.cpp
     
-    ${DELFEM2_INC}/opengl/glfw/viewer2.h     ${DELFEM2_INC}/opengl/glfw/viewer2.cpp
-    ${DELFEM2_INC}/opengl/glfw/viewer3.h     ${DELFEM2_INC}/opengl/glfw/viewer3.cpp
+    ${DELFEM2_INC}/glfw/util.h     
+    ${DELFEM2_INC}/glfw/viewer2.h     
+    ${DELFEM2_INC}/glfw/viewer2.cpp
+    ${DELFEM2_INC}/glfw/viewer3.h     
+    ${DELFEM2_INC}/glfw/viewer3.cpp
+
 
     ${DELFEM2_INC}/openglstb/glyph.h         ${DELFEM2_INC}/openglstb/glyph.cpp
 )

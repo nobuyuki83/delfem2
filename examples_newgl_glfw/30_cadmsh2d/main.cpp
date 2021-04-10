@@ -16,9 +16,9 @@
   #include <glad/glad.h>
 #endif
 
-#include "delfem2/opengl/glfw/viewer2.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/glfw/viewer2.h"
 #include "delfem2/opengl/new/v23dtricad.h"
-#include "delfem2/opengl/funcs.h"
 #include "delfem2/cad2_dtri2.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -28,7 +28,7 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------
 
-class CCadDtri_Viewer : public delfem2::opengl::CViewer2 {
+class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
 public:
   CCadDtri_Viewer(){
     {
@@ -36,7 +36,7 @@ public:
       cad.AddPolygon(aXY);
     }
   }
-  void InitGL(){
+  void InitShader(){
     shdr_cad.Compile();
     shdr_dmsh.Compile();
     {
@@ -138,8 +138,9 @@ void callback_resize(GLFWwindow* window, int width, int height)
 
 int main()
 {
-  viewer.Init_newGL();
-    
+  dfm2::glfw::InitGLNew();
+  viewer.InitGL();
+
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
@@ -147,7 +148,7 @@ int main()
   }
 #endif
   
-  viewer.InitGL();
+  viewer.InitShader();
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

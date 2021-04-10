@@ -62,6 +62,10 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 <img src="14_ClothPoseTexture/thumbnail.png" width=200>
 
+### [15_ClothInitialConfig](15_ClothInitialConfig)
+
+<img src="15_ClothInitialConfig/thumbnail.png" width=200>
+
 
 
 ### [20_PoseBoneBlendshape](20_PoseBoneBlendshape)

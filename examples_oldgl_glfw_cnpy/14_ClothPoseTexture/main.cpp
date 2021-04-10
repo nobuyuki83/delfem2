@@ -11,7 +11,8 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/color.h"
@@ -44,7 +45,7 @@ void Draw(
     const std::vector<dfm2::CVec2d>& aVec2,
     const dfm2::CProjector_RigMesh& projector_smpl,
     const dfm2::opengl::CTexRGB& tex,
-    dfm2::opengl::CViewer3& viewer)
+    dfm2::glfw::CViewer3& viewer)
 {
   viewer.DrawBegin_oldGL();
 
@@ -186,16 +187,14 @@ int main()
       posTarget = dfm2::CVec3d(d0,d1,d2);
     }
   }
-
   dfm2::CKineticDamper damper;
-
-   // -----------
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::CViewer3 viewer;
+  // -----------
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   viewer.camera.view_height = 1.0;
   dfm2::opengl::setSomeLighting();
-
   tex.InitGL();
 
   for(int iframe = 0; iframe< 300; ++iframe){

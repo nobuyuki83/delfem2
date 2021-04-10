@@ -1,3 +1,6 @@
+#ifndef DFM2_MOUSEINPUT_H
+#define DFM2_MOUSEINPUT_H
+
 #include "delfem2/mat4.h"
 
 namespace delfem2 {
@@ -78,3 +81,5 @@ public:
 
 
 }
+
+#endif

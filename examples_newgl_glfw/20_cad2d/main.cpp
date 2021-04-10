@@ -10,7 +10,8 @@
   #include <glad/glad.h>
 #endif
 
-#include "delfem2/opengl/glfw/viewer2.h"
+#include "delfem2/glfw/viewer2.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/new/v23dtricad.h"
 #include "delfem2/cad2_dtri2.h"
@@ -20,7 +21,7 @@
 // end of header
 // -----------------------------------------------------
 
-class CCAD2D_Viewer : public delfem2::opengl::CViewer2
+class CCAD2D_Viewer : public delfem2::glfw::CViewer2
 {
 public:
   CCAD2D_Viewer(){
@@ -68,8 +69,9 @@ void draw(GLFWwindow* window)
 
 int main()
 {
+  dfm2::glfw::InitGLNew();
   viewer.view_height = 2.0;
-  viewer.Init_newGL();
+  viewer.InitGL();
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;

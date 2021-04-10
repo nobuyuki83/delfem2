@@ -6,7 +6,8 @@
  */
 
 #include <glad/glad.h> // glad need to be defiend in the begenning
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -38,8 +39,9 @@ int main(int argc,char* argv[])
     smplr.isDrawOnlyHitPoints = true;
   }
   // ---------------------------------------
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
 //  viewer.camera.Rot_Camera(+0.2, -0.2);

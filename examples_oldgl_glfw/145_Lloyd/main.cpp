@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/sampler.h"
@@ -55,7 +56,7 @@ void MakeDensity(
 }
 
 void Draw(
-    const delfem2::opengl::CViewer3& viewer,
+    const delfem2::glfw::CViewer3& viewer,
     const std::vector<double>& aXY,
     const double min_xy[2],
     const double max_xy[2])
@@ -81,11 +82,12 @@ int main(int argc,char* argv[])
   std::uniform_real_distribution<double> dist_x(min_xy[0], max_xy[0]);
   std::uniform_real_distribution<double> dist_y(min_xy[1], max_xy[1]);
   // -----------
-  delfem2::opengl::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer;
   viewer.camera.trans[0] = -0.5;
   viewer.camera.trans[1] = -0.5;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.Init_oldGL();
+  delfem2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.view_height = 0.7;
   while ( true )
   {

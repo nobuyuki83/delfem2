@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/femrod.h"
@@ -203,7 +204,7 @@ void FindRodHairContactCCD(
 
 int main(int argc,char* argv[])
 {
-  class CViewerDemo : public dfm2::opengl::CViewer3 {
+  class CViewerDemo : public dfm2::glfw::CViewer3 {
     void  key_press(int key, int mods) override {
       if( key == GLFW_KEY_A ){
         is_animation = !is_animation;
@@ -217,7 +218,8 @@ int main(int argc,char* argv[])
     bool is_animation = true;
     bool is_step = false;
   } viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
 //  viewer.camera.Rot_Camera(-0.4, -0.1);

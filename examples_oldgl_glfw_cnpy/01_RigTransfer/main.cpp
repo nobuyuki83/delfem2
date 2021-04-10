@@ -11,7 +11,8 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/rigv3.h"
@@ -103,10 +104,11 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
   // ----------------------------------
   
   std::vector<double> aXYZ1 = aXYZ0;
-    
+
+  delfem2::glfw::CViewer3 viewer;
   // -----------
-  delfem2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   dfm2::opengl::setSomeLighting();
   
   std::vector<CRigMap> aMapBoneTrg2Src(aBone.size());

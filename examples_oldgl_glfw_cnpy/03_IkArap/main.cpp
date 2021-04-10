@@ -11,7 +11,8 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -214,12 +215,12 @@ void Draw
     ::glDisable(GL_LIGHTING);
     ::glPointSize(20);
     ::glBegin(GL_POINTS);
-    for(unsigned int it=0;it<aTarget.size();++it){
-      const unsigned int ib = aTarget[it].ib;
+    for(const auto & it : aTarget){
+      const unsigned int ib = it.ib;
       ::glColor3d(0,1,0);
       dfm2::opengl::myGlVertex(aBone[ib].Pos());
       ::glColor3d(0,0,1);
-      dfm2::opengl::myGlVertex(aTarget[it].pos);
+      dfm2::opengl::myGlVertex(it.pos);
     }
     ::glEnd();
   }
@@ -413,13 +414,15 @@ int main()
     }
   }
   std::vector< dfm2::CVec3d > aTargetOriginPos;
-  for(unsigned int it=0;it<aTarget.size();++it){
-    aTargetOriginPos.push_back(aTarget[it].pos);
+  for(auto & it : aTarget){
+    aTargetOriginPos.push_back(it.pos);
   }
- 
-  // -----------
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+
+  // -------------
+  // below: opengl
+  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.camera.view_height = 1.2;
   dfm2::opengl::setSomeLighting();

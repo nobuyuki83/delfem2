@@ -11,7 +11,8 @@
 #else
   #include <glad/glad.h>
 #endif
-#include "delfem2/opengl/glfw/viewer2.h"
+#include "delfem2/glfw/viewer2.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/noise.h"
 #include "delfem2/mshprimitive.h"
@@ -29,7 +30,7 @@ namespace dfm2 = delfem2;
 // ---------------------------
 dfm2::opengl::CShader_TriMesh shdr0;
 dfm2::opengl::CShader_TriMesh_Tex shdr;
-delfem2::opengl::CViewer2 viewer;
+delfem2::glfw::CViewer2 viewer;
 unsigned int idTexColor = 0;
 unsigned int idTexDepth = 0;
 
@@ -77,7 +78,8 @@ void draw(GLFWwindow* window)
 
 int main()
 {
-  viewer.Init_newGL();
+  dfm2::glfw::InitGLNew();
+  viewer.InitGL();
   
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))

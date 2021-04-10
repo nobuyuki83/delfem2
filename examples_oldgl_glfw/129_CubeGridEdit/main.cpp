@@ -6,7 +6,8 @@
  */
 
 #include <glad/glad.h>
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/gridcube.h"
 #include "delfem2/cam3_m4q.h"
@@ -28,7 +29,7 @@ namespace dfm2 = delfem2;
 int main(int argc,char* argv[])
 {
   // -------------
-  class CViewer_CubeGrid : public dfm2::opengl::CViewer3
+  class CViewer_CubeGrid : public dfm2::glfw::CViewer3
   {
   public:
     CViewer_CubeGrid(){
@@ -91,7 +92,8 @@ int main(int argc,char* argv[])
     };
     EDIT_MODE edit_mode = EDIT_ADD;
   } viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);

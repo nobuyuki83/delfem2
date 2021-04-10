@@ -10,7 +10,8 @@
  * @file implementation based on "Müller et al., Particle-based fluid simulation for interactive applications. SCA 2003"
  */
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/vec3.h"
 #include <GLFW/glfw3.h>
@@ -278,8 +279,9 @@ int main(int argc, char *argv[])
   init( ps );
   std::cout << "particle size : " << ps.size() << std::endl;  
   
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.view_height = 25;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();

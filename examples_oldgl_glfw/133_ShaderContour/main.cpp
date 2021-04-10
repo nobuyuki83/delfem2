@@ -7,7 +7,8 @@
 
 
 #include <glad/glad.h>
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -72,8 +73,9 @@ int main(int argc,char* argv[])
   draw_sampler.draw_len_axis = 1.0;
 
   // -------------------
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
