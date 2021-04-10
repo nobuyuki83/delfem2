@@ -69,7 +69,7 @@ void draw(GLFWwindow* window)
 
 int main()
 {
-  dfm2::glfw::InitGLNew();
+  delfem2::glfw::InitGLNew();
   viewer.view_height = 2.0;
   viewer.InitGL();
 #ifndef EMSCRIPTEN
