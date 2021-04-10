@@ -7,7 +7,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/openglstb/glyph.h"
 #include "delfem2/mshprimitive.h"
@@ -26,8 +27,9 @@ int main(int argc,char* argv[])
   glyph.ParseGlyphInfo(std::string(PATH_INPUT_DIR)+"/myFont.fnt");
   // -------------------
   
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);

@@ -9,7 +9,8 @@
   #include <glad/glad.h>
 #endif
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/mshmisc.h"
@@ -64,7 +65,7 @@ class CInput_ContactSphere: public dfm2::CInput_Contact
 
 // ---------------------------------------------------------
 
-dfm2::opengl::CViewer3 viewer;
+dfm2::glfw::CViewer3 viewer;
 dfm2::opengl::CShader_TriMesh shdr_trimsh;
 
 std::vector<double> aXYZ0; // (out) undeformed vertex positions
@@ -154,8 +155,9 @@ int main()
                      psup.data(),psup.size());
     ilu_A.Initialize_ILU0(mat_A);
   }
-  
-  viewer.Init_newGL();
+
+  delfem2::glfw::InitGLNew();
+  viewer.InitGL();
       
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){

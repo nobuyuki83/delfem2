@@ -11,7 +11,8 @@
 
 #include "delfem2/eigen/lsitrsol.h"
 #include "delfem2/eigen/lsmerge.h"
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/mshprimitive.h"
@@ -57,8 +58,9 @@ void ShowEigen_SolidLinear_MeshQuad2(
   const auto& evec = s.eigenvectors(); // somehow this takes time
 
   //
-  delfem2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
+  viewer.InitGL();
 
   std::vector<double> aDisp(np*2,0.0);
 
@@ -106,8 +108,9 @@ void ShowEigen_SolidLinear_MeshTri2(
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> s(A);
   const auto& evec = s.eigenvectors();
   //
-  delfem2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
+  viewer.InitGL();
   for(unsigned int iframe=0;iframe<10;++iframe){
     std::cout << s.eigenvalues()(iframe) << std::endl;
     for(unsigned int i=0;i<np*2;++i){

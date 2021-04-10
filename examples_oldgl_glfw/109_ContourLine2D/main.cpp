@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
@@ -85,8 +86,9 @@ void Hoge()
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
+  viewer.InitGL();
   
   viewer.camera.view_height = 1.0;
   viewer.camera.camera_rot_mode  = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;

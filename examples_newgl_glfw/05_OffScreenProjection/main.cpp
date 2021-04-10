@@ -15,7 +15,8 @@
 #include "delfem2/vec3.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/opengl/new/r2tgln.h"
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include <iostream>
 #include <cmath>
 
@@ -27,7 +28,7 @@
 
 namespace dfm2 = delfem2;
 
-delfem2::opengl::CViewer3 viewer;
+delfem2::glfw::CViewer3 viewer;
 dfm2::opengl::CRender2Tex r2t;
 dfm2::opengl::CShader_TriMesh shdr_trimsh;
 dfm2::opengl::CShader_Points shdr_points;
@@ -67,7 +68,8 @@ int main()
     draw_r2t.draw_len_axis = 1.0;
   }
 
-  viewer.Init_newGL();
+  dfm2::glfw::InitGLNew();
+  viewer.InitGL();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))

@@ -12,7 +12,7 @@
 #include "delfem2/pgeo.h"
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
 
 namespace dfm2 = delfem2;
 
@@ -179,8 +179,8 @@ void myGlutDisplay(void)
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  delfem2::glfw::CViewer3 viewer;
+  viewer.InitGL();
   
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.camera.view_height = 4;

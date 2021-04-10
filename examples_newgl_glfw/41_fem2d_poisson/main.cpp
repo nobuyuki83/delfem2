@@ -28,7 +28,8 @@
   #include <glad/glad.h>
 #endif
 #include "delfem2/opengl/new/mshcolor.h"
-#include "delfem2/opengl/glfw/viewer2.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/glfw/viewer2.h"
 #include <GLFW/glfw3.h>
 
 
@@ -170,7 +171,7 @@ dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
 dfm2::CPreconditionerILU<double> ilu_A;
 
-dfm2::opengl::CViewer2 viewer;
+dfm2::glfw::CViewer2 viewer;
 dfm2::opengl::CShader_TriMesh_Scalar shdr0;
 
 
@@ -319,8 +320,9 @@ int main()
     InitializeProblem_Scalar();
     SolveProblem_Poisson();
   }
-  
-  viewer.Init_newGL();
+
+  delfem2::glfw::InitGLNew();
+  viewer.InitGL();
   viewer.view_height = 1.5;
     
 #ifndef EMSCRIPTEN

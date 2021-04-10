@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/noise.h"
 #include <GLFW/glfw3.h>
@@ -17,8 +18,9 @@ namespace dfm2 = delfem2;
 // ---------------------
 
 int main(int argc, char *argv[]) {
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
 
   unsigned int nSize = 256;
   std::vector<double> aV;

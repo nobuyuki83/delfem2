@@ -25,6 +25,7 @@ add_subdirectory(11_ClothPose)
 add_subdirectory(12_IkImageCloth)
 add_subdirectory(13_ClothPoseRig)
 add_subdirectory(14_ClothPoseTexture)
+add_subdirectory(15_ClothInitialConfig)
 
 add_subdirectory(20_PoseBoneBlendshape)
 

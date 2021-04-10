@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/pbd_geo3.h"
@@ -133,8 +133,8 @@ int main(int argc,char* argv[])
     aBC[ix] = 1;
   }
     
-  dfm2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  dfm2::glfw::CViewer3 viewer;
+  viewer.InitGL();
   
   while (!glfwWindowShouldClose(viewer.window))
   {

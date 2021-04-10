@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/geo3_v23m34q.h"
@@ -285,8 +286,9 @@ int main(int argc,char* argv[])
     }
   }
   // -----------
-  delfem2::opengl::CViewer3 viewer;
-  viewer.Init_oldGL();
+  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
+  viewer.InitGL();
   viewer.camera.view_height = 1.5;
   while (!glfwWindowShouldClose(viewer.window))
   {

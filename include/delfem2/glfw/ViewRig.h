@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_OPENGL_GLFW_VIEWRIG_H
-#define DFM2_OPENGL_GLFW_VIEWRIG_H
+#ifndef DFM2_GLFW_VIEWRIG_H
+#define DFM2_GLFW_VIEWRIG_H
 
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/gizmo_geo3.h"
@@ -102,7 +102,7 @@ public:
   CGizmo_Rotation<REAL> gizmo_rot;
 };
 
-namespace opengl {
+namespace glfw {
 
 DFM2_INLINE void Draw(
     CGizmo_Rig<float>& giz,
@@ -166,15 +166,15 @@ public:
   void Draw() {
     ::glEnable(GL_LIGHTING);
     ::glEnable(GL_DEPTH_TEST);
-    DrawMeshTri3D_FaceNorm(
+    ::delfem2::opengl::DrawMeshTri3D_FaceNorm(
         aXYZ1.data(),
         aTri.data(), aTri.size() / 3);
     ::glDisable(GL_DEPTH_TEST);
-    DrawBone(
+    ::delfem2::opengl::DrawBone(
         aBone,
         -1, -1,
         0.01, 1.0);
-    ::delfem2::opengl::Draw(gizmo, aBone);
+    ::delfem2::glfw::Draw(gizmo, aBone);
   }
 
   void mouse_drag(

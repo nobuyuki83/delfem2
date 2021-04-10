@@ -6,7 +6,7 @@
  */
 
 
-#include "delfem2/opengl/glfw/viewer2.h"
+#include "delfem2/glfw/viewer2.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
 #include "delfem2/openglstb/glyph.h"
@@ -29,8 +29,8 @@ int main(int argc,char* argv[])
   glyph.ParseGlyphInfo(std::string(PATH_INPUT_DIR)+"/myFont.fnt");
   delfem2::CCad2D cad;
   // --------------------
-  delfem2::opengl::CViewer2 viewer;
-  viewer.Init_oldGL();
+  delfem2::glfw::CViewer2 viewer;
+  viewer.InitGL();
   glyph.InitGL();
   delfem2::opengl::setSomeLighting();
   unsigned int iframe = 0;

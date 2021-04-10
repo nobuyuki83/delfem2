@@ -14,7 +14,8 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"
-#include "delfem2/opengl/glfw/viewer3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 namespace dfm2 = delfem2;
 
 // -------------------------------
@@ -161,11 +162,12 @@ int main(int argc,char* argv[])
 
   // ---------------------------
 
-  dfm2::opengl::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer;
   viewer.camera.view_height = 1.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.camera.Rot_Camera(-0.5,-0.5);
-  viewer.Init_oldGL();
+  dfm2::glfw::InitGLOld();
+  viewer.InitGL();
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
