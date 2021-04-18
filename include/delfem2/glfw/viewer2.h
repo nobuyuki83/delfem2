@@ -57,6 +57,7 @@ public:
 public:
   GLFWwindow *window = nullptr;
   CMouseInput nav;
+  std::string title;
   double bgcolor[4] = {1, 1, 1, 1};
   unsigned int width = 640;
   unsigned int height = 480;

@@ -16,7 +16,7 @@
 namespace delfem2 {
 namespace viewer2 {
 
-static delfem2::glfw::CViewer2 *pViewer2 = 0;
+static delfem2::glfw::CViewer2 *pViewer2 = nullptr;
 
 static void glfw_callback_key(GLFWwindow *window, int key, int scancode, int action, int mods) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -31,10 +31,10 @@ static void glfw_callback_resize(GLFWwindow *window, int width, int height) {
 }
 
 static void glfw_callback_mouse_button(GLFWwindow *window, int button, int action, int mods) {
-  assert(pViewer2 != 0);
+  assert(pViewer2 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  const float asp = width / (float) height;
+  const float asp = float(width) / float(height);
   {
     ::delfem2::CMouseInput &nav = pViewer2->nav;
     nav.imodifier = mods;
@@ -64,10 +64,10 @@ static void glfw_callback_mouse_button(GLFWwindow *window, int button, int actio
 }
 
 static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, double ypos) {
-  assert(pViewer2 != 0);
+  assert(pViewer2 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  const float asp = width / (float) height;
+  const float asp = float(width) / float(height);
   { // update nav
     ::delfem2::CMouseInput &nav = pViewer2->nav;
     const double mov_end_x = (2.0 * xpos - width) / width;
@@ -98,7 +98,7 @@ static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, doubl
 
 static void glfw_callback_scroll(GLFWwindow *window, double xoffset, double yoffset) {
   assert(pViewer2 != nullptr);
-  pViewer2->scale *= pow(1.01, yoffset);
+  pViewer2->scale *= powf(1.01, float(yoffset));
 }
 
 }
@@ -109,9 +109,9 @@ void delfem2::glfw::CViewer2::InitGL()
   delfem2::viewer2::pViewer2 = this;
   // glfw window creation
   // --------------------
-  this->window = glfwCreateWindow(width,
-                                  height,
-                                  "LearnOpenGL",
+  this->window = glfwCreateWindow(int(width),
+                                  int(height),
+                                  title.c_str(),
                                   nullptr,
                                   nullptr);
   if (this->window == nullptr)
@@ -156,7 +156,7 @@ void delfem2::glfw::CViewer2::DrawBegin_oldGL() const
   {
     int width0, height0;
     glfwGetFramebufferSize(window, &width0, &height0);
-    float asp = width0 / (float) height0;
+    const float asp = float(width0) / (float) height0;
     this->Mat4_MVP_OpenGL(mMV, mP, asp);
 //    camera.Mat4_MVP_OpenGL(mMV,mP, asp);
   }
