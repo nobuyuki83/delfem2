@@ -14,21 +14,21 @@
 #define DFM2_COLOR_H
 
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <cassert>
 #include "delfem2/dfm2_inline.h"
 
 namespace delfem2{
 
+template <typename T0, typename T1>
 DFM2_INLINE void GetRGB_HSV(
-    float&r, float& g, float& b,
-    float h, float s, float v);
-
+    T0&r, T0& g, T0& b,
+    T1 h, T1 s, T1 v);
 
 DFM2_INLINE void heatmap(double input, double* color);
 DFM2_INLINE void heatmap_glColor(double input);
@@ -60,7 +60,7 @@ public:
     this->b = b;
     this->a = a;
   }
-  CColor(const std::vector<double>& v){
+  explicit CColor(const std::vector<double>& v){
     this->r = 1.0;
     this->g = 1.0;
     this->b = 1.0;
@@ -76,7 +76,7 @@ public:
       this->g = v[1];
       this->b = v[2];
     }
-    else if( v.size() > 0 ){
+    else if( !v.empty() ){
       this->r = v[0];
       this->g = v[0];
       this->b = v[0];
@@ -88,8 +88,8 @@ public:
     b = (float)rand()/(float(RAND_MAX)+1.0f);
   }
   void setRandomVividColor(){
-    double h = (double)rand()/(RAND_MAX+1.0);
-    GetRGB_HSV(r,g,b, (float)h,1,1);
+    const float hue = rand()/(RAND_MAX+1.0);
+    GetRGB_HSV(r,g,b, hue,1.f,1.f);
   }
   /*
   void glColor() const;
@@ -130,13 +130,14 @@ public:
   float a;
 };
 
-DFM2_INLINE void interpolateColor(CColor& Cout, float r, const CColor& C0, const CColor& C1);
+DFM2_INLINE void interpolateColor(
+    CColor& Cout, float r, const CColor& C0, const CColor& C1);
 
 // ------------------------------------------------------------
 // std::vector from here
 
-DFM2_INLINE CColor getColor
- (double input, const std::vector<std::pair<double, CColor> >& colorMap);
+DFM2_INLINE CColor getColor(
+    double input, const std::vector<std::pair<double, CColor> >& colorMap);
 
 
 DFM2_INLINE void ColorMap_BlueGrayRed(
@@ -156,7 +157,7 @@ DFM2_INLINE void ColorMap_RedYellowGreenCyanBlue(
 class CColorMap
 {
 public:
-  CColorMap(){}
+  CColorMap() = default;
   CColorMap(double min, double max, const std::string& str){
     if( str == "bgr" ){
       ColorMap_BlueGrayRed(aColor, min, max);
