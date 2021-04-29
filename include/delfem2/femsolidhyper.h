@@ -5,7 +5,21 @@
 
 namespace delfem2 {
 
-void AddWdWddW_SolidHyper3Hex(
+/**
+ * Compute elastic potential and its grandient (residual vector) and hessian (stiffness matrix)
+ * for the 2nd order Mooney-Rivlin hyper elastic material with reduced invariants
+ * for hex element
+ * @param[out] W elastic potential
+ * @param[out] dW gradient of W
+ * @param[out] ddW hessian of W
+ * @param[out] vol volume
+ * @param[in] c1 first parameter of the 2nd order Mooney-Rivlin material
+ * @param[in] c2 second parameter of the 2nd order Mooney-Rivlin material
+ * @param[in] aP0 coordinates of vertices of the hex element
+ * @param[in] aU displacement of vertices of the hex element
+ * @param[in] iGauss degree of Gaussian quadrature
+ */
+void AddWdWddW_Solid3HyperMooneyrivlin2Reduced_Hex(
     double &W,
     double dW[8][3],
     double ddW[8][8][3][3],

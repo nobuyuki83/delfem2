@@ -66,15 +66,15 @@ void Simulation(
 {
   double c1 = 1.0;
   double c2 = 1.0;
-  const unsigned int iGauss = 1;
   for(unsigned int ih=0;ih<aHex.size()/8;++ih){
     double aP0[8][3]; delfem2::FetchData<8,3>(aP0,aHex.data()+ih*8,aXYZ.data());
     double aU[8][3]; delfem2::FetchData<8,3>(aU,aHex.data()+ih*8,aDisp.data());
+    //
     double W = 0.0;
-    double ddW[8][8][3][3]; for(int i=0;i<8*8*3*3;++i){ (&ddW[0][0][0][0])[i] = 0.0; }
     double dW[8][3]; for(int i=0;i<8*3;++i){ (&dW[0][0])[i] = 0.0; }
+    double ddW[8][8][3][3]; for(int i=0;i<8*8*3*3;++i){ (&ddW[0][0][0][0])[i] = 0.0; }
     double vol = 0.0;
-    delfem2::AddWdWddW_SolidHyper3Hex(
+    delfem2::AddWdWddW_Solid3HyperMooneyrivlin2Reduced_Hex(
         W, dW, ddW, vol,
         c1, c2, aP0, aU, 1);
     //
