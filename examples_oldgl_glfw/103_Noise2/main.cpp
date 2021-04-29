@@ -49,14 +49,14 @@ int main(int argc, char *argv[]) {
     ColorMap_BlueCyanGreenYellowRed(colorMap, -0.5, +0.5);
     //  makeHeatMap_BlueGrayRed(colorMap, -0.8, +0.8);
     ::glBegin(GL_QUADS);
-    const int nH = nSize;
-    const int nW = nSize;
-    for (int jh = 0; jh < nH - 1; ++jh) {
-      for (int jw = 0; jw < nW - 1; ++jw) {
-        int i00 = (jh + 0) * nW + (jw + 0);
-        int i10 = (jh + 0) * nW + (jw + 1);
-        int i11 = (jh + 1) * nW + (jw + 1);
-        int i01 = (jh + 1) * nW + (jw + 0);
+    const unsigned int nH = nSize;
+    const unsigned int nW = nSize;
+    for (unsigned int jh = 0; jh < nH - 1; ++jh) {
+      for (unsigned int jw = 0; jw < nW - 1; ++jw) {
+        const unsigned int i00 = (jh + 0) * nW + (jw + 0);
+        const unsigned int i10 = (jh + 0) * nW + (jw + 1);
+        const unsigned int i11 = (jh + 1) * nW + (jw + 1);
+        const unsigned int i01 = (jh + 1) * nW + (jw + 0);
         double v00 = aV[i00];
         double v10 = aV[i10];
         double v11 = aV[i11];

@@ -55,6 +55,9 @@ template void delfem2::GetRGB_HSV(
 template void delfem2::GetRGB_HSV(
     double&r, double& g, double& b,
     double h, double s, double v);
+template void delfem2::GetRGB_HSV(
+    float&r, float& g, float& b,
+    double h, double s, double v);
 #endif
 
 // ------------------------------------------------------------
