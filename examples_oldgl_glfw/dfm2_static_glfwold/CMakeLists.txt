@@ -92,6 +92,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/pbd_geo3.h                  ${DELFEM2_INC}/pbd_geo3.cpp
     ${DELFEM2_INC}/pbd_geo3dtri23.h            ${DELFEM2_INC}/pbd_geo3dtri23.cpp
 
+    ${DELFEM2_INC}/rgd_v2m3.h                  ${DELFEM2_INC}/rgd_v2m3.cpp
+
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
     ${DELFEM2_INC}/sdf.h

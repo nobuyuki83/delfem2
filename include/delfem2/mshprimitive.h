@@ -124,6 +124,15 @@ void MeshTri3_Capsule(
     unsigned int nr,
     unsigned int nl);
 
+template <typename T>
+DFM2_INLINE void MeshHex3_Grid(
+    std::vector<T>& aXYZ,
+    std::vector<unsigned int>& aHex,
+    unsigned int nx,
+    unsigned int ny,
+    unsigned int nz,
+    T elen);
+
 // above: 3D primitives
 // --------------------------------------------------------------------------------------------------------------
 // below: 2D primitives
@@ -134,7 +143,7 @@ DFM2_INLINE void MeshQuad2D_Grid(
     unsigned int nx,
     unsigned int ny);
 
-// ========================================
+// =================================================================================
 // primivive classes from here
 
 template <typename REAL>

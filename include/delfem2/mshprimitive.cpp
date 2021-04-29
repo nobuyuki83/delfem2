@@ -912,7 +912,64 @@ template void delfem2::MeshTri3_Torus(
     unsigned int nr, unsigned int nl);
 #endif
 
+
+template <typename T>
+DFM2_INLINE void delfem2::MeshHex3_Grid(
+    std::vector<T>& aXYZ,
+    std::vector<unsigned int>& aHex,
+    unsigned int nx,
+    unsigned int ny,
+    unsigned int nz,
+    T elen)
+{
+  aXYZ.resize((nz+1)*(ny+1)*(nx+1)*3, 0);
+  for(unsigned int iz=0;iz<nz+1;++iz){
+    for(unsigned int iy=0;iy<ny+1;++iy){
+      for(unsigned int ix=0;ix<nx+1;++ix){
+        aXYZ[(iz*(ny+1)*(nx+1)+iy*(nx+1)+ix)*3+0] = ix*elen;
+        aXYZ[(iz*(ny+1)*(nx+1)+iy*(nx+1)+ix)*3+1] = iy*elen;
+        aXYZ[(iz*(ny+1)*(nx+1)+iy*(nx+1)+ix)*3+2] = iz*elen;
+      }
+    }
+  }
+  aHex.resize(nx*ny*nz*8);
+  for (unsigned int iz = 0; iz < nz; ++iz) {
+    for(unsigned int iy=0;iy<ny;++iy) {
+      for(unsigned int ix=0;ix<nx;++ix){
+        unsigned int ih0 = iz*ny*nx+iy*nx+ix;
+        aHex[ih0*8+0] = (iz+0)*(ny+1)*(nx+1) + (iy+0)*(nx+1) + (ix+0);
+        aHex[ih0*8+1] = (iz+0)*(ny+1)*(nx+1) + (iy+0)*(nx+1) + (ix+1);
+        aHex[ih0*8+2] = (iz+0)*(ny+1)*(nx+1) + (iy+1)*(nx+1) + (ix+1);
+        aHex[ih0*8+3] = (iz+0)*(ny+1)*(nx+1) + (iy+1)*(nx+1) + (ix+0);
+        aHex[ih0*8+4] = (iz+1)*(ny+1)*(nx+1) + (iy+0)*(nx+1) + (ix+0);
+        aHex[ih0*8+5] = (iz+1)*(ny+1)*(nx+1) + (iy+0)*(nx+1) + (ix+1);
+        aHex[ih0*8+6] = (iz+1)*(ny+1)*(nx+1) + (iy+1)*(nx+1) + (ix+1);
+        aHex[ih0*8+7] = (iz+1)*(ny+1)*(nx+1) + (iy+1)*(nx+1) + (ix+0);
+      }
+    }
+  }
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MeshHex3_Grid(
+    std::vector<float>& aXYZ,
+    std::vector<unsigned int>& aHex,
+    unsigned int nx,
+    unsigned int ny,
+    unsigned int nz,
+    float elen);
+template void delfem2::MeshHex3_Grid(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aHex,
+    unsigned int nx,
+    unsigned int ny,
+    unsigned int nz,
+    double elen);
+#endif
+
+
+// above: function
 // =========================================================================
+// below: class
 
 template <typename REAL>
 delfem2::CPlane<REAL>::CPlane(const double n[3], const double o[3])
@@ -1131,7 +1188,6 @@ unsigned int delfem2::CTorus<REAL>::FindInOut(double px, double py, double pz) c
 }
 
 // --------------------------------------------------------------------------
-
 
 // ---------------------------------------------------------------------------------------------------------------------
 

@@ -13,6 +13,16 @@
 
 namespace delfem2 {
 
+
+namespace rgd_v2m3{
+
+CMat3d Mat3_Affine(
+    const CVec2d& posl,
+    const double theta,
+    const CVec2d& posg);
+
+}
+
 class CRigidState2 {
 public:
   bool is_fix;

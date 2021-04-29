@@ -117,6 +117,62 @@ DFM2_INLINE void delfem2::femutil::MatMatTrans3(
   }
 }
 
+namespace delfem2 {
+namespace femutil {
+
+void HexVox(
+    double &detjac,
+    double dndx[][3],
+    double an[],
+    const double coords[][3],
+    double dndr[8][3]) {
+  double dxdr[3][3] = {
+      {0.0, 0.0, 0.0},
+      {0.0, 0.0, 0.0},
+      {0.0, 0.0, 0.0},
+  };
+
+  for (int inode = 0; inode < 8; inode++) {
+    dxdr[0][0] += coords[inode][0] * dndr[inode][0];
+    dxdr[0][1] += coords[inode][0] * dndr[inode][1];
+    dxdr[0][2] += coords[inode][0] * dndr[inode][2];
+    dxdr[1][0] += coords[inode][1] * dndr[inode][0];
+    dxdr[1][1] += coords[inode][1] * dndr[inode][1];
+    dxdr[1][2] += coords[inode][1] * dndr[inode][2];
+    dxdr[2][0] += coords[inode][2] * dndr[inode][0];
+    dxdr[2][1] += coords[inode][2] * dndr[inode][1];
+    dxdr[2][2] += coords[inode][2] * dndr[inode][2];
+  }
+
+  detjac = +dxdr[0][0] * dxdr[1][1] * dxdr[2][2]
+           + dxdr[1][0] * dxdr[2][1] * dxdr[0][2]
+           + dxdr[2][0] * dxdr[0][1] * dxdr[1][2]
+           - dxdr[0][0] * dxdr[2][1] * dxdr[1][2]
+           - dxdr[1][0] * dxdr[0][1] * dxdr[2][2]
+           - dxdr[2][0] * dxdr[1][1] * dxdr[0][2];
+
+  const double inv_jac = 1.0 / detjac;
+
+  double drdx[3][3];
+  drdx[0][0] = inv_jac * (dxdr[1][1] * dxdr[2][2] - dxdr[1][2] * dxdr[2][1]);
+  drdx[0][1] = inv_jac * (dxdr[0][2] * dxdr[2][1] - dxdr[0][1] * dxdr[2][2]);
+  drdx[0][2] = inv_jac * (dxdr[0][1] * dxdr[1][2] - dxdr[0][2] * dxdr[1][1]);
+  drdx[1][0] = inv_jac * (dxdr[1][2] * dxdr[2][0] - dxdr[1][0] * dxdr[2][2]);
+  drdx[1][1] = inv_jac * (dxdr[0][0] * dxdr[2][2] - dxdr[0][2] * dxdr[2][0]);
+  drdx[1][2] = inv_jac * (dxdr[0][2] * dxdr[1][0] - dxdr[0][0] * dxdr[1][2]);
+  drdx[2][0] = inv_jac * (dxdr[1][0] * dxdr[2][1] - dxdr[1][1] * dxdr[2][0]);
+  drdx[2][1] = inv_jac * (dxdr[0][1] * dxdr[2][0] - dxdr[0][0] * dxdr[2][1]);
+  drdx[2][2] = inv_jac * (dxdr[0][0] * dxdr[1][1] - dxdr[0][1] * dxdr[1][0]);
+
+  for (int inode = 0; inode < 8; inode++) {
+    dndx[inode][0] = dndr[inode][0] * drdx[0][0] + dndr[inode][1] * drdx[1][0] + dndr[inode][2] * drdx[2][0];
+    dndx[inode][1] = dndr[inode][0] * drdx[0][1] + dndr[inode][1] * drdx[1][1] + dndr[inode][2] * drdx[2][1];
+    dndx[inode][2] = dndr[inode][0] * drdx[0][2] + dndr[inode][1] * drdx[1][2] + dndr[inode][2] * drdx[2][2];
+  }
+}
+
+}
+}
 
 // =======================================================================
 
@@ -201,12 +257,14 @@ DFM2_INLINE void delfem2::TetDlDx(
   //  std::cout << a[3]+dldx[3][0]*p3[0]+dldx[3][1]*p3[1]+dldx[3][2]*p3[2] << std::endl;
 }
 
-DFM2_INLINE void delfem2::ShapeFunc_Hex8
-    (const double& r0, const double& r1,	const double& r2,
-     const double coords[][3],
-     double& detjac,
-     double dndx[][3],
-     double an[] )
+DFM2_INLINE void delfem2::ShapeFunc_Vox8(
+    const double& r0,
+    const double& r1,
+    const double& r2,
+    const double coords[][3],
+    double& detjac,
+    double dndx[][3],
+    double an[] )
 {
   an[0] = 0.125*(1.0-r0)*(1.0-r1)*(1.0-r2);
   an[1] = 0.125*(1.0+r0)*(1.0-r1)*(1.0-r2);
@@ -245,49 +303,61 @@ DFM2_INLINE void delfem2::ShapeFunc_Hex8
   dndr[6][2] = -dndr[2][2];
   dndr[7][2] = -dndr[3][2];
 
-  double dxdr[3][3]  = {
-      { 0.0, 0.0, 0.0 },
-      { 0.0, 0.0, 0.0 },
-      { 0.0, 0.0, 0.0 },
-  };
+  femutil::HexVox(
+      detjac,dndx,an,
+      coords,dndr);
+}
 
-  for(int inode=0;inode<8;inode++){
-    dxdr[0][0] += coords[inode][0]*dndr[inode][0];
-    dxdr[0][1] += coords[inode][0]*dndr[inode][1];
-    dxdr[0][2] += coords[inode][0]*dndr[inode][2];
-    dxdr[1][0] += coords[inode][1]*dndr[inode][0];
-    dxdr[1][1] += coords[inode][1]*dndr[inode][1];
-    dxdr[1][2] += coords[inode][1]*dndr[inode][2];
-    dxdr[2][0] += coords[inode][2]*dndr[inode][0];
-    dxdr[2][1] += coords[inode][2]*dndr[inode][1];
-    dxdr[2][2] += coords[inode][2]*dndr[inode][2];
-  }
 
-  detjac = dxdr[0][0]*dxdr[1][1]*dxdr[2][2]
-           + dxdr[1][0]*dxdr[2][1]*dxdr[0][2]
-           + dxdr[2][0]*dxdr[0][1]*dxdr[1][2]
-           - dxdr[0][0]*dxdr[2][1]*dxdr[1][2]
-           - dxdr[1][0]*dxdr[0][1]*dxdr[2][2]
-           - dxdr[2][0]*dxdr[1][1]*dxdr[0][2];
+DFM2_INLINE void delfem2::ShapeFunc_Hex8(
+    const double& r0,
+    const double& r1,
+    const double& r2,
+    const double coords[][3],
+    double& detjac,
+    double dndx[][3],
+    double an[] )
+{
+  an[0] = 0.125*(1.0-r0)*(1.0-r1)*(1.0-r2);
+  an[1] = 0.125*(1.0+r0)*(1.0-r1)*(1.0-r2);
+  an[2] = 0.125*(1.0+r0)*(1.0+r1)*(1.0-r2);
+  an[3] = 0.125*(1.0-r0)*(1.0+r1)*(1.0-r2);
+  an[4] = 0.125*(1.0-r0)*(1.0-r1)*(1.0+r2);
+  an[5] = 0.125*(1.0+r0)*(1.0-r1)*(1.0+r2);
+  an[6] = 0.125*(1.0+r0)*(1.0+r1)*(1.0+r2);
+  an[7] = 0.125*(1.0-r0)*(1.0+r1)*(1.0+r2);
 
-  const double inv_jac = 1.0 / detjac;
+  double dndr[8][3];
+  dndr[0][0] = -0.125*(1.0-r1)*(1.0-r2);
+  dndr[1][0] = +0.125*(1.0-r1)*(1.0-r2);
+  dndr[2][0] = +0.125*(1.0+r1)*(1.0-r2);
+  dndr[3][0] = -0.125*(1.0+r1)*(1.0-r2);
+  dndr[4][0] = -0.125*(1.0-r1)*(1.0+r2);
+  dndr[5][0] = +0.125*(1.0-r1)*(1.0+r2);
+  dndr[6][0] = +0.125*(1.0+r1)*(1.0+r2);
+  dndr[7][0] = -0.125*(1.0+r1)*(1.0+r2);
 
-  double drdx[3][3];
-  drdx[0][0] = inv_jac*( dxdr[1][1]*dxdr[2][2]-dxdr[1][2]*dxdr[2][1] );
-  drdx[0][1] = inv_jac*( dxdr[0][2]*dxdr[2][1]-dxdr[0][1]*dxdr[2][2] );
-  drdx[0][2] = inv_jac*( dxdr[0][1]*dxdr[1][2]-dxdr[0][2]*dxdr[1][1] );
-  drdx[1][0] = inv_jac*( dxdr[1][2]*dxdr[2][0]-dxdr[1][0]*dxdr[2][2] );
-  drdx[1][1] = inv_jac*( dxdr[0][0]*dxdr[2][2]-dxdr[0][2]*dxdr[2][0] );
-  drdx[1][2] = inv_jac*( dxdr[0][2]*dxdr[1][0]-dxdr[0][0]*dxdr[1][2] );
-  drdx[2][0] = inv_jac*( dxdr[1][0]*dxdr[2][1]-dxdr[1][1]*dxdr[2][0] );
-  drdx[2][1] = inv_jac*( dxdr[0][1]*dxdr[2][0]-dxdr[0][0]*dxdr[2][1] );
-  drdx[2][2] = inv_jac*( dxdr[0][0]*dxdr[1][1]-dxdr[0][1]*dxdr[1][0] );
+  dndr[0][1] = -0.125*(1.0-r0)*(1.0-r2);
+  dndr[1][1] = -0.125*(1.0+r0)*(1.0-r2);
+  dndr[2][1] = +0.125*(1.0+r0)*(1.0-r2);
+  dndr[3][1] = +0.125*(1.0-r0)*(1.0-r2);
+  dndr[4][1] = -0.125*(1.0-r0)*(1.0+r2);
+  dndr[5][1] = -0.125*(1.0+r0)*(1.0+r2);
+  dndr[6][1] = +0.125*(1.0+r0)*(1.0+r2);
+  dndr[7][1] = +0.125*(1.0-r0)*(1.0+r2);
 
-  for(int inode=0;inode<8;inode++){
-    dndx[inode][0] = dndr[inode][0]*drdx[0][0] + dndr[inode][1]*drdx[1][0] + dndr[inode][2]*drdx[2][0];
-    dndx[inode][1] = dndr[inode][0]*drdx[0][1] + dndr[inode][1]*drdx[1][1] + dndr[inode][2]*drdx[2][1];
-    dndx[inode][2] = dndr[inode][0]*drdx[0][2] + dndr[inode][1]*drdx[1][2] + dndr[inode][2]*drdx[2][2];
-  }
+  dndr[0][2] = -0.125*(1.0-r0)*(1.0-r1);
+  dndr[1][2] = -0.125*(1.0+r0)*(1.0-r1);
+  dndr[2][2] = -0.125*(1.0+r0)*(1.0+r1);
+  dndr[3][2] = -0.125*(1.0-r0)*(1.0+r1);
+  dndr[4][2] = +0.125*(1.0-r0)*(1.0-r1);
+  dndr[5][2] = +0.125*(1.0+r0)*(1.0-r1);
+  dndr[6][2] = +0.125*(1.0+r0)*(1.0+r1);
+  dndr[7][2] = +0.125*(1.0-r0)*(1.0+r1);
+
+  femutil::HexVox(
+      detjac,dndx,an,
+      coords,dndr);
 }
 
 DFM2_INLINE void delfem2::ddW_MassConsistentVal3D_Tet3D(

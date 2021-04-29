@@ -205,12 +205,24 @@ DFM2_INLINE void TetDlDx(
     const double p2[],
     const double p3[]);
 
-DFM2_INLINE void ShapeFunc_Hex8
-    (const double& r0, const double& r1,	const double& r2,
-     const double coords[][3],
-     double& detjac,
-     double dndx[][3],
-     double an[] );
+DFM2_INLINE void ShapeFunc_Vox8(
+    const double& r0,
+    const double& r1,
+    const double& r2,
+    const double coords[][3],
+    double& detjac,
+    double dndx[][3],
+    double an[] );
+
+DFM2_INLINE void ShapeFunc_Hex8(
+    const double& r0,
+    const double& r1,
+    const double& r2,
+    const double coords[][3],
+    double& detjac,
+    double dndx[][3],
+    double an[] );
+
 
 template <int nno, int ndim>
 DFM2_INLINE void FetchData(
