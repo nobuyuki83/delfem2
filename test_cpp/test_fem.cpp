@@ -1016,7 +1016,7 @@ TEST(fem, solidhyper3) {
       for (int i = 0; i < 8 * 8 * 3 * 3; ++i) { (&ddW0[0][0][0][0])[i] = 0.0; }
       for (int i = 0; i < 8 * 3; ++i) { (&dW0[0][0])[i] = 0.0; }
       double vol0 = 0.0;
-      delfem2::AddWdWddW_SolidHyper3Hex(
+      delfem2::AddWdWddW_Solid3HyperMooneyrivlin2Reduced_Hex(
           W0, dW0, ddW0, vol0,
           c1, c2, aP0, aU0, 1);
     }
@@ -1036,7 +1036,7 @@ TEST(fem, solidhyper3) {
             }
           }
           aU1[ino][idim] += eps;
-          delfem2::AddWdWddW_SolidHyper3Hex(
+          delfem2::AddWdWddW_Solid3HyperMooneyrivlin2Reduced_Hex(
               W1, dW1, ddW1, vol1,
               c1, c2, aP0, aU1, 1);
         }

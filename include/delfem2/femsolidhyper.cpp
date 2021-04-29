@@ -1,6 +1,8 @@
 
+
 #include "delfem2/femutil.h"
 #include "delfem2/femsolidhyper.h"
+#include <cmath>
 
 void MakeStressConstitute_Hyper2D(
     const double c1,
@@ -515,8 +517,19 @@ bool AddLinSys_Hyper2D_P1bP1(
 }
 */
 
-double MakeStressConstitute_Hyper3D(
-    double S2[],
+namespace delfem2 {
+namespace femsolidhyper {
+
+/**
+ * @param[out] dWdC2 gradient of W w.r.t. right Cauchy-Green tensor
+ * @param[out] ddWddC2 hessian of W w.r.t. right Cauchy-Green tensor
+ * @param[in] c1
+ * @param[in] c2
+ * @param[in] dudx displacement gradient tensor
+ * @return density of elastic potential energy
+ */
+double WdWdCddWddC_Solid3HyperMooneyrivlin2Reduced(
+    double dWdC2[],
     double ddWddC2[][6],
     //
     const double c1,
@@ -537,6 +550,7 @@ double MakeStressConstitute_Hyper3D(
     C[idim][idim] += 1.0;
   }
   
+  // invariants of Cauchy-Green tensor
   const double p1C = C[0][0] + C[1][1] + C[2][2];
   const double p2C =
       + C[0][0] * C[1][1]
@@ -554,7 +568,7 @@ double MakeStressConstitute_Hyper3D(
       - C[1][0] * C[0][1] * C[2][2];
 
   double Cinv[ndim][ndim];
-  {
+  { // inverse of right Cauchy-Green tensor
     const double inv_det = 1.0 / p3C;
     Cinv[0][0] = inv_det * (C[1][1] * C[2][2] - C[1][2] * C[2][1]);
     Cinv[0][1] = inv_det * (C[0][2] * C[2][1] - C[0][1] * C[2][2]);
@@ -569,40 +583,29 @@ double MakeStressConstitute_Hyper3D(
 
   const double tmp1 = 1.0 / pow(p3C, 1.0 / 3.0);
   const double tmp2 = 1.0 / pow(p3C, 2.0 / 3.0);
-  
-  const double pi1C = p1C*tmp1;
-  const double pi2C = p2C*tmp2;
+  const double pi1C = p1C*tmp1; // 1st reduced invariant
+  const double pi2C = p2C*tmp2; // 2nd reduced invariant
   const double W = c1*(pi1C-3.) + c2*(pi2C-3.);
 
+  // compute 2nd Piola-Kirchhoff tensor here
   double S[ndim][ndim]; // 2nd Piola-Kirchhoff tensor
-  {
-    for (unsigned int i = 0; i < ndim * ndim; i++) { *(&S[0][0] + i) = 0.0; }
-    for (unsigned int idim = 0; idim < ndim; idim++) {
-      for (unsigned int jdim = 0; jdim < ndim; jdim++) {
-        S[idim][jdim] -=
-            2.0 * c2 * tmp2 * C[idim][jdim]
-            + 2.0 * (c1 * pi1C + c2 * 2.0 * pi2C) / 3.0
-              * Cinv[idim][jdim];
-      }
-    }
-    {
-      const double dtmp1 = 2.0 * c1 * tmp1 + 2.0 * c2 * tmp2 * p1C;
-      S[0][0] += dtmp1;
-      S[1][1] += dtmp1;
-      S[2][2] += dtmp1;
+  for (unsigned int i = 0; i < ndim * ndim; i++) { *(&S[0][0] + i) = 0.0; }
+  for (unsigned int idim = 0; idim < ndim; idim++) {
+    for (unsigned int jdim = 0; jdim < ndim; jdim++) {
+      S[idim][jdim] -=
+          2.0 * c2 * tmp2 * C[idim][jdim]
+          + 2.0 * (c1 * pi1C + c2 * 2.0 * pi2C) / 3.0
+            * Cinv[idim][jdim];
     }
   }
-  /*
   {
-    const double dtmp1 = 2.0 * press * rcg_pinv3;
-    for (unsigned int idim = 0; idim < ndim; idim++) {
-      for (unsigned int jdim = 0; jdim < ndim; jdim++) {
-        stress_2ndpk[idim][jdim] += dtmp1 * rcg_inv[idim][jdim];
-      }
-    }
+    const double dtmp1 = 2.0 * c1 * tmp1 + 2.0 * c2 * tmp2 * p1C;
+    S[0][0] += dtmp1;
+    S[1][1] += dtmp1;
+    S[2][2] += dtmp1;
   }
-   */
-
+  
+  // computing constituive tensor from here
   double ddWddC[ndim][ndim][ndim][ndim];
   for (unsigned int i = 0; i < ndim * ndim * ndim * ndim; i++) { *(&ddWddC[0][0][0][0] + i) = 0.0; }
   for (unsigned int idim = 0; idim < ndim; idim++) {
@@ -620,13 +623,6 @@ double MakeStressConstitute_Hyper3D(
               + C[idim][jdim] * Cinv[kdim][ldim]
               + Cinv[idim][kdim] * Cinv[jdim][ldim] * p2C * 0.5
               + Cinv[idim][ldim] * Cinv[jdim][kdim] * p2C * 0.5);
-          /*
-          tmp += 4.0 * press * rcg_pinv3 *
-                 rcg_inv[idim][jdim] * rcg_inv[kdim][ldim]
-                 - 2.0 * press * rcg_pinv3 * (
-              rcg_inv[idim][kdim] * rcg_inv[ldim][jdim]
-              + rcg_inv[idim][ldim] * rcg_inv[kdim][jdim]);
-              */
           ddWddC[idim][jdim][kdim][ldim] += tmp;
         }
       }
@@ -649,49 +645,37 @@ double MakeStressConstitute_Hyper3D(
       ddWddC[idim][jdim][idim][jdim] -= 2.0 * c2 * tmp2;
     }
   }
-
-//	double stress_2ndpk2[nstdim];
-  /*
-  {
-    Cinvsym[0] = Cinv[0][0];
-    Cinvsym[1] = Cinv[1][1];
-    Cinvsym[2] = Cinv[2][2];
-    Cinvsym[3] = Cinv[0][1];
-    Cinvsym[4] = Cinv[1][2];
-    Cinvsym[5] = Cinv[2][0];
+  { // 2nd piola-kirchhoff tensor is symmetric. Here extracting 6 independent elements.
+    dWdC2[0] = S[0][0];
+    dWdC2[1] = S[1][1];
+    dWdC2[2] = S[2][2];
+    dWdC2[3] = S[0][1];
+    dWdC2[4] = S[1][2];
+    dWdC2[5] = S[2][0];
   }
-   */
-  {
-    S2[0] = S[0][0];
-    S2[1] = S[1][1];
-    S2[2] = S[2][2];
-    S2[3] = S[0][1];
-    S2[4] = S[1][2];
-    S2[5] = S[2][0];
-  }
-//	double constit2[nstdim][nstdim];
-  {
-    unsigned int istdim2ij[6][2] = {{0, 0},
-                                    {1, 1},
-                                    {2, 2},
-                                    {0, 1},
-                                    {1, 2},
-                                    {2, 0}};
+  { // Extracting independent components in the constitutive tensor
+    constexpr unsigned int istdim2ij[6][2] = {
+        {0, 0}, {1, 1}, {2, 2}, {0, 1}, {1, 2}, {2, 0}
+    };
     for (unsigned int istdim = 0; istdim < 6; istdim++) {
       for (unsigned int jstdim = 0; jstdim < 6; jstdim++) {
-        const unsigned int *idim_ij = istdim2ij[istdim];
-        const unsigned int *jdim_ij = istdim2ij[jstdim];
-        ddWddC2[istdim][jstdim]
-            = ddWddC[idim_ij[0]][idim_ij[1]][jdim_ij[0]][jdim_ij[1]];
+        const unsigned int idim0 = istdim2ij[istdim][0];
+        const unsigned int idim1 = istdim2ij[istdim][1];
+        const unsigned int jdim0 = istdim2ij[jstdim][0];
+        const unsigned int jdim1 = istdim2ij[jstdim][1];
+        ddWddC2[istdim][jstdim] = ddWddC[idim0][idim1][jdim0][jdim1];
       }
     }
   }
   return W;
 }
 
+}
+}
 
 
-void delfem2::AddWdWddW_SolidHyper3Hex(
+
+void delfem2::AddWdWddW_Solid3HyperMooneyrivlin2Reduced_Hex(
     double& W,
     double dW[8][3],
     double ddW[8][8][3][3],
@@ -733,7 +717,7 @@ void delfem2::AddWdWddW_SolidHyper3Hex(
         }
         double S2[6];
         double ddWddC2[6][6];
-        const double w0 = MakeStressConstitute_Hyper3D(
+        const double w0 = femsolidhyper::WdWdCddWddC_Solid3HyperMooneyrivlin2Reduced(
             S2, ddWddC2,
             c1, c2, dudx);
 
