@@ -30,7 +30,16 @@
 namespace delfem2{
 namespace opengl{
 namespace old{
-namespace mshuni{
+namespace mshuni {
+
+template <int nDim, typename T>
+void myGlVtxPtr(const T* p);
+
+template <> void myGlVtxPtr<3>(const double* p){ ::glVertex3dv( p ); }
+template <> void myGlVtxPtr<3>(const float* p){ ::glVertex3fv( p ); }
+template <> void myGlVtxPtr<2>(const double* p){ ::glVertex2dv( p ); }
+template <> void myGlVtxPtr<2>(const float* p){ ::glVertex2fv( p ); }
+
 
 const int noelElemFace_Hex[8][4] = { // this numbering is corresponds to VTK_HEX
     { 0, 4, 7, 3 }, // -x
@@ -426,18 +435,22 @@ DFM2_INLINE void delfem2::opengl::DrawPoints2d_Psup(
   ::glEnd();
 }
 
+template <typename T>
 DFM2_INLINE void
-delfem2::opengl::DrawPoints3d_Points(
-    const std::vector<double>& aXYZ)
+delfem2::opengl::DrawPoints3_Points(
+    const std::vector<T>& aXYZ)
 {
   const unsigned int nxyz = aXYZ.size()/3;
   ::glBegin(GL_POINTS);
   for(unsigned int ino=0;ino<nxyz;ino++){
-    const double p0[3] = { aXYZ[ino*3+0], aXYZ[ino*3+1], aXYZ[ino*3+2]};
-    ::glVertex3dv( p0 );
+    delfem2::opengl::old::mshuni::myGlVtxPtr<3>( aXYZ.data()+ino*3 );
   }
   ::glEnd();
 }
+#ifndef DFM2_HEADER_ONLY
+  template void delfem2::opengl::DrawPoints3_Points(const std::vector<float>& aXYZ);
+  template void delfem2::opengl::DrawPoints3_Points(const std::vector<double>& aXYZ);
+#endif
 
 DFM2_INLINE void
 delfem2::opengl::DrawPoints3d_NormVtx(

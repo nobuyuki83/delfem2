@@ -30,12 +30,12 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------
 
-void GenMesh
-(std::vector<dfm2::CVec2d>& aVec2,
- std::vector<dfm2::CDynPntSur>& aPo2D,
- std::vector<dfm2::CDynTri>& aETri,
- double elen,
- const std::vector< std::vector<double> >& aaXY)
+void GenMesh(
+    std::vector<dfm2::CVec2d>& aVec2,
+    std::vector<dfm2::CDynPntSur>& aPo2D,
+    std::vector<dfm2::CDynTri>& aETri,
+    double elen,
+    const std::vector< std::vector<double> >& aaXY)
 {
   std::vector<int> loopIP_ind, loopIP;
   {
@@ -63,12 +63,12 @@ void GenMesh
   }
 }
 
-void RotationAtMeshPoints
-(std::vector<double>& aR,
- const std::vector<double>& aXYZ,
- const std::vector<double>& aDisp,
- const std::vector<unsigned int> &psup_ind,
- const std::vector<unsigned int> &psup)
+void RotationAtMeshPoints(
+    std::vector<double>& aR,
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aDisp,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup)
 {
   const unsigned int np = aXYZ.size()/3;
   aR.resize(np*9);

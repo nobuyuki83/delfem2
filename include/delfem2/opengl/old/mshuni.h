@@ -20,7 +20,7 @@
 #include <vector>
 
 #ifndef M_PI
-#  define M_PI 3.14159265358979323846264338327950288
+  #define M_PI 3.14159265358979323846264338327950288
 #endif
 
 namespace delfem2{
@@ -49,8 +49,14 @@ DFM2_INLINE void DrawPoints2d_Psup(
 // above: 2D
 // below: 3D
 
-DFM2_INLINE void DrawPoints3d_Points(
-    const std::vector<double>& aXYZ);
+/**
+ * @brief Draw Points using GL_POINTS
+ * @tparam T float or double
+ * @param aXYZ
+ */
+template <typename T>
+DFM2_INLINE void DrawPoints3_Points(
+    const std::vector<T>& aXYZ);
 
 DFM2_INLINE void DrawPoints3d_NormVtx(
     const std::vector<double>& aXYZ,
