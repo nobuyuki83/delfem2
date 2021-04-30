@@ -98,7 +98,7 @@ static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, doubl
 
 static void glfw_callback_scroll(GLFWwindow *window, double xoffset, double yoffset) {
   assert(pViewer2 != nullptr);
-  pViewer2->scale *= powf(1.01, float(yoffset));
+  pViewer2->scale *= powf(1.01f, float(yoffset));
 }
 
 }

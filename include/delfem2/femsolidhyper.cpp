@@ -521,8 +521,9 @@ namespace delfem2 {
 namespace femsolidhyper {
 
 /**
- * @param[out] dWdC2 gradient of W w.r.t. right Cauchy-Green tensor
- * @param[out] ddWddC2 hessian of W w.r.t. right Cauchy-Green tensor
+ * compute energy density and its gradient & hessian w.r.t. right Cauchy-Green tensor given the displacement gradient tensor
+ * @param[out] dWdC2 gradient of energy density w.r.t. right Cauchy-Green tensor
+ * @param[out] ddWddC2 hessian of energy density w.r.t. right Cauchy-Green tensor
  * @param[in] c1
  * @param[in] c2
  * @param[in] dudx displacement gradient tensor
