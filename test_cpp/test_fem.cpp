@@ -1003,6 +1003,7 @@ TEST(fem, solidhyper3) {
   std::uniform_real_distribution<double> dist01(0,1);
   for(int ino=0;ino<8;++ino) {
     for (int idim = 0; idim < 3; ++idim) {
+      aP0[ino][idim] += 0.1*dist01(rndeng);
       aU0[ino][idim] += 0.2*dist01(rndeng);
     }
   }
@@ -1041,12 +1042,12 @@ TEST(fem, solidhyper3) {
               c1, c2, aP0, aU1, 1);
         }
         {
-          EXPECT_NEAR((W1 - W0) / eps, dW0[ino][idim], 1.0e-3);
+          EXPECT_NEAR((W1 - W0) / eps, dW0[ino][idim], 1.0e-4);
         }
         for(int jno=0;jno<8;++jno) {
           for (int jdim = 0; jdim < 3; ++jdim) {
             double tmp0 = (dW1[jno][jdim]-dW0[jno][jdim])/eps;
-            EXPECT_NEAR(tmp0, ddW0[ino][jno][idim][jdim], 1.0e-2);
+            EXPECT_NEAR(tmp0, ddW0[ino][jno][idim][jdim], 1.0e-4);
           }
         }
       }
