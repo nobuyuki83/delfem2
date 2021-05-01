@@ -119,7 +119,7 @@ ELSE()
 ENDIF()
 
 add_executable(${MY_BINARY_NAME}
-  ${DELFEM2_INC}/tinygltf/io_gltf.h     ${DELFEM2_INC}/tinygltf/io_gltf.cpp
+  ${DELFEM2_INC}/tinygltf/io_gltf.h      ${DELFEM2_INC}/tinygltf/io_gltf.cpp
   ${SRC_DFM2}
   test_bvh.cpp
   test_lp.cpp

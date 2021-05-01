@@ -385,3 +385,19 @@ DFM2_INLINE void delfem2::ddW_MassConsistentVal3D_Tet3D(
     }
   }
 }
+
+DFM2_INLINE double delfem2::DiffShapeFuncAtQuadraturePoint_Hex(
+    double dndx[8][3],
+    int iGauss,
+    int ir1,
+    int ir2,
+    int ir3,
+    const double aP0[8][3])
+{
+  const double r1 = LineGauss[iGauss][ir1][0];
+  const double r2 = LineGauss[iGauss][ir2][0];
+  const double r3 = LineGauss[iGauss][ir3][0];
+  double an[8], detjac;
+  ShapeFunc_Hex8(r1, r2, r3, aP0, detjac, dndx, an);
+  return detjac * LineGauss[iGauss][ir1][1] * LineGauss[iGauss][ir2][1] * LineGauss[iGauss][ir3][1];
+}
