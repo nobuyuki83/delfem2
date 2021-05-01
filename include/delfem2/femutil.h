@@ -14,11 +14,11 @@
 
 namespace delfem2 {
 
-const static unsigned int NIntLineGauss[4] = {
+constexpr static unsigned int NIntLineGauss[4] = {
   1, 2, 3, 4
 };
 
-const static double LineGauss[4][4][2] =
+constexpr static double LineGauss[4][4][2] =
 {
   {
     { 0.0, 2.0 },
@@ -46,8 +46,8 @@ const static double LineGauss[4][4][2] =
   }
 };
 
-const static unsigned int NIntTriGauss[3] = { 1, 3, 7 };
-const static double TriGauss[3][7][3] =
+constexpr static unsigned int NIntTriGauss[3] = { 1, 3, 7 };
+constexpr static double TriGauss[3][7][3] =
 {
   { // liner
     { 0.3333333333, 0.3333333333, 1.0 },
@@ -76,11 +76,11 @@ const static double TriGauss[3][7][3] =
   }
 };
 
-const static unsigned int NIntTetGauss[4] = {
+constexpr static unsigned int NIntTetGauss[4] = {
     1, 4, 5, 16
 };
 
-const static double TetGauss[4][16][4] = {
+constexpr static double TetGauss[4][16][4] = {
   {	// order-1    1point
       { 0.25, 0.25, 0.25, 1.0 },
   },
@@ -223,6 +223,73 @@ DFM2_INLINE void ShapeFunc_Hex8(
     double dndx[][3],
     double an[] );
 
+
+template <unsigned int ndim>
+void RightCauchyGreen_DispGrad(
+    double C[ndim][ndim],
+    const double dudx[ndim][ndim])
+{
+  for (unsigned int idim = 0; idim < ndim; idim++) {
+    for (unsigned int jdim = 0; jdim < ndim; jdim++) {
+      C[idim][jdim] = dudx[idim][jdim] + dudx[jdim][idim];
+      for (unsigned int kdim = 0; kdim < ndim; kdim++) {
+        C[idim][jdim] += dudx[kdim][idim] * dudx[kdim][jdim];
+      }
+    }
+    C[idim][idim] += 1.0;
+  }
+}
+
+template <int ndim, int nno, typename T>
+void DispGrad_GradshapeDisp(
+    T dudx[ndim][ndim],
+    const T dndx[nno][ndim],
+    const T aU[nno][ndim] )
+{
+  for(unsigned int idim=0;idim<ndim;idim++){
+    for(unsigned int jdim=0;jdim<ndim;jdim++){
+      T dtmp1 = 0;
+      for(unsigned int ino=0;ino<nno;ino++){
+        dtmp1 += aU[ino][idim]*dndx[ino][jdim];
+      }
+      dudx[idim][jdim] = dtmp1;
+    }
+  }
+}
+
+double DiffShapeFuncAtQuadraturePoint_Hex(
+    double dndx[8][3],
+    int iGauss, int ir1, int ir2, int ir3,
+    const double aP0[8][3]);
+
+
+template <typename T>
+T DetInv_Mat3(
+    T Cinv[][3],
+    const T C[3][3])
+{
+  const double p3C =
+      + C[0][0] * C[1][1] * C[2][2]
+      + C[1][0] * C[2][1] * C[0][2]
+      + C[2][0] * C[0][1] * C[1][2]
+      - C[0][0] * C[2][1] * C[1][2]
+      - C[2][0] * C[1][1] * C[0][2]
+      - C[1][0] * C[0][1] * C[2][2];
+  // -----
+  { // inverse of right Cauchy-Green tensor
+    const double inv_det = 1.0 / p3C;
+    Cinv[0][0] = inv_det * (C[1][1] * C[2][2] - C[1][2] * C[2][1]);
+    Cinv[0][1] = inv_det * (C[0][2] * C[2][1] - C[0][1] * C[2][2]);
+    Cinv[0][2] = inv_det * (C[0][1] * C[1][2] - C[0][2] * C[1][1]);
+    Cinv[1][0] = inv_det * (C[1][2] * C[2][0] - C[1][0] * C[2][2]);
+    Cinv[1][1] = inv_det * (C[0][0] * C[2][2] - C[0][2] * C[2][0]);
+    Cinv[1][2] = inv_det * (C[0][2] * C[1][0] - C[0][0] * C[1][2]);
+    Cinv[2][0] = inv_det * (C[1][0] * C[2][1] - C[1][1] * C[2][0]);
+    Cinv[2][1] = inv_det * (C[0][1] * C[2][0] - C[0][0] * C[2][1]);
+    Cinv[2][2] = inv_det * (C[0][0] * C[1][1] - C[0][1] * C[1][0]);
+  }
+  return p3C;
+}
 
 template <int nno, int ndim>
 DFM2_INLINE void FetchData(

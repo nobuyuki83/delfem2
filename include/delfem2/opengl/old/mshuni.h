@@ -282,6 +282,13 @@ DFM2_INLINE void DrawMeshHex3D_Edge(
     const unsigned int* aHex,
     const unsigned int nHex);
 
+DFM2_INLINE void DrawMeshHex3D_EdgeDisp(
+    const double* aXYZ,
+    const unsigned int nXYZ,
+    const unsigned int* aHex,
+    const unsigned int nHex,
+    const double* aDisp);
+
 DFM2_INLINE void DrawMeshHex3D_FaceNorm(
     const double* aXYZ,
     const unsigned int* aHex,
@@ -289,7 +296,7 @@ DFM2_INLINE void DrawMeshHex3D_FaceNorm(
 
 DFM2_INLINE void DrawHex3D_FaceNormDisp(
     const std::vector<double>& aXYZ,
-    const std::vector<int>& aHex,
+    const std::vector<unsigned int>& aHex,
     const std::vector<double>& aDisp);
 
 DFM2_INLINE void Draw_HexMeshFaceDisp(

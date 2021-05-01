@@ -30,6 +30,17 @@ void AddWdWddW_Solid3HyperMooneyrivlin2Reduced_Hex(
     const double aU[8][3],
     unsigned int iGauss);
 
+void AddWdWddW_Solid3Compression_Hex(
+    double& W,
+    double dW[8][3],
+    double ddW[8][8][3][3],
+    double& vol,
+    //
+    double stiff_comp,
+    const double aP0[8][3],
+    const double aU[8][3],
+    unsigned int iGauss);
+
 }
 
 #ifdef DFM2_HEADER_ONLY
