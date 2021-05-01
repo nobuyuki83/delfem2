@@ -297,9 +297,10 @@ cmake --build .
 <img src="625_DefLaplacianFitProj/thumbnail.png" width=200>
 
 ### [626_RgdRotation](626_RgdRotation)
-
 <img src="626_RgdRotation/thumbnail.png" width=200>
 
 ### [627_Rgd2dCollision](627_Rgd2dCollision)
-
 <img src="627_Rgd2dCollision/thumbnail.png" width=200>
+
+### [628_FemHyper3](628_FemHyper3)
+<img src="628_FemHyper3/thumbnail.png" width=200>
