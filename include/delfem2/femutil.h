@@ -328,6 +328,16 @@ DFM2_INLINE void AddEmatConsistentMassTet(
   }
 }
 
+DFM2_INLINE void SetEMatLaplaceTet(
+    double C[4][4][3][3],
+    double w0,
+    const double dldx[4][3]);
+
+DFM2_INLINE void SetEMatLaplaceTet(
+    double C[4][4],
+    double w0,
+    const double dldx[4][3]);
+
 DFM2_INLINE void SetEmatConsistentMassTet(
     double eM[4][4][3][3],
     double w0);
@@ -350,6 +360,22 @@ DFM2_INLINE void EmatConsistentMassTri2(
     {
       eM[ino][ino][0][0] += dtmp1;
       eM[ino][ino][1][1] += dtmp1;
+    }
+  }
+}
+
+template <int nno>
+void AddEmatEvecScale3(
+    double R[nno][3],
+    const double eM[nno][nno][3][3],
+    const double v0[nno][3],
+    double scale)
+{
+  for (int ino = 0; ino<nno; ino++){
+    for (int jno = 0; jno<nno; jno++){
+      R[ino][0] += scale*(eM[ino][jno][0][0]*v0[jno][0]+eM[ino][jno][0][1]*v0[jno][1]+eM[ino][jno][0][2]*v0[jno][2]);
+      R[ino][1] += scale*(eM[ino][jno][1][0]*v0[jno][0]+eM[ino][jno][1][1]*v0[jno][1]+eM[ino][jno][1][2]*v0[jno][2]);
+      R[ino][2] += scale*(eM[ino][jno][2][0]*v0[jno][0]+eM[ino][jno][2][1]*v0[jno][1]+eM[ino][jno][2][2]*v0[jno][2]);
     }
   }
 }
