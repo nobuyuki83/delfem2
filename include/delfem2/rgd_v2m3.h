@@ -27,7 +27,7 @@ class CRigidState2 {
 public:
   bool is_fix;
   std::vector<CVec2d> shape;
-  // below: derived from shape
+  // below: set at the beginning. derived from shape
   CVec2d posl;
   double mass;
   double I;

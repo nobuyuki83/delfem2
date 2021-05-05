@@ -13,41 +13,6 @@
 #include "delfem2/femstokes.h"
 #include <cmath>
 
-void SetEMatLaplaceTet(
-    double C[4][4],
-    double w0,
-    const double dldx[4][3])
-{
-  for(int ino=0;ino<4;ino++){
-    for(int jno=0;jno<4;jno++){
-      C[ino][jno] = w0*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
-    }
-  }
-}
-
-void SetEMatLaplaceTet(
-    double C[4][4][3][3],
-    double w0,
-    const double dldx[4][3])
-{
-  for(int ino=0;ino<4;ino++){
-    for(int jno=0;jno<4;jno++){
-      const double dtmp1 = w0*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
-      C[ino][jno][0][0] = dtmp1;
-      C[ino][jno][0][1] = 0.0;
-      C[ino][jno][0][2] = 0.0;
-      C[ino][jno][1][0] = 0.0;
-      C[ino][jno][1][1] = dtmp1;
-      C[ino][jno][1][2] = 0.0;
-      C[ino][jno][2][0] = 0.0;
-      C[ino][jno][2][1] = 0.0;
-      C[ino][jno][2][2] = dtmp1;
-    }
-  }
-}
-
-
-
 // ------------------------
 // below tri
 
@@ -308,36 +273,34 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1P1(
         emat_pp,
         vol*tau, dldx);
   }
-  
+
+  // ---------
   for(unsigned int ino=0;ino<nno;ino++){
     eres_u[ino][0] = vol*g_x*0.25;
     eres_u[ino][1] = vol*g_y*0.25;
     eres_u[ino][2] = vol*g_z*0.25;
   }
-  eres_p[0] = 0;
-  eres_p[1] = 0;
-  eres_p[2] = 0;
-  eres_p[3] = 0;
-  
-  //
-  
-  for(unsigned int ino=0;ino<nno;ino++){
-    for(unsigned int jno=0;jno<nno;jno++){
-      eres_u[ino][0] -= emat_uu[ino][jno][0][0]*velo[jno][0]+emat_uu[ino][jno][0][1]*velo[jno][1]+emat_uu[ino][jno][0][2]*velo[jno][2];
-      eres_u[ino][1] -= emat_uu[ino][jno][1][0]*velo[jno][0]+emat_uu[ino][jno][1][1]*velo[jno][1]+emat_uu[ino][jno][1][2]*velo[jno][2];
-      eres_u[ino][2] -= emat_uu[ino][jno][2][0]*velo[jno][0]+emat_uu[ino][jno][2][1]*velo[jno][1]+emat_uu[ino][jno][2][2]*velo[jno][2];
-    }
+  AddEmatEvecScale3<4>(eres_u,emat_uu,velo,-1.);
+  for(unsigned int ino=0;ino<nno;ino++) {
     for(unsigned int jno=0;jno<nno;jno++){
       eres_u[ino][0] -= emat_up[ino][jno][0]*press[jno];
       eres_u[ino][1] -= emat_up[ino][jno][1]*press[jno];
       eres_u[ino][2] -= emat_up[ino][jno][2]*press[jno];
     }
   }
-  for(unsigned int ino=0;ino<nno;ino++){
+  // ---------
+  eres_p[0] = 0;
+  eres_p[1] = 0;
+  eres_p[2] = 0;
+  eres_p[3] = 0;
+  for(unsigned int ino=0;ino<nno;ino++) {
     eres_p[ino] = 0.0;
-    for(unsigned int jno=0;jno<nno;jno++){
-      eres_p[ino] -= emat_pu[ino][jno][0]*velo[jno][0]+emat_pu[ino][jno][1]*velo[jno][1]+emat_pu[ino][jno][2]*velo[jno][2];
+    for (unsigned int jno = 0; jno < nno; jno++) {
+      eres_p[ino] -= emat_pu[ino][jno][0] * velo[jno][0] + emat_pu[ino][jno][1] * velo[jno][1] +
+                     emat_pu[ino][jno][2] * velo[jno][2];
     }
+  }
+  for(unsigned int ino=0;ino<nno;ino++) {
     for(unsigned int jno=0;jno<nno;jno++){
       eres_p[ino] -= emat_pp[ino][jno]*press[jno];
     }

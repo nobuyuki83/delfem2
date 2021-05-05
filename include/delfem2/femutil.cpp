@@ -283,6 +283,39 @@ DFM2_INLINE void delfem2::SetEmatConsistentMassTet(
   }
 }
 
+DFM2_INLINE void delfem2::SetEMatLaplaceTet(
+    double C[4][4],
+    double w0,
+    const double dldx[4][3])
+{
+  for(int ino=0;ino<4;ino++){
+    for(int jno=0;jno<4;jno++){
+      C[ino][jno] = w0*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
+    }
+  }
+}
+
+DFM2_INLINE void delfem2::SetEMatLaplaceTet(
+    double C[4][4][3][3],
+    double w0,
+    const double dldx[4][3])
+{
+  for(int ino=0;ino<4;ino++){
+    for(int jno=0;jno<4;jno++){
+      const double dtmp1 = w0*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
+      C[ino][jno][0][0] = dtmp1;
+      C[ino][jno][0][1] = 0.0;
+      C[ino][jno][0][2] = 0.0;
+      C[ino][jno][1][0] = 0.0;
+      C[ino][jno][1][1] = dtmp1;
+      C[ino][jno][1][2] = 0.0;
+      C[ino][jno][2][0] = 0.0;
+      C[ino][jno][2][1] = 0.0;
+      C[ino][jno][2][2] = dtmp1;
+    }
+  }
+}
+
 // above: tet
 // -----------
 // below: vox

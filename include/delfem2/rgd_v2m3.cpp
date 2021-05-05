@@ -60,6 +60,7 @@ void delfem2::Steptime_Rgd2(
     rs.posg_tmp = rs.posg + dt * rs.velo;
     rs.theta_tmp = rs.theta + dt * rs.omega;
   }
+  // find & resolve contact
   std::vector<CContact> aContact;
   for(unsigned int ir=0;ir<aRS.size();++ir) {
     CRigidState2& ri = aRS[ir];
@@ -103,6 +104,7 @@ void delfem2::Steptime_Rgd2(
       }
     }
   }
+  // finalize position, set velocity
   for(CRigidState2& rs : aRS) {
     if( rs.is_fix ) {
       rs.velo = CVec2d(0,0);
@@ -114,6 +116,7 @@ void delfem2::Steptime_Rgd2(
     rs.posg = rs.posg_tmp;
     rs.theta = rs.theta_tmp;
   }
+  // add frictional velocity change
   for(CContact& c : aContact ){
     CRigidState2& ri = aRS[c.ir];
     CRigidState2& rj = aRS[c.jr];

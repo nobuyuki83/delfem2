@@ -285,13 +285,9 @@ DFM2_INLINE void delfem2::MakeMat_LinearSolid3D_Static_Q1(
       }
     }
   }
-  for (int ino = 0; ino<8; ino++){
-    for (int jno = 0; jno<8; jno++){
-      eres[ino][0] -= emat[ino][jno][0][0]*disp[jno][0]+emat[ino][jno][0][1]*disp[jno][1]+emat[ino][jno][0][2]*disp[jno][2];
-      eres[ino][1] -= emat[ino][jno][1][0]*disp[jno][0]+emat[ino][jno][1][1]*disp[jno][1]+emat[ino][jno][1][2]*disp[jno][2];
-      eres[ino][2] -= emat[ino][jno][2][0]*disp[jno][0]+emat[ino][jno][2][1]*disp[jno][1]+emat[ino][jno][2][2]*disp[jno][2];
-    }
-  }
+  AddEmatEvecScale3<8>(
+      eres,
+      emat,disp,-1.);
 }
 
 
@@ -415,13 +411,11 @@ DFM2_INLINE void delfem2::matRes_LinearSolid_TetP2(
       eres[ino][0] += w*vol*rho*g_x*N[ino];
       eres[ino][1] += w*vol*rho*g_y*N[ino];
       eres[ino][2] += w*vol*rho*g_z*N[ino];
-      for (unsigned int jno = 0; jno<10; jno++){
-        eres[ino][0] -= emat[ino][jno][0][0]*disp[jno][0]+emat[ino][jno][0][1]*disp[jno][1]+emat[ino][jno][0][2]*disp[jno][2];
-        eres[ino][1] -= emat[ino][jno][1][0]*disp[jno][0]+emat[ino][jno][1][1]*disp[jno][1]+emat[ino][jno][1][2]*disp[jno][2];
-        eres[ino][2] -= emat[ino][jno][2][0]*disp[jno][0]+emat[ino][jno][2][1]*disp[jno][1]+emat[ino][jno][2][2]*disp[jno][2];
-      }
     }
-  }
+  } // iint
+  AddEmatEvecScale3<10>(
+      eres,
+      emat,disp,-1.);
 }
 
 
@@ -450,13 +444,9 @@ DFM2_INLINE void delfem2::EMat_SolidLinear_Static_Tet(
   if( !is_add ){
     for(int i=0;i<12;++i){ (&eres[0][0])[i] = 0.0; }
   }
-  for (int ino = 0; ino<4; ino++){
-    for (int jno = 0; jno<4; jno++){
-      eres[ino][0] -= emat[ino][jno][0][0]*disp[jno][0]+emat[ino][jno][0][1]*disp[jno][1]+emat[ino][jno][0][2]*disp[jno][2];
-      eres[ino][1] -= emat[ino][jno][1][0]*disp[jno][0]+emat[ino][jno][1][1]*disp[jno][1]+emat[ino][jno][1][2]*disp[jno][2];
-      eres[ino][2] -= emat[ino][jno][2][0]*disp[jno][0]+emat[ino][jno][2][1]*disp[jno][1]+emat[ino][jno][2][2]*disp[jno][2];
-    }
-  }
+  AddEmatEvecScale3<4>(
+      eres,
+      emat,disp,-1.);
 }
 
 DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D(
@@ -495,12 +485,6 @@ DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D(
       eMmat,
       rho*vol);
   
-  // calc external force
-  for(int ino=0;ino<nno;ino++){
-    eres[ino][0] = vol*rho*g_x*0.25;
-    eres[ino][1] = vol*rho*g_y*0.25;
-    eres[ino][2] = vol*rho*g_z*0.25;
-  }
   //
   {	// calc coeff matrix for newmark-beta
     double dtmp1 = beta_newmark*dt*dt;
@@ -508,33 +492,26 @@ DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D(
       (&emat[0][0][0][0])[i] = (&eMmat[0][0][0][0])[i]+dtmp1*(&eKmat[0][0][0][0])[i];
     }
   }
-  
+
   // calc element redisual vector
   for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eres[ino][0] -= eKmat[ino][jno][0][0]*disp[jno][0]+eKmat[ino][jno][0][1]*disp[jno][1]+eKmat[ino][jno][0][2]*disp[jno][2];
-      eres[ino][1] -= eKmat[ino][jno][1][0]*disp[jno][0]+eKmat[ino][jno][1][1]*disp[jno][1]+eKmat[ino][jno][1][2]*disp[jno][2];
-      eres[ino][2] -= eKmat[ino][jno][2][0]*disp[jno][0]+eKmat[ino][jno][2][1]*disp[jno][1]+eKmat[ino][jno][2][2]*disp[jno][2];
-    }
-    for(int jno=0;jno<nno;jno++){
-      eres[ino][0] -= eMmat[ino][jno][0][0]*acc[jno][0]+eMmat[ino][jno][0][1]*acc[jno][1]+eMmat[ino][jno][0][2]*acc[jno][2];
-      eres[ino][1] -= eMmat[ino][jno][1][0]*acc[jno][0]+eMmat[ino][jno][1][1]*acc[jno][1]+eMmat[ino][jno][1][2]*acc[jno][2];
-      eres[ino][2] -= eMmat[ino][jno][2][0]*acc[jno][0]+eMmat[ino][jno][2][1]*acc[jno][1]+eMmat[ino][jno][2][2]*acc[jno][2];
-    }
+    eres[ino][0] = vol*rho*g_x*0.25;
+    eres[ino][1] = vol*rho*g_y*0.25;
+    eres[ino][2] = vol*rho*g_z*0.25;
   }
+  AddEmatEvecScale3<4>(
+      eres,
+      eKmat,disp,-1.);
+  AddEmatEvecScale3<4>(
+      eres,
+      eMmat,acc,-1.);
   if( is_initial_iter ){
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eres[ino][0] -= dt*(eKmat[ino][jno][0][0]*velo[jno][0]+eKmat[ino][jno][0][1]*velo[jno][1]+eKmat[ino][jno][0][2]*velo[jno][2]);
-        eres[ino][1] -= dt*(eKmat[ino][jno][1][0]*velo[jno][0]+eKmat[ino][jno][1][1]*velo[jno][1]+eKmat[ino][jno][1][2]*velo[jno][2]);
-        eres[ino][2] -= dt*(eKmat[ino][jno][2][0]*velo[jno][0]+eKmat[ino][jno][2][1]*velo[jno][1]+eKmat[ino][jno][2][2]*velo[jno][2]);
-      }
-      for(int jno=0;jno<nno;jno++){
-        eres[ino][0] -= 0.5*dt*dt*(eKmat[ino][jno][0][0]*acc[jno][0]+eKmat[ino][jno][0][1]*acc[jno][1]+eKmat[ino][jno][0][2]*acc[jno][2]);
-        eres[ino][1] -= 0.5*dt*dt*(eKmat[ino][jno][1][0]*acc[jno][0]+eKmat[ino][jno][1][1]*acc[jno][1]+eKmat[ino][jno][1][2]*acc[jno][2]);
-        eres[ino][2] -= 0.5*dt*dt*(eKmat[ino][jno][2][0]*acc[jno][0]+eKmat[ino][jno][2][1]*acc[jno][1]+eKmat[ino][jno][2][2]*acc[jno][2]);
-      }
-    }
+    AddEmatEvecScale3<4>(
+        eres,
+        eKmat,velo,-dt);
+    AddEmatEvecScale3<4>(
+        eres,
+        eKmat,acc,-0.5*dt*dt);
   }
 }
 

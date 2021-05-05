@@ -80,16 +80,10 @@ void InitializeProblem_Poisson(
                              aTet.data(), aTet.size()/4, 4,
                              (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
-  /*
-  CJaggedArray crs;
-  crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
-  crs.Sort();
-   */
   ////
   mat_A.Initialize(np, 1, true); // diagonal
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
-//  ilu_A.Initialize_ILU0(mat_A);
   ilu_A.Initialize_ILUk(mat_A, 0);
 }
 
@@ -173,11 +167,6 @@ void InitializeProblem_Diffusion(
                              aTet.data(), aTet.size()/4, 4,
                              (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
-  /*
-  CJaggedArray crs;
-  crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
-  crs.Sort();
-   */
   ////
   mat_A.Initialize(np, 1, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -267,13 +256,11 @@ void InitializeProblem_ShellEigenPB(
                              aTet.data(), aTet.size()/4, 4,
                              (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
-//  CJaggedArray crs;
-//  crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, np, false);
-//  crs.Sort();
-  ////
+  //
   mat_A.Initialize(np, 3, true);
-  mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
-                   psup.data(),     psup.size());
+  mat_A.SetPattern(
+      psup_ind.data(), psup_ind.size(),
+      psup.data(),     psup.size());
   ilu_A.Initialize_ILU0(mat_A);
 }
 
@@ -288,9 +275,9 @@ void SolveProblem_LinearSolid_Static(
     const std::vector<double>& aXYZ,
     const std::vector<int>& aIsSurf)
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*3;
-  ////////////////////////////////////////////
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*3;
+  //
   double myu = 1.0;
   double lambda = 1.0;
   double rho = 1.0;
@@ -335,9 +322,8 @@ void InitializeProblem_LinearSolid_Dynamic(
     const std::vector<int>& aIsSurf)
 {
   const double len = 1.1;
-  // set boundary condition
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*3;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*3;
   ////
   aVal.assign(nDoF, 0.0);
   aVelo.assign(nDoF, 0.0);
@@ -360,17 +346,10 @@ void InitializeProblem_LinearSolid_Dynamic(
       aTet.data(), aTet.size()/4, 4,
       (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
-  /*
-  CJaggedArray crs;
-  crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
-  crs.Sort();
-   */
-  //
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
   ilu_A.Initialize_ILU0(mat_A);
-  //
   dt_timestep = 0.03;
 }
 
@@ -387,10 +366,10 @@ void SolveProblem_LinearSolid_Dynamic(
   const unsigned int np = aXYZ.size()/3;
   const unsigned int nDoF = np*3;
   // --------
-  double myu = 1.0;
+  double myu = 10.0;
   double lambda = 1.0;
   double rho = 1.0;
-  const double g[3] = {0.0, -0.3, 0.0};
+  const double g[3] = {0.0, -3, 0.0};
   mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
@@ -760,7 +739,7 @@ void SolveProblem_NavierStokes_Dynamic(
 class CInSphere : public dfm2::CInput_IsosurfaceStuffing
 {
 public:
-  virtual double SignedDistance(double x, double y, double z) const {
+  double SignedDistance(double x, double y, double z) const override {
     double n[3];
     return sdf.Projection(n,
                           x, y, z);
@@ -781,7 +760,7 @@ public:
 class CInBox : public dfm2::CInput_IsosurfaceStuffing
 {
 public:
-  virtual double SignedDistance(double x, double y, double z) const override
+  double SignedDistance(double x, double y, double z) const override
   {
     double n[3];
     return sdf.Projection(n,
