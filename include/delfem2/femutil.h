@@ -308,11 +308,51 @@ DFM2_INLINE void FetchData(
   }
 }
 
-DFM2_INLINE void ddW_MassConsistentVal3D_Tet3D(
-    double* eMmat,
-    double rho, double vol,
-    bool is_add,
-    unsigned int nstride);
+template <int ndofno>
+DFM2_INLINE void AddEmatConsistentMassTet(
+    double eM[4][4][ndofno][ndofno],
+    double w0)
+{
+  const double dtmp1 = w0*0.05;
+  for(int ino=0;ino<4;ino++){
+    for(int jno=0;jno<4;jno++){
+      eM[ino][jno][0][0] += dtmp1;
+      eM[ino][jno][1][1] += dtmp1;
+      eM[ino][jno][2][2] += dtmp1;
+    }
+    {
+      eM[ino][ino][0][0] += dtmp1;
+      eM[ino][ino][1][1] += dtmp1;
+      eM[ino][ino][2][2] += dtmp1;
+    }
+  }
+}
+
+DFM2_INLINE void SetEmatConsistentMassTet(
+    double eM[4][4][3][3],
+    double w0);
+
+template <int ndofno>
+DFM2_INLINE void EmatConsistentMassTri2(
+    double eM[3][3][ndofno][ndofno],
+    double w0,
+    bool is_add)
+{
+  if( !is_add ){
+    for(unsigned int i=0;i<3*3*ndofno*ndofno;++i){ (&eM[0][0][0][0])[i] = 0.0; }
+  }
+  const double dtmp1 = w0*0.0833333333333333333333333333;
+  for(int ino=0;ino<3;ino++){
+    for(int jno=0;jno<3;jno++){
+      eM[ino][jno][0][0] += dtmp1;
+      eM[ino][jno][1][1] += dtmp1;
+    }
+    {
+      eM[ino][ino][0][0] += dtmp1;
+      eM[ino][ino][1][1] += dtmp1;
+    }
+  }
+}
 
 } // namespace delfem2
 

@@ -175,6 +175,7 @@ void HexVox(
 }
 
 // =======================================================================
+// below: tri
 
 // derivative of a shape function of a triangle and constant compornent 
 DFM2_INLINE void delfem2::TriDlDx(
@@ -200,6 +201,8 @@ DFM2_INLINE void delfem2::TriDlDx(
   dldx[2][1] = tmp1*(p1[0]-p0[0]);
 }
 
+// ------------------------------
+// below: tet
 
 DFM2_INLINE double delfem2::femutil::TetVolume3D(
     const double v1[3],
@@ -257,6 +260,33 @@ DFM2_INLINE void delfem2::TetDlDx(
   //  std::cout << a[3]+dldx[3][0]*p3[0]+dldx[3][1]*p3[1]+dldx[3][2]*p3[2] << std::endl;
 }
 
+DFM2_INLINE void delfem2::SetEmatConsistentMassTet(
+    double eM[4][4][3][3],
+    double w0)
+{
+  const double dtmp1 = w0*0.05;
+  for(int ino=0;ino<4;ino++){
+    for(int jno=0;jno<4;jno++){
+      eM[ino][jno][0][0] = dtmp1;
+      eM[ino][jno][1][1] = dtmp1;
+      eM[ino][jno][2][2] = dtmp1;
+      eM[ino][jno][0][1] = 0.0;
+      eM[ino][jno][0][2] = 0.0;
+      eM[ino][jno][1][0] = 0.0;
+      eM[ino][jno][1][2] = 0.0;
+      eM[ino][jno][2][0] = 0.0;
+      eM[ino][jno][2][1] = 0.0;
+    }
+    eM[ino][ino][0][0] += dtmp1;
+    eM[ino][ino][1][1] += dtmp1;
+    eM[ino][ino][2][2] += dtmp1;
+  }
+}
+
+// above: tet
+// -----------
+// below: vox
+
 DFM2_INLINE void delfem2::ShapeFunc_Vox8(
     const double& r0,
     const double& r1,
@@ -308,6 +338,9 @@ DFM2_INLINE void delfem2::ShapeFunc_Vox8(
       coords,dndr);
 }
 
+// vox
+// ---------------
+// hex
 
 DFM2_INLINE void delfem2::ShapeFunc_Hex8(
     const double& r0,
@@ -360,31 +393,6 @@ DFM2_INLINE void delfem2::ShapeFunc_Hex8(
       coords,dndr);
 }
 
-DFM2_INLINE void delfem2::ddW_MassConsistentVal3D_Tet3D(
-    double* eMmat,
-    double rho, double vol,
-    bool is_add,
-    unsigned int nstride)
-{
-  if( !is_add ){
-    for(unsigned int i=0;i<4*4*nstride*nstride;++i){ eMmat[i] = 0.0; }
-  }
-  const double dtmp1 = vol*rho*0.05;
-  for(int ino=0;ino<4;ino++){
-    for(int jno=0;jno<4;jno++){
-      double* pM = eMmat+(nstride*nstride)*(ino*4+jno);
-      pM[0*nstride+0] += dtmp1;
-      pM[1*nstride+1] += dtmp1;
-      pM[2*nstride+2] += dtmp1;
-    }
-    {
-      double* pM = eMmat+(nstride*nstride)*(ino*4+ino);
-      pM[0*nstride+0] += dtmp1;
-      pM[1*nstride+1] += dtmp1;
-      pM[2*nstride+2] += dtmp1;
-    }
-  }
-}
 
 DFM2_INLINE double delfem2::DiffShapeFuncAtQuadraturePoint_Hex(
     double dndx[8][3],

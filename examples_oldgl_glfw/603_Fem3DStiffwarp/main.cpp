@@ -138,14 +138,15 @@ void Solve_Linear()
 {
   mat_A.setZero();
   vec_b.assign(aXYZ.size(),0.0);
-  dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(mat_A, vec_b.data(),
-                                                 myu, lambda,
-                                                 rho, gravity,
-                                                 dt,
-                                                 aXYZ.data(), aXYZ.size()/3,
-                                                 aTet.data(), aTet.size()/4,
-                                                 aDisp.data(),
-                                                 aVelo.data());
+  dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
+      mat_A, vec_b.data(),
+      myu, lambda,
+      rho, gravity,
+      dt,
+      aXYZ.data(), aXYZ.size()/3,
+      aTet.data(), aTet.size()/4,
+      aDisp.data(),
+      aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b,aBCFlag,0);
   //
@@ -153,8 +154,9 @@ void Solve_Linear()
   ilu_A.DoILUDecomp();
   const int nDoF = aXYZ.size();
   std::vector<double> dv(nDoF,0.0);
-  std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
-                                              1.0e-4, 1000, mat_A, ilu_A);
+  std::vector<double> aConv = Solve_PBiCGStab(
+      vec_b.data(), dv.data(),
+      1.0e-4, 1000, mat_A, ilu_A);
   //
   dfm2::XPlusAYBZ(aDisp,nDoF,aBCFlag,
                   dt, dv,
@@ -172,15 +174,16 @@ void Solve_StiffnessWarping()
   // ----------------------
   mat_A.setZero();
   vec_b.assign(aXYZ.size(),0.0);
-  dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(mat_A, vec_b.data(),
-                                                    myu, lambda,
-                                                    rho, gravity,
-                                                    dt,
-                                                    aXYZ.data(), aXYZ.size()/3,
-                                                    aTet.data(), aTet.size()/4,
-                                                    aDisp.data(),
-                                                    aVelo.data(),
-                                                    aR);
+  dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
+      mat_A, vec_b.data(),
+      myu, lambda,
+      rho, gravity,
+      dt,
+      aXYZ.data(), aXYZ.size()/3,
+      aTet.data(), aTet.size()/4,
+      aDisp.data(),
+      aVelo.data(),
+      aR);
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b,aBCFlag,0);
   // -------------------

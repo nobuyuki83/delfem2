@@ -8,12 +8,13 @@
 /**
  * @file make element matrix (EMAT) and merge it to the global matri for linear solid equation
  *
+ * (2021/05/05) changed header guard name
  * (2020/12/26) TODO: use template to generalize the merge functions
  * (2020/12/25) created. separated from "femem3" and "femem2"
  */
 
-#ifndef DFM2_FEMEM2_H
-#define DFM2_FEMEM2_H
+#ifndef DFM2_FEMPOISSON_H
+#define DFM2_FEMPOISSON_H
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
@@ -114,7 +115,6 @@ void MergeLinSys_Poission_MeshTri2D(
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-//    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
     Merge<3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -151,7 +151,6 @@ void MergeLinSys_Poission_MeshTet3D(
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-//    mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
     Merge<4,4,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -192,7 +191,6 @@ void MergeLinSys_Diffusion_MeshTri2D(
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-//    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
     Merge<3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -226,10 +224,11 @@ void MergeLinSys_Diffusion_MeshTet3D(
     const double velo[ 4] = { aVelo[i0], aVelo[i1], aVelo[i2], aVelo[i3] };
     // ---------------------
     double eres[4], emat[4][4];
-    EMat_Diffusion_Newmark_Tet3D(eres,emat,
-                                 alpha, source,
-                                 dt_timestep, gamma_newmark, rho,
-                                 coords, value, velo);
+    EMat_Diffusion_Newmark_Tet3D(
+        eres,emat,
+        alpha, source,
+        dt_timestep, gamma_newmark, rho,
+        coords, value, velo);
     for (int ino = 0; ino<4; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];

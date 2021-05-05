@@ -14,7 +14,7 @@
 
 #ifndef DFM2_HEADER_ONLY
 // Merge use explicitly use the template so for static library we need to include the template itself.
-#  include "delfem2/lsmats.h"
+  #include "delfem2/lsmats.h"
 #endif
 
 namespace delfem2 {
@@ -106,10 +106,6 @@ void MergeLinSys_StokesStatic2D(
 {
   namespace lcl = ::delfem2::femutil;
   const unsigned int np = nXY;
-//  const int nDoF = np*3;
-  ////
-//  mat_A.SetZero();
-//  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
@@ -129,9 +125,7 @@ void MergeLinSys_StokesStatic2D(
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
     }
-    // marge dde
     Merge<3,3,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
-//    mat_A.Mearge(3, aIP, 3, aIP, 9, &emat[0][0][0][0], tmp_buffer);
   }
 }
 
@@ -163,13 +157,12 @@ void MergeLinSys_StokesDynamic2D(
     double velo_press[3][3]; FetchData<3,3>(velo_press, aIP,aVal);
     double acc_apress[3][3]; FetchData<3,3>(acc_apress, aIP,aVelo);
     //
-    double eres[3][3];
-    double emat[3][3][3][3];
-    //
-    EMat_Stokes2D_Dynamic_P1(myu, rho,  g_x, g_y,
-                                dt_timestep, gamma_newmark,
-                                coords, velo_press, acc_apress,
-                                emat, eres);
+    double eres[3][3], emat[3][3][3][3];
+    EMat_Stokes2D_Dynamic_P1(
+        myu, rho,  g_x, g_y,
+        dt_timestep, gamma_newmark,
+        coords, velo_press, acc_apress,
+        emat, eres);
     for (int ino = 0; ino<3; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
@@ -177,7 +170,6 @@ void MergeLinSys_StokesDynamic2D(
       vec_b[ip*3+2] += eres[ino][2];
     }
     Merge<3,3,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
-//    mat_A.Mearge(3, aIP, 3, aIP, 9, &emat[0][0][0][0], tmp_buffer);
   }
 }
 
@@ -209,11 +201,11 @@ void MergeLinSys_Stokes3D_Static(
     const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; FetchData<4,3>(coords, aIP,aXYZ.data());
     double velo_press[4][4]; FetchData<4,4>(velo_press, aIP,aVal.data());
-    double eres[4][4];
-    double emat[4][4][4][4];
-    MakeMat_Stokes3D_Static_P1(myu, g_x, g_y, g_z,
-                               coords, velo_press,
-                               emat, eres);
+    double eres[4][4], emat[4][4][4][4];
+    MakeMat_Stokes3D_Static_P1(
+        myu, g_x, g_y, g_z,
+        coords, velo_press,
+        emat, eres);
     for (int ino = 0; ino<4; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip*4+0] += eres[ino][0];
@@ -221,8 +213,6 @@ void MergeLinSys_Stokes3D_Static(
       vec_b[ip*4+2] += eres[ino][2];
       vec_b[ip*4+3] += eres[ino][3];
     }
-    // marge dde
-//    mat_A.Mearge(4, aIP, 4, aIP,16, &emat[0][0][0][0], tmp_buffer);
     Merge<4,4,4,4,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -258,13 +248,13 @@ void MergeLinSys_Stokes3D_Dynamic(
     double coords[4][3]; FetchData<4,3>(coords, aIP,aXYZ.data());
     double velo_press[4][4]; FetchData<4,4>(velo_press, aIP,aVal.data());
     double acc_apress[4][4]; FetchData<4,4>(acc_apress, aIP,aVelo.data());
-    ////
-    double eres[4][4];
-    double emat[4][4][4][4];
-    MakeMat_Stokes3D_Dynamic_P1(myu, rho,  g_x, g_y,g_z,
-                                dt_timestep, gamma_newmark,
-                                coords, velo_press, acc_apress,
-                                emat, eres);
+    //
+    double eres[4][4], emat[4][4][4][4];
+    MakeMat_Stokes3D_Dynamic_P1(
+        myu, rho,  g_x, g_y,g_z,
+        dt_timestep, gamma_newmark,
+        coords, velo_press, acc_apress,
+        emat, eres);
     for (int ino = 0; ino<4; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip*4+0] += eres[ino][0];
@@ -272,7 +262,6 @@ void MergeLinSys_Stokes3D_Dynamic(
       vec_b[ip*4+2] += eres[ino][2];
       vec_b[ip*4+3] += eres[ino][3];
     }
-//    mat_A.Mearge(4, aIP, 4, aIP,16, &emat[0][0][0][0], tmp_buffer);
     Merge<4,4,4,4,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }

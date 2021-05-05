@@ -9,15 +9,61 @@
 // Merge use explicitly use the template so for static library we need to include the template itself.
 #  include "delfem2/lsmats.h"
 #endif
+
 #include "delfem2/femstokes.h"
 #include <cmath>
 
+void SetEMatLaplaceTet(
+    double C[4][4],
+    double w0,
+    const double dldx[4][3])
+{
+  for(int ino=0;ino<4;ino++){
+    for(int jno=0;jno<4;jno++){
+      C[ino][jno] = w0*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
+    }
+  }
+}
+
+void SetEMatLaplaceTet(
+    double C[4][4][3][3],
+    double w0,
+    const double dldx[4][3])
+{
+  for(int ino=0;ino<4;ino++){
+    for(int jno=0;jno<4;jno++){
+      const double dtmp1 = w0*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
+      C[ino][jno][0][0] = dtmp1;
+      C[ino][jno][0][1] = 0.0;
+      C[ino][jno][0][2] = 0.0;
+      C[ino][jno][1][0] = 0.0;
+      C[ino][jno][1][1] = dtmp1;
+      C[ino][jno][1][2] = 0.0;
+      C[ino][jno][2][0] = 0.0;
+      C[ino][jno][2][1] = 0.0;
+      C[ino][jno][2][2] = dtmp1;
+    }
+  }
+}
+
+
+
+// ------------------------
+// below tri
+
 DFM2_INLINE void delfem2::MakeMat_Stokes2D_Static_P1P1(
-    double alpha, double g_x, double g_y,
+    double alpha,
+    double g_x,
+    double g_y,
     const double coords[][2],
-    const double velo[3][2], const double press[3],
-    double emat_uu[][3][2][2], double emat_up[][3][2], double emat_pu[][3][2], double emat_pp[][3],
-    double eres_u[][2], double eres_p[3])
+    const double velo[3][2],
+    const double press[3],
+    double emat_uu[][3][2][2],
+    double emat_up[][3][2],
+    double emat_pu[][3][2],
+    double emat_pp[][3],
+    double eres_u[][2],
+    double eres_p[3])
 {
   const unsigned int nno = 3;
   const unsigned int ndim = 2;
@@ -27,7 +73,7 @@ DFM2_INLINE void delfem2::MakeMat_Stokes2D_Static_P1P1(
   double dldx[nno][ndim], const_term[nno];
   TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
   
-  // -------------------------
+  //-------------------------
   
   for(unsigned int i=0;i<nno*nno*ndim*ndim;i++){ *(&emat_uu[0][0][0][0]+i) = 0.0; }
   for(unsigned int ino=0;ino<nno;ino++){
@@ -110,10 +156,11 @@ DFM2_INLINE void delfem2::EMat_Stokes2D_Static_P1(
   ////
   double emat_uu[3][3][2][2], emat_up[3][3][2], emat_pu[3][3][2], emat_pp[3][3];
   double eres_u[3][2], eres_p[3];
-  MakeMat_Stokes2D_Static_P1P1(alpha, g_x, g_y,
-                               coords, velo, press,
-                               emat_uu, emat_up, emat_pu, emat_pp,
-                               eres_u, eres_p);
+  MakeMat_Stokes2D_Static_P1P1(
+      alpha, g_x, g_y,
+      coords, velo, press,
+      emat_uu, emat_up, emat_pu, emat_pp,
+      eres_u, eres_p);
   ////
   for(int ino=0;ino<nno;ino++){
     for(int jno=0;jno<nno;jno++){
@@ -150,11 +197,12 @@ DFM2_INLINE void delfem2::EMat_Stokes2D_Dynamic_P1(
     double eres[3][3])
 {
   const int nno = 3;
-
+  //
   const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
+  //
   double dldx[nno][2], const_term[nno];
   TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
-  
+  //
   double tau;
   {
     const double h = sqrt( area / 3.14 )*2;
@@ -177,26 +225,11 @@ DFM2_INLINE void delfem2::EMat_Stokes2D_Dynamic_P1(
     }
   }
   
-  ////////////////
+  //
   double eMmat[3][3][3][3];
-  {
-    const double dtmp1 = area*rho*0.0833333333333333333333333333;
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eMmat[ino][jno][0][0] = dtmp1;
-        eMmat[ino][jno][1][1] = dtmp1;
-        eMmat[ino][jno][0][1] = 0.0;
-        eMmat[ino][jno][1][0] = 0.0;
-        eMmat[ino][jno][0][2] = 0.0;
-        eMmat[ino][jno][1][2] = 0.0;
-        eMmat[ino][jno][2][0] = 0.0;
-        eMmat[ino][jno][2][1] = 0.0;
-        eMmat[ino][jno][2][2] = 0.0;
-      }
-      eMmat[ino][ino][0][0] += dtmp1;
-      eMmat[ino][ino][1][1] += dtmp1;
-    }
-  }
+  EmatConsistentMassTri2<3>(
+      eMmat,
+      area*rho, false);
   
   for(int ino=0;ino<nno;ino++){
     eres[ino][0] = area*g_x*0.33333333333333333333;
@@ -223,34 +256,35 @@ DFM2_INLINE void delfem2::EMat_Stokes2D_Dynamic_P1(
   }
 }
 
-
+// above: tri
+// ----------------------------------------------
+// below: tet
 
 DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1P1(
-  double alpha, double g_x, double g_y, double g_z,
+  double alpha,
+  double g_x,
+  double g_y,
+  double g_z,
   const double coords[4][3],
-  const double velo[4][3], const double press[4],
-  double emat_uu[4][4][3][3], double emat_up[4][4][3], double emat_pu[4][4][3], double emat_pp[4][4],
-  double eres_u[4][3], double eres_p[4])
+  const double velo[4][3],
+  const double press[4],
+  double emat_uu[4][4][3][3],
+  double emat_up[4][4][3],
+  double emat_pu[4][4][3],
+  double emat_pp[4][4],
+  double eres_u[4][3],
+  double eres_p[4])
 {
   const unsigned int nno = 4;
   const unsigned int ndim = 3;
-  
+  //
   const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
-  
+  //
   double dldx[nno][ndim], const_term[nno];
   TetDlDx(dldx, const_term,   coords[0], coords[1], coords[2], coords[3]);
-  
-  // --------------------------------------------------
-  
-  for(unsigned int i=0;i<nno*nno*ndim*ndim;i++){ *(&emat_uu[0][0][0][0]+i) = 0.0; }
-  for(unsigned int ino=0;ino<nno;ino++){
-    for(unsigned int jno=0;jno<nno;jno++){
-      const double dtmp1 = vol*alpha*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
-      emat_uu[ino][jno][0][0] = dtmp1;
-      emat_uu[ino][jno][1][1] = dtmp1;
-      emat_uu[ino][jno][2][2] = dtmp1;
-    }
-  }
+  //
+  SetEMatLaplaceTet(
+      emat_uu, vol*alpha, dldx);
   for(unsigned int i=0;i<nno*nno*ndim;i++){ *(&emat_up[0][0][0]+i) = 0.0; }
   for(unsigned int ino=0;ino<nno;ino++){
     for(unsigned int jno=0;jno<nno;jno++){
@@ -267,16 +301,12 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1P1(
       emat_pu[ino][jno][2] += vol*dldx[jno][2]*0.25;
     }
   }
-  for(unsigned int i=0;i<nno*nno;i++){ *(&emat_pp[0][0]+i) = 0.0; }
-  double tau; // relaxation parameter
   {
     const double h = pow(vol/3.14, 0.3333333333)*2;
-    tau = -h*h/alpha*0.1;
-  }
-  for(unsigned int ino=0;ino<nno;ino++){
-    for(unsigned int jno=0;jno<nno;jno++){
-      emat_pp[ino][jno] = vol*tau*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
-    }
+    const double tau = -h*h/alpha*0.1;
+    SetEMatLaplaceTet(
+        emat_pp,
+        vol*tau, dldx);
   }
   
   for(unsigned int ino=0;ino<nno;ino++){
@@ -289,7 +319,7 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1P1(
   eres_p[2] = 0;
   eres_p[3] = 0;
   
-  ////////////////////////////////////////////////////////////////////////////////////
+  //
   
   for(unsigned int ino=0;ino<nno;ino++){
     for(unsigned int jno=0;jno<nno;jno++){
@@ -316,12 +346,15 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1P1(
 
 
 
-DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1
-(double alpha, double g_x, double g_y, double g_z,
- const double coords[4][3],
- const double velo_press[4][4],
- double emat[4][4][4][4],
- double eres[4][4])
+DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1(
+    double alpha,
+    double g_x,
+    double g_y,
+    double g_z,
+    const double coords[4][3],
+    const double velo_press[4][4],
+    double emat[4][4][4][4],
+    double eres[4][4])
 {
   const int nno = 4;
   
@@ -331,28 +364,29 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1
     {velo_press[2][0],velo_press[2][1],velo_press[2][2]},
     {velo_press[3][0],velo_press[3][1],velo_press[3][2]} };
   const double press[4] = { velo_press[0][3], velo_press[1][3], velo_press[2][3], velo_press[3][3] };
-  ////
+  //
   double emat_uu[4][4][3][3], emat_up[4][4][3], emat_pu[4][4][3], emat_pp[4][4];
   double eres_u[4][3], eres_p[4];
-  MakeMat_Stokes3D_Static_P1P1(alpha, g_x, g_y, g_z,
-                               coords, velo, press,
-                               emat_uu, emat_up, emat_pu, emat_pp,
-                               eres_u, eres_p);
-  ////
+  MakeMat_Stokes3D_Static_P1P1(
+      alpha, g_x, g_y, g_z,
+      coords, velo, press,
+      emat_uu, emat_up, emat_pu, emat_pp,
+      eres_u, eres_p);
+  //
   for(int ino=0;ino<nno;ino++){
     for(int jno=0;jno<nno;jno++){
       emat[ino][jno][0][0] = emat_uu[ino][jno][0][0];
       emat[ino][jno][0][1] = emat_uu[ino][jno][0][1];
       emat[ino][jno][0][2] = emat_uu[ino][jno][0][2];
-      ////
+      //
       emat[ino][jno][1][0] = emat_uu[ino][jno][1][0];
       emat[ino][jno][1][1] = emat_uu[ino][jno][1][1];
       emat[ino][jno][1][2] = emat_uu[ino][jno][1][2];
-      ////
+      //
       emat[ino][jno][2][0] = emat_uu[ino][jno][2][0];
       emat[ino][jno][2][1] = emat_uu[ino][jno][2][1];
       emat[ino][jno][2][2] = emat_uu[ino][jno][2][2];
-      ////
+      //
       emat[ino][jno][0][3] = emat_up[ino][jno][0];
       emat[ino][jno][1][3] = emat_up[ino][jno][1];
       emat[ino][jno][2][3] = emat_up[ino][jno][2];
@@ -360,7 +394,7 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1
       emat[ino][jno][3][0] = emat_pu[ino][jno][0];
       emat[ino][jno][3][1] = emat_pu[ino][jno][1];
       emat[ino][jno][3][2] = emat_pu[ino][jno][2];
-      ////
+      //
       emat[ino][jno][3][3] = emat_pp[ino][jno];
     }
   }
@@ -375,40 +409,35 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1
 
 
 DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_Newmark_P1P1(
-    double alpha, double rho, double g_x, double g_y, double g_z,
-    const double dt_timestep, const double gamma_newmark,
+    double alpha,
+    double rho,
+    double g_x,
+    double g_y,
+    double g_z,
+    const double dt_timestep,
+    const double gamma_newmark,
     const double coords[4][3],
-    const double velo[4][3], const double press[4], const double acc[4][3], const double apress[4],
-    double emat_uu[4][4][3][3], double emat_up[4][4][3], double emat_pu[4][4][3], double emat_pp[4][4],
-    double eres_u[4][3], double eres_p[4])
+    const double velo[4][3],
+    const double press[4],
+    const double acc[4][3],
+    const double apress[4],
+    double emat_uu[4][4][3][3],
+    double emat_up[4][4][3],
+    double emat_pu[4][4][3],
+    double emat_pp[4][4],
+    double eres_u[4][3],
+    double eres_p[4])
 {
-  //	std::cout << "AddMat_Stokes2D_NonStatic_Newmark_P1P1" << std::endl;
-  
-  const int nno = 4;
-  const int ndim = 3;
-  ////
+  constexpr int nno = 4;
+  constexpr int ndim = 3;
+  //
   const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
   double dldx[nno][ndim], const_term[nno];
   TetDlDx(dldx, const_term,   coords[0],coords[1],coords[2],coords[3]);
   
   // ------------------------------
   double eCmat_uu[4][4][3][3];
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      const double dtmp1 = vol*alpha*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
-      eCmat_uu[ino][jno][0][0] = dtmp1;
-      eCmat_uu[ino][jno][0][1] = 0.0;
-      eCmat_uu[ino][jno][0][2] = 0.0;
-      ////
-      eCmat_uu[ino][jno][1][0] = 0.0;
-      eCmat_uu[ino][jno][1][1] = dtmp1;
-      eCmat_uu[ino][jno][1][2] = 0.0;
-      ////
-      eCmat_uu[ino][jno][2][0] = 0.0;
-      eCmat_uu[ino][jno][2][1] = 0.0;
-      eCmat_uu[ino][jno][2][2] = dtmp1;
-    }
-  }
+  SetEMatLaplaceTet(eCmat_uu, vol*alpha, dldx);
   
   double eCmat_up[4][4][3];
   for(int ino=0;ino<nno;ino++){
@@ -435,35 +464,12 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_Newmark_P1P1(
   }
   
   double eCmat_pp[4][4];
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eCmat_pp[ino][jno] = vol*tau*(dldx[jno][0]*dldx[ino][0]+dldx[jno][1]*dldx[ino][1]+dldx[jno][2]*dldx[ino][2]);
-    }
-  }
-  
+  SetEMatLaplaceTet(eCmat_pp,vol*tau,dldx);
+
   // -------------------------
   double eMmat_uu[4][4][3][3];
-  {
-    const double dtmp1 = vol*rho*0.05;
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eMmat_uu[ino][jno][0][0] = dtmp1;
-        eMmat_uu[ino][jno][0][1] = 0.0;
-        eMmat_uu[ino][jno][0][2] = 0.0;
-        ////
-        eMmat_uu[ino][jno][1][0] = 0.0;
-        eMmat_uu[ino][jno][1][1] = dtmp1;
-        eMmat_uu[ino][jno][1][2] = 0.0;
-        ////
-        eMmat_uu[ino][jno][2][0] = 0.0;
-        eMmat_uu[ino][jno][2][1] = 0.0;
-        eMmat_uu[ino][jno][2][2] = dtmp1;
-      }
-      eMmat_uu[ino][ino][0][0] += dtmp1;
-      eMmat_uu[ino][ino][1][1] += dtmp1;
-      eMmat_uu[ino][ino][2][2] += dtmp1;
-    }
-  }
+  SetEmatConsistentMassTet(
+      eMmat_uu,vol*rho);
   
   for(int ino=0;ino<nno;ino++){
     eres_u[ino][0] = vol*g_x*0.25;
@@ -545,10 +551,11 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_P1(
     double emat[4][4][4][4],
     double eres[4][4])
 {
-  const int nno = 4;
-  const int ndim = 4;
+  constexpr int nno = 4;
+  constexpr int ndim = 4;
   //
   const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
+  //
   double dldx[nno][3], const_term[nno];
   TetDlDx(dldx, const_term,   coords[0], coords[1], coords[2], coords[3]);
   //
@@ -582,7 +589,10 @@ DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_P1(
   }
 
   double eMmat[4][4][4][4];
-  ddW_MassConsistentVal3D_Tet3D(&eMmat[0][0][0][0], rho, vol, false, 4);
+  for(int i=0;i<nno*nno*ndim*ndim;++i){ (&eMmat[0][0][0][0])[i] = 0.0; }
+  AddEmatConsistentMassTet<4>(
+      eMmat,
+      rho*vol);
   
   for(int ino=0;ino<nno;ino++){
     eres[ino][0] = vol*g_x*0.25;

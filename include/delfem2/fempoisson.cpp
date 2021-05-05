@@ -6,18 +6,14 @@
  */
 
 
-
 #ifndef DFM2_HEADER_ONLY
 // Merge use explicitly use the template so for static library we need to include the template itself.
 #  include "delfem2/lsmats.h"
 #endif
 #include "delfem2/fempoisson.h"
-#include <cmath>
-#include <cassert>
-#include <complex>
 
 // --------------------------------------------------------
-
+// below tri
 
 DFM2_INLINE void delfem2::EMat_Poisson_Tri2D(
     double eres[3],
@@ -29,18 +25,19 @@ DFM2_INLINE void delfem2::EMat_Poisson_Tri2D(
 {
   constexpr int nno = 3;
   constexpr int ndim = 2;
-  ////
-  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;
-  for (int i = 0; i<9; ++i){ (&emat[0][0])[i] = 0.0; }
+  //
   const double area = femutil::TriArea2D(coords[0], coords[1], coords[2]);
-  ////
+  //
   double dldx[nno][ndim], const_term[nno];
   TriDlDx(dldx, const_term, coords[0], coords[1], coords[2]);
+  //
+  for (int i = 0; i<9; ++i){ (&emat[0][0])[i] = 0.0; }
   for (int ino = 0; ino<nno; ino++){
     for (int jno = 0; jno<nno; jno++){
       emat[ino][jno] = alpha*area*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]);
     }
   }
+  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;
   for (int ino = 0; ino<nno; ino++){
     eres[ino] = source*area*0.33333333333333333;
   }
@@ -50,6 +47,69 @@ DFM2_INLINE void delfem2::EMat_Poisson_Tri2D(
     }
   }
 }
+
+
+DFM2_INLINE void delfem2::EMat_Diffusion_Tri2D(
+    double eres[3],
+    double emat[3][3],
+    const double alpha,
+    const double source,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double rho,
+    const double coords[3][2],
+    const double value[3],
+    const double velo[3])
+{
+  constexpr int nno = 3;
+  constexpr int ndim = 2;
+
+  const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
+  double dldx[nno][ndim], const_term[nno];
+  TriDlDx(dldx,const_term,coords[0],coords[1],coords[2]);
+
+  // --------------------------
+
+  for (int i = 0; i<9; ++i){ (&emat[0][0])[i] = 0.0; }
+  double eCmat[nno][nno];
+  for(int ino=0;ino<nno;ino++){
+    for(int jno=0;jno<nno;jno++){
+      eCmat[ino][jno] = alpha*area*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]);
+    }
+  }
+  double eMmat[nno][nno];
+  {
+    const double dtmp1 = rho*area*0.08333333333333333;
+    for(int ino=0;ino<nno;ino++){
+      for(int jno=0;jno<nno;jno++){
+        eMmat[ino][jno] = dtmp1;
+      }
+      eMmat[ino][ino] += dtmp1;
+    }
+  }
+
+  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;
+  for(int ino=0;ino<nno;ino++){
+    eres[ino] = source*area*0.333333333333333333;
+  }
+
+  {
+    const double dtmp1 = gamma_newmark*dt_timestep;
+    for(int i=0;i<nno*nno;i++){
+      (&emat[0][0])[i] = (&eMmat[0][0])[i]+dtmp1*(&eCmat[0][0])[i];
+    }
+  }
+  for(int ino=0;ino<nno;ino++){
+    for(int jno=0;jno<nno;jno++){
+      eres[ino]	-= eCmat[ino][jno]*(value[jno]+dt_timestep*velo[jno]) + eMmat[ino][jno]*velo[jno];
+    }
+  }
+
+}
+
+// above: tri
+// ------------------------------------------------------------
+// below: quad
 
 void delfem2::EMat_Poission2_QuadOrth(
     double emat[4][4],
@@ -96,65 +156,9 @@ void delfem2::EMat_Poisson2_QuadOrth_GaussInt(
   }
 }
 
-DFM2_INLINE void delfem2::EMat_Diffusion_Tri2D(
-    double eres[3],
-    double emat[3][3],
-    const double alpha,
-    const double source,
-    const double dt_timestep,
-    const double gamma_newmark,
-    const double rho,
-    const double coords[3][2],
-    const double value[3],
-    const double velo[3])
-{
-  constexpr int nno = 3;
-  constexpr int ndim = 2;
-  
-  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;
-  for (int i = 0; i<9; ++i){ (&emat[0][0])[i] = 0.0; }
-  
-  const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
-  double dldx[nno][ndim], const_term[nno];
-  TriDlDx(dldx,const_term,coords[0],coords[1],coords[2]);
-  
-  // --------------------------
-  
-  double eCmat[nno][nno];
-  for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eCmat[ino][jno] = alpha*area*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]);
-    }
-  }
-  double eMmat[nno][nno];
-  {
-    const double dtmp1 = rho*area*0.08333333333333333;
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eMmat[ino][jno] = dtmp1;
-      }
-      eMmat[ino][ino] += dtmp1;
-    }
-  }
-		
-  for(int ino=0;ino<nno;ino++){
-    eres[ino] = source*area*0.333333333333333333;
-  }
-  
-  {
-    const double dtmp1 = gamma_newmark*dt_timestep;
-    for(int i=0;i<nno*nno;i++){
-      (&emat[0][0])[i] = (&eMmat[0][0])[i]+dtmp1*(&eCmat[0][0])[i];
-    }
-  }
-	for(int ino=0;ino<nno;ino++){
-    for(int jno=0;jno<nno;jno++){
-      eres[ino]	-= eCmat[ino][jno]*(value[jno]+dt_timestep*velo[jno]) + eMmat[ino][jno]*velo[jno];
-    }
-  }
-}
-
-
+// above: quad
+// -------------------------------------------------------------
+// below: tet
 
 DFM2_INLINE void delfem2::EMat_Poisson_Tet3D(
     double eres[4],
@@ -167,18 +171,18 @@ DFM2_INLINE void delfem2::EMat_Poisson_Tet3D(
   constexpr int nno = 4;
   constexpr int ndim = 3;
   //
-  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;  eres[3] = 0;
-  for (int i = 0; i<16; ++i){ (&emat[0][0])[i] = 0.0; }
   const double area = femutil::TetVolume3D(coords[0], coords[1], coords[2], coords[3]);
   //
   double dldx[nno][ndim], const_term[nno];
   TetDlDx(dldx, const_term, coords[0], coords[1], coords[2], coords[3]);
-  
+
+  for (int i = 0; i<16; ++i){ (&emat[0][0])[i] = 0.0; }
   for (int ino = 0; ino<nno; ino++){
     for (int jno = 0; jno<nno; jno++){
       emat[ino][jno] = alpha*area*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]+dldx[ino][2]*dldx[jno][2]);
     }
   }
+  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;  eres[3] = 0;
   for (int ino = 0; ino<nno; ino++){
     eres[ino] = source*area*0.25;
   }
@@ -203,16 +207,14 @@ DFM2_INLINE void delfem2::EMat_Diffusion_Newmark_Tet3D(
 {
   constexpr int nno = 4;
   constexpr int ndim = 3;
-  
-  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;  eres[3] = 0;
-  for (int i=0; i<16; ++i){ (&emat[0][0])[i] = 0.0; }
-  
+
   const double vol = femutil::TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
   double dldx[nno][ndim], const_term[nno];
   TetDlDx(dldx,const_term,coords[0],coords[1],coords[2],coords[3]);
   
   // ----------------------
-  
+
+  for (int i=0; i<16; ++i){ (&emat[0][0])[i] = 0.0; }
   double eCmat[nno][nno];
   for(int ino=0;ino<nno;ino++){
     for(int jno=0;jno<nno;jno++){
@@ -229,11 +231,11 @@ DFM2_INLINE void delfem2::EMat_Diffusion_Newmark_Tet3D(
       eMmat[ino][ino] += dtmp1;
     }
   }
-		
+
+  eres[0] = 0;  eres[1] = 0;  eres[2] = 0;  eres[3] = 0;
   for(int ino=0;ino<nno;ino++){
     eres[ino] = source*vol*0.25;
   }
-  
   {
     const double dtmp1 = gamma_newmark*dt_timestep;
     for(int i=0;i<nno*nno;i++){
