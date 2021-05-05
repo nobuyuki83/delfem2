@@ -107,9 +107,11 @@ DFM2_INLINE void delfem2::EMat_SolidStaticLinear_Tri2D(
   constexpr int ndim = 2;
 
   const double area = femutil::TriArea2D(coords[0],coords[1],coords[2]);
-  double dldx[nno][ndim], zero_order_term[nno];
-  TriDlDx(dldx, zero_order_term, coords[0],coords[1],coords[2]);
-
+  double dldx[nno][ndim];
+  {
+    double zero_order_term[nno];
+    TriDlDx(dldx, zero_order_term, coords[0], coords[1], coords[2]);
+  }
   femsolidlinear::SetEmat_LinearSolid2<3>(
       emat,
       lambda,myu,dldx,area);
@@ -161,19 +163,9 @@ DFM2_INLINE void delfem2::EMat_SolidDynamicLinear_Tri2D(
       lambda,myu,dldx,area);
 
   double eMmat[nno][nno][ndim][ndim];
-  {
-    const double dtmp1 = area*rho*0.0833333333333333333333333;
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eMmat[ino][jno][0][0] = dtmp1;
-        eMmat[ino][jno][0][1] = 0.0;
-        eMmat[ino][jno][1][0] = 0.0;
-        eMmat[ino][jno][1][1] = dtmp1;
-      }
-      eMmat[ino][ino][0][0] += dtmp1;
-      eMmat[ino][ino][1][1] += dtmp1;
-    }
-  }
+  EmatConsistentMassTri2<2>(
+      eMmat,
+      area*rho,false);
 
   // calc external force
   for(int ino=0;ino<nno;ino++){
@@ -499,9 +491,9 @@ DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D(
   SetEmat_LinearSolid3<4>(eKmat,lambda,myu,dldx,vol);
   
   double eMmat[nno][nno][ndim][ndim];
-  ddW_MassConsistentVal3D_Tet3D(
-      &eMmat[0][0][0][0],
-      rho,vol,false,3);
+  SetEmatConsistentMassTet(
+      eMmat,
+      rho*vol);
   
   // calc external force
   for(int ino=0;ino<nno;ino++){
@@ -509,9 +501,7 @@ DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D(
     eres[ino][1] = vol*rho*g_y*0.25;
     eres[ino][2] = vol*rho*g_z*0.25;
   }
-  
-  ////////////////////////////////////////////////////////////////////////////////////
-  
+  //
   {	// calc coeff matrix for newmark-beta
     double dtmp1 = beta_newmark*dt*dt;
     for(int i=0;i<nno*nno*ndim*ndim;i++){

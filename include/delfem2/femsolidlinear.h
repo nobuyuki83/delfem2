@@ -178,7 +178,6 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
       vec_b[ip*2+0] += eres[ino][0];
       vec_b[ip*2+1] += eres[ino][1];
     }
-//    mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
     Merge<3,3,2,2,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -245,8 +244,8 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
     const std::vector<unsigned int>& aHex,
     const std::vector<double>& aVal)
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*3;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*3;
   //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
@@ -256,8 +255,7 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
     double coords[8][3]; FetchData<8,3>(coords, aIP, aXYZ.data());
     double disps[8][3]; FetchData<8,3>(disps, aIP, aVal.data());
     //
-    double eres[8][3];
-    double emat[8][8][3][3];
+    double eres[8][3], emat[8][8][3][3];
     MakeMat_LinearSolid3D_Static_Q1(
         myu, lambda,
         rho, g_x, g_y, g_z,
@@ -269,8 +267,6 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
     }
-    // marge dde
-//    mat_A.Mearge(8, aIP, 8, aIP, 9, &emat[0][0][0][0], tmp_buffer);
     Merge<8,8,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -324,8 +320,6 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
       vec_b[ip*2+0] += eres[ino][0];
       vec_b[ip*2+1] += eres[ino][1];
     }
-    // marge dde
-//    mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
     Merge<3,3,2,2,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -376,7 +370,6 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
     }
-//    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
     Merge<4,4,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -406,8 +399,7 @@ void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
     double P[4][3]; FetchData<4,3>(P, aIP, aXYZ);
-    double emat[4][4][3][3];
-    double eres[4][3];
+    double emat[4][4][3][3], eres[4][3];
     const double vol = femutil::TetVolume3D(P[0], P[1], P[2], P[3]);
     {
       double dldx[4][3], const_term[4];
@@ -442,7 +434,6 @@ void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
       vec_b[ip*3+1] += eres[ino][1]/dt;
       vec_b[ip*3+2] += eres[ino][2]/dt;
     }
-//    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
     Merge<4,4,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
@@ -457,18 +448,18 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
     const double g[3],
     const double dt,
     const double* aXYZ,
-    int nXYZ,
+    unsigned int nXYZ,
     const unsigned int* aTet,
-    int nTet,
+    unsigned int nTet,
     const double* aDisp,
     const double* aVelo,
     const std::vector<double>& aR)
 {
-  const int np = nXYZ;
-  assert((int)aR.size()==np*9);
+  const unsigned int np = nXYZ;
+  assert(aR.size()==np*9);
   // ----------------------------
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
-  for (int iel = 0; iel<nTet; ++iel){
+  for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
@@ -476,7 +467,7 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
     double P[4][3]; FetchData<4,3>(P, aIP, aXYZ);
     const double vol = femutil::TetVolume3D(P[0], P[1], P[2], P[3]);
-    ////
+    //
     double emat[4][4][3][3];
     { // make stifness matrix with stiffness warping
       double dldx[4][3], const_term[4];
@@ -530,7 +521,6 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
       vec_b[ip*3+1] += eres[ino][1]/dt;
       vec_b[ip*3+2] += eres[ino][2]/dt;
     }
-//    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
     Merge<4,4,3,3,double>(mat_A,aIP,aIP,emat,tmp_buffer);
   }
 }
