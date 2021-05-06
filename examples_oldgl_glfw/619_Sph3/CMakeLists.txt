@@ -16,7 +16,7 @@ endif ()
 
 #############################
 
-project(619_Sph2d)
+project(619_Sph3)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

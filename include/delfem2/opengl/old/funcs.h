@@ -26,10 +26,10 @@ namespace opengl{
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
-DFM2_INLINE void DrawCharacter
- (int* pChr,
-  double ax, double bx,
-  double ay, double by);
+DFM2_INLINE void DrawCharacter(
+    int* pChr,
+    double ax, double bx,
+    double ay, double by);
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
@@ -79,22 +79,22 @@ DFM2_INLINE void DrawTorus_Solid
   double rad_meridian,
   double scale_tex);
 
-DFM2_INLINE void DrawCylinder_Face
- (const double* dir_, double radius_, const double* cent_);
+DFM2_INLINE void DrawCylinder_Face(
+    const double* dir_, double radius_, const double* cent_);
 
-DFM2_INLINE void DrawCylinder_Edge
- (const double* dir_, double radius_, const double* cent_);
+DFM2_INLINE void DrawCylinder_Edge(
+    const double* dir_, double radius_, const double* cent_);
 
-DFM2_INLINE void DrawPlane_Edge
- (const double* origin_, const double* normal_);
+DFM2_INLINE void DrawPlane_Edge(
+    const double* origin_, const double* normal_);
 
 // ========================================
 // Draw Axis-Aligned Box
 
-DFM2_INLINE void DrawBox_MinMaxXYZ
- (double x_min, double x_max,
-  double y_min, double y_max,
-  double z_min, double z_max);
+DFM2_INLINE void DrawBox_MinMaxXYZ(
+    double x_min, double x_max,
+    double y_min, double y_max,
+    double z_min, double z_max);
 
 DFM2_INLINE void DrawBox_MinMaxXYZ(
     double aabbMinMaxXYZ[6]);

@@ -275,8 +275,8 @@ cmake --build .
 ### [618_Fem3d](618_Fem3d)
 <img src="618_Fem3d/thumbnail.png" width=200>
 
-### [619_Sph2d](619_Sph2d)
-<img src="619_Sph2d/thumbnail.png" width=200>
+### [619_Sph3](619_Sph3)
+<img src="619_Sph3/thumbnail.png" width=200>
 
 ### [620_FemClothSelfCollision](620_FemClothSelfCollision)
 <img src="620_FemClothSelfCollision/thumbnail.png" width=200>
