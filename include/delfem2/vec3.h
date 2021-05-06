@@ -183,13 +183,15 @@ public:
     p[2] /= d;
 		return *this;
 	}
-  inline double operator[](int i) const{
+	template <typename INDEX>
+  inline double operator[](INDEX i) const{
     if( i == 0 ) return p[0];
     if( i == 1 ) return p[1];
     if( i == 2 ) return p[2];
     return 0;
   }
-  inline T& operator[](int i){
+  template <typename INDEX>
+  inline T& operator[](INDEX i){
     if( i == 0 ) return p[0];
     if( i == 1 ) return p[1];
     if( i == 2 ) return p[2];
