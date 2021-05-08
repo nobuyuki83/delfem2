@@ -1141,16 +1141,16 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3DSurface_Edge
   for (unsigned int itf=0; itf<aTetFace.size()/2;++itf){
     int itet = aTetFace[itf*2+0];
     int iface = aTetFace[itf*2+1];
-    const int i1 = aTet[itet*4+noelTetFace[iface][0]];
-    const int i2 = aTet[itet*4+noelTetFace[iface][1]];
-    const int i3 = aTet[itet*4+noelTetFace[iface][2]];
-    if( i1 == -1 ){
-      assert(i2==-1); assert(i3==-1);
+    const unsigned int i1 = aTet[itet*4+noelTetFace[iface][0]];
+    const unsigned int i2 = aTet[itet*4+noelTetFace[iface][1]];
+    const unsigned int i3 = aTet[itet*4+noelTetFace[iface][2]];
+    if( i1 == UINT_MAX ){
+      assert(i2==UINT_MAX && i3==UINT_MAX);
       continue;
     }
-    assert( i1 < aXYZ.size()/3);
-    assert( i2 < aXYZ.size()/3);
-    assert( i3 < aXYZ.size()/3);
+    assert( i1 < aXYZ.size()/3 );
+    assert( i2 < aXYZ.size()/3 );
+    assert( i3 < aXYZ.size()/3 );
     double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
