@@ -82,6 +82,7 @@ int main(int argc,char* argv[])
     rs.theta = 0;
     rs.velo = dfm2::CVec2d(0, 0);
     rs.posg = dfm2::CVec2d(0, 0.0);
+    rs.shape_velo.resize(rs.shape.size(),dfm2::CVec2d(0,0));
   }
 
   aRS[1].posg.p[1] = 0.5;

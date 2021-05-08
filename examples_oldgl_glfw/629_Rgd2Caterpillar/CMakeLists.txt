@@ -17,7 +17,7 @@ endif ()
 
 #################################
 
-project(629_Rgd2Mode)
+project(629_Rgd2Caterpillar)
 
 # opengl
 find_package(OpenGL REQUIRED)
