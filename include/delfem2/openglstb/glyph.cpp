@@ -69,7 +69,7 @@ void delfem2::openglstb::CGlyph::ParseGlyphInfo(const std::string &fpath) {
   auto aToken = Split(line, " =");
   assert(aToken.size() == 3);
   unsigned int nchar = std::strtol(aToken[2].data(), 0, 10);
-  for (int ichar = 0; ichar < nchar; ++ichar) {
+  for (unsigned int ichar = 0; ichar < nchar; ++ichar) {
     getline(fin, line);
     auto aVal = Split(line, ' ');
     std::cout << line << std::endl;

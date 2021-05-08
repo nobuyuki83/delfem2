@@ -61,7 +61,7 @@ void InitializeProblem_Poisson(
   const unsigned int np = aXYZ.size()/3;
   aVal.assign(np, 0.0);
   aBCFlag.assign(np, 0);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
 //    const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
 //    const double pz = aXYZ[ip*3+2];
