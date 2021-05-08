@@ -27,6 +27,10 @@ class CRigidState2 {
 public:
   bool is_fix;
   std::vector<CVec2d> shape;
+
+  //! velocity of shape for deforming rigid body (1-way deformation given by the user)
+  std::vector<CVec2d> shape_velo;
+
   // below: set at the beginning. derived from shape
   CVec2d posl;
   double mass;
@@ -37,15 +41,33 @@ public:
   double theta;
   CVec2d velo;
   double omega;
+
   // below: temp data for PBD
   CVec2d posg_tmp;
   double theta_tmp;
 };
 
-class CContact {
+class CContactInfo2 {
 public:
-  unsigned int ir, jr;
-  CVec2d Pi, Pjn, Njn;
+  //! index of rigid body A
+  unsigned int irbA;
+
+  //! index of rigid body B
+  unsigned int irbB;
+
+  //! contacting positioin of rigid body A (corner point)
+  unsigned int ipA;
+
+  //! contacting positioin of rigid body A (corner point)
+  unsigned int ieB;
+
+  //! ratio on the edge
+  double reB;
+
+  //! normal of rigid body B at the contacting point
+  CVec2d Njn;
+
+  //! magnitude of impulse
   double lambda;
 };
 

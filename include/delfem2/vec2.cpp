@@ -484,9 +484,10 @@ template double delfem2::Dot(const CVec2d& ipo0, const CVec2d& ipo1);
 // get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 // this one has implementation in header because GetDist_LineSeg_Point below refers this
 template <typename T>
-double delfem2::FindNearestPointParameter_Line_Point
-(const CVec2<T>& po_c,
- const CVec2<T>& po_s, const CVec2<T>& po_e)
+double delfem2::FindNearestPointParameter_Line_Point(
+    const CVec2<T>& po_c,
+    const CVec2<T>& po_s,
+    const CVec2<T>& po_e)
 {
   const CVec2<T>& es = po_e-po_s;
   const CVec2<T>& sc = po_s-po_c;
@@ -561,9 +562,11 @@ bool delfem2::IsCross_LineSeg_LineSeg
 }
 
 template <typename T>
-double delfem2::GetDist_LineSeg_LineSeg
-(const CVec2<T>& po_s0, const CVec2<T>& po_e0,
- const CVec2<T>& po_s1, const CVec2<T>& po_e1)
+double delfem2::GetDist_LineSeg_LineSeg(
+    const CVec2<T>& po_s0,
+    const CVec2<T>& po_e0,
+    const CVec2<T>& po_s1,
+    const CVec2<T>& po_e1)
 {
   if( IsCross_LineSeg_LineSeg(po_s0,po_e0, po_s1,po_e1) ) return -1;
   const double ds1 = GetDist_LineSeg_Point(po_s0,po_s1,po_e1);
@@ -579,10 +582,10 @@ double delfem2::GetDist_LineSeg_LineSeg
 
 // square root of circumradius
 template <typename T>
-double delfem2::SquareCircumradius
-(const CVec2<T>& p0,
- const CVec2<T>& p1,
- const CVec2<T>& p2 )
+double delfem2::SquareCircumradius(
+    const CVec2<T>& p0,
+    const CVec2<T>& p1,
+    const CVec2<T>& p2 )
 {
 	const double area = Area_Tri(p0,p1,p2);
   
@@ -595,11 +598,11 @@ double delfem2::SquareCircumradius
 
 //! center of the circumcircle
 template <typename T>
-bool delfem2::CenterCircumcircle
-(const CVec2<T>& p0,
- const CVec2<T>& p1,
- const CVec2<T>& p2,
- CVec2<T>& center)
+bool delfem2::CenterCircumcircle(
+    const CVec2<T>& p0,
+    const CVec2<T>& p1,
+    const CVec2<T>& p2,
+    CVec2<T>& center)
 {
   const double area = Area_Tri(p0,p1,p2);
   if( fabs(area) < 1.0e-10 ){ return false; }
@@ -703,18 +706,18 @@ template delfem2::CVec2d delfem2::pointCurve_BezierQuadratic(double t,
 
 //! Area of the Triangle (3 indexes and vertex array)
 template <typename T>
-double delfem2::Area_Tri
-(const int iv1, const int iv2, const int iv3,
- const std::vector<CVec2<T>>& point )
+double delfem2::Area_Tri(
+    const int iv1, const int iv2, const int iv3,
+    const std::vector<CVec2<T>>& point )
 {
   return Area_Tri(point[iv1],point[iv2],point[iv3]);
 }
 
 template <typename T>
-void delfem2::Polyline_CubicBezierCurve
-(std::vector<CVec2<T>>& aP,
- const int n, 
- const std::vector<CVec2<T>>& aCP)
+void delfem2::Polyline_CubicBezierCurve(
+    std::vector<CVec2<T>>& aP,
+    const int n,
+    const std::vector<CVec2<T>>& aCP)
 {
   int ns = (int)(aCP.size()/3);
   aP.resize(ns*n+1);

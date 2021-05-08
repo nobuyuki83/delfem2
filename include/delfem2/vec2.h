@@ -182,7 +182,7 @@ public:
 		p[0] /= mag;
 		p[1] /= mag;
 	}
-  CVec2 Mat3Vec2_AffineProjection(const T* A){
+  CVec2 Mat3Vec2_AffineProjection(const T* A) const {
     CVec2<T> y;
     y.p[0] = A[0]*p[0] + A[1]*p[1] + A[2];
     y.p[1] = A[3]*p[0] + A[4]*p[1] + A[5];
@@ -191,7 +191,7 @@ public:
     y.p[1] /= w;
     return y;
   }
-  CVec2 Mat3Vec2_AffineDirection(const T* A){
+  CVec2 Mat3Vec2_AffineDirection(const T* A) const {
     CVec2<T> y;
     y.p[0] = A[0]*p[0] + A[1]*p[1];
     y.p[1] = A[3]*p[0] + A[4]*p[1];

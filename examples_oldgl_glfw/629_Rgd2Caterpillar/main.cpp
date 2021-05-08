@@ -65,18 +65,24 @@ int main(int argc,char* argv[])
         {-0.9, 0.8},
         {-1.0, 0.8},
     };
+    rs.shape_velo.assign(rs.shape.size(),dfm2::CVec2d(0,0));
   }
+
+  const double lw = 0.6;
+  const double lh = 0.2;
+
   {
     dfm2::CRigidState2& rs = aRS[1];
     rs.is_fix = false;
     unsigned int ndiv = 10;
     rs.shape.reserve((ndiv+1)*2);
     for(int i=0;i<ndiv+1;++i){
-      rs.shape.emplace_back(i*0.4/ndiv,0.0 );
+      rs.shape.emplace_back(i*lw/ndiv,0.0 );
     }
     for(int i=(int)ndiv;i>=0;--i){
-      rs.shape.emplace_back(i*0.4/ndiv,0.2 );
+      rs.shape.emplace_back(i*lw/ndiv,lh );
     }
+    rs.shape_velo.assign(rs.shape.size(),dfm2::CVec2d(0,0));
   }
 
   for(dfm2::CRigidState2& rs : aRS){
@@ -91,7 +97,8 @@ int main(int argc,char* argv[])
     rs.posg = dfm2::CVec2d(0, 0.0);
   }
 
-  aRS[1].posg.p[1] = 0.5;
+  aRS[1].posg.p[0] = 0.3;
+  aRS[1].posg.p[1] = 0.3;
   aRS[1].theta = 0.0;
 
   const dfm2::CVec2d gravity(0,-10);
@@ -101,14 +108,25 @@ int main(int argc,char* argv[])
   while(true){
     {
       auto& aP = aRS[1].shape;
+      auto& aV = aRS[1].shape_velo;
       unsigned int np = aP.size()/2;
+      const double angvelo = 5.;
+      const double rad = 0.02;
       for(int ip=0;ip<np;++ip) {
-        double x0 = aP[ip].x();
-        aP[ip].p[1] = 0.05 * sin(x0 * 20 + time * 5);
+        double x0 = lw/(np-1)*ip;
+        aP[ip].p[0] = rad * cos(x0 * 20 + time * angvelo) + x0;
+        aP[ip].p[1] = rad * sin(x0 * 20 + time * angvelo);
+        aV[ip] = dfm2::CVec2d(
+            -rad*angvelo*sin(x0 * 20 + time*angvelo),
+            +rad*angvelo*cos(x0 * 20 + time*angvelo) );
       }
       for(int ip=0;ip<np;++ip){
-        double x0 = aP[ip+np].x();
-        aP[ip+np].p[1] = 0.05*sin(x0*20+time*5)+0.2;
+        double x0 = lw/(np-1)*(np-1-ip);
+        aP[ip+np].p[0] = rad * cos(x0 * 20 + time * angvelo) + x0;
+        aP[ip+np].p[1] = rad * sin(x0 * 20 + time * angvelo) + lh;
+        aV[ip+np] = dfm2::CVec2d(
+            -rad*angvelo*sin(x0 * 20 + time*angvelo),
+            +rad*angvelo*cos(x0 * 20 + time*angvelo) );
       }
     }
     Steptime_Rgd2(aRS, dt, gravity);
