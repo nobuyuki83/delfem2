@@ -2,6 +2,7 @@
 #define DFM2_SRCHGRID_H
 
 #include <vector>
+#include <algorithm> // for sort
 
 namespace delfem2 {
 
@@ -78,7 +79,7 @@ public:
     }
 #ifndef NDEBUG
     for (unsigned int ig = 0; ig < ng; ++ig) {
-      for (int ii0 = aGrid2Obj_ind[ig]; ii0 < aGrid2Obj_ind[ig + 1]; ++ii0) {
+      for (unsigned int ii0 = aGrid2Obj_ind[ig]; ii0 < aGrid2Obj_ind[ig + 1]; ++ii0) {
         assert(aGrid2Obj[ii0].igrid == ig);
       }
     }
