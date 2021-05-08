@@ -47,13 +47,14 @@ public:
 public:
   void GridIndex(
       int &ix0, int &iy0, int &iz0,
-      const double p[3]) const {
+      const double p[3]) const
+  {
     ix0 = floor((p[0] - bbmin[0]) / h);
-    if (ix0 < 0) { ix0 = 0; } else if (ix0 >= nx) { ix0 = int(nx - 1); }
+    if (ix0 < 0) { ix0 = 0; } else if (ix0 >= int(nx)) { ix0 = int(nx - 1); }
     iy0 = floor((p[1] - bbmin[1]) / h);
-    if (iy0 < 0) { iy0 = 0; } else if (iy0 >= ny) { iy0 = int(ny - 1); }
+    if (iy0 < 0) { iy0 = 0; } else if (iy0 >= int(ny)) { iy0 = int(ny - 1); }
     iz0 = floor((p[2] - bbmin[2]) / h);
-    if (iz0 < 0) { iz0 = 0; } else if (iz0 >= nz) { iz0 = int(nz - 1); }
+    if (iz0 < 0) { iz0 = 0; } else if (iz0 >= int(nz)) { iz0 = int(nz - 1); }
   }
 
   void SetObject(unsigned int iobj, const double p[3]) {
@@ -69,7 +70,7 @@ public:
     aGrid2Obj_ind.resize(ng + 1);
     aGrid2Obj_ind[0] = 0;
     {
-      int i0 = 0;
+      unsigned int i0 = 0;
       for (unsigned int ig = 0; ig < ng; ++ig) {
         while (aGrid2Obj[i0].igrid <= ig && i0 < aGrid2Obj.size()) { i0++; }
         aGrid2Obj_ind[ig + 1] = i0;
@@ -94,11 +95,11 @@ public:
       for (int j = -1; j < 2; ++j) {
         for (int k = -1; k < 2; ++k) {
           const int ix1 = ix0 + i;
-          if (ix1 < 0 || ix1 >= nx) continue;
+          if (ix1 < 0 || ix1 >= int(nx)) continue;
           const int iy1 = iy0 + j;
-          if (iy1 < 0 || iy1 >= ny) continue;
+          if (iy1 < 0 || iy1 >= int(ny)) continue;
           const int iz1 = iz0 + k;
-          if (iz1 < 0 || iz1 >= nz) continue;
+          if (iz1 < 0 || iz1 >= int(nz)) continue;
           const unsigned int ig1 = iz1 * ny * nx + iy1 * nx + ix1;
           for (int ii0 = aGrid2Obj_ind[ig1]; ii0 < aGrid2Obj_ind[ig1 + 1]; ++ii0) {
             aIP.push_back(aGrid2Obj[ii0].iobj);
