@@ -237,7 +237,7 @@ void InitializeProblem_Scalar(
 {
   const unsigned int np = aXY1.size()/2;
   aBCFlag.assign(np, 0);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const double px = aXY1[ip*2+0];
     const double py = aXY1[ip*2+1];
     if( fabs(fabs(px)-len) < 0.0001 || fabs(fabs(py)-len) < 0.0001 ){
@@ -535,7 +535,7 @@ void SolveProblem_LinearSolid_Static(
   // --------------
   dfm2::XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
-  for(int idof=0;idof<nDoF;++idof){
+  for(unsigned int idof=0;idof<nDoF;++idof){
     int jdof = aMSFlag[idof];
     if( jdof == -1 ) continue;
     aVal[idof] = aVal[jdof];
@@ -597,7 +597,7 @@ void SolveProblem_LinearSolid_Dynamic(
                   dt_timestep,aAcc);
   dfm2::XPlusAY(aAcc, nDoF, aBCFlag,
                 1.0, vec_x);
-  for(int idof=0;idof<nDoF;++idof){
+  for(unsigned int idof=0;idof<nDoF;++idof){
     int jdof = aMSFlag[idof];
     if( jdof == -1 ) continue;
     aVal[ idof] = aVal[ jdof];
@@ -727,11 +727,11 @@ void InitializeProblem_Fluid2(
     const std::vector<int>& loopIP,
     double len)
 {
-  const unsigned int np = (int)aXY1.size()/2;
+  const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np*3;
   // set boundary condition
   aBCFlag.assign(nDoF, 0);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const double px = aXY1[ip*2+0];
     const double py = aXY1[ip*2+1];
     if( fabs(fabs(py)-len) < 0.0001 ){
@@ -755,7 +755,7 @@ void InitializeProblem_Fluid2(
   aMSFlag.assign(nDoF, -1);
   { // master slave
     int iseed = -1;
-    for(int ip=0;ip<np;++ip){
+    for(unsigned int ip=0;ip<np;++ip){
       const double px = aXY1[ip*2+0];
 //      const double py = aXY1[ip*2+1];
       if( fabs(px+len) > 0.0001 || aBCFlag[ip*3+0] == 1 ){ continue; }

@@ -260,8 +260,8 @@ bool Mearge(
 template <int nrow, int ncol, int ndimrow, int ndimcol, typename T>
 bool Merge(
     CMatrixSparse<T>& A,
-    const unsigned int* aIpRow,
-    const unsigned int* aIpCol,
+    const unsigned int aIpRow[nrow],
+    const unsigned int aIpCol[ncol],
     const T emat[nrow][ncol][ndimrow][ndimcol],
     std::vector<unsigned int>& merge_buffer)
 {

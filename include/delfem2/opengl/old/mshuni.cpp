@@ -572,11 +572,11 @@ delfem2::opengl::DrawPoints2d_4RotSym(
 // ---------------------------------------------
 // line
 
-DFM2_INLINE void delfem2::opengl::DrawMeshLine3D_Edge
-    (const double* aXYZ,
-     unsigned int nXYZ,
-     const unsigned int* aLine,
-     unsigned int nLine)
+DFM2_INLINE void delfem2::opengl::DrawMeshLine3D_Edge(
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aLine,
+    unsigned int nLine)
 {
   for (unsigned int il = 0; il<nLine; il++){
     const unsigned int i0 = aLine[il*2+0];

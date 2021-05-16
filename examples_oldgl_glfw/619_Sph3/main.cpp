@@ -337,11 +337,17 @@ int main(int argc, char *argv[])
     ::glfwSetWindowTitle(viewer.window, "SPH with Spatial Hash");
     delfem2::SearchGrid sg;
     sg.Initialize(bbmin, bbmax, sph_radcutoff, ps.size());
+    for (unsigned int ip = 0; ip < ps.size(); ++ip) {
+      sg.aGrid2Obj[ip].igrid = sg.GetGridIndex(ps[ip].r.p);
+      sg.aGrid2Obj[ip].iobj = ip;
+    }
+    sg.PostProcess(true);
     for (unsigned int iframe = 0; iframe < 300; ++iframe) {
-      for (unsigned int ip = 0; ip < ps.size(); ++ip) {
-        sg.SetObject(ip, ps[ip].r.p);
+      for(auto& gridobj : sg.aGrid2Obj){
+        const unsigned int ip = gridobj.iobj;
+        gridobj.igrid = sg.GetGridIndex(ps[ip].r.p);
       }
-      sg.PostProcess();
+      sg.PostProcess(false);
       SPH_DensityPressureHash(
           ps,
           sph_radcutoff, SPH_PMASS, SPH_RESTDENSITY, SPH_INTSTIFF, sg);

@@ -76,7 +76,7 @@ int main(int argc,char* argv[])
     rs.is_fix = false;
     unsigned int ndiv = 10;
     rs.shape.reserve((ndiv+1)*2);
-    for(int i=0;i<ndiv+1;++i){
+    for(unsigned int i=0;i<ndiv+1;++i){
       rs.shape.emplace_back(i*lw/ndiv,0.0 );
     }
     for(int i=(int)ndiv;i>=0;--i){
@@ -112,7 +112,7 @@ int main(int argc,char* argv[])
       unsigned int np = aP.size()/2;
       const double angvelo = 5.;
       const double rad = 0.02;
-      for(int ip=0;ip<np;++ip) {
+      for(unsigned int ip=0;ip<np;++ip) {
         double x0 = lw/(np-1)*ip;
         aP[ip].p[0] = rad * cos(x0 * 20 + time * angvelo) + x0;
         aP[ip].p[1] = rad * sin(x0 * 20 + time * angvelo);
@@ -120,7 +120,7 @@ int main(int argc,char* argv[])
             -rad*angvelo*sin(x0 * 20 + time*angvelo),
             +rad*angvelo*cos(x0 * 20 + time*angvelo) );
       }
-      for(int ip=0;ip<np;++ip){
+      for(unsigned int ip=0;ip<np;++ip){
         double x0 = lw/(np-1)*(np-1-ip);
         aP[ip+np].p[0] = rad * cos(x0 * 20 + time * angvelo) + x0;
         aP[ip+np].p[1] = rad * sin(x0 * 20 + time * angvelo) + lh;

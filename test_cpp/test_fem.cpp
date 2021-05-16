@@ -1114,3 +1114,36 @@ TEST(fem, solid3compressionhex)
     }
   }
 }
+
+
+TEST(fem, femrod2)
+{
+  std::mt19937 rndeng(0);
+  std::uniform_real_distribution<double> distm1p1(-1.,+1.);
+
+  const double aP0[3][2] = {
+      { distm1p1(rndeng), distm1p1(rndeng)},
+      { distm1p1(rndeng), distm1p1(rndeng)},
+      { distm1p1(rndeng), distm1p1(rndeng)},
+  };
+  double aL[2] = {1.,1.};
+  double stiffA = 0.0;
+  double stiffB = 1.0;
+  double W0,dW0[3][2],ddW0[3][3][2][2];
+  dfm2::WdWddW_Rod2(
+      W0, dW0, ddW0,
+      aP0, aL, stiffA, stiffA, stiffB);
+  double eps = 1.0e-5;
+  for(unsigned int ip=0;ip<3;++ip){
+    for(unsigned int idim=0;idim<2;++idim){
+      double aP1[3][2] = {
+          { aP0[0][0], aP0[0][1] },
+          { aP0[1][0], aP0[1][1] },
+          { aP0[2][0], aP0[2][1] } };
+      aP1[ip][idim] += eps;
+      double W1,dW1[3][2],ddW1[3][3][2][2];
+      dfm2::WdWddW_Rod2(W1, dW1, ddW1, aP1, aL, stiffA, stiffA, stiffB);
+      EXPECT_NEAR( (W1-W0)/eps, dW0[ip][idim], 1.0e-3);
+    }
+  }
+}

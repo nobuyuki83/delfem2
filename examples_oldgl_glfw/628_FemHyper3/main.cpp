@@ -67,7 +67,7 @@ void Simulation(
 {
   const unsigned int np = aXYZ0.size()/3;
   const unsigned int nDoF = np*3;
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     aDisp[ip*3+0] += dt*aVelo[ip*3+0];
     aDisp[ip*3+1] += dt*aVelo[ip*3+1];
     aDisp[ip*3+2] += dt*aVelo[ip*3+2];
@@ -132,7 +132,7 @@ void Simulation(
   dfm2::XPlusAY(
       aDisp,
       nDoF, aBCFlag,1.0, vecx);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     aVelo[ip*3+0] += vecx[ip*3+0]/dt;
     aVelo[ip*3+1] += vecx[ip*3+1]/dt;
     aVelo[ip*3+2] += vecx[ip*3+2]/dt;
