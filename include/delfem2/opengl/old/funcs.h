@@ -63,12 +63,20 @@ DFM2_INLINE void setGL_Camera2D();
 DFM2_INLINE void DrawAxis(double s);
 
 DFM2_INLINE void DrawSphere(int nla, int nlo);
-DFM2_INLINE void DrawSphereAt
- (int nla, int nlo, double rad, double x, double y, double z);
-DFM2_INLINE void DrawSphere_Edge(double radius_);
+DFM2_INLINE void DrawSphereAt(
+    int nla,
+    int nlo,
+    double rad,
+    double x,
+    double y,
+    double z);
 
-DFM2_INLINE void DrawTorus_Edge
- (double radius_, double radius_tube_);
+DFM2_INLINE void DrawSphere_Edge(
+    double radius_);
+
+DFM2_INLINE void DrawTorus_Edge(
+    double radius_,
+    double radius_tube_);
 
 /**
  * @param rad_longtitude longer radius of doughnuts

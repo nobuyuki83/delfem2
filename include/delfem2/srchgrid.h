@@ -6,6 +6,15 @@
 
 namespace delfem2 {
 
+template <class T>
+void insertion_sort_stl(std::vector<T>& vec)
+{
+  for(auto it = vec.begin(); it != vec.end(); it++){
+    auto const insertion_point = std::upper_bound(vec.begin(), it, *it);
+    std::rotate(insertion_point, it, it+1);
+  }
+}
+
 class SearchGrid {
 public:
   class CGrid2Obj {
@@ -58,15 +67,28 @@ public:
     if (iz0 < 0) { iz0 = 0; } else if (iz0 >= int(nz)) { iz0 = int(nz - 1); }
   }
 
+  unsigned int GetGridIndex(const double p[3]) const {
+    int ix0, iy0, iz0;
+    GridIndex(ix0, iy0, iz0, p);
+    return iz0 * ny * nx + iy0 * nx + ix0;
+  }
+
+  /*
   void SetObject(unsigned int iobj, const double p[3]) {
     int ix0, iy0, iz0;
     GridIndex(ix0, iy0, iz0, p);
     aGrid2Obj[iobj].igrid = iz0 * ny * nx + iy0 * nx + ix0;
     aGrid2Obj[iobj].iobj = iobj;
   }
+   */
 
-  void PostProcess() {
-    std::sort(aGrid2Obj.begin(), aGrid2Obj.end()); // quick sort
+  void PostProcess(bool is_initial) {
+    if( is_initial ) {
+      std::sort(aGrid2Obj.begin(), aGrid2Obj.end()); // quick sort
+    }
+    else{
+      insertion_sort_stl(aGrid2Obj);
+    }
     const unsigned int ng = nx * ny * nz;
     aGrid2Obj_ind.resize(ng + 1);
     aGrid2Obj_ind[0] = 0;

@@ -46,6 +46,12 @@ DFM2_INLINE void DrawPoints2d_Psup(
     const unsigned int* psup_ind,
     const unsigned int* psup);
 
+DFM2_INLINE void DrawPoints2d_4RotSym(
+    const double* aXY,
+    const unsigned int nXY,
+    const double* aDir,
+    double vlen);
+
 // above: 2D
 // below: 3D
 
@@ -68,20 +74,14 @@ DFM2_INLINE void DrawPoints3d_Psup(
     const std::vector<unsigned int>& psup_ind,
     const std::vector<unsigned int>& psup);
 
-DFM2_INLINE void DrawPoints2d_4RotSym(
-    const double* aXY,
-    const unsigned int nXY,
-    const double* aDir,
-    double vlen);
-
 // =====================================
 // Draw Line
 
-DFM2_INLINE void DrawMeshLine3D_Edge
- (const double* aXYZ,
-  unsigned int nXYZ,
-  const unsigned int* aLine,
-  unsigned int nLine);
+DFM2_INLINE void DrawMeshLine3D_Edge(
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aLine,
+    unsigned int nLine);
 
 // =====================================
 // Draw Triangle Mesh

@@ -19,10 +19,10 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------
 
-void myGlutDisplay
-(const std::vector<dfm2::CVec3d>& aP,
- const std::vector<dfm2::CVec3d>& aS,
- std::vector<unsigned int>& aIP_HairRoot)
+void myGlutDisplay(
+    const std::vector<dfm2::CVec3d>& aP,
+    const std::vector<dfm2::CVec3d>& aS,
+    std::vector<unsigned int>& aIP_HairRoot)
 {
   const unsigned int nhair = aIP_HairRoot.size()-1;
   for(unsigned int ihair=0;ihair<nhair;++ihair){
@@ -65,18 +65,27 @@ void myGlutDisplay
 
 class CHairShape{
 public:
+  //! number of points
   unsigned int np;
+
+  //! axis position increment for the helix
   double pitch;
+
+  //! radius of helix
   double rad0;
+
+  //! angle increment for the helix
   double dangle;
+
+  //! root shape
   double p0[3];
 };
 
-void MakeProblemSetting_Spiral
-(std::vector<dfm2::CVec3d>& aP0,
- std::vector<dfm2::CVec3d>& aS0,
- std::vector<unsigned int>& aIP_HairRoot,
- const std::vector<CHairShape>& aHairShape)
+void MakeProblemSetting_Spiral(
+    std::vector<dfm2::CVec3d>& aP0,
+    std::vector<dfm2::CVec3d>& aS0,
+    std::vector<unsigned int>& aIP_HairRoot,
+    const std::vector<CHairShape>& aHairShape)
 {
   aIP_HairRoot.assign(1,0);
   aP0.clear();
@@ -88,7 +97,10 @@ void MakeProblemSetting_Spiral
     const double rad0 = aHairShape[ihair].rad0;
     const double* p0 = aHairShape[ihair].p0;
     for(unsigned int ip=0;ip<np;++ip){
-      dfm2::CVec3d p = dfm2::CVec3d(p0[0]+ip*pitch, p0[1]+rad0*cos(dangle*ip), p0[2]+rad0*sin(dangle*ip));
+      dfm2::CVec3d p = dfm2::CVec3d(
+          p0[0]+ip*pitch,
+          p0[1]+rad0*cos(dangle*ip),
+          p0[2]+rad0*sin(dangle*ip));
       aP0.push_back(p);
     }
     const unsigned int np0 = aIP_HairRoot[ihair];
@@ -146,10 +158,10 @@ int main(int argc,char* argv[])
     dfm2::CMatrixSparse<double> mats;
     dfm2::MakeSparseMatrix_RodHair(
         mats,
-        aIP_HairRoot);
+        aIP_HairRoot,4);
     // -----------------
     std::vector<dfm2::CVec3d> aS = aS0, aP = aP0;
-    // apply random deviation
+    // apply random perturbation
     for(unsigned int ip=0;ip<aP.size();++ip){
       aP[ip] = aP0[ip];
       auto rnd = dfm2::CVec3d::Random(dist01,reng)*0.1;
@@ -171,9 +183,10 @@ int main(int argc,char* argv[])
     for(int iframe=0;iframe<100;++iframe) {
       // static minimization of the rod deformation
       dfm2::MakeDirectorOrthogonal_RodHair(aS,aP);
-      Solve_RodHair(aP, aS, mats,
-                    stiff_stretch, stiff_bendtwist, 0.0,
-                    aP0, aS0, aBCFlag, aIP_HairRoot);
+      Solve_RodHair(
+          aP, aS, mats,
+          stiff_stretch, stiff_bendtwist, 0.0,
+          aP0, aS0, aBCFlag, aIP_HairRoot);
       // ----------
       viewer.DrawBegin_oldGL();
       myGlutDisplay(aP, aS, aIP_HairRoot);

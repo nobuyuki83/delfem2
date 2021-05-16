@@ -258,7 +258,7 @@ int main(int argc,char* argv[])
   dfm2::CMatrixSparse<double> mats; // sparse matrix
   dfm2::MakeSparseMatrix_RodHair( // make sparse matrix pattern
       mats,
-      aIP_HairRoot);
+      aIP_HairRoot,4);
   // -----------------
   std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
   std::vector<dfm2::CVec3d> aPV (aP0.size(), dfm2::CVec3d(0,0,0)); // velocity

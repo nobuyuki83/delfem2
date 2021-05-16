@@ -15,6 +15,16 @@
 
 namespace delfem2 {
 
+DFM2_INLINE void WdWddW_Rod2(
+    double& W,
+    double dW[3][2],
+    double ddW[3][3][2][2],
+    const double ap[3][2],
+    const double aL[2],
+    double stiff_stretch01,
+    double stiff_stretch12,
+    double stiff1_bend);
+
 /**
  * @brief energy W and its derivative dW and second derivative ddW
  * where W = a^T R(dn) b(theta)
@@ -27,85 +37,94 @@ DFM2_INLINE void RodFrameTrans(
     double dtheta);
 
 /**
- * @param dF_dv (out) how i-th frame axis moves w.r.t the movement of the edge
- * @param dF_dt (out) how i-th frame axis moves w.r.t the rotation along 2nd axis
- * @param l01 (in) length of the edge
- * @param Frm (in) frame axis vectors
+ * @param[out] dF_dv how i-th frame axis moves w.r.t the movement of the edge
+ * @param[out] dF_dt how i-th frame axis moves w.r.t the rotation along 2nd axis
+ * @param[in] l01 length of the edge
+ * @param[in] Frm frame axis vectors
  */
-DFM2_INLINE void DiffFrameRod
-(CMat3d dF_dv[3],
- CVec3d dF_dt[3],
- //
- double l01,
- const CVec3d Frm[3]);
+DFM2_INLINE void DiffFrameRod(
+    CMat3d dF_dv[3],
+    CVec3d dF_dt[3],
+    //
+    double l01,
+    const CVec3d Frm[3]);
 
 /**
  * @brief second derivative (ddW) of W, where W = Q^T Frm[iaxis]
  */
-DFM2_INLINE void DifDifFrameRod
-(CMat3d& ddW_ddv,
- CVec3d& ddW_dvdt,
- double& ddW_dtt,
- //
- unsigned int iaxis,
- double l01,
- const CVec3d& Q,
- const CVec3d Frm[3]);
+DFM2_INLINE void DifDifFrameRod(
+    CMat3d& ddW_ddv,
+    CVec3d& ddW_dvdt,
+    double& ddW_dtt,
+    //
+    unsigned int iaxis,
+    double l01,
+    const CVec3d& Q,
+    const CVec3d Frm[3]);
 
-DFM2_INLINE double WdWddW_DotFrame
-(CVec3d dV_dP[3],
- double dV_dt[2],
- CMat3d ddV_ddP[3][3],
- CVec3d ddV_dtdP[2][3],
- double ddV_ddt[2][2],
- //
- const CVec3d P[3],
- const CVec3d S[2],
- const double off[3]);
+DFM2_INLINE double WdWddW_DotFrame(
+    CVec3d dV_dP[3],
+    double dV_dt[2],
+    CMat3d ddV_ddP[3][3],
+    CVec3d ddV_dtdP[2][3],
+    double ddV_ddt[2][2],
+    //
+    const CVec3d P[3],
+    const CVec3d S[2],
+    const double off[3]);
 
-DFM2_INLINE CVec3d Darboux_Rod
-(const CVec3d P[3],
- const CVec3d S[2]);
+DFM2_INLINE CVec3d Darboux_Rod(
+    const CVec3d P[3],
+    const CVec3d S[2]);
 
 /**
- * @param P[3] (in) point of rod
- * @param S[2] (in) director vectors on the edges
- * @param off[3] (in) Daboux vector in the material frame
- * @param is_eaxct (in) whether the hessian is exact or not
+ * @param[in] P points of rod
+ * @param[in] S director vectors on the edges
+ * @param[in] daboux0 Daboux vector in the rest shape
+ * @param[in] is_eaxct whether the hessian is exact or not
  */
-DFM2_INLINE double WdWddW_Rod
-(CVec3d dW_dP[3],
- double dW_dt[2],
- CMat3d ddW_ddP[3][3],
- CVec3d ddW_dtdP[2][3],
- double ddW_ddt[2][2],
- const double stiff_bendtwist[3],
- const CVec3d P[3],
- const CVec3d S[2],
- const CVec3d& darboux0,
- bool is_exact);
+DFM2_INLINE double WdWddW_Rod(
+    CVec3d dW_dP[3],
+    double dW_dt[2],
+    CMat3d ddW_ddP[3][3],
+    CVec3d ddW_dtdP[2][3],
+    double ddW_ddt[2][2],
+    const double stiff_bendtwist[3],
+    const CVec3d P[3],
+    const CVec3d S[2],
+    const CVec3d& darboux0,
+    bool is_exact);
 
-DFM2_INLINE double WdWddW_SquareLengthLineseg3D
-(CVec3d dW_dP[2],
- CMat3d ddW_ddP[2][2],
- //
- const double stiff,
- const CVec3d P[2],
- double L0);
+/**
+ * compute energy and its graident and hessian for the 3D spring
+ * @param[out] dW_dP
+ * @param[out] ddW_ddP
+ * @param[in] stiff stiffness
+ * @param[in] P current positions
+ * @param[in] L0 rest length
+ * @return energy
+ */
+DFM2_INLINE double WdWddW_SquareLengthLineseg3D(
+    CVec3d dW_dP[2],
+    CMat3d ddW_ddP[2][2],
+    //
+    const double stiff,
+    const CVec3d P[2],
+    double L0);
 
 // ------------------------
 
-DFM2_INLINE void Solve_DispRotSeparate
- (std::vector<CVec3d>& aP,
-  std::vector<CVec3d>& aS,
-  CMatrixSparse<double>& mats,
-  const double stiff_stretch,
-  const double stiff_bendtwist[3],
-  const std::vector<CVec3d>& aP0,
-  const std::vector<CVec3d>& aDarboux0,
-  const std::vector<unsigned int>& aElemSeg,
-  const std::vector<unsigned int>& aElemRod,
-  const std::vector<int>& aBCFlag);
+DFM2_INLINE void Solve_DispRotSeparate(
+    std::vector<CVec3d>& aP,
+    std::vector<CVec3d>& aS,
+    CMatrixSparse<double>& mats,
+    const double stiff_stretch,
+    const double stiff_bendtwist[3],
+    const std::vector<CVec3d>& aP0,
+    const std::vector<CVec3d>& aDarboux0,
+    const std::vector<unsigned int>& aElemSeg,
+    const std::vector<unsigned int>& aElemRod,
+    const std::vector<int>& aBCFlag);
 
 
 // --------------
@@ -122,13 +141,26 @@ DFM2_INLINE void MakeBCFlag_RodHair(
 
 DFM2_INLINE void MakeSparseMatrix_RodHair(
     CMatrixSparse<double>& mats,
-    const std::vector<unsigned int>& aIP_HairRoot);
+    const std::vector<unsigned int>& aIP_HairRoot,
+    unsigned int ndof_par_node);
 
 DFM2_INLINE void MakeDirectorOrthogonal_RodHair(
     std::vector<CVec3d>& aS,
     const std::vector<CVec3d>& aP);
 
-
+/**
+ * Merge linear system for hair
+ * @param vec_r
+ * @param[in,out] mats sparse matrix
+ * @param[in] stiff_stretch
+ * @param[in] stiff_bendtwist
+ * @param[in] aIP_HairRoot
+ * @param[in] aP
+ * @param[in] aS
+ * @param[in] aP0 vertex position of rest shape
+ * @param[in] aS0
+ * @return
+ */
 DFM2_INLINE double MergeLinSys_Hair(
     std::vector<double>& vec_r,
     CMatrixSparse<double>& mats,
