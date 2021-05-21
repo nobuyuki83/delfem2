@@ -1102,12 +1102,12 @@ TEST(fem, solid3compressionhex)
               1., aP0, aU1, 1);
         }
         {
-          EXPECT_NEAR((W1 - W0) / eps, dW0[ino][idim], 1.0e-6);
+          EXPECT_NEAR((W1 - W0) / eps, dW0[ino][idim], 1.0e-4);
         }
         for(int jno=0;jno<8;++jno) {
           for (int jdim = 0; jdim < 3; ++jdim) {
             double tmp0 = (dW1[jno][jdim]-dW0[jno][jdim])/eps;
-            EXPECT_NEAR(tmp0, ddW0[ino][jno][idim][jdim], 1.0e-6);
+            EXPECT_NEAR(tmp0, ddW0[ino][jno][idim][jdim], 1.0e-4);
           }
         }
       }

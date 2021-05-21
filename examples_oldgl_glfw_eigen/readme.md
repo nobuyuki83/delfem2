@@ -1,7 +1,13 @@
 # DelFEM2 Examples using Legacy OpenGL
 
-These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricated in many environment. But still it is convenient to use legacy functions such as glBegin(), glEnd(). We will eventually consider porting these demo into newer OpenGL >= 3.3 in the [examples_newgl_glfw](../examples_newgl_glfw) folder.
+These demo uses [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) library for matrix operation. 
+Please take a look at the following document to set up Eigen library. 
 
+[How to set up Eigen](../docs/setup_eigen.md)  
+
+These demos use legacy OpenGL (version 2.1 and GLSL shaer version 1.2) which are depricated in many environment. 
+But still it is convenient to use legacy functions such as glBegin(), glEnd(). 
+We will eventually consider porting these demo into newer OpenGL >= 3.3 in the [examples_newgl_glfw](../examples_newgl_glfw) folder.
 
 
 ## EigenModes

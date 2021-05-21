@@ -22,3 +22,6 @@
 [submodule "3rd_party/zlib"]
 	path = 3rd_party/zlib
 	url = https://github.com/madler/zlib.git
+[submodule "3rd_party/eigen"]
+	path = 3rd_party/eigen
+	url = https://gitlab.com/libeigen/eigen.git
