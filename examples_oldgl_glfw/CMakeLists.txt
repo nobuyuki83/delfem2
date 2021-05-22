@@ -113,3 +113,5 @@ add_subdirectory(628_FemHyper3)
 add_subdirectory(629_Rgd2Caterpillar)
 add_subdirectory(630_FemRod2Static)
 add_subdirectory(631_FemRod2Dynamic)
+add_subdirectory(632_PbdSpring2)
+
