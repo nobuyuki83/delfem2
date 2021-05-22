@@ -46,7 +46,7 @@ cd delfem2/3rd_party/eigen-3.*.* # move to the directory
 mkdir build # make a new directory for "out-of-source build"
 cd build    # move to the new directory
 cmake ..    # configure (this may take one or two minutes)
-cmake --install . --prefix ../Eigen_Lib  # install eigen into the "Eigen_Lib" folder
+cmake --install . --prefix ../../Eigen_Lib  # copy files into the "Eigen_Lib" folder
 ```
 
 Make sure you have a header file `Dense` at
@@ -67,13 +67,13 @@ $ cd 3rd_party/eigen # move to the eigen repository
 $ mkdir build # make a directory for "out-of-source build"
 $ cd build    # move to the new directory
 $ cmake ..    # configure (this may take one or two minutes)
-$ cmake --install . --prefix ../Eigen_Lib # install into the "Eigen_Lib" folder
+$ cmake --install . --prefix ../../Eigen_Lib # copy files into the "Eigen_Lib" folder
 ```
 
 Make sure you have a header file `Dense` at
 
 ```
-pba-<username>/3rd_party/Eigen_Lib/include/eigen3/Eigen/Dense
+delfem2/3rd_party/Eigen_Lib/include/eigen3/Eigen/Dense
 ```
 
 
