@@ -12,6 +12,7 @@
 #include "delfem2/femutil.h"
 #include "delfem2/femrod.h"
 #include "delfem2/lsvecx.h"
+#include "delfem2/lsitrsol.h"
 #include <random>
 
 #include "delfem2/vec2.h"
@@ -67,7 +68,7 @@ void Solve(
   {
     const std::size_t n = vec_r.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto aConvHist = Solve_CG(
+    auto aConvHist = dfm2::Solve_CG(
         dfm2::CVecXd(vec_r), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
         1.0e-4, 300, mats);
     if( !aConvHist.empty() ){

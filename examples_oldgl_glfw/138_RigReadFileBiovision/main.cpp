@@ -29,8 +29,9 @@ int main(int argc,char* argv[])
 
   std::string path_bvh = std::string(PATH_INPUT_DIR)+"/jump.bvh";
 //  std::cout << "path:" << path_bvh << std::endl;
-  Read_BioVisionHierarchy(aBone,aChannelRotTransBone,nframe,aValRotTransBone,
-                          path_bvh);
+  Read_BioVisionHierarchy(
+      aBone,aChannelRotTransBone,nframe,aValRotTransBone,
+      path_bvh);
   UpdateBoneRotTrans(aBone);
   std::cout << "nBone:" << aBone.size() << "   aCh:" << aChannelRotTransBone.size() << std::endl;
   for(unsigned int ib=0;ib<aBone.size();++ib){
@@ -52,16 +53,24 @@ int main(int argc,char* argv[])
     {
       static int iframe = 0;
       const int nch = aChannelRotTransBone.size();
-      SetPose_BioVisionHierarchy(aBone, aChannelRotTransBone,
-                                 aValRotTransBone.data()+iframe*nch);
+      SetPose_BioVisionHierarchy(
+          aBone, aChannelRotTransBone,
+          aValRotTransBone.data()+iframe*nch);
       iframe = (iframe+1)%nframe;
     }
     // --------------------
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawAxis(10);
-    dfm2::opengl::DrawBone(aBone,
-                           -1, -1,
-                           0.1, 1.0);
+    /*
+    dfm2::opengl::DrawBone_Line(
+        aBone,
+        -1, -1,
+        0.1, 1.0);
+        */
+    dfm2::opengl::DrawBone_Octahedron(
+        aBone,
+        -1, -1,
+        0.1, 1.0);
     viewer.SwapBuffers();
     glfwPollEvents();
   }

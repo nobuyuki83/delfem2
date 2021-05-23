@@ -225,7 +225,7 @@ void Draw
     ::glEnd();
   }
   ::glDisable(GL_DEPTH_TEST);
-  delfem2::opengl::DrawBone(
+  delfem2::opengl::DrawBone_Line(
       aBone,
       -1, -1,
       0.01, 1.0);

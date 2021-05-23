@@ -73,7 +73,7 @@ int main(int argc,char* argv[])
     delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
     delfem2::opengl::DrawAxis(1);
     ::glDisable(GL_DEPTH_TEST);
-    delfem2::opengl::DrawBone(
+    delfem2::opengl::DrawBone_Line(
         aBone,
         -1, -1,
         0.01, 1.0);

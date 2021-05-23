@@ -100,7 +100,9 @@ int main(int argc,char* argv[])
     ::glDisable(GL_DEPTH_TEST);
     ::glDisable(GL_LIGHTING);
     ::glColor3d(1,0,0);
-    dfm2::opengl::DrawBone(aBone,-1,0,0.02,0.2);
+    dfm2::opengl::DrawBone_Line(
+        aBone,
+        -1,0,0.02,0.2);
     viewer.SwapBuffers();
     glfwPollEvents();
     if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }

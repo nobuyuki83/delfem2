@@ -29,10 +29,17 @@ DFM2_INLINE void Draw_RigBone(
     double rad_bone_sphere,
     double rad_rot_hndlr);
 
-DFM2_INLINE void DrawBone(
+DFM2_INLINE void DrawBone_Line(
     const std::vector<delfem2::CRigBone>& aBone,
     int ibone_selected,
     int ielem_selected,
+    double rad_bone_sphere,
+    double rad_rot_hndlr);
+
+DFM2_INLINE void DrawBone_Octahedron(
+    const std::vector<CRigBone>& aBone,
+    unsigned int ibone_selected,
+    unsigned int ielem_selected,
     double rad_bone_sphere,
     double rad_rot_hndlr);
 

@@ -63,16 +63,41 @@ DFM2_INLINE void myGlNormal(const CVec3f& n){ ::glNormal3f(n.x(),n.y(),n.z()); }
 }
 }
 
+// ----------------------------
+
+namespace delfem2{
+namespace opengl{
+
+template <typename REAL>
+DFM2_INLINE void myDrawOneTriangle(
+    const CVec3<REAL>& v0,
+    const CVec3<REAL>& v1,
+    const CVec3<REAL>& v2)
+{
+  CVec3<REAL> n; UnitNormal(n, v0, v1, v2);
+  myGlNormal(n);
+  myGlVertex(v0);
+  myGlVertex(v1);
+  myGlVertex(v2);
+}
+
+}
+}
 
 // ----------------------------
 
-DFM2_INLINE void delfem2::opengl::myGlNormal(const CVec3d& a, const CVec3d& b, const CVec3d& c)
+DFM2_INLINE void delfem2::opengl::myGlNormal(
+    const CVec3d& a,
+    const CVec3d& b,
+    const CVec3d& c)
 {
   CVec3d n; UnitNormal(n, a, b, c);
   ::glNormal3d(n.x(),n.y(),n.z());
 }
 
-DFM2_INLINE void delfem2::opengl::myGlVertex(int i, const std::vector<CVec3d>& aV)
+DFM2_INLINE void delfem2::opengl::myGlVertex(
+    int i,
+    const std::vector<CVec3d>& aV)
 {
   const CVec3d& v = aV[i];
   opengl::myGlVertex(v);
@@ -177,10 +202,10 @@ DFM2_INLINE void delfem2::opengl::DrawCylinder
 }
 
 template <typename REAL>
-DFM2_INLINE void delfem2::opengl::DrawArrow
-(const CVec3<REAL>& p0,
- const CVec3<REAL>& d,
- int ndivt)
+DFM2_INLINE void delfem2::opengl::DrawArrow(
+    const CVec3<REAL>& p0,
+    const CVec3<REAL>& d,
+    int ndivt)
 {
   using CV3 = CVec3<REAL>;
   CV3 z = d; z.SetNormalizedVector();
@@ -209,37 +234,123 @@ DFM2_INLINE void delfem2::opengl::DrawArrow
   { // cone
     ::glBegin(GL_TRIANGLES);
     for(int idiv=0;idiv<ndivt;idiv++){
-      CV3 p1 = p0+d*(REAL)0.8;
-      REAL s0 = (REAL)(r1*sin((idiv+0)*dt));
-      REAL s1 = (REAL)(r1*sin((idiv+1)*dt));
-      REAL c0 = (REAL)(r1*cos((idiv+0)*dt));
-      REAL c1 = (REAL)(r1*cos((idiv+1)*dt));
-      CV3 v0 = p1 + s0*x + c0*y;
-      CV3 v1 = p1 + s1*x + c1*y;
-      CV3 v2 = p0+d;
-      CV3 n; UnitNormal(n, v1, v0, v2);
-      myGlNormal(n);
-      myGlVertex(v0);
-      myGlVertex(v2);
-      myGlVertex(v1);
+      const CV3 p1 = p0+d*(REAL)0.8;
+      const REAL s0 = (REAL)(r1*sin((idiv+0)*dt));
+      const REAL s1 = (REAL)(r1*sin((idiv+1)*dt));
+      const REAL c0 = (REAL)(r1*cos((idiv+0)*dt));
+      const REAL c1 = (REAL)(r1*cos((idiv+1)*dt));
+      const CV3 v0 = p1 + s0*x + c0*y;
+      const CV3 v1 = p1 + s1*x + c1*y;
+      const CV3 v2 = p0+d;
+      myDrawOneTriangle(v1,v0,v2);
     }
     ::glEnd();
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::opengl::DrawArrow(const CVec3d& p0,
-                                         const CVec3d& d,
-                                         int ndivt);
-template void delfem2::opengl::DrawArrow(const CVec3f& p0,
-                                         const CVec3f& d,
-                                         int ndivt);
+template void delfem2::opengl::DrawArrow(
+    const CVec3d& p0,
+    const CVec3d& d,
+    int ndivt);
+template void delfem2::opengl::DrawArrow(
+    const CVec3f& p0,
+    const CVec3f& d,
+    int ndivt);
 #endif
-
 
 // -----------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawCircleArrow
-(const CVec3d& org, CVec3d axis, double offset)
+template<typename REAL>
+DFM2_INLINE void delfem2::opengl::DrawArrowOcta_FaceNrm(
+    const CVec3<REAL> &p0,
+    const CVec3<REAL> &d,
+    REAL rad_ratio,
+    REAL node_ratio)
+{
+  using CV3 = CVec3<REAL>;
+  CV3 z = d;
+  z.SetNormalizedVector();
+  CV3 x, y; GetVertical2Vector(z, x, y);
+  const REAL dt = M_PI*0.5;
+  const REAL r0 = d.Length() * rad_ratio;
+  const CV3 p1 = p0 + node_ratio*d;
+  const CV3 p2 = p0 + d;
+  //
+  ::glBegin(GL_TRIANGLES);
+  for (int idiv = 0; idiv < 4; idiv++) {
+    const REAL s0 = (REAL) (r0 * sin((idiv + 0) * dt));
+    const REAL s1 = (REAL) (r0 * sin((idiv + 1) * dt));
+    const REAL c0 = (REAL) (r0 * cos((idiv + 0) * dt));
+    const REAL c1 = (REAL) (r0 * cos((idiv + 1) * dt));
+    const CV3 q0 = p1 + s0 * x + c0 * y;
+    const CV3 q1 = p1 + s1 * x + c1 * y;
+    myDrawOneTriangle(p0,q0,q1);
+    myDrawOneTriangle(p2,q1,q0);
+  }
+  ::glEnd();
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::opengl::DrawArrowOcta_FaceNrm(
+    const CVec3d &p0,
+    const CVec3d &d,
+    double rad_ratio,
+    double node_ratio);
+template void delfem2::opengl::DrawArrowOcta_FaceNrm(
+    const CVec3f &p0,
+    const CVec3f &d,
+    float rad_ratio,
+    float node_ratio);
+#endif
+
+
+template<typename REAL>
+DFM2_INLINE void delfem2::opengl::DrawArrowOcta_Edge(
+    const delfem2::CVec3<REAL> &p0,
+    const delfem2::CVec3<REAL> &d,
+    REAL rad_ratio,
+    REAL node_ratio)
+{
+  using CV3 = CVec3<REAL>;
+  CV3 z = d; z.SetNormalizedVector();
+  CV3 x, y; GetVertical2Vector(z, x, y);
+  const REAL dt = M_PI*0.5;
+  const REAL r0 = d.Length() * rad_ratio;
+  const CV3 p1 = p0 + node_ratio*d;
+  const CV3 p2 = p0 + d;
+  //
+  ::glBegin(GL_LINES);
+  for (int idiv = 0; idiv < 4; idiv++) {
+    const REAL s0 = (REAL) (r0 * sin((idiv + 0) * dt));
+    const REAL s1 = (REAL) (r0 * sin((idiv + 1) * dt));
+    const REAL c0 = (REAL) (r0 * cos((idiv + 0) * dt));
+    const REAL c1 = (REAL) (r0 * cos((idiv + 1) * dt));
+    const CV3 q0 = p1 + s0 * x + c0 * y;
+    const CV3 q1 = p1 + s1 * x + c1 * y;
+    myGlVertex(p0); myGlVertex(q0);
+    myGlVertex(p2); myGlVertex(q0);
+    myGlVertex(q0); myGlVertex(q1);
+  }
+  ::glEnd();
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::opengl::DrawArrowOcta_Edge(
+    const delfem2::CVec3d &p0,
+    const delfem2::CVec3d &d,
+    double rad_ratio,
+    double node_ratio)
+template void delfem2::opengl::DrawArrowOcta_Edge(
+    const delfem2::CVec3f &p0,
+    const delfem2::CVec3f &d,
+    float rad_ratio,
+    float node_ratio)
+#endif
+
+// -----------------------------
+
+DFM2_INLINE void delfem2::opengl::DrawCircleArrow(
+    const CVec3d& org,
+    CVec3d axis,
+    double offset)
 {
   double arrow_width_ratio = 0.1;
   double head_width_ratio = 2.0;

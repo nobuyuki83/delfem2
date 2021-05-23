@@ -37,100 +37,136 @@ DFM2_INLINE void ViewTransformation(const CVec3d& dx, const CVec3d& dz, const CV
 
 // -------------------------------------
 
-DFM2_INLINE void DrawArcSolid
- (const CVec3d& axis,
-  const CVec3d& org,
-  double ru, // rin
-  double rv, // rout
-  double rads,
-  double rade);
+DFM2_INLINE void DrawArcSolid(
+    const CVec3d& axis,
+    const CVec3d& org,
+    double ru, // rin
+    double rv, // rout
+    double rads,
+    double rade);
 
 template <typename REAL>
-DFM2_INLINE void DrawArrow
- (const CVec3<REAL>& p0,
-  const CVec3<REAL>& d,
-  int ndivt=16);
+DFM2_INLINE void DrawArrow(
+    const CVec3<REAL>& p0,
+    const CVec3<REAL>& d,
+    int ndivt=16);
 
-DFM2_INLINE void DrawCircleArrow
- (const CVec3d& org, CVec3d axis, double offset);
+template<typename REAL>
+DFM2_INLINE void DrawArrowOcta_FaceNrm(
+    const CVec3<REAL> &p,
+    const CVec3<REAL> &d,
+    REAL rad_ratio,
+    REAL node_ratio);
 
-DFM2_INLINE void DrawCylinder
- (const CVec3d& p0,
-  const CVec3d& p1,
-  double r);
+template<typename REAL>
+DFM2_INLINE void DrawArrowOcta_Edge(
+    const delfem2::CVec3<REAL> &p,
+    const delfem2::CVec3<REAL> &d,
+    REAL rad_ratio,
+    REAL node_ratio);
 
-DFM2_INLINE void DrawCylinderWire
- (const CVec3d& p0,
-  const CVec3d& p1,
-  double r);
+DFM2_INLINE void DrawCircleArrow(
+    const CVec3d& org,
+    CVec3d axis,
+    double offset);
 
-DFM2_INLINE void DrawSingleQuad_FaceNorm(const CVec3d& p0,
-                             const CVec3d& p1,
-                             const CVec3d& p2,
-                             const CVec3d& p3);
-DFM2_INLINE void DrawSingleQuad_Edge(const CVec3d& p0,
-                         const CVec3d& p1,
-                         const CVec3d& p2,
-                         const CVec3d& p3);
-DFM2_INLINE void DrawSingleHex_Edge
- (const CVec3d& p0,
-  const CVec3d& p1,
-  const CVec3d& p2,
-  const CVec3d& p3,
-  const CVec3d& p4,
-  const CVec3d& p5,
-  const CVec3d& p6,
-  const CVec3d& p7);
+DFM2_INLINE void DrawCylinder (
+    const CVec3d& p0,
+    const CVec3d& p1,
+    double r);
 
-DFM2_INLINE void drawPolyLine3D(const std::vector<CVec3d>& aP);
+DFM2_INLINE void DrawCylinderWire(
+    const CVec3d& p0,
+    const CVec3d& p1,
+    double r);
+
+DFM2_INLINE void DrawSingleQuad_FaceNorm(
+    const CVec3d& p0,
+    const CVec3d& p1,
+    const CVec3d& p2,
+    const CVec3d& p3);
+
+DFM2_INLINE void DrawSingleQuad_Edge(
+    const CVec3d& p0,
+    const CVec3d& p1,
+    const CVec3d& p2,
+    const CVec3d& p3);
+
+DFM2_INLINE void DrawSingleHex_Edge (
+    const CVec3d& p0,
+    const CVec3d& p1,
+    const CVec3d& p2,
+    const CVec3d& p3,
+    const CVec3d& p4,
+    const CVec3d& p5,
+    const CVec3d& p6,
+    const CVec3d& p7);
+
+DFM2_INLINE void drawPolyLine3D(
+    const std::vector<CVec3d>& aP);
 
 template <typename REAL>
-DFM2_INLINE void DrawCircleWire(const CVec3<REAL>& axis,
-                                const CVec3<REAL>& org,
-                                REAL r);
+DFM2_INLINE void DrawCircleWire(
+    const CVec3<REAL>& axis,
+    const CVec3<REAL>& org,
+    REAL r);
 
-DFM2_INLINE void DrawCircleSolid(const CVec3d& axis,
-                     const CVec3d& org,
-                     double r);
-DFM2_INLINE void DrawGrid2D(int ndivx, int ndivy,
-                const CVec3d& ex, const CVec3d& ey, const CVec3d& org);
-void DrawGridOutside(int ndivx, int ndivy, int ndivz,
-                     double elen,
-                     const CVec3d& org);
+DFM2_INLINE void DrawCircleSolid(
+    const CVec3d& axis,
+    const CVec3d& org,
+    double r);
+
+DFM2_INLINE void DrawGrid2D(
+    int ndivx,
+    int ndivy,
+    const CVec3d& ex,
+    const CVec3d& ey,
+    const CVec3d& org);
+
+void DrawGridOutside(
+    int ndivx,
+    int ndivy,
+    int ndivz,
+    double elen,
+    const CVec3d& org);
   
 // ------------
 // mesh from here
-DFM2_INLINE void DrawPoint3D(const std::vector<CVec3d>& aPoint);
-DFM2_INLINE void DrawMeshQuad_Face
- (const std::vector<CVec3d>& aPoint,
-  const std::vector<unsigned int>& aQuad);
 
-DFM2_INLINE void DrawMeshTri_Edge
- (const std::vector<CVec3d>& aP,
-  const std::vector<unsigned int>& aTri);
+DFM2_INLINE void DrawPoint3D(
+    const std::vector<CVec3d>& aPoint);
 
-DFM2_INLINE void DrawTriMeshNorm
- (const std::vector<CVec3d>& aP,
-  const std::vector<int>& aTri);
+DFM2_INLINE void DrawMeshQuad_Face(
+    const std::vector<CVec3d>& aPoint,
+    const std::vector<unsigned int>& aQuad);
 
-DFM2_INLINE void DrawMeshTri_Edge
- (const std::vector<CVec3d>& aP,
-  const std::vector<unsigned int>& aTri);
+DFM2_INLINE void DrawMeshTri_Edge(
+    const std::vector<CVec3d>& aP,
+    const std::vector<unsigned int>& aTri);
 
-DFM2_INLINE void DrawQuad3D_Edge
- (const std::vector<CVec3d>& aPoint,
-  const std::vector<unsigned int>& aQuad);
+DFM2_INLINE void DrawTriMeshNorm(
+    const std::vector<CVec3d>& aP,
+    const std::vector<int>& aTri);
+
+DFM2_INLINE void DrawMeshTri_Edge(
+    const std::vector<CVec3d>& aP,
+    const std::vector<unsigned int>& aTri);
+
+DFM2_INLINE void DrawQuad3D_Edge(
+    const std::vector<CVec3d>& aPoint,
+    const std::vector<unsigned int>& aQuad);
 
 // CVec3
 // --------------------------------------------------------------------
 // CMat4
 
 template <typename REAL>
-DFM2_INLINE void MyGlMultMat(const delfem2::CMat4<REAL>& m);
+DFM2_INLINE void MyGlMultMat(
+    const delfem2::CMat4<REAL>& m);
 
-DFM2_INLINE void DrawHandlerRotation_Mat4
- (const double Mat[16],
-  double size, int ielem_picked);
+DFM2_INLINE void DrawHandlerRotation_Mat4(
+    const double Mat[16],
+    double size, int ielem_picked);
 
 // CMat4
 // --------------------------------------------------------------------
