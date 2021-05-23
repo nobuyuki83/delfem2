@@ -124,7 +124,7 @@ public:
           const int iz1 = iz0 + k;
           if (iz1 < 0 || iz1 >= int(nz)) continue;
           const unsigned int ig1 = iz1 * ny * nx + iy1 * nx + ix1;
-          for (int ii0 = aGrid2Obj_ind[ig1]; ii0 < aGrid2Obj_ind[ig1 + 1]; ++ii0) {
+          for (unsigned int ii0 = aGrid2Obj_ind[ig1]; ii0 < aGrid2Obj_ind[ig1 + 1]; ++ii0) {
             aIP.push_back(aGrid2Obj[ii0].iobj);
           }
         }

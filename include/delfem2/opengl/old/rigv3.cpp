@@ -55,7 +55,7 @@ DFM2_INLINE void delfem2::opengl::Draw_RigBone(
   }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawBone(
+DFM2_INLINE void delfem2::opengl::DrawBone_Line(
     const std::vector<CRigBone>& aBone,
     int ibone_selected,
     int ielem_selected,
@@ -64,26 +64,76 @@ DFM2_INLINE void delfem2::opengl::DrawBone(
 {
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
-  ::glPointSize(3);
   for(unsigned int iskel=0;iskel<aBone.size();++iskel){
     const bool is_selected = (int)iskel==ibone_selected;
     Draw_RigBone(iskel,
         is_selected,ielem_selected,aBone,
         rad_bone_sphere,rad_rot_hndlr);
   }
-  // draw edges whilte
   for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     const CRigBone& bone = aBone[ibone];
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
     const CRigBone& bone_p = aBone[ibone_p];
     bool is_selected_p = (ibone_p == ibone_selected);
-    if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); }
-    else{              ::glColor3d(0.0,0.0,0.0); }
+    if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); } // white if selected
+    else{              ::glColor3d(0.0,0.0,0.0); } // black if not selected
     ::glBegin(GL_LINES);
     opengl::myGlVertex(bone.Pos());
     opengl::myGlVertex(bone_p.Pos());
     ::glEnd();
+  }
+}
+
+DFM2_INLINE void delfem2::opengl::DrawBone_Octahedron(
+    const std::vector<CRigBone>& aBone,
+    unsigned int ibone_selected,
+    unsigned int ielem_selected,
+    double rad_bone_sphere,
+    double rad_rot_hndlr)
+{
+  namespace dfm2 = delfem2;
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+  for(unsigned int iskel=0;iskel<aBone.size();++iskel){
+    const bool is_selected = (iskel==ibone_selected);
+    Draw_RigBone(
+        iskel,
+        is_selected,ielem_selected,aBone,
+        rad_bone_sphere,rad_rot_hndlr);
+  }
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
+    const CRigBone& bone = aBone[ibone];
+    const int ibone_p = aBone[ibone].ibone_parent;
+    if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
+    const CRigBone& bone_p = aBone[ibone_p];
+    bool is_selected_p = (ibone_p == ibone_selected);
+    const CVec3d p0(bone_p.invBindMat[3], bone_p.invBindMat[7], bone_p.invBindMat[11]);
+    const CVec3d p1(bone.invBindMat[3], bone.invBindMat[7], bone.invBindMat[11]);
+    ::glPushMatrix();
+    double At[16]; dfm2::Transpose_Mat4(At,bone_p.affmat3Global);
+    ::glMultMatrixd(At);
+    ::glEnable(GL_LIGHTING);
+    delfem2::opengl::DrawArrowOcta_FaceNrm(
+        dfm2::CVec3d(0,0,0),
+        p0-p1,
+        0.1,
+        0.2);
+    //
+    ::glDisable(GL_LIGHTING);
+    if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); } // white if selected
+    else{              ::glColor3d(0.0,0.0,0.0); } // black if not selected
+    delfem2::opengl::DrawArrowOcta_Edge(
+        dfm2::CVec3d(0,0,0),
+        p0-p1,
+        0.1,
+        0.2);
+    /*
+    delfem2::opengl::DrawArrow(
+        dfm2::CVec3d(0,0,0),
+        p0-p1);
+        */
+    ::glPopMatrix();
   }
 }
 

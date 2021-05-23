@@ -256,23 +256,23 @@ DFM2_INLINE void delfem2::WdWddW_Rod2(
   return;
    */
   W = 0.0;
-  for(int iT=0; iT < nT; ++iT){
+  for(unsigned int iT=0; iT < nT; ++iT){
     W += 0.5*aWT[iT]*aT[iT]*aT[iT];
   }
-  for(int ip=0;ip<nP;++ip){
+  for(unsigned int ip=0;ip<nP;++ip){
     for(int idim=0;idim<2;++idim){
       dW[ip][idim] = 0.0;
-      for(int iT=0; iT < nT; ++iT){
+      for(unsigned int iT=0; iT < nT; ++iT){
         dW[ip][idim] += aWT[iT] * dT[iT][ip][idim] * aT[iT];
       }
     }
   }
-  for(int ip=0;ip<nP;++ip){
-    for (int jp = 0; jp < nP; ++jp) {
+  for(unsigned int ip=0;ip<nP;++ip){
+    for (unsigned int jp = 0; jp < nP; ++jp) {
       for (int idim = 0; idim < 2; ++idim) {
         for (int jdim = 0; jdim < 2; ++jdim) {
           ddW[ip][jp][idim][jdim] = 0.0;
-          for (int iT = 0; iT < nT; ++iT) {
+          for (unsigned int iT = 0; iT < nT; ++iT) {
             ddW[ip][jp][idim][jdim] += aWT[iT] * dT[iT][ip][idim] * dT[iT][jp][jdim];
           }
         }
