@@ -12,6 +12,8 @@
 #include "delfem2/femutil.h"
 #include "delfem2/femrod.h"
 #include "delfem2/lsvecx.h"
+#include "delfem2/lsitrsol.h"
+#include "delfem2/vecxitrsol.h"
 #include <random>
 
 #include "delfem2/vec2.h"
@@ -21,7 +23,7 @@ namespace dfm2 = delfem2;
 
 void DrawPolyline(const std::vector<double>& aXY){
   ::glBegin(GL_LINE_STRIP);
-  for(int ixy=0;ixy<aXY.size()/2;++ixy){
+  for(unsigned int ixy=0;ixy<aXY.size()/2;++ixy){
     ::glVertex2dv(aXY.data()+ixy*2);
   }
   ::glEnd();
@@ -70,11 +72,11 @@ void Solve(
     }
     dfm2::Merge<3,3,2,2>(mats, aIP, aIP, ddWe, merge_buffer);
   }
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     mats.valDia[ip*4+0] += mass_point/(dt*dt);
     mats.valDia[ip*4+3] += mass_point/(dt*dt);
   }
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     vec_r[ip*2+0] += mass_point*gravity[0];
     vec_r[ip*2+1] += mass_point*gravity[1];
   }
@@ -94,7 +96,7 @@ void Solve(
     }
   }
   std::cout << W << std::endl;
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     axy[ip*2+0] += vec_x[ip*2+0];
     axy[ip*2+1] += vec_x[ip*2+1];
     auv[ip*2+0] += vec_x[ip*2+0]/dt;

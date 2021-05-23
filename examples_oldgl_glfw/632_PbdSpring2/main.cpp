@@ -45,8 +45,8 @@ DFM2_INLINE void WdWddW_Spring2(
       {-u01[0], -u01[1]},
       {+u01[0], +u01[1]} };
   W = 0.5 * stiffness * C * C; // Hooke's law. energy is square of length
-  for(int ino=0; ino < nnode; ++ino){
-    for(int idim=0;idim < ndim;++idim){
+  for(unsigned int ino=0; ino < nnode; ++ino){
+    for(unsigned int idim=0;idim < ndim;++idim){
       dW[ino][idim] = stiffness * dC[ino][idim] * C;
     }
   }
@@ -70,7 +70,7 @@ void StepTimePbdSpring2(
     aXY[ip*2+0] += dt*aUV[ip*2+0]+dt*dt*gravity[0];
     aXY[ip*2+1] += dt*aUV[ip*2+1]+dt*dt*gravity[1];
   }
-  for(int il=0;il<aLine.size()/2;++il){
+  for(unsigned int il=0;il<aLine.size()/2;++il){
     unsigned int ip0 = aLine[il*2+0];
     unsigned int ip1 = aLine[il*2+1];
     const double Len = distance2(aXY0.data()+ip0*2, aXY0.data()+ip1*2);

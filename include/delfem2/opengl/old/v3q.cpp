@@ -337,12 +337,12 @@ template void delfem2::opengl::DrawArrowOcta_Edge(
     const delfem2::CVec3d &p0,
     const delfem2::CVec3d &d,
     double rad_ratio,
-    double node_ratio)
+    double node_ratio);
 template void delfem2::opengl::DrawArrowOcta_Edge(
     const delfem2::CVec3f &p0,
     const delfem2::CVec3f &d,
     float rad_ratio,
-    float node_ratio)
+    float node_ratio);
 #endif
 
 // -----------------------------
