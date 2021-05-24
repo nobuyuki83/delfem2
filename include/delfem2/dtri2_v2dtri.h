@@ -9,8 +9,8 @@
  * @brief dynamic triangle mesh class & functions
  */
 
-#ifndef DFM2_DTRI_V2_H
-#define DFM2_DTRI_V2_H
+#ifndef DFM2_DTRI2_V2DTRI_H
+#define DFM2_DTRI2_V2DTRI_H
 
 #include "delfem2/dfm2_inline.h"
 #include <map>
@@ -38,7 +38,7 @@ DFM2_INLINE void CheckTri(
  * @param ipo0 point index
  */
 DFM2_INLINE void DelaunayAroundPoint(
-    const unsigned int ipo0,
+    unsigned int ipo0,
     std::vector<CDynPntSur>& aPo,
     std::vector<CDynTri>& aTri,
     const std::vector<CVec2d>& aVec2);
@@ -54,11 +54,11 @@ DFM2_INLINE void Meshing_Initialize(
     std::vector<CDynTri>& aTri,
     std::vector<CVec2d>& aVec2);
 
-DFM2_INLINE void FlagConnected
- (std::vector<int>& inout_flg,
-  const std::vector<CDynTri>& aTri_in,
-  unsigned int itri0_ker,
-  int iflag);
+DFM2_INLINE void FlagConnected(
+    std::vector<int>& inout_flg,
+    const std::vector<CDynTri>& aTri_in,
+    unsigned int itri0_ker,
+    int iflag);
 
 
 /**
@@ -122,12 +122,29 @@ DFM2_INLINE void MinMaxTriArea(
     const std::vector<CVec2d>& aVec2,
     const std::vector<CDynTri>& aETri);
 
+/**
+ * Convert dynamic triangle mesh data into array of vertex coordinate and their connectivities
+ * @param[out] aXY
+ * @param[out] aTri
+ * @param[in] aVec2
+ * @param[in] aETri
+ */
 DFM2_INLINE void CMeshTri2D(
     std::vector<double>& aXY,
     std::vector<unsigned int>& aTri,
-    std::vector<CVec2d>& aVec2,
-    std::vector<CDynTri>& aETri);
+    const std::vector<CVec2d>& aVec2,
+    const std::vector<CDynTri>& aETri);
 
+/**
+ * Generate mesh inside a region specified by polygons
+ * First polygon specify the outside of the region, subsequent polygons specifies the holes
+ * @param[out] aPo2D
+ * @param[out] aETri
+ * @param[out] aVec2
+ * @param[in] aaXY input array of polygons
+ * @param[in] resolution_edge
+ * @param[in] resolution_face
+ */
 DFM2_INLINE void GenMesh(
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aETri,
@@ -144,8 +161,8 @@ public:
 
 class CInputTriangulation_Uniform : public CInputTriangulation {
 public:
-  CInputTriangulation_Uniform(double elen): elen(elen){}
-  virtual double edgeLengthRatio(double px, double py) const {
+  explicit CInputTriangulation_Uniform(double elen): elen(elen){}
+  double edgeLengthRatio(double px, double py) const override {
     return 1.0;
   }
 public:
@@ -163,9 +180,9 @@ void MeshingInside(
     std::vector<int>& aFlagPnt,
     std::vector<unsigned int>& aFlagTri,
     //
-    const size_t nPointFix,
-    const unsigned int nflgpnt_offset,
-    const double len,
+    size_t nPointFix,
+    unsigned int nflgpnt_offset,
+    double len,
     const CInputTriangulation& mesh_density);
 
 
@@ -184,17 +201,17 @@ public:
       return ipo1 < rhs.ipo1;
     }
   public:
-    int ipo_new, ipo0, ipo1;
+    int ipo_new{}, ipo0, ipo1;
     double r0;
   };
 public:
   void Interpolate(double* pVal, int np, int ndim) const {
-    for(unsigned int icmd=0;icmd<aCmdEdge.size();++icmd){
-      const int i0 = aCmdEdge[icmd].ipo0; assert( i0>=0 && i0<np );
-      const int i1 = aCmdEdge[icmd].ipo1; assert( i1>=0 && i1<np );
-      const int i2 = aCmdEdge[icmd].ipo_new;
+    for(const auto & cmd : aCmdEdge){
+      const int i0 = cmd.ipo0; assert(i0 >= 0 && i0 < np );
+      const int i1 = cmd.ipo1; assert(i1 >= 0 && i1 < np );
+      const int i2 = cmd.ipo_new;
       if( i2 >= np || i2 < 0 ){ continue; }
-      double r0 = aCmdEdge[icmd].r0;
+      double r0 = cmd.r0;
       for(int idim=0;idim<ndim;++idim){
         pVal[i2*ndim+idim] = r0*pVal[i0*ndim+idim] + (1-r0)*pVal[i1*ndim+idim];
       }
@@ -237,7 +254,7 @@ public:
       aVec2[ipo].p[1] = aXY[ipo*2+1];
     }
   }
-  void Check()
+  void Check() const
   {
     AssertDTri(aETri);
     AssertMeshDTri(aEPo, aETri);
@@ -267,14 +284,14 @@ public:
   int insertPointElem(int itri0, double r0, double r1){
     CVec2d v2;
     {
-      int i0 = aETri[itri0].v[0];
-      int i1 = aETri[itri0].v[1];
-      int i2 = aETri[itri0].v[2];
+      unsigned int i0 = aETri[itri0].v[0];
+      unsigned int i1 = aETri[itri0].v[1];
+      unsigned int i2 = aETri[itri0].v[2];
       v2 = r0*aVec2[i0]+r1*aVec2[i1]+(1-r0-r1)*aVec2[i2];
     }
-    const unsigned int ipo0 = static_cast<unsigned int>(aEPo.size());
+    const auto ipo0 = static_cast<unsigned int>(aEPo.size());
     aVec2.push_back(v2);
-    aEPo.push_back(CDynPntSur());
+    aEPo.emplace_back();
     InsertPoint_Elem(ipo0, itri0, aEPo, aETri);
     return ipo0;
   }
