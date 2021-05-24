@@ -51,10 +51,10 @@ DFM2_INLINE void convert2Tri_Quad(
 
 /**
  * @brief Make quad mesh from tri mesh by merging adjacent triangle elements
- * @param aQuad (out) element index of quad mesh
- * @param aTri (in) element index of tri mesh
- * @param nTri (in) number of triangle mesh
- * @param np (in) number of points
+ * @param[out] aQuad element index of quad mesh
+ * @param[in] aTri element index of tri mesh
+ * @param[in] nTri number of triangle mesh
+ * @param[in] np number of points
  */
 DFM2_INLINE void ElemQuad_DihedralTri(
     std::vector<unsigned int>& aQuad,
@@ -185,6 +185,15 @@ DFM2_INLINE void MeshLine_JArrayEdge(
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup);
 
+/**
+ * Extracting line element from mesh (e.g., triangle mesh).
+ * The edges of the element becomes the line
+ * @param[out] aLine
+ * @param[in] aElm0
+ * @param[in] nElem
+ * @param[in] elem_type
+ * @param[in] nPo the number of the vertices
+ */
 DFM2_INLINE void MeshLine_MeshElem(
     std::vector<unsigned int>& aLine,
     //

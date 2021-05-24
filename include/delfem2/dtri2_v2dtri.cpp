@@ -261,7 +261,7 @@ DFM2_INLINE void delfem2::MeshingInside(
       };
       double len2 = len*mesh_density.edgeLengthRatio(pcnt[0], pcnt[1]);
       if( area < len2 * len2 * ratio ){ continue; }
-      const unsigned int ipo0 = static_cast<unsigned int>(aPo2D.size());
+      const auto ipo0 = static_cast<unsigned int>(aPo2D.size());
       aPo2D.resize( aPo2D.size()+1 );
       aVec2.resize( aVec2.size()+1 );
       aVec2[ipo0].p[0] = (aVec2[aTri[itri].v[0]].x()+aVec2[aTri[itri].v[1]].x()+aVec2[aTri[itri].v[2]].x())/3.0;
@@ -532,11 +532,11 @@ DFM2_INLINE void delfem2::DeleteTriFlag
 }
 
 
-DFM2_INLINE void delfem2::DeleteUnrefPoints
-(std::vector<CVec2d>& aVec2,
- std::vector<CDynPntSur>& aPo2D,
- std::vector<CDynTri>& aTri_in,
- const std::vector<unsigned int>& aPoDel)
+DFM2_INLINE void delfem2::DeleteUnrefPoints(
+    std::vector<CVec2d>& aVec2,
+    std::vector<CDynPntSur>& aPo2D,
+    std::vector<CDynTri>& aTri_in,
+    const std::vector<unsigned int>& aPoDel)
 {
   assert( aPo2D.size() == aVec2.size() );
   std::vector<unsigned int> map_po_del;
@@ -577,12 +577,12 @@ DFM2_INLINE void delfem2::DeleteUnrefPoints
 }
 
 
-DFM2_INLINE void delfem2::DeletePointsFlag
-(std::vector<CVec2d>& aVec1,
- std::vector<CDynPntSur>& aPo1,
- std::vector<CDynTri>& aTri,
- std::vector<int>& aFlgPnt1,
- int iflg)
+DFM2_INLINE void delfem2::DeletePointsFlag(
+    std::vector<CVec2d>& aVec1,
+    std::vector<CDynPntSur>& aPo1,
+    std::vector<CDynTri>& aTri,
+    std::vector<int>& aFlgPnt1,
+    int iflg)
 {
   const size_t np0 = aVec1.size();
   assert( aPo1.size() == np0 );
@@ -624,10 +624,10 @@ DFM2_INLINE void delfem2::DeletePointsFlag
   }
 }
 
-DFM2_INLINE void delfem2::Meshing_Initialize
-(std::vector<CDynPntSur>& aPo2D,
- std::vector<CDynTri>& aTri,
- std::vector<CVec2d>& aVec2)
+DFM2_INLINE void delfem2::Meshing_Initialize(
+    std::vector<CDynPntSur>& aPo2D,
+    std::vector<CDynTri>& aTri,
+    std::vector<CVec2d>& aVec2)
 {
   aPo2D.resize(aVec2.size());
   for(size_t ixys=0;ixys<aVec2.size();ixys++){
@@ -887,12 +887,12 @@ void PrepareInput
  */
 
 
-DFM2_INLINE void delfem2::Meshing_SingleConnectedShape2D
-(std::vector<CDynPntSur>& aPo2D,
- std::vector<CVec2d>& aVec2,
- std::vector<CDynTri>& aDTri,
- const std::vector<int>& loopIP_ind,
- const std::vector<int>& loopIP)
+DFM2_INLINE void delfem2::Meshing_SingleConnectedShape2D(
+    std::vector<CDynPntSur>& aPo2D,
+    std::vector<CVec2d>& aVec2,
+    std::vector<CDynTri>& aDTri,
+    const std::vector<int>& loopIP_ind,
+    const std::vector<int>& loopIP)
 {
   std::vector<unsigned int> aPoDel;
   {
@@ -933,11 +933,11 @@ DFM2_INLINE void delfem2::Meshing_SingleConnectedShape2D
 
 // -----------------------------------------
 
-DFM2_INLINE void delfem2::CMeshTri2D
-(std::vector<double>& aXY,
- std::vector<unsigned int>& aTri,
- std::vector<CVec2d>& aVec2,
- std::vector<CDynTri>& aETri)
+DFM2_INLINE void delfem2::CMeshTri2D(
+    std::vector<double>& aXY,
+    std::vector<unsigned int>& aTri,
+    const std::vector<CVec2d>& aVec2,
+    const std::vector<CDynTri>& aETri)
 {
   aXY.resize(aVec2.size()*2);
   for(size_t ip=0;ip<aVec2.size();++ip){
@@ -953,13 +953,15 @@ DFM2_INLINE void delfem2::CMeshTri2D
 }
 
 
-DFM2_INLINE void delfem2::RefinementPlan_EdgeLongerThan_InsideCircle
-(CCmdRefineMesh& aCmd,
- double elen,
- double px, double py, double rad,
- const std::vector<CDynPntSur>& aPo2D,
- const std::vector<CVec2d>& aVec2,
- const std::vector<CDynTri>& aETri)
+DFM2_INLINE void delfem2::RefinementPlan_EdgeLongerThan_InsideCircle(
+    CCmdRefineMesh& aCmd,
+    double elen,
+    double px,
+    double py,
+    double rad,
+    const std::vector<CDynPntSur>& aPo2D,
+    const std::vector<CVec2d>& aVec2,
+    const std::vector<CDynTri>& aETri)
 {
   std::set<CCmdRefineMesh::CCmdEdge> setCmd;
   for(const auto & itri : aETri){
@@ -985,11 +987,11 @@ DFM2_INLINE void delfem2::RefinementPlan_EdgeLongerThan_InsideCircle
 
 
 // TODO: implement this function
-DFM2_INLINE void delfem2::RefineMesh
-(std::vector<CDynPntSur>& aEPo2,
- std::vector<CDynTri>& aSTri,
- std::vector<CVec2d>& aVec2,
- CCmdRefineMesh& aCmd)
+DFM2_INLINE void delfem2::RefineMesh(
+    std::vector<CDynPntSur>& aEPo2,
+    std::vector<CDynTri>& aSTri,
+    std::vector<CVec2d>& aVec2,
+    CCmdRefineMesh& aCmd)
 {
   assert( aVec2.size() == aEPo2.size() );
   std::stack<int> aIV_free;
@@ -1003,7 +1005,7 @@ DFM2_INLINE void delfem2::RefineMesh
     double r0 = cmd.r0;
     CVec2d v01 = r0*aVec2[i0] + (1.0-r0)*aVec2[i1];
     if( aIV_free.empty() ){
-      unsigned int ipo = static_cast<unsigned int>(aVec2.size());
+      auto ipo = static_cast<unsigned int>(aVec2.size());
       aVec2.push_back(v01);
       aEPo2.emplace_back();
       cmd.ipo_new = ipo;
@@ -1024,11 +1026,11 @@ DFM2_INLINE void delfem2::RefineMesh
 }
 
 
-DFM2_INLINE void delfem2::MakeInvMassLumped_Tri
-(std::vector<double>& aInvMassLumped,
- double rho,
- const std::vector<CVec2d>& aVec2,
- const std::vector<CDynTri>& aETri)
+DFM2_INLINE void delfem2::MakeInvMassLumped_Tri(
+    std::vector<double>& aInvMassLumped,
+    double rho,
+    const std::vector<CVec2d>& aVec2,
+    const std::vector<CDynTri>& aETri)
 {
   aInvMassLumped.assign(aVec2.size(),0.0);
   for(const auto & it : aETri){
@@ -1038,7 +1040,7 @@ DFM2_INLINE void delfem2::MakeInvMassLumped_Tri
       {aVec2[aIP[1]].x(),aVec2[aIP[1]].y()},
       {aVec2[aIP[2]].x(),aVec2[aIP[2]].y()} };
     const double Area = Area_Tri2(P[0], P[1], P[2]);
-    for(int ip : aIP){
+    for(auto ip : aIP){
       aInvMassLumped[ip] += Area*rho/3.0;
     }
   }
@@ -1049,16 +1051,16 @@ DFM2_INLINE void delfem2::MakeInvMassLumped_Tri
   }
 }
 
-DFM2_INLINE void delfem2::MinMaxTriArea
-(double& min_area,
- double& max_area,
- const std::vector<CVec2d>& aVec2,
- const std::vector<CDynTri>& aETri)
+DFM2_INLINE void delfem2::MinMaxTriArea(
+    double& min_area,
+    double& max_area,
+    const std::vector<CVec2d>& aVec2,
+    const std::vector<CDynTri>& aETri)
 {
   for(size_t it=0;it<aETri.size();++it){
-    const int i0 = aETri[it].v[0];
-    const int i1 = aETri[it].v[1];
-    const int i2 = aETri[it].v[2];
+    const unsigned int i0 = aETri[it].v[0];
+    const unsigned int i1 = aETri[it].v[1];
+    const unsigned int i2 = aETri[it].v[2];
     double P[3][2] = {
       {aVec2[i0].x(),aVec2[i0].y()},
       {aVec2[i1].x(),aVec2[i1].y()},
@@ -1074,13 +1076,13 @@ DFM2_INLINE void delfem2::MinMaxTriArea
 }
 
 
-DFM2_INLINE void delfem2::GenMesh
-(std::vector<CDynPntSur>& aPo2D,
- std::vector<CDynTri>& aETri,
- std::vector<CVec2d>& aVec2,
- const std::vector< std::vector<double> >& aaXY,
- double resolution_edge,
- double resolution_face)
+DFM2_INLINE void delfem2::GenMesh(
+    std::vector<CDynPntSur>& aPo2D,
+    std::vector<CDynTri>& aETri,
+    std::vector<CVec2d>& aVec2,
+    const std::vector< std::vector<double> >& aaXY,
+    double resolution_edge,
+    double resolution_face)
 {
   std::vector<int> loopIP_ind, loopIP;
   {
