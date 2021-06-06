@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/mat2.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/pbd_geo3.h"
 

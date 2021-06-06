@@ -95,34 +95,6 @@ DFM2_INLINE float Distance2
   
 }
 
-// -------------------------------------
-
-template <typename T>
-void delfem2::MatVec2(T w[2], const T A[4], const T v[2])
-{
-  w[0] = A[0*2+0]*v[0]+A[0*2+1]*v[1];
-  w[1] = A[1*2+0]*v[0]+A[1*2+1]*v[1];
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::MatVec2(float w[2], const float A[4], const float v[2]);
-template void delfem2::MatVec2(double w[2], const double A[4], const double v[2]);
-#endif
-
-// -------------------------------------
-
-template <typename T>
-void delfem2::MatMat2(T AB[4], const T A[4], const T B[4])
-{
-  AB[0*2+0] = A[0*2+0]*B[0*2+0]+A[0*2+1]*B[1*2+0];
-  AB[0*2+1] = A[0*2+0]*B[0*2+1]+A[0*2+1]*B[1*2+1];
-  AB[1*2+0] = A[1*2+0]*B[0*2+0]+A[1*2+1]*B[1*2+0];
-  AB[1*2+1] = A[1*2+0]*B[0*2+1]+A[1*2+1]*B[1*2+1];
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::MatMat2(float AB[4], const float A[4], const float B[4]);
-template void delfem2::MatMat2(double AB[4], const double A[4], const double B[4]);
-#endif
-
 // --------------------------------------------------
 
 template <typename T>
@@ -184,98 +156,6 @@ void delfem2::Normalize2(T w[2])
 template void delfem2::Normalize2(float w[2]);
 template void delfem2::Normalize2(double w[2]);
 #endif
-
-// --------------------------------------------------------------
-
-DFM2_INLINE bool delfem2::InverseMat2
- (double invB[4],
-  const double B[4])
-{
-  double det = B[0]*B[3]-B[1]*B[2];
-  if (fabs(det)<1.0e-10) return false;
-  double invdet = 1.0/det;
-  invB[0] = +invdet*B[3];
-  invB[1] = -invdet*B[1];
-  invB[2] = -invdet*B[2];
-  invB[3] = +invdet*B[0];
-  return true;
-}
-
-DFM2_INLINE void delfem2::gramian2
- (double AtA[3],
-  const double A[4])
-{
-  AtA[0] = A[0*2+0]*A[0*2+0]+A[1*2+0]*A[1*2+0];
-  AtA[1] = A[0*2+0]*A[0*2+1]+A[1*2+0]*A[1*2+1];
-  AtA[2] = AtA[1];
-  AtA[3] = A[0*2+1]*A[0*2+1]+A[1*2+1]*A[1*2+1];
-}
-
-DFM2_INLINE void delfem2::VLVt2
- (double A[4],
-  double l0,
-  double l1,
-  const double V[4])
-{
-  A[0] = l0*V[0]*V[0]+l1*V[1]*V[1];
-  A[1] = l0*V[2]*V[0]+l1*V[3]*V[1];
-  A[2] = l0*V[0]*V[2]+l1*V[1]*V[3];
-  A[3] = l0*V[2]*V[2]+l1*V[3]*V[3];
-}
-
-
-DFM2_INLINE void delfem2::RotationalComponentOfMatrix2
- (double R[4], const double M[4])
-{
-  const double eps = 1.0e-20;
-  double A[4];
-  {
-    double s = fabs(M[0])+fabs(M[1])+fabs(M[2])+fabs(M[3]);
-    if (s<1.0e-10){
-      R[0] = 1.0;  R[1] = 0.0; R[2] = 0.0; R[3] = 1.0;
-      return;
-    }
-    double invs = 1.0/s;
-    A[0] = invs*M[0];
-    A[1] = invs*M[1];
-    A[2] = invs*M[2];
-    A[3] = invs*M[3];
-  }
-  double G[4]; gramian2(G, A);
-  double l0, l1;
-  double v0[2], v1[2];
-  {
-    double b = G[0]+G[3];
-    double c = G[0]*G[3]-G[1]*G[2];
-    double d = b*b-4*c;
-    if (d<eps){
-      l0 = 0.5*b;
-      l1 = 0.5*b;
-      v0[0] = 0;
-      v0[1] = 1;
-      v1[0] = 1;
-      v1[1] = 0;
-    }
-    else{
-      d = sqrt(d);
-      l0 = 0.5*(b+d);
-      l1 = 0.5*(b-d);
-      v0[0] = G[1];
-      v0[1] = G[3]-l1;
-      if (SquareLength2(v0)>eps){ Normalize2(v0); }
-      v1[0] = G[0]-l0;
-      v1[1] = G[2];
-      if (SquareLength2(v1)>eps){ Normalize2(v1); }
-    }
-  }
-  double V[4] = { v0[0], v1[0], v0[1], v1[1] };
-  if (l0<eps){ l0 = 1; }
-  if (l1<eps){ l1 = 1; }
-  double il0 = 1.0/sqrt(l0);
-  double il1 = 1.0/sqrt(l1);
-  double invS[4]; VLVt2(invS, il0, il1, V);
-  MatMat2(R, A, invS);
-}
 
 
 // ------------------------------------------------------------------------
@@ -383,11 +263,7 @@ delfem2::CVec2<T> delfem2::rotate90
 template <typename T>
 delfem2::CVec2<T> delfem2::Mat2Vec(const double A[4], const CVec2<T>& v)
 {
-  CVec2<T> w;
-  MatVec2(w.p, A, v.p);
-  return w;
-  //  w.p[0] = A[0]*v.p[0]+A[1]*v.p[1];
-  //  w.p[1] = A[2]*v.p[0]+A[3]*v.p[1];
+  return CVec2<T>( A[0]*v.x+A[1]*v.y, A[2]*v.x+A[3]*v.y );
 }
 #ifndef DFM2_HEADER_ONLY
 template delfem2::CVec2d delfem2::Mat2Vec(const double A[4], const CVec2d& v);
