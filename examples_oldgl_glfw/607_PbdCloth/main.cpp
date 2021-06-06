@@ -96,8 +96,8 @@ int main(int argc,char* argv[])
   const int np = aPo2D.size();
   aXYZ.resize(np*3);
   for(int ip=0;ip<np;++ip){
-    aXYZ[ip*3+0] = aVec2[ip].x();
-    aXYZ[ip*3+1] = aVec2[ip].y();
+    aXYZ[ip*3+0] = aVec2[ip].x;
+    aXYZ[ip*3+1] = aVec2[ip].y;
     aXYZ[ip*3+2] = 0.0;
   }
   aXYZt = aXYZ;

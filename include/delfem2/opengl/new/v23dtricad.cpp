@@ -161,8 +161,8 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad)
     std::vector< std::vector<unsigned int>> aaTri;
     for(const auto & iv : cad.aVtx){
       AddPoint(aPxyNxyf, aaTri,
-               iv.pos.x(),
-               iv.pos.y(),
+               iv.pos.x,
+               iv.pos.y,
                16);
     }
     for(const auto & il : aaLine){
@@ -360,8 +360,8 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
   {
     aXYf.resize(aVec2.size()*2);
     for(size_t iv=0;iv<aVec2.size();++iv){
-      aXYf[iv*2+0] = aVec2[iv].x();
-      aXYf[iv*2+1] = aVec2[iv].y();
+      aXYf[iv*2+0] = aVec2[iv].x;
+      aXYf[iv*2+1] = aVec2[iv].y;
     }
     aTri.resize(aETri.size()*3);
     for(size_t it=0;it<aETri.size();++it){

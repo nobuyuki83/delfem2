@@ -40,7 +40,7 @@ bool Nearest_Polygon2(
     winding_nubmer += theta;
     const CVec2d pe = GetNearest_LineSeg_Point(q, p0, p1);
     double re0 = (pe-p0).Length()/(p1-p0).Length();
-    const CVec2d ne = (p1 - p0).Rotate(-M_PI * 0.5).Normalize();
+    const CVec2d ne = (p1 - p0).Rotate(-M_PI * 0.5).normalized();
     const double dist0 = (pe-q).Length();
     if( min_dist > 0 && dist0 > min_dist ){ continue; }
     //
@@ -48,7 +48,7 @@ bool Nearest_Polygon2(
     ie_near = iej;
     re_near = re0;
     if( dist0 < 1.0e-5 ){ n_near = ne; } // if distance is small use edge's normal
-    else{ n_near = (pe-q).Normalize(); } // if distance is not so small, use the contacting direciton
+    else{ n_near = (pe-q).normalized(); } // if distance is not so small, use the contacting direciton
   }
   return fabs(winding_nubmer - M_PI*2)<1.0e-3; // winding_number==M_PI: inside else: outside
 }

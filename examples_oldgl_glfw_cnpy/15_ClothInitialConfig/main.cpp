@@ -203,7 +203,7 @@ int main()
         unsigned int iv0 = cad.topo.aEdge[ie].iv0;
         unsigned int iv1 = cad.topo.aEdge[ie].iv1;
         dfm2::CVec2d p = (cad.aVtx[iv0].pos+cad.aVtx[iv1].pos)*0.5;
-        glyph.DrawStringAt(std::to_string(ie),0.001, p.x(), p.y());
+        glyph.DrawStringAt(std::to_string(ie),0.001, p.x, p.y);
       }
       ::glTranslated(0,0,+0.9);
     }

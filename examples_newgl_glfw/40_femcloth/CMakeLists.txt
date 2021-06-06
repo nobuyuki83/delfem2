@@ -44,7 +44,7 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 # glfw
 SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/FindGLFW.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 
 # opengl
 find_package(OpenGL REQUIRED)

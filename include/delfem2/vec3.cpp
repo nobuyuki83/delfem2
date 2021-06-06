@@ -714,15 +714,16 @@ template void delfem2::CVec3<double>::SetNormalizedVector();
 // ----------------------------
 
 template <typename T>
-void delfem2::CVec3<T>::SetZero()
+void delfem2::CVec3<T>::setZero()
 {
-  p[0] = 0.0;
-  p[1] = 0.0;
-  p[2] = 0.0;
+  p[0] = 0;
+  p[1] = 0;
+  p[2] = 0;
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CVec3<float>::SetZero();
-template void delfem2::CVec3<double>::SetZero();
+template void delfem2::CVec3<float>::setZero();
+template void delfem2::CVec3<double>::setZero();
+template void delfem2::CVec3<int>::setZero();
 #endif
 
   

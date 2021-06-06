@@ -158,8 +158,8 @@ int main(int argc,char* argv[])
   // -------------------------------
   aXYZ0.resize(aPo2D.size()*3);
   for(std::size_t ip=0;ip<aPo2D.size();++ip){
-    aXYZ0[ip*3+0] = aVec2[ip].x();
-    aXYZ0[ip*3+1] = aVec2[ip].y();
+    aXYZ0[ip*3+0] = aVec2[ip].x;
+    aXYZ0[ip*3+1] = aVec2[ip].y;
     aXYZ0[ip*3+2] = 0.0;
   }
   aXYZ = aXYZ0;

@@ -30,7 +30,7 @@ DFM2_INLINE void FaceCenterNormal(
     const std::vector<CCad3D_Edge>& aEdge)
 {
   const std::size_t nIE = aIE.size();
-  cg.SetZero();
+  cg.setZero();
   double len_tot = 0.0;
   for (unsigned int iie = 0; iie<nIE; ++iie){
     int ie0 = aIE[(iie+0)%nIE].first;
@@ -42,8 +42,8 @@ DFM2_INLINE void FaceCenterNormal(
     len_tot += lenAB;
   }
   cg /= len_tot;
-  ///////
-  nf.SetZero();
+  // ---
+  nf.setZero();
   for (unsigned int iie = 0; iie<nIE; ++iie){
     int ie0 = aIE[(iie+0)%nIE].first;
 //    int ie1 = aIE[(iie+1)%nIE].first;
@@ -740,7 +740,7 @@ void delfem2::MakeItSmooth
  std::vector<CCad3D_Face>& aFace)
 {
   for(auto & iv : aVertex){
-    iv.norm.SetZero();
+    iv.norm.setZero();
   }
   for(auto & ifc : aFace){
     const std::vector< std::pair<unsigned int,bool> >& aIE = ifc.aIE;
@@ -759,7 +759,7 @@ void delfem2::MakeItSmooth
 //    if( aVertex[iv].isConst[1] ){ aVertex[iv].norm.y = 0; }
 //    if( aVertex[iv].isConst[2] ){ aVertex[iv].norm.z = 0; }
     if( iv.norm.Length() < 0.1 ){
-      iv.norm.SetZero();
+      iv.norm.setZero();
       continue;
     }
     iv.norm.SetNormalizedVector();
@@ -928,11 +928,11 @@ bool delfem2::FindFittingPoint(
     for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
       CVec2d q0 = aP2D[iq+0];
       CVec2d q1 = aP2D[iq+1];
-      if( (q0.x()-p2d_org.x())*(q1.x()-p2d_org.x()) < 0 ){
-        p2d_near.p[0] = p2d_org.x();
-        p2d_near.p[1] = ((q0+q1)*0.5).y();
-        p2d_norm.p[0] = (q1-q0).y();
-        p2d_norm.p[1] = (q0-q1).x();
+      if( (q0.x-p2d_org.x)*(q1.x-p2d_org.x) < 0 ){
+        p2d_near.p[0] = p2d_org.x;
+        p2d_near.p[1] = ((q0+q1)*0.5).y;
+        p2d_norm.p[0] = (q1-q0).y;
+        p2d_norm.p[1] = (q0-q1).x;
         isHit = true;
         break;
       }
@@ -943,11 +943,11 @@ bool delfem2::FindFittingPoint(
     for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
       CVec2d q0 = aP2D[iq+0];
       CVec2d q1 = aP2D[iq+1];
-      if( (q0.y()-p2d_org.y())*(q1.y()-p2d_org.y()) < 0 ){
-        p2d_near.p[0] = ((q0+q1)*0.5).x();
-        p2d_near.p[1] = p2d_org.y();
-        p2d_norm.p[0] = (q1-q0).y();
-        p2d_norm.p[1] = (q0-q1).x();
+      if( (q0.y-p2d_org.y)*(q1.y-p2d_org.y) < 0 ){
+        p2d_near.p[0] = ((q0+q1)*0.5).x;
+        p2d_near.p[1] = p2d_org.y;
+        p2d_norm.p[0] = (q1-q0).y;
+        p2d_norm.p[1] = (q0-q1).x;
         isHit = true;
         break;
       }
@@ -968,7 +968,7 @@ bool delfem2::FindFittingPoint(
   if( !isHit ) return false;
   double dist = (p2d_near-p2d_org).Length();
   if( dist > 0.4 ) return false;
-  p2d_norm.SetNormalizedVector();
+  p2d_norm.normalize();
   return true;
 }
 
@@ -1013,7 +1013,7 @@ bool delfem2::MovePointsAlongSketch(
   CVec3d plane_ey(0,0,0); plane_ey[(inorm+2)%3] = 1;
   std::vector<CVec2d> aP2D;
   for(const auto& sp0 : aStroke1){
-    CVec3d src = screenUnProjection(CVec3d(sp0.x(),sp0.y(),0), mMV, mPj);
+    CVec3d src = screenUnProjection(CVec3d(sp0.x,sp0.y,0), mMV, mPj);
     CVec3d dir = screenUnProjection(CVec3d(0,0,1), mMV, mPj);
     CVec3d p = intersection_Plane_Line(plane_org, plane_nrm, src,dir);
     aP2D.emplace_back((p-plane_org)*plane_ex,(p-plane_org)*plane_ey);
@@ -1029,8 +1029,8 @@ bool delfem2::MovePointsAlongSketch(
     bool res = FindFittingPoint(p2d_near,p2d_norm,
         p2d_org, aP2D, isConstX,isConstY,view_height*0.2);
     if( res ){
-      CVec3d p3d_near = plane_org + p2d_near.x()*plane_ex + p2d_near.y()*plane_ey;
-      CVec3d n3d_near = p2d_norm.x()*plane_ex + p2d_norm.y()*plane_ey;
+      CVec3d p3d_near = plane_org + p2d_near.x*plane_ex + p2d_near.y*plane_ey;
+      CVec3d n3d_near = p2d_norm.x*plane_ex + p2d_norm.y*plane_ey;
       v.pos = p3d_near;
       v.norm = n3d_near;
       is_moved = true;
@@ -1533,7 +1533,7 @@ bool delfem2::CCad3D::MouseMotion
         CVec3d axis(0, 0, 0); axis[iaxis] = 1;
         CVec2d spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
         CVec2d spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
-        double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).SqLength();
+        double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).squaredNorm();
         CVec3d d = r*axis;
         plane_org += d;
         std::vector<int> aIP = getPointsInEdges(aIE_picked, aEdge);
@@ -1556,7 +1556,7 @@ bool delfem2::CCad3D::MouseMotion
         CVec3d axis(0, 0, 0); axis[iaxis] = 1;
         CVec2d spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
         CVec2d spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
-        double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).SqLength();
+        double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).squaredNorm();
         CVec3d d = r*axis;
         plane_org += d;
         return false;

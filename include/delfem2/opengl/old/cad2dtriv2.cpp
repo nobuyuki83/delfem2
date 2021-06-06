@@ -40,9 +40,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm(
     const CVec2d& p0 = aVec2[i0];
     const CVec2d& p1 = aVec2[i1];
     const CVec2d& p2 = aVec2[i2];
-    ::glVertex2d(p0.x(),p0.y());
-    ::glVertex2d(p1.x(),p1.y());
-    ::glVertex2d(p2.x(),p2.y());
+    ::glVertex2d(p0.x,p0.y);
+    ::glVertex2d(p1.x,p1.y);
+    ::glVertex2d(p2.x,p2.y);
   }
   ::glEnd();
 }
@@ -66,9 +66,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge
     const CVec2d& p0 = aVec2[i0];
     const CVec2d& p1 = aVec2[i1];
     const CVec2d& p2 = aVec2[i2];
-    glVertex2d(p0.x(),p0.y());  glVertex2d(p1.x(),p1.y());
-    glVertex2d(p1.x(),p1.y());  glVertex2d(p2.x(),p2.y());
-    glVertex2d(p2.x(),p2.y());  glVertex2d(p0.x(),p0.y());
+    glVertex2d(p0.x,p0.y);  glVertex2d(p1.x,p1.y);
+    glVertex2d(p1.x,p1.y);  glVertex2d(p2.x,p2.y);
+    glVertex2d(p2.x,p2.y);  glVertex2d(p0.x,p0.y);
   }
   ::glEnd();
 }
@@ -94,7 +94,7 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge
     if( edge.type_edge == CCad2D_EdgeGeo::BEZIER_CUBIC ){
       assert( edge.param.size() == 4 );
       const CVec2d lx = (edge.p1 - edge.p0);
-      const CVec2d ly = CVec2d(lx.y(),-lx.x());
+      const CVec2d ly = CVec2d(lx.y,-lx.x);
       const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
       const CVec2d q1 = edge.p0 + edge.param[2]*lx + edge.param[3]*ly;
       ::glColor3d(0,1,0);
@@ -118,7 +118,7 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge
     else if( edge.type_edge == CCad2D_EdgeGeo::BEZIER_QUADRATIC ){
       assert( edge.param.size() == 2 );
       const CVec2d lx = (edge.p1 - edge.p0);
-      const CVec2d ly = CVec2d(lx.y(),-lx.x());
+      const CVec2d ly = CVec2d(lx.y,-lx.x);
       const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
       ::glColor3d(0,1,0);
       ::glBegin(GL_LINES);
@@ -154,7 +154,7 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
   for(size_t iv=0;iv<aVtx.size();++iv){
     if( (int)iv == ivtx_picked ){ ::glColor3d(1,1,0); }
     else{ ::glColor3d(1,0,0); }
-    ::glVertex3d( aVtx[iv].pos.x(), aVtx[iv].pos.y(), 0.0);
+    ::glVertex3d( aVtx[iv].pos.x, aVtx[iv].pos.y, 0.0);
   }
   ::glEnd();
   //

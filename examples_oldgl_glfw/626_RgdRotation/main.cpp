@@ -54,8 +54,8 @@ class CRigidBodyForceModel
 {
 public:
   void GetForceTorque(CVec3d& F, CVec3d& T) const{
-    F.SetZero();
-    T.SetZero();
+    F.setZero();
+    T.setZero();
   }
 };
 

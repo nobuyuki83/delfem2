@@ -114,7 +114,6 @@ CVec2<T> operator/ (const CVec2<T>& vec, double d); //! divide by real number
 
 /**
  * @brief 2 dimensional vector class
- * @todo use template for this class
  */
 template <typename T>
 class CVec2{
@@ -124,10 +123,14 @@ public:
 		this->p[0] = rhs.p[0];
 		this->p[1] = rhs.p[1];
 	}
-	CVec2(double x, double y){
+	CVec2(T x, T y){
 		this->p[0] = x;
 		this->p[1] = y;
 	}
+	CVec2(T x){
+    this->p[0] = x;
+    this->p[1] = x;
+  }
 	// above: constructor / destructor
 	// -------------------------------
 	// below: operator
@@ -175,13 +178,49 @@ public:
     assert(0);
     return p[0];
   }
-  // ----------
-	//! @brief normalize length
-	inline void SetNormalizedVector(){
+  // above: operator
+  // ---------------
+  // below: function
+  
+//  inline T x() const { return p[0]; }
+//  inline T y() const { return p[1]; }
+  
+  T Length() const{
+    return sqrt( p[0]*p[0]+p[1]*p[1] );
+  }
+  
+  //! @brief squared Euclidian norm (named similalty to Eigen)
+  T squaredNorm() const{
+    return p[0]*p[0]+p[1]*p[1];
+  }
+  
+	//! @brief in place normalization with Euclidian norm (named similarly to Eigen)
+	void normalize(){
 		const double mag = Length();
 		p[0] /= mag;
 		p[1] /= mag;
 	}
+  
+  //! @brief normalizeation (named similarly to Eigen)
+  CVec2 normalized() const {
+    CVec2 r(*this);
+    r.normalize();
+    return r;
+  }
+  
+  //! @brief set zero vector (named similarly to Eigen)
+  inline void setZero(){
+    p[0] = T(0);
+    p[1] = T(0);
+  }
+
+	template <typename S>
+	CVec2<S> cast() const {
+    return CVec2<S>(
+        static_cast<S>(p[0]),
+        static_cast<S>(p[1]));
+  };
+
   CVec2 Mat3Vec2_AffineProjection(const T* A) const {
     CVec2<T> y;
     y.p[0] = A[0]*p[0] + A[1]*p[1] + A[2];
@@ -197,35 +236,26 @@ public:
     y.p[1] = A[3]*p[0] + A[4]*p[1];
     return y;
   }
-  CVec2 Normalize() const {
-    CVec2 r(*this);
-    r.SetNormalizedVector();
-    return r;
-  }
+
   CVec2 Rotate(T t) const {
     CVec2 r;
     r.p[0] = cos(t)*p[0] - sin(t)*p[1];
     r.p[1] = sin(t)*p[0] + cos(t)*p[1];
     return r;
   }
-	//! set zero vector
-	inline void SetZero(){
-		p[0] = 0.0;
-		p[1] = 0.0;
-	}
-  inline double x() const { return p[0]; }
-  inline double y() const { return p[1]; }
-  double Length() const{
-		return sqrt( p[0]*p[0]+p[1]*p[1] );
-	}
-  double SqLength() const{
-		return p[0]*p[0]+p[1]*p[1];
-	}
+
 public:
-  double p[2];
+//  T p[2];
+  union {
+    T p[2];
+    struct {
+      T x, y;
+    };
+  };
 };
 using CVec2d = CVec2<double>;
 using CVec2f = CVec2<float>;
+using CVec2i = CVec2<int>;
   
 template <typename T>
 CVec2<T> rotate(const CVec2<T>& p0, double theta);

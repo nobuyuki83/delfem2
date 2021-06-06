@@ -55,9 +55,9 @@ public:
   double LengthNDiv(unsigned int ndiv) const;
   CBoundingBox2D BB() const{
     CBoundingBox2D bb;
-    bb.Add(p0.x(),p0.y());
-    bb.Add(p1.x(),p1.y());
-    for(unsigned int ip=0;ip<aP.size();++ip){ bb.Add(aP[ip].x(),aP[ip].y()); }
+    bb.Add(p0.x,p0.y);
+    bb.Add(p1.x,p1.y);
+    for(unsigned int ip=0;ip<aP.size();++ip){ bb.Add(aP[ip].x,aP[ip].y); }
     return bb;
   }
 public:

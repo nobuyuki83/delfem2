@@ -55,7 +55,7 @@ public:
         aW.resize(nxy*nv);
         for(int ixy=0;ixy<nxy;++ixy){
           dfm2::MeanValueCoordinate2D(aW.data()+nv*ixy,
-                                      dmsh.aVec2[ixy].x(), dmsh.aVec2[ixy].y(),
+                                      dmsh.aVec2[ixy].x, dmsh.aVec2[ixy].y,
                                       aXYVtx.data(), aXYVtx.size()/2);
           double sum = 0.0;
           for(int iv=0;iv<nv;++iv){

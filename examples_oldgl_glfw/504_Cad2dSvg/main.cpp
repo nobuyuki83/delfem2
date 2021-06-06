@@ -7,6 +7,7 @@
 
 
 #include "delfem2/glfw/viewer2.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
 #include "delfem2/openglstb/glyph.h"
@@ -30,6 +31,7 @@ int main(int argc,char* argv[])
   delfem2::CCad2D cad;
   // --------------------
   delfem2::glfw::CViewer2 viewer;
+  delfem2::glfw::InitGLOld();
   viewer.InitGL();
   glyph.InitGL();
   delfem2::opengl::setSomeLighting();
@@ -65,7 +67,7 @@ int main(int argc,char* argv[])
         unsigned int iv0 = cad.topo.aEdge[ie].iv0;
         unsigned int iv1 = cad.topo.aEdge[ie].iv1;
         dfm2::CVec2d p = (cad.aVtx[iv0].pos+cad.aVtx[iv1].pos)*0.5;
-        glyph.DrawStringAt(std::to_string(ie),0.8, p.x(), p.y());
+        glyph.DrawStringAt(std::to_string(ie),0.8, p.x, p.y);
       }
       ::glTranslated(0,0,+0.9);
     }

@@ -159,7 +159,7 @@ int main(int argc,char* argv[])
     rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,1), cad);
     for(int ip : aIP){
-      dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
+      dfm2::CVec3d p0(aVec2[ip].x-rt23.org2.x, aVec2[ip].y-rt23.org2.y,0.0);
       dfm2::CVec3d p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
       aXYZ[ip*3+0] = p1.x();
       aXYZ[ip*3+1] = p1.y();
@@ -172,7 +172,7 @@ int main(int argc,char* argv[])
       rt23.R.SetIdentity();
       std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,0), cad);
       for(int ip : aIP){
-        dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
+        dfm2::CVec3d p0(aVec2[ip].x-rt23.org2.x, aVec2[ip].y-rt23.org2.y,0.0);
         dfm2::CVec3d p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
         aXYZ[ip*3+0] = p1.x();
         aXYZ[ip*3+1] = p1.y();
