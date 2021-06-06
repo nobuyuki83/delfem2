@@ -43,6 +43,7 @@ include_directories(
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_library(${PROJ_NAME} STATIC
+    ${DELFEM2_INC}/mat2.h                      ${DELFEM2_INC}/mat2.cpp
     ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
     ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
     ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp

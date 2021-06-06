@@ -30,12 +30,6 @@ template <typename T>
 T Distance2(const T v1[2], const T v2[2]);
 
 template <typename T>
-void MatVec2(T w[2], const T A[4], const T v[2]);
-
-template <typename T>
-void MatMat2(T AB[4], const T A[4], const T B[4]);
-
-template <typename T>
 T SquareLength2(const T v[2]);
 
 template <typename T>
@@ -61,24 +55,6 @@ DFM2_INLINE bool IsCrossLines(
 template <typename T>
 DFM2_INLINE void GaussianDistribution2(
     T noise[2]);
-
-DFM2_INLINE bool InverseMat2(
-    double invB[4],
-    const double B[4]);
-
-DFM2_INLINE void gramian2(
-    double AtA[3],
-    const double A[4]);
-
-DFM2_INLINE void VLVt2(
-    double A[4],
-    double l0,
-    double l1,
-    const double V[4]);
-
-DFM2_INLINE void RotationalComponentOfMatrix2(
-    double R[4],
-    const double M[4]);
 
 // ----------------------
 
@@ -167,16 +143,13 @@ public:
 		v -= rhs;
 		return v;
 	}
-  inline double operator[](int i) const{
-    if (i==0) return p[0];
-    if (i==1) return p[1];
-    return 0;
+  inline T operator[](int i) const{
+    assert(i<2);
+    return p[i];
   }
-  inline double& operator[](int i){
-    if (i==0) return p[0];
-    if (i==1) return p[1];
-    assert(0);
-    return p[0];
+  inline T& operator[](int i){
+    assert(i<2);
+    return p[i];
   }
   // above: operator
   // ---------------

@@ -51,6 +51,7 @@ IF(NOT DFM2_HEADER_ONLY)
   set(SRC_DFM2
       ${DELFEM2_INC}/vec2.h                 ${DELFEM2_INC}/vec2.cpp
       ${DELFEM2_INC}/vec3.h                 ${DELFEM2_INC}/vec3.cpp
+      ${DELFEM2_INC}/mat2.h                 ${DELFEM2_INC}/mat2.cpp      
       ${DELFEM2_INC}/mat3.h                 ${DELFEM2_INC}/mat3.cpp
       ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
