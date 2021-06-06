@@ -48,7 +48,7 @@ void SetProblem()
 {
   dfm2::MeshTri3D_Cube(aXYZ, aTri, 10);
   for(unsigned int i=0;i<aXYZ.size();++i){ aXYZ[i] *= 0.3; }
-  Velo.SetZero();
+  Velo.setZero();
   Velo[0] = 1.0;
   {
     std::vector<double> A, f;

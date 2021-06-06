@@ -218,7 +218,7 @@ public:
 	inline double Length()  const{ return sqrt( p[0]*p[0]+p[1]*p[1]+p[2]*p[2] ); }
 	inline double DLength() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
 	void SetNormalizedVector();
-	void SetZero();
+	void setZero();
   void Print() const {
     std::cout <<p[0]<< " " << p[1] << " " << p[2] << std::endl;
   }

@@ -32,7 +32,7 @@ public:
     R.SetIdentity();
   }
   delfem2::CVec3d Transform(const delfem2::CVec2d& pi) const {
-    delfem2::CVec3d p0(pi.x()-org2.x(), pi.y()-org2.y(),0.0);
+    delfem2::CVec3d p0(pi.x-org2.x, pi.y-org2.y,0.0);
     delfem2::CVec3d p2 = p0;
     if( radinv_x < 1.0e-5 ) {
       double x0 = p0.x();

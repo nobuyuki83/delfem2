@@ -189,7 +189,7 @@ DFM2_INLINE delfem2::CVec3d delfem2::drag_AxisHandler
 {
   CVec2d spa0 = screenXYProjection(p+len*axis, mMV, mPj);
   CVec2d spa1 = screenXYProjection(p-len*axis, mMV, mPj);
-  double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).SqLength();
+  double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).squaredNorm();
   return r*axis*len;
 }
 

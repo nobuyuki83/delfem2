@@ -122,11 +122,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNormTex(
                          p0, p1, p2);
       ::glNormal3dv(n);
     }
-    ::glTexCoord2d(aVec2[i0].x(),aVec2[i0].y());
+    ::glTexCoord2d(aVec2[i0].x,aVec2[i0].y);
     ::glVertex3dv(p0);
-    ::glTexCoord2d(aVec2[i1].x(),aVec2[i1].y());
+    ::glTexCoord2d(aVec2[i1].x,aVec2[i1].y);
     ::glVertex3dv(p1);
-    ::glTexCoord2d(aVec2[i2].x(),aVec2[i2].y());
+    ::glTexCoord2d(aVec2[i2].x,aVec2[i2].y);
     ::glVertex3dv(p2);
   }
   ::glEnd();

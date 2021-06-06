@@ -245,11 +245,11 @@ public:
   }
   std::vector<double> MinMax_XYZ() const {
     double x_min,x_max, y_min,y_max;
-    x_min=x_max=aVec2[0].x();
-    y_min=y_max=aVec2[0].y();
+    x_min=x_max=aVec2[0].x;
+    y_min=y_max=aVec2[0].y;
     for(unsigned int ipo=0;ipo<aEPo.size();ipo++){
-      const double x = aVec2[ipo].x();
-      const double y = aVec2[ipo].y();
+      const double x = aVec2[ipo].x;
+      const double y = aVec2[ipo].y;
       x_min = (x_min < x) ? x_min : x;
       x_max = (x_max > x) ? x_max : x;
       y_min = (y_min < y) ? y_min : y;

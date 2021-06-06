@@ -845,7 +845,7 @@ void delfem2::viscousityVortexParticleGrid
   grid.aDataVtx.resize((nx+1)*(ny+1)*(nz+1));
   for (unsigned int igp = 0; igp<grid.aDataVtx.size(); ++igp){
     grid.aDataVtx[igp].aPairPtcleWeight.clear();
-    grid.aDataVtx[igp].circ.SetZero();
+    grid.aDataVtx[igp].circ.setZero();
   }
   for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     CVec3d p = aVortexParticle[ivp].pos;

@@ -191,8 +191,8 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D(
       CVec2d dq = CVec2d(aXY0[ip*2+0],aXY0[ip*2+1])-qc;
       CVec2d pg = pc+Mat2Vec(R, dq); // goal position
       CVec2d pg2 = stiffness*pg+(1-stiffness)*CVec2d(aXYt[ip*2+0],aXYt[ip*2+1]);
-      aXYt[ip*2+0] = pg2.x();
-      aXYt[ip*2+1] = pg2.y();
+      aXYt[ip*2+0] = pg2.x;
+      aXYt[ip*2+1] = pg2.y;
     }
   }
 }

@@ -29,12 +29,12 @@ void delfem2::opengl::myGlVertex(
     unsigned int i,
     const std::vector<CVec2d>& aP)
 {
-  ::glVertex3d(aP[i].x(), aP[i].y(), +0.0);
+  ::glVertex3d(aP[i].x, aP[i].y, +0.0);
 }
 
 void delfem2::opengl::myGlVertex(const CVec2d& v)
 {
-  ::glVertex2d(v.x(), v.y());
+  ::glVertex2d(v.x, v.y);
 }
 
 //--------------------------------------------------------

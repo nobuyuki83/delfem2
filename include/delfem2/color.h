@@ -34,6 +34,18 @@ DFM2_INLINE void heatmap(double input, double* color);
 DFM2_INLINE void heatmap_glColor(double input);
 DFM2_INLINE void heatmap_glDiffuse(double input);
 
+template <typename T>
+void ColorRGB_Int(T rgb[3],
+          int c)
+{
+  int ir = c / 65536;
+  int ig = c / 256 % 256;
+  int ib = c % 256;
+  rgb[0] = T(ir)/255.0;
+  rgb[1] = T(ig)/255.0;
+  rgb[2] = T(ib)/255.0;
+}
+
 // -------------------------------------------------------------
 
 /**

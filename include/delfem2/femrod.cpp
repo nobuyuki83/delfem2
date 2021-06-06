@@ -314,7 +314,7 @@ DFM2_INLINE void delfem2::DiffFrameRod(
 {
   dF_dt[0] = +Frm[1];
   dF_dt[1] = -Frm[0];
-  dF_dt[2].SetZero();
+  dF_dt[2].setZero();
   dF_dv[0] = (-1.0/l01)*Mat3_OuterProduct(Frm[2],Frm[0]);
   dF_dv[1] = (-1.0/l01)*Mat3_OuterProduct(Frm[2],Frm[1]);
   dF_dv[2] = (+1.0/l01)*( Mat3_Identity(1.0) - Mat3_OuterProduct(Frm[2],Frm[2]) );
@@ -390,10 +390,10 @@ DFM2_INLINE double delfem2::WdWddW_DotFrame(
   DiffFrameRod(dF1_dv, dF1_dt,
                (P[2]-P[1]).Length(), Frm1);
   double V = 0;
-  for(int i=0;i<3;++i){ dV_dP[i].SetZero(); }
+  for(int i=0;i<3;++i){ dV_dP[i].setZero(); }
   for(int i=0;i<2;++i){ dV_dt[i] = 0.0; }
   for(int i=0;i<4;++i){ (&ddV_ddt[0][0])[i] = 0.0; }
-  for(int i=0;i<6;++i){ (&ddV_dtdP[0][0])[i].SetZero(); }
+  for(int i=0;i<6;++i){ (&ddV_dtdP[0][0])[i].setZero(); }
   for(int i=0;i<9;++i){ (&ddV_ddP[0][0])[i].setZero(); }
   // ---------------------
   for(int i=0;i<3;++i){
@@ -483,19 +483,19 @@ DFM2_INLINE double delfem2::WdWddW_Rod(
       dG_dv, dG_dt,
       (P[2]-P[1]).Length(), G);
   // ------------
-  for(int i=0;i<3;++i){ dW_dP[i].SetZero(); }
+  for(int i=0;i<3;++i){ dW_dP[i].setZero(); }
   for(int i=0;i<2;++i){ dW_dt[i] = 0.0; }
   for(int i=0;i<4;++i){ (&ddW_ddt[0][0])[i] = 0.0; }
-  for(int i=0;i<6;++i){ (&ddW_dtdP[0][0])[i].SetZero(); }
+  for(int i=0;i<6;++i){ (&ddW_dtdP[0][0])[i].setZero(); }
   for(int i=0;i<9;++i){ (&ddW_ddP[0][0])[i].setZero(); }
   // ------------
   const double Y = 1 + F[0]*G[0] + F[1]*G[1] + F[2]*G[2];
   CVec3d dY_dp[3]; // how Y changes w.r.t. the position
   double dY_dt[2]; // how Y changes w.r.t. the twist
   { // making derivative of Y
-    dY_dp[0].SetZero();
-    dY_dp[1].SetZero();
-    dY_dp[2].SetZero();
+    dY_dp[0].setZero();
+    dY_dp[1].setZero();
+    dY_dp[2].setZero();
     dY_dt[0] = 0.0;
     dY_dt[1] = 0.0;
     femrod::AddDiff_DotFrameRod(
@@ -530,9 +530,9 @@ DFM2_INLINE double delfem2::WdWddW_Rod(
     CVec3d dX_dp[3];
     double dX_dt[2];
     {
-      dX_dp[0].SetZero();
-      dX_dp[1].SetZero();
-      dX_dp[2].SetZero();
+      dX_dp[0].setZero();
+      dX_dp[1].setZero();
+      dX_dp[2].setZero();
       dX_dt[0] = 0.0;
       dX_dt[1] = 0.0;
       femrod::AddDiff_DotFrameRod(

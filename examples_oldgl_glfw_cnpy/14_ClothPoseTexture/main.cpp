@@ -250,8 +250,8 @@ int main()
     }
     for (unsigned int ip = 0; ip < np; ip++) {
       fout << "vt ";
-      fout << aVec2_Cloth[ip].x() << " ";
-      fout << aVec2_Cloth[ip].y() << " ";
+      fout << aVec2_Cloth[ip].x << " ";
+      fout << aVec2_Cloth[ip].y << " ";
       fout << 0.0 << std::endl;
     }
     for (unsigned int itri = 0; itri < nt; itri++) {

@@ -148,8 +148,8 @@ int main()
     for(auto & it : aBoneLoc){
       dfm2::CTarget t;
       t.ib = it.first;
-      int iw = (int)it.second.x();
-      int ih = (int)it.second.y();
+      int iw = (int)it.second.x;
+      int ih = (int)it.second.y;
       t.pos.p[0] = (double)iw/width-0.5;
       t.pos.p[1] = 0.5*height/width - (double)ih/height;
       aTarget.push_back(t);
