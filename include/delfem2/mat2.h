@@ -160,7 +160,8 @@ public:
   // ---------------
   // below: function
 
-  //! @brief set all value to zero (named similarly to Eigen)
+  //! @brief set all value to zero
+  //! @details naming inspired by Eigen
   inline void setZero() {
     p[0] = T(0);
     p[1] = T(0);
@@ -168,8 +169,21 @@ public:
     p[3] = T(0);
   }
 
+  //! @brief transpose matrix
+  //! @details naming inspired by Eigen
   CMat2 transpose() const {
     return CMat2(p[0],p[2],p[1],p[3]);
+  }
+  
+  void transposeInPlace() {
+    const T t1 = p[1];
+    p[1] = p[2];
+    p[2] = t1;
+  }
+  
+  //! @details naming inspired by Eigen
+  T determinant() const {
+    return p[0]*p[3]-p[1]*p[2];
   }
 
   template<typename S>
@@ -181,14 +195,14 @@ public:
         static_cast<S>(p[3]) );
   };
 
-  T determinant() const {
-    return p[0]*p[3]-p[1]*p[2];
-  }
-
   void multiply_vec2(T vo[2], const T vi[2]) const {
     MatVec2(
         vo,
         p,vi);
+  }
+  
+  static CMat2<T> outer_product(const T v0[2], const T v1[2]){
+    return CMat2<T>(v0[0]*v1[0], v0[0]*v1[1], v0[1]*v1[0], v0[1]*v1[1]);
   }
 
 public:
@@ -206,6 +220,12 @@ void polar_decomposition(
     CMat2<T> &R,
     CMat2<T> &S,
     const CMat2<T>& m);
+
+template <typename T>
+void svd(CMat2<T> &U,
+         CMat2<T> &sig,
+         CMat2<T> &V,
+         const CMat2<T>& m);
 
 } // delfem2
   
