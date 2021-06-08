@@ -254,3 +254,43 @@ void delfem2::polar_decomposition(
   R(1, 1) = c;
   S = R.transpose() * m;
 }
+
+template <typename T>
+void delfem2::svd(CMat2<T> &U,
+                  CMat2<T> &sig,
+                  CMat2<T> &V,
+                  const CMat2<T>& m)
+{
+  CMat2<T> S;
+  polar_decomposition(U, S, m);
+  T c, s;
+  if (std::abs(S(0, 1)) < 1e-6f) {
+    sig = S;
+    c = 1;
+    s = 0;
+  }
+  else {
+    auto tao = 0.5f * (S(0, 0) - S(1, 1));
+    auto w = std::sqrt(tao * tao + S(0, 1) * S(0, 1));
+    auto t = tao > 0 ? S(0, 1) / (tao + w) : S(0, 1) / (tao - w);
+    c = 1.0f / std::sqrt(t * t + 1);
+    s = -t * c;
+    sig(0, 0) = (c*c) * S(0, 0) - 2 * c * s * S(0, 1) + (s*s) * S(1, 1);
+    sig(1, 1) = (s*s) * S(0, 0) + 2 * c * s * S(0, 1) + (c*c) * S(1, 1);
+  }
+  if (sig(0, 0) < sig(1, 1)){
+    std::swap(sig(0, 0), sig(1, 1));
+    V(0, 0) = -s;
+    V(0, 1) = -c;
+    V(1, 0) = c;
+    V(1, 1) = -s;
+  }
+  else {
+    V(0, 0) = c;
+    V(0, 1) = -s;
+    V(1, 0) = s;
+    V(1, 1) = c;
+  }
+  V.transposeInPlace();
+  U = U * V;
+}
