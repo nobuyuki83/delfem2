@@ -108,10 +108,10 @@ void Project(
       double mMVP[16]; dfm2::MatMat4(mMVP, smplr.mMV, smplr.mP);
       double mMVinv[16]; dfm2::Inverse_Mat4(mMVinv, mMVP);
       dfm2::CVec3d z1; dfm2::Vec3_Vec3Mat4_AffineProjection(z1.p,z0.p,mMVinv);
-      double ct = n0*z1.Normalize();
+      double ct = n0*z1.normalized();
       if( ct <= 0.0 ){ continue; }
-      if( (p0-ps).Length() > 0.1 ){ continue; }
-      const double len = ((p0-ps).Length()+1.0e-5)/ct;
+      if( (p0-ps).norm() > 0.1 ){ continue; }
+      const double len = ((p0-ps).norm()+1.0e-5)/ct;
       if( len_min < 0 || len < len_min ){
         len_min = len;
         pmin = p0;
@@ -121,9 +121,9 @@ void Project(
     if( len_min < 0 ){ continue; }
     {
       aIdpNrm.emplace_back( ip, nmin );
-      aXYZ1[ip*3+0] = pmin.x();
-      aXYZ1[ip*3+1] = pmin.y();
-      aXYZ1[ip*3+2] = pmin.z();
+      aXYZ1[ip*3+0] = pmin.x;
+      aXYZ1[ip*3+1] = pmin.y;
+      aXYZ1[ip*3+2] = pmin.z;
     }
   }
 }

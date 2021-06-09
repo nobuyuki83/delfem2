@@ -244,7 +244,7 @@ int main(int argc,char* argv[])
           dfm2::CVec3d p0(ix0+0.5, iy0+0.5, iz0+0.5);
           dfm2::CVec3d p1; dfm2::Vec3_Mat4Vec3_Affine(p1.p, grid.am.mat,p0.p);
           dfm2::CVec3d p2 = dfm2::nearest_LineSeg_Point(p1, ps, pe);
-          double dist0 = (p2-p1).Length();
+          double dist0 = (p2-p1).norm();
           aIdvoxDist.emplace_back( ivox0, dist0 );
         }
       }
@@ -257,9 +257,9 @@ int main(int argc,char* argv[])
       const dfm2::CMat4d& ami = grid.am.Inverse();
       for(unsigned int ip=0;ip<np;ip++){
         dfm2::CVec3d p0; dfm2::Vec3_Mat4Vec3_Affine(p0.p, ami.mat, aXYZ0.data()+ip*3);
-        int ix0 = (int)floor(p0.x()-0.5);
-        int iy0 = (int)floor(p0.y()-0.5);
-        int iz0 = (int)floor(p0.z()-0.5);
+        int ix0 = (int)floor(p0.x-0.5);
+        int iy0 = (int)floor(p0.y-0.5);
+        int iz0 = (int)floor(p0.z-0.5);
         double dist0 = 0;
         double sumw = 0.0;
         for(unsigned int i=0;i<8;++i){
@@ -271,7 +271,7 @@ int main(int argc,char* argv[])
           assert( iz >= -1 && iz <= nz );
           unsigned int ivox = iz*ny*nx + iy*nx + ix;
           if( grid.aVal[ivox] == 0 ) continue;
-          double len = (p0.x()-ix)*(p0.x()-ix) + (p0.y()-iy)*(p0.y()-iy) + (p0.z()-iz)*(p0.z()-iz);
+          double len = (p0.x-ix)*(p0.x-ix) + (p0.y-iy)*(p0.y-iy) + (p0.z-iz)*(p0.z-iz);
           len = sqrt(len);
           double w0 = 1.0/(len+1.0e-3);
 //a          std::cout << ibone << " " << ip << " " << aDist[ivox] << std::endl;

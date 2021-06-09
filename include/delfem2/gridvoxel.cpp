@@ -460,13 +460,13 @@ void delfem2::Intersection_VoxelGrid_LinSeg
   dfm2::CVec3d Ps; dfm2::Vec3_Mat4Vec3_Affine(Ps.p, ami.mat, ps.p); // local coordinate
   dfm2::CVec3d Pe; dfm2::Vec3_Mat4Vec3_Affine(Pe.p, ami.mat, pe.p); // local coordinate
   const int is[3] = {
-    static_cast<int>(floor(Ps.x())),
-    static_cast<int>(floor(Ps.y())),
-    static_cast<int>(floor(Ps.z())) };
+    static_cast<int>(floor(Ps.x)),
+    static_cast<int>(floor(Ps.y)),
+    static_cast<int>(floor(Ps.z)) };
   const int ie[3] = {
-    static_cast<int>(floor(Pe.x())),
-    static_cast<int>(floor(Pe.y())),
-    static_cast<int>(floor(Pe.z())) };
+    static_cast<int>(floor(Pe.x)),
+    static_cast<int>(floor(Pe.y)),
+    static_cast<int>(floor(Pe.z)) };
   int ic[3] = { is[0], is[1], is[2] };
   const dfm2::CVec3d direction = Pe-Ps;
   const double dx = direction[0];
@@ -478,9 +478,9 @@ void delfem2::Intersection_VoxelGrid_LinSeg
   const double tDeltaX = stepX/dx; assert( tDeltaX > 0 );
   const double tDeltaY = stepY/dy; assert( tDeltaY > 0 );
   const double tDeltaZ = stepZ/dz; assert( tDeltaZ > 0 );
-  double tMaxX = dfm2::gridvoxel::intbound(Ps.x(), dx); assert( tMaxX > 0 );
-  double tMaxY = dfm2::gridvoxel::intbound(Ps.y(), dy); assert( tMaxY > 0 );
-  double tMaxZ = dfm2::gridvoxel::intbound(Ps.z(), dz); assert( tMaxZ > 0 );
+  double tMaxX = dfm2::gridvoxel::intbound(Ps.x, dx); assert( tMaxX > 0 );
+  double tMaxY = dfm2::gridvoxel::intbound(Ps.y, dy); assert( tMaxY > 0 );
+  double tMaxZ = dfm2::gridvoxel::intbound(Ps.z, dz); assert( tMaxZ > 0 );
   aIndVox.clear();
   for(int itr=0;itr<1000;++itr){
     if( ic[0] >= 0 && ic[1] >= 0 && ic[2] >= 0 &&

@@ -62,8 +62,8 @@ DFM2_INLINE void delfem2::dW_ArapEnergy
       const CVec3d v1 = pj-pi;
       const CVec3d r = -(v1-v0);
       //      const CVec3d r = -v1;
-      r.AddToScale(aRes.data()+ip*3, +1);
-      r.AddToScale(aRes.data()+jp*3, -1);
+      r.AddToScale(aRes.data()+ip*3, +1.);
+      r.AddToScale(aRes.data()+jp*3, -1.);
     }
   }
 }

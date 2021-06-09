@@ -406,8 +406,8 @@ void delfem2::nearest_LineSeg_Line(
   //
   CVec3<T> p1 = nearest_Line_Point(ps,  pb_, vb);
   CVec3<T> p2 = nearest_Line_Point(pe,  pb_, vb);
-  T Dist1 = (p1-ps).Length();
-  T Dist2 = (p2-pe).Length();
+  T Dist1 = (p1-ps).norm();
+  T Dist2 = (p2-pe).norm();
   if( Dist1 < Dist2 ){
     a = ps;
     b = p1;
@@ -478,7 +478,7 @@ DFM2_INLINE double delfem2::Nearest_LineSeg_LineSeg_CCD_Iteration(
     if (p[1] < 0) { p[1] = 0.0; } else if (p[1] > 1) { p[1] = 1.0; }
     if (p[2] < 0) { p[2] = 0.0; } else if (p[2] > 1) { p[2] = 1.0; }
   }
-  return v0.Length();
+  return v0.norm();
 }
 
 // ---------------------------------------------
@@ -562,7 +562,7 @@ delfem2::CVec3<T> delfem2::nearest_Plane_Point
  const CVec3<T>& o, // origin
  const CVec3<T>& n) // normal
 {
-  const CVec3<T> n0  = n.Normalize();
+  const CVec3<T> n0  = n.normalized();
   return p + ((o-p)*n0)*n0;
 }
 
@@ -575,7 +575,7 @@ delfem2::CVec3<T> delfem2::Nearest_Orgin_PlaneTri
  const CVec3<T>& q2)
 {
   namespace lcl = delfem2::proximity3;
-  const CVec3<T> n1 = ((q1-q0)^(q2-q0)).Normalize();
+  const CVec3<T> n1 = ((q1-q0)^(q2-q0)).normalized();
   const double v0 = lcl::Volume_OrgTet(q1, q2, n1);
   const double v1 = lcl::Volume_OrgTet(q2, q0, n1);
   const double v2 = lcl::Volume_OrgTet(q0, q1, n1);
@@ -601,24 +601,24 @@ delfem2::CVec3<T> delfem2::Nearest_Origin_Tri
     if( r0>0 && r1>0 && (1-r0-r1)>0 ){ return p012; }
   }
   CVec3<T> p_min = q0;
-  double d_min = q0.Length();
+  double d_min = q0.norm();
   r0=1; r1=0;
   {
     double s2;
     CVec3<T> p12 = nearest_Origin_LineSeg(s2, q1, q2);
-    const double d12 = p12.Length();
+    const double d12 = p12.norm();
     if(d12<d_min){ d_min=d12; p_min=p12; r1=1-s2; r0=0; }
   }
   {
     double s0;
     CVec3<T> p20 = nearest_Origin_LineSeg(s0, q2, q0);
-    const double d20 = p20.Length();
+    const double d20 = p20.norm();
     if(d20<d_min){ d_min=d20; p_min=p20; r1=0; r0=s0; }
   }
   {
     double s1;
     CVec3<T> p01 = nearest_Origin_LineSeg(s1, q0, q1);
-    const double d01 = p01.Length();
+    const double d01 = p01.norm();
     if(d01<d_min){ d_min=d01; p_min=p01; r0=1-s1; r1=s1; }
   }
   return p_min;
@@ -672,7 +672,7 @@ delfem2::CVec3<T> delfem2::nearst_Origin_Quad
     }
     double tol = 1.0e-4;
     if( t0 > -tol && t0 < 1.0+tol && t1 > -tol && t1 < 1.0+tol ){
-      double d0 = q.Length();
+      double d0 = q.norm();
       if( dist_min < 0 || d0 < dist_min ){
         dist_min = d0;
         s0 = t0;
@@ -684,7 +684,7 @@ delfem2::CVec3<T> delfem2::nearst_Origin_Quad
   if( dist_min > 0 ){ return q_min; }
   //
   const CVec3<T> q01 = nearest_Origin_LineSeg(q0,q1);
-  const double d01  = q01.Length();
+  const double d01  = q01.norm();
   if( dist_min < 0 || d01 < dist_min ){
     dist_min = d01;
     s0 = Distance(q01,q0)/Distance(q0,q1);
@@ -693,7 +693,7 @@ delfem2::CVec3<T> delfem2::nearst_Origin_Quad
   }
   //
   CVec3<T> q12 = nearest_Origin_LineSeg(q1,q2);
-  const double d12  = q12.Length();
+  const double d12  = q12.norm();
   if( dist_min < 0 || d12 < dist_min ){
     dist_min = d12;
     s0 = 1.0;
@@ -702,7 +702,7 @@ delfem2::CVec3<T> delfem2::nearst_Origin_Quad
   }
   //
   CVec3<T> q23 = nearest_Origin_LineSeg(q2,q3);
-  const double d23  = q23.Length();
+  const double d23  = q23.norm();
   if( dist_min < 0 || d23 < dist_min ){
     dist_min = d23;
     s0 = Distance(q23,q3)/Distance(q2,q3);
@@ -711,7 +711,7 @@ delfem2::CVec3<T> delfem2::nearst_Origin_Quad
   }
   //
   CVec3<T> q30 = nearest_Origin_LineSeg(q3,q0);
-  const double d30  = q30.Length();
+  const double d30  = q30.norm();
   if( dist_min < 0 || d30 < dist_min ){
     dist_min = d30;
     s0 = 0.0;
@@ -1045,7 +1045,7 @@ double delfem2::DistanceFaceVertex
   w1 = (-t2*t3+t0*t4)*invdet;
   const double w2 = 1-w0-w1;
   CVec3<T> pw = w0*p0 + w1*p1 + w2*p2;
-  return (pw-p3).Length();
+  return (pw-p3).norm();
 }
 #ifndef DFM2_HEADER_ONLY
 template double delfem2::DistanceFaceVertex
@@ -1063,11 +1063,11 @@ double delfem2::DistanceEdgeEdge
 {
   const CVec3<T>& vp =p1-p0;
   const CVec3<T>& vq =q1-q0;
-  if( Cross(vp,vq).Length() < 1.0e-10 ){ // handling parallel edge
+  if( Cross(vp,vq).norm() < 1.0e-10 ){ // handling parallel edge
     CVec3<T> pq0 = p0-q0;
-    CVec3<T> nvp = vp; nvp.SetNormalizedVector();
+    CVec3<T> nvp = vp; nvp.normalize();
     CVec3<T> vert = pq0 - Dot(pq0,nvp)*nvp;
-    double dist = vert.Length();
+    double dist = vert.norm();
     double lp0 = Dot(p0,nvp);
     double lp1 = Dot(p1,nvp);
     double lq0 = Dot(q0,nvp);
@@ -1096,7 +1096,7 @@ double delfem2::DistanceEdgeEdge
   ratio_q = (+t2*t3-t0*t4)*invdet;
   CVec3<T> pc = p0 + ratio_p*vp;
   CVec3<T> qc = q0 + ratio_q*vq;
-  return (pc-qc).Length();
+  return (pc-qc).norm();
 }
 #ifndef DFM2_HEADER_ONLY
 template double delfem2::DistanceEdgeEdge
@@ -1134,7 +1134,7 @@ bool delfem2::IsContact_EE_Proximity
   if( ratio_q > 1 ) return false;
   const CVec3<T>& pm = (1-ratio_p)*p0 + ratio_p*p1;
   const CVec3<T>& qm = (1-ratio_q)*q0 + ratio_q*q1;
-  return (pm - qm).Length() <= delta;
+  return (pm - qm).norm() <= delta;
 }
 #ifndef DFM2_HEADER_ONLY
 template bool delfem2::IsContact_EE_Proximity
@@ -1249,19 +1249,19 @@ bool delfem2::IsContact_FV_CCD2
   double r0,r1;
   double dist = DistanceFaceVertex(p0, p1, p2, p3, r0,r1);
   {
-    double vn0 = (p0-q0).Length();
-    double vn1 = (p1-q1).Length();
-    double vn2 = (p2-q2).Length();
-    double vn3 = (p3-q3).Length();
+    double vn0 = (p0-q0).norm();
+    double vn1 = (p1-q1).norm();
+    double vn2 = (p2-q2).norm();
+    double vn3 = (p3-q3).norm();
     double vnt = ( vn0 > vn1 ) ? vn0 : vn1;
     vnt = ( vn2 > vnt ) ? vn2 : vnt;
     double max_app = (vnt+vn3);
     const double r2 = 1-r0-r1;
     if( dist > max_app ) return false;
     if( r0 < 0 || r0 > 1 || r1 < 0 || r1 > 1 || r2 < 0 || r2 > 1 ){
-      double dist01 = (nearest_LineSeg_Point(p3, p0, p1)-p3).Length();
-      double dist12 = (nearest_LineSeg_Point(p3, p1, p2)-p3).Length();
-      double dist20 = (nearest_LineSeg_Point(p3, p2, p0)-p3).Length();
+      double dist01 = (nearest_LineSeg_Point(p3, p0, p1)-p3).norm();
+      double dist12 = (nearest_LineSeg_Point(p3, p1, p2)-p3).norm();
+      double dist20 = (nearest_LineSeg_Point(p3, p2, p0)-p3).norm();
       if( dist01 > max_app && dist12 > max_app && dist20 > max_app ){ return false; }
     }
   }

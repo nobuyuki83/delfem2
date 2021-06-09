@@ -80,7 +80,7 @@ public:
     if( aP.size()<2 ) return;
     p0 = aVertex[iv0].pos;
     p1 = aVertex[iv1].pos;
-    const double len01 = (p1-p0).Length();
+    const double len01 = (p1-p0).norm();
     CVec3d n0 = aVertex[iv0].norm;
     CVec3d n1 = aVertex[iv1].norm;
     CVec3d en = this->getNorm();

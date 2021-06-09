@@ -257,7 +257,7 @@ template void delfem2::Cross3(double r[3], const double v1[3], const double v2[3
 template <typename T>
 DFM2_INLINE void delfem2::Normalize3(T v[3])
 {
-  double len = sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+  T len = std::sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
   v[0] /= len;
   v[1] /= len;
   v[2] /= len;
@@ -699,16 +699,16 @@ bool operator!= (const CVec3<T>& lhs, const CVec3<T>& rhs){
 // ----------------------------
   
 template <typename T>
-void delfem2::CVec3<T>::SetNormalizedVector()
+void delfem2::CVec3<T>::normalize()
 {
-  double invmag = 1.0/Length();
+  double invmag = 1.0/norm();
   p[0] *= invmag;
   p[1] *= invmag;
   p[2] *= invmag;
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CVec3<float>::SetNormalizedVector();
-template void delfem2::CVec3<double>::SetNormalizedVector();
+template void delfem2::CVec3<float>::normalize();
+template void delfem2::CVec3<double>::normalize();
 #endif
   
 // ----------------------------
@@ -751,10 +751,10 @@ void delfem2::GetVertical2Vector
  CVec3<T>& vec_y)
 {
   vec_x = Cross(CVec3<T>(0,1,0),vec_n);
-  const double len = vec_x.Length();
+  const double len = vec_x.norm();
   if( len < 1.0e-10 ){
     vec_x = Cross(CVec3<T>(1,0,0),vec_n);  // z????
-    vec_x.SetNormalizedVector();
+    vec_x.normalize();
     vec_y = Cross(vec_n,vec_x);  // x????
   }
   else{
@@ -874,7 +874,7 @@ delfem2::CVec3<T> delfem2::screenUnProjectionDirection
 {
   CVec3<T> v0 = solve_GlAffineMatrixDirection(mPj, v);
   CVec3<T> v1 = solve_GlAffineMatrixDirection(mMV, v0);
-  v1.SetNormalizedVector();
+  v1.normalize();
   return v1;
 }
 #ifndef DFM2_HEADER_ONLY
@@ -896,14 +896,14 @@ delfem2::CVec3<T> delfem2::screenDepthDirection
   CVec3<T> v0( Dv*v.p[0], Dv*v.p[1], 0.0 );
   CVec3<T> v1 = solve_GlAffineMatrix(mPj, v0);
   v1.p[2] = 1;
-  ////
+  //
   float Du = mPj[11]*2.f + mPj[15]; // z is 1 after model view
   CVec3<T> u0( Du*v.p[0], Du*v.p[1], 0.0 );
   CVec3<T> u1 = solve_GlAffineMatrix(mPj, u0);
   u1.p[2] = 2;
-  ////
+  //
   CVec3<T> v2 = solve_GlAffineMatrixDirection(mMV, (v1-u1) );
-  v2.SetNormalizedVector();
+  v2.normalize();
   return v2;
 }
 
@@ -926,16 +926,15 @@ template void delfem2::Cross(CVec3d& lhs, const CVec3d& v1, const CVec3d& v2 );
 // ----------------------
 
 template <typename T>
-double delfem2::Area_Tri(
+T delfem2::Area_Tri(
     const CVec3<T>& v1,
     const CVec3<T>& v2,
     const CVec3<T>& v3)
 {
-  double x, y, z;
-  x = ( v2.p[1] - v1.p[1] )*( v3.p[2] - v1.p[2] ) - ( v3.p[1] - v1.p[1] )*( v2.p[2] - v1.p[2] );
-  y = ( v2.p[2] - v1.p[2] )*( v3.p[0] - v1.p[0] ) - ( v3.p[2] - v1.p[2] )*( v2.p[0] - v1.p[0] );
-  z = ( v2.p[0] - v1.p[0] )*( v3.p[1] - v1.p[1] ) - ( v3.p[0] - v1.p[0] )*( v2.p[1] - v1.p[1] );
-  return 0.5*sqrt( x*x + y*y + z*z );
+  const T x = ( v2.p[1] - v1.p[1] )*( v3.p[2] - v1.p[2] ) - ( v3.p[1] - v1.p[1] )*( v2.p[2] - v1.p[2] );
+  const T y = ( v2.p[2] - v1.p[2] )*( v3.p[0] - v1.p[0] ) - ( v3.p[2] - v1.p[2] )*( v2.p[0] - v1.p[0] );
+  const T z = ( v2.p[0] - v1.p[0] )*( v3.p[1] - v1.p[1] ) - ( v3.p[0] - v1.p[0] )*( v2.p[1] - v1.p[1] );
+  return 0.5*std::sqrt( x*x + y*y + z*z );
 }
 #ifndef DFM2_HEADER_ONLY
 template double delfem2::Area_Tri(const CVec3<double>& v1, const CVec3<double>& v2, const CVec3<double>& v3);
@@ -944,14 +943,14 @@ template double delfem2::Area_Tri(const CVec3<double>& v1, const CVec3<double>& 
   
 
 template <typename T>
-double delfem2::SquareTriArea(
+T delfem2::SquareTriArea(
     const CVec3<T>& v1,
     const CVec3<T>& v2,
     const CVec3<T>& v3)
 {
-  double dtmp_x = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
-  double dtmp_y = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
-  double dtmp_z = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
+  const T dtmp_x = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
+  const T dtmp_y = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
+  const T dtmp_z = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
   return (dtmp_x*dtmp_x + dtmp_y*dtmp_y + dtmp_z*dtmp_z)*0.25;
 }
 
@@ -1049,7 +1048,7 @@ void delfem2::UnitNormal(
   vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
   vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
   vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-  const double dtmp1 = 1.0 / Length(vnorm);
+  const T dtmp1 = 1.0 / vnorm.norm();
   vnorm.p[0] *= dtmp1;
   vnorm.p[1] *= dtmp1;
   vnorm.p[2] *= dtmp1;
@@ -1071,7 +1070,7 @@ delfem2::CVec3<T> delfem2::UnitNormal(
   vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
   vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
   vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-  const double dtmp1 = 1.0/Length(vnorm);
+  const T dtmp1 = 1.0 / vnorm.norm();
   vnorm.p[0] *= dtmp1;
   vnorm.p[1] *= dtmp1;
   vnorm.p[2] *= dtmp1;
@@ -1098,15 +1097,15 @@ void delfem2::MeanValueCoordinate(
     const CVec3<T>& v2)
 {
   double eps  = 1.0e-5;
-  double d0 = v0.Length();
-  double d1 = v1.Length();
-  double d2 = v2.Length();
+  double d0 = v0.norm();
+  double d1 = v1.norm();
+  double d2 = v2.norm();
   const CVec3<T> u0 = v0/d0;
   const CVec3<T> u1 = v1/d1;
   const CVec3<T> u2 = v2/d2;
-  double l0 = (u1-u2).Length();
-  double l1 = (u2-u0).Length();
-  double l2 = (u0-u1).Length();
+  double l0 = (u1-u2).norm();
+  double l1 = (u2-u0).norm();
+  double l2 = (u0-u1).norm();
   if( l0<eps || l1<eps || l2<eps ){
     w[0] = 0;
     w[1] = 0;
@@ -1155,19 +1154,19 @@ delfem2::CVec3<T> delfem2::RotateVector(
     const CVec3<T>& vec0,
     const CVec3<T>& rot )
 {
-  const double theta = rot.Length();
+  const double theta = rot.norm();
   if( theta < 1.0e-30 ){
     return vec0;
   }
   CVec3<T> e0 = rot;
-  e0.SetNormalizedVector();
+  e0.normalize();
   CVec3<T> e2 = delfem2::Cross(e0,vec0);
-  if( e2.Length() < 1.0e-30 ){
+  if( e2.norm() < 1.0e-30 ){
     return vec0;
   }
-  e2.SetNormalizedVector();
+  e2.normalize();
   CVec3<T> e1 = delfem2::Cross(e2,e0);
-  assert( fabs( e1.Length() - 1 ) < 1.0e-10 );
+  assert( fabs( e1.norm() - 1 ) < 1.0e-10 );
   //	assert( e2.p[0]*vec_0.p[0] + e2.p[1]*vec_0.p[1] + e2.p[2]*vec_0.p[2] < 1.0e-10 );
   const double dot00 = Dot(vec0,e0);
   const double dot01 = Dot(vec0,e1);
@@ -1193,9 +1192,9 @@ template <typename T>
 delfem2::CVec3<T> delfem2::RandUnitVector(){
   for(int itr=0;itr<100;itr++){
     CVec3<T> r = RandVector<T>();
-    double l = r.Length();
+    double l = r.norm();
     if( (l <= 1 || itr==9) && l > 1.0e-5 ){
-      r.SetNormalizedVector();
+      r.normalize();
       return r;
     }
   }

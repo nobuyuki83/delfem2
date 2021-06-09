@@ -41,19 +41,19 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm(
     }
     {
       CVec3d n; UnitNormal(n, aVec3[i0], aVec3[i1], aVec3[i2]);
-      ::glNormal3d(n.x(),n.y(),n.z());
+      ::glNormal3d(n.x,n.y,n.z);
     }
     {
       CVec3d p0 = aVec3[i0];
-      ::glVertex3d(p0.x(),p0.y(),p0.z());
+      ::glVertex3d(p0.x,p0.y, p0.z);
     }
     {
       CVec3d p1 = aVec3[i1];
-      ::glVertex3d(p1.x(),p1.y(),p1.z());
+      ::glVertex3d(p1.x,p1.y,p1.z);
     }
     {
       CVec3d p2 = aVec3[i2];
-      ::glVertex3d(p2.x(),p2.y(),p2.z());
+      ::glVertex3d(p2.x,p2.y,p2.z);
     }
   }
   ::glEnd();
@@ -152,12 +152,12 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge(
     const CVec3d& p0 = aVec3[i0];
     const CVec3d& p1 = aVec3[i1];
     const CVec3d& p2 = aVec3[i2];
-    glVertex3d(p0.x(),p0.y(),p0.z());
-    glVertex3d(p1.x(),p1.y(),p1.z());
-    glVertex3d(p1.x(),p1.y(),p1.z());
-    glVertex3d(p2.x(),p2.y(),p2.z());
-    glVertex3d(p2.x(),p2.y(),p2.z());
-    glVertex3d(p0.x(),p0.y(),p0.z());
+    glVertex3d(p0.x,p0.y,p0.z);
+    glVertex3d(p1.x,p1.y,p1.z);
+    glVertex3d(p1.x,p1.y,p1.z);
+    glVertex3d(p2.x,p2.y,p2.z);
+    glVertex3d(p2.x,p2.y,p2.z);
+    glVertex3d(p0.x,p0.y,p0.z);
   }
   ::glEnd();
 }

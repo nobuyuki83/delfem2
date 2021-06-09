@@ -49,7 +49,7 @@ void delfem2::Pick_CubeGrid(
     CVec3d cnt =  org + elen*CVec3d(ih+0.5,jh+0.5,kh+0.5);
     {
       CVec3d q = nearest_Line_Point(cnt, src_pic, dir_pic);
-      if( (q-cnt).Length() > elen  ) continue;
+      if( (q-cnt).norm() > elen  ) continue;
     }
     CVec3d aP[8] = {
       org + elen*CVec3d(ih+0,jh+0,kh+0),
@@ -70,7 +70,7 @@ void delfem2::Pick_CubeGrid(
       const double r0 = (pi-p0)*(p1-p0)/(elen*elen);
       const double r1 = (pi-p0)*(p3-p0)/(elen*elen);
       if( r0>0 && r0<1 && r1>0 && r1< 1 ){
-        double depth = (pi-src_pic)*dir_pic/dir_pic.DLength();
+        double depth = (pi-src_pic)*dir_pic/dir_pic.squaredNorm();
         if( icube_pic == UINT_MAX || depth < depth_min ){
           depth_min = depth;
           icube_pic = ivox;

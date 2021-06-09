@@ -41,8 +41,8 @@ DFM2_INLINE void delfem2::WdWddW_MIPS
   CVec3d v12 = p2-p1;
   CVec3d v20 = p0-p2;
   CVec3d n = v01^v20;
-  double area = n.Length()*0.5;
-  double Area = ((P1-P0)^(P2-P0)).Length()*0.5;
+  double area = n.norm()*0.5;
+  double Area = ((P1-P0)^(P2-P0)).norm()*0.5;
   double la = (p1-p2)*(p1-p2);
   double lb = (p2-p0)*(p2-p0);
   double lc = (p0-p1)*(p0-p1);
@@ -67,9 +67,9 @@ DFM2_INLINE void delfem2::WdWddW_MIPS
   CVec3d dECd1 = t01*p0 + t11*p1 + t12*p2;
   CVec3d dECd2 = t02*p0 + t12*p1 + t22*p2;
   ////
-  dE[0][0]=dECd0.x(); dE[0][1]=dECd0.y(); dE[0][2]=dECd0.z();
-  dE[1][0]=dECd1.x(); dE[1][1]=dECd1.y(); dE[1][2]=dECd1.z();
-  dE[2][0]=dECd2.x(); dE[2][1]=dECd2.y(); dE[2][2]=dECd2.z();
+  dE[0][0]=dECd0.x; dE[0][1]=dECd0.y; dE[0][2]=dECd0.z;
+  dE[1][0]=dECd1.x; dE[1][1]=dECd1.y; dE[1][2]=dECd1.z;
+  dE[2][0]=dECd2.x; dE[2][1]=dECd2.y; dE[2][2]=dECd2.z;
   
   CMat3d (*op)(const CVec3d&, const CVec3d&) = Mat3_OuterProduct;
   

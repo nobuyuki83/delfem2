@@ -300,8 +300,8 @@ void delfem2::makeLinearSystem_PotentialFlow_Order1st(
       const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
       const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
       CVec3d n = Normal(q0, q1, q2);
-      const double area = n.Length()*0.5; // area
-      n.SetNormalizedVector(); // unit normal
+      const double area = n.norm()*0.5; // area
+      n.normalize(); // unit normal
       n *= -1; // outward pointing vector
       double dC[3] = { 0, 0, 0 };
       double df = 0;
@@ -313,7 +313,7 @@ void delfem2::makeLinearSystem_PotentialFlow_Order1st(
         double wb = TriGauss[ngauss][iint][2];
         CVec3d yb = r0*q0+r1*q1+r2*q2;
         CVec3d v = (p-yb);
-        double len = v.Length();
+        double len = v.norm();
         double G = 1.0/(4*M_PI*len);
         double dGdn = (v*n)/(4*M_PI*len*len*len);
         {
@@ -360,8 +360,8 @@ delfem2::CVec3d delfem2::evaluateField_PotentialFlow_Order1st(
     const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
     assert(ngauss>=0&&ngauss<6);
     CVec3d n = Normal(q0, q1, q2);
-    const double area = n.Length()*0.5; // area
-    n.SetNormalizedVector(); // unit normal
+    const double area = n.norm()*0.5; // area
+    n.normalize(); // unit normal
     n *= -1; // outward normal 
     const int nint = NIntTriGauss[ngauss]; // number of integral points
     for (int iint = 0; iint<nint; iint++){
@@ -372,7 +372,7 @@ delfem2::CVec3d delfem2::evaluateField_PotentialFlow_Order1st(
       CVec3d yb = r0*q0+r1*q1+r2*q2;
       double phiyb = r0*aValSrf[jq0]+r1*aValSrf[jq1]+r2*aValSrf[jq2];
       CVec3d v = (pos-yb);
-      double len = v.Length();
+      double len = v.norm();
       double G = 1.0/(4*M_PI*len);
       double dGdn = (v*n)/(4*M_PI*len*len*len);
       CVec3d dGdx = -v/(4*M_PI*len*len*len);
@@ -416,8 +416,8 @@ void delfem2::makeLinearSystem_PotentialFlow_Order0th(
       const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
       const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
       CVec3d ny = Normal(q0, q1, q2);
-      const double area = ny.Length()*0.5; // area
-      ny.SetNormalizedVector(); // unit normal
+      const double area = ny.norm()*0.5; // area
+      ny.normalize(); // unit normal
       ny *= -1; // it is pointing outward to the domain
       double aC = 0;
       double df = 0;
@@ -429,7 +429,7 @@ void delfem2::makeLinearSystem_PotentialFlow_Order0th(
         double wb = TriGauss[ngauss][iint][2];
         CVec3d yb = r0*q0+r1*q1+r2*q2;
         CVec3d r = (pm-yb);
-        double len = r.Length();
+        double len = r.norm();
         double G = 1.0/(4*M_PI*len);
         double dGdn = (r*ny)/(4*M_PI*len*len*len);
         {
@@ -490,9 +490,9 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
     const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
     const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
     CVec3d ny = Normal(q0, q1, q2);
-    const double area = ny.Length()*0.5; // area
+    const double area = ny.norm()*0.5; // area
 //    const double elen = sqrt(area*2)*0.5;
-    ny.SetNormalizedVector(); // unit normal
+    ny.normalize(); // unit normal
     ny *= -1; // normal pointing outward
     const double phiy = aValTri[jtri];
     const int nint = NIntTriGauss[ngauss]; // number of integral points
@@ -503,7 +503,7 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
       const double wb = TriGauss[ngauss][iint][2];
       const CVec3d yb = r0*q0+r1*q1+r2*q2;
       const CVec3d r = (pos-yb);
-      const double len = r.Length();
+      const double len = r.norm();
       double G = 1.0/(4*M_PI*len);
       double dGdny = (r*ny)/(4*M_PI*len*len*len);
       CVec3d dGdx = -r/(4*M_PI*len*len*len);
@@ -544,14 +544,14 @@ int ngauss)
   CVec3d xm = (x0+x1+x2)*0.3333333333333333333;
   CVec3d nx = Normal(x0, x1, x2);
 //  const double areax = nx.Length()*0.5; // area
-  nx.SetNormalizedVector(); // unit normal
-  const CVec3d ux = (x1-x0).Normalize();
+  nx.normalize(); // unit normal
+  const CVec3d ux = (x1-x0).normalized();
   const CVec3d vx = nx^ux;
   //
   CVec3d ny = Normal(y0, y1, y2);
-  const double areay = ny.Length()*0.5; // area
-  ny.SetNormalizedVector(); // unit normal
-  const CVec3d uy = (y1-y0).Normalize();
+  const double areay = ny.norm()*0.5; // area
+  ny.normalize(); // unit normal
+  const CVec3d uy = (y1-y0).normalized();
   const CVec3d vy = ny^uy;
   //
   aC[0] = aC[1] = aC[2] = aC[3] = 0.0;
@@ -562,7 +562,7 @@ int ngauss)
     double wb = TriGauss[ngauss][iint][2];
     CVec3d yb = r0*y0+r1*y1+r2*y2;
     CVec3d r = (xm-yb);
-    double len = r.Length();
+    double len = r.norm();
 //    double G = -1.0/(4*M_PI*len);
 //    double dGdn = -(r*ny)/(4*M_PI*len*len*len);
     CVec3d dGdy = -r/(4*M_PI*len*len*len);
@@ -597,8 +597,8 @@ void delfem2::makeLinearSystem_VortexSheet_Order0th(
     const CVec3d p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
     const CVec3d p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
     {
-      const CVec3d nx = Normal(p0, p1, p2).Normalize();
-      const CVec3d ux = (p1-p0).Normalize();
+      const CVec3d nx = Normal(p0, p1, p2).normalized();
+      const CVec3d ux = (p1-p0).normalized();
       const CVec3d vx = (nx^ux);
       f[it*2+0] = ux*velo;
       f[it*2+1] = vx*velo;
@@ -649,9 +649,9 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
     const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
     const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
     CVec3d ny = Normal(q0, q1, q2);
-    const double areay = ny.Length()*0.5; // area
-    ny.SetNormalizedVector(); // unit normal
-    const CVec3d uy = (q1-q0).Normalize();
+    const double areay = ny.norm()*0.5; // area
+    ny.normalize(); // unit normal
+    const CVec3d uy = (q1-q0).normalized();
     const CVec3d vy = ny^uy;
     const int nint = NIntTriGauss[ngauss]; // number of integral points
     for (int iint = 0; iint<nint; iint++){
@@ -661,7 +661,7 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
       const double wb = TriGauss[ngauss][iint][2];
       CVec3d yb = r0*q0+r1*q1+r2*q2;
       CVec3d r = (pos-yb);
-      const double len = r.Length();
+      const double len = r.norm();
       //    double G = -1.0/(4*M_PI*len);
       //    double dGdn = -(r*ny)/(4*M_PI*len*len*len);
       //    CVector3 dGdy = -r/(4*M_PI*len*len*len);
@@ -683,7 +683,7 @@ delfem2::CVec3d delfem2::veloVortexParticle
  double rad_vp)
 {
   CVec3d v = pos_eval-pos_vp;
-  double len = v.Length();
+  double len = v.norm();
   double ratio = len/rad_vp;
   double f0 = 1.0-exp(-ratio*ratio*ratio);
 //  double f0 = 1.0;
@@ -700,13 +700,13 @@ const CVec3d& circ_vp,
 double rad_vp)
 {
   CVec3d v = pos_eval-pos_vp;
-  double len = v.Length();
+  double len = v.norm();
   double ratio = len/rad_vp;
   double f0 = 1.0-exp(-ratio*ratio*ratio);
   double g0 = f0/(4*M_PI*len*len*len);
   velo_eval = g0*(circ_vp^v);
   //
-  CVec3d dlen = v.Normalize();
+  CVec3d dlen = v.normalized();
   CVec3d dratio = dlen/rad_vp;
   CVec3d df0 = (exp(-ratio*ratio*ratio)*3*ratio*ratio)*dratio;
   CVec3d dg0 = (1.0/(4*M_PI*len*len*len))*df0-(3*f0/(4*M_PI*len*len*len*len))*dlen;
@@ -813,17 +813,17 @@ void delfem2::viscousityVortexParticleGrid
     grid.cnt = CVec3d(0, 0, 0);
     return;
   }
-  min_x = max_x = aVortexParticle[0].pos.x();
-  min_y = max_y = aVortexParticle[0].pos.y();
-  min_z = max_z = aVortexParticle[0].pos.z();
+  min_x = max_x = aVortexParticle[0].pos.x;
+  min_y = max_y = aVortexParticle[0].pos.y;
+  min_z = max_z = aVortexParticle[0].pos.z;
   for (unsigned int ivp = 1; ivp<aVortexParticle.size(); ++ivp){
     CVec3d p = aVortexParticle[ivp].pos;
-    if (p.x()<min_x){ min_x = p.x(); }
-    if (p.x()>max_x){ max_x = p.x(); }
-    if (p.y()<min_y){ min_y = p.y(); }
-    if (p.y()>max_y){ max_y = p.y(); }
-    if (p.z()<min_z){ min_z = p.z(); }
-    if (p.z()>max_z){ max_z = p.z(); }
+    if (p.x<min_x){ min_x = p.x; }
+    if (p.x>max_x){ max_x = p.x; }
+    if (p.y<min_y){ min_y = p.y; }
+    if (p.y>max_y){ max_y = p.y; }
+    if (p.z<min_z){ min_z = p.z; }
+    if (p.z>max_z){ max_z = p.z; }
   }
   grid.cnt = CVec3d(min_x+max_x, min_y+max_y, min_z+max_z)*0.5;
   max_x += h; 
@@ -849,15 +849,15 @@ void delfem2::viscousityVortexParticleGrid
   }
   for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     CVec3d p = aVortexParticle[ivp].pos;
-    int ix = (p.x()-(grid.cnt.x()-h*nx*0.5))/h;
-    int iy = (p.y()-(grid.cnt.y()-h*ny*0.5))/h;
-    int iz = (p.z()-(grid.cnt.z()-h*nz*0.5))/h;
+    int ix = (p.x-(grid.cnt.x-h*nx*0.5))/h;
+    int iy = (p.y-(grid.cnt.y-h*ny*0.5))/h;
+    int iz = (p.z-(grid.cnt.z-h*nz*0.5))/h;
     assert(ix>=0&&ix<nx);
     assert(iy>=0&&iy<ny);
     assert(iz>=0&&iz<nz);
-    double rx = (p.x()-(grid.cnt.x()-h*nx*0.5)-ix*h)/h;
-    double ry = (p.y()-(grid.cnt.y()-h*ny*0.5)-iy*h)/h;
-    double rz = (p.z()-(grid.cnt.z()-h*nz*0.5)-iz*h)/h;
+    double rx = (p.x-(grid.cnt.x-h*nx*0.5)-ix*h)/h;
+    double ry = (p.y-(grid.cnt.y-h*ny*0.5)-iy*h)/h;
+    double rz = (p.z-(grid.cnt.z-h*nz*0.5)-iz*h)/h;
     assert(rx>=-1.0e-5&&rx<=1.0+1.0e-5);
     assert(ry>=-1.0e-5&&ry<=1.0+1.0e-5);
     assert(rz>=-1.0e-5&&rz<=1.0+1.0e-5);
@@ -934,17 +934,17 @@ std::complex<double> delfem2::evaluateField_Helmholtz_Order0th(
   const COMPLEX IMG(0.0, 1.0);
   std::complex<double> c1;
   {
-    double rs = (p-pos_source).Length();
+    double rs = (p-pos_source).norm();
     c1 = exp(rs*k*IMG)/(4*M_PI*rs);
   }
   int ntri = (int)aTri.size()/3;
   for (int jtri = 0; jtri<ntri; jtri++){
     CVec3d pmj = MidPoint(jtri, aTri, aXYZ);
-    double rm = (p-pmj).Length();
+    double rm = (p-pmj).norm();
     CVec3d n = bem::NormalTri(jtri, aTri, aXYZ);
     if (is_inverted_norm){ n *= -1; }
-    double area = n.Length()*0.5;
-    n.SetNormalizedVector();
+    double area = n.norm()*0.5;
+    n.normalize();
     std::complex<double> G = exp(rm*k*IMG)/(4*M_PI*rm);
     std::complex<double> dGdr = G*(IMG*k-1.0/rm);
     double drdn = (1.0/rm)*((p-pmj)*n);
@@ -967,8 +967,8 @@ int ngauss)
   assert(ngauss>=0&&ngauss<3);
   const int nint = NIntTriGauss[ngauss]; // number of integral points
   CVec3d n = Normal(q0, q1, q2);
-  const double a = n.Length()*0.5; // area
-  n.SetNormalizedVector(); // unit normal
+  const double a = n.norm()*0.5; // area
+  n.normalize(); // unit normal
   aC[0] = aC[1] = aC[2] = COMPLEX(0, 0);
   for (int iint = 0; iint<nint; iint++){
     double r0 = TriGauss[ngauss][iint][0];
@@ -976,7 +976,7 @@ int ngauss)
     double r2 = 1.0-r0-r1;
     double w = TriGauss[ngauss][iint][2];
     CVec3d v = p0-(r0*q0+r1*q1+r2*q2);
-    double d = v.Length();  
+    double d = v.norm();  
     COMPLEX G = exp(COMPLEX(0, k*d))/(4.0*M_PI*d);
     COMPLEX val = G*(-IMG*k*beta+v*n/(d*d)*COMPLEX(1.0, -k*d));
     const COMPLEX wav = w*a*val;
@@ -1001,7 +1001,7 @@ int ngauss)
   const COMPLEX IMG(0.0, 1.0);
   COMPLEX c1;
   {
-    double rs = (p-pos_source).Length();
+    double rs = (p-pos_source).norm();
     c1 = exp(rs*k*IMG)/(4*M_PI*rs);
   }
   int ntri = (int)aTri.size()/3;
@@ -1067,9 +1067,9 @@ delfem2::CVec3d delfem2::evaluateField_PotentialFlow
   for (int jtri = 0; jtri<ntri; jtri++){
     CVec3d pmj = MidPoint(jtri, aTri, aXYZ);
     CVec3d nj = bem::NormalTri(jtri, aTri, aXYZ);
-    double areaj = nj.Length()*0.5;
+    double areaj = nj.norm()*0.5;
     CVec3d v = p-pmj;
-    double lenv = v.Length();
+    double lenv = v.norm();
     c -= areaj*aSol[jtri]/(lenv*lenv*lenv)*v;
   }
   return c;

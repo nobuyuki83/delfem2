@@ -63,7 +63,7 @@ DFM2_INLINE void AddDiffDiff_DotFrameRod(
     CMat3d ddW_ddv;
     CVec3d ddW_dvdt;
     double ddW_ddt;
-    DifDifFrameRod(ddW_ddv, ddW_dvdt, ddW_ddt, i0, (P[1]-P[0]).Length(), F1[i1], F0);
+    DifDifFrameRod(ddW_ddv, ddW_dvdt, ddW_ddt, i0, (P[1]-P[0]).norm(), F1[i1], F0);
     ddV_dtdP[0][0] += c*(-ddW_dvdt);
     ddV_dtdP[0][1] += c*(+ddW_dvdt - dF0_dt[i0]*dF1_dv[i1]);
     ddV_dtdP[0][2] += c*(+dF0_dt[i0]*dF1_dv[i1]);
@@ -81,7 +81,7 @@ DFM2_INLINE void AddDiffDiff_DotFrameRod(
     CMat3d ddW_ddv;
     CVec3d ddW_dvdt;
     double ddW_ddt;
-    DifDifFrameRod(ddW_ddv, ddW_dvdt, ddW_ddt, i1, (P[2]-P[1]).Length(), F0[i0], F1);
+    DifDifFrameRod(ddW_ddv, ddW_dvdt, ddW_ddt, i1, (P[2]-P[1]).norm(), F0[i0], F1);
     ddV_dtdP[1][0] += c*-dF1_dt[i1]*dF0_dv[i0];
     ddV_dtdP[1][1] += c*(-ddW_dvdt + dF1_dt[i1]*dF0_dv[i0]);
     ddV_dtdP[1][2] += c*+ddW_dvdt;
@@ -294,11 +294,11 @@ DFM2_INLINE void delfem2::RodFrameTrans(
     double dtheta)
 {
   //  std::cout << "      "  << S0.Length() << std::endl;
-  assert( fabs(S0.Length() - 1.0) < 1.0e-3 );
+  assert( fabs(S0.norm() - 1.0) < 1.0e-3 );
   assert( fabs(S0*V01) < 1.0e-3 );
-  const CVec3d& U0 = V01.Normalize();
+  const CVec3d& U0 = V01.normalized();
   const CVec3d& T0 = U0^S0;
-  frm[2] = (V01+du).Normalize();
+  frm[2] = (V01+du).normalized();
   const CMat3d& R = Mat3_MinimumRotation(U0, frm[2]);
   frm[0] = R*(cos(dtheta)*S0 + sin(dtheta)*T0);
   frm[1] = R*(cos(dtheta)*T0 - sin(dtheta)*S0);
@@ -364,19 +364,19 @@ DFM2_INLINE double delfem2::WdWddW_DotFrame(
     const CVec3d S[2],
     const double off[3])
 {
-  assert( fabs(S[0].Length() - 1.0) < 1.0e-10 );
-  assert( fabs(S[0]*(P[1]-P[0]).Normalize()) < 1.0e-10 );
-  assert( fabs(S[1].Length() - 1.0) < 1.0e-10 );
-  assert( fabs(S[1]*(P[2]-P[1]).Normalize()) < 1.0e-10 );
+  assert( fabs(S[0].norm() - 1.0) < 1.0e-10 );
+  assert( fabs(S[0]*(P[1]-P[0]).normalized()) < 1.0e-10 );
+  assert( fabs(S[1].norm() - 1.0) < 1.0e-10 );
+  assert( fabs(S[1]*(P[2]-P[1]).normalized()) < 1.0e-10 );
   CVec3d Frm0[3];
   {
-    Frm0[2] = (P[1]-P[0]).Normalize();
+    Frm0[2] = (P[1]-P[0]).normalized();
     Frm0[0] = S[0];
     Frm0[1] = Cross(Frm0[2],Frm0[0]);
   }
   CVec3d Frm1[3];
   {
-    Frm1[2] = (P[2]-P[1]).Normalize();
+    Frm1[2] = (P[2]-P[1]).normalized();
     Frm1[0] = S[1];
     Frm1[1] = Cross(Frm1[2],Frm1[0]);
   }
@@ -384,11 +384,11 @@ DFM2_INLINE double delfem2::WdWddW_DotFrame(
   CMat3d dF0_dv[3];
   CVec3d dF0_dt[3];
   DiffFrameRod(dF0_dv, dF0_dt,
-               (P[1]-P[0]).Length(), Frm0);
+               (P[1]-P[0]).norm(), Frm0);
   CMat3d dF1_dv[3];
   CVec3d dF1_dt[3];
   DiffFrameRod(dF1_dv, dF1_dt,
-               (P[2]-P[1]).Length(), Frm1);
+               (P[2]-P[1]).norm(), Frm1);
   double V = 0;
   for(int i=0;i<3;++i){ dV_dP[i].setZero(); }
   for(int i=0;i<2;++i){ dV_dt[i] = 0.0; }
@@ -418,19 +418,19 @@ DFM2_INLINE delfem2::CVec3d delfem2::Darboux_Rod
  (const CVec3d P[3],
   const CVec3d S[2])
 {
-  assert( fabs(S[0].Length() - 1.0) < 1.0e-5 );
-  assert( fabs(S[0]*(P[1]-P[0]).Normalize()) < 1.0e-5 );
-  assert( fabs(S[1].Length() - 1.0) < 1.0e-5 );
-  assert( fabs(S[1]*(P[2]-P[1]).Normalize()) < 1.0e-5 );
+  assert( fabs(S[0].norm() - 1.0) < 1.0e-5 );
+  assert( fabs(S[0]*(P[1]-P[0]).normalized()) < 1.0e-5 );
+  assert( fabs(S[1].norm() - 1.0) < 1.0e-5 );
+  assert( fabs(S[1]*(P[2]-P[1]).normalized()) < 1.0e-5 );
   CVec3d F0[3];
   { // frame on line segment 01
-    F0[2] = (P[1]-P[0]).Normalize();
+    F0[2] = (P[1]-P[0]).normalized();
     F0[0] = S[0];
     F0[1] = Cross(F0[2],F0[0]);
   }
   CVec3d F1[3];
   { // frame on line segment 12
-    F1[2] = (P[2]-P[1]).Normalize();
+    F1[2] = (P[2]-P[1]).normalized();
     F1[0] = S[1];
     F1[1] = Cross(F1[2],F1[0]);
   }
@@ -455,19 +455,19 @@ DFM2_INLINE double delfem2::WdWddW_Rod(
     const CVec3d& darboux0,
     bool is_exact )
 {
-  assert( fabs(S[0].Length() - 1.0) < 1.0e-5 );
-  assert( fabs(S[0]*(P[1]-P[0]).Normalize()) < 1.0e-5 );
-  assert( fabs(S[1].Length() - 1.0) < 1.0e-5 );
-  assert( fabs(S[1]*(P[2]-P[1]).Normalize()) < 1.0e-5 );
+  assert( fabs(S[0].norm() - 1.0) < 1.0e-5 );
+  assert( fabs(S[0]*(P[1]-P[0]).normalized()) < 1.0e-5 );
+  assert( fabs(S[1].norm() - 1.0) < 1.0e-5 );
+  assert( fabs(S[1]*(P[2]-P[1]).normalized()) < 1.0e-5 );
   CVec3d F[3];
   { // compute frame on 01 segment
-    F[2] = (P[1]-P[0]).Normalize();
+    F[2] = (P[1]-P[0]).normalized();
     F[0] = S[0];
     F[1] = Cross(F[2],F[0]);
   }
   CVec3d G[3];
   { // compute frame on 12 segment
-    G[2] = (P[2]-P[1]).Normalize();
+    G[2] = (P[2]-P[1]).normalized();
     G[0] = S[1];
     G[1] = Cross(G[2],G[0]);
   }
@@ -476,12 +476,12 @@ DFM2_INLINE double delfem2::WdWddW_Rod(
   CVec3d dF_dt[3];
   DiffFrameRod(
       dF_dv, dF_dt,
-      (P[1]-P[0]).Length(), F);
+      (P[1]-P[0]).norm(), F);
   CMat3d dG_dv[3];
   CVec3d dG_dt[3];
   DiffFrameRod(
       dG_dv, dG_dt,
-      (P[2]-P[1]).Length(), G);
+      (P[2]-P[1]).norm(), G);
   // ------------
   for(int i=0;i<3;++i){ dW_dP[i].setZero(); }
   for(int i=0;i<2;++i){ dW_dt[i] = 0.0; }
@@ -520,9 +520,9 @@ DFM2_INLINE double delfem2::WdWddW_Rod(
     F[2]*G[0] - F[0]*G[2],
     F[0]*G[1] - F[1]*G[0] };
   const double R[3] = {
-    X[0]/Y-darboux0.x(),
-    X[1]/Y-darboux0.y(),
-    X[2]/Y-darboux0.z() };
+    X[0]/Y-darboux0.x,
+    X[1]/Y-darboux0.y,
+    X[2]/Y-darboux0.z };
   for(unsigned int iaxis=0;iaxis<3;++iaxis){
     const double stfa = stiff_bendtwist[iaxis];
     const unsigned int jaxis = (iaxis+1)%3;
@@ -680,7 +680,7 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
     const unsigned int i0 = aElemSeg[iseg*2+0];
     const unsigned int i1 = aElemSeg[iseg*2+1];
     const unsigned int* aINoel = aElemSeg.data()+iseg*2;
-    const double L0 = (aP0[i0]-aP0[i1]).Length();
+    const double L0 = (aP0[i0]-aP0[i1]).norm();
     const CVec3d aPE[2] = { aP[i0], aP[i1] };
     // --------------
     CVec3d dW_dP[2];
@@ -700,9 +700,9 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
     {
       for (int inoel=0; inoel<2; inoel++){
         const unsigned int ip = aINoel[inoel];
-        vec_r[ip*3+0] -= dW_dP[inoel].x();
-        vec_r[ip*3+1] -= dW_dP[inoel].y();
-        vec_r[ip*3+2] -= dW_dP[inoel].z();
+        vec_r[ip*3+0] -= dW_dP[inoel].x;
+        vec_r[ip*3+1] -= dW_dP[inoel].y;
+        vec_r[ip*3+2] -= dW_dP[inoel].z;
       }
     }
   }
@@ -737,9 +737,9 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
       }
       for(int in=0;in<3;++in){
         for(int jn=0;jn<2;++jn){
-          eM[3+jn][in][0][0] = eM[in][jn+3][0][0] = ddW_dtdP[jn][in].x();
-          eM[3+jn][in][0][1] = eM[in][jn+3][1][0] = ddW_dtdP[jn][in].y();
-          eM[3+jn][in][0][2] = eM[in][jn+3][2][0] = ddW_dtdP[jn][in].z();
+          eM[3+jn][in][0][0] = eM[in][jn+3][0][0] = ddW_dtdP[jn][in].x;
+          eM[3+jn][in][0][1] = eM[in][jn+3][1][0] = ddW_dtdP[jn][in].y;
+          eM[3+jn][in][0][2] = eM[in][jn+3][2][0] = ddW_dtdP[jn][in].z;
         }
       }
       for(int in=0;in<2;++in){
@@ -753,9 +753,9 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
     {
       for (int inoel=0; inoel<3; inoel++){
         const unsigned int ip = aINoel[inoel];
-        vec_r[ip*3+0] -= dW_dP[inoel].x();
-        vec_r[ip*3+1] -= dW_dP[inoel].y();
-        vec_r[ip*3+2] -= dW_dP[inoel].z();
+        vec_r[ip*3+0] -= dW_dP[inoel].x;
+        vec_r[ip*3+1] -= dW_dP[inoel].y;
+        vec_r[ip*3+2] -= dW_dP[inoel].z;
       }
       for (int inoel=0; inoel<2; inoel++){
         const unsigned int in0 = aINoel[3+inoel];
@@ -819,9 +819,9 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
     const unsigned int i1 = aElemSeg[iseg*2+1];
     const CVec3d& p0 = aP[i0];
     const CVec3d& p1 = aP[i1];
-    const CVec3d e01 = (p1-p0).Normalize();
+    const CVec3d e01 = (p1-p0).normalized();
     aS[iseg] -= (aS[iseg]*e01)*e01;
-    aS[iseg].SetNormalizedVector();
+    aS[iseg].normalize();
   }
 }
 
@@ -848,8 +848,8 @@ DFM2_INLINE void delfem2::ParallelTransport_RodHair(
       const unsigned int is1 = ip_r+ir+1;
       const CMat3d CMat3 = Mat3_MinimumRotation(aP0[ip1]-aP0[ip0], aP0[ip2]-aP0[ip1]);
       CVec3d s1 = CMat3*aS0[is0] + aS0[is1];
-      const CVec3d v = (aP0[ip2] - aP0[ip1]).Normalize();
-      aS0[is1] = (s1-(s1*v)*v).Normalize();
+      const CVec3d v = (aP0[ip2] - aP0[ip1]).normalized();
+      aS0[is1] = (s1-(s1*v)*v).normalized();
     }
   }
 }
@@ -912,9 +912,9 @@ DFM2_INLINE void delfem2::MakeDirectorOrthogonal_RodHair(
     const unsigned int ip1 = is+1;
     const CVec3d& p0 = aP[ip0];
     const CVec3d& p1 = aP[ip1];
-    const CVec3d e01 = (p1-p0).Normalize();
+    const CVec3d e01 = (p1-p0).normalized();
     aS[is] -= (aS[is]*e01)*e01;
-    aS[is].SetNormalizedVector();
+    aS[is].normalize();
   }
   /*
   for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
@@ -953,7 +953,7 @@ double delfem2::MergeLinSys_Hair(
       const unsigned int ip0 = ips+is+0;
       const unsigned int ip1 = ips+is+1;
       const unsigned int aINoel[2] = {ip0,ip1};
-      const double L0 = (aP0[ip0]-aP0[ip1]).Length();
+      const double L0 = (aP0[ip0]-aP0[ip1]).norm();
       const CVec3d aPE[2] = { aP[ip0], aP[ip1] };
       // --------------
       CVec3d dW_dP[2];
@@ -972,9 +972,9 @@ double delfem2::MergeLinSys_Hair(
       }
       for (int in=0; in<2; in++){
         const unsigned int ip = aINoel[in];
-        vec_r[ip*4+0] -= dW_dP[in].x();
-        vec_r[ip*4+1] -= dW_dP[in].y();
-        vec_r[ip*4+2] -= dW_dP[in].z();
+        vec_r[ip*4+0] -= dW_dP[in].x;
+        vec_r[ip*4+1] -= dW_dP[in].y;
+        vec_r[ip*4+2] -= dW_dP[in].z;
       }
     }
   }
@@ -1014,9 +1014,9 @@ double delfem2::MergeLinSys_Hair(
         }
         for(int in=0;in<3;++in){
           for(int jn=0;jn<2;++jn){
-            eM[in][jn][0][3] = eM[jn][in][3][0] = ddW_dtdP[jn][in].x();
-            eM[in][jn][1][3] = eM[jn][in][3][1] = ddW_dtdP[jn][in].y();
-            eM[in][jn][2][3] = eM[jn][in][3][2] = ddW_dtdP[jn][in].z();
+            eM[in][jn][0][3] = eM[jn][in][3][0] = ddW_dtdP[jn][in].x;
+            eM[in][jn][1][3] = eM[jn][in][3][1] = ddW_dtdP[jn][in].y;
+            eM[in][jn][2][3] = eM[jn][in][3][2] = ddW_dtdP[jn][in].z;
           }
         }
         for(int in=0;in<2;++in){
@@ -1029,9 +1029,9 @@ double delfem2::MergeLinSys_Hair(
       {
         for (int ino=0; ino<3; ino++){
           const unsigned int ip = aINoel[ino];
-          vec_r[ip*4+0] -= dW_dP[ino].x();
-          vec_r[ip*4+1] -= dW_dP[ino].y();
-          vec_r[ip*4+2] -= dW_dP[ino].z();
+          vec_r[ip*4+0] -= dW_dP[ino].x;
+          vec_r[ip*4+1] -= dW_dP[ino].y;
+          vec_r[ip*4+2] -= dW_dP[ino].z;
         }
         for (int in=0; in<2; in++){
           const unsigned int in0 = aINoel[in];
@@ -1208,9 +1208,9 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
   }
   for(unsigned int ip=0;ip<aP.size();++ip){ // this term has effect only in the second nonliear iteration
     const CVec3d dp = aPt0[ip]-aP[ip];
-    vec_r[ip*4+0] += dp.x()*mdtt;
-    vec_r[ip*4+1] += dp.y()*mdtt;
-    vec_r[ip*4+2] += dp.z()*mdtt;
+    vec_r[ip*4+0] += dp.x*mdtt;
+    vec_r[ip*4+1] += dp.y*mdtt;
+    vec_r[ip*4+2] += dp.z*mdtt;
   }
 //  std::cout << "energy:" << W << std::endl;
   //    std::cout << "sym: " << CheckSymmetry(mats) << std::endl;
@@ -1222,9 +1222,9 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
 //    std::cout << "    contact: " << r0 << std::endl;
     for(int iip=0;iip<4;++iip){
       const unsigned int ip0 = aIP[iip];
-      vec_r[ip0*4+0] -= stiff_contact*r0*aW[iip]*ch.norm.x();
-      vec_r[ip0*4+1] -= stiff_contact*r0*aW[iip]*ch.norm.y();
-      vec_r[ip0*4+2] -= stiff_contact*r0*aW[iip]*ch.norm.z();
+      vec_r[ip0*4+0] -= stiff_contact*r0*aW[iip]*ch.norm.x;
+      vec_r[ip0*4+1] -= stiff_contact*r0*aW[iip]*ch.norm.y;
+      vec_r[ip0*4+2] -= stiff_contact*r0*aW[iip]*ch.norm.z;
     }
   }
   // --------------

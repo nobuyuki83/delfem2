@@ -145,8 +145,8 @@ DFM2_INLINE void Rig_WdW_Target(
   const CVec3d p0 = aBone[ib].Pos();
   const unsigned int ncnst = 2;
   {
-    double sqx = pos.x()-p0.x();
-    double sqy = pos.y()-p0.y();
+    double sqx = pos.x-p0.x;
+    double sqy = pos.y-p0.y;
     aW.push_back(sqx);
     aW.push_back(sqy);
   }
@@ -247,9 +247,9 @@ Solve_MinRigging(
   }
   {
      CVec3d vec_trans(u.data()+aBone.size()*3);
-    aBone[0].transRelative[0] -= vec_trans.x();
-    aBone[0].transRelative[1] -= vec_trans.y();
-    aBone[0].transRelative[2] -= vec_trans.z();
+    aBone[0].transRelative[0] -= vec_trans.x;
+    aBone[0].transRelative[1] -= vec_trans.y;
+    aBone[0].transRelative[2] -= vec_trans.z;
   }
   UpdateBoneRotTrans(aBone);
 }

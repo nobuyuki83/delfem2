@@ -61,12 +61,12 @@ TEST(bvh,inclusion_sphere)
     for(unsigned int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
-      bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
+      bool is_intersect = bv.isInclude_Point(p0.x, p0.y, p0.z);
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
         const unsigned int ichild0 = node.ichild[0];
         const unsigned int ichild1 = node.ichild[1];
-        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x(), p0.y(), p0.z()) );
-        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x(), p0.y(), p0.z()) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x, p0.y, p0.z) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x, p0.y, p0.z) );
       }
     }
   }
@@ -94,12 +94,12 @@ TEST(bvh,inclusion_aabb)
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_AABB& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
-      bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
+      bool is_intersect = bv.isInclude_Point(p0.x, p0.y, p0.z);
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
         const unsigned int ichild0 = node.ichild[0];
         const unsigned int ichild1 = node.ichild[1];
-        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x(), p0.y(), p0.z()) );
-        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x(), p0.y(), p0.z()) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x, p0.y, p0.z) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x, p0.y, p0.z) );
       }
     }
   }
@@ -130,7 +130,7 @@ TEST(bvh,nearestinc_sphere)
   for(int itr=0;itr<1000;++itr){
     dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng));
     {
-      p0.SetNormalizedVector();
+      p0.normalize();
       if( itr % 2 == 0 ){ p0 *= 1.02; } // outside included in bvh
       else{               p0 *= 0.98; } // inside in included in bvh
     }
@@ -156,7 +156,7 @@ TEST(bvh,nearestinc_sphere)
       double dist_tri = -1, dist_bv = 0.1;
       dfm2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
           dist_tri, dist_bv, pes2,
-          p0.x(), p0.y(), p0.z(), 0.1,
+          p0.x, p0.y, p0.z, 0.1,
           aXYZ.data(), aXYZ.size()/3,
           aTri.data(), aXYZ.size()/3,
           bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
@@ -201,7 +201,7 @@ TEST(bvh,nearest_range) // find global nearest from range
         double min0, max0;
         bb_tri.Range_DistToPoint(
             min0, max0,
-            p0.x(), p0.y(), p0.z());
+            p0.x, p0.y, p0.z);
         EXPECT_GE( max0, dist_max );
         EXPECT_GE( min0, dist_min );
         if( max0 < dist_max+1.0e-10 ){ is_max = true; }
@@ -223,7 +223,7 @@ TEST(bvh,nearest_range) // find global nearest from range
         bb_tri.AddPoint(aXYZ.data()+ino0*3, 0.0);
       }
       double min0, max0;
-      bb_tri.Range_DistToPoint(min0, max0, p0.x(), p0.y(), p0.z());
+      bb_tri.Range_DistToPoint(min0, max0, p0.x, p0.y, p0.z);
       if( aFlg[itri] == 1 ){ // inside range
         EXPECT_LE(min0,dist_max);
         EXPECT_GE(max0,dist_min);
@@ -296,12 +296,12 @@ TEST(bvh,sdf) // find global nearest directry
       randomDist(randomEng),
       randomDist(randomEng),
       randomDist(randomEng) );
-    if( (p0.Length()-1.0)<1.0e-3 ){ continue; }
+    if( (p0.norm()-1.0)<1.0e-3 ){ continue; }
     dfm2::CVec3d n0;
     double sdf = bvh.SignedDistanceFunction(n0,
                                             p0, aXYZ, aTri, aNorm);
-    EXPECT_NEAR(1-p0.Length(), sdf, 1.0e-2);
-    EXPECT_NEAR(n0*p0.Normalize(), 1.0, 1.0e-2 );
+    EXPECT_NEAR(1-p0.norm(), sdf, 1.0e-2);
+    EXPECT_NEAR(n0*p0.normalized(), 1.0, 1.0e-2 );
   }
 }
 
@@ -329,7 +329,7 @@ TEST(bvh,lineintersection)
            1.0e-5);
   for(int itr=0;itr<100;++itr){
     const dfm2::CVec3d s0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice);
-    const dfm2::CVec3d d0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice).Normalize();
+    const dfm2::CVec3d d0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice).normalized();
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -386,7 +386,7 @@ TEST(bvh,rayintersection)
       1.0e-5);
   for(int itr=0;itr<100;++itr){
     const dfm2::CVec3d s0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice);
-    const dfm2::CVec3d d0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice).Normalize();
+    const dfm2::CVec3d d0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice).normalized();
     for(unsigned int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];

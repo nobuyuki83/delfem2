@@ -19,7 +19,7 @@ namespace dfm2 = delfem2;
 
 static void myGlVertex3d(const dfm2::CVec3d& v)
 {
-  ::glVertex3d(v.x(),v.y(),v.z());
+  ::glVertex3d(v.x,v.y,v.z);
 }
 
 static void myGlVertex3d
@@ -27,7 +27,7 @@ static void myGlVertex3d
  const std::vector<dfm2::CVec3d>& aV)
 {
   const dfm2::CVec3d& v = aV[i];
-  ::glVertex3d(v.x(), v.y(), v.z());
+  ::glVertex3d(v.x, v.y, v.z);
 }
 
 int main(int argc,char* argv[])

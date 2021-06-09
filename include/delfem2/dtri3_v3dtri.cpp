@@ -191,9 +191,9 @@ DFM2_INLINE bool FindRayTriangleMeshIntersectionClosestToPoint
   for (auto & i : intersectionPoints)
   {
     float currSquareDistance =
-    (i.x() - targetPoint.x()) * (i.x() - targetPoint.x()) +
-    (i.y() - targetPoint.y()) * (i.y() - targetPoint.y()) +
-    (i.z() - targetPoint.z()) * (i.z() - targetPoint.z());
+    (i.x - targetPoint.x) * (i.x - targetPoint.x) +
+    (i.y - targetPoint.y) * (i.y - targetPoint.y) +
+    (i.z - targetPoint.z) * (i.z - targetPoint.z);
     if (currSquareDistance < minSquareDistance)
     {
       intersectionPoint = i;
@@ -220,7 +220,7 @@ DFM2_INLINE delfem2::CVec3d delfem2::UnitNormal_DTri3(
   int i1 = aSTri[itri0].v[1];
   int i2 = aSTri[itri0].v[2];
   const CVec3d n = Normal(aP3[i0], aP3[i1], aP3[i2]);
-  return n.Normalize();
+  return n.normalized();
 }
 
 

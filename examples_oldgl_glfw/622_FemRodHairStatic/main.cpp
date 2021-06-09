@@ -34,7 +34,7 @@ void myGlutDisplay(
     ::glPointSize(3);
     ::glBegin(GL_POINTS);
     for(unsigned int ip=ips;ip<ipe;++ip){
-      ::glVertex3d(aP[ip].x(), aP[ip].y(), aP[ip].z());
+      ::glVertex3d(aP[ip].x, aP[ip].y, aP[ip].z);
     }
     ::glEnd();
     // ------------
@@ -45,8 +45,8 @@ void myGlutDisplay(
     for(unsigned int is=0;is<ns;++is){
       const unsigned int ip0 = ips+is+0; assert( ip0 < aP.size() );
       const unsigned int ip1 = ips+is+1; assert( ip1 < aP.size() );
-      ::glVertex3d(aP[ip0].x(), aP[ip0].y(), aP[ip0].z());
-      ::glVertex3d(aP[ip1].x(), aP[ip1].y(), aP[ip1].z());
+      ::glVertex3d(aP[ip0].x, aP[ip0].y, aP[ip0].z);
+      ::glVertex3d(aP[ip1].x, aP[ip1].y, aP[ip1].z);
     }
     ::glEnd();
     // --------------
@@ -55,7 +55,7 @@ void myGlutDisplay(
       const unsigned int ip0 = ips+is+0; assert( ip0 < aP.size() );
       const unsigned int ip1 = ips+is+1; assert( ip1 < aP.size() );
       dfm2::CVec3d p01 = 0.5*(aP[ip0]+aP[ip1]);
-      double l01 = (aP[ip0]-aP[ip1]).Length();
+      double l01 = (aP[ip0]-aP[ip1]).norm();
       dfm2::opengl::myGlVertex(p01);
       dfm2::opengl::myGlVertex(p01+(l01*0.5)*aS[is]);
     }
@@ -105,9 +105,9 @@ void MakeProblemSetting_Spiral(
     }
     const unsigned int np0 = aIP_HairRoot[ihair];
     for(unsigned int is=0;is<np-1;++is){
-      const dfm2::CVec3d v = (aP0[np0+is+1] - aP0[np0+is+0]).Normalize();
+      const dfm2::CVec3d v = (aP0[np0+is+1] - aP0[np0+is+0]).normalized();
       dfm2::CVec3d s(1.3, 1.5, 1.7);
-      s = (s-(s*v)*v).Normalize();
+      s = (s-(s*v)*v).normalized();
       aS0.push_back(s);
     }
     aS0.emplace_back(1,0,0);
@@ -165,9 +165,9 @@ int main(int argc,char* argv[])
     for(unsigned int ip=0;ip<aP.size();++ip){
       aP[ip] = aP0[ip];
       auto rnd = dfm2::CVec3d::Random(dist01,reng)*0.1;
-      if( aBCFlag[ip*4+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
-      if( aBCFlag[ip*4+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
-      if( aBCFlag[ip*4+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
+      if( aBCFlag[ip*4+0] == 0 ){ aP[ip].p[0] += rnd.x; }
+      if( aBCFlag[ip*4+1] == 0 ){ aP[ip].p[1] += rnd.y; }
+      if( aBCFlag[ip*4+2] == 0 ){ aP[ip].p[2] += rnd.z; }
       if( aBCFlag[ip*4+3] == 0 ){
         assert( ip != aP.size()-1 );
         aS[ip] += dfm2::CVec3d::Random(dist01,reng)*0.1;

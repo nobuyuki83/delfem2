@@ -31,7 +31,7 @@ void myGlutDisplay
   ::glPointSize(10);
   ::glBegin(GL_POINTS);
   for(const auto & p : aP){
-    ::glVertex3d(p.x(), p.y(), p.z());
+    ::glVertex3d(p.x, p.y, p.z);
   }
   ::glEnd();
   // ------------
@@ -41,8 +41,8 @@ void myGlutDisplay
   for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
     unsigned int i0 = aElemSeg[iseg*2+0]; assert( i0 < aP.size() );
     unsigned int i1 = aElemSeg[iseg*2+1]; assert( i1 < aP.size() );
-    ::glVertex3d(aP[i0].x(), aP[i0].y(), aP[i0].z());
-    ::glVertex3d(aP[i1].x(), aP[i1].y(), aP[i1].z());
+    ::glVertex3d(aP[i0].x, aP[i0].y, aP[i0].z);
+    ::glVertex3d(aP[i1].x, aP[i1].y, aP[i1].z);
   }
   ::glEnd();
   // --------------
@@ -51,7 +51,7 @@ void myGlutDisplay
     unsigned int i0 = aElemSeg[iseg*2+0]; assert( i0 < aP.size() );
     unsigned int i1 = aElemSeg[iseg*2+1]; assert( i1 < aP.size() );
     dfm2::CVec3d p01 = 0.5*(aP[i0]+aP[i1]);
-    double l01 = (aP[i0]-aP[i1]).Length();
+    double l01 = (aP[i0]-aP[i1]).norm();
     dfm2::opengl::myGlVertex(p01);
     dfm2::opengl::myGlVertex(p01+(l01*0.5)*aS[iseg]);
   }
@@ -85,8 +85,8 @@ void MakeProblemSetting_Spiral
     for(unsigned int is=0;is<ns;++is){
       unsigned int ip0 = aElemSeg[is*2+0];
       unsigned int ip1 = aElemSeg[is*2+1];
-      const dfm2::CVec3d v = (aP0[ip1] - aP0[ip0]).Normalize();
-      aS0[is] = (aS0[is]-(aS0[is]*v)*v).Normalize();
+      const dfm2::CVec3d v = (aP0[ip1] - aP0[ip0]).normalized();
+      aS0[is] = (aS0[is]-(aS0[is]*v)*v).normalized();
     }
   }
   // --------------------------
@@ -110,8 +110,8 @@ void MakeProblemSetting_Spiral
       const unsigned int is1 = aElemRod[ir*5+4]-np; assert( is1 < ns );
       const dfm2::CMat3d CMat3 = dfm2::Mat3_MinimumRotation(aP0[ip1]-aP0[ip0], aP0[ip2]-aP0[ip1]);
       dfm2::CVec3d s1 = CMat3*aS0[is0] + aS0[is1];
-      const dfm2::CVec3d v = (aP0[ip2] - aP0[ip1]).Normalize();
-      aS0[is1] = (s1-(s1*v)*v).Normalize();
+      const dfm2::CVec3d v = (aP0[ip2] - aP0[ip1]).normalized();
+      aS0[is1] = (s1-(s1*v)*v).normalized();
     }
   }
 }
@@ -174,28 +174,28 @@ int main(int argc,char* argv[])
     for(unsigned int ip=0;ip<aP.size();++ip){
       aP[ip] = aP0[ip];
       auto rnd = dfm2::CVec3d::Random(dist03,reng);
-      if( aBCFlag[ip*3+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
-      if( aBCFlag[ip*3+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
-      if( aBCFlag[ip*3+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
+      if( aBCFlag[ip*3+0] == 0 ){ aP[ip].p[0] += rnd.x; }
+      if( aBCFlag[ip*3+1] == 0 ){ aP[ip].p[1] += rnd.y; }
+      if( aBCFlag[ip*3+2] == 0 ){ aP[ip].p[2] += rnd.z; }
     }
     const unsigned int ns = aS.size();
     for(unsigned int is=0;is<ns;++is){
       aS[is] = aS0[is];
       auto rnd = dfm2::CVec3d::Random(dist03,reng);
       const unsigned int np = aP.size();
-      if( aBCFlag[(np+is)*3+0] == 0 ){ aS[is].p[0] += rnd.x(); }
-      if( aBCFlag[(np+is)*3+1] == 0 ){ aS[is].p[1] += rnd.y(); }
-      if( aBCFlag[(np+is)*3+2] == 0 ){ aS[is].p[2] += rnd.z(); }
+      if( aBCFlag[(np+is)*3+0] == 0 ){ aS[is].p[0] += rnd.x; }
+      if( aBCFlag[(np+is)*3+1] == 0 ){ aS[is].p[1] += rnd.y; }
+      if( aBCFlag[(np+is)*3+2] == 0 ){ aS[is].p[2] += rnd.z; }
     }
     for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
       const unsigned int i0 = aElemSeg[iseg*2+0];
       const unsigned int i1 = aElemSeg[iseg*2+1];
       const dfm2::CVec3d& p0 = aP[i0];
       const dfm2::CVec3d& p1 = aP[i1];
-      const dfm2::CVec3d e01 = (p1-p0).Normalize();
+      const dfm2::CVec3d e01 = (p1-p0).normalized();
       assert( iseg < aS.size() );
       aS[iseg] -= (aS[iseg]*e01)*e01;
-      aS[iseg].SetNormalizedVector();
+      aS[iseg].normalize();
     }
     const double stiff_stretch = dist01(reng)+1.;
     const double stiff_bendtwist[3] = {

@@ -22,8 +22,8 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 
-static void myGlNormal(const dfm2::CVec3d& n){ ::glNormal3d(n.x(),n.y(),n.z()); }
-static void myGlVertex(const dfm2::CVec3d& v){ ::glVertex3d(v.x(),v.y(),v.z()); }
+static void myGlNormal(const dfm2::CVec3d& n){ ::glNormal3d(n.x,n.y,n.z); }
+static void myGlVertex(const dfm2::CVec3d& v){ ::glVertex3d(v.x,v.y,v.z); }
 static void myGlColorDiffuse(float r, float g, float b, float a){
   ::glColor4d(r, g, b, a );
   float c[4] = {r, g, b, a};

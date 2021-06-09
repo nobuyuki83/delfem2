@@ -63,8 +63,8 @@ DFM2_INLINE void dWddW_ArapEnergy(
     CVec3d pj(aXYZ1.data()+jp*3);
     const CVec3d v1 = pj-pi;
     const CVec3d r = -(v1-v0);
-    r.AddToScale(eR.data()+nNg*3, +1);
-    r.AddToScale(eR.data()+jjp*3, -1);
+    r.AddToScale(eR.data()+nNg*3, +1.);
+    r.AddToScale(eR.data()+jjp*3, -1.);
   }
 }
 

@@ -141,10 +141,10 @@ int main(int argc,char* argv[])
         aXYZ,
         aTriSuTri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];
-    coordLocal[2] = dfm2::Normal_Tri3(ielm_ker,aTri,aXYZ).Normalize();
+    coordLocal[2] = dfm2::Normal_Tri3(ielm_ker,aTri,aXYZ).normalized();
     assert( fabs(coordLocal[0] * coordLocal[2])<1.0e-10 );
-    assert( fabs(coordLocal[0].Length()-1.0)<1.0e-10 );
-    assert( fabs(coordLocal[2].Length()-1.0)<1.0e-10 );
+    assert( fabs(coordLocal[0].norm()-1.0)<1.0e-10 );
+    assert( fabs(coordLocal[2].norm()-1.0)<1.0e-10 );
     coordLocal[1] = coordLocal[2]^coordLocal[0];
     coordLocal[3] = dfm2::CG_Tri3(ielm_ker,aTri,aXYZ);
     //
@@ -156,7 +156,7 @@ int main(int argc,char* argv[])
       for (unsigned int ielsup = elsup_ind[ip0]; ielsup < elsup_ind[ip0 + 1]; ++ielsup) {
         const unsigned int it1 = elsup[ielsup];
         dfm2::CVec3d p1 = dfm2::CG_Tri3(it1, aTri, aXYZ);
-        double w1 = 1.0 / (p0 - p1).Length();
+        double w1 = 1.0 / (p0 - p1).norm();
         tex[0] += w1 * aTexE[it1 * 2 + 0];
         tex[1] += w1 * aTexE[it1 * 2 + 1];
         w0 += w1;

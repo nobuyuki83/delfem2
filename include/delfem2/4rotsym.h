@@ -46,7 +46,7 @@ CVec3d FindNearestOrientation(
   }
   idiff = (id0_near+4-id1_near)%4;
   CVec3d d0new = ad0[id0_near] * weight + ad1[id1_near];
-  d0new = (d0new - (d0new * n0) * n0).Normalize();
+  d0new = (d0new - (d0new * n0) * n0).normalized();
   if( id0_near == 1 ){ d0new = d0new ^ n0; }
   return d0new;
 }
@@ -96,8 +96,8 @@ void Smooth4RotSym2(
           o_new,N, o1, N, weight);
       weight += 1.0;
     }
-    aOdir[ip*2+0] = o_new.x();
-    aOdir[ip*2+1] = o_new.y();
+    aOdir[ip*2+0] = o_new.x;
+    aOdir[ip*2+1] = o_new.y;
   }
 }
 

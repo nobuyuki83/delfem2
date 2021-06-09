@@ -61,7 +61,7 @@ void ShadingImageRayLambertian(
             aXYZ.data() + aTri[itri * 3 + 0] * 3,
             aXYZ.data() + aTri[itri * 3 + 1] * 3,
             aXYZ.data() + aTri[itri * 3 + 2] * 3);
-        dfm2::CVec3d udir1 = dir1.Normalize();
+        dfm2::CVec3d udir1 = dir1.normalized();
         const double dot = n[0] * udir1[0] + n[1] * udir1[1] + n[2] * udir1[2];
         aRGB[(ih * nwidth + iw) * 3 + 0] = static_cast<unsigned char>(-dot * 255);
         aRGB[(ih * nwidth + iw) * 3 + 1] = static_cast<unsigned char>(-dot * 255);

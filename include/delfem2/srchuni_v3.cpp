@@ -147,7 +147,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri
   const CVec3<T> n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
   const CVec3<T> n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
   const CVec3<T> n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
-  return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
+  return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).normalized();
 }
 template delfem2::CVec3d delfem2::CPtElm2<double>::UNorm_Tri(
     const std::vector<double>&,
@@ -170,7 +170,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
   const CVec3<T> n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
   const CVec3<T> n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
   const CVec3<T> n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
-  return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
+  return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).normalized();
 }
 template delfem2::CVec3d delfem2::CPtElm2<double>::UNorm_Tri(
     const double* aXYZ,
@@ -483,7 +483,7 @@ void delfem2::IntersectionRay_MeshTri3DPart(
     if( !res ){ continue; }
     double r2 = 1-r0-r1;
     CVec3<T> q0 = p0*r0+p1*r1+p2*r2;
-    double depth = (q0-org)*dir/dir.DLength();
+    double depth = (q0-org)*dir/dir.squaredNorm();
     if( depth < 0 ) continue;
     mapDepthPES.insert( std::make_pair(depth,CPtElm2<T>(itri,r0,r1)) );
   }
@@ -643,12 +643,12 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTri3D(
     const int i0 = aTri[it*3+0];
     const int i1 = aTri[it*3+1];
     const int i2 = aTri[it*3+2];
-    const CVec3<T> p0(aXYZ[i0*3+0]-q.x(), aXYZ[i0*3+1]-q.y(), aXYZ[i0*3+2]-q.z() );
-    const CVec3<T> p1(aXYZ[i1*3+0]-q.x(), aXYZ[i1*3+1]-q.y(), aXYZ[i1*3+2]-q.z() );
-    const CVec3<T> p2(aXYZ[i2*3+0]-q.x(), aXYZ[i2*3+1]-q.y(), aXYZ[i2*3+2]-q.z() );
+    const CVec3<T> p0(aXYZ[i0*3+0]-q.x, aXYZ[i0*3+1]-q.y, aXYZ[i0*3+2]-q.z );
+    const CVec3<T> p1(aXYZ[i1*3+0]-q.x, aXYZ[i1*3+1]-q.y, aXYZ[i1*3+2]-q.z );
+    const CVec3<T> p2(aXYZ[i2*3+0]-q.x, aXYZ[i2*3+1]-q.y, aXYZ[i2*3+2]-q.z );
     double r0,r1;
     CVec3<T> p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
-    double dist = p_min.DLength();
+    double dist = p_min.squaredNorm();
     if( min_dist<0 || dist < min_dist ){
       min_dist = dist;
       pes = CPtElm2<T>((int)it,r0,r1);
@@ -677,13 +677,13 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTri3DPart(
     const unsigned int i0 = aTri[itri0*3+0];
     const unsigned int i1 = aTri[itri0*3+1];
     const unsigned int i2 = aTri[itri0*3+2];
-    const CVec3<T> p0(aXYZ[i0*3+0]-q.x(), aXYZ[i0*3+1]-q.y(), aXYZ[i0*3+2]-q.z() );
-    const CVec3<T> p1(aXYZ[i1*3+0]-q.x(), aXYZ[i1*3+1]-q.y(), aXYZ[i1*3+2]-q.z() );
-    const CVec3<T> p2(aXYZ[i2*3+0]-q.x(), aXYZ[i2*3+1]-q.y(), aXYZ[i2*3+2]-q.z() );
+    const CVec3<T> p0(aXYZ[i0*3+0]-q.x, aXYZ[i0*3+1]-q.y, aXYZ[i0*3+2]-q.z );
+    const CVec3<T> p1(aXYZ[i1*3+0]-q.x, aXYZ[i1*3+1]-q.y, aXYZ[i1*3+2]-q.z );
+    const CVec3<T> p2(aXYZ[i2*3+0]-q.x, aXYZ[i2*3+1]-q.y, aXYZ[i2*3+2]-q.z );
     double r0,r1;
     CVec3<T> p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
     assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
-    double dist = p_min.DLength();
+    double dist = p_min.squaredNorm();
     if( min_dist<0 || dist < min_dist ){
       min_dist = dist;
       pes = CPtElm2<T>(itri0,r0,r1);
@@ -785,7 +785,7 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTetFace3D
     CVec3<T> q2 = CVec3<T>(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2])-p0;
     double r0,r1;
     CVec3<T> p2 = Nearest_Origin_Tri(r0,r1, q0,q1,q2);
-    double dist = p2.Length();
+    double dist = p2.norm();
     if( itf_min == -1 || dist < dist_min ){
       dist_min = dist;
       itf_min = itf;
@@ -827,16 +827,16 @@ double delfem2::SDFNormal_NearestPoint
  const double* aNorm)
 {
   CVec3<T> q1 = pes.Pos_Tri(aXYZ,nXYZ,aTri,nTri);
-  double dist = (q1-p0).Length();
+  double dist = (q1-p0).norm();
   CVec3<T> n1 = pes.UNorm_Tri(aXYZ,nXYZ,aTri,nTri,aNorm);
   if( (q1-p0)*n1 > 0 ){  //inside
     if( dist < 1.0e-6 ){ n0 = n1; }
-    else{ n0 = (q1-p0).Normalize(); }
+    else{ n0 = (q1-p0).normalized(); }
     return dist;
   }
   else{ // outside
     if( dist < 1.0e-6 ){ n0 = n1; }
-    else{ n0 = (p0-q1).Normalize(); }
+    else{ n0 = (p0-q1).normalized(); }
     return -dist;
   }
 }
@@ -860,16 +860,16 @@ double delfem2::SDFNormal_NearestPoint
  const std::vector<double>& aNorm)
 {
   CVec3<T> q1 = pes.Pos_Tri(aXYZ,aTri);
-  double dist = (q1-p0).Length();
+  double dist = (q1-p0).norm();
   CVec3<T> n1 = pes.UNorm_Tri(aXYZ,aTri,aNorm);
   if( (q1-p0)*n1 > 0 ){  //inside
     if( dist < 1.0e-6 ){ n0 = n1; }
-    else{ n0 = (q1-p0).Normalize(); }
+    else{ n0 = (q1-p0).normalized(); }
     return dist;
   }
   else{ // outside
     if( dist < 1.0e-6 ){ n0 = n1; }
-    else{ n0 = (p0-q1).Normalize(); }
+    else{ n0 = (p0-q1).normalized(); }
     return -dist;
   }
 }
@@ -903,7 +903,7 @@ double delfem2::DistanceToTri
   pes.itri = itri0;
   pes.r0 = r0;
   pes.r1 = r1;
-  return p_min.Length();
+  return p_min.norm();
 }
 template double delfem2::DistanceToTri
  (CPtElm2<double>& pes,
@@ -935,7 +935,7 @@ double delfem2::DistanceToTri(
   pes.itri = itri0;
   pes.r0 = r0;
   pes.r1 = r1;
-  return p_min.Length();
+  return p_min.norm();
 }
 template double delfem2::DistanceToTri(
 	CPtElm2<double>& pes,

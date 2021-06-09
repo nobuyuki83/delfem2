@@ -39,7 +39,7 @@ public:
       for (unsigned int ib = 0; ib < aBone.size(); ++ib) {
         CVec3d p0 = aBone[ib].Pos();
         CVec3d p1 = nearest_Line_Point(p0, s0, d0);
-        double len01 = (p0 - p1).Length();
+        double len01 = (p0 - p1).norm();
         if (len01 < 0.03) {
           ipicked_bone = ib;
           gizmo_rot.quat[0] = aBone[ipicked_bone].quatRelativeRot[0];
@@ -61,7 +61,8 @@ public:
     if (mode_edit == ROT) {
       if (ipicked_bone == -1) { return false; }
       assert(ipicked_bone >= 0 && ipicked_bone < (int) aBone.size());
-      gizmo_rot.pos = aBone[ipicked_bone].Pos().Float();
+      const delfem2::CVec3d hoge = aBone[ipicked_bone].Pos();
+      gizmo_rot.pos = hoge.cast<float>();
       gizmo_rot.Drag(src0, src1, dir);
       {
         const int ibp = aBone[ipicked_bone].ibone_parent;
@@ -78,9 +79,9 @@ public:
       return true;
     } else if (mode_edit == TRNSL) {
       gizmo_trnsl.Drag(src0, src1, dir);
-      aBone[0].transRelative[0] = gizmo_trnsl.pos.x();
-      aBone[0].transRelative[1] = gizmo_trnsl.pos.y();
-      aBone[0].transRelative[2] = gizmo_trnsl.pos.z();
+      aBone[0].transRelative[0] = gizmo_trnsl.pos.x;
+      aBone[0].transRelative[1] = gizmo_trnsl.pos.y;
+      aBone[0].transRelative[2] = gizmo_trnsl.pos.z;
       UpdateBoneRotTrans(aBone);
       return true;
     }
@@ -117,7 +118,7 @@ DFM2_INLINE void Draw(
   else if( giz.mode_edit == CGizmo_Rig<float>::MODE_EDIT::ROT ){ // translation
     if( giz.ipicked_bone != -1 ){
       assert( giz.ipicked_bone >= 0 && giz.ipicked_bone < (int)aBone.size() );
-      giz.gizmo_rot.pos = aBone[giz.ipicked_bone].Pos().Float();
+      giz.gizmo_rot.pos = aBone[giz.ipicked_bone].Pos().cast<float>();
       { // set quaternion
         CMat3<double> m3;
         m3.SetMat4(aBone[giz.ipicked_bone].affmat3Global);

@@ -153,7 +153,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 
 static void myGlVertex3d(const dfm2::CVec3d& v)
 {
-  ::glVertex3d(v.x(), v.y(), v.z());
+  ::glVertex3d(v.x, v.y, v.z);
 }
 
 
@@ -173,7 +173,7 @@ void myGlutDisplay(
     ::glPointSize(1);
     ::glBegin(GL_POINTS);
     for (auto & ip : aPo3D){
-      glVertex3d(ip.p.x(), ip.p.y(), ip.p.z());
+      glVertex3d(ip.p.x, ip.p.y, ip.p.z);
     }
     ::glEnd();
     ///

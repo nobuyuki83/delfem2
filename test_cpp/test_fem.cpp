@@ -277,14 +277,14 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
   //
   for(int itr=0;itr<10000;++itr){
     const dfm2::CVec3d V01 = dfm2::CVec3d::Random(dist_01, randomEng);
-    if( V01.Length() < 0.1 ){ continue; }
+    if( V01.norm() < 0.1 ){ continue; }
     dfm2::CVec3d Frm[3];
     {
       Frm[2] = V01;
-      Frm[2].SetNormalizedVector();
+      Frm[2].normalize();
       Frm[0].SetRandom(dist_01, randomEng);
       Frm[0] -= (Frm[0]*Frm[2])*Frm[2];
-      Frm[0].SetNormalizedVector();
+      Frm[0].normalize();
       Frm[1] = (Frm[2]^Frm[0]);
     }
     dfm2::CVec3d Q; Q.SetRandom(dist_01, randomEng);
@@ -297,7 +297,7 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       dfm2::CMat3d dF_dv[3];
       dfm2::CVec3d dF_dt[3];
       dfm2::DiffFrameRod(dF_dv, dF_dt,
-                         V01.Length(), Frm);
+                         V01.norm(), Frm);
       DW_Dv[0] = Q*dF_dv[0];
       DW_Dv[1] = Q*dF_dv[1];
       DW_Dv[2] = Q*dF_dv[2];
@@ -320,7 +320,7 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       dfm2::CMat3d df_dv[3];
       dfm2::CVec3d df_dt[3];
       DiffFrameRod(df_dv, df_dt,
-                   (V01+du).Length(), frm);
+                   (V01+du).norm(), frm);
       dw_dv[0] = Q*df_dv[0];
       dw_dv[1] = Q*df_dv[1];
       dw_dv[2] = Q*df_dv[2];
@@ -339,7 +339,7 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       dfm2::CVec3d DDW_DvDt;
       double DDW_DDt;
       DifDifFrameRod(DDW_DDv, DDW_DvDt, DDW_DDt,
-          i,V01.Length(),Q,Frm);
+          i,V01.norm(),Q,Frm);
       double val0 = (dw_dt[i]-DW_Dt[i])/eps;
       double val1 = (DDW_DDt*dtheta+DDW_DvDt*du)/eps;
       EXPECT_NEAR(val0, val1, 1.0e-3);
@@ -349,10 +349,10 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       dfm2::CVec3d DDW_DvDt;
       double DDW_DDt;
       DifDifFrameRod(DDW_DDv, DDW_DvDt, DDW_DDt,
-          i,V01.Length(),Q,Frm);
+          i,V01.norm(),Q,Frm);
       const dfm2::CVec3d vec0 = (dw_dv[i]-DW_Dv[i])/eps;
       const dfm2::CVec3d vec1 = (DDW_DvDt*dtheta+DDW_DDv*du)/eps;
-      EXPECT_LT( (vec0-vec1).Length(), 3.5e-3);
+      EXPECT_LT( (vec0-vec1).norm(), 3.5e-3);
     }
   }
 }
@@ -370,20 +370,20 @@ TEST(objfunc_v23, WdWddW_DotFrame)
         dfm2::CVec3d::Random(dist_01, randomEng),
         dfm2::CVec3d::Random(dist_01, randomEng),
         dfm2::CVec3d::Random(dist_01, randomEng) };
-    if( (P[1]-P[0]).Length() < 0.01 ){ continue; }
-    if( (P[2]-P[1]).Length() < 0.01 ){ continue; }
+    if( (P[1]-P[0]).norm() < 0.01 ){ continue; }
+    if( (P[2]-P[1]).norm() < 0.01 ){ continue; }
     dfm2::CVec3d S[2];
     {
       S[0].SetRandom(dist_01,randomEng);
-      const dfm2::CVec3d U0 = (P[1]-P[0]).Normalize();
+      const dfm2::CVec3d U0 = (P[1]-P[0]).normalized();
       S[0] -= (S[0]*U0)*U0;
-      S[0].SetNormalizedVector();
+      S[0].normalize();
     }
     {
       S[1].SetRandom(dist_01,randomEng);
-      const dfm2::CVec3d U1 = (P[2]-P[1]).Normalize();
+      const dfm2::CVec3d U1 = (P[2]-P[1]).normalized();
       S[1] -= (S[1]*U1)*U1;
-      S[1].SetNormalizedVector();
+      S[1].normalize();
     }
     const double off[3] = {
         dist_m1p1(randomEng),
@@ -458,7 +458,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                                  +ddW_ddP[0][0]*dP[0]
                                  +ddW_ddP[0][1]*dP[1]
                                  +ddW_ddP[0][2]*dP[2])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-2*(1+val1.Length()) );
+      EXPECT_LT( (val0-val1).norm(), 1.0e-2*(1+val1.norm()) );
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[1]-dW_dP[1])/eps;
@@ -467,7 +467,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                                  +ddW_ddP[1][0]*dP[0]
                                  +ddW_ddP[1][1]*dP[1]
                                  +ddW_ddP[1][2]*dP[2])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-2*(1+val1.Length()) );
+      EXPECT_LT( (val0-val1).norm(), 1.0e-2*(1+val1.norm()) );
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[2]-dW_dP[2])/eps;
@@ -476,7 +476,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                                  +ddW_ddP[2][0]*dP[0]
                                  +ddW_ddP[2][1]*dP[1]
                                  +ddW_ddP[2][2]*dP[2])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-2*(1+val1.Length()) );
+      EXPECT_LT( (val0-val1).norm(), 1.0e-2*(1+val1.norm()) );
     }
   }
 }
@@ -506,15 +506,15 @@ TEST(objfunc_v23, WdWddW_Rod)
     dfm2::CVec3d S[2];
     {
       S[0].SetRandom(dist_01,randomEng);
-      const dfm2::CVec3d U0 = (P[1]-P[0]).Normalize();
+      const dfm2::CVec3d U0 = (P[1]-P[0]).normalized();
       S[0] -= (S[0]*U0)*U0;
-      S[0].SetNormalizedVector();
+      S[0].normalize();
     }
     {
       S[1].SetRandom(dist_01,randomEng);
-      const dfm2::CVec3d U1 = (P[2]-P[1]).Normalize();
+      const dfm2::CVec3d U1 = (P[2]-P[1]).normalized();
       S[1] -= (S[1]*U1)*U1;
-      S[1].SetNormalizedVector();
+      S[1].normalize();
     }
     const double off[3] = {
         dist_m1p1(randomEng),
@@ -589,7 +589,7 @@ TEST(objfunc_v23, WdWddW_Rod)
                                  +ddW_ddP[0][0]*dP[0]
                                  +ddW_ddP[0][1]*dP[1]
                                  +ddW_ddP[0][2]*dP[2])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-3*(1+val1.Length()) );
+      EXPECT_LT( (val0-val1).norm(), 1.0e-3*(1+val1.norm()) );
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[1]-dW_dP[1])/eps;
@@ -598,7 +598,7 @@ TEST(objfunc_v23, WdWddW_Rod)
                                  +ddW_ddP[1][0]*dP[0]
                                  +ddW_ddP[1][1]*dP[1]
                                  +ddW_ddP[1][2]*dP[2])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-3*(1+val1.Length()) );
+      EXPECT_LT( (val0-val1).norm(), 1.0e-3*(1+val1.norm()) );
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[2]-dW_dP[2])/eps;
@@ -607,7 +607,7 @@ TEST(objfunc_v23, WdWddW_Rod)
                                  +ddW_ddP[2][0]*dP[0]
                                  +ddW_ddP[2][1]*dP[1]
                                  +ddW_ddP[2][2]*dP[2])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-3*(1+val1.Length()) );
+      EXPECT_LT( (val0-val1).norm(), 1.0e-3*(1+val1.norm()) );
     }
   }
 }
@@ -626,7 +626,7 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
     const dfm2::CVec3d P[2] = {
         dfm2::CVec3d::Random(dist_01,rndeng),
         dfm2::CVec3d::Random(dist_01,rndeng) };
-    if( (P[0]-P[1]).Length() < 0.1 ){ continue; }
+    if( (P[0]-P[1]).norm() < 0.1 ){ continue; }
     dfm2::CVec3d dW_dP[2];
     dfm2::CMat3d ddW_ddP[2][2];
     const double L0 = 1.0;
@@ -652,12 +652,12 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
     {
       const dfm2::CVec3d val0 = (dw_dP[0]-dW_dP[0])/eps;
       const dfm2::CVec3d val1 = (+ddW_ddP[0][0]*dP[0]+ddW_ddP[0][1]*dP[1])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-3*(1+val1.Length()) );
+      EXPECT_LT( (val0-val1).norm(), 1.0e-3*(1+val1.norm()) );
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[1]-dW_dP[1])/eps;
       const dfm2::CVec3d val1 = (+ddW_ddP[1][0]*dP[0]+ddW_ddP[1][1]*dP[1])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-3*(1+val1.Length()) );
+      EXPECT_LT( (val0-val1).norm(), 1.0e-3*(1+val1.norm()) );
     }
   }
 }

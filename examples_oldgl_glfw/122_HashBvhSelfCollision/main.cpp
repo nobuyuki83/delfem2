@@ -48,9 +48,9 @@ int main(int argc,char* argv[])
       std::vector<double> aElemCenter(ntri*3);
       for(unsigned int itri=0;itri<ntri;++itri){
         dfm2::CVec3d p0 = dfm2::CG_Tri3(itri, aTri, aXYZ);
-        aElemCenter[itri*3+0] = p0.x();
-        aElemCenter[itri*3+1] = p0.y();
-        aElemCenter[itri*3+2] = p0.z();
+        aElemCenter[itri*3+0] = p0.x;
+        aElemCenter[itri*3+1] = p0.y;
+        aElemCenter[itri*3+2] = p0.z;
       }
       std::vector<unsigned int> aTriSuTri;
       dfm2::ElSuEl_MeshElem(
@@ -111,8 +111,8 @@ int main(int argc,char* argv[])
     ::glColor3d(1,0,0);
     ::glBegin(GL_LINES);
     for(const auto & tp : aITP){
-      glVertex3d(tp.P[0].x(), tp.P[0].y(), tp.P[0].z());
-      glVertex3d(tp.P[1].x(), tp.P[1].y(), tp.P[1].z());
+      glVertex3d(tp.P[0].x, tp.P[0].y, tp.P[0].z);
+      glVertex3d(tp.P[1].x, tp.P[1].y, tp.P[1].z);
     }
     ::glEnd();
     viewer.SwapBuffers();

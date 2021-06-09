@@ -199,7 +199,7 @@ public:
     pes.itri = UINT_MAX;
     delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
         dist,dist_min, pes,
-        p0.x(), p0.y(), p0.z(), rad_exp,
+        p0.x, p0.y, p0.z, rad_exp,
         aXYZ, nXYZ, aTri, nTri,
         iroot_bvh, aNodeBVH, aBB_BVH);
     if( pes.itri == UINT_MAX ){ return dist_min; }
@@ -213,7 +213,7 @@ public:
     CPtElm2<REAL> pes;
     double dist_min = -1;
     BVH_NearestPoint_MeshTri3D(dist_min, pes,
-                               p0.x(), p0.y(), p0.z(),
+                               p0.x, p0.y, p0.z,
                                aXYZ, aTri, iroot_bvh, aNodeBVH, aBB_BVH);
     return pes;
   }
@@ -231,14 +231,14 @@ public:
     {
       double dist_min = -1;
       delfem2::BVH_NearestPoint_MeshTri3D(dist_min, pes,
-                                          p0.x(), p0.y(), p0.z(),
+                                          p0.x, p0.y, p0.z,
                                           aXYZ, aTri,
                                           iroot_bvh, aNodeBVH, aBB_BVH);
     }
     const CVec3<REAL> q0 = pes.Pos_Tri(aXYZ, aTri);
-    double dist = (q0-p0).Length();
-    if( !aBB_BVH[iroot_bvh].isInclude_Point(p0.x(),p0.y(),p0.z()) ){ // outside
-      n0 = (p0-q0).Normalize();
+    double dist = (q0-p0).norm();
+    if( !aBB_BVH[iroot_bvh].isInclude_Point(p0.x,p0.y,p0.z) ){ // outside
+      n0 = (p0-q0).normalized();
       return -dist;
     }
     const CVec3<REAL> n1 = pes.UNorm_Tri(aXYZ, aTri, aNorm);
@@ -247,7 +247,7 @@ public:
       if( (q0-p0)*n1 > 0 ){ return dist; } //inside
       return -dist; // outside
     }
-    CVec3<REAL> dir = (CG_Tri3(pes.itri, aTri, aXYZ)-p0).Normalize();
+    CVec3<REAL> dir = (CG_Tri3(pes.itri, aTri, aXYZ)-p0).normalized();
     if( (q0-p0)*n1 < 0 ){ dir = -dir; } // probaby outside so shoot ray outside
     std::vector<unsigned int> aIndElem;
     BVH_GetIndElem_Predicate(aIndElem,
@@ -259,10 +259,10 @@ public:
                                   aTri, aXYZ, aIndElem,
                                   0.0);
     if( mapDepthPES1.size() %2 == 0 ){ // outside
-      n0 = (p0-q0).Normalize();
+      n0 = (p0-q0).normalized();
       return -dist;
     }
-    n0 = (q0-p0).Normalize();
+    n0 = (q0-p0).normalized();
     return +dist;
   }
 public:
@@ -377,9 +377,9 @@ void Project_PointsIncludedInBVH_Outside_Cache(
     aInfoNearest[ip].sdf = sdf;
     aInfoNearest[ip].is_active = true;
     if( sdf+cc < 0 ) continue;
-    aXYZt[ip*3+0] += (sdf+cc)*n0.x();
-    aXYZt[ip*3+1] += (sdf+cc)*n0.y();
-    aXYZt[ip*3+2] += (sdf+cc)*n0.z();
+    aXYZt[ip*3+0] += (sdf+cc)*n0.x;
+    aXYZt[ip*3+1] += (sdf+cc)*n0.y;
+    aXYZt[ip*3+2] += (sdf+cc)*n0.z;
   }
 }
 
