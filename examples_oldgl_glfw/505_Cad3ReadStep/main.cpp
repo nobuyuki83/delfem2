@@ -306,7 +306,7 @@ class CStep_Line: public CStep_Curve
     const dfm2::CVec3d& d = pVec->pDir->dir;
     const double l = pVec->len;
     const dfm2::CVec3d v = l*d;
-    return (p-cp)*v/v.DLength();
+    return (p-cp)*v/v.squaredNorm();
   }
   virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine,
                            double r1, double r2,
@@ -359,8 +359,8 @@ public:
   virtual double GetParameter(const dfm2::CVec3d& p) const{
     const dfm2::CVec3d& c = pA2P3D->pCP->p;
     const dfm2::CVec3d& n = pA2P3D->pDir1->dir;
-    const dfm2::CVec3d ex = (pA2P3D->pDir2->dir).Normalize();
-    const dfm2::CVec3d ey = Cross(n,ex).Normalize();
+    const dfm2::CVec3d ex = (pA2P3D->pDir2->dir).normalized();
+    const dfm2::CVec3d ey = Cross(n,ex).normalized();
     return atan2( (p-c)*ey, (p-c)*ex );
   }
   virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine,
@@ -369,8 +369,8 @@ public:
   {
     const dfm2::CVec3d& c = pA2P3D->pCP->p;
     const dfm2::CVec3d& n = pA2P3D->pDir1->dir;
-    const dfm2::CVec3d ex = (pA2P3D->pDir2->dir).Normalize();
-    const dfm2::CVec3d ey = Cross(n,ex).Normalize();
+    const dfm2::CVec3d ex = (pA2P3D->pDir2->dir).normalized();
+    const dfm2::CVec3d ey = Cross(n,ex).normalized();
     if( r1 > r2 ){ r2 += M_PI*2; }
     polyLine.clear();
     for(unsigned int is=0;is<nsmpl;++is){

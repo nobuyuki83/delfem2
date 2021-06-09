@@ -330,6 +330,6 @@ bool delfem2::opengl::GetProjectedPoint(
   //
   Vec3_Vec3Mat4_AffineProjection(p0.p, p3.p,mMVPGinv);
   CVec3d p4; Vec3_Vec3Mat4_AffineProjection(p4.p, (p3+n3).p,mMVPGinv);
-  n0 = (p4-p0).Normalize();
+  n0 = (p4-p0).normalized();
   return true;
 }

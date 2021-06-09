@@ -52,9 +52,9 @@ void InitializeProblem() {
     dfm2::CPtElm2<double> pes0 = Nearest_Point_MeshTri3D(p0,
         aXYZ, aTri);
     dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
-    aXYZ_Quad[ip*3+0] = q0.x();
-    aXYZ_Quad[ip*3+1] = q0.y();
-    aXYZ_Quad[ip*3+2] = q0.z();
+    aXYZ_Quad[ip*3+0] = q0.x;
+    aXYZ_Quad[ip*3+1] = q0.y;
+    aXYZ_Quad[ip*3+2] = q0.z;
   }
   
   dfm2::Normal_MeshQuad3(aNorm_Quad,
@@ -114,9 +114,9 @@ void InitializeProblem() {
       if( !aPES.empty() ){
         dfm2::CPtElm2<double>& pes0 = mapPES.begin()->second;
         dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
-        aXYZ_Quad[ip*3+0] = q0.x();
-        aXYZ_Quad[ip*3+1] = q0.y();
-        aXYZ_Quad[ip*3+2] = q0.z();
+        aXYZ_Quad[ip*3+0] = q0.x;
+        aXYZ_Quad[ip*3+1] = q0.y;
+        aXYZ_Quad[ip*3+2] = q0.z;
       }
     }
     { // make normal for new vertices

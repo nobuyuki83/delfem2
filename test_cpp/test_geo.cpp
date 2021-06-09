@@ -182,7 +182,7 @@ TEST(mat3, quat)
       dfm2::CVec3d v0(dist(mtd),dist(mtd),dist(mtd) );
       dfm2::CVec3d qv0 = dfm2::QuatVec(quat0, v0);
       dfm2::CVec3d Rv0 = dfm2::MatVec(R0, v0);
-      EXPECT_LT( (qv0 - Rv0).Length(), 1.0e-20 );
+      EXPECT_LT( (qv0 - Rv0).norm(), 1.0e-20 );
     }
   }
 

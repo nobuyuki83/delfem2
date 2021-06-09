@@ -120,8 +120,8 @@ void MPM_Particle2Grid_Snow2(
         const unsigned int ig = bc.x + i; assert(ig<mgrid);
         const unsigned int jg = bc.y + j; assert(jg<mgrid);
         const delfem2::CVec2f grid_v(
-            aVeloGrid[ig*mgrid+jg].x(),
-            aVeloGrid[ig*mgrid+jg].y());
+            aVeloGrid[ig*mgrid+jg].x,
+            aVeloGrid[ig*mgrid+jg].y);
         const float weight = w0[i].x * w0[j].y;
         particle.velo += weight * delfem2::CVec2f(grid_v.x,grid_v.y);
         particle.C += 4 * inv_dx * weight * delfem2::CMat2f::outer_product(grid_v.p, dpos.p);

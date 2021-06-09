@@ -109,9 +109,9 @@ void QuadErrorMetric_MeshDTri3
       unsigned int ino0 = aTriSurPo[iit].second;
       assert( aDTri[it0].v[ino0] == ip );
       const dfm2::CVec3d n0 = dfm2::UnitNormal_DTri3(it0, aDTri, aVec3);
-      const double a0 = n0.x();
-      const double b0 = n0.y();
-      const double c0 = n0.z();
+      const double a0 = n0.x;
+      const double b0 = n0.y;
+      const double c0 = n0.z;
       const double d0 = -n0*aVec3[ip];
       aSymMat4[ip*10+0] += a0*a0;
       aSymMat4[ip*10+1] += a0*b0;

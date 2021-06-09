@@ -94,15 +94,15 @@ int main(int argc,char* argv[])
       dfm2::CVec3d p1; dfm2::Vec3Mat4(p1.p,dir.p,mMVPG.mat);
       std::vector<dfm2::CPtElm2<double>> aPES;
       dfm2::IntersectionLine_Hightfield(aPES,
-          p0.p, p1.Normalize().p,
+          p0.p, p1.normalized().p,
           sampler.nResX, sampler.nResY,
           sampler.aZ);
       for(const auto & pes : aPES){
         dfm2::CVec3d lpos = pes.Pos_Grid(sampler.nResX, sampler.nResY, 1.0, sampler.aZ);
         dfm2::CVec3d q2; dfm2::Vec3_Vec3Mat4_AffineProjection(q2.p, lpos.p, mMVPGinv.mat);
-        aXYZ1.push_back(q2.x());
-        aXYZ1.push_back(q2.y());
-        aXYZ1.push_back(q2.z());
+        aXYZ1.push_back(q2.x);
+        aXYZ1.push_back(q2.y);
+        aXYZ1.push_back(q2.z);
       }
     }
 
@@ -126,8 +126,8 @@ int main(int argc,char* argv[])
         dfm2::CVec3d p1 = src - 10.0*dir;
         ::glLineWidth(1);
         ::glBegin(GL_LINES);
-        ::glVertex3d(p0.x(), p0.y(), p0.z());
-        ::glVertex3d(p1.x(), p1.y(), p1.z());
+        ::glVertex3d(p0.x, p0.y, p0.z);
+        ::glVertex3d(p1.x, p1.y, p1.z);
         ::glEnd();
       }
       for(unsigned int ixyz=0;ixyz<aXYZ1.size()/3;++ixyz){

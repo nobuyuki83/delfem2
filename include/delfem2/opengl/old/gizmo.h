@@ -80,12 +80,12 @@ void Draw(const CGizmo_Affine<REAL>& ga)
     {
       ::glColor3d(1,1,1);
       const CVec3<REAL>& p0 = ga.pivot0;
-      DrawSphereAt(32, 32, 0.02, p0.x(), p0.y(), p0.z());
+      DrawSphereAt(32, 32, 0.02, p0.x, p0.y, p0.z);
     }
     {
       ::glColor3d(1,1,0);
       const CVec3<REAL>& p0 = ga.gizmo_trnsl.pos;
-      DrawSphereAt(32, 32, 0.02, p0.x(), p0.y(), p0.z());
+      DrawSphereAt(32, 32, 0.02, p0.x, p0.y, p0.z);
     }
     ::glEnable(GL_DEPTH_TEST);
   }

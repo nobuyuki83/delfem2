@@ -34,7 +34,7 @@ void myDraw
     ::glPointSize(3);
     ::glBegin(GL_POINTS);
     for(unsigned int ip=ips;ip<ipe;++ip){
-      ::glVertex3d(aP[ip].x(), aP[ip].y(), aP[ip].z());
+      ::glVertex3d(aP[ip].x, aP[ip].y, aP[ip].z);
     }
     ::glEnd();
     // ------------
@@ -45,8 +45,8 @@ void myDraw
     for(unsigned int is=0;is<ns;++is){
       const unsigned int ip0 = ips+is+0; assert( ip0 < aP.size() );
       const unsigned int ip1 = ips+is+1; assert( ip1 < aP.size() );
-      ::glVertex3d(aP[ip0].x(), aP[ip0].y(), aP[ip0].z());
-      ::glVertex3d(aP[ip1].x(), aP[ip1].y(), aP[ip1].z());
+      ::glVertex3d(aP[ip0].x, aP[ip0].y, aP[ip0].z);
+      ::glVertex3d(aP[ip1].x, aP[ip1].y, aP[ip1].z);
     }
     ::glEnd();
     // --------------
@@ -55,7 +55,7 @@ void myDraw
       const unsigned int ip0 = ips+is+0; assert( ip0 < aP.size() );
       const unsigned int ip1 = ips+is+1; assert( ip1 < aP.size() );
       dfm2::CVec3d p01 = 0.5*(aP[ip0]+aP[ip1]);
-      double l01 = (aP[ip0]-aP[ip1]).Length();
+      double l01 = (aP[ip0]-aP[ip1]).norm();
       dfm2::opengl::myGlVertex(p01);
       dfm2::opengl::myGlVertex(p01+(l01*0.5)*aS[is]);
     }
@@ -105,9 +105,9 @@ void MakeProblemSetting_Spiral
     }
     const unsigned int np0 = aIP_HairRoot[ihair];
     for(unsigned int is=0;is<np-1;++is){
-      const dfm2::CVec3d v = (aP0[np0+is+1] - aP0[np0+is+0]).Normalize();
+      const dfm2::CVec3d v = (aP0[np0+is+1] - aP0[np0+is+0]).normalized();
       dfm2::CVec3d s(1.3, 1.5, 1.7);
-      s = (s-(s*v)*v).Normalize();
+      s = (s-(s*v)*v).normalized();
       aS0.push_back(s);
     }
     aS0.emplace_back(1,0,0);
@@ -167,8 +167,8 @@ void FindRodHairContactCCD(
         dfm2::nearest_Line_Line(D, Da, Db, p0s, p1s-p0s, q0s, q1s-q0s);
         Da /= D;
         Db /= D;
-        p[0] = (Da-p0s)*(p1s-p0s)/(p1s-p0s).DLength();
-        p[1] = (Db-q0s)*(q1s-q0s)/(q1s-q0s).DLength();
+        p[0] = (Da-p0s)*(p1s-p0s)/(p1s-p0s).squaredNorm();
+        p[1] = (Db-q0s)*(q1s-q0s)/(q1s-q0s).squaredNorm();
 //        std::cout << ir << " " << jr << " --> " << p[0] << " " << p[1] << " " << (Da-Db)*(p1s-p0s) << " " << (Da-Db)*(q1s-q0s) << " " << (Da-Db).Length() << std::endl;
         if( p[0] > 1 ){ p[0] = 1; } else if( p[0] < 0 ){ p[0] = 0; }
         if( p[1] > 1 ){ p[1] = 1; } else if( p[1] < 0 ){ p[1] = 0; }
@@ -196,7 +196,7 @@ void FindRodHairContactCCD(
        */
       dfm2::CContactHair ch{ir + 0, ir + 1, s1,
                             jr + 0, jr + 1, t1,
-                            vs.Normalize()};
+                            vs.normalized()};
       aCollision.push_back(ch);
     } // jr
   } // ir

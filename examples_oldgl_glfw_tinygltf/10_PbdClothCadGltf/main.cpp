@@ -161,9 +161,9 @@ int main(int argc,char* argv[])
     for(int ip : aIP){
       dfm2::CVec3d p0(aVec2[ip].x-rt23.org2.x, aVec2[ip].y-rt23.org2.y,0.0);
       dfm2::CVec3d p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
-      aXYZ[ip*3+0] = p1.x();
-      aXYZ[ip*3+1] = p1.y();
-      aXYZ[ip*3+2] = p1.z();
+      aXYZ[ip*3+0] = p1.x;
+      aXYZ[ip*3+1] = p1.y;
+      aXYZ[ip*3+2] = p1.z;
     }
     {
       CRigidTrans_2DTo3D rt23;
@@ -174,9 +174,9 @@ int main(int argc,char* argv[])
       for(int ip : aIP){
         dfm2::CVec3d p0(aVec2[ip].x-rt23.org2.x, aVec2[ip].y-rt23.org2.y,0.0);
         dfm2::CVec3d p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
-        aXYZ[ip*3+0] = p1.x();
-        aXYZ[ip*3+1] = p1.y();
-        aXYZ[ip*3+2] = p1.z();
+        aXYZ[ip*3+0] = p1.x;
+        aXYZ[ip*3+1] = p1.y;
+        aXYZ[ip*3+2] = p1.z;
       }
     }
     aLine.clear();

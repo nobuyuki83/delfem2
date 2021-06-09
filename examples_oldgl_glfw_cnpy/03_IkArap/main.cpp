@@ -185,9 +185,9 @@ void Solve_MinEnergyArap(
   }
   {
     dfm2::CVec3d vec_trans(u.data()+nb*3);
-    aBone[0].transRelative[0] -= vec_trans.x();
-    aBone[0].transRelative[1] -= vec_trans.y();
-    aBone[0].transRelative[2] -= vec_trans.z();
+    aBone[0].transRelative[0] -= vec_trans.x;
+    aBone[0].transRelative[1] -= vec_trans.y;
+    aBone[0].transRelative[2] -= vec_trans.z;
   }
   dfm2::UpdateBoneRotTrans(aBone);
   dfm2::Skinning_LBS(aXYZ1,

@@ -58,7 +58,7 @@ void myGlutDisplay()
     ::glColor3d(0,0,0);
     ::glPointSize(10);
     ::glBegin(GL_POINTS);
-    ::glVertex3d(aCG_CS[ics].x(), aCG_CS[ics].y(), aCG_CS[ics].z());
+    ::glVertex3d(aCG_CS[ics].x, aCG_CS[ics].y, aCG_CS[ics].z);
     ::glEnd();
   }
   for(size_t ics=0;ics<ReebGraphCS.size();++ics){
@@ -69,8 +69,8 @@ void myGlutDisplay()
       ::glColor3d(0,0,0);
       ::glLineWidth(3);
       ::glBegin(GL_LINES);
-      ::glVertex3d(aCG_CS[ics].x(), aCG_CS[ics].y(), aCG_CS[ics].z());
-      ::glVertex3d(aCG_CS[jcs].x(), aCG_CS[jcs].y(), aCG_CS[jcs].z());
+      ::glVertex3d(aCG_CS[ics].x, aCG_CS[ics].y, aCG_CS[ics].z);
+      ::glVertex3d(aCG_CS[jcs].x, aCG_CS[jcs].y, aCG_CS[jcs].z);
       ::glEnd();
     }
   }

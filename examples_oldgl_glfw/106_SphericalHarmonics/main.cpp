@@ -57,10 +57,10 @@ static void drawShphere_Heatmap
         z *= invl;
         glNormal3d(x,y,z);
       }
-      double va = value(a.x(),a.y(),a.z());
-      double vb = value(b.x(),b.y(),b.z());
-      double vc = value(c.x(),c.y(),c.z());
-      double vd = value(d.x(),d.y(),d.z());
+      double va = value(a.x,a.y,a.z);
+      double vb = value(b.x,b.y,b.z);
+      double vc = value(c.x,c.y,c.z);
+      double vd = value(d.x,d.y,d.z);
       color(va+0.5); delfem2::opengl::myGlVertex(a);
       color(vb+0.5); delfem2::opengl::myGlVertex(b);
       color(vc+0.5); delfem2::opengl::myGlVertex(c);
@@ -96,10 +96,10 @@ static void drawShphere_Radius
       dfm2::CVec3d b(r0*x1,y0,r0*z1);
       dfm2::CVec3d c(r1*x1,y1,r1*z1);
       dfm2::CVec3d d(r1*x0,y1,r1*z0);
-      double va = value(a.x(),a.y(),a.z());
-      double vb = value(b.x(),b.y(),b.z());
-      double vc = value(c.x(),c.y(),c.z());
-      double vd = value(d.x(),d.y(),d.z());
+      double va = value(a.x,a.y,a.z);
+      double vb = value(b.x,b.y,b.z);
+      double vc = value(c.x,c.y,c.z);
+      double vd = value(d.x,d.y,d.z);
       delfem2::opengl::myGlNormal(va*a,vc*c,vb*b);
       color(va+0.5); delfem2::opengl::myGlVertex(fabs(va)*a);
       color(vb+0.5); delfem2::opengl::myGlVertex(fabs(vb)*b);

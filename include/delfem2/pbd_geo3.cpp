@@ -209,7 +209,7 @@ DFM2_INLINE void delfem2::PBD_CdC_TriStrain2D3D(
   const CVec3d Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
   const CVec3d Gd1( P[2][0]-P[0][0], P[2][1]-P[0][1], 0.0 );
   CVec3d Gd2 = Cross(Gd0, Gd1);
-  const double Area = Gd2.Length()*0.5;
+  const double Area = Gd2.norm()*0.5;
   Gd2 /= (Area*2.0);
   
   CVec3d Gu0 = Cross( Gd1, Gd2 ); Gu0 /= Dot(Gu0,Gd0);
@@ -223,9 +223,9 @@ DFM2_INLINE void delfem2::PBD_CdC_TriStrain2D3D(
     0.5*( Dot(gd1,gd1) - Dot(Gd1,Gd1) ),
     1.0*( Dot(gd0,gd1) - Dot(Gd0,Gd1) ) };
   
-  const double GuGu_xx[3] = { Gu0.x()*Gu0.x(), Gu1.x()*Gu1.x(), Gu0.x()*Gu1.x() };
-  const double GuGu_yy[3] = { Gu0.y()*Gu0.y(), Gu1.y()*Gu1.y(), Gu0.y()*Gu1.y() };
-  const double GuGu_xy[3] = { 2.0*Gu0.x()*Gu0.y(), 2.0*Gu1.x()*Gu1.y(), Gu0.x()*Gu1.y()+Gu0.y()*Gu1.x() };
+  const double GuGu_xx[3] = { Gu0.x*Gu0.x, Gu1.x*Gu1.x, Gu0.x*Gu1.x };
+  const double GuGu_yy[3] = { Gu0.y*Gu0.y, Gu1.y*Gu1.y, Gu0.y*Gu1.y };
+  const double GuGu_xy[3] = { 2.0*Gu0.x*Gu0.y, 2.0*Gu1.x*Gu1.y, Gu0.x*Gu1.y+Gu0.y*Gu1.x };
   C[0] = E2[0]*GuGu_xx[0] + E2[1]*GuGu_xx[1] + E2[2]*GuGu_xx[2];
   C[1] = E2[0]*GuGu_yy[0] + E2[1]*GuGu_yy[1] + E2[2]*GuGu_yy[2];
   C[2] = E2[0]*GuGu_xy[0] + E2[1]*GuGu_xy[1] + E2[2]*GuGu_xy[2];
@@ -264,9 +264,9 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTri2D3D(
   CVec3d v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
   CVec3d v20(p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2]);
   CVec3d v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
-  const double l12 = v12.Length();
-  const double l20 = v20.Length();
-  const double l01 = v01.Length();
+  const double l12 = v12.norm();
+  const double l20 = v20.norm();
+  const double l01 = v01.norm();
   C[0] = l12-L12;
   C[1] = l20-L20;
   C[2] = l01-L01;
@@ -292,7 +292,7 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_EnergyStVK
   const CVec3d Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
   const CVec3d Gd1( P[2][0]-P[0][0], P[2][1]-P[0][1], 0.0 );
   CVec3d Gd2 = Cross(Gd0, Gd1);
-  const double Area = Gd2.Length()*0.5;
+  const double Area = Gd2.norm()*0.5;
   Gd2 /= (Area*2.0);
   
   CVec3d Gu0 = Cross( Gd1, Gd2 ); Gu0 /= Dot(Gu0,Gd0);
@@ -381,12 +381,12 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTet
   CVec3d v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
   CVec3d v13(p[1][0]-p[3][0], p[1][1]-p[3][1], p[1][2]-p[3][2]);
   CVec3d v23(p[2][0]-p[3][0], p[2][1]-p[3][1], p[2][2]-p[3][2]);
-  const double l01 = v01.Length();
-  const double l02 = v02.Length();
-  const double l03 = v03.Length();
-  const double l12 = v12.Length();
-  const double l13 = v13.Length();
-  const double l23 = v23.Length();
+  const double l01 = v01.norm();
+  const double l02 = v02.norm();
+  const double l03 = v03.norm();
+  const double l12 = v12.norm();
+  const double l13 = v13.norm();
+  const double l23 = v23.norm();
   C[0] = l01-L01;
   C[1] = l02-L02;
   C[2] = l03-L03;
@@ -505,8 +505,8 @@ DFM2_INLINE void delfem2::GetConstConstDiff_Bend(
   ////
   const CVec3<T> A = v02^v03;
   const CVec3<T> B = v13^v12;
-  const double lA = A.Length();
-  const double lB = B.Length();
+  const double lA = A.norm();
+  const double lB = B.norm();
   const CVec3<T> a = A/lA;
   const CVec3<T> b = B/lB;
   const double ab = a*b;

@@ -27,10 +27,10 @@ namespace delfem2 {
 namespace opengl {
 
 template <>
-DFM2_INLINE void myGlVertex(const CVec3d& v){ ::glVertex3d(v.x(),v.y(),v.z()); }
+DFM2_INLINE void myGlVertex(const CVec3d& v){ ::glVertex3d(v.x,v.y,v.z); }
 
 template <>
-DFM2_INLINE void myGlVertex(const CVec3f& v){ ::glVertex3f(v.x(),v.y(),v.z()); }
+DFM2_INLINE void myGlVertex(const CVec3f& v){ ::glVertex3f(v.x,v.y,v.z); }
 
 }
 }
@@ -41,10 +41,10 @@ namespace delfem2 {
 namespace opengl {
 
 template <>
-DFM2_INLINE void myGlTranslate(const CVec3f& v){ ::glTranslatef(v.x(),v.y(),v.z()); }
+DFM2_INLINE void myGlTranslate(const CVec3f& v){ ::glTranslatef(v.x,v.y,v.z); }
 
 template <>
-DFM2_INLINE void myGlTranslate(const CVec3d& v){ ::glTranslated(v.x(),v.y(),v.z()); }
+DFM2_INLINE void myGlTranslate(const CVec3d& v){ ::glTranslated(v.x,v.y,v.z); }
 
 }
 }
@@ -55,10 +55,10 @@ namespace delfem2{
 namespace opengl{
 
 template <>
-DFM2_INLINE void myGlNormal(const CVec3d& n){ ::glNormal3d(n.x(),n.y(),n.z()); }
+DFM2_INLINE void myGlNormal(const CVec3d& n){ ::glNormal3d(n.x,n.y,n.z); }
 
 template <>
-DFM2_INLINE void myGlNormal(const CVec3f& n){ ::glNormal3f(n.x(),n.y(),n.z()); }
+DFM2_INLINE void myGlNormal(const CVec3f& n){ ::glNormal3f(n.x,n.y,n.z); }
 
 }
 }
@@ -92,7 +92,7 @@ DFM2_INLINE void delfem2::opengl::myGlNormal(
     const CVec3d& c)
 {
   CVec3d n; UnitNormal(n, a, b, c);
-  ::glNormal3d(n.x(),n.y(),n.z());
+  ::glNormal3d(n.x,n.y,n.z);
 }
 
 DFM2_INLINE void delfem2::opengl::myGlVertex(
@@ -116,10 +116,10 @@ DFM2_INLINE void delfem2::opengl::ModelTransformation
   const CVec3d& dy = Cross(dz,dx);
   const CVec3d& o = origin;
   double A[16];
-  A[ 0] = dx.x();  A[ 1] = dx.y();  A[ 2] = dx.z();  A[ 3] = 0;
-  A[ 4] = dy.x();  A[ 5] = dy.y();  A[ 6] = dy.z();  A[ 7] = 0;
-  A[ 8] = dz.x();  A[ 9] = dz.y();  A[10] = dz.z();  A[11] = 0;
-  A[12] = +o.x();  A[13] = +o.y();  A[14] = +o.z();  A[15] = 1;
+  A[ 0] = dx.x;  A[ 1] = dx.y;  A[ 2] = dx.z;  A[ 3] = 0;
+  A[ 4] = dy.x;  A[ 5] = dy.y;  A[ 6] = dy.z;  A[ 7] = 0;
+  A[ 8] = dz.x;  A[ 9] = dz.y;  A[10] = dz.z;  A[11] = 0;
+  A[12] = +o.x;  A[13] = +o.y;  A[14] = +o.z;  A[15] = 1;
   ::glMultMatrixd(A);
 }
 
@@ -129,10 +129,10 @@ DFM2_INLINE void delfem2::opengl::ViewTransformation
   const CVec3d& dy = Cross(dz,dx);
   CVec3d o(dx*origin,dy*origin,dz*origin);
   double A[16];
-  A[ 0] = dx.x();  A[ 1] = dy.x();  A[ 2] = dz.x();  A[ 3] = 0;
-  A[ 4] = dx.y();  A[ 5] = dy.y();  A[ 6] = dz.y();  A[ 7] = 0;
-  A[ 8] = dx.z();  A[ 9] = dy.z();  A[10] = dz.z();  A[11] = 0;
-  A[12] = -o.x();  A[13] = -o.y();  A[14] = -o.z();  A[15] = 1;
+  A[ 0] = dx.x;  A[ 1] = dy.x;  A[ 2] = dz.x;  A[ 3] = 0;
+  A[ 4] = dx.y;  A[ 5] = dy.y;  A[ 6] = dz.y;  A[ 7] = 0;
+  A[ 8] = dx.z;  A[ 9] = dy.z;  A[10] = dz.z;  A[11] = 0;
+  A[12] = -o.x;  A[13] = -o.y;  A[14] = -o.z;  A[15] = 1;
   ::glMultMatrixd(A);
 }
 
@@ -145,7 +145,7 @@ DFM2_INLINE void delfem2::opengl::DrawCylinderWire
 {
   const int ndiv = 16;
   double rdiv = 3.1415*2.0/ndiv;
-  CVec3d ez = (p1-p0).Normalize();
+  CVec3d ez = (p1-p0).normalized();
   CVec3d ex,ey; GetVertical2Vector(ez, ex, ey);
   ::glBegin(GL_LINES);
   for(int idiv=0;idiv<ndiv;++idiv){
@@ -169,7 +169,7 @@ DFM2_INLINE void delfem2::opengl::DrawCylinder
  const CVec3d& p1,
  double r)
 {
-  CVec3d z = (p1-p0).Normalize();
+  CVec3d z = (p1-p0).normalized();
   CVec3d x, y; GetVertical2Vector(z, x, y);
   const int ndivt = 32;
   const double dt = 3.1415*2.0/ndivt;
@@ -208,11 +208,11 @@ DFM2_INLINE void delfem2::opengl::DrawArrow(
     int ndivt)
 {
   using CV3 = CVec3<REAL>;
-  CV3 z = d; z.SetNormalizedVector();
+  CV3 z = d; z.normalize();
   CV3 x,y; GetVertical2Vector(z,x,y);
   REAL dt = 3.1415*2.0 / ndivt;
-  REAL r0 = d.Length()*0.05;
-  REAL r1 = d.Length()*0.10;
+  REAL r0 = d.norm()*0.05;
+  REAL r1 = d.norm()*0.10;
   //  double l = d.Length();
   { // cylinder
     ::glBegin(GL_QUADS);
@@ -269,10 +269,10 @@ DFM2_INLINE void delfem2::opengl::DrawArrowOcta_FaceNrm(
 {
   using CV3 = CVec3<REAL>;
   CV3 z = d;
-  z.SetNormalizedVector();
+  z.normalize();
   CV3 x, y; GetVertical2Vector(z, x, y);
   const REAL dt = M_PI*0.5;
-  const REAL r0 = d.Length() * rad_ratio;
+  const REAL r0 = d.norm() * rad_ratio;
   const CV3 p1 = p0 + node_ratio*d;
   const CV3 p2 = p0 + d;
   //
@@ -311,10 +311,10 @@ DFM2_INLINE void delfem2::opengl::DrawArrowOcta_Edge(
     REAL node_ratio)
 {
   using CV3 = CVec3<REAL>;
-  CV3 z = d; z.SetNormalizedVector();
+  CV3 z = d; z.normalize();
   CV3 x, y; GetVertical2Vector(z, x, y);
   const REAL dt = M_PI*0.5;
-  const REAL r0 = d.Length() * rad_ratio;
+  const REAL r0 = d.norm() * rad_ratio;
   const CV3 p1 = p0 + node_ratio*d;
   const CV3 p2 = p0 + d;
   //
@@ -354,13 +354,13 @@ DFM2_INLINE void delfem2::opengl::DrawCircleArrow(
 {
   double arrow_width_ratio = 0.1;
   double head_width_ratio = 2.0;
-  CVec3d z = -axis; z.SetNormalizedVector();
+  CVec3d z = -axis; z.normalize();
   CVec3d x,y; GetVertical2Vector(z,x,y);
   CVec3d p0 = org+offset*z;
   int ndivt = 32;
   double dt = 3.1415*2.0 / ndivt;
-  double r0 = axis.Length()*arrow_width_ratio;
-  double l = axis.Length();
+  double r0 = axis.norm()*arrow_width_ratio;
+  double l = axis.norm();
   { // cylinder
     ::glBegin(GL_QUADS);
     for(int idiv=(int)(ndivt*0.1);idiv<(int)(ndivt*0.9);idiv++){
@@ -370,7 +370,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleArrow(
       CVec3d s1 = sin((idiv+1)*dt)*x + cos((idiv+1)*dt)*y;
       for(int jdiv=0;jdiv<ndivt;jdiv++){
         CVec3d n = sin((jdiv+0)*dt)*s0 + cos((jdiv+0)*dt)*z;
-        ::glNormal3d(n.x(),n.y(),n.z());
+        ::glNormal3d(n.x,n.y,n.z);
         myGlVertex(q0 + r0*sin((jdiv+0)*dt)*s0 + r0*cos((jdiv+0)*dt)*z);
         myGlVertex(q0 + r0*sin((jdiv+1)*dt)*s0 + r0*cos((jdiv+1)*dt)*z);
         myGlVertex(q1 + r0*sin((jdiv+1)*dt)*s1 + r0*cos((jdiv+1)*dt)*z);
@@ -380,7 +380,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleArrow(
     ::glEnd();
   }
   { // cone
-    double r1 = axis.Length()*head_width_ratio*arrow_width_ratio;
+    double r1 = axis.norm()*head_width_ratio*arrow_width_ratio;
     ::glBegin(GL_TRIANGLES);
     int idiv0 = (int)(ndivt*0.9+1);
     int idiv1 = (int)(ndivt*1.0);
@@ -393,7 +393,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleArrow(
       CVec3d v1 = q0 + r1*sin((jdiv+1)*dt)*s0 + r1*cos((jdiv+1)*dt)*z;
       const CVec3d& v2 = q1;
       CVec3d n; UnitNormal(n, v0, v2, v1);
-      ::glNormal3d(n.x(),n.y(),n.z());
+      ::glNormal3d(n.x,n.y,n.z);
       myGlVertex(v0);
       myGlVertex(v2);
       myGlVertex(v1);
@@ -563,7 +563,7 @@ DFM2_INLINE void delfem2::opengl::DrawTriMeshNorm
     const CVec3d& v0 = aP[i0];
     const CVec3d& v1 = aP[i1];
     const CVec3d& v2 = aP[i2];
-    const CVec3d& n = Normal(v0, v1, v2).Normalize();
+    const CVec3d& n = Normal(v0, v1, v2).normalized();
     myGlNormal(n);
     myGlVertex(v0);
     myGlVertex(v1);
@@ -617,7 +617,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad_Face
     {
       CVec3d v01 = aPoint[iv1]-aPoint[iv0];
       CVec3d v12 = aPoint[iv2]-aPoint[iv1];
-      CVec3d n = (v01^v12).Normalize();
+      CVec3d n = (v01^v12).normalized();
       myGlNormal(n);
     }
     myGlVertex(aPoint[iv0]);
@@ -734,19 +734,19 @@ DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_Mat4
   ::glDisable(GL_LIGHTING);
   {
     if( ielem_picked == 0 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(1,0,0); }
-    const CVec3d& ax = Mat4Vec(Mat,CVec3d(1,0,0)).Normalize();
+    const CVec3d& ax = Mat4Vec(Mat,CVec3d(1,0,0)).normalized();
     const CVec3d pos(Mat[3],Mat[7],Mat[11]);
     opengl::DrawCircleWire(ax, pos, size);
   }
   {
     if( ielem_picked == 1 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,1,0); }
-    const CVec3d& ay = Mat4Vec(Mat,CVec3d(0,1,0)).Normalize();
+    const CVec3d& ay = Mat4Vec(Mat,CVec3d(0,1,0)).normalized();
     const CVec3d pos(Mat[3],Mat[7],Mat[11]);
     opengl::DrawCircleWire(ay, pos, size);
   }
   {
     if( ielem_picked == 2 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,0,1); }
-    const CVec3d& az = Mat4Vec(Mat,CVec3d(0,0,1)).Normalize();
+    const CVec3d& az = Mat4Vec(Mat,CVec3d(0,0,1)).normalized();
     const CVec3d pos(Mat[3],Mat[7],Mat[11]);
     opengl::DrawCircleWire(az, pos, size);
   }

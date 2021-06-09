@@ -35,12 +35,12 @@ public:
     delfem2::CVec3d p0(pi.x-org2.x, pi.y-org2.y,0.0);
     delfem2::CVec3d p2 = p0;
     if( radinv_x < 1.0e-5 ) {
-      double x0 = p0.x();
+      double x0 = p0.x;
       p2.p[0] = x0;
       p2.p[2] = -0.5*radinv_x*x0*x0;
     }
     else{
-      double x0 = p0.x();
+      double x0 = p0.x;
       p2.p[0] = (1.0/radinv_x)*sin(radinv_x*x0);
       p2.p[2] = -(1.0/radinv_x)*(1-cos(radinv_x*x0));
     }

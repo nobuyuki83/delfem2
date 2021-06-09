@@ -236,8 +236,8 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
       ::glBegin(GL_LINES);
       dfm2::CVec3d ps = aBone[ibs].Pos();
       dfm2::CVec3d pt = aBone_MotionSrc[ibt].Pos();
-      ::glVertex3d(pt.x(),pt.y(),pt.z());
-      ::glVertex3d(ps.x(),ps.y(),ps.z());
+      ::glVertex3d(pt.x,pt.y,pt.z);
+      ::glVertex3d(ps.x,ps.y,ps.z);
       ::glEnd();
     }
     glfwSwapBuffers(viewer.window);

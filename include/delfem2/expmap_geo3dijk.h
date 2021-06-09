@@ -68,8 +68,8 @@ public:
       unsigned int ip0,
       std::vector<unsigned int> &aOrder) {
     assert(aOrder.size() == aXYZ.size() / 3);
-    const CVec3d n0 = CVec3d(aNorm.data() + ip0 * 3).Normalize();
-    aAxisX[ip0].SetNormalizedVector();
+    const CVec3d n0 = CVec3d(aNorm.data() + ip0 * 3).normalized();
+    aAxisX[ip0].normalize();
     const CVec3d x0 = aAxisX[ip0];
     const CVec3d y0 = n0 ^x0;
     aTex[ip0 * 2 + 0] /= aW[ip0];
@@ -77,10 +77,10 @@ public:
     for (unsigned int ipsup = psup_ind[ip0]; ipsup < psup_ind[ip0 + 1]; ++ipsup) {
       const unsigned int ip1 = psup[ipsup];
       if (aOrder[ip1] != UINT_MAX) { continue; } // effect propagate from fixed to unfixed
-      const CVec3d n1 = CVec3d(aNorm.data() + ip1 * 3).Normalize();
+      const CVec3d n1 = CVec3d(aNorm.data() + ip1 * 3).normalized();
       const CVec3d d01 = CVec3d(aXYZ.data() + ip1 * 3) - CVec3d(aXYZ.data() + ip0 * 3);
-      const double len01 = d01.Length();
-      const CVec3d e01 = (d01 - (d01 * n0) * n0).Normalize() * len01; // projected edge and same length
+      const double len01 = d01.norm();
+      const CVec3d e01 = (d01 - (d01 * n0) * n0).normalized() * len01; // projected edge and same length
       const double w01 = 1.0 / len01;
       const CVec3d x1 = Mat3_MinimumRotation(n0, n1) * x0;
       aAxisX[ip1] += w01 * x1;
@@ -117,7 +117,7 @@ public:
     { // set kernel point information
       aTex[it_ker * 2 + 0] = 0.0;
       aTex[it_ker * 2 + 1] = 0.0;
-      CVec3d n0 = Normal_Tri3(it_ker,aTri,aXYZ).Normalize();
+      CVec3d n0 = Normal_Tri3(it_ker,aTri,aXYZ).normalized();
       CVec3d y0;
       GetVertical2Vector(
           n0,
@@ -140,9 +140,9 @@ public:
   {
     assert( aOrder.size() == aTri.size()/3 );
     assert( aOrder[it0] != UINT_MAX );
-    const CVec3d n0 = Normal_Tri3(it0,aTri,aXYZ).Normalize();
+    const CVec3d n0 = Normal_Tri3(it0,aTri,aXYZ).normalized();
     const CVec3d p0 = CG_Tri3(it0,aTri,aXYZ);
-    aAxisX[it0].SetNormalizedVector();
+    aAxisX[it0].normalize();
     const CVec3d x0 = aAxisX[it0];
     const CVec3d y0 = n0^x0;
     aTex[it0 * 2 + 0] /= aW[it0];
@@ -151,10 +151,10 @@ public:
       const unsigned int it1 = aTriSuTri[it0*3+iedge];
       if( it1 == UINT_MAX ){ continue; }
       if ( aOrder[it1] != UINT_MAX ) { continue; } // effect propagate from fixed to unfixed
-      const CVec3d n1 = Normal_Tri3(it1,aTri,aXYZ).Normalize();
+      const CVec3d n1 = Normal_Tri3(it1,aTri,aXYZ).normalized();
       const CVec3d d01 = CG_Tri3(it1,aTri,aXYZ)-p0;
-      const double len01 = d01.Length();
-      const CVec3d e01 = (d01 - (d01 * n0) * n0).Normalize() * len01; // projected edge and same length
+      const double len01 = d01.norm();
+      const CVec3d e01 = (d01 - (d01 * n0) * n0).normalized() * len01; // projected edge and same length
       const double w01 = 1.0 / len01;
       const CVec3d x1 = Mat3_MinimumRotation(n0, n1) * x0;
       aAxisX[it1] += w01 * x1;
@@ -217,7 +217,7 @@ void TexPoint_TexElemFlag(
       const unsigned int it1 = elsup[ielsup];
       if( aFlgTri[it1] != iflg ){ continue; }
       CVec3d p1 = CG_Tri3(it1, aTri, aXYZ);
-      double w1 = 1.0 / (p0 - p1).Length();
+      double w1 = 1.0 / (p0 - p1).norm();
       tex[0] += w1 * aTexE[it1 * 2 + 0];
       tex[1] += w1 * aTexE[it1 * 2 + 1];
       w0 += w1;
@@ -270,10 +270,10 @@ void FlatteringPattern(
         aXYZ,
         aTriSuTri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];
-    coordLocal[2] = Normal_Tri3(ielm_ker, aTri, aXYZ).Normalize();
+    coordLocal[2] = Normal_Tri3(ielm_ker, aTri, aXYZ).normalized();
     assert(fabs(coordLocal[0] * coordLocal[2]) < 1.0e-10);
-    assert(fabs(coordLocal[0].Length() - 1.0) < 1.0e-10);
-    assert(fabs(coordLocal[2].Length() - 1.0) < 1.0e-10);
+    assert(fabs(coordLocal[0].norm() - 1.0) < 1.0e-10);
+    assert(fabs(coordLocal[2].norm() - 1.0) < 1.0e-10);
     coordLocal[1] = coordLocal[2] ^ coordLocal[0];
     coordLocal[3] = CG_Tri3(ielm_ker, aTri, aXYZ);
     //

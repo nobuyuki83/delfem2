@@ -20,7 +20,7 @@ DFM2_INLINE bool delfem2::isPickCircle
 {
   double t = ((org-src)*axis)/(dir*axis);
   CVec3d p0 = src+t*dir;
-  double rad0 = (p0-org).Length();
+  double rad0 = (p0-org).norm();
   return fabs(rad - rad0) < pick_tol;
 }
 
@@ -65,9 +65,9 @@ DFM2_INLINE int delfem2::PickHandlerRotation_PosQuat
   REAL dx = (px-src)*dir;
   REAL dy = (py-src)*dir;
   REAL dz = (pz-src)*dir;
-  REAL lx = (px-qx).Length();
-  REAL ly = (py-qy).Length();
-  REAL lz = (pz-qz).Length();
+  REAL lx = (px-qx).norm();
+  REAL ly = (py-qy).norm();
+  REAL lz = (pz-qz).norm();
   REAL dm = (fabs(dx)+fabs(dy)+fabs(dz))*1000;
   //  std::cout << lx << " " << ly << " " << lz << " " << dm << std::endl;
   if( lx>tol ){ dx = dm; }
@@ -106,9 +106,9 @@ DFM2_INLINE int delfem2::PickHandlerRotation_Mat4
   double dx = (px-src)*dir;
   double dy = (py-src)*dir;
   double dz = (pz-src)*dir;
-  double lx = (px-qx).Length();
-  double ly = (py-qy).Length();
-  double lz = (pz-qz).Length();
+  double lx = (px-qx).norm();
+  double ly = (py-qy).norm();
+  double lz = (pz-qz).norm();
   double dm = (fabs(dx)+fabs(dy)+fabs(dz))*1000;
   if( lx>tol ){ dx = dm; }
   if( ly>tol ){ dy = dm; }
@@ -131,9 +131,9 @@ DFM2_INLINE bool delfem2::DragHandlerRot_PosQuat
     double vi[3] = {0,0,0}; vi[ielem] = 1;
     double vo[3]; QuatVec(vo, quat, vi);
     CVec3d v0(0,0,0); v0[ielem] = 1;
-    CVec3d v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
+    CVec3d v1(vo[0],vo[1],vo[2]); v1.normalize();
     double ar = -DragCircle(sp0,sp1, pos, v1, mMV, mPj);
-    double dq[4] = { cos(ar*0.5), v0.x()*sin(ar*0.5), v0.y()*sin(ar*0.5), v0.z()*sin(ar*0.5) };
+    double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, dq, quat);
     Copy_Quat(quat,qtmp);
     return true;
@@ -150,10 +150,10 @@ bool delfem2::DragHandlerRot_Mat4
     double vi[3] = {0,0,0}; vi[ielem] = 1;
     double vo[3]; Mat4Vec3(vo, mat, vi);
     CVec3d v0(0,0,0); v0[ielem] = 1;
-    CVec3d v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
+    CVec3d v1(vo[0],vo[1],vo[2]); v1.normalize();
     CVec3d pos(mat[3],mat[7],mat[11]);
     const double ar = DragCircle(sp0,sp1, pos, v1, mMV, mPj);
-    const double dq[4] = { cos(ar*0.5), v0.x()*sin(ar*0.5), v0.y()*sin(ar*0.5), v0.z()*sin(ar*0.5) };
+    const double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, quat, dq);
     Copy_Quat(quat,qtmp);
     return true;
@@ -206,7 +206,7 @@ DFM2_INLINE double delfem2::DragCircle
   double angl = area / ( (sp0-spo0).Length() * (sp1-spo0).Length() );
   {
     CVec3d a3 = screenUnProjectionDirection(axis,mMV,mPj);
-    if( a3.z() < 0 ){ angl *= -1; }
+    if( a3.z < 0 ){ angl *= -1; }
   }
   return angl;
   //  CMatrix3 R; R.SetRotMatrix_Cartesian(angl*axis);
@@ -288,7 +288,7 @@ void delfem2::CGizmo_Rotation<REAL>::Drag
   using CQ = CQuat<REAL>;
   int ielem = ielem_picked;
   if( ielem>=0 && ielem<3 ){
-    CV3 va = (CQ(quat)*CV3::Axis(ielem)).Normalize();
+    CV3 va = (CQ(quat)*CV3::Axis(ielem)).normalized();
     CV3 pz0,qz0; Nearest_Line_Circle(pz0,qz0,
                                      CV3(src0), CV3(dir),
                                      pos,va, size);
@@ -300,9 +300,9 @@ void delfem2::CGizmo_Rotation<REAL>::Drag
     const double ar = atan2((a0^a1)*va, a0*a1);
     const REAL dq[4] = {
       (REAL)cos(ar*0.5),
-      (REAL)(va.x()*sin(ar*0.5)),
-      (REAL)(va.y()*sin(ar*0.5)),
-      (REAL)(va.z()*sin(ar*0.5)) };
+      (REAL)(va.x*sin(ar*0.5)),
+      (REAL)(va.y*sin(ar*0.5)),
+      (REAL)(va.z*sin(ar*0.5)) };
     REAL qtmp[4]; QuatQuat(qtmp, dq, quat);
     Copy_Quat(quat,qtmp);
   }
@@ -337,7 +337,7 @@ void delfem2::CGizmo_Transl<REAL>::Pick
                                     pos-size*CVec3<REAL>::Axis(0),
                                     pos+size*CVec3<REAL>::Axis(0),
                                     CVec3<REAL>(src), CVec3<REAL>(dir));
-    if( (pls-pl).Length() < tol ){
+    if( (pls-pl).norm() < tol ){
       ielem_picked = 0;
       return;
     }
@@ -348,7 +348,7 @@ void delfem2::CGizmo_Transl<REAL>::Pick
                                     pos-size*CVec3<REAL>::Axis(1),
                                     pos+size*CVec3<REAL>::Axis(1),
                                     CVec3<REAL>(src), CVec3<REAL>(dir));
-    if( (pls-pl).Length() < tol ){
+    if( (pls-pl).norm() < tol ){
       ielem_picked = 1;
       return;
     }
@@ -359,7 +359,7 @@ void delfem2::CGizmo_Transl<REAL>::Pick
                                     pos-size*CVec3<REAL>::Axis(2),
                                     pos+size*CVec3<REAL>::Axis(2),
                                     CVec3<REAL>(src), CVec3<REAL>(dir));
-    if( (pls-pl).Length() < tol ){
+    if( (pls-pl).norm() < tol ){
       ielem_picked = 2;
       return;
     }

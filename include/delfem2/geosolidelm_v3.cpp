@@ -447,9 +447,9 @@ double delfem2::SolidAngleTri(
     const CVec3<T>& v2,
     const CVec3<T>& v3)
 {
-  double l1 = v1.Length();
-  double l2 = v2.Length();
-  double l3 = v3.Length();
+  double l1 = v1.norm();
+  double l2 = v2.norm();
+  double l3 = v3.norm();
   double den = (v1^v2)*v3;
   double num = l1*l2*l3+(v1*v2)*l3+(v2*v3)*l1+(v3*v1)*l2;
   double tho = den/num;

@@ -137,21 +137,19 @@ public:
   CVec3(T vx, T vy, T vz) : p{vx,vy,vz} {}
   CVec3(): p{0.0, 0.0, 0.0} {}
 	CVec3(const CVec3& rhs){ p[0] = rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
-  CVec3(const double* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
-  CVec3(const float* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
-  CVec3(const std::vector<double>& v){ p[0] = v[0]; p[1] = v[1]; p[2] = v[2]; }
+  
+  template <typename S>
+  CVec3(const S* v) : p{v[0],v[1],v[2]} {}
+  
+  template <typename S>
+  CVec3(const std::vector<S>& v)  : p(v[0],v[1],v[2]) {}
+  
 	virtual ~CVec3(){}
-
-  std::vector<double> stlvec() const {
-    std::vector<double> d = {p[0], p[1], p[2]};
-    return d;
-  }
-	void SetVector(double vx, double vy, double vz){ p[0] = vx; p[1] = vy; p[2] = vz; }
-	template <typename T1>
-  void CopyTo(T1* v) const { v[0]=p[0]; v[1]=p[1]; v[2]=p[2]; }
-  void CopyToScale(double* v, double s) const { v[0]=p[0]*s; v[1]=p[1]*s; v[2]=p[2]*s; }
-  void AddToScale(double* v, double s) const { v[0]+=p[0]*s; v[1]+=p[1]*s; v[2]+=p[2]*s; }
-
+  
+  // above: constructor / destructor
+  // -------------------------------
+  // below: operator
+  
 	inline const CVec3 operator-() const{ return ((T)(-1))*(*this); }
 	inline const CVec3 operator+() const{ return *this; }
 	inline CVec3& operator=(const CVec3& rhs){
@@ -184,41 +182,68 @@ public:
 		return *this;
 	}
 	template <typename INDEX>
-  inline double operator[](INDEX i) const{
-    if( i == 0 ) return p[0];
-    if( i == 1 ) return p[1];
-    if( i == 2 ) return p[2];
-    return 0;
+  inline T operator[](INDEX i) const{
+    assert(i<3);
+    return p[i];
   }
   template <typename INDEX>
   inline T& operator[](INDEX i){
-    if( i == 0 ) return p[0];
-    if( i == 1 ) return p[1];
-    if( i == 2 ) return p[2];
-    assert(0);
-    return p[0];
+    assert(i<3);
+    return p[i];
   }  
 	inline CVec3 operator+(){ return *this; }
 	inline CVec3 operator-(){ return CVec3(-p[0],-p[1],-p[2]); }
-  inline T x() const { return p[0]; }
-  inline T y() const { return p[1]; }
-  inline T z() const { return p[2]; }
 
-  CVec3 Normalize() const {
+  // above: operator
+  // ------
+
+  //! @details named after Eigen library
+  CVec3 normalized() const {
     CVec3 r = (*this);
-    r.SetNormalizedVector();
+    r.normalize();
     return r;
   }
-  CVec3<float> Float() const {
-    return CVec3<float>((float)p[0], (float)p[1], (float)p[2]);
-  }
-  CVec3<double> Double() const {
-    return CVec3<double>((double)p[0], (double)p[1], (double)p[2]);
-  }
-	inline double Length()  const{ return sqrt( p[0]*p[0]+p[1]*p[1]+p[2]*p[2] ); }
-	inline double DLength() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
-	void SetNormalizedVector();
+  
+  //! @brief in-place normalization of vector
+  //! @details named after Eigen library
+  void normalize();
+  
+  //! @details named after Eigen library
+	inline double norm()  const{ return sqrt( p[0]*p[0]+p[1]*p[1]+p[2]*p[2] ); }
+  
+  //! @details named after Eigen library
+	inline double squaredNorm() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
+  
+  //! @details named after Eigen library
 	void setZero();
+  
+  template <typename S>
+  CVec3<S> cast() const {
+    return CVec3<S>(static_cast<S>(p[0]),
+                    static_cast<S>(p[1]),
+                    static_cast<S>(p[2]));
+  };
+  
+  T* data() { return p; }
+  const T* data() const { return p; }
+    
+  std::vector<double> stlvec() const {
+    std::vector<double> d = {p[0], p[1], p[2]};
+    return d;
+  }
+  
+  template <typename S>
+  void SetVector(S vx, S vy, S vz){ p[0] = vx; p[1] = vy; p[2] = vz; }
+  
+  template <typename S>
+  void CopyTo(S* v) const { v[0]=p[0]; v[1]=p[1]; v[2]=p[2]; }
+  
+  template <typename S>
+  void CopyToScale(S* v, S s) const { v[0]=p[0]*s; v[1]=p[1]*s; v[2]=p[2]*s; }
+  
+  template <typename S>
+  void AddToScale(S* v, S s) const { v[0]+=p[0]*s; v[1]+=p[1]*s; v[2]+=p[2]*s; }
+  
   void Print() const {
     std::cout <<p[0]<< " " << p[1] << " " << p[2] << std::endl;
   }
@@ -231,8 +256,6 @@ public:
     if( idim < 3) { r[idim] = 1; }
     return r;
   }
-  T* data() { return p; }
-  const T* data() const { return p; }
   //
   template <typename DIST, typename ENG>
   void SetRandom(DIST& dist, ENG& eng){
@@ -245,9 +268,13 @@ public:
   static CVec3 Random(DIST& dist, ENG& eng){
     return CVec3(dist(eng),dist(eng),dist(eng));
   }
-//  void SetRandom();
 public:
-  T p[3];
+  union {
+    T p[3];
+    struct {
+      T x, y, z;
+    };
+  };
 };
 using CVec3d = CVec3<double>;
 using CVec3f = CVec3<float>;
@@ -341,10 +368,10 @@ template <typename T>
 void Cross( CVec3<T>& lhs, const CVec3<T>& v1, const CVec3<T>& v2 );
   
 template <typename T>
-double Area_Tri(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3);
+T Area_Tri(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3);
   
 template <typename T>
-double SquareTriArea(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3);
+T SquareTriArea(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3);
   
 template <typename T>
 double SquareDistance(

@@ -61,9 +61,9 @@ int main(int argc,char* argv[])
         for(unsigned int ibc=0;ibc<nbc;++ibc){
           aCntBC[ibc] /= (double)aW[ibc];
         }
-        giz1.pivot0 = aCntBC[1].Float();
-        giz1.gizmo_rot.pos = aCntBC[1].Float();
-        giz1.gizmo_trnsl.pos = aCntBC[1].Float();
+        giz1.pivot0 = aCntBC[1].cast<float>();
+        giz1.gizmo_rot.pos = aCntBC[1].cast<float>();
+        giz1.gizmo_trnsl.pos = aCntBC[1].cast<float>();
         giz1.gizmo_rot.size = 0.3;
         giz1.gizmo_trnsl.size = 0.3;
       }
