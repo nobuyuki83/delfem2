@@ -95,26 +95,14 @@ template <typename T>
 class CVec3;
   
 template <typename T>
-CVec3<T> operator + (const CVec3<T>& lhs, const CVec3<T>& rhs);
-  
-template <typename T>
-CVec3<T> operator - (const CVec3<T>& lhs, const CVec3<T>& rhs);
-  
-template <typename T>
 CVec3<T> operator * (T d, const CVec3<T>& rhs);
-  
-template <typename T>
-CVec3<T> operator * (const CVec3<T>& vec, T d);
-  
+    
 template <typename T>
 T operator * (const CVec3<T>& lhs, const CVec3<T>& rhs);
   
 template <typename T>
 CVec3<T> operator / (const CVec3<T>& vec, T d);
-  
-template <typename T>
-CVec3<T> operator ^ (const CVec3<T>& lhs, const CVec3<T>& rhs);
-  
+
 template <typename T>
 std::ostream &operator<<(std::ostream &output, const CVec3<T>& v);
   
@@ -150,35 +138,24 @@ public:
   // -------------------------------
   // below: operator
   
-	inline const CVec3 operator-() const{ return ((T)(-1))*(*this); }
-	inline const CVec3 operator+() const{ return *this; }
-	inline CVec3& operator=(const CVec3& rhs){
-		if( this != &rhs ){ p[0]= rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
+	inline const CVec3 operator-() const { return ((T)(-1))*(*this); }
+	inline const CVec3 operator+() const { return *this; }
+  inline CVec3 operator+(){ return *this; }
+  inline CVec3 operator-(){ return CVec3(-p[0],-p[1],-p[2]); }
+	inline CVec3& operator=(const CVec3& b){
+		if( this != &b ){ x=b.x; y=b.y; z=b.z; }
 		return *this;
 	}
-	inline CVec3& operator+=(const CVec3& rhs){
-		p[0] += rhs.p[0];
-    p[1] += rhs.p[1];
-    p[2] += rhs.p[2];
-		return *this;
-	}
-	inline CVec3& operator-=(const CVec3& rhs){
-		p[0] -= rhs.p[0];
-    p[1] -= rhs.p[1];
-    p[2] -= rhs.p[2];
-		return *this;
-	}
-	inline CVec3& operator*=(double d){
-		p[0] *= d;
-    p[1] *= d;
-    p[2] *= d;
-		return *this;
-	}
-	inline CVec3& operator/=(double d){
+	inline CVec3& operator+=(const CVec3& b){ x += b.x; y += b.y; z += b.z; return *this; }
+	inline CVec3& operator-=(const CVec3& b){ x -= b.x; y -= b.y; z -= b.z; return *this; }
+  inline CVec3 operator+(const CVec3 &b) const { return CVec3(x+b.x,y+b.y,z+b.z); }
+  inline CVec3 operator-(const CVec3 &b) const { return CVec3(x-b.x,y-b.y,z-b.z); }
+  inline CVec3 operator^(const CVec3& b) const {return CVec3(y*b.z-z*b.y,z*b.x-x*b.z,x*b.y-y*b.x);}
+  inline  CVec3 operator*(T b) const { return CVec3(x*b,y*b,z*b); }
+	inline CVec3& operator*=(T d){ x *= d; y *= d; z *= d; return *this; }
+	inline CVec3& operator/=(T d){
 		if( fabs(d) < NEARLY_ZERO ){ return *this; }
-		p[0] /= d;
-    p[1] /= d;
-    p[2] /= d;
+		x /= d; y /= d; z /= d;
 		return *this;
 	}
 	template <typename INDEX>
@@ -190,9 +167,7 @@ public:
   inline T& operator[](INDEX i){
     assert(i<3);
     return p[i];
-  }  
-	inline CVec3 operator+(){ return *this; }
-	inline CVec3 operator-(){ return CVec3(-p[0],-p[1],-p[2]); }
+  }
 
   // above: operator
   // ------
@@ -209,14 +184,19 @@ public:
   void normalize();
   
   //! @details named after Eigen library
-	inline double norm()  const{ return sqrt( p[0]*p[0]+p[1]*p[1]+p[2]*p[2] ); }
+	inline T norm() const { return std::sqrt( p[0]*p[0]+p[1]*p[1]+p[2]*p[2] ); }
   
   //! @details named after Eigen library
-	inline double squaredNorm() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
+	inline T squaredNorm() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
   
   //! @details named after Eigen library
 	void setZero();
-  
+
+	//! @details named after Eigen library
+	T dot(const CVec3& rhs) const { return x*rhs.x + y*rhs.y + z*rhs.z; }
+
+  CVec3 mult(const CVec3 &b) const { return CVec3(x * b.x, y * b.y, z * b.z); }
+
   template <typename S>
   CVec3<S> cast() const {
     return CVec3<S>(static_cast<S>(p[0]),

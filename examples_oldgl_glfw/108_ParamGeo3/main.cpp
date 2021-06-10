@@ -10,16 +10,15 @@
 #include <random>
 #include "delfem2/vec3.h"
 #include "delfem2/pgeo.h"
-
 #include <GLFW/glfw3.h>
 #include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 
 namespace dfm2 = delfem2;
 
 // -----------------------------------
 
-dfm2::CVec3d GetPointSurf
-(double u, double v,
+dfm2::CVec3d GetPointSurf(double u, double v,
  int isurf,
  std::vector<int>& aIndCP,
  std::vector<dfm2::CVec3d>& aCP)
@@ -180,8 +179,8 @@ void myGlutDisplay(void)
 int main(int argc,char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.camera.view_height = 4;
   
