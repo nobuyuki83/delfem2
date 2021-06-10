@@ -129,7 +129,6 @@ int main(int argc,char* argv[])
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
-
   tex.InitGL();
 
   while (!glfwWindowShouldClose(viewer.window))

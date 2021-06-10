@@ -449,48 +449,6 @@ template void delfem2::AverageFour3(double po[3],
 // below: with CVec3
 
 namespace delfem2 {
-  
-/*
-template <typename T>
-CVec3<T> Cross(const CVec3<T>& arg1, const CVec3<T>& arg2)
-{
-  CVec3<T> temp;
-  Cross3(temp.p, arg1.p, arg2.p);
-  return temp;
-}
-template CVec3<double> Cross(const CVec3<double>& arg1, const CVec3<double>& arg2);
- */
-  
-// -----------------------------
-
-//! add
-template <typename T>
-CVec3<T> operator+ (const CVec3<T>& lhs, const CVec3<T>& rhs){
-  CVec3<T> temp = lhs;
-  temp += rhs;
-  return temp;
-}
-#ifndef DFM2_HEADER_ONLY
-template CVec3f operator+ (const CVec3f& lhs, const CVec3f& rhs);
-template CVec3d operator+ (const CVec3d& lhs, const CVec3d& rhs);
-#endif
-  
-// ------------------
-
-//! subtract
-template <typename T>
-CVec3<T> operator - (const CVec3<T>& lhs, const CVec3<T>& rhs){
-  CVec3<T> temp = lhs;
-  temp -= rhs;
-  return temp;
-}
-#ifndef DFM2_HEADER_ONLY
-template CVec3f operator - (const CVec3f& lhs, const CVec3f& rhs);
-template CVec3d operator - (const CVec3d& lhs, const CVec3d& rhs);
-#endif
-
-  
-// ------------------
 
 //! scale
 template <typename T>
@@ -503,19 +461,7 @@ CVec3<T> operator* (T d, const CVec3<T>& rhs){
 template CVec3f operator* (float d, const CVec3f& rhs);
 template CVec3d operator* (double d, const CVec3d& rhs);
 #endif
-
-//! scale
-template <typename T>
-CVec3<T> operator* (const CVec3<T>& vec, T d){
-  CVec3<T> temp = vec;
-  temp *= d;
-  return temp;
-}
-#ifndef DFM2_HEADER_ONLY
-template CVec3f operator* (const CVec3f& vec, float d);
-template CVec3d operator* (const CVec3d& vec, double d);
-#endif
-  
+ 
 // -----------------------
 
 //! mult
@@ -543,16 +489,7 @@ template CVec3d operator/ (const CVec3d& vec, double d);
   
 // ----------------
 
-//! mult
-template <typename T>
-CVec3<T> operator^ (const CVec3<T>& lhs, const CVec3<T>& rhs){
-  return Cross(lhs,rhs);
-}
-#ifndef DFM2_HEADER_ONLY
-template CVec3f operator^ (const CVec3f& lhs, const CVec3f& rhs);
-template CVec3d operator^ (const CVec3d& lhs, const CVec3d& rhs);
-#endif
-  
+
 // ------------------
 
 template <typename T>

@@ -172,9 +172,12 @@ cmake --build .
 ### [147_HashLbvh3RayTri](147_HashLbvh3RayTri)
 <img src="147_HashLbvh3RayTri/thumbnail.png" width=200>
 
-### [148_RayTracingSimple](148_RayTracingSimple)
+### [148_RayCasting](148_RayCasting)
+<img src="148_RayCasting/thumbnail.png" width=200>
 
-<img src="148_RayTracingSimple/thumbnail.png" width=200>
+### [149_PathTracingSimple](149_PathTracingSimple)
+
+<img src="149_PathTracingSimple/thumbnail.png" width=200>
 
 
 
@@ -325,3 +328,9 @@ cmake --build .
 ### [632_PbdSpring2](632_PbdSpring2)
 
 <img src="632_PbdSpring2/thumbnail.png" width=200>
+
+
+
+### [633_Mpm2Snow](633_Mpm2Snow)
+
+<img src="633_Mpm2Snow/thumbnail.png" width=200>

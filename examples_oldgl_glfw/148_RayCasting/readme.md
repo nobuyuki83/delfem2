@@ -1,4 +1,4 @@
-### 148_RayTracingSimple
+### 148_RayCasting
 ![](thumbnail.png)
 
 This demo compute image by shooting rays from sceren to an object.
