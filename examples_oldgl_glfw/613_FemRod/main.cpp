@@ -86,7 +86,7 @@ void MakeProblemSetting_Spiral
       unsigned int ip0 = aElemSeg[is*2+0];
       unsigned int ip1 = aElemSeg[is*2+1];
       const dfm2::CVec3d v = (aP0[ip1] - aP0[ip0]).normalized();
-      aS0[is] = (aS0[is]-(aS0[is]*v)*v).normalized();
+      aS0[is] = (aS0[is]-(aS0[is].dot(v))*v).normalized();
     }
   }
   // --------------------------
@@ -111,7 +111,7 @@ void MakeProblemSetting_Spiral
       const dfm2::CMat3d CMat3 = dfm2::Mat3_MinimumRotation(aP0[ip1]-aP0[ip0], aP0[ip2]-aP0[ip1]);
       dfm2::CVec3d s1 = CMat3*aS0[is0] + aS0[is1];
       const dfm2::CVec3d v = (aP0[ip2] - aP0[ip1]).normalized();
-      aS0[is1] = (s1-(s1*v)*v).normalized();
+      aS0[is1] = (s1-(s1.dot(v))*v).normalized();
     }
   }
 }
@@ -194,7 +194,7 @@ int main(int argc,char* argv[])
       const dfm2::CVec3d& p1 = aP[i1];
       const dfm2::CVec3d e01 = (p1-p0).normalized();
       assert( iseg < aS.size() );
-      aS[iseg] -= (aS[iseg]*e01)*e01;
+      aS[iseg] -= (aS[iseg].dot(e01))*e01;
       aS[iseg].normalize();
     }
     const double stiff_stretch = dist01(reng)+1.;

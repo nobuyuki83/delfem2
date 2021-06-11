@@ -430,7 +430,8 @@ std::vector<delfem2::CPtElm2<double>> delfem2::IntersectionLine_MeshTri3(
 template <typename T>
 void delfem2::IntersectionRay_MeshTri3 (
     std::map<T,CPtElm2<T>>& mapDepthPES,
-    const CVec3<T>& org, const CVec3<T>& dir,
+    const CVec3<T>& org,
+    const CVec3<T>& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<T>& aXYZ,
     T eps)
@@ -442,7 +443,7 @@ void delfem2::IntersectionRay_MeshTri3 (
   mapDepthPES.clear();
   for(auto pes : aPES){
     CVec3<T> p0 = pes.Pos_Tri(aXYZ,aTri);
-    double depth = (p0-org)*dir;
+    double depth = (p0-org).dot(dir);
     if( depth < 0 ) continue;
     mapDepthPES.insert( std::make_pair(depth, pes) );
   }
@@ -483,7 +484,7 @@ void delfem2::IntersectionRay_MeshTri3DPart(
     if( !res ){ continue; }
     double r2 = 1-r0-r1;
     CVec3<T> q0 = p0*r0+p1*r1+p2*r2;
-    double depth = (q0-org)*dir/dir.squaredNorm();
+    double depth = (q0-org).dot(dir)/dir.squaredNorm();
     if( depth < 0 ) continue;
     mapDepthPES.insert( std::make_pair(depth,CPtElm2<T>(itri,r0,r1)) );
   }
@@ -829,7 +830,7 @@ double delfem2::SDFNormal_NearestPoint
   CVec3<T> q1 = pes.Pos_Tri(aXYZ,nXYZ,aTri,nTri);
   double dist = (q1-p0).norm();
   CVec3<T> n1 = pes.UNorm_Tri(aXYZ,nXYZ,aTri,nTri,aNorm);
-  if( (q1-p0)*n1 > 0 ){  //inside
+  if( (q1-p0).dot(n1) > 0 ){  //inside
     if( dist < 1.0e-6 ){ n0 = n1; }
     else{ n0 = (q1-p0).normalized(); }
     return dist;
@@ -862,7 +863,7 @@ double delfem2::SDFNormal_NearestPoint
   CVec3<T> q1 = pes.Pos_Tri(aXYZ,aTri);
   double dist = (q1-p0).norm();
   CVec3<T> n1 = pes.UNorm_Tri(aXYZ,aTri,aNorm);
-  if( (q1-p0)*n1 > 0 ){  //inside
+  if( (q1-p0).dot(n1) > 0 ){  //inside
     if( dist < 1.0e-6 ){ n0 = n1; }
     else{ n0 = (q1-p0).normalized(); }
     return dist;

@@ -107,7 +107,7 @@ void MakeProblemSetting_Spiral
     for(unsigned int is=0;is<np-1;++is){
       const dfm2::CVec3d v = (aP0[np0+is+1] - aP0[np0+is+0]).normalized();
       dfm2::CVec3d s(1.3, 1.5, 1.7);
-      s = (s-(s*v)*v).normalized();
+      s = (s-(s.dot(v))*v).normalized();
       aS0.push_back(s);
     }
     aS0.emplace_back(1,0,0);
@@ -167,8 +167,8 @@ void FindRodHairContactCCD(
         dfm2::nearest_Line_Line(D, Da, Db, p0s, p1s-p0s, q0s, q1s-q0s);
         Da /= D;
         Db /= D;
-        p[0] = (Da-p0s)*(p1s-p0s)/(p1s-p0s).squaredNorm();
-        p[1] = (Db-q0s)*(q1s-q0s)/(q1s-q0s).squaredNorm();
+        p[0] = (Da-p0s).dot(p1s-p0s)/(p1s-p0s).squaredNorm();
+        p[1] = (Db-q0s).dot(q1s-q0s)/(q1s-q0s).squaredNorm();
 //        std::cout << ir << " " << jr << " --> " << p[0] << " " << p[1] << " " << (Da-Db)*(p1s-p0s) << " " << (Da-Db)*(q1s-q0s) << " " << (Da-Db).Length() << std::endl;
         if( p[0] > 1 ){ p[0] = 1; } else if( p[0] < 0 ){ p[0] = 0; }
         if( p[1] > 1 ){ p[1] = 1; } else if( p[1] < 0 ){ p[1] = 0; }

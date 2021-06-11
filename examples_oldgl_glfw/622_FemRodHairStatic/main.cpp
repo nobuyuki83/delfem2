@@ -107,7 +107,7 @@ void MakeProblemSetting_Spiral(
     for(unsigned int is=0;is<np-1;++is){
       const dfm2::CVec3d v = (aP0[np0+is+1] - aP0[np0+is+0]).normalized();
       dfm2::CVec3d s(1.3, 1.5, 1.7);
-      s = (s-(s*v)*v).normalized();
+      s = (s-(s.dot(v))*v).normalized();
       aS0.push_back(s);
     }
     aS0.emplace_back(1,0,0);

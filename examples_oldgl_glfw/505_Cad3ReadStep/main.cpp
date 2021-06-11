@@ -306,7 +306,7 @@ class CStep_Line: public CStep_Curve
     const dfm2::CVec3d& d = pVec->pDir->dir;
     const double l = pVec->len;
     const dfm2::CVec3d v = l*d;
-    return (p-cp)*v/v.squaredNorm();
+    return (p-cp).dot(v)/v.squaredNorm();
   }
   virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine,
                            double r1, double r2,
@@ -361,7 +361,7 @@ public:
     const dfm2::CVec3d& n = pA2P3D->pDir1->dir;
     const dfm2::CVec3d ex = (pA2P3D->pDir2->dir).normalized();
     const dfm2::CVec3d ey = Cross(n,ex).normalized();
-    return atan2( (p-c)*ey, (p-c)*ex );
+    return atan2( (p-c).dot(ey), (p-c).dot(ex) );
   }
   virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine,
                            double r1, double r2,
@@ -699,8 +699,8 @@ public:
     const  dfm2::CVec3d& n = pA2P3D->pDir1->dir;
     const  dfm2::CVec3d& ex = pA2P3D->pDir2->dir;
     const  dfm2::CVec3d& ey = Cross(n,ex);
-    r0 = (p0-org)*ex;
-    r1 = (p0-org)*ey;
+    r0 = (p0-org).dot(ex);
+    r1 = (p0-org).dot(ey);
   }
 public:
   int idA2P3D;

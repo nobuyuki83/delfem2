@@ -212,7 +212,7 @@ delfem2::CMat3<REAL> delfem2::Mat3_MinimumRotation
   CVec3<REAL> ep = V.normalized();
   CVec3<REAL> eq = v.normalized();
   CVec3<REAL> n = ep^eq;
-  const double st2 = n*n;
+  const double st2 = n.dot(n);
   CMat3<REAL> m;
   if( st2 < 1.0e-4f ){
     m.mat[0] = 1.f      +0.5f*(n.x*n.x-st2);
@@ -227,7 +227,7 @@ delfem2::CMat3<REAL> delfem2::Mat3_MinimumRotation
     return m;
   }
   const double st = sqrt(st2);
-  const double ct = ep*eq;
+  const double ct = ep.dot(eq);
   n.normalize();
   m.mat[0] = ct         +(1.f-ct)*n.x*n.x;
   m.mat[1] =   -n.z*st+(1.f-ct)*n.x*n.y;
@@ -289,7 +289,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTriSolid
   double tr0 = I0.Trace();
   CMat3d I = tr0*CMat3d::Identity()-I0;
   
-  double darea = (d0*(d1^d2));
+  double darea = d0.dot(d1^d2);
   I *= darea/120.0;
   return I;
 }

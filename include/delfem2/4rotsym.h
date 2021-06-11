@@ -37,7 +37,7 @@ CVec3d FindNearestOrientation(
   unsigned int id1_near = UINT_MAX;
   for(unsigned int id0=0;id0<2;++id0){
     for(unsigned int id1=0;id1<4;++id1){
-      const double dot = ad0[id0]*ad1[id1];
+      const double dot = ad0[id0].dot(ad1[id1]);
       if( dot < dot_max ){ continue; }
       id0_near = id0;
       id1_near = id1;
@@ -46,7 +46,7 @@ CVec3d FindNearestOrientation(
   }
   idiff = (id0_near+4-id1_near)%4;
   CVec3d d0new = ad0[id0_near] * weight + ad1[id1_near];
-  d0new = (d0new - (d0new * n0) * n0).normalized();
+  d0new = (d0new - (d0new.dot(n0)) * n0).normalized();
   if( id0_near == 1 ){ d0new = d0new ^ n0; }
   return d0new;
 }

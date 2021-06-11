@@ -450,8 +450,8 @@ double delfem2::SolidAngleTri(
   double l1 = v1.norm();
   double l2 = v2.norm();
   double l3 = v3.norm();
-  double den = (v1^v2)*v3;
-  double num = l1*l2*l3+(v1*v2)*l3+(v2*v3)*l1+(v3*v1)*l2;
+  double den = (v1^v2).dot(v3);
+  double num = l1*l2*l3+(v1.dot(v2))*l3+(v2.dot(v3))*l1+(v3.dot(v1))*l2;
   double tho = den/num;
   double v = atan(tho);
   if (v<0){ v += 2*M_PI; }

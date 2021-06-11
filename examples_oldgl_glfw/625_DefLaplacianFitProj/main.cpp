@@ -108,7 +108,7 @@ void Project(
       double mMVP[16]; dfm2::MatMat4(mMVP, smplr.mMV, smplr.mP);
       double mMVinv[16]; dfm2::Inverse_Mat4(mMVinv, mMVP);
       dfm2::CVec3d z1; dfm2::Vec3_Vec3Mat4_AffineProjection(z1.p,z0.p,mMVinv);
-      double ct = n0*z1.normalized();
+      double ct = n0.dot(z1.normalized());
       if( ct <= 0.0 ){ continue; }
       if( (p0-ps).norm() > 0.1 ){ continue; }
       const double len = ((p0-ps).norm()+1.0e-5)/ct;

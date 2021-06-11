@@ -464,17 +464,6 @@ template CVec3d operator* (double d, const CVec3d& rhs);
  
 // -----------------------
 
-//! mult
-template <typename T>
-T operator* (const CVec3<T>& lhs, const CVec3<T>& rhs){
-  return Dot(lhs,rhs);
-}
-#ifndef DFM2_HEADER_ONLY
-template float operator* (const CVec3f& lhs, const CVec3f& rhs);
-template double operator* (const CVec3d& lhs, const CVec3d& rhs);
-#endif
-
-
 //! divide by real number
 template <typename T>
 CVec3<T> operator/ (const CVec3<T>& vec, T d){

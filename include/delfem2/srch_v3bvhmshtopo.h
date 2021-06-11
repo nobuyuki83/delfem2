@@ -244,11 +244,11 @@ public:
     const CVec3<REAL> n1 = pes.UNorm_Tri(aXYZ, aTri, aNorm);
     if( dist < 1.0e-6 ){
       n0 = n1;
-      if( (q0-p0)*n1 > 0 ){ return dist; } //inside
+      if( (q0-p0).dot(n1) > 0 ){ return dist; } //inside
       return -dist; // outside
     }
     CVec3<REAL> dir = (CG_Tri3(pes.itri, aTri, aXYZ)-p0).normalized();
-    if( (q0-p0)*n1 < 0 ){ dir = -dir; } // probaby outside so shoot ray outside
+    if( (q0-p0).dot(n1) < 0 ){ dir = -dir; } // probaby outside so shoot ray outside
     std::vector<unsigned int> aIndElem;
     BVH_GetIndElem_Predicate(aIndElem,
         CIsBV_IntersectRay<BV>(p0.p, dir.p),

@@ -123,11 +123,13 @@ DFM2_INLINE void delfem2::opengl::ModelTransformation
   ::glMultMatrixd(A);
 }
 
-DFM2_INLINE void delfem2::opengl::ViewTransformation
- (const CVec3d& dx, const CVec3d& dz, const CVec3d& origin)
+DFM2_INLINE void delfem2::opengl::ViewTransformation(
+    const CVec3d& dx,
+    const CVec3d& dz,
+    const CVec3d& origin)
 {
   const CVec3d& dy = Cross(dz,dx);
-  CVec3d o(dx*origin,dy*origin,dz*origin);
+  CVec3d o(dx.dot(origin),dy.dot(origin),dz.dot(origin));
   double A[16];
   A[ 0] = dx.x;  A[ 1] = dy.x;  A[ 2] = dz.x;  A[ 3] = 0;
   A[ 4] = dx.y;  A[ 5] = dy.y;  A[ 6] = dz.y;  A[ 7] = 0;

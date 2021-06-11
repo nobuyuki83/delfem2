@@ -96,9 +96,6 @@ class CVec3;
   
 template <typename T>
 CVec3<T> operator * (T d, const CVec3<T>& rhs);
-    
-template <typename T>
-T operator * (const CVec3<T>& lhs, const CVec3<T>& rhs);
   
 template <typename T>
 CVec3<T> operator / (const CVec3<T>& vec, T d);

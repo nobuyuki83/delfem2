@@ -333,7 +333,7 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_EnergyStVK
    0.5*( Dot3D(gd[1],gd[1]) - Dot3D(Gd[1],Gd[1]) ),
    1.0*( Dot3D(gd[0],gd[1]) - Dot3D(Gd[0],Gd[1]) ) };
    */
-  const double GuGu2[3] = { Gu0*Gu0, Gu1*Gu1, Gu1*Gu0 };
+  const double GuGu2[3] = { Gu0.dot(Gu0), Gu1.dot(Gu1), Gu1.dot(Gu0) };
   const double Cons2[3][3] = { // constitutive tensor
     { lambda*GuGu2[0]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[0]),
       lambda*GuGu2[0]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[2]),
@@ -427,10 +427,10 @@ DFM2_INLINE void delfem2::PBD_CdC_QuadBend(
   const CVec3d e03(P[3][0]-P[0][0], P[3][1]-P[0][1], P[3][2]-P[0][2]);
   const CVec3d e12(P[2][0]-P[1][0], P[2][1]-P[1][1], P[2][2]-P[1][2]);
   const CVec3d e13(P[3][0]-P[1][0], P[3][1]-P[1][1], P[3][2]-P[1][2]);
-  const double cot023 = -(e02*e23)/H0;
-  const double cot032 = +(e03*e23)/H0;
-  const double cot123 = -(e12*e23)/H1;
-  const double cot132 = +(e13*e23)/H1;
+  const double cot023 = -(e02.dot(e23))/H0;
+  const double cot032 = +(e03.dot(e23))/H0;
+  const double cot123 = -(e12.dot(e23))/H1;
+  const double cot132 = +(e13.dot(e23))/H1;
   const double tmp0 = sqrt(3.0)/(sqrt(A0+A1)*L);
   const double K[4] = {
     (-cot023-cot032)*tmp0,
@@ -509,12 +509,12 @@ DFM2_INLINE void delfem2::GetConstConstDiff_Bend(
   const double lB = B.norm();
   const CVec3<T> a = A/lA;
   const CVec3<T> b = B/lB;
-  const double ab = a*b;
+  const double ab = a.dot(b);
   //  C = acos(ab);
   C = ab-1;
   const double sab = 1.0;//-1.0/sin(C);
-  const CVec3<T> tmpBA = (b-a*(a*b))*(sab/lA);
-  const CVec3<T> tmpAB = (a-b*(b*a))*(sab/lB);
+  const CVec3<T> tmpBA = (b-a*(a.dot(b)))*(sab/lA);
+  const CVec3<T> tmpAB = (a-b*(b.dot(a)))*(sab/lB);
   dC[0] = (tmpBA^v23);
   dC[1] = (v23^tmpAB);
   dC[2] = (v03^tmpBA) + (tmpAB^v13);

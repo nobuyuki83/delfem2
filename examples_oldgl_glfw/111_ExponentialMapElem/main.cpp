@@ -142,7 +142,7 @@ int main(int argc,char* argv[])
         aTriSuTri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];
     coordLocal[2] = dfm2::Normal_Tri3(ielm_ker,aTri,aXYZ).normalized();
-    assert( fabs(coordLocal[0] * coordLocal[2])<1.0e-10 );
+    assert( fabs(coordLocal[0].dot(coordLocal[2]))<1.0e-10 );
     assert( fabs(coordLocal[0].norm()-1.0)<1.0e-10 );
     assert( fabs(coordLocal[2].norm()-1.0)<1.0e-10 );
     coordLocal[1] = coordLocal[2]^coordLocal[0];

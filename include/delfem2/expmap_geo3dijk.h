@@ -80,13 +80,13 @@ public:
       const CVec3d n1 = CVec3d(aNorm.data() + ip1 * 3).normalized();
       const CVec3d d01 = CVec3d(aXYZ.data() + ip1 * 3) - CVec3d(aXYZ.data() + ip0 * 3);
       const double len01 = d01.norm();
-      const CVec3d e01 = (d01 - (d01 * n0) * n0).normalized() * len01; // projected edge and same length
+      const CVec3d e01 = (d01 - (d01.dot(n0)) * n0).normalized() * len01; // projected edge and same length
       const double w01 = 1.0 / len01;
       const CVec3d x1 = Mat3_MinimumRotation(n0, n1) * x0;
       aAxisX[ip1] += w01 * x1;
       aW[ip1] += w01;
-      aTex[ip1 * 2 + 0] += w01 * (aTex[ip0 * 2 + 0] + (e01 * x0));
-      aTex[ip1 * 2 + 1] += w01 * (aTex[ip0 * 2 + 1] + (e01 * y0));
+      aTex[ip1 * 2 + 0] += w01 * (aTex[ip0 * 2 + 0] + (e01.dot(x0)));
+      aTex[ip1 * 2 + 1] += w01 * (aTex[ip0 * 2 + 1] + (e01.dot(y0)));
     }
   }
 };
@@ -154,13 +154,13 @@ public:
       const CVec3d n1 = Normal_Tri3(it1,aTri,aXYZ).normalized();
       const CVec3d d01 = CG_Tri3(it1,aTri,aXYZ)-p0;
       const double len01 = d01.norm();
-      const CVec3d e01 = (d01 - (d01 * n0) * n0).normalized() * len01; // projected edge and same length
+      const CVec3d e01 = (d01 - (d01.dot(n0)) * n0).normalized() * len01; // projected edge and same length
       const double w01 = 1.0 / len01;
       const CVec3d x1 = Mat3_MinimumRotation(n0, n1) * x0;
       aAxisX[it1] += w01 * x1;
       aW[it1] += w01;
-      aTex[it1 * 2 + 0] += w01 * (aTex[it0 * 2 + 0] + (e01 * x0));
-      aTex[it1 * 2 + 1] += w01 * (aTex[it0 * 2 + 1] + (e01 * y0));
+      aTex[it1 * 2 + 0] += w01 * (aTex[it0 * 2 + 0] + (e01.dot(x0)));
+      aTex[it1 * 2 + 1] += w01 * (aTex[it0 * 2 + 1] + (e01.dot(y0)));
     }
   }
 };
@@ -193,7 +193,7 @@ public:
   }
 
   bool IsIncludeElem(unsigned int ie) override{
-    return aFlgElem[ie] == iflag0;;
+    return aFlgElem[ie] == iflag0;
   }
 };
 
@@ -271,7 +271,7 @@ void FlatteringPattern(
         aTriSuTri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];
     coordLocal[2] = Normal_Tri3(ielm_ker, aTri, aXYZ).normalized();
-    assert(fabs(coordLocal[0] * coordLocal[2]) < 1.0e-10);
+    assert(fabs(coordLocal[0].dot(coordLocal[2])) < 1.0e-10);
     assert(fabs(coordLocal[0].norm() - 1.0) < 1.0e-10);
     assert(fabs(coordLocal[2].norm() - 1.0) < 1.0e-10);
     coordLocal[1] = coordLocal[2] ^ coordLocal[0];

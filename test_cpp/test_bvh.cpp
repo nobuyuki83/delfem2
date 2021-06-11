@@ -149,7 +149,7 @@ TEST(bvh,nearestinc_sphere)
       EXPECT_LT(Distance(q0,q1),1.0e-10);
     }
     dfm2::CVec3d n0 = pes1.UNorm_Tri(aXYZ, aTri, aNorm);
-    EXPECT_EQ( n0*(p0-q1)>0, itr%2==0);
+    EXPECT_EQ( n0.dot(p0-q1)>0, itr%2==0);
     // ---------------------
     {
       dfm2::CPtElm2d pes2;
@@ -301,7 +301,7 @@ TEST(bvh,sdf) // find global nearest directry
     double sdf = bvh.SignedDistanceFunction(n0,
                                             p0, aXYZ, aTri, aNorm);
     EXPECT_NEAR(1-p0.norm(), sdf, 1.0e-2);
-    EXPECT_NEAR(n0*p0.normalized(), 1.0, 1.0e-2 );
+    EXPECT_NEAR(n0.dot(p0.normalized()), 1.0, 1.0e-2 );
   }
 }
 

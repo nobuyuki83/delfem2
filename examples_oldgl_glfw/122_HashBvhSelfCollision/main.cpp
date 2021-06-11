@@ -6,6 +6,7 @@
  */
 
 #include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/srchbi_v3bvh.h"
@@ -73,6 +74,7 @@ int main(int argc,char* argv[])
   }
   
   dfm2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
   
