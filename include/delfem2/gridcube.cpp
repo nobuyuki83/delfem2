@@ -67,10 +67,10 @@ void delfem2::Pick_CubeGrid(
       //      const CVector3& p2 = aP[noelHexFace[iface][2]];
       const CVec3d& p3 = aP[noelElemFace_Vox[iface][3]];
       const CVec3d pi = intersection_Plane_Line(p0,n, src_pic,dir_pic);
-      const double r0 = (pi-p0)*(p1-p0)/(elen*elen);
-      const double r1 = (pi-p0)*(p3-p0)/(elen*elen);
+      const double r0 = (pi-p0).dot(p1-p0)/(elen*elen);
+      const double r1 = (pi-p0).dot(p3-p0)/(elen*elen);
       if( r0>0 && r0<1 && r1>0 && r1< 1 ){
-        double depth = (pi-src_pic)*dir_pic/dir_pic.squaredNorm();
+        double depth = (pi-src_pic).dot(dir_pic)/dir_pic.squaredNorm();
         if( icube_pic == UINT_MAX || depth < depth_min ){
           depth_min = depth;
           icube_pic = ivox;

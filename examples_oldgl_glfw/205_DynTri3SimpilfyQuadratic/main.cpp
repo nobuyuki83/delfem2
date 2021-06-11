@@ -87,7 +87,7 @@ double MinimizeQuad(double* pos,
   const dfm2::CVec3d v(SymMat4_Q[3], SymMat4_Q[6], SymMat4_Q[8]);
   const dfm2::CVec3d p = -A.Inverse()*v;
   p.CopyTo(pos);
-  return SymMat4_Q[9] + p*v;
+  return SymMat4_Q[9] + p.dot(v);
 //  std::cout << ip << " ###  " << aVec3[ip] << "  ###  " << p - aVec3[ip] << " ### " << err << std::endl;
 }
 
@@ -112,7 +112,7 @@ void QuadErrorMetric_MeshDTri3
       const double a0 = n0.x;
       const double b0 = n0.y;
       const double c0 = n0.z;
-      const double d0 = -n0*aVec3[ip];
+      const double d0 = -n0.dot(aVec3[ip]);
       aSymMat4[ip*10+0] += a0*a0;
       aSymMat4[ip*10+1] += a0*b0;
       aSymMat4[ip*10+2] += a0*c0;

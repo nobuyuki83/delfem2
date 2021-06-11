@@ -32,7 +32,7 @@ DFM2_INLINE double delfem2::W_ArapEnergy(
       CVec3d pj(aXYZ1.data()+jp*3);
       const CVec3d v1 = pj-pi;
       CVec3d v = v0-v1;
-      w += v*v;
+      w += v.dot(v);
       //      w += v1*v1;
     }
   }

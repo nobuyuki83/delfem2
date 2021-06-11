@@ -108,7 +108,7 @@ void InitializeProblem() {
       std::map<double, dfm2::CPtElm2<double>> mapPES;
       for(auto & pes : aPES){
         dfm2::CVec3d q0 = pes.Pos_Tri(aXYZ, aTri);
-        double h = (q0-p0)*n0;
+        double h = (q0-p0).dot(n0);
         mapPES.insert( std::make_pair(-h, pes) );
       }
       if( !aPES.empty() ){

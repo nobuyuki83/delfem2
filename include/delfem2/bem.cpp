@@ -315,7 +315,7 @@ void delfem2::makeLinearSystem_PotentialFlow_Order1st(
         CVec3d v = (p-yb);
         double len = v.norm();
         double G = 1.0/(4*M_PI*len);
-        double dGdn = (v*n)/(4*M_PI*len*len*len);
+        double dGdn = (v.dot(n))/(4*M_PI*len*len*len);
         {
           double wav = wb*area*dGdn;
           dC[0] += r0*wav; 
@@ -323,7 +323,7 @@ void delfem2::makeLinearSystem_PotentialFlow_Order1st(
           dC[2] += r2*wav; 
         }
         {
-          double vnyb = -n*velo;
+          double vnyb = -n.dot(velo);
           double val = vnyb*G;
           df += wb*area*val; 
         }
@@ -374,10 +374,10 @@ delfem2::CVec3d delfem2::evaluateField_PotentialFlow_Order1st(
       CVec3d v = (pos-yb);
       double len = v.norm();
       double G = 1.0/(4*M_PI*len);
-      double dGdn = (v*n)/(4*M_PI*len*len*len);
+      double dGdn = (v.dot(n))/(4*M_PI*len*len*len);
       CVec3d dGdx = -v/(4*M_PI*len*len*len);
-      CVec3d dGdndx = (1/(4*M_PI*len*len*len))*n-(3*(v*n)/(4*M_PI*len*len*len*len*len))*v;
-      double vnyb = -n*velo_inf;
+      CVec3d dGdndx = (1/(4*M_PI*len*len*len))*n-(3*(v.dot(n))/(4*M_PI*len*len*len*len*len))*v;
+      double vnyb = -n.dot(velo_inf);
       {
         double phyx = dGdn*phiyb-G*vnyb;
         phi_pos -= wb*area*phyx;
@@ -431,13 +431,13 @@ void delfem2::makeLinearSystem_PotentialFlow_Order0th(
         CVec3d r = (pm-yb);
         double len = r.norm();
         double G = 1.0/(4*M_PI*len);
-        double dGdn = (r*ny)/(4*M_PI*len*len*len);
+        double dGdn = (r.dot(ny))/(4*M_PI*len*len*len);
         {
           double wav = wb*area*dGdn;
           aC += wav;  // should be plus
         }
         {
-          double vnyb = -ny*velo_inf;
+          double vnyb = -ny.dot(velo_inf);
           double val = vnyb*G;
           df += wb*area*val;  // should be plus
         }
@@ -505,9 +505,9 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
       const CVec3d r = (pos-yb);
       const double len = r.norm();
       double G = 1.0/(4*M_PI*len);
-      double dGdny = (r*ny)/(4*M_PI*len*len*len);
+      double dGdny = (r.dot(ny))/(4*M_PI*len*len*len);
       CVec3d dGdx = -r/(4*M_PI*len*len*len);
-      CVec3d dGdnydx = (1/(4*M_PI*len*len*len))*ny-(3*(r*ny)/(4*M_PI*len*len*len*len*len))*r;
+      CVec3d dGdnydx = (1/(4*M_PI*len*len*len))*ny-(3*(r.dot(ny))/(4*M_PI*len*len*len*len*len))*r;
       ///
 //      const double reg = 1.0-exp(-(len*len*len)/(elen*elen*elen));
 //      G *= reg;
@@ -515,7 +515,7 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
 //      dGdx *= reg;
 //      dGdnydx *= reg;
       ////
-      const double vnyb = -ny*velo_inf;
+      const double vnyb = -ny.dot(velo_inf);
       {
         double phyx = -dGdny*phiy+G*vnyb;
         phi_pos += wb*area*phyx; // should be plus
@@ -569,10 +569,10 @@ int ngauss)
     CVec3d pvycdGdy = -(vy^r)/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
     CVec3d muycdGdy = +(uy^r)/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
     {
-      aC[0] += wb*areay*(pvycdGdy*ux);
-      aC[1] += wb*areay*(muycdGdy*ux);
-      aC[2] += wb*areay*(pvycdGdy*vx);
-      aC[3] += wb*areay*(muycdGdy*vx);
+      aC[0] += wb*areay*(pvycdGdy.dot(ux));
+      aC[1] += wb*areay*(muycdGdy.dot(ux));
+      aC[2] += wb*areay*(pvycdGdy.dot(vx));
+      aC[3] += wb*areay*(muycdGdy.dot(vx));
     } 
   }
 }
@@ -600,8 +600,8 @@ void delfem2::makeLinearSystem_VortexSheet_Order0th(
       const CVec3d nx = Normal(p0, p1, p2).normalized();
       const CVec3d ux = (p1-p0).normalized();
       const CVec3d vx = (nx^ux);
-      f[it*2+0] = ux*velo;
-      f[it*2+1] = vx*velo;
+      f[it*2+0] = ux.dot(velo);
+      f[it*2+1] = vx.dot(velo);
     }
     for (int jt = 0; jt<nt; ++jt){
       if (it==jt) continue;
@@ -947,7 +947,7 @@ std::complex<double> delfem2::evaluateField_Helmholtz_Order0th(
     n.normalize();
     std::complex<double> G = exp(rm*k*IMG)/(4*M_PI*rm);
     std::complex<double> dGdr = G*(IMG*k-1.0/rm);
-    double drdn = (1.0/rm)*((p-pmj)*n);
+    double drdn = (1.0/rm)*((p-pmj).dot(n));
     c1 -= area*aSol[jtri]*(dGdr*drdn-IMG*k*Adm*G);
   }
   return c1;
@@ -978,7 +978,7 @@ int ngauss)
     CVec3d v = p0-(r0*q0+r1*q1+r2*q2);
     double d = v.norm();  
     COMPLEX G = exp(COMPLEX(0, k*d))/(4.0*M_PI*d);
-    COMPLEX val = G*(-IMG*k*beta+v*n/(d*d)*COMPLEX(1.0, -k*d));
+    COMPLEX val = G*(-IMG*k*beta+v.dot(n)/(d*d)*COMPLEX(1.0, -k*d));
     const COMPLEX wav = w*a*val;
     aC[0] += r0*wav;
     aC[1] += r1*wav;

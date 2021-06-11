@@ -18,7 +18,7 @@ DFM2_INLINE bool delfem2::isPickCircle
  const CVec3d& dir,
  double pick_tol)
 {
-  double t = ((org-src)*axis)/(dir*axis);
+  double t = ((org-src).dot(axis))/(dir.dot(axis));
   CVec3d p0 = src+t*dir;
   double rad0 = (p0-org).norm();
   return fabs(rad - rad0) < pick_tol;
@@ -46,7 +46,7 @@ bool delfem2::isPickQuad
   a30 /= a0123;
   if( a01<eps || a12<eps || a23<eps || a30<eps ){ return false; }
   CVec3d n0123 = Normal(p0,p1,p2) + Normal(p1,p2,p3) + Normal(p2,p3,p0) + Normal(p3,p0,p1);
-  return n0123 * pick_dir <= 0;
+  return n0123.dot(pick_dir) <= 0;
 }
 
 template <typename REAL>
@@ -62,9 +62,9 @@ DFM2_INLINE int delfem2::PickHandlerRotation_PosQuat
   CV3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
   CV3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
   CV3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
-  REAL dx = (px-src)*dir;
-  REAL dy = (py-src)*dir;
-  REAL dz = (pz-src)*dir;
+  REAL dx = (px-src).dot(dir);
+  REAL dy = (py-src).dot(dir);
+  REAL dz = (pz-src).dot(dir);
   REAL lx = (px-qx).norm();
   REAL ly = (py-qy).norm();
   REAL lz = (pz-qz).norm();
@@ -103,9 +103,9 @@ DFM2_INLINE int delfem2::PickHandlerRotation_Mat4
   CVec3d px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
   CVec3d py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
   CVec3d pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
-  double dx = (px-src)*dir;
-  double dy = (py-src)*dir;
-  double dz = (pz-src)*dir;
+  double dx = (px-src).dot(dir);
+  double dy = (py-src).dot(dir);
+  double dz = (pz-src).dot(dir);
   double lx = (px-qx).norm();
   double ly = (py-qy).norm();
   double lz = (pz-qz).norm();
@@ -297,7 +297,7 @@ void delfem2::CGizmo_Rotation<REAL>::Drag
                                      pos,va, size);
     CV3 a0 = (qz0-pos)/size;
     CV3 a1 = (qz1-pos)/size;
-    const double ar = atan2((a0^a1)*va, a0*a1);
+    const double ar = atan2((a0^a1).dot(va), a0.dot(a1));
     const REAL dq[4] = {
       (REAL)cos(ar*0.5),
       (REAL)(va.x*sin(ar*0.5)),

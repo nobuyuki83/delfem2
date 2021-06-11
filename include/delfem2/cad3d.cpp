@@ -439,14 +439,14 @@ void delfem2::CCad3D_Face::Initialize(
   std::vector<double> aXY_B0;
   for(unsigned int ixyz=0;ixyz<aXYZ_B0.size()/3;++ixyz){
     CVec3d p(aXYZ_B0[ixyz*3+0],aXYZ_B0[ixyz*3+1],aXYZ_B0[ixyz*3+2]);
-    aXY_B0.push_back((p-cg)*axis_x);
-    aXY_B0.push_back((p-cg)*axis_y);
+    aXY_B0.push_back((p-cg).dot(axis_x));
+    aXY_B0.push_back((p-cg).dot(axis_y));
   }
   std::vector<double> aXY_B1;
   for(unsigned int ixyz=0;ixyz<aXYZ_B1.size()/3;++ixyz){
     CVec3d p(aXYZ_B1[ixyz*3+0],aXYZ_B1[ixyz*3+1],aXYZ_B1[ixyz*3+2]);
-    aXY_B1.push_back((p-cg)*axis_x);
-    aXY_B1.push_back((p-cg)*axis_y);
+    aXY_B1.push_back((p-cg).dot(axis_x));
+    aXY_B1.push_back((p-cg).dot(axis_y));
   }
   std::vector<double> aXY_out;
   {
@@ -687,8 +687,8 @@ void delfem2::ConectEdge
     CVec3d p1 = aVertex[iv1].pos;
     CVec3d mid = (p0+p1)*0.5;
     CVec3d n(0,0,0); n[inorm_new] =1;
-    aVertex[iv0].pos = p0-((p0-mid)*n)*n;
-    aVertex[iv1].pos = p1-((p1-mid)*n)*n;
+    aVertex[iv0].pos = p0-((p0-mid).dot(n))*n;
+    aVertex[iv1].pos = p1-((p1-mid).dot(n))*n;
   }
   if( inorm_new >= 0 && inorm_new < 3 ){
     aVertex[iv0].isConst[inorm_new] = true;
@@ -1016,13 +1016,13 @@ bool delfem2::MovePointsAlongSketch(
     CVec3d src = screenUnProjection(CVec3d(sp0.x,sp0.y,0), mMV, mPj);
     CVec3d dir = screenUnProjection(CVec3d(0,0,1), mMV, mPj);
     CVec3d p = intersection_Plane_Line(plane_org, plane_nrm, src,dir);
-    aP2D.emplace_back((p-plane_org)*plane_ex,(p-plane_org)*plane_ey);
+    aP2D.emplace_back((p-plane_org).dot(plane_ex),(p-plane_org).dot(plane_ey));
   }
   bool is_moved = false;
   std::vector<int> aIP = getPointsInEdges(aIE_picked,aEdge);
   for(int iv0 : aIP){
     CCad3D_Vertex& v = aVertex[iv0];
-    CVec2d p2d_org((v.pos-plane_org)*plane_ex, (v.pos-plane_org)*plane_ey);
+    CVec2d p2d_org((v.pos-plane_org).dot(plane_ex), (v.pos-plane_org).dot(plane_ey));
     const bool isConstX = v.isConst[(inorm+1)%3];
     const bool isConstY = v.isConst[(inorm+2)%3];
     CVec2d p2d_near, p2d_norm;
@@ -1084,8 +1084,8 @@ void delfem2::DivideFace
     CVec3d n0 = aVertex[iv0].norm;
     CVec3d n1 = aVertex[iv1].norm;
     CVec3d v = Cross(n0+n1,n01);
-    if( v*(p1-p0) > 0 ){ ConectEdge(iv0,iv1, ifc, inorm, aVertex, aEdge, aFace, elen); }
-    else{                ConectEdge(iv1,iv0, ifc, inorm, aVertex, aEdge, aFace, elen); }
+    if( v.dot(p1-p0) > 0 ){ ConectEdge(iv0,iv1, ifc, inorm, aVertex, aEdge, aFace, elen); }
+    else{                   ConectEdge(iv1,iv0, ifc, inorm, aVertex, aEdge, aFace, elen); }
   }
 }
 
@@ -1381,7 +1381,7 @@ void delfem2::CCad3D::Pick(
       bool res = aEdge[ie].isPick(ratio_edge, sp0, mMV, mPj);
       if( res ){
         CVec3d p = aEdge[ie].GetPosInEdge(ratio_edge);
-        double depth = -p*dir_pick;
+        double depth = -p.dot(dir_pick);
         mapDepthEdge.insert( std::make_pair(depth, std::make_pair(ie,ratio_edge) ) );
       }
     }
@@ -1407,8 +1407,8 @@ void delfem2::CCad3D::Pick(
       std::vector<CVec3d>& aP = aEdge[ie].aP;
       for(std::size_t ip=0;ip<aP.size();++ip){
         const CVec3d& p = aP[ip];
-        double x0 = (p-plane_org)*plane_ex;
-        double y0 = (p-plane_org)*plane_ey;
+        double x0 = (p-plane_org).dot(plane_ex);
+        double y0 = (p-plane_org).dot(plane_ey);
         if( iie==0 && ip==0 ){
           minX = x0;
           minY = y0;

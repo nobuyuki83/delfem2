@@ -456,11 +456,11 @@ DFM2_INLINE double delfem2::Nearest_LineSeg_LineSeg_CCD_Iteration(
         + (1 - t0) * q0s - (1 - t0) * q0e + t0 * q1s - t0 * q1e;
     const CVec3d dsu = + p0s - p0e - p1s + p1e;
     const CVec3d dtu = - q0s + q0e + q1s - q1e;
-    double R[3] = { v0*ds, v0*dt, v0*du };
+    double R[3] = { v0.dot(ds), v0.dot(dt), v0.dot(du) };
     double A[9] = {
-        ds*ds,        ds*dt,        ds*du+v0*dsu,
-        dt*ds,        dt*dt,        dt*du*v0*dtu,
-        du*ds+v0*dsu, du*dt+v0*dtu, du*du };
+        ds.dot(ds), ds.dot(dt), ds.dot(du)+v0.dot(dsu),
+        dt.dot(ds), dt.dot(dt), dt.dot(du)*v0.dot(dtu),
+        du.dot(ds)+v0.dot(dsu), du.dot(dt)+v0.dot(dtu), du.dot(du) };
     {
       double eps = (A[0] + A[4] + A[8]) * 1.0e-10 + 1.0e-20;
       A[0] += eps;
@@ -493,12 +493,12 @@ void delfem2::nearest_Line_Line(
     const CVec3<T>& pb_,
     const CVec3<T>& vb)
 {
-  T xaa = va*va;
-  T xab = vb*va;
-  T xbb = vb*vb;
+  T xaa = va.dot(va);
+  T xab = vb.dot(va);
+  T xbb = vb.dot(vb);
   D = (xaa*xbb-xab*xab);
-  T xac = va*(pb_-pa_);
-  T xbc = vb*(pb_-pa_);
+  T xac = va.dot(pb_-pa_);
+  T xbc = vb.dot(pb_-pa_);
   T da = xbb*xac-xab*xbc;
   T db = xab*xac-xaa*xbc;
   Da = D*pa_+da*va;
@@ -530,12 +530,12 @@ void delfem2::nearest_Line_Line(
     const CVec3<T>& pb_,
     const CVec3<T>& vb)
 {
-  T xaa = va*va;
-  T xab = vb*va;
-  T xbb = vb*vb;
+  T xaa = va.dot(va);
+  T xab = vb.dot(va);
+  T xbb = vb.dot(vb);
   D = (xaa*xbb-xab*xab);
-  T xac = va*(pb_-pa_);
-  T xbc = vb*(pb_-pa_);
+  T xac = va.dot(pb_-pa_);
+  T xbc = vb.dot(pb_-pa_);
   Dta = xbb*xac-xab*xbc;
   Dtb = xab*xac-xaa*xbc;
   Da = D*pa_+Dta*va;
@@ -809,18 +809,18 @@ void delfem2::Nearest_Line_Circle
   CVec3<T> ex,ey; GetVertical2Vector(normal, ex, ey);
   T u0;
   {
-    if( fabs(dir*normal)>fabs((org-src)*normal)*1.0e-4 ){
-      u0 = ((org-src)*normal)/(dir*normal);
+    if( fabs(dir.dot(normal))>fabs((org-src).dot(normal))*1.0e-4 ){
+      u0 = ((org-src).dot(normal))/(dir.dot(normal));
     }
     else{
-      u0 = (org-src)*dir/(dir*dir);
+      u0 = (org-src).dot(dir)/(dir.dot(dir));
     }
   }
   for(int itr=0;itr<nitr;++itr){
     p0 = src+u0*dir;
-    double t0 = atan2(ey*(p0-org),ex*(p0-org));
+    double t0 = atan2(ey.dot(p0-org),ex.dot(p0-org));
     q0 = (T)(rad*cos(t0))*ex + (T)(rad*sin(t0))*ey + org;
-    u0 = (q0-src)*dir/(dir*dir);
+    u0 = (q0-src).dot(dir)/(dir.dot(dir));
   }
 }
 #ifndef DFM2_HEADER_ONLY
@@ -882,7 +882,7 @@ delfem2::CVec3<T> delfem2::intersection_Plane_Line
  const CVec3<T>& s, // one point on line
  const CVec3<T>& d) // direction of line
 {
-  double t = ((o-s)*n)/(d*n);
+  double t = ((o-s).dot(n))/(d.dot(n));
   return s + t*d;
 }
 #ifndef DFM2_HEADER_ONLY
@@ -1302,11 +1302,13 @@ template bool delfem2::IsContact_FV_CCD2
   
 
 template <typename T>
-bool delfem2::isIntersectTriPair
-(CVec3<T>& P0, CVec3<T>& P1,
- int itri, int jtri,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aXYZ)
+bool delfem2::isIntersectTriPair(
+    CVec3<T>& P0,
+    CVec3<T>& P1,
+    int itri,
+    int jtri,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ)
 {
   const int i0 = aTri[itri*3+0];
   const int i1 = aTri[itri*3+1];
@@ -1325,12 +1327,12 @@ bool delfem2::isIntersectTriPair
   const CVec3<T> q2(aXYZ[j2*3+0], aXYZ[j2*3+1], aXYZ[j2*3+2]);
   const CVec3<T> np = Normal(p0,p1,p2);
   const CVec3<T> nq = Normal(q0,q1,q2);
-  double dp0 = (p0-q0)*nq;
-  double dp1 = (p1-q0)*nq;
-  double dp2 = (p2-q0)*nq;
-  double dq0 = (q0-p0)*np;
-  double dq1 = (q1-p0)*np;
-  double dq2 = (q2-p0)*np;
+  double dp0 = (p0-q0).dot(nq);
+  double dp1 = (p1-q0).dot(nq);
+  double dp2 = (p2-q0).dot(nq);
+  double dq0 = (q0-p0).dot(np);
+  double dq1 = (q1-p0).dot(np);
+  double dq2 = (q2-p0).dot(np);
   if( ((dp0>0) == (dp1>0)) && ((dp1>0) == (dp2>0)) ) return false;
   if( ((dq0>0) == (dq1>0)) && ((dq1>0) == (dq2>0)) ) return false;
   const CVec3<T> p01 = (1.0/(dp0-dp1))*(dp0*p1-dp1*p0);
@@ -1344,18 +1346,18 @@ bool delfem2::isIntersectTriPair
   if(      dp0*dp1>0 ){ ps=p20; pe=p12; }
   else if( dp1*dp2>0 ){ ps=p01; pe=p20; }
   else{                 ps=p12; pe=p01; }
-  if( ps*vz>pe*vz ){ CVec3<T> pt=ps; ps=pe; pe=pt; }
-  double zps = ps*vz;
-  double zpe = pe*vz;
+  if( ps.dot(vz)>pe.dot(vz) ){ CVec3<T> pt=ps; ps=pe; pe=pt; }
+  double zps = ps.dot(vz);
+  double zpe = pe.dot(vz);
   assert( zps<=zpe );
-  ////
+  //
   CVec3<T> qs,qe;
   if(      dq0*dq1>0 ){ qs=q20; qe=q12; }
   else if( dq1*dq2>0 ){ qs=q01; qe=q20; }
   else{                 qs=q12; qe=q01; }
-  if( qs*vz>qe*vz ){ CVec3<T> qt=qs; qs=qe; qe=qt; }
-  double zqs = qs*vz;
-  double zqe = qe*vz;
+  if( qs.dot(vz)>qe.dot(vz) ){ CVec3<T> qt=qs; qs=qe; qe=qt; }
+  double zqs = qs.dot(vz);
+  double zqe = qe.dot(vz);
   assert( zqs<=zqe );
   //
   if( zps>zqe || zqs>zpe ) return false;

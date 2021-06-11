@@ -157,13 +157,17 @@ T getTangentCubicBezierCurve(
 template <typename T>
 bool getParameterCubicBezier_IntersectionWithPlane(
     double& t,
-    const T& org, const T& nrm,
-    const T& p1, const T& p2, const T& p3, const T& p4)
+    const T& org,
+    const T& nrm,
+    const T& p1,
+    const T& p2,
+    const T& p3,
+    const T& p4)
 {
-  double h1 = (p1-org)*nrm;
-  double h2 = (p2-org)*nrm;
-  double h3 = (p3-org)*nrm;
-  double h4 = (p4-org)*nrm;
+  double h1 = (p1-org).dot(nrm);
+  double h2 = (p2-org).dot(nrm);
+  double h3 = (p3-org).dot(nrm);
+  double h4 = (p4-org).dot(nrm);
   double ref = fabs(h1) + fabs(h2) + fabs(h3) + fabs(h4);
   double eps = 1.0e-5;
   if( fabs(h1)<ref*eps && fabs(h4)<ref*eps ) return false;

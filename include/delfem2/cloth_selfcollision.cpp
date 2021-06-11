@@ -328,9 +328,9 @@ void ApplyRigidImpactZone
       dfm2::CVec3d v(aUVWm0[ino*3+0],aUVWm0[ino*3+1],aUVWm0[ino*3+2]);
       L += Cross(p-gc,v-av);
       dfm2::CVec3d q = p-gc;
-      I[0] += v*v - q[0]*q[0];  I[1] +=     - q[0]*q[1];  I[2] +=     - q[0]*q[2];
-      I[3] +=     - q[1]*q[0];  I[4] += v*v - q[1]*q[1];  I[5] +=     - q[1]*q[2];
-      I[6] +=     - q[2]*q[0];  I[7] +=     - q[2]*q[1];  I[8] += v*v - q[2]*q[2];
+      I[0] += v.dot(v) - q[0]*q[0];  I[1] +=          - q[0]*q[1];  I[2] +=          - q[0]*q[2];
+      I[3] +=          - q[1]*q[0];  I[4] += v.dot(v) - q[1]*q[1];  I[5] +=          - q[1]*q[2];
+      I[6] +=          - q[2]*q[0];  I[7] +=          - q[2]*q[1];  I[8] += v.dot(v) - q[2]*q[2];
     }
     // 角速度を求める
     double Iinv[9];

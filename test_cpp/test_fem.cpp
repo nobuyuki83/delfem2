@@ -283,14 +283,14 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       Frm[2] = V01;
       Frm[2].normalize();
       Frm[0].SetRandom(dist_01, randomEng);
-      Frm[0] -= (Frm[0]*Frm[2])*Frm[2];
+      Frm[0] -= (Frm[0].dot(Frm[2]))*Frm[2];
       Frm[0].normalize();
       Frm[1] = (Frm[2]^Frm[0]);
     }
     dfm2::CVec3d Q; Q.SetRandom(dist_01, randomEng);
     //  Q = Frm[2];
     // --------------------------------
-    double W[3] = { Q*Frm[0], Q*Frm[1], Q*Frm[2] };
+    double W[3] = { Q.dot(Frm[0]), Q.dot(Frm[1]), Q.dot(Frm[2]) };
     dfm2::CVec3d DW_Dv[3];
     double DW_Dt[3];
     {
@@ -301,9 +301,9 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       DW_Dv[0] = Q*dF_dv[0];
       DW_Dv[1] = Q*dF_dv[1];
       DW_Dv[2] = Q*dF_dv[2];
-      DW_Dt[0] = Q*dF_dt[0];
-      DW_Dt[1] = Q*dF_dt[1];
-      DW_Dt[2] = Q*dF_dt[2];
+      DW_Dt[0] = Q.dot(dF_dt[0]);
+      DW_Dt[1] = Q.dot(dF_dt[1]);
+      DW_Dt[2] = Q.dot(dF_dt[2]);
     }
     // ---------
     const dfm2::CVec3d du = dfm2::CVec3d::Random(dist_01, randomEng)*eps;
@@ -313,7 +313,7 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
     RodFrameTrans(frm,
         Frm[0], V01,
         du, dtheta);
-    const double w[3] = { Q*frm[0], Q*frm[1], Q*frm[2] };
+    const double w[3] = { Q.dot(frm[0]), Q.dot(frm[1]), Q.dot(frm[2]) };
     dfm2::CVec3d dw_dv[3];
     double dw_dt[3];
     {
@@ -324,13 +324,13 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       dw_dv[0] = Q*df_dv[0];
       dw_dv[1] = Q*df_dv[1];
       dw_dv[2] = Q*df_dv[2];
-      dw_dt[0] = Q*df_dt[0];
-      dw_dt[1] = Q*df_dt[1];
-      dw_dt[2] = Q*df_dt[2];
+      dw_dt[0] = Q.dot(df_dt[0]);
+      dw_dt[1] = Q.dot(df_dt[1]);
+      dw_dt[2] = Q.dot(df_dt[2]);
     }
     for(int i=0;i<3;++i){
       double val0 = (w[i]-W[i])/eps;
-      double val1 = (DW_Dt[i]*dtheta+DW_Dv[i]*du)/eps;
+      double val1 = (DW_Dt[i]*dtheta+DW_Dv[i].dot(du))/eps;
       EXPECT_NEAR(val0, val1, 1.0e-3);
     }
     //
@@ -341,7 +341,7 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       DifDifFrameRod(DDW_DDv, DDW_DvDt, DDW_DDt,
           i,V01.norm(),Q,Frm);
       double val0 = (dw_dt[i]-DW_Dt[i])/eps;
-      double val1 = (DDW_DDt*dtheta+DDW_DvDt*du)/eps;
+      double val1 = (DDW_DDt*dtheta+DDW_DvDt.dot(du))/eps;
       EXPECT_NEAR(val0, val1, 1.0e-3);
     }
     for(int i=0;i<3;++i){
@@ -376,13 +376,13 @@ TEST(objfunc_v23, WdWddW_DotFrame)
     {
       S[0].SetRandom(dist_01,randomEng);
       const dfm2::CVec3d U0 = (P[1]-P[0]).normalized();
-      S[0] -= (S[0]*U0)*U0;
+      S[0] -= (S[0].dot(U0))*U0;
       S[0].normalize();
     }
     {
       S[1].SetRandom(dist_01,randomEng);
       const dfm2::CVec3d U1 = (P[2]-P[1]).normalized();
-      S[1] -= (S[1]*U1)*U1;
+      S[1] -= (S[1].dot(U1))*U1;
       S[1].normalize();
     }
     const double off[3] = {
@@ -428,27 +428,27 @@ TEST(objfunc_v23, WdWddW_DotFrame)
       const double val0 = (w-W)/eps;
       const double val1 = (+dW_dt[0]*dT[0]
                            +dW_dt[1]*dT[1]
-                           +dW_dP[0]*dP[0]
-                           +dW_dP[1]*dP[1]
-                           +dW_dP[2]*dP[2])/eps;
+                           +dW_dP[0].dot(dP[0])
+                           +dW_dP[1].dot(dP[1])
+                           +dW_dP[2].dot(dP[2]))/eps;
       EXPECT_NEAR(val0, val1, 3.5e-2*(1.0+fabs(val1)));
     }
     {
       const double val0 = (dw_dt[0]-dW_dt[0])/eps;
       const double val1 = (+ddW_ddt[ 0][0]*dT[0]
                            +ddW_ddt[ 0][1]*dT[1]
-                           +ddW_dtdP[0][0]*dP[0]
-                           +ddW_dtdP[0][1]*dP[1]
-                           +ddW_dtdP[0][2]*dP[2])/eps;
+                           +ddW_dtdP[0][0].dot(dP[0])
+                           +ddW_dtdP[0][1].dot(dP[1])
+                           +ddW_dtdP[0][2].dot(dP[2]))/eps;
       EXPECT_NEAR(val0, val1, 3.0e-2*(1.0+fabs(val1)));
     }
     {
       const double val0 = (dw_dt[1]-dW_dt[1])/eps;
       const double val1 = (+ddW_ddt[ 1][0]*dT[0]
                            +ddW_ddt[ 1][1]*dT[1]
-                           +ddW_dtdP[1][0]*dP[0]
-                           +ddW_dtdP[1][1]*dP[1]
-                           +ddW_dtdP[1][2]*dP[2])/eps;
+                           +ddW_dtdP[1][0].dot(dP[0])
+                           +ddW_dtdP[1][1].dot(dP[1])
+                           +ddW_dtdP[1][2].dot(dP[2]))/eps;
       EXPECT_NEAR(val0, val1, 3.5e-2*(1.0+fabs(val1)));
     }
     {
@@ -507,13 +507,13 @@ TEST(objfunc_v23, WdWddW_Rod)
     {
       S[0].SetRandom(dist_01,randomEng);
       const dfm2::CVec3d U0 = (P[1]-P[0]).normalized();
-      S[0] -= (S[0]*U0)*U0;
+      S[0] -= (S[0].dot(U0))*U0;
       S[0].normalize();
     }
     {
       S[1].SetRandom(dist_01,randomEng);
       const dfm2::CVec3d U1 = (P[2]-P[1]).normalized();
-      S[1] -= (S[1]*U1)*U1;
+      S[1] -= (S[1].dot(U1))*U1;
       S[1].normalize();
     }
     const double off[3] = {
@@ -559,27 +559,27 @@ TEST(objfunc_v23, WdWddW_Rod)
       const double val0 = (w-W)/eps;
       const double val1 = (+dW_dt[0]*dT[0]
                            +dW_dt[1]*dT[1]
-                           +dW_dP[0]*dP[0]
-                           +dW_dP[1]*dP[1]
-                           +dW_dP[2]*dP[2])/eps;
+                           +dW_dP[0].dot(dP[0])
+                           +dW_dP[1].dot(dP[1])
+                           +dW_dP[2].dot(dP[2]))/eps;
       EXPECT_NEAR(val0, val1, 5.0e-3*(1+fabs(val1)) );
     }
     {
       const double val0 = (dw_dt[0]-dW_dt[0])/eps;
       const double val1 = (+ddW_ddt[ 0][0]*dT[0]
                            +ddW_ddt[ 0][1]*dT[1]
-                           +ddW_dtdP[0][0]*dP[0]
-                           +ddW_dtdP[0][1]*dP[1]
-                           +ddW_dtdP[0][2]*dP[2])/eps;
+                           +ddW_dtdP[0][0].dot(dP[0])
+                           +ddW_dtdP[0][1].dot(dP[1])
+                           +ddW_dtdP[0][2].dot(dP[2]))/eps;
       EXPECT_NEAR(val0, val1, 2.5e-3*(1+fabs(val1)) );
     }
     {
       const double val0 = (dw_dt[1]-dW_dt[1])/eps;
       const double val1 = (+ddW_ddt[ 1][0]*dT[0]
                            +ddW_ddt[ 1][1]*dT[1]
-                           +ddW_dtdP[1][0]*dP[0]
-                           +ddW_dtdP[1][1]*dP[1]
-                           +ddW_dtdP[1][2]*dP[2])/eps;
+                           +ddW_dtdP[1][0].dot(dP[0])
+                           +ddW_dtdP[1][1].dot(dP[1])
+                           +ddW_dtdP[1][2].dot(dP[2]))/eps;
       EXPECT_NEAR(val0, val1, 1.0e-3*(1+fabs(val1)) );
     }
     {
@@ -646,7 +646,7 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
     }
     {
       const double val0 = (w-W)/eps;
-      const double val1 = (+dW_dP[0]*dP[0]+dW_dP[1]*dP[1])/eps;
+      const double val1 = (+dW_dP[0].dot(dP[0])+dW_dP[1].dot(dP[1]))/eps;
       EXPECT_NEAR( val0, val1, 1.0e-3*(1+fabs(val1)) );
     }
     {
