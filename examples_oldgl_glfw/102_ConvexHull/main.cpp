@@ -7,7 +7,7 @@
 
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/geoconvhull3_v3.h"
+#include "delfem2/geoconvhull3.h"
 #include "delfem2/vec3.h"
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -17,14 +17,15 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------
 
-static void myGlVertex3d(const dfm2::CVec3d& v)
+static void myGlVertex3d(
+    const dfm2::CVec3d& v)
 {
   ::glVertex3d(v.x,v.y,v.z);
 }
 
-static void myGlVertex3d
-(unsigned int i,
- const std::vector<dfm2::CVec3d>& aV)
+static void myGlVertex3d(
+    unsigned int i,
+    const std::vector<dfm2::CVec3d>& aV)
 {
   const dfm2::CVec3d& v = aV[i];
   ::glVertex3d(v.x, v.y, v.z);
@@ -33,28 +34,28 @@ static void myGlVertex3d
 int main(int argc,char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
   viewer.InitGL();
   
   viewer.camera.view_height = 1.5;
   
-  std::vector<dfm2::CVec3d> aXYZ;
-  std::vector<int> aTri;
-    
+  std::vector<dfm2::CVec3d> aXYZ(100);
+  std::vector<unsigned int> aTri;
+
+  double time_last_update = -2;
   while (!glfwWindowShouldClose(viewer.window))
   {
-    {
-      static int iframe = 0;
-      if( iframe == 0 ){
-        int nXYZ = 100;
-        aXYZ.resize(nXYZ);
-        for(int ixyz=0;ixyz<nXYZ;ixyz++){
-          aXYZ[ixyz].p[0] = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
-          aXYZ[ixyz].p[1] = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
-          aXYZ[ixyz].p[2] = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
-        }
-        delfem2::ConvexHull(aTri,aXYZ);
+    const double time_now = glfwGetTime();
+    if(time_now - time_last_update > 1 ){
+      std::mt19937 rngeng(std::random_device{}());
+      std::uniform_real_distribution<double> dist_m1p1(-1,+1);
+      for(auto& p: aXYZ){
+        p.x = dist_m1p1(rngeng);
+        p.y = dist_m1p1(rngeng);
+        p.z = dist_m1p1(rngeng);
       }
-      iframe = (iframe + 1)%300;
+      delfem2::ConvexHull<double>(aTri,aXYZ);
+      time_last_update = time_now;
     }
     
     viewer.DrawBegin_oldGL();

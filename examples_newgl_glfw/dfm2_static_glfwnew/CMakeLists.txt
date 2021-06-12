@@ -46,8 +46,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
     ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
     ${DELFEM2_INC}/geoplygn2_v2.h              ${DELFEM2_INC}/geoplygn2_v2.cpp
-    ${DELFEM2_INC}/geoconvhull3_v3.h           ${DELFEM2_INC}/geoconvhull3_v3.cpp
     ${DELFEM2_INC}/geoproximity3_v3.h          ${DELFEM2_INC}/geoproximity3_v3.cpp
+    ${DELFEM2_INC}/geoconvhull3.h
 
     ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
     ${DELFEM2_INC}/jagarray.h                  ${DELFEM2_INC}/jagarray.cpp
