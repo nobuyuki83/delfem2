@@ -155,16 +155,10 @@ public:
 		x /= d; y /= d; z /= d;
 		return *this;
 	}
-	template <typename INDEX>
-  inline T operator[](INDEX i) const{
-    assert(i<3);
-    return p[i];
-  }
-  template <typename INDEX>
-  inline T& operator[](INDEX i){
-    assert(i<3);
-    return p[i];
-  }
+	template <typename INDEX> inline T operator[](INDEX i) const{ assert(i<3); return p[i]; }
+  template <typename INDEX> inline T& operator[](INDEX i){ assert(i<3); return p[i]; }
+  template <typename INDEX> inline T operator()(INDEX i) const{ assert(i<3); return p[i]; }
+  template <typename INDEX> inline T& operator()(INDEX i){ assert(i<3); return p[i]; }
 
   // above: operator
   // ------
