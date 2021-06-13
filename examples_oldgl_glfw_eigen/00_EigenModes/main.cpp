@@ -132,6 +132,8 @@ void ShowEigen_SolidLinear_MeshTri2(
 
 int main()
 {
+  std::cout << "Available :SIMD Instructions: "<< Eigen::SimdInstructionSetsInUse() << std::endl;
+  //
   std::vector<double> aXY;
   std::vector<unsigned int> aQuad;
   unsigned int nx = 10;

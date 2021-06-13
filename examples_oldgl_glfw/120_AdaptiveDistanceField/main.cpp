@@ -9,7 +9,7 @@
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/adf.h"
+#include "delfem2/isrf_adf.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"

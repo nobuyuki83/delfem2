@@ -20,6 +20,8 @@ namespace dfm2 = delfem2;
 
 int main(int argc,char* argv[])
 {
+  std::cout << "Available :SIMD Instructions: "<< Eigen::SimdInstructionSetsInUse() << std::endl;
+  //
   std::vector<Eigen::Vector3f,Eigen::aligned_allocator<Eigen::Vector3f> > aXYZ(100);
   std::vector<unsigned int> aTri;
   // --

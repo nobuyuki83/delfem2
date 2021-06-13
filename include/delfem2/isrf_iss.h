@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_ISS_H
-#define DFM2_ISS_H
+#ifndef DFM2_ISRF_ISS_H
+#define DFM2_ISRF_ISS_H
 
 #include "delfem2/dfm2_inline.h"
 #include <vector>
@@ -68,7 +68,7 @@ void makeBackgroundLattice
 }
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/iss.cpp"
+#  include "delfem2/isrf_iss.cpp"
 #endif
 
 #endif

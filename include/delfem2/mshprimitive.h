@@ -12,7 +12,7 @@
 
 #include <math.h>
 #include <vector>
-#include "delfem2/sdf.h"
+#include "delfem2/isrf_sdf.h"
 #include "delfem2/dfm2_inline.h"
 
 #ifndef M_PI

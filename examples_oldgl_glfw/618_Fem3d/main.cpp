@@ -23,7 +23,7 @@
 #include "delfem2/femsolidlinear.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshprimitive.h"
-#include "delfem2/iss.h"
+#include "delfem2/isrf_iss.h"
 #include "delfem2/jagarray.h"
 #include <GLFW/glfw3.h>
 #include <cassert>
