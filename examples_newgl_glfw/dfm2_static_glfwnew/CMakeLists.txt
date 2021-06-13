@@ -65,8 +65,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/file.h                      ${DELFEM2_INC}/file.cpp
     ${DELFEM2_INC}/filenpy_str.h               ${DELFEM2_INC}/filenpy_str.cpp
     
-    ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
-    ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
+    ${DELFEM2_INC}/isrf_iss.h                  ${DELFEM2_INC}/isrf_iss.cpp
+    ${DELFEM2_INC}/isrf_adf.h                  ${DELFEM2_INC}/isrf_adf.cpp
 
     ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
     ${DELFEM2_INC}/srchbv3sphere.h

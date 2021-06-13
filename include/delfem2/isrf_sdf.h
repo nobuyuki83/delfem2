@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_SDF_H
-#define DFM2_SDF_H
+#ifndef DFM2_ISRF_SDF_H
+#define DFM2_ISRF_SDF_H
 
 namespace delfem2 {
 

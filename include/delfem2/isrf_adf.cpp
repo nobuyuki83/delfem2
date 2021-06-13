@@ -9,9 +9,7 @@
 #include <assert.h>
 #include <math.h>
 #include <vector>
-#include "delfem2/adf.h"
-
-namespace dfm2 = delfem2;
+#include "delfem2/isrf_adf.h"
 
 namespace delfem2{
 namespace adf{
@@ -345,7 +343,7 @@ DFM2_INLINE void VertexInterp
 }
 }
 
-dfm2::CADF3::CADF3()
+delfem2::CADF3::CADF3()
 {
   this->is_show_cage = false;
   //	this->is_show_cage = true;
@@ -357,15 +355,15 @@ dfm2::CADF3::CADF3()
   color_[2] = 1.0;
 }
 
-dfm2::CADF3::~CADF3()
+delfem2::CADF3::~CADF3()
 {
   if( this->aIsoTri_  != 0 ){ delete[] this->aIsoTri_; }
   if( this->aIsoEdge_ != 0 ){ delete[] this->aIsoEdge_; }
 }
 
-void dfm2::CADF3::SetUp
-(const CInput_ADF3& ct,
- double bb[6])
+void delfem2::CADF3::SetUp(
+  const CInput_ADF3& ct,
+  double bb[6])
 {
   aNode.reserve(1024*64);
   aNode.resize(1);
@@ -400,9 +398,9 @@ void dfm2::CADF3::SetUp
 }
 
 // return penetration depth (inside is positive)
-double dfm2::CADF3::Projection
-(double px, double py, double pz,
- double n[3]) const // normal outward
+double delfem2::CADF3::Projection(
+  double px, double py, double pz,
+  double n[3]) const // normal outward
 {
   const CNode& no = aNode[0];
   if( fabs(px-no.cent_[0]) > no.hw_ || fabs(py-no.cent_[1]) > no.hw_ || fabs(pz-no.cent_[2]) > no.hw_ ){
@@ -416,7 +414,7 @@ double dfm2::CADF3::Projection
   return no.FindDistNormal(px,py,pz, n, aNode);
 }
 
-void dfm2::CADF3::BuildIsoSurface_MarchingCube()
+void delfem2::CADF3::BuildIsoSurface_MarchingCube()
 {
   std::vector<double> aTri;
   aTri.reserve(1024*32);
@@ -427,7 +425,7 @@ void dfm2::CADF3::BuildIsoSurface_MarchingCube()
   nIsoTri_ = (unsigned int)aTri.size()/9;
 }
 
-void dfm2::CADF3::BuildMarchingCubeEdge()
+void delfem2::CADF3::BuildMarchingCubeEdge()
 {
   if( nIsoTri_ == 0 ){ this->BuildIsoSurface_MarchingCube(); }
   if( this->aIsoEdge_ != 0 ){ delete aIsoEdge_; }
@@ -447,7 +445,7 @@ void dfm2::CADF3::BuildMarchingCubeEdge()
 }
 
 
-dfm2::CADF3::CNode::CNode()
+delfem2::CADF3::CNode::CNode()
 {
   cent_[0] = 0;	cent_[1] = 0;	cent_[2] = 0;
   hw_ = 0;
@@ -457,8 +455,8 @@ dfm2::CADF3::CNode::CNode()
   dists_[4] = 0;		dists_[5] = 0;		dists_[6] = 0;		dists_[7] = 0;
 }
 
-dfm2::CADF3::CNode::CNode
-(const CNode& no)
+delfem2::CADF3::CNode::CNode(
+  const CNode& no)
 {
   cent_[0] = no.cent_[0];
   cent_[1] = no.cent_[1];
@@ -472,8 +470,8 @@ dfm2::CADF3::CNode::CNode
   dists_[4] = no.dists_[4];		dists_[5] = no.dists_[5];		dists_[6] = no.dists_[6];		dists_[7] = no.dists_[7];
 }
 
-void dfm2::CADF3::CNode::SetCornerDist
-(const CInput_ADF3& ct)
+void delfem2::CADF3::CNode::SetCornerDist(
+  const CInput_ADF3& ct)
 {
   dists_[0] = ct.sdf(cent_[0]-hw_, cent_[1]-hw_, cent_[2]-hw_);
   dists_[1] = ct.sdf(cent_[0]+hw_, cent_[1]-hw_, cent_[2]-hw_);
@@ -485,7 +483,7 @@ void dfm2::CADF3::CNode::SetCornerDist
   dists_[7] = ct.sdf(cent_[0]-hw_, cent_[1]+hw_, cent_[2]+hw_);
 }
 
-void dfm2::CADF3::CNode::MakeChildTree
+void delfem2::CADF3::CNode::MakeChildTree
 (const CInput_ADF3& ct,
  std::vector<CNode>& aNo,
  double min_hw, double max_hw)
@@ -675,7 +673,7 @@ MAKE_CHILDS:
   return;
 }
 
-double dfm2::CADF3::CNode::FindDistNormal
+double delfem2::CADF3::CNode::FindDistNormal
 (double px, double py, double pz,
  double n[3],
  const std::vector<CNode>& aNo) const // normal outward
@@ -767,7 +765,7 @@ double dfm2::CADF3::CNode::FindDistNormal
   }
 }
 
-void dfm2::CADF3::CNode::GenerateIsoSurface
+void delfem2::CADF3::CNode::GenerateIsoSurface
 (std::vector<double>& aTri,
  const std::vector<CNode>& aNo) const
 {

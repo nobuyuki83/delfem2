@@ -15,7 +15,7 @@
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/iss.h"
+#include "delfem2/isrf_iss.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include <GLFW/glfw3.h>

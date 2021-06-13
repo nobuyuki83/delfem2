@@ -96,9 +96,9 @@ add_library(${PROJ_NAME} STATIC
 
     ${DELFEM2_INC}/rgd_v2m3.h                  ${DELFEM2_INC}/rgd_v2m3.cpp
 
-    ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
-    ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
-    ${DELFEM2_INC}/sdf.h
+    ${DELFEM2_INC}/isrf_iss.h                  ${DELFEM2_INC}/isrf_iss.cpp
+    ${DELFEM2_INC}/isrf_adf.h                  ${DELFEM2_INC}/isrf_adf.cpp
+    ${DELFEM2_INC}/isrf_sdf.h
 
     ${DELFEM2_INC}/bem.h                       ${DELFEM2_INC}/bem.cpp
 

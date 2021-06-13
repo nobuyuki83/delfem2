@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_ADF_H
-#define DFM2_ADF_H
+#ifndef DFM2_ISRF_ADF_H
+#define DFM2_ISRF_ADF_H
 #include "delfem2/dfm2_inline.h"
 #include <vector>
 
@@ -77,7 +77,7 @@ public:
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/adf.cpp"
+#  include "delfem2/isrf_adf.cpp"
 #endif
 
 #endif /* adaptive_distance_field_h */

@@ -9,7 +9,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "delfem2/iss.h"
+#include "delfem2/isrf_iss.h"
 
 namespace delfem2 {
 namespace iss {
