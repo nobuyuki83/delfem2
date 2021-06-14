@@ -45,44 +45,57 @@ namespace delfem2 {
 namespace convhull3 {
 
 template<class VEC>
-void Normal(
+inline void Normal(
     VEC &vnorm,
     const VEC &v1,
     const VEC &v2,
-    const VEC &v3) {
+    const VEC &v3)
+{
   vnorm(0) = (v2(1) - v1(1)) * (v3(2) - v1(2)) - (v2(2) - v1(2)) * (v3(1) - v1(1));
   vnorm(1) = (v2(2) - v1(2)) * (v3(0) - v1(0)) - (v2(0) - v1(0)) * (v3(2) - v1(2));
   vnorm(2) = (v2(0) - v1(0)) * (v3(1) - v1(1)) - (v2(1) - v1(1)) * (v3(0) - v1(0));
 }
 
+template<typename REAL, class VEC>
+inline REAL Dot3(
+    const VEC &v1,
+    const VEC &v2)
+{
+  return v1(0)*v2(0) + v1(1)*v2(1) + v1(2)*v2(2);
+}
+
 template<typename REAL, typename VEC, typename ALLOCATOR>
 bool IsOut(
-    int itri,
+    unsigned int itri,
     const VEC &v,
     const std::vector<VEC, ALLOCATOR> &aXYZ,
-    const std::vector<unsigned int> &aTri) {
-  unsigned int i0 = aTri[itri * 3 + 0];
-  unsigned int i1 = aTri[itri * 3 + 1];
-  unsigned int i2 = aTri[itri * 3 + 2];
+    const std::vector<unsigned int> &aTri)
+{
+  const unsigned int i0 = aTri[itri * 3 + 0];
+  const unsigned int i1 = aTri[itri * 3 + 1];
+  const unsigned int i2 = aTri[itri * 3 + 2];
   const VEC &v0 = aXYZ[i0];
   const VEC &v1 = aXYZ[i1];
   const VEC &v2 = aXYZ[i2];
-  VEC n;
+  VEC n; n.setZero();
   Normal(n, v0, v1, v2);
-  REAL dot = (v - v0).dot(n);
+//  REAL dot = Dot3<REAL,VEC>(v-v0,n);
+  REAL dot = n.dot(v-v0);
   return dot > 0;
 }
 
 //! Volume of a tetrahedra
-template<typename VEC>
-double Volume_Tet(
+template <typename REAL, typename VEC>
+REAL Volume_Tet(
     const VEC &v0,
     const VEC &v1,
     const VEC &v2,
-    const VEC &v3) {
-  double v = (v1(0) - v0(0)) * ((v2(1) - v0(1)) * (v3(2) - v0(2)) - (v3(1) - v0(1)) * (v2(2) - v0(2)))
-             + (v1(1) - v0(1)) * ((v2(2) - v0(2)) * (v3(0) - v0(0)) - (v3(2) - v0(2)) * (v2(0) - v0(0)))
-             + (v1(2) - v0(2)) * ((v2(0) - v0(0)) * (v3(1) - v0(1)) - (v3(0) - v0(0)) * (v2(1) - v0(1)));
+    const VEC &v3)
+{
+  REAL v
+      = (v1(0) - v0(0)) * ((v2(1) - v0(1)) * (v3(2) - v0(2)) - (v3(1) - v0(1)) * (v2(2) - v0(2)))
+      + (v1(1) - v0(1)) * ((v2(2) - v0(2)) * (v3(0) - v0(0)) - (v3(2) - v0(2)) * (v2(0) - v0(0)))
+      + (v1(2) - v0(2)) * ((v2(0) - v0(0)) * (v3(1) - v0(1)) - (v3(0) - v0(0)) * (v2(1) - v0(1)));
   return v * 0.16666666666666666666666666666667;
 }
 
@@ -93,7 +106,8 @@ double Volume_Tet(
 template<typename REAL, typename VEC, typename ALLOCATOR>
 void delfem2::ConvexHull(
     std::vector<unsigned int> &aTri,
-    const std::vector<VEC, ALLOCATOR> &aXYZ) {
+    const std::vector<VEC, ALLOCATOR> &aXYZ)
+{
   namespace lcl = ::delfem2::convhull3;
   std::vector<int> aBflg(aXYZ.size(), -1);
   aTri.reserve(aXYZ.size() * 6);
@@ -109,11 +123,7 @@ void delfem2::ConvexHull(
       {0,1},{1,2},{3,1},{0,2},{2,2},{1,1}
   };
   {
-    REAL vol = lcl::Volume_Tet(
-        aXYZ[0],
-        aXYZ[1],
-        aXYZ[2],
-        aXYZ[3]);
+    REAL vol = lcl::Volume_Tet<REAL>(aXYZ[0], aXYZ[1], aXYZ[2], aXYZ[3]);
     if (vol < 0) {
       aTri = {
           3,2,1,
@@ -269,7 +279,7 @@ void delfem2::ConvexHull(
     }
     for (unsigned int itri = 0; itri < aTri.size() / 3; itri++) { // set old relation
       if (isDelTri[itri] == 1) continue;
-      int jtri0 = mapOld2New[itri];
+      unsigned int jtri0 = mapOld2New[itri];
       assert(jtri0 < aTri1.size() / 3);
       for (int iet = 0; iet < 3; iet++) {
         int itri_s = aTriSur[itri * 3 + iet].first;
@@ -299,9 +309,9 @@ void delfem2::ConvexHull(
       }
 #endif
       assert(isDelTri[itri0] == 0);
-      unsigned int jtri0 = mapOld2New[itri0];
+      const unsigned int jtri0 = mapOld2New[itri0];
       assert(jtri0 != UINT_MAX);
-      unsigned int jtri1 = aTri1.size() / 3;
+      const unsigned int jtri1 = aTri1.size() / 3;
       assert(jtri1 == ntri_old + ib);
       aTri1.push_back(iv);
       aTri1.push_back(aTri[itri0 * 3 + itn2]);

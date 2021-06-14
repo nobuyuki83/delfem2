@@ -9,11 +9,11 @@
  * @brief demo for visualizing eigenmodes
  */
 
-#include "delfem2/eigen/lsitrsol.h"
+#include "delfem2/eigen/ls_dense.h"
 #include "delfem2/eigen/lsmerge.h"
+#include "delfem2/lsitrsol.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mshuni.h"

@@ -10,19 +10,42 @@
 #include "delfem2/opengleigen/funcs.h"
 #include "delfem2/geoconvhull3.h"
 #include <GLFW/glfw3.h>
+#include <chrono>
 #include <vector>
 #include <cstdlib>
 #include <random>
 
 namespace dfm2 = delfem2;
-
 // ---------------------------------------
+
+template <typename REAL, class VEC>
+double MeasureTime()
+{
+  std::vector<VEC,Eigen::aligned_allocator<VEC> > aXYZ0(1000);
+  {
+    std::mt19937 rngeng(std::random_device{}());
+    std::uniform_real_distribution<REAL> dist_m1p1(-1,+1);
+    for(auto& xyz : aXYZ0){
+      xyz(0) = dist_m1p1(rngeng);
+      xyz(1) = dist_m1p1(rngeng);
+      xyz(2) = dist_m1p1(rngeng);
+    }
+  }
+  std::vector<unsigned int> aTri0;
+  auto start = std::chrono::system_clock::now();
+  for(int it=0;it<1000;++it) {
+    delfem2::ConvexHull<REAL>(aTri0, aXYZ0);
+  }
+  auto end = std::chrono::system_clock::now();
+  return std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
+}
 
 int main(int argc,char* argv[])
 {
   std::cout << "Available :SIMD Instructions: "<< Eigen::SimdInstructionSetsInUse() << std::endl;
+
   //
-  std::vector<Eigen::Vector3f,Eigen::aligned_allocator<Eigen::Vector3f> > aXYZ(100);
+  std::vector<Eigen::Vector4f,Eigen::aligned_allocator<Eigen::Vector4f> > aXYZ(100);
   std::vector<unsigned int> aTri;
   // --
   delfem2::glfw::CViewer3 viewer;
@@ -47,6 +70,7 @@ int main(int argc,char* argv[])
       time_last_update = time_now;
     }
     //
+
     viewer.DrawBegin_oldGL();
     ::glEnable(GL_BLEND);
     ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -69,5 +93,10 @@ int main(int argc,char* argv[])
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
+  // ----------
+  std::cout << MeasureTime<float,Eigen::Vector3f>() << std::endl;
+  std::cout << MeasureTime<float,Eigen::Vector4f>() << std::endl;
+  std::cout << MeasureTime<double,Eigen::Vector3d>() << std::endl;
+  std::cout << MeasureTime<double,Eigen::Vector4d>() << std::endl;
   exit(EXIT_SUCCESS);
 }

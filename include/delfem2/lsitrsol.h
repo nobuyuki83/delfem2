@@ -45,7 +45,7 @@ std::vector<double> Solve_CG(
   double sqnorm_res = r_vec.dot(r_vec);
   if (sqnorm_res < 1.0e-30) { return aConv; }
   const double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
-  p_vec = r_vec;  // {p} = {r}  (Set Initial Serch Direction)
+  p_vec = r_vec;  // {p} = {r}  (set initial serch direction, copy value not reference)
   for (unsigned int iitr = 0; iitr < max_iteration; iitr++) {
     double alpha;
     {  // alpha = (r,r) / (p,Ap)
