@@ -58,10 +58,11 @@ using CVecXf = CVecX<float>;
 using CVecXcd = CVecX<std::complex<double> >;
 using CVecXcf = CVecX<std::complex<float> >;
 
+
 template <typename REAL>
 void AddScaledVec(
     CVecX<REAL>& y,
-    REAL alpha,
+    double alpha,
     const CVecX<REAL>& x)
 {
   assert(y.n == x.n);
@@ -83,6 +84,7 @@ void ScaleAndAddVec(
     y.p[i] = beta * y.p[i] + x.p[i];
   }
 }
+
 
 template<typename REAL, class MAT>
 void AddMatVec(
