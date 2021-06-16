@@ -723,32 +723,31 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNormEdge(
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
+template <typename REAL>
 DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge(
-    const double* aXYZ,
+    const REAL* aXYZ,
     unsigned int nXYZ,
     const unsigned int* aTri,
     unsigned int nTri)
 {
+  namespace lcl = ::delfem2::opengl::old::mshuni;
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
-  //
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
   for (unsigned int itri = 0; itri<nTri; ++itri){
     const unsigned int i1 = aTri[itri*3+0];
     const unsigned int i2 = aTri[itri*3+1];
     const unsigned int i3 = aTri[itri*3+2];
-    assert(i1 < nXYZ);
-    assert(i2 < nXYZ);
-    assert(i3 < nXYZ);
-    const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
-    const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-    const double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    ::glVertex3dv(p1); ::glVertex3dv(p2);
-    ::glVertex3dv(p2); ::glVertex3dv(p3);
-    ::glVertex3dv(p3); ::glVertex3dv(p1);
+    if( i1 >= nXYZ || i2 >= nXYZ || i3 >= nXYZ ){ continue; }
+    assert( i1 < nXYZ && i2 < nXYZ && i3 < nXYZ );
+    const REAL* p1 = aXYZ+i1*3;
+    const REAL* p2 = aXYZ+i2*3;
+    const REAL* p3 = aXYZ+i3*3;
+    lcl::myGlVtxPtr<3>(p1);  lcl::myGlVtxPtr<3>(p2);
+    lcl::myGlVtxPtr<3>(p2);  lcl::myGlVtxPtr<3>(p3);
+    lcl::myGlVtxPtr<3>(p3);  lcl::myGlVtxPtr<3>(p1);
   }
   ::glEnd();
-  
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 

@@ -173,10 +173,12 @@ DFM2_INLINE void DrawMeshTri3D_FaceNorm_TexVtx(
     const std::vector<unsigned int>& aTri,
     const std::vector<double>& aTex);
 
-// Edge 3D
+template <typename REAL>
 DFM2_INLINE void DrawMeshTri3D_Edge(
-    const double* aXYZ, unsigned int nXYZ,
-    const unsigned int* aTri, unsigned int nTri);
+    const REAL* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTri,
+    unsigned int nTri);
 
 DFM2_INLINE void DrawMeshTri3D_Edge(
     const std::vector<double>& aXYZ,

@@ -518,7 +518,7 @@ DFM2_INLINE void delfem2::Read_Obj_MeshQuad3(
 DFM2_INLINE void delfem2::Read_Obj2(
     const std::string& fname,
     std::vector<double>& aXYZ,
-    std::vector<int>& aTri)
+    std::vector<unsigned int>& aTri)
 {
   std::ifstream fin;
   fin.open(fname.c_str());
@@ -559,41 +559,6 @@ DFM2_INLINE void delfem2::Read_Obj2(
 //      sscanf(str0,"%d",&i0);
 //      sscanf(str1,"%d",&i1);
 //      sscanf(str2,"%d",&i2);
-      aTri.push_back(i0-1);
-      aTri.push_back(i1-1);
-      aTri.push_back(i2-1);
-    }
-  }
-}
-
-DFM2_INLINE void delfem2::Read_Obj(
-    std::stringstream& ssobj,
-    std::vector<double>& aXYZ,
-    std::vector<int>& aTri)
-{
-  aXYZ.clear();
-  aTri.clear();
-  aXYZ.reserve(256*16);
-  aTri.reserve(256*16);
-  for (;;){
-    if (ssobj.eof()) break;
-    char buff[1024];
-    ssobj.getline(buff, 1024, '\n');
-    if (buff[0]=='#'){ continue; }
-    if (buff[0]=='v' && buff[1]==' '){
-      char str[256]; double x, y, z;
-      std::istringstream is(buff);
-      is >> str >> x >> y >> z;
-//      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
-      aXYZ.push_back(x);
-      aXYZ.push_back(y);
-      aXYZ.push_back(z);
-    }
-    if (buff[0]=='f'){
-      char str[256]; int i0, i1, i2;
-      std::istringstream is(buff);
-      is >> str >> i0 >> i1 >> i2;
-//      sscanf(buff, "%s %d %d %d", str, &i0, &i1, &i2);
       aTri.push_back(i0-1);
       aTri.push_back(i1-1);
       aTri.push_back(i2-1);

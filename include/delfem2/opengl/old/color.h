@@ -61,11 +61,12 @@ DFM2_INLINE void DrawMeshTri3D_VtxColor(
  * @param[in] aIndGroup store index of group for each triangle. size: "number of triangle"
  * @param[in] aColor
  */
+template <typename REAL>
 DFM2_INLINE void DrawMeshTri3DFlag_FaceNorm(
-    const std::vector<double>& aXYZ,
+    const std::vector<REAL>& aXYZ,
     const std::vector<unsigned int>& aTri,
     const std::vector<unsigned int>& aFlgElm,
-    std::vector< std::pair<int,CColor> >& aColor);
+    const std::vector< std::pair<int,CColor> >& aColor);
 
 DFM2_INLINE void DrawMeshTri_ScalarP0(
     const std::vector<double>& aXYZ,
@@ -105,8 +106,9 @@ DFM2_INLINE void DrawMeshTri3D_ScalarP1(
     const double* aValSrf,
     const std::vector<std::pair<double, CColor> >& colorMap);
 
+template <typename REAL>
 DFM2_INLINE void DrawMeshTri3D_VtxColor(
-    const std::vector<double>& aXYZ,
+    const std::vector<REAL>& aXYZ,
     const std::vector<unsigned int>& aTri,
     std::vector<CColor>& aColor);
 

@@ -65,14 +65,15 @@ public:
   bool IsActive() const {
     return r >= 0;
   }
-  bool IsIntersectLine(const double src[3], const double dir[3]) const {
-    double ratio = dir[0]*(c[0]-src[0]) + dir[1]*(c[1]-src[1]) + dir[2]*(c[2]-src[2]);
+  template <typename REAL1>
+  bool IsIntersectLine(const REAL1 src[3], const REAL1 dir[3]) const {
+    REAL ratio = dir[0]*(c[0]-src[0]) + dir[1]*(c[1]-src[1]) + dir[2]*(c[2]-src[2]);
     ratio = ratio/(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
-    const double px = src[0] + ratio*dir[0];
-    const double py = src[1] + ratio*dir[1];
-    const double pz = src[2] + ratio*dir[2];
-    const double L = sqrt((px-c[0])*(px-c[0]) + (py-c[1])*(py-c[1]) + (pz-c[2])*(pz-c[2]));
-    assert( fabs(dir[0]*(px-c[0]) + dir[1]*(py-c[1]) + dir[2]*(pz-c[2])) < 1.0e-10 );
+    const REAL px = src[0] + ratio*dir[0];
+    const REAL py = src[1] + ratio*dir[1];
+    const REAL pz = src[2] + ratio*dir[2];
+    const REAL L = sqrt((px-c[0])*(px-c[0]) + (py-c[1])*(py-c[1]) + (pz-c[2])*(pz-c[2]));
+    assert( fabs(dir[0]*(px-c[0]) + dir[1]*(py-c[1]) + dir[2]*(pz-c[2])) < 1.0e-4 );
     if( L <= r ){ return true; }
     return false;
   }
