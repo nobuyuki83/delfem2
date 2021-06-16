@@ -253,6 +253,18 @@ cmake --build .
 ./runUnitTests
 cd ../../
 
+echo "###############################"
+echo "test eigen"
+echo "###############################"
+
+cd test_eigen
+mkdir buildMakeStatic
+cd buildMakeStatic
+cmake .. -DDFM2_HEADER_ONLY=ON -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
+./runUnitTests
+cd ../../
+
 
 echo "################################"
 echo "build examples alembic"

@@ -28,7 +28,8 @@ namespace delfem2 {
 /**
  * @brief solve linear system using conjugate gradient method
  * @detail VEC&& is the "universal reference"
- * @param[in] mat  a template class with member function "MatVec" with  {y} = alpha*[A]{x} + beta*{y}
+ * @tparam MAT matrix class (Eigen::MatrixX, delfem2::CMatrixSparse, delfem2::MatrixSparseBlockEigen)
+ * @param[in] mat a template class with member function "MatVec" with  {y} = alpha*[A]{x} + beta*{y}
  */
 template<class MAT, class VEC>
 std::vector<double> Solve_CG(

@@ -64,6 +64,20 @@ jobs:
           -DDFM2_HEADER_ONLY=OFF
         cd ../../
 
+    - name: build & run test_eigen
+      run: |
+        echo "###################################"
+        echo "## build test_eigen hdronly and run"
+
+        cd test_eigen
+        mkdir buildVS64Hdronly
+        cd buildVS64Hdronly
+        cmake .. -A x64 `
+          -DDFM2_HEADER_ONLY=ON -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --config Release
+        ./Release/runUnitTests.exe 
+        cd ../../
+
     - name: build glfw
       run: |
         echo "################################"

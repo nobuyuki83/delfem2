@@ -100,15 +100,13 @@ void AddMatVec(
 }
 
 
-template <class PREC, class VEC>
+template <typename REAL, class PREC>
 void SolvePrecond(
-    VEC& Pr_vec,
+    CVecX<REAL>& Pr_vec,
     const PREC& ilu)
 {
   ilu.SolvePrecond(Pr_vec.p);
 }
-
-
 
 } // delfem2
 
