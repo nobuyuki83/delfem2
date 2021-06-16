@@ -139,7 +139,8 @@ public:
 // -----------------------------------------------------------------
 
 template <typename T>
-delfem2::CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& p)
+delfem2::CPreconditionerILU<T>::CPreconditionerILU(
+    const CPreconditionerILU<T>& p)
 {
 //  std::cout << "CPreconditionerILU -- construct copy" << std::endl;
   this->mat = p.mat; // deep copy
@@ -717,7 +718,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
     const T* vcrs = mat.valCrs.data();
     // ----------------------------
     T pTmpVec[2];
-    for(int iblk=nblk-1;iblk>=0;iblk--){
+    for(int iblk=nblk-1;iblk>=0;iblk--){ // going backward
       assert( (int)iblk < nblk );
       pTmpVec[0] = vec[iblk*2+0];
       pTmpVec[1] = vec[iblk*2+1];
@@ -725,8 +726,8 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
       const unsigned int icrs1 = colind[iblk+1];
       for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
         assert( ijcrs<mat.rowPtr.size() );
-        const int jblk0 = rowptr[ijcrs];
-        assert( jblk0>(int)iblk && jblk0<nblk );
+        const unsigned int jblk0 = rowptr[ijcrs];
+        assert( (int)jblk0>iblk && jblk0<nblk );
         const T* vij = &vcrs[ijcrs*4];
         const T valj0 = vec[jblk0*2+0];
         const T valj1 = vec[jblk0*2+1];
@@ -1059,18 +1060,21 @@ template void delfem2::CPreconditionerILU<std::complex<double>>::SetValueILU(
 #endif
 
 
+/**
+ * TODO: need to sort the rowPtr
+ */
 template <typename T>
-void delfem2::CPreconditionerILU<T>::Initialize_ILU0
- (const CMatrixSparse<T>& m)
+void delfem2::CPreconditionerILU<T>::Initialize_ILU0(
+    const CMatrixSparse<T>& m)
 {
   this->mat = m;
-  const int nblk = m.nrowblk;
+  const unsigned int nblk = m.nrowblk;
   m_diaInd.resize(nblk);
-  for(int iblk=0;iblk<nblk;iblk++){
+  for(int iblk=0;iblk<nblk;++iblk){
     m_diaInd[iblk] = mat.colInd[iblk+1];
-    for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
+    for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];++icrs){
       assert( icrs < mat.rowPtr.size() );
-      const int jblk0 = mat.rowPtr[icrs];
+      const unsigned int jblk0 = mat.rowPtr[icrs];
       assert( jblk0 < nblk );
       if( jblk0 > iblk ){
         m_diaInd[iblk] = icrs;

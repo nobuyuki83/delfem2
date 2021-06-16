@@ -26,7 +26,7 @@ jobs:
       run: |
         git submodule update --init --recursive       
 
-    - name: test_cpp
+    - name: install_gtest
       run: |
         echo "###########################"
         echo "## fetch & build googletest"
@@ -38,10 +38,12 @@ jobs:
         cmake --build .
         mkdir ../GTest_Lib
         cmake --install . --prefix ../GTest_Lib
-        cd ../../
+        cd ../../        
 
-        echo "#####################################"
-        echo "## build delfem2 test hdronly and run"
+    - name: test_cpp
+      run: |
+        echo "############################"
+        echo "## build delfem2 test static"
 
         cd test_cpp
         mkdir buildMakeHdronly && cd buildMakeHdronly
@@ -50,8 +52,8 @@ jobs:
         ./runUnitTests
         cd ../../
 
-        echo "###########################"
-        echo "## build delfem test static" 
+        echo "#####################################"
+        echo "## build delfem2 test hdronly and run" 
         
         cd test_cpp
         mkdir buildMakeStatic && cd buildMakeStatic
@@ -59,6 +61,18 @@ jobs:
         cmake --build .
         ./runUnitTests
         cd ../../    
+
+    - name: test_eigen
+      run: 
+        echo "#####################################"
+        echo "## build delfem2 test hdronly and run"
+        
+        cd test_eigen
+        mkdir buildMakeStatic && cd buildMakeStatic
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake --build .
+        ./runUnitTests
+        cd ../../ 
 
     - name: build_glfw
       run: |

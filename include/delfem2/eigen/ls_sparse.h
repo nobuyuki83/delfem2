@@ -1,3 +1,7 @@
+
+#ifndef DFM2_EIGEN_LS_SPARSE_H
+#define DFM2_EIGEN_LS_SPARSE_H
+
 #include <Eigen/Core>
 #include <vector>
 
@@ -173,10 +177,12 @@ void AddMatVec(
       assert(icrs < A.rowPtr.size());
       const unsigned int jblk0 = A.rowPtr[icrs];
       assert(jblk0 < A.ncolblk);
-      lhs.segment(iblk * nrowdim, nrowdim) += alpha * A.valCrs[icrs] * rhs.segment(jblk0 * ncoldim, ncoldim); // SIMD?
+      lhs.template segment<nrowdim>(iblk * nrowdim) += alpha * A.valCrs[icrs] * rhs.template segment<ncoldim>(jblk0 * ncoldim); // SIMD?
     }
-    lhs.segment(iblk * nrowdim, nrowdim) += alpha * A.valDia[iblk] * rhs.segment(iblk * ncoldim, ncoldim); // SIMD?
+    lhs.template segment<nrowdim>(iblk * nrowdim) += alpha * A.valDia[iblk] * rhs.template segment<ncoldim>(iblk * ncoldim); // SIMD?
   }
 }
 
 }
+
+#endif

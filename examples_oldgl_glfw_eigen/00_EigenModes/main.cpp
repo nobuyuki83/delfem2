@@ -10,7 +10,6 @@
  */
 
 #include "delfem2/eigen/ls_dense.h"
-#include "delfem2/eigen/lsmerge.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
@@ -19,10 +18,10 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/points.h"
 #include "delfem2/femsolidlinear.h"
-namespace dfm2 = delfem2;
-
 #include <Eigen/Eigenvalues>
 #include <GLFW/glfw3.h>
+
+namespace dfm2 = delfem2;
 
 void ShowEigen_SolidLinear_MeshQuad2(
     const std::vector<double>& aXY,
@@ -39,7 +38,7 @@ void ShowEigen_SolidLinear_MeshQuad2(
   for (unsigned int iq = 0; iq < aQuad.size() / 4; ++iq) {
     const unsigned int aIp[4] = {
         aQuad[iq * 4 + 0], aQuad[iq * 4 + 1], aQuad[iq * 4 + 2], aQuad[iq * 4 + 3]};
-    Merge<4,4,2,2,double>(A,aIp,aIp,emat,tmp_buffer);
+    delfem2::Merge<4,4,2,2,double>(A,aIp,aIp,emat,tmp_buffer);
   }
 
   {
@@ -102,7 +101,7 @@ void ShowEigen_SolidLinear_MeshTri2(
         eres,emat,
         1,1,0,0,0,
         disp,coord);
-    Merge<3,3,2,2,double>(A,aIp,aIp,emat,tmp_buffer);
+    delfem2::Merge<3,3,2,2,double>(A,aIp,aIp,emat,tmp_buffer);
   }
 
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> s(A);
