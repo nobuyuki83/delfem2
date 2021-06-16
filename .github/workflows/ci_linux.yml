@@ -63,7 +63,7 @@ jobs:
         cd ../../    
 
     - name: test_eigen
-      run: 
+      run: |
         echo "#####################################"
         echo "## build delfem2 test hdronly and run"
         

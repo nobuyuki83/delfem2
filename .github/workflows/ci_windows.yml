@@ -64,20 +64,6 @@ jobs:
           -DDFM2_HEADER_ONLY=OFF
         cd ../../
 
-    - name: build & run test_eigen
-      run: |
-        echo "###################################"
-        echo "## build test_eigen hdronly and run"
-
-        cd test_eigen
-        mkdir buildVS64Hdronly
-        cd buildVS64Hdronly
-        cmake .. -A x64 `
-          -DDFM2_HEADER_ONLY=ON -DCMAKE_BUILD_TYPE=Release
-        cmake --build . --config Release
-        ./Release/runUnitTests.exe 
-        cd ../../
-
     - name: build glfw
       run: |
         echo "################################"
@@ -219,3 +205,30 @@ jobs:
         cmake -A x64 .. -DILMBASE_ROOT="$openexr_root"
         cmake --build . --config Release
         cd ../..
+
+    - name: build eigen
+      run: |
+        echo "##############################"
+        echo "## build eigen"
+
+        git submodule update --init -- 3rd_party/eigen
+        cd 3rd_party/eigen
+        mkdir build
+        cd build
+        cmake ..
+        cmake --install . --prefix ../../Eigen_Lib
+
+
+    - name: build & run test_eigen
+      run: |
+        echo "###################################"
+        echo "## build test_eigen hdronly and run"
+
+        cd test_eigen
+        mkdir buildVS64Hdronly
+        cd buildVS64Hdronly
+        cmake .. -A x64 `
+          -DDFM2_HEADER_ONLY=ON -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --config Release
+        ./Release/runUnitTests.exe 
+        cd ../../
