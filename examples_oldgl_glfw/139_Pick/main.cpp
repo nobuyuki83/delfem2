@@ -8,6 +8,8 @@
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/opengl/old/color.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
@@ -19,57 +21,20 @@
 
 namespace dfm2 = delfem2;
 
-// ----------------------------------------
-
-void myGlutDisplay(
-    const std::vector<double>& aXYZ,
-    const std::vector<unsigned int>& aTri,
-    const std::vector<unsigned int>& aIndElm,
-    const double src0[3],
-    const double dir0[3])
-{
-  ::glDisable(GL_LIGHTING);
-  //
-  ::glPointSize(2);
-  ::glBegin(GL_POINTS);
-  ::glColor3d(0,0,0);
-  for(size_t ip=0;ip<aXYZ.size()/3;++ip){
-    ::glVertex3d(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
-  }
-  ::glEnd();
-  //
-  ::glBegin(GL_TRIANGLES);
-  ::glColor3d(0,0,1);
-  for(unsigned int it : aIndElm){
-    ::glVertex3dv(aXYZ.data()+aTri[it*3+0]*3);
-    ::glVertex3dv(aXYZ.data()+aTri[it*3+1]*3);
-    ::glVertex3dv(aXYZ.data()+aTri[it*3+2]*3);
-  }
-  ::glEnd();
-  //
-  ::glPointSize(4);
-  ::glBegin(GL_POINTS);
-  ::glColor3d(1,0,0);
-  ::glVertex3dv(src0);
-  ::glEnd();
-  //
-  ::glColor3d(1,0,0);
-  const double L = 100;
-  ::glBegin(GL_LINES);
-  ::glVertex3d(src0[0]+L*dir0[0],src0[1]+L*dir0[1],src0[2]+L*dir0[2]);
-  ::glVertex3d(src0[0]-L*dir0[0],src0[1]-L*dir0[1],src0[2]-L*dir0[2]);
-  ::glEnd();
-}
-
 int main(int argc,char* argv[])
 {
   std::vector<double> aXYZ; // 3d points
   std::vector<unsigned int> aTri;
 
   { // load input mesh
-    delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
-                      aXYZ, aTri);
+    const auto path =std::string(PATH_SOURCE_DIR) + "/../../test_inputs/arm_16k.ply";
+    std::cout << path << std::endl;
+    delfem2::Read_Ply(
+        path,
+        aXYZ, aTri);
     dfm2::Normalize_Points3(aXYZ, 2.0);
+    std::cout << "point_size: " << aXYZ.size()/3 << std::endl;
+    std::cout << "triangle_size: " << aTri.size()/3 << std::endl;
   }
 
   std::vector<dfm2::CNodeBVH2> aNodeBVH;
@@ -101,36 +66,58 @@ int main(int argc,char* argv[])
       dfm2::Check_BVH(aNodeBVH,aCent.size()/3);
     }
   }
-  
-  dfm2::glfw::CViewer3 viewer;
+
+  std::vector<unsigned int> aFlagElem(aTri.size()/3, 0);
+
+  class MyView
+      : public dfm2::glfw::CViewer3
+  {
+  public:
+    MyView(
+        std::vector<unsigned int>& aFlagElem0,
+        const std::vector<dfm2::CNodeBVH2>& aNodeBVH0,
+        const std::vector<dfm2::CBV3_Sphere<double>>& aAABB0)
+        : aFlagElem(aFlagElem0), aNodeBVH(aNodeBVH0), aAABB(aAABB0) {}
+    void mouse_press(const float src[3], const float dir[3]) override {
+      std::vector<unsigned int> aIndElem;
+      dfm2::BVH_GetIndElem_Predicate(
+          aIndElem,
+          delfem2::CIsBV_IntersectLine< dfm2::CBV3_Sphere<double>, float>(src,dir),
+          0, aNodeBVH, aAABB);
+      for(auto ie : aIndElem) {
+        aFlagElem[ie] = 1;
+      }
+    }
+  public:
+    std::vector<unsigned int>& aFlagElem;
+    const std::vector<dfm2::CNodeBVH2>& aNodeBVH;
+    const std::vector<dfm2::CBV3_Sphere<double>>& aAABB;
+  };
+
+  MyView viewer(
+      aFlagElem,
+      aNodeBVH,aAABB);
+
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
+  const std::vector< std::pair<int,delfem2::CColor> > aColor = {
+      { 2, delfem2::CColor::White() },
+      { 2, delfem2::CColor::Red() } };
 
-  double cur_time = 0.0;
   while (!glfwWindowShouldClose(viewer.window))
   {
-    cur_time += 0.001;
-    const double src0[3] = {
-        0.5*sin(cur_time*1),
-        0.5*sin(cur_time*2),
-        0.5*sin(cur_time*3) };
-    const double dir0[3] = {
-        0.5*sin(cur_time*5),
-        0.5*sin(cur_time*6),
-        0.5*sin(cur_time*7) };
-    // -----------
-    std::vector<unsigned int> aIndElem;
-    dfm2::BVH_GetIndElem_Predicate(aIndElem,
-        dfm2::CIsBV_IntersectLine< dfm2::CBV3_Sphere<double>, double>(src0,dir0),
-        0, aNodeBVH, aAABB);
-    // -----------
+    // ----------
     viewer.DrawBegin_oldGL();
-    myGlutDisplay(aXYZ,aTri,aIndElem,src0,dir0);
+    ::glDisable(GL_LIGHTING);
+    ::glColor3d(0,0,0);
+    delfem2::opengl::DrawMeshTri3D_Edge(aXYZ,aTri);
+    delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
+        aXYZ,aTri,aFlagElem,aColor);
+    // ----------
     viewer.SwapBuffers();
-    
     glfwPollEvents();
   }
   

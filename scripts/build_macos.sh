@@ -172,6 +172,20 @@ cmake --build .
 cd ../../
 
 echo "################################"
+echo "fetch latest eigen"
+echo "################################"
+
+git submodule update --init -- 3rd_party/eigen
+cd 3rd_party/eigen
+git checkout master
+git pull origin master
+mkdir build 
+cd build
+cmake ..
+cmake --install . --prefix ../../Eigen_Lib
+cd ../../../
+
+echo "################################"
 echo "build examples_eigen"
 echo "################################"
 

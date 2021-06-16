@@ -138,15 +138,10 @@ DFM2_INLINE void Read_Obj_MeshQuad3(
     std::vector<unsigned int> &aQuad,
     const std::string &fname);
 
-DFM2_INLINE void Read_Obj(
-    std::stringstream &ssobj,
-    std::vector<double> &aXYZ,
-    std::vector<int> &aTri);
-
 DFM2_INLINE void Read_Obj2(
     const std::string &fname,
     std::vector<double> &aXYZ,
-    std::vector<int> &aTri);
+    std::vector<unsigned int> &aTri);
 
 DFM2_INLINE void Read_Obj3(
     const std::string &fname,

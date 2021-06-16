@@ -27,20 +27,49 @@ namespace delfem2 {
 namespace opengl {
 namespace color_glold {
 
-DFM2_INLINE void UnitNormalAreaTri3D
- (double n[3], double& a,
-  const double v1[3], const double v2[3], const double v3[3])
+template <typename REAL>
+DFM2_INLINE void UnitNormalAreaTri3D(
+    REAL n[3],
+    REAL& a,
+    const REAL v1[3],
+    const REAL v2[3],
+    const REAL v3[3])
 {
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-  const double invlen = 0.5/a;
-  n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
+  a = std::sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
+  const REAL invlen = 0.5/a;
+  n[0]*=invlen;
+  n[1]*=invlen;
+  n[2]*=invlen;
 }
 
-DFM2_INLINE void myGlVertex3d(int i, const std::vector<double>& aV)
-{
+template <typename T>
+void myGlNormalPtr(const T *p);
+
+template <>
+void myGlNormalPtr(const double *p) { ::glNormal3dv(p); }
+
+template <>
+void myGlNormalPtr(const float *p) { ::glNormal3fv(p); }
+
+template <typename REAL>
+DFM2_INLINE void myGlVertex3(
+    unsigned int i,
+    const std::vector<REAL>& aV);
+
+template <>
+DFM2_INLINE void myGlVertex3(
+    unsigned int i,
+    const std::vector<float>& aV){
+  glVertex3f(aV[i*3+0],aV[i*3+1],aV[i*3+2]);
+}
+
+template <>
+DFM2_INLINE void myGlVertex3(
+    unsigned int i,
+    const std::vector<double>& aV){
   glVertex3d(aV[i*3+0],aV[i*3+1],aV[i*3+2]);
 }
 
@@ -215,11 +244,12 @@ DFM2_INLINE void delfem2::opengl::heatmap
 
 // -------------------------------------------------------------
 
+template <typename REAL>
 DFM2_INLINE void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
-    const std::vector<double>& aXYZ,
+    const std::vector<REAL>& aXYZ,
     const std::vector<unsigned int>& aTri,
     const std::vector<unsigned int>& aFlgElm,
-    std::vector< std::pair<int,CColor> >& aColor)
+    const std::vector< std::pair<int,CColor> >& aColor)
 {
   namespace lcl = delfem2::opengl::color_glold;
   const unsigned int nTri = aTri.size()/3;
@@ -231,29 +261,39 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
     else if( imode == 1 ){ ::glEnable(GL_LIGHTING); }
     else if( imode == 2 ){ ::glDisable(GL_LIGHTING); }
     myGlColorDiffuse(aColor[ig0].second);
-    const int i1 = aTri[itri*3+0];
-    const int i2 = aTri[itri*3+1];
-    const int i3 = aTri[itri*3+2];
-    if( i1 == -1 ){
-      assert(i2==-1); assert(i3==-1);
+    const unsigned int i1 = aTri[itri*3+0];
+    const unsigned int i2 = aTri[itri*3+1];
+    const unsigned int i3 = aTri[itri*3+2];
+    if( i1 == UINT_MAX ){
+      assert( i2 == UINT_MAX && i3 == UINT_MAX );
       continue;
     }
     ::glBegin(GL_TRIANGLES);
-    assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
-    assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
-    assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
-    double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
-    double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
-    double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
-    double un[3], area;
+    assert( i1 < aXYZ.size()/3 );
+    assert( i2 < aXYZ.size()/3 );
+    assert( i3 < aXYZ.size()/3 );
+    const REAL* p1 = aXYZ.data()+i1*3;
+    const REAL* p2 = aXYZ.data()+i2*3;
+    const REAL* p3 = aXYZ.data()+i3*3;
+    REAL un[3], area;
     lcl::UnitNormalAreaTri3D(un,area, p1,p2,p3);
-    ::glNormal3dv(un);
-    lcl::myGlVertex3d(i1,aXYZ);
-    lcl::myGlVertex3d(i2,aXYZ);
-    lcl::myGlVertex3d(i3,aXYZ);
+    lcl::myGlNormalPtr(un);
+    lcl::myGlVertex3<REAL>(i1,aXYZ);
+    lcl::myGlVertex3<REAL>(i2,aXYZ);
+    lcl::myGlVertex3<REAL>(i3,aXYZ);
     ::glEnd();
   }
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(const std::vector<float>& aXYZ,
+                                                          const std::vector<unsigned int>& aTri,
+                                                          const std::vector<unsigned int>& aFlgElm,
+                                                          const std::vector< std::pair<int,CColor> >& aColor);
+template void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(const std::vector<double>& aXYZ,
+                                                          const std::vector<unsigned int>& aTri,
+                                                          const std::vector<unsigned int>& aFlgElm,
+                                                          const std::vector< std::pair<int,CColor> >& aColor);
+#endif
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP1(
     const double* aXY,
@@ -407,35 +447,35 @@ DFM2_INLINE void delfem2::opengl::drawMeshTri3D_ScalarP0(
 }
 
 
-
+template <typename REAL>
 DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_VtxColor(
-    const std::vector<double>& aXYZ,
+    const std::vector<REAL>& aXYZ,
     const std::vector<unsigned int>& aTri,
     std::vector<CColor>& aColor)
 {
-  const int nTri = (int)aTri.size()/3;
-  /////
-  for(int itri=0;itri<nTri;++itri){
-    const int i1 = aTri[itri*3+0];
-    const int i2 = aTri[itri*3+1];
-    const int i3 = aTri[itri*3+2];
-    if( i1 == -1 ){
-      assert(i2==-1); assert(i3==-1);
+  const unsigned int nTri = aTri.size()/3;
+  for(unsigned int itri=0;itri<nTri;++itri){
+    const unsigned int i1 = aTri[itri*3+0];
+    const unsigned int i2 = aTri[itri*3+1];
+    const unsigned int i3 = aTri[itri*3+2];
+    if( i1 == UINT_MAX ){
+      assert(i2==UINT_MAX);
+      assert(i3==UINT_MAX);
       continue;
     }
     ::glBegin(GL_TRIANGLES);
-    assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
-    assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
-    assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
-    double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
-    double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
-    double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
+    assert( i1 < aXYZ.size()/3 );
+    assert( i2 < aXYZ.size()/3 );
+    assert( i3 < aXYZ.size()/3 );
+    const REAL p1 = aXYZ.data()+i1*3;
+    const REAL p2 = aXYZ.data()+i2*3;
+    const REAL p3 = aXYZ.data()+i3*3;
     double un[3], area;
     color_glold::UnitNormalAreaTri3D(un,area, p1,p2,p3);
     ::glNormal3dv(un);
-    myGlColorDiffuse(aColor[i1]); color_glold::myGlVertex3d(i1,aXYZ);
-    myGlColorDiffuse(aColor[i2]); color_glold::myGlVertex3d(i2,aXYZ);
-    myGlColorDiffuse(aColor[i3]); color_glold::myGlVertex3d(i3,aXYZ);
+    myGlColorDiffuse(aColor[i1]); color_glold::myGlVertex3<double>(i1,aXYZ);
+    myGlColorDiffuse(aColor[i2]); color_glold::myGlVertex3<double>(i2,aXYZ);
+    myGlColorDiffuse(aColor[i3]); color_glold::myGlVertex3<double>(i3,aXYZ);
     ::glEnd();
   }
 }

@@ -242,22 +242,24 @@ void BVH_GetIndElem_Predicate(
   BVH_GetIndElem_Predicate(aIndElem, pred, ichild1,aBVH,aBB);
 }
 
-template <typename BV>
+template <class BV,typename REAL>
 class CIsBV_IntersectLine
 {
 public:
   CIsBV_IntersectLine(
-      const double src_[3],
-      const double dir_[3]) :
+      const REAL src_[3],
+      const REAL dir_[3]) :
       src{src_[0],src_[1],src_[2]},
       dir{dir_[0],dir_[1],dir_[2]}
   {}
-  bool IsTrue(unsigned int ibv, const std::vector<BV>& aBV){
+  bool IsTrue(unsigned int ibv,
+              const std::vector<BV>& aBV)
+  {
     return aBV[ibv].IsIntersectLine(src,dir);
   }
 public:
-  const double src[3];
-  const double dir[3];
+  const REAL src[3];
+  const REAL dir[3];
 };
 
 

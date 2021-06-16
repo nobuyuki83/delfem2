@@ -410,7 +410,7 @@ void Intersection_ImageRay_TriMesh3(
       //
       aIndElem.resize(0);
       BVH_GetIndElem_Predicate(aIndElem,
-          CIsBV_IntersectLine<BV>(src1.p,dir1.p),
+          CIsBV_IntersectLine<BV,double>(src1.p,dir1.p),
           0, aNodeBVH, aAABB);
       if( aIndElem.empty() ){ continue; } // no bv hit the ray
       std::map<double, CPtElm2<double>> mapDepthPES;

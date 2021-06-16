@@ -343,7 +343,7 @@ TEST(bvh,lineintersection)
     }
     std::vector<unsigned int> aIndElem;
     dfm2::BVH_GetIndElem_Predicate(aIndElem,
-        dfm2::CIsBV_IntersectLine<dfm2::CBV3d_Sphere>(s0.p,d0.p),
+        dfm2::CIsBV_IntersectLine<dfm2::CBV3d_Sphere,double>(s0.p,d0.p),
         bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
     for(int itri0 : aIndElem){
