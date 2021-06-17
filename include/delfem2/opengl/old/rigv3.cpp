@@ -13,17 +13,17 @@
 
 // -------------------------
 #if defined(__APPLE__) // Mac
-#  include <OpenGL/gl.h>
+  #include <OpenGL/gl.h>
 #elif defined(_WIN32) // windows
-#  include <windows.h>
-#  include <GL/gl.h>
+  #include <windows.h>
+  #include <GL/gl.h>
 #else
-#  include <GL/gl.h>
+  #include <GL/gl.h>
 #endif
 
 
 #ifndef M_PI 
-#  define M_PI 3.1415926535
+  #define M_PI 3.1415926535
 #endif
 
 //namespace dfm2 = delfem2;
@@ -107,7 +107,7 @@ DFM2_INLINE void delfem2::opengl::DrawBone_Octahedron(
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
     const CRigBone& bone_p = aBone[ibone_p];
-    bool is_selected_p = (ibone_p == ibone_selected);
+    bool is_selected_p = (ibone_p == (int)ibone_selected);
     const CVec3d p0(bone_p.invBindMat[3], bone_p.invBindMat[7], bone_p.invBindMat[11]);
     const CVec3d p1(bone.invBindMat[3], bone.invBindMat[7], bone.invBindMat[11]);
     ::glPushMatrix();

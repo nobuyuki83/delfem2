@@ -486,6 +486,9 @@ DFM2_INLINE void delfem2::Check_MortonCode_Sort(
   const double bbmin[3],
   const double bbmax[3])
 {
+#ifdef NDEBUG
+  return;
+#else
   for(unsigned int imc=1;imc<aSortedMc.size();++imc){
     std::uint32_t mc0 = aSortedMc[imc-1];
     std::uint32_t mc1 = aSortedMc[imc+0];
@@ -509,6 +512,7 @@ DFM2_INLINE void delfem2::Check_MortonCode_Sort(
     std::cout << std::bitset<32>(mc0) << " " << ip << " " << mc0 << std::endl;
   }
    */
+#endif
 }
 
 DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(

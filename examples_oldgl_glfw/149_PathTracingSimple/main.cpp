@@ -6,7 +6,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <vector>
-#include <chrono>
 #include "delfem2/vec3.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/glfw/viewer3.h"
@@ -127,7 +126,6 @@ CVec3d radiance(
 }
 
 int main(int argc, char *argv[]) {
-  std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
   std::vector<CSphere> aSphere = {//Scene: radius, position, emission, color, material
       CSphere(1e5, CVec3d(1e5 + 1, 40.8, 81.6), CVec3d(), CVec3d(.75, .25, .25), DIFF),//Left
       CSphere(1e5, CVec3d(-1e5 + 99, 40.8, 81.6), CVec3d(), CVec3d(.25, .25, .75), DIFF),//Rght
@@ -167,13 +165,15 @@ int main(int argc, char *argv[]) {
   unsigned int isample = 0.0;
   while (!glfwWindowShouldClose(viewer.window))
   {
-    for (int ih = 0; ih < nh; ih++) {
-      unsigned short Xi[3] = {0, 0, (unsigned short)(ih * ih * ih + isample)}; // random seed
-      for (int iw = 0; iw < nw; iw++){
+    for (unsigned int ih = 0; ih < nh; ih++) {
+      unsigned short Xi[3] = {0, 0, (unsigned short)(ih * ih * ih + isample * isample)}; // random seed
+      for (unsigned int iw = 0; iw < nw; iw++){
         for (int sy = 0; sy < 2; sy++) {
           for (int sx = 0; sx < 2; sx++) {
-            double r1 = 2 * erand48(Xi), dx = r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 - r1);
-            double r2 = 2 * erand48(Xi), dy = r2 < 1 ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
+            const double r1 = 2 * erand48(Xi);
+            const double r2 = 2 * erand48(Xi);
+            const double dx = r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 - r1);
+            const double dy = r2 < 1 ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
             CVec3d d = cx * (((sx + .5 + dx) / 2 + iw) / nw - .5) +
                        cy * (((sy + .5 + dy) / 2 + ih) / nh - .5) + cam.d;
             CVec3d r = radiance(Ray(cam.o + d * 140., d.normalized()), 0, Xi, aSphere);

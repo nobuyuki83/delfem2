@@ -25,7 +25,7 @@ class CBV3_Sphere
 {
 public:
   CBV3_Sphere(){
-    c[0]=c[1]=c[2];
+    c[0]=c[1]=c[2]=0;
     r = -1; // if r is negative this is not active yet
   }
   void AddPoint(const REAL p[3], REAL R){

@@ -127,7 +127,7 @@ TEST(ls,test1)
   {
     const auto time0 = std::chrono::system_clock::now();
     unsigned int nitr1 = 0;
-    { // CG method std::vector
+    for(int itr=0;itr<10;++itr){ // CG method std::vector
       std::vector<double> vx1(vb1.size());
       const std::size_t n = vb1.size();
       std::vector<double> tmp0(n), tmp1(n);
@@ -142,7 +142,7 @@ TEST(ls,test1)
     const auto time1 = std::chrono::system_clock::now();
     // ---------------
     unsigned int nitr0 = 0;
-    { // CG method with eigen
+    for(int itr=0;itr<10;++itr){ // CG method with eigen
       Eigen::VectorXd vx0(vb0.size());
       const std::size_t n = vb0.size();
       Eigen::VectorXd tmp0(n), tmp1(n);
@@ -184,6 +184,8 @@ TEST(ls,test1)
     const auto time0 = std::chrono::system_clock::now();
     unsigned int nitr1 = 0;
     for (int itr = 0; itr < 1000; ++itr) { // solve with ILU-CG std::vector
+      ilu1.SetValueILU(mA1);
+      ilu1.DoILUDecomp();
       std::vector<double> vx1(vb1.size());
       const std::size_t n = vb1.size();
       std::vector<double> tmp0(n), tmp1(n);
@@ -195,6 +197,8 @@ TEST(ls,test1)
     const auto time1 = std::chrono::system_clock::now();
     unsigned int nitr0 = 0;
     for (int itr = 0; itr < 1000; ++itr) { // solve with ILU-CG Eigen
+      delfem2::ILU_CopyValue(ilu0, mA0);
+      delfem2::ILU_Decompose(ilu0);
       Eigen::VectorXd vx0(vb0.size());
       const std::size_t n = vb1.size();
       Eigen::VectorXd tmp0(n), tmp1(n);
