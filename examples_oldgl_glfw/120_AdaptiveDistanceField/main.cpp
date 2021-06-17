@@ -134,7 +134,7 @@ void SetProblem(int iprob)
     class CInSphere : public delfem2::CInput_ADF3
     {
     public:
-      virtual double sdf(double x, double y, double z) const {
+      double sdf(double x, double y, double z) const override {
         double n[3];
         return obj.Projection(n,
                               x, y, z);
@@ -217,14 +217,17 @@ int main(int argc,char* argv[])
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   
   delfem2::opengl::setSomeLighting();
-  
+
+  double time_last_update = -3;
+  int iproblem  = 0;
   while(!glfwWindowShouldClose(viewer.window)){
-    int iproblem  = 0;
     {
-      static int iframe = 0;
-      iproblem = iframe/1000;
-      if( iframe % 1000  == 0 ){ SetProblem(iproblem); }
-      iframe = (iframe+1)%3000;
+      const double time = glfwGetTime();
+      if( time - time_last_update > 2 ){
+        SetProblem(iproblem);
+        iproblem = (iproblem+1)%3;
+        time_last_update = glfwGetTime();
+      }
     }
     // --------------------
     viewer.DrawBegin_oldGL();

@@ -18,7 +18,7 @@
   #include <GL/gl.h>
 #endif
 
-#include <cstring>
+#include <climits>
 
 // header ends here
 // -------------------------------------------------
