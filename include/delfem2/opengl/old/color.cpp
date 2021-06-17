@@ -80,11 +80,11 @@ DFM2_INLINE void DrawSingleTri3D_Scalar_Vtx
   const double* aValVtx,
   const std::vector<std::pair<double, CColor> >& colorMap)
 {
-  const int i0 = tri[0];
-  const int i1 = tri[1];
-  const int i2 = tri[2];
-  if (i0==-1){
-    assert(i1==-1); assert(i2==-1);
+  const unsigned int i0 = tri[0];
+  const unsigned int i1 = tri[1];
+  const unsigned int i2 = tri[2];
+  if (i0==UINT_MAX){
+    assert( i1==UINT_MAX && i2==UINT_MAX );
     return;
   }
     //  assert(i0>=0&&i0<(int)aXYZ.size()/3);
@@ -138,7 +138,10 @@ DFM2_INLINE void DrawSingleQuad3D_Scalar_Vtx
 }
 
 
-DFM2_INLINE bool IsAbovePlane(const double p[3], const double org[3], const double n[3])
+DFM2_INLINE bool IsAbovePlane(
+    const double p[3],
+    const double org[3],
+    const double n[3])
 {
   const double dot = (p[0]-org[0])*n[0] + (p[1]-org[1])*n[1] + (p[2]-org[2])*n[2];
   return dot > 0;
@@ -151,7 +154,9 @@ DFM2_INLINE bool IsAbovePlane(const double p[3], const double org[3], const doub
 
 // -----------------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::myGlMaterialDiffuse(const CColor& color){
+DFM2_INLINE void delfem2::opengl::myGlMaterialDiffuse(
+    const CColor& color)
+{
   float c[4];
   c[0] = color.r;
   c[1] = color.g;
@@ -160,23 +165,29 @@ DFM2_INLINE void delfem2::opengl::myGlMaterialDiffuse(const CColor& color){
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 }
 
-DFM2_INLINE void delfem2::opengl::myGlColor(const CColor& c){
+DFM2_INLINE void delfem2::opengl::myGlColor(
+    const CColor& c)
+{
   ::glColor4d(c.r, c.g, c.b, c.a );
 }
 
-DFM2_INLINE void delfem2::opengl::myGlColorDiffuse(const CColor& color){
+DFM2_INLINE void delfem2::opengl::myGlColorDiffuse(
+    const CColor& color)
+{
   ::glColor4d(color.r, color.g, color.b, color.a );
   float c[4] = {color.r, color.g, color.b, color.a};
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 }
 
-DFM2_INLINE void delfem2::opengl::myGlDiffuse(const CColor& color){
+DFM2_INLINE void delfem2::opengl::myGlDiffuse(
+    const CColor& color)
+{
   float c[4] = {color.r, color.g, color.b, color.a};
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 }
 
-DFM2_INLINE void delfem2::opengl::DrawBackground
- (const CColor& c)
+DFM2_INLINE void delfem2::opengl::DrawBackground(
+    const CColor& c)
 {
   glPushAttrib(GL_TRANSFORM_BIT|GL_CURRENT_BIT|GL_ENABLE_BIT);
   ::glShadeModel(GL_SMOOTH);
@@ -222,21 +233,24 @@ DFM2_INLINE void delfem2::opengl::DrawBackground()
 
 // ------------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::heatmap_glColor(double input)
+DFM2_INLINE void delfem2::opengl::heatmap_glColor(
+    double input)
 {
   double c[3]; ::delfem2::heatmap(input,c);
   ::glColor3dv(c);
 }
 
-DFM2_INLINE void delfem2::opengl::heatmap_glDiffuse(double input)
+DFM2_INLINE void delfem2::opengl::heatmap_glDiffuse(
+    double input)
 {
   double c[3]; ::delfem2::heatmap(input,c);
   float cf[4] = {(float)c[0],(float)c[1],(float)c[2],1.f};
   glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,cf);
 }
 
-DFM2_INLINE void delfem2::opengl::heatmap
- (double input, const std::vector<std::pair<double, CColor> >& colorMap)
+DFM2_INLINE void delfem2::opengl::heatmap(
+    double input,
+    const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const CColor& c = getColor(input, colorMap);
   opengl::myGlColorDiffuse(c);
@@ -418,8 +432,8 @@ DFM2_INLINE void delfem2::opengl::drawMeshTri3D_ScalarP0(
     const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const unsigned int nTri = aTri.size()/3;
-  if( aValSrf.size()!=nTri) return;
-  /////
+  if( aValSrf.size()!=nTri ){ return; }
+  // ---
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri = 0; itri<nTri; ++itri){
     const int i0 = aTri[itri*3+0];
@@ -459,8 +473,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_VtxColor(
     const unsigned int i2 = aTri[itri*3+1];
     const unsigned int i3 = aTri[itri*3+2];
     if( i1 == UINT_MAX ){
-      assert(i2==UINT_MAX);
-      assert(i3==UINT_MAX);
+      assert( i2==UINT_MAX && i3==UINT_MAX );
       continue;
     }
     ::glBegin(GL_TRIANGLES);
@@ -486,11 +499,13 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_VtxColor(
 // tet from here
 
 // 3D value
-DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_ScalarP1
-(const double* aXYZ, unsigned int nXYZ,
- const unsigned int* aTet, unsigned int nTet,
- const double* aValSrf,
- const std::vector<std::pair<double, CColor> >& colorMap)
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_ScalarP1(
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
+    const double* aValSrf,
+    const std::vector<std::pair<double, CColor> >& colorMap)
 {
   ::glBegin(GL_TRIANGLES);
   for (unsigned itri = 0; itri<nTet; ++itri){
@@ -532,11 +547,12 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_ScalarP1
 
 
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Cut
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTet,
- const std::vector<CColor>& aColor,
- const double org[3], const double ncut[3])
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Cut(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTet,
+    const std::vector<CColor>& aColor,
+    const double org[3],
+    const double ncut[3])
 {
   glEnable(GL_COLOR_MATERIAL);
   glColorMaterial(GL_FRONT, GL_DIFFUSE);

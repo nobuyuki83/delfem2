@@ -210,8 +210,6 @@ DFM2_INLINE void delfem2::EMat_SolidDynamicLinear_Tri2D(
 // -----------------------------------------
 // below: quad
 
-
-
 void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
     double emat[4][4][2][2],
     double lx,
@@ -225,9 +223,9 @@ void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
   unsigned int nw = NIntLineGauss[ngauss];
   for(unsigned int iw=0;iw<nw;++iw){
     for(unsigned int jw=0;jw<nw;++jw){
-      const double w = lx*ly*0.25*LineGauss[ngauss][iw][1]*LineGauss[ngauss][jw][1];
-      const double x1 = (1-LineGauss[ngauss][iw][0])*0.5;
-      const double y1 = (1-LineGauss[ngauss][jw][0])*0.5;
+      const double w = lx*ly*0.25*LineGauss<double>[ngauss][iw][1]*LineGauss<double>[ngauss][jw][1];
+      const double x1 = (1-LineGauss<double>[ngauss][iw][0])*0.5;
+      const double y1 = (1-LineGauss<double>[ngauss][jw][0])*0.5;
       const double x2 = 1 - x1;
       const double y2 = 1 - y1;
       // u = u1*(x1y1) + u2*(x2y1) + u3*(x2y2) + u4*(x1y2)
@@ -242,45 +240,40 @@ void delfem2::EMat_SolidLinear2_QuadOrth_GaussInt(
   }
 }
 
-DFM2_INLINE void delfem2::MakeMat_LinearSolid3D_Static_Q1(
+DFM2_INLINE void delfem2::elemMatRes_LinearSolidGravity3_Static_Q1(
     const double myu,
     const double lambda,
     const double rho,
-    const double g_x,
-    const double g_y,
-    const double g_z,
+    const double g[3],
     const double coords[8][3],
     const double disp[8][3],
     //
     double emat[8][8][3][3],
     double eres[8][3])
 {
-  const int nDegInt = 2;
-  const int nInt = NIntLineGauss[nDegInt];
-  const double (*Gauss)[2] = LineGauss[nDegInt];
+  constexpr int iGauss = 2;
+  constexpr int nInt = NIntLineGauss[iGauss];
+  const double (*gauss)[2] = LineGauss<double>[iGauss];
 
-  for(unsigned int i=0;i<8*8*3*3;i++){ *( &emat[0][0][0][0]+i) = 0.0; }
-  for(unsigned int i=0;i<    8*3;i++){ *( &eres[0][0]      +i) = 0.0; }
+  std::fill_n(&emat[0][0][0][0],8*8*3*3, 0.0);
+  std::fill_n(&eres[0][0], 8*3, 0.0);
 
   double vol = 0.0;
   for(int ir1=0;ir1<nInt;ir1++){
     for(int ir2=0;ir2<nInt;ir2++){
       for(int ir3=0;ir3<nInt;ir3++){
-        double detwei, dndx[8][3],an[8];
-        {
-          const double r1 = Gauss[ir1][0];
-          const double r2 = Gauss[ir2][0];
-          const double r3 = Gauss[ir3][0];
-          double detjac;
-          ShapeFunc_Hex8(r1, r2, r3, coords, detjac, dndx, an);
-          detwei = detjac * Gauss[ir1][1] * Gauss[ir2][1] * Gauss[ir3][1];
-        }
+        const double r1 = gauss[ir1][0];
+        const double r2 = gauss[ir2][0];
+        const double r3 = gauss[ir3][0];
+        double dndx[8][3], an[8], detjac;
+        ShapeFunc_Hex8(r1, r2, r3, coords, detjac, dndx, an);
+        const double detwei = detjac * gauss[ir1][1] * gauss[ir2][1] * gauss[ir3][1];
         vol += detwei;
         femsolidlinear::AddEmat_LinearSolid3<8>(emat,lambda,myu,dndx,detwei);
         for(int ino=0;ino<8;ino++){
-          eres[ino][0] += detwei*rho*g_x*an[ino];
-          eres[ino][1] += detwei*rho*g_y*an[ino];
-          eres[ino][2] += detwei*rho*g_z*an[ino];
+          eres[ino][0] += detwei*rho*g[0]*an[ino];
+          eres[ino][1] += detwei*rho*g[1]*an[ino];
+          eres[ino][2] += detwei*rho*g[2]*an[ino];
         }
       }
     }
@@ -371,16 +364,17 @@ DFM2_INLINE void delfem2::matRes_LinearSolid_TetP2(
     const double dldx[4][3],
     const double disp[10][3])
 {
-  for (unsigned int i = 0; i<10*10*3*3; i++){ (&emat[0][0][0][0])[i] = 0; }
-  for (unsigned int i = 0; i<10*3; i++){ (&eres[0][0])[i] = 0; }
-  unsigned int nOrder = 2;
-  unsigned int nInt = NIntTetGauss[nOrder];
+  constexpr unsigned int nOrder = 2;
+  constexpr unsigned int nInt = NIntTetGauss[nOrder];
+  const double (*gauss)[4] = TetGauss<double>[nOrder];
+  std::fill_n(&emat[0][0][0][0], 10*10*3*3, 0.0);
+  std::fill_n( &eres[0][0], 10*3, 0.0);
   for (unsigned int iint = 0; iint<nInt; iint++){
-    double l0 = TetGauss[nOrder][iint][0];
-    double l1 = TetGauss[nOrder][iint][1];
-    double l2 = TetGauss[nOrder][iint][2];
+    double l0 = gauss[iint][0];
+    double l1 = gauss[iint][1];
+    double l2 = gauss[iint][2];
     double l3 = (1-l0-l1-l2);
-    double w = TetGauss[nOrder][iint][3];
+    double w = gauss[iint][3];
     double N[10] = {
       l0*(2*l0-1),
       l1*(2*l1-1),

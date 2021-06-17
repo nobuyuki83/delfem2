@@ -136,9 +136,9 @@ void delfem2::EMat_Poisson2_QuadOrth_GaussInt(
   unsigned int nw = NIntLineGauss[ngauss];
   for (unsigned int iw = 0; iw < nw; ++iw) {
     for (unsigned int jw = 0; jw < nw; ++jw) {
-      const double w = lx * ly * 0.25 * LineGauss[ngauss][iw][1] * LineGauss[ngauss][jw][1];
-      const double x1 = (1 - LineGauss[ngauss][iw][0]) * 0.5;
-      const double y1 = (1 - LineGauss[ngauss][jw][0]) * 0.5;
+      const double w = lx * ly * 0.25 * LineGauss<double>[ngauss][iw][1] * LineGauss<double>[ngauss][jw][1];
+      const double x1 = (1 - LineGauss<double>[ngauss][iw][0]) * 0.5;
+      const double y1 = (1 - LineGauss<double>[ngauss][jw][0]) * 0.5;
       const double x2 = 1 - x1;
       const double y2 = 1 - y1;
       // u = u1x1y1 + u2x2y1 + u3x2y2 + u4x1y2

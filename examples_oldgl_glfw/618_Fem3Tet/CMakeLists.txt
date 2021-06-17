@@ -2,28 +2,31 @@ cmake_minimum_required(VERSION 3.12)
 
 option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 
-#################################
+######################################################
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "-O2 /W4 \
-    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 \
-    /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456")
+  set(CMAKE_CXX_FLAGS "-O2 -std=c++11 -W4\
+    /wd4100 /wd4458 /wd4577 /wd4267\
+    /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505\
+    /wd4838 /wd4305 /wd4505 /wd4456")
 else ()
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -Wno-unused-variable  -Wno-unused-function")
 endif ()
 
-#################################
+####################################
 
-project(630_FemRod2Static)
+project(618_Fem3Tet)
 
-# opengl
-find_package(OpenGL REQUIRED)
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
 SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
+
+# opengl
+find_package(OpenGL REQUIRED)
 
 # dfm2
 IF (DFM2_HEADER_ONLY)
@@ -39,12 +42,12 @@ else ()
 ENDIF ()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-#################################
+############################################
 
 include_directories(
     ${OPENGL_INCLUDE_DIR}
-    ${GLFW_INCLUDE_DIR}
     ${DELFEM2_INCLUDE_DIR}
+    ${GLFW_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
