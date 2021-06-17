@@ -4,20 +4,20 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 
 ######################################################
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "-O2 -std=c++11 -W4\
-    /wd4100 /wd4458 /wd4577 /wd4267\
-    /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505\
-    /wd4838 /wd4305 /wd4505 /wd4456")
+  set(CMAKE_CXX_FLAGS "-O2 /W4\
+  /wd4100 /wd4458 /wd4577 /wd4267 /wd4244\
+  /wd4800 /wd4996 /wd4530 /wd4245 /wd4505\
+  /wd4838 /wd4305 /wd4505 /wd4456")
 else ()
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -Wno-unused-variable  -Wno-unused-function")
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations")
 endif ()
 
-####################################
+############################################
 
-project(618_Fem3d)
+project(634_FemLinearSolid3)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -42,12 +42,12 @@ else ()
 ENDIF ()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-############################################
+########################################
 
 include_directories(
     ${OPENGL_INCLUDE_DIR}
-    ${DELFEM2_INCLUDE_DIR}
     ${GLFW_INCLUDE_DIR}
+    ${DELFEM2_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}

@@ -54,11 +54,11 @@ DFM2_INLINE void stress_LinearSolid_TetP2 (
   const double dldx[4][3],
   const double disp[10][3]);
 
-void MakeMat_LinearSolid3D_Static_Q1(const double myu, const double lambda,
+void elemMatRes_LinearSolidGravity3_Static_Q1(
+    const double myu,
+    const double lambda,
     const double rho,
-    const double g_x,
-    const double g_y,
-    const double g_z,
+    const double g[3],
     const double coords[8][3],
     const double disp[8][3],
     //
@@ -237,9 +237,7 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
     const double myu,
     const double lambda,
     const double rho,
-    const double g_x,
-    const double g_y,
-    const double g_z,
+    const double gravity[3],
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& aHex,
     const std::vector<double>& aVal)
@@ -256,11 +254,11 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
     double disps[8][3]; FetchData<8,3>(disps, aIP, aVal.data());
     //
     double eres[8][3], emat[8][8][3][3];
-    MakeMat_LinearSolid3D_Static_Q1(
+    elemMatRes_LinearSolidGravity3_Static_Q1(
         myu, lambda,
-        rho, g_x, g_y, g_z,
+        rho, gravity,
         coords, disps,
-        emat,eres);
+        emat, eres);
     for (int ino = 0; ino<8; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
@@ -529,7 +527,7 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/femsolidlinear.cpp"
+  #include "delfem2/femsolidlinear.cpp"
 #endif
   
 #endif /* fem_ematrix_h */

@@ -4,8 +4,7 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 
 ######################################################
 
-enable_language(CXX)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF (MSVC)
   set(CMAKE_CXX_FLAGS "/W4 -O2 \

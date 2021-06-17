@@ -744,8 +744,14 @@ public:
     return sdf.Projection(n,
                           x, y, z);
   }
-  virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
-                     double px, double py, double pz) const
+  virtual void Level(
+      int& ilevel_vol,
+      int& ilevel_srf,
+      int& nlayer,
+      double& sdf,
+      double px,
+      double py,
+      double pz) const
   {
     sdf = this->SignedDistance(px, py, pz);
     ilevel_vol = -1;

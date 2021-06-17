@@ -18,7 +18,8 @@ constexpr static unsigned int NIntLineGauss[4] = {
   1, 2, 3, 4
 };
 
-constexpr static double LineGauss[4][4][2] =
+template <typename T>
+constexpr static T LineGauss[4][4][2] =
 {
   {
     { 0.0, 2.0 },
@@ -47,7 +48,9 @@ constexpr static double LineGauss[4][4][2] =
 };
 
 constexpr static unsigned int NIntTriGauss[3] = { 1, 3, 7 };
-constexpr static double TriGauss[3][7][3] =
+
+template <typename T>
+constexpr static T TriGauss[3][7][3] =
 {
   { // liner
     { 0.3333333333, 0.3333333333, 1.0 },
@@ -80,7 +83,8 @@ constexpr static unsigned int NIntTetGauss[4] = {
     1, 4, 5, 16
 };
 
-constexpr static double TetGauss[4][16][4] = {
+template <typename T>
+constexpr static T TetGauss[4][16][4] = {
   {	// order-1    1point
       { 0.25, 0.25, 0.25, 1.0 },
   },
@@ -268,7 +272,7 @@ T DetInv_Mat3(
     T Cinv[][3],
     const T C[3][3])
 {
-  const double p3C =
+  const T p3C =
       + C[0][0] * C[1][1] * C[2][2]
       + C[1][0] * C[2][1] * C[0][2]
       + C[2][0] * C[0][1] * C[1][2]
@@ -277,7 +281,7 @@ T DetInv_Mat3(
       - C[1][0] * C[0][1] * C[2][2];
   // -----
   { // inverse of right Cauchy-Green tensor
-    const double inv_det = 1.0 / p3C;
+    const T inv_det = 1. / p3C;
     Cinv[0][0] = inv_det * (C[1][1] * C[2][2] - C[1][2] * C[2][1]);
     Cinv[0][1] = inv_det * (C[0][2] * C[2][1] - C[0][1] * C[2][2]);
     Cinv[0][2] = inv_det * (C[0][1] * C[1][2] - C[0][2] * C[1][1]);
