@@ -41,6 +41,7 @@ There are currently no tutorial available for this library. To understand the co
 + C++ test:
   + [test_cpp](test_cpp): tests using C++
   + [test_cuda](test_cuda) : test using cuda
+  + [test_eigen](test_eigen) : test using eigen
 
 Several demos in "examples_newgl_glfw" can be run on the browser. Please take a look at https://nobuyuki83.github.io/delfem2/
 
@@ -119,5 +120,4 @@ If DelFEM2 contributes to an academic publication, cite it as:
 ```
 
 DelFEM2 is currently developed and maintained by [Nobuyuki Umetani](http://www.nobuyuki-umetani.com/). If you have questions or comments please [contact via email](mailto:n.umetani@gmail.com).
-
 

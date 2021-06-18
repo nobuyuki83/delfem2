@@ -912,7 +912,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
       const int np = (int)aXY0.size()/2;
       mat_A.Initialize(np, 3, true);
       mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
-      ilu_A.Initialize_ILU0(mat_A);
+      ilu_A.SetPattern0(mat_A);
     }
     std::vector<double> aVal;
     aVal.assign(aXY0.size()/2*3, 0.0);
@@ -935,8 +935,8 @@ TEST(fem,plate_bending_mitc3_cantilever)
       // --------------------------
       std::vector<double> vec_x;
       {
-        ilu_A.SetValueILU(mat_A);
-        ilu_A.DoILUDecomp();
+        ilu_A.CopyValue(mat_A);
+        ilu_A.Decompose();
         vec_x.resize(vec_b.size());
         std::vector<double> conv;
         {

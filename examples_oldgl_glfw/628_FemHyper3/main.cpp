@@ -45,7 +45,7 @@ void InitializeMatrix(
   smat.SetPattern(
       psup_ind.data(), psup_ind.size(),
       psup.data(), psup.size());
-  ilu.Initialize_ILU0(smat);
+  ilu.SetPattern0(smat);
 }
 
 void Simulation(
@@ -116,8 +116,8 @@ void Simulation(
   // --------------------------------
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  silu.SetValueILU(smat);
-  silu.DoILUDecomp();
+  silu.CopyValue(smat);
+  silu.Decompose();
   std::vector<double> vecx(vecb.size());
   {
     const std::size_t n = vecb.size();

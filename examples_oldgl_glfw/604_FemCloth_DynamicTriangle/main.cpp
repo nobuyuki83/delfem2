@@ -185,7 +185,7 @@ int main(int argc,char* argv[])
         np);
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.SetPattern(psup_ind.data(),psup_ind.size(), psup.data(),psup.size());
-    ilu_A.Initialize_ILU0(mat_A);
+    ilu_A.SetPattern0(mat_A);
   }
   aUVW.resize(aXYZ.size(),0.0);
   aBCFlag.resize(aXYZ.size(),0);

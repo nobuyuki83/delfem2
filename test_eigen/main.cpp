@@ -6,15 +6,12 @@
  */
 
 #include "gtest/gtest.h"
-#include <cstring>
-#include <random>
 #include "delfem2/lsvecx.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/femsolidlinear.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/jagarray.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri.h"
 #include "delfem2/eigen/ls_dense.h"
@@ -91,7 +88,6 @@ TEST(ls,test1)
         psup_ind0, psup0,
         aTri1.data(), aTri1.size() / 3, 3,
         aXY1.size() / 2);
-    dfm2::JArray_Sort(psup_ind0, psup0);
     mA0.Initialize(np);
     mA0.SetPattern(psup_ind0.data(), psup_ind0.size(), psup0.data(), psup0.size());
     const double myu = 10.0, lambda = 10.0, rho = 1.0, g_x = 0.0, g_y = -3.0;
@@ -123,16 +119,17 @@ TEST(ls,test1)
   }
   // ---------------
   double conv_ratio = 1.0e-6;
-  int iteration = 1000;
+  int iteration = 10000;
   {
+    const unsigned int max_itr = 10;
     const auto time0 = std::chrono::system_clock::now();
     unsigned int nitr1 = 0;
-    for(int itr=0;itr<10;++itr){ // CG method std::vector
-      std::vector<double> vx1(vb1.size());
+    for(int itr=0;itr<max_itr;++itr){ // CG method std::vector
       const std::size_t n = vb1.size();
-      std::vector<double> tmp0(n), tmp1(n);
+      std::vector<double> tmp0(n), tmp1(n), vx1(n), vB1(n);
+      vB1 = vb1;
       std::vector<double> aConv = Solve_CG(
-          dfm2::CVecXd(vb1),
+          dfm2::CVecXd(vB1),
           dfm2::CVecXd(vx1),
           dfm2::CVecXd(tmp0),
           dfm2::CVecXd(tmp1),
@@ -142,76 +139,77 @@ TEST(ls,test1)
     const auto time1 = std::chrono::system_clock::now();
     // ---------------
     unsigned int nitr0 = 0;
-    for(int itr=0;itr<10;++itr){ // CG method with eigen
-      Eigen::VectorXd vx0(vb0.size());
+    for(int itr=0;itr<max_itr;++itr){ // CG method with eigen
       const std::size_t n = vb0.size();
-      Eigen::VectorXd tmp0(n), tmp1(n);
+      Eigen::VectorXd tmp0(n), tmp1(n), vx0(n), vB0(n);
+      vB0 = vb0;
       std::vector<double> aConv = delfem2::Solve_CG(
-          vb0, vx0, tmp0, tmp1,
+          vB0, vx0, tmp0, tmp1,
           conv_ratio, iteration, mA0);
       nitr0 = aConv.size();
     }
-    EXPECT_EQ(nitr0,nitr1);
+    EXPECT_NEAR(nitr0,nitr1,10);
     const auto time2 = std::chrono::system_clock::now();
     double elapsed01 = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
     double elapsed12 = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1).count();
-    std::cout << "cg std::vector: " << elapsed01 << "   cg eigen: " << elapsed12 << std::endl;
+    std::cout << "cg std::vector: " << elapsed01 << "   cg eigen: " << elapsed12 << " iteration: " << nitr0 << " " << nitr1 << std::endl;
   }
   delfem2::CILU_SparseBlock<Eigen::Matrix2d,Eigen::aligned_allocator<Eigen::Matrix2d>> ilu0;
   delfem2::CPreconditionerILU<double> ilu1;
   { // LU
-    ilu1.Initialize_ILU0(mA1);
-    ilu1.SetValueILU(mA1);
-    ilu1.DoILUDecomp();
+    ilu1.SetPattern0(mA1);
+    ilu1.CopyValue(mA1);
+    ilu1.Decompose();
     delfem2::ILU_SetPattern0(ilu0, mA0);
     delfem2::ILU_CopyValue(ilu0, mA0);
     delfem2::ILU_Decompose(ilu0);
     // check if the entry is the same
-    for(unsigned int icrs=0;icrs<ilu0.mat.valCrs.size();++icrs) {
-      EXPECT_NEAR(ilu0.mat.valCrs[icrs](0, 0), ilu1.mat.valCrs[icrs * 4 + 0], epsilon);
-      EXPECT_NEAR(ilu0.mat.valCrs[icrs](0, 1), ilu1.mat.valCrs[icrs * 4 + 1], epsilon);
-      EXPECT_NEAR(ilu0.mat.valCrs[icrs](1, 0), ilu1.mat.valCrs[icrs * 4 + 2], epsilon);
-      EXPECT_NEAR(ilu0.mat.valCrs[icrs](1, 1), ilu1.mat.valCrs[icrs * 4 + 3], epsilon);
+    for(unsigned int icrs=0;icrs<ilu0.valCrs.size();++icrs) {
+      EXPECT_NEAR(ilu0.valCrs[icrs](0, 0), ilu1.valCrs[icrs * 4 + 0], epsilon);
+      EXPECT_NEAR(ilu0.valCrs[icrs](0, 1), ilu1.valCrs[icrs * 4 + 1], epsilon);
+      EXPECT_NEAR(ilu0.valCrs[icrs](1, 0), ilu1.valCrs[icrs * 4 + 2], epsilon);
+      EXPECT_NEAR(ilu0.valCrs[icrs](1, 1), ilu1.valCrs[icrs * 4 + 3], epsilon);
     }
-    for(unsigned int iblk=0;iblk<ilu0.mat.valDia.size();++iblk) {
-      EXPECT_NEAR(ilu0.mat.valDia[iblk](0, 0), ilu1.mat.valDia[iblk * 4 + 0], epsilon);
-      EXPECT_NEAR(ilu0.mat.valDia[iblk](0, 1), ilu1.mat.valDia[iblk * 4 + 1], epsilon);
-      EXPECT_NEAR(ilu0.mat.valDia[iblk](1, 0), ilu1.mat.valDia[iblk * 4 + 2], epsilon);
-      EXPECT_NEAR(ilu0.mat.valDia[iblk](1, 1), ilu1.mat.valDia[iblk * 4 + 3], epsilon);
+    for(unsigned int iblk=0;iblk<ilu0.valDia.size();++iblk) {
+      EXPECT_NEAR(ilu0.valDia[iblk](0, 0), ilu1.valDia[iblk * 4 + 0], epsilon);
+      EXPECT_NEAR(ilu0.valDia[iblk](0, 1), ilu1.valDia[iblk * 4 + 1], epsilon);
+      EXPECT_NEAR(ilu0.valDia[iblk](1, 0), ilu1.valDia[iblk * 4 + 2], epsilon);
+      EXPECT_NEAR(ilu0.valDia[iblk](1, 1), ilu1.valDia[iblk * 4 + 3], epsilon);
     }
   }
   {
     const auto time0 = std::chrono::system_clock::now();
+    const unsigned int max_itr = 10;
     unsigned int nitr1 = 0;
-    for (int itr = 0; itr < 1000; ++itr) { // solve with ILU-CG std::vector
-      ilu1.SetValueILU(mA1);
-      ilu1.DoILUDecomp();
-      std::vector<double> vx1(vb1.size());
+    for (int itr = 0; itr < max_itr; ++itr) { // solve with ILU-CG std::vector
+      ilu1.CopyValue(mA1);
+      ilu1.Decompose();
       const std::size_t n = vb1.size();
-      std::vector<double> tmp0(n), tmp1(n);
+      std::vector<double> tmp0(n), tmp1(n), vx1(n), vB1(n);
+      vB1 = vb1;
       std::vector<double> aConv = Solve_PCG(
-          dfm2::CVecXd(vb1), dfm2::CVecXd(vx1), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+          dfm2::CVecXd(vB1), dfm2::CVecXd(vx1), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
           conv_ratio, iteration, mA1, ilu1);
       nitr1 = aConv.size();
     }
     const auto time1 = std::chrono::system_clock::now();
     unsigned int nitr0 = 0;
-    for (int itr = 0; itr < 1000; ++itr) { // solve with ILU-CG Eigen
+    for (int itr = 0; itr < max_itr; ++itr) { // solve with ILU-CG Eigen
       delfem2::ILU_CopyValue(ilu0, mA0);
       delfem2::ILU_Decompose(ilu0);
-      Eigen::VectorXd vx0(vb0.size());
       const std::size_t n = vb1.size();
-      Eigen::VectorXd tmp0(n), tmp1(n);
+      Eigen::VectorXd tmp0(n), tmp1(n), vx0(n), vB0(n);
+      vB0 = vb0;
       std::vector<double> aConv = Solve_PCG(
-          vb0, vx0, tmp0, tmp1,
+          vB0, vx0, tmp0, tmp1,
           conv_ratio, iteration, mA0, ilu0);
       nitr0 = aConv.size();
     }
+    EXPECT_NEAR(nitr0,nitr1,10);
     const auto time2 = std::chrono::system_clock::now();
     double elapsed01 = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
     double elapsed12 = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1).count();
-    std::cout << "ilu-cg std::vector: " << elapsed01 << "   ilu-cg eigen: " << elapsed12 << std::endl;
-    EXPECT_EQ(nitr0,nitr1);
+    std::cout << "ilu-cg std::vector: " << elapsed01 << "   ilu-cg eigen: " << elapsed12 << " iteration: " << nitr0 << " " << nitr1 << std::endl;
   }
 }
 

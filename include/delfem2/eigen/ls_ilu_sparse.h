@@ -14,7 +14,11 @@ class CILU_SparseBlock {
 public:
   CILU_SparseBlock() {}
 public:
-  CMatrixSparseBlock<MAT,ALLOCATOR> mat;
+  unsigned int nblk;
+  std::vector<unsigned int> colInd;
+  std::vector<unsigned int> rowPtr;
+  std::vector<MAT, ALLOCATOR> valCrs;
+  std::vector<MAT, ALLOCATOR> valDia;
   std::vector<unsigned int> m_diaInd;
 };
 
@@ -25,19 +29,29 @@ void ILU_SetPattern0(
     CILU_SparseBlock<MAT,ALLOCATOR>& ilu,
     const CMatrixSparseBlock<MAT,ALLOCATOR>& A)
 {
-  ilu.mat.nrowblk = A.nrowblk;
-  ilu.mat.ncolblk = A.ncolblk;
-  ilu.mat.colInd = A.colInd;
-  ilu.mat.rowPtr = A.rowPtr;
-  ilu.mat.valCrs.resize(A.valCrs.size());
-  ilu.mat.valDia.resize(A.valDia.size());
   const unsigned int nblk = A.nrowblk;
+  ilu.nblk = nblk;
+  ilu.colInd = A.colInd;
+  ilu.rowPtr = A.rowPtr;
+  ilu.valCrs.resize(ilu.rowPtr.size());
+  ilu.valDia.resize(ilu.nblk);
   ilu.m_diaInd.resize(nblk);
+  // ---------------
+  // sort mat.rowPtr
+  for(unsigned int iblk=0;iblk<nblk;++iblk) {
+    const unsigned int icrs0 = ilu.colInd[iblk];
+    const unsigned int icrs1 = ilu.colInd[iblk+1];
+    std::sort(
+        ilu.rowPtr.data()+icrs0,
+        ilu.rowPtr.data()+icrs1);
+  }
+  // ------------
+  // set m_diaInd
   for(unsigned int iblk=0;iblk<nblk;iblk++){
-    ilu.m_diaInd[iblk] = ilu.mat.colInd[iblk+1];
-    for(unsigned int icrs=ilu.mat.colInd[iblk];icrs<ilu.mat.colInd[iblk+1];icrs++){
-      assert( icrs < ilu.mat.rowPtr.size() );
-      const int jblk0 = ilu.mat.rowPtr[icrs];
+    ilu.m_diaInd[iblk] = ilu.colInd[iblk+1];
+    for(unsigned int icrs=ilu.colInd[iblk];icrs<ilu.colInd[iblk+1];icrs++){
+      assert( icrs < ilu.rowPtr.size() );
+      const int jblk0 = ilu.rowPtr[icrs];
       assert( jblk0 < nblk );
       if( jblk0 > iblk ){
         ilu.m_diaInd[iblk] = icrs;
@@ -52,17 +66,17 @@ void ILU_CopyValue(
     CILU_SparseBlock<MAT,ALLOCATOR>& ilu,
     const CMatrixSparseBlock<MAT,ALLOCATOR>& A)
 {
-  const unsigned int nblk = ilu.mat.nrowblk;
+  const unsigned int nblk = ilu.nblk;
   assert( A.nrowblk == nblk && A.ncolblk == nblk );
   std::vector<int> row2crs(nblk,-1);
   // copy diagonal value
-  ilu.mat.valDia = A.valDia;
+  ilu.valDia = A.valDia;
   // copy off-diagonal values
-  for(auto& b : ilu.mat.valCrs){ b.setZero(); } // set zero
+  for(auto& b : ilu.valCrs){ b.setZero(); } // set zero
   for(unsigned int iblk=0;iblk<nblk;iblk++){
-    for(unsigned int ijcrs=ilu.mat.colInd[iblk];ijcrs<ilu.mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<ilu.mat.rowPtr.size() );
-      const unsigned int jblk0 = ilu.mat.rowPtr[ijcrs];
+    for(unsigned int ijcrs=ilu.colInd[iblk];ijcrs<ilu.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      const unsigned int jblk0 = ilu.rowPtr[ijcrs];
       assert( jblk0 < nblk );
       row2crs[jblk0] = ijcrs;
     }
@@ -72,11 +86,11 @@ void ILU_CopyValue(
       assert( jblk0<nblk );
       const int ijcrs0 = row2crs[jblk0];
       if( ijcrs0 == UINT_MAX ) continue;
-      ilu.mat.valCrs[ijcrs0] = A.valCrs[ijcrs];
+      ilu.valCrs[ijcrs0] = A.valCrs[ijcrs];
     }
-    for(unsigned int ijcrs=ilu.mat.colInd[iblk];ijcrs<ilu.mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<ilu.mat.rowPtr.size() );
-      const unsigned int jblk0 = ilu.mat.rowPtr[ijcrs];
+    for(unsigned int ijcrs=ilu.colInd[iblk];ijcrs<ilu.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      const unsigned int jblk0 = ilu.rowPtr[ijcrs];
       assert( jblk0 < nblk );
       row2crs[jblk0] = -1;
     }
@@ -87,48 +101,48 @@ template<class MAT, class ALLOCATOR>
 bool ILU_Decompose(
     CILU_SparseBlock<MAT,ALLOCATOR>& ilu)
 {
-  const unsigned int nblk = ilu.mat.nrowblk;
+  const unsigned int nblk = ilu.nblk;
   std::vector<unsigned int> row2crs(nblk,UINT_MAX);
   for(unsigned int iblk=0;iblk<nblk;iblk++){
-    for(unsigned int ijcrs=ilu.mat.colInd[iblk];ijcrs<ilu.mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<ilu.mat.rowPtr.size() );
-      const unsigned int jblk0 = ilu.mat.rowPtr[ijcrs];
+    for(unsigned int ijcrs=ilu.colInd[iblk];ijcrs<ilu.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      const unsigned int jblk0 = ilu.rowPtr[ijcrs];
       assert( jblk0<nblk );
       row2crs[jblk0] = ijcrs;
     }
     // [L] * [D^-1*U]
-    for(unsigned int ikcrs=ilu.mat.colInd[iblk];ikcrs<ilu.m_diaInd[iblk];ikcrs++){
-      const unsigned int kblk = ilu.mat.rowPtr[ikcrs];
+    for(unsigned int ikcrs=ilu.colInd[iblk];ikcrs<ilu.m_diaInd[iblk];ikcrs++){
+      const unsigned int kblk = ilu.rowPtr[ikcrs];
       assert( kblk<nblk );
-      const MAT& vik = ilu.mat.valCrs[ikcrs];
-      for(unsigned int kjcrs=ilu.m_diaInd[kblk];kjcrs<ilu.mat.colInd[kblk+1];kjcrs++){
-        const unsigned int jblk0 = ilu.mat.rowPtr[kjcrs];
+      const MAT& vik = ilu.valCrs[ikcrs];
+      for(unsigned int kjcrs=ilu.m_diaInd[kblk];kjcrs<ilu.colInd[kblk+1];kjcrs++){
+        const unsigned int jblk0 = ilu.rowPtr[kjcrs];
         assert( jblk0<nblk );
-        const MAT& vkj = ilu.mat.valCrs[kjcrs];
+        const MAT& vkj = ilu.valCrs[kjcrs];
         if( jblk0 != iblk ){
           const unsigned int ijcrs0 = row2crs[jblk0];
           if( ijcrs0 == UINT_MAX ){ continue; }
 //          ilu.mat.valCrs[ijcrs0] -= vik*vkj.transpose();
 //          ilu.mat.valCrs[ijcrs0] -= vik.transpose()*vkj;
-          ilu.mat.valCrs[ijcrs0] -= vik*vkj;
+          ilu.valCrs[ijcrs0] -= vik*vkj;
         }
         else{
 //          ilu.mat.valDia[iblk] -= vik*vkj.transpose();
 //          ilu.mat.valDia[iblk] -= vik.transpose()*vkj;
-          ilu.mat.valDia[iblk] -= vik*vkj;
+          ilu.valDia[iblk] -= vik*vkj;
         }
       }
     }
     // invserse diagonal
-    ilu.mat.valDia[iblk] = ilu.mat.valDia[iblk].inverse().eval();
+    ilu.valDia[iblk] = ilu.valDia[iblk].inverse().eval();
     // [U] = [1/D][U]
-    for(unsigned int ijcrs=ilu.m_diaInd[iblk];ijcrs<ilu.mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<ilu.mat.rowPtr.size() );
-      ilu.mat.valCrs[ijcrs] = ilu.mat.valDia[iblk]*ilu.mat.valCrs[ijcrs];
+    for(unsigned int ijcrs=ilu.m_diaInd[iblk];ijcrs<ilu.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      ilu.valCrs[ijcrs] = ilu.valDia[iblk]*ilu.valCrs[ijcrs];
     }
-    for(unsigned int ijcrs=ilu.mat.colInd[iblk];ijcrs<ilu.mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<ilu.mat.rowPtr.size() );
-      const unsigned int jblk0 = ilu.mat.rowPtr[ijcrs];
+    for(unsigned int ijcrs=ilu.colInd[iblk];ijcrs<ilu.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      const unsigned int jblk0 = ilu.rowPtr[ijcrs];
       assert( jblk0<nblk );
       row2crs[jblk0] = UINT_MAX;
     }
@@ -148,25 +162,25 @@ void SolvePrecond(
   constexpr unsigned int ndim = nrowdim;
   // --------
   // forward
-  const unsigned int nblk = ilu.mat.nrowblk;
+  const unsigned int nblk = ilu.nblk;
   for(unsigned int iblk=0;iblk<nblk;iblk++){
-    for(unsigned int ijcrs=ilu.mat.colInd[iblk];ijcrs<ilu.m_diaInd[iblk];ijcrs++){
-      assert( ijcrs<ilu.mat.rowPtr.size() );
-      const unsigned int jblk0 = ilu.mat.rowPtr[ijcrs];
+    for(unsigned int ijcrs=ilu.colInd[iblk];ijcrs<ilu.m_diaInd[iblk];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      const unsigned int jblk0 = ilu.rowPtr[ijcrs];
       assert( (int)jblk0<iblk );
-      vec.template segment<ndim>(iblk*ndim) -= ilu.mat.valCrs[ijcrs]*vec.template segment<ndim>(jblk0*ndim); // jblk0!=iblk
+      vec.template segment<ndim>(iblk*ndim) -= ilu.valCrs[ijcrs]*vec.template segment<ndim>(jblk0*ndim); // jblk0!=iblk
     }
-    vec.template segment<ndim>(iblk*ndim) = ilu.mat.valDia[iblk]*vec.template segment<ndim>(iblk*ndim).eval();
+    vec.template segment<ndim>(iblk*ndim) = ilu.valDia[iblk]*vec.template segment<ndim>(iblk*ndim).eval();
   }
   // -----
   // backward
   for(int iblk=nblk-1;iblk>=0;iblk--){
     assert( iblk < (int)nblk );
-    for(unsigned int ijcrs=ilu.m_diaInd[iblk];ijcrs<ilu.mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<ilu.mat.rowPtr.size() );
-      const unsigned int jblk0 = ilu.mat.rowPtr[ijcrs];
+    for(unsigned int ijcrs=ilu.m_diaInd[iblk];ijcrs<ilu.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      const unsigned int jblk0 = ilu.rowPtr[ijcrs];
       assert( (int)jblk0>iblk && jblk0<nblk );
-      vec.template segment<ndim>(iblk*ndim) -= ilu.mat.valCrs[ijcrs]*vec.template segment<ndim>(jblk0*ndim); // jblk0!=iblk
+      vec.template segment<ndim>(iblk*ndim) -= ilu.valCrs[ijcrs]*vec.template segment<ndim>(jblk0*ndim); // jblk0!=iblk
     }
   }
 }

@@ -458,7 +458,7 @@ void delfem2::CDef_Arap::Init(
   
   this->Prec.Clear();
   if( is_preconditioner ){
-    this->Prec.Initialize_ILU0(Mat);
+    this->Prec.SetPattern0(Mat);
   }
   
 }
@@ -503,8 +503,8 @@ void delfem2::CDef_Arap::Deform(
   
   aUpd1.resize(aRes1.size());  
   if( is_preconditioner ){
-    this->Prec.SetValueILU(Mat);
-    this->Prec.DoILUDecomp();
+    this->Prec.CopyValue(Mat);
+    this->Prec.Decompose();
     const std::size_t n = np*3;
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_PCG(

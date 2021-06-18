@@ -233,8 +233,8 @@ void StepTime_InternalDynamicsILU(
     if( aBCFlag[i] == 0 ) continue;
     vec_b[i] = 0;
   }
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   // solve linear system
   double conv_ratio = 1.0e-4;
   int iteration = 100;

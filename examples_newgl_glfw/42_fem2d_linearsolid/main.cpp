@@ -252,7 +252,7 @@ void InitializeProblem()
   //
   mat_A.Initialize(np, 2, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  ilu_A.SetPattern0(mat_A);
 }
 
 /*
@@ -314,8 +314,8 @@ void SolveProblem_LinearSolid_Static()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   {
     const std::size_t n = vec_b.size();

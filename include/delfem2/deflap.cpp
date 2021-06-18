@@ -317,8 +317,8 @@ void delfem2::CDef_LaplacianLinear::SetValueToPreconditioner()
     Mat.valDia[ip0*9+2*3+2] += weight_nrm*n0[2]*n0[2];
   }
   // --------
-  this->Prec.SetValueILU(Mat);
-  this->Prec.DoILUDecomp();
+  this->Prec.CopyValue(Mat);
+  this->Prec.Decompose();
   /*
   for(int ip=0;ip<np;++ip){
     for(unsigned int icrs=Prec.mat.colInd[ip];icrs<Prec.mat.colInd[ip+1];++icrs){

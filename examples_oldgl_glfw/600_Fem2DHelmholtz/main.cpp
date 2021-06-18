@@ -76,7 +76,7 @@ int main(int argc,char* argv[])
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.Initialize(np, 1, true);
     mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
-    ilu_A.Initialize_ILU0(mat_A);
+    ilu_A.SetPattern0(mat_A);
   }
   {
     const unsigned int np = aXY1.size()/2;
@@ -101,8 +101,8 @@ int main(int argc,char* argv[])
     mat_A.SetFixedBC(aBCFlag.data());
     dfm2::setRHS_Zero(vec_b, aBCFlag,0);
     std::vector<std::complex<double> > vec_x;
-    ilu_A.SetValueILU(mat_A);
-    ilu_A.DoILUDecomp();
+    ilu_A.CopyValue(mat_A);
+    ilu_A.Decompose();
     vec_x.resize(vec_b.size());
     /*
      std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), vec_x.data(),

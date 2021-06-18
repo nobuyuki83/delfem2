@@ -87,8 +87,8 @@ void SolveProblem_PlateBendingMITC3(
   //
   std::vector<double> vec_x;
   {
-    ilu_A.SetValueILU(mat_A);
-    ilu_A.DoILUDecomp();
+    ilu_A.CopyValue(mat_A);
+    ilu_A.Decompose();
     vec_x.resize(vec_b.size());
     {
       const std::size_t n = vec_b.size();
