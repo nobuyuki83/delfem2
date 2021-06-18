@@ -184,7 +184,7 @@ void InitializeProblem_ShellEigenPB()
   mat_A.SetPattern(
       psup_ind.data(), psup_ind.size(),
       psup.data(),     psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  ilu_A.SetPattern0(mat_A);
   // --------------------------------
   aMassLumpedSqrtInv.resize(np);
   aModesKer.resize(nDoF*6);
@@ -212,8 +212,8 @@ void InitializeProblem_ShellEigenPB()
       aMassLumpedSqrtInv.data());
   mat_A.AddDia(0.8);
   
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
 }
 
 void Solve(){

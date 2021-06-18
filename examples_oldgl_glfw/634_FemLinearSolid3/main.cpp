@@ -16,7 +16,6 @@
 #include "delfem2/lsvecx.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/femsolidlinear.h"
-#include "delfem2/jagarray.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/femutil.h"
 namespace dfm2 = delfem2;
@@ -40,12 +39,12 @@ void InitializeMatrix(
       psup_ind, psup,
       aHex.data(), aHex.size()/8, 8,
       (int)aXYZ.size()/3);
-  dfm2::JArray_Sort(psup_ind, psup);
   smat.Initialize(np, 3, true);
   smat.SetPattern(
       psup_ind.data(), psup_ind.size(),
       psup.data(), psup.size());
-  ilu.Initialize_ILU0(smat);
+  //ilu.Initialize_ILU0(smat);
+  ilu.Initialize_ILUk(smat,2);
 }
 
 void Simulation(
@@ -103,8 +102,8 @@ void Simulation(
   // --------------------------------
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  silu.SetValueILU(smat);
-  silu.DoILUDecomp();
+  silu.CopyValue(smat);
+  silu.Decompose();
   std::vector<double> vecx(vecb.size());
   {
     const std::size_t n = vecb.size();

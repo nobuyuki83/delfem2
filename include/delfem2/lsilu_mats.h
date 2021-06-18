@@ -26,17 +26,21 @@ public:
   CPreconditionerILU(const CPreconditionerILU&); // copy
   ~CPreconditionerILU(){ m_diaInd.clear(); }
   void Clear(){
-    mat.Clear();
+    colInd.clear();
+    rowPtr.clear();
+    valCrs.clear();
+    valDia.clear();
     m_diaInd.clear();
   }
-  void Initialize_ILU0(const CMatrixSparse<T>& m);
+  void SetPattern0(const CMatrixSparse<T>& m);
   void Initialize_ILUk(const CMatrixSparse<T>& m, int fill_level);
-  void SetValueILU(const CMatrixSparse<T>& m);
+
+  void CopyValue(const CMatrixSparse<T>& m);
   void SolvePrecond(T* vec) const{
 		this->ForwardSubstitution(vec);
 		this->BackwardSubstitution(vec);
   }
-  bool DoILUDecomp();
+  bool Decompose();
   //
   void ForwardSubstitution(  T* vec ) const;
   void BackwardSubstitution( T* vec ) const;
@@ -47,8 +51,13 @@ public:
   // treat 1x1 block space matrix as N*N block sparse matrix where the block matrix is diagonal
   void BackwardSubstitutionDegenerate( T* vec, unsigned int N ) const;
 public:
-  CMatrixSparse<T> mat;
+  unsigned int nblk;
+  unsigned int ndim;
+  std::vector<unsigned int> colInd;
+  std::vector<unsigned int> rowPtr;
   std::vector<unsigned int> m_diaInd;
+  std::vector<T> valCrs;
+  std::vector<T> valDia;
 };
    
 } // end namespace delfem2

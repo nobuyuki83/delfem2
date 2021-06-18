@@ -153,7 +153,7 @@ int main()
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.SetPattern(psup_ind.data(),psup_ind.size(),
                      psup.data(),psup.size());
-    ilu_A.Initialize_ILU0(mat_A);
+    ilu_A.SetPattern0(mat_A);
   }
 
   delfem2::glfw::InitGLNew();

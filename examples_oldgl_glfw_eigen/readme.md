@@ -15,4 +15,12 @@ We will eventually consider porting these demo into newer OpenGL >= 3.3 in the [
 ### [00_EigenModes](00_EigenModes)
 <img src="00_EigenModes/thumbnail.png" width=200px>
 
+### [01_ConvexHull](01_ConvexHull)
 
+<img src="01_ConvexHull/thumbnail.png" width=200px>
+
+
+
+### [02_FemSolidLinear2](02_FemSolidLinear2)
+
+<img src="02_FemSolidLinear2/thumbnail.png" width=200px>

@@ -208,7 +208,7 @@ int main(int argc,char* argv[])
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.SetPattern(psup_ind.data(),psup_ind.size(),
                      psup.data(),psup.size());
-    ilu_A.Initialize_ILU0(mat_A);
+    ilu_A.SetPattern0(mat_A);
   }
   
   delfem2::glfw::CViewer3 viewer;

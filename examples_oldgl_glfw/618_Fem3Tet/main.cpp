@@ -116,8 +116,8 @@ void SolveProblem_Poisson(
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   {
     const std::size_t n = vec_b.size();
@@ -171,7 +171,7 @@ void InitializeProblem_Diffusion(
   mat_A.Initialize(np, 1, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  ilu_A.SetPattern0(mat_A);
 }
 
 void SolveProblem_Diffusion(
@@ -205,8 +205,8 @@ void SolveProblem_Diffusion(
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   {
     const std::size_t n = vec_b.size();
@@ -261,7 +261,7 @@ void InitializeProblem_ShellEigenPB(
   mat_A.SetPattern(
       psup_ind.data(), psup_ind.size(),
       psup.data(),     psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  ilu_A.SetPattern0(mat_A);
 }
 
 
@@ -296,8 +296,8 @@ void SolveProblem_LinearSolid_Static(
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   {
     const std::size_t n = vec_b.size();
@@ -349,7 +349,7 @@ void InitializeProblem_LinearSolid_Dynamic(
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  ilu_A.SetPattern0(mat_A);
   dt_timestep = 0.03;
 }
 
@@ -385,8 +385,8 @@ void SolveProblem_LinearSolid_Dynamic(
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   {
     const std::size_t n = vec_b.size();
@@ -460,7 +460,7 @@ void InitializeProblem_Stokes_Static(
   mat_A.Initialize(np, 4, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  ilu_A.SetPattern0(mat_A);
   //
 }
 
@@ -496,8 +496,8 @@ void SolveProblem_Stokes_Static(
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   {
     const std::size_t n = vec_b.size();
@@ -566,7 +566,7 @@ void InitializeProblem_Stokes_Dynamic(
   mat_A.Initialize(np, 4, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  ilu_A.SetPattern0(mat_A);
   //
 }
 
@@ -601,8 +601,8 @@ void SolveProblem_Stokes_Dynamic(
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   {
     const std::size_t n = vec_b.size();
@@ -719,8 +719,8 @@ void SolveProblem_NavierStokes_Dynamic(
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A,aBCFlag);
   double conv_ratio = 1.0e-5;
   int iteration = 1000;
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   Solve_PBiCGStab(vec_b.data(),vec_x.data(),
                   conv_ratio,iteration,mat_A,ilu_A);
@@ -731,7 +731,6 @@ void SolveProblem_NavierStokes_Dynamic(
                   dt_timestep,aVelo);
   dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
                 1.0,vec_x);
-  /////
   dt_timestep = 0.0025;
 }
 

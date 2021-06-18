@@ -129,7 +129,7 @@ void InitializeProblem_ShellEigenPB()
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  ilu_A.SetPattern0(mat_A);
 }
   
 // ------------------------------------------------------
@@ -150,8 +150,8 @@ void Solve_Linear()
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b,aBCFlag,0);
   //
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   const int nDoF = aXYZ.size();
   std::vector<double> dv(nDoF,0.0);
   std::vector<double> aConv = Solve_PBiCGStab(
@@ -187,8 +187,8 @@ void Solve_StiffnessWarping()
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b,aBCFlag,0);
   // -------------------
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
+  ilu_A.CopyValue(mat_A);
+  ilu_A.Decompose();
   const int nDoF = aXYZ.size();
   std::vector<double> dv(nDoF,0.0);
   std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
