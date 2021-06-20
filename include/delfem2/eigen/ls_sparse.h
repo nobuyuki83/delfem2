@@ -7,11 +7,13 @@
 
 namespace delfem2 {
 
-template<class MAT, class ALLOCATOR>
+template<class MAT, class ALLOCATOR, int RowsActive = MAT::RowsAtCompileTime>
 class CMatrixSparseBlock {
 public:
   CMatrixSparseBlock() noexcept
-      : nrowblk(0), ncolblk(0) {}
+      : nrowblk(0), ncolblk(0) {
+    static_assert( RowsActive <= MAT::RowsAtCompileTime, "active dim should be no greater than the actual dim");
+  }
 
   void Initialize(unsigned int nblk) {
     this->nrowblk = nblk;
@@ -44,6 +46,13 @@ public:
     assert(nrowblk == ncolblk && valCrs.size() == rowPtr.size());
     for (auto &m : valDia) { m.setZero(); }
     for (auto &m : valCrs) { m.setZero(); }
+    // --------
+    if( RowsActive == MAT::RowsAtCompileTime ){ return; }
+    for (auto &m : valDia) {
+      for (int i = RowsActive; i < MAT::RowsAtCompileTime; ++i) {
+        m(i, i) = 1;
+      }
+    }
   }
 
 public:
@@ -55,14 +64,17 @@ public:
   std::vector<MAT, ALLOCATOR> valDia;
 };
 
-template<int nrow, int ncol, int ndimrow, int ndimcol, typename REAL, class MAT, class ALLOCATOR>
+template<int nrow, int ncol,
+    int ndimrow, int ndimcol,
+    typename REAL, class MAT, class ALLOCATOR, int RowsActive=MAT::RowsAtCompileTime>
 bool Merge(
-    CMatrixSparseBlock<MAT, ALLOCATOR> &A,
+    CMatrixSparseBlock<MAT, ALLOCATOR, RowsActive> &A,
     const unsigned int aIpRow[nrow],
     const unsigned int aIpCol[ncol],
     const REAL emat[nrow][ncol][ndimrow][ndimcol],
     std::vector<unsigned int> &merge_buffer) {
-  assert(!A.valCrs.empty() && !A.valDia.empty());
+  static_assert(RowsActive<=MAT::RowsAtCompileTime,
+      "the active dim must be not greater than the matrix size");
   merge_buffer.resize(A.ncolblk, UINT_MAX);
   for (unsigned int irow = 0; irow < nrow; irow++) {
     const unsigned int iblk1 = aIpRow[irow];
@@ -101,18 +113,21 @@ bool Merge(
   return true;
 }
 
-template<typename REAL, class MAT, class ALLOCATOR>
+template<typename REAL,
+    class MAT, class ALLOCATOR, int RowsActive = MAT::RowsAtCompileTime >
 void SetFixedBC_Dia(
-    CMatrixSparseBlock<MAT, ALLOCATOR> &A,
+    CMatrixSparseBlock<MAT, ALLOCATOR, RowsActive> &A,
     const int *bc_flag,
     REAL val_dia) {
   constexpr int nrowdim = MAT::RowsAtCompileTime;
   constexpr int ncoldim = MAT::ColsAtCompileTime;
+  static_assert(nrowdim == ncoldim,
+      "matrix should be diagonal");
   assert(A.ncolblk == A.nrowblk && ncoldim == nrowdim);
   for (unsigned int iblk = 0; iblk < A.nrowblk; iblk++) { // set diagonal
-    for (unsigned int ilen = 0; ilen < nrowdim; ilen++) {
-      if (bc_flag[iblk * nrowdim + ilen] == 0) continue;
-      for (unsigned int jlen = 0; jlen < ncoldim; jlen++) {
+    for (unsigned int ilen = 0; ilen < RowsActive; ++ilen) {
+      if (bc_flag[iblk * RowsActive + ilen] == 0){ continue; }
+      for (unsigned int jlen = 0; jlen < RowsActive; ++jlen) {
         A.valDia[iblk](ilen, jlen) = 0;
         A.valDia[iblk](jlen, ilen) = 0;
       }
@@ -121,18 +136,17 @@ void SetFixedBC_Dia(
   }
 }
 
-template<class MAT, class ALLOCATOR>
+template<class MAT, class ALLOCATOR, int RowsActive = MAT::RowsAtCompileTime >
 void SetFixedBC_Row(
-    CMatrixSparseBlock<MAT, ALLOCATOR> &A,
+    CMatrixSparseBlock<MAT, ALLOCATOR, RowsActive> &A,
     const int *bc_flag) {
-  constexpr int nrowdim = MAT::RowsAtCompileTime;
-  constexpr int ncoldim = MAT::ColsAtCompileTime;
-  assert(A.ncolblk == A.nrowblk && ncoldim == nrowdim);
+  static_assert(RowsActive<=MAT::RowsAtCompileTime,
+      "active dimension should be smaller than the matrix row");
   for (unsigned int iblk = 0; iblk < A.nrowblk; iblk++) { // set row
     for (unsigned int icrs = A.colInd[iblk]; icrs < A.colInd[iblk + 1]; icrs++) {
-      for (unsigned int ilen = 0; ilen < nrowdim; ilen++) {
-        if (bc_flag[iblk * nrowdim + ilen] == 0) continue;
-        for (unsigned int jlen = 0; jlen < ncoldim; jlen++) {
+      for (unsigned int ilen = 0; ilen < RowsActive; ilen++) {
+        if (bc_flag[iblk * RowsActive + ilen] == 0) continue;
+        for (unsigned int jlen = 0; jlen < RowsActive; jlen++) {
           A.valCrs[icrs](ilen, jlen) = 0;
         }
       }
@@ -140,18 +154,17 @@ void SetFixedBC_Row(
   }
 }
 
-template<class MAT, class ALLOCATOR>
+template<class MAT, class ALLOCATOR, int RowsActive = MAT::RowsAtCompileTime>
 void SetFixedBC_Col(
-    CMatrixSparseBlock<MAT, ALLOCATOR> &A,
+    CMatrixSparseBlock<MAT, ALLOCATOR, RowsActive> &A,
     const int *bc_flag) {
-  constexpr int nrowdim = MAT::RowsAtCompileTime;
-  constexpr int ncoldim = MAT::ColsAtCompileTime;
-  assert(A.ncolblk == A.nrowblk && ncoldim == nrowdim);
+  static_assert(RowsActive<=MAT::RowsAtCompileTime,
+      "number of active rows should not be greater than the actual row");
   for (unsigned int icrs = 0; icrs < A.rowPtr.size(); icrs++) { // set column
-    const int jblk1 = A.rowPtr[icrs];
-    for (unsigned int jlen = 0; jlen < ncoldim; jlen++) {
-      if (bc_flag[jblk1 * ncoldim + jlen] == 0) continue;
-      for (unsigned int ilen = 0; ilen < nrowdim; ilen++) {
+    const unsigned int jblk1 = A.rowPtr[icrs];
+    for (unsigned int jlen = 0; jlen < RowsActive; jlen++) {
+      if (bc_flag[jblk1 * RowsActive + jlen] == 0){ continue; }
+      for (unsigned int ilen = 0; ilen < RowsActive; ilen++) {
         A.valCrs[icrs](ilen, jlen) = 0;
       }
     }
@@ -161,16 +174,18 @@ void SetFixedBC_Col(
 // --------------------------------
 // Eigen dependency from here
 
-template<typename REAL, class MAT, class ALLOCATOR>
+template<typename REAL,
+    class MAT, class ALLOCATOR, int RowsActive = MAT::RowsAtCompileTime >
 void AddMatVec(
     Eigen::VectorX<REAL> &lhs,
     REAL beta,
     REAL alpha,
-    const CMatrixSparseBlock<MAT, ALLOCATOR> &A,
+    const CMatrixSparseBlock<MAT, ALLOCATOR, RowsActive> &A,
     const Eigen::VectorX<REAL> &rhs) {
   assert(lhs.rows() == rhs.rows());
   constexpr int nrowdim = MAT::RowsAtCompileTime;
   constexpr int ncoldim = MAT::ColsAtCompileTime;
+  assert(lhs.rows()%nrowdim==0);
   lhs *= beta;
   for (unsigned int iblk = 0; iblk < A.nrowblk; iblk++) {
     for (unsigned int icrs = A.colInd[iblk]; icrs < A.colInd[iblk + 1]; icrs++) {
@@ -180,6 +195,28 @@ void AddMatVec(
       lhs.template segment<nrowdim>(iblk * nrowdim) += alpha * A.valCrs[icrs] * rhs.template segment<ncoldim>(jblk0 * ncoldim); // SIMD?
     }
     lhs.template segment<nrowdim>(iblk * nrowdim) += alpha * A.valDia[iblk] * rhs.template segment<ncoldim>(iblk * ncoldim); // SIMD?
+  }
+}
+
+template<typename REAL,
+    class MAT, class ALLOCATOR, int RowsActive = MAT::RowsAtCompileTime >
+void AddMatVec(
+    Eigen::Matrix<REAL,-1,MAT::RowsAtCompileTime,Eigen::RowMajor> &lhs,
+    REAL beta,
+    REAL alpha,
+    const CMatrixSparseBlock<MAT, ALLOCATOR, RowsActive> &A,
+    const Eigen::Matrix<REAL,-1,MAT::ColsAtCompileTime,Eigen::RowMajor> &rhs) {
+  assert(lhs.rows() == rhs.rows());
+  assert(lhs.rows()%MAT::RowsAtCompileTime==0);
+  lhs *= beta;
+  for (unsigned int iblk = 0; iblk < A.nrowblk; iblk++) {
+    for (unsigned int icrs = A.colInd[iblk]; icrs < A.colInd[iblk + 1]; icrs++) {
+      assert(icrs < A.rowPtr.size());
+      const unsigned int jblk0 = A.rowPtr[icrs];
+      assert(jblk0 < A.ncolblk);
+      lhs.row(iblk) += alpha * A.valCrs[icrs] * rhs.row(jblk0).transpose(); // SIMD?
+    }
+    lhs.row(iblk) += alpha * A.valDia[iblk] * rhs.row(iblk).transpose(); // SIMD?
   }
 }
 

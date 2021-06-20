@@ -29,7 +29,7 @@ public:
   CVecX(REAL* p_, std::size_t n_) : p(p_), n(n_) {}
   CVecX(std::vector<REAL>& v) : p(v.data()), n(v.size()) {}
   //
-  REAL dot(const CVecX& rhs){
+  REAL dot(const CVecX& rhs) const {
     assert(n == rhs.n);
     REAL d = 0;
     for(unsigned int i=0;i<n;++i){
@@ -106,6 +106,14 @@ void SolvePrecond(
     const PREC& ilu)
 {
   ilu.SolvePrecond(Pr_vec.p);
+}
+
+template <typename REAL>
+REAL Dot(
+    const CVecX<REAL>& x,
+    const CVecX<REAL>& y)
+{
+  return x.dot(y);
 }
 
 } // delfem2

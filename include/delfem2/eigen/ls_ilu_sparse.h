@@ -185,6 +185,40 @@ void SolvePrecond(
   }
 }
 
+template<typename REAL, class MAT, class ALLOCATOR>
+void SolvePrecond(
+    Eigen::Matrix<REAL,-1,MAT::RowsAtCompileTime,Eigen::RowMajor>& vec,
+    const CILU_SparseBlock<MAT,ALLOCATOR>& ilu)
+{
+  constexpr unsigned int nrowdim = MAT::RowsAtCompileTime;
+  constexpr unsigned int ncoldim = MAT::ColsAtCompileTime;
+  static_assert(nrowdim == ncoldim,
+      "The block matrix need to be square");
+  // --------
+  // forward
+  const unsigned int nblk = ilu.nblk;
+  for(unsigned int iblk=0;iblk<nblk;iblk++){
+    for(unsigned int ijcrs=ilu.colInd[iblk];ijcrs<ilu.m_diaInd[iblk];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      const unsigned int jblk0 = ilu.rowPtr[ijcrs];
+      assert( (int)jblk0<iblk );
+      vec.row(iblk) -= ilu.valCrs[ijcrs]*vec.row(jblk0).transpose(); // jblk0!=iblk
+    }
+    vec.row(iblk) = ilu.valDia[iblk]*vec.row(iblk).transpose().eval();
+  }
+  // -----
+  // backward
+  for(int iblk=nblk-1;iblk>=0;iblk--){
+    assert( iblk < (int)nblk );
+    for(unsigned int ijcrs=ilu.m_diaInd[iblk];ijcrs<ilu.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<ilu.rowPtr.size() );
+      const unsigned int jblk0 = ilu.rowPtr[ijcrs];
+      assert( (int)jblk0>iblk && jblk0<nblk );
+      vec.row(iblk) -= ilu.valCrs[ijcrs]*vec.row(jblk0).transpose(); // jblk0!=iblk
+    }
+  }
+}
+
 }
 
 #endif

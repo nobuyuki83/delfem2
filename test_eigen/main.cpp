@@ -78,44 +78,50 @@ TEST(ls,test1)
   const unsigned int nDoF = np*2;
   const std::vector<double> aVal(nDoF,0);
   // -----------
-  delfem2::CMatrixSparseBlock<Eigen::Matrix2d,Eigen::aligned_allocator<Eigen::Matrix2d>> mA0;
-  Eigen::VectorXd vb0(nDoF);
-  dfm2::CMatrixSparse<double> mA1;
-  std::vector<double> vb1(nDoF);
+  delfem2::CMatrixSparseBlock<Eigen::Matrix2d,Eigen::aligned_allocator<Eigen::Matrix2d>> Aeig;
+  Eigen::VectorXd Veig0(nDoF);
+  Eigen::Matrix<double,-1,2,Eigen::RowMajor> Veig1(np,2);
+  dfm2::CMatrixSparse<double> Astd;
+  std::vector<double> Vstd(nDoF);
   {
     std::vector<unsigned int> psup_ind0, psup0;
     dfm2::JArray_PSuP_MeshElem(
         psup_ind0, psup0,
         aTri1.data(), aTri1.size() / 3, 3,
         aXY1.size() / 2);
-    mA0.Initialize(np);
-    mA0.SetPattern(psup_ind0.data(), psup_ind0.size(), psup0.data(), psup0.size());
+    Aeig.Initialize(np);
+    Aeig.SetPattern(psup_ind0.data(), psup_ind0.size(), psup0.data(), psup0.size());
     const double myu = 10.0, lambda = 10.0, rho = 1.0, g_x = 0.0, g_y = -3.0;
-    mA0.setZero();
-    vb0.setZero();
+    Aeig.setZero();
+    Veig0.setZero();
     dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
-        mA0, vb0.data(),
+        Aeig, Veig0.data(),
         myu, lambda, rho, g_x, g_y,
         aXY1.data(), aXY1.size() / 2,
         aTri1.data(), aTri1.size() / 3,
         aVal.data());
-    SetFixedBC_Dia(mA0, aBCFlag.data(), 1.f);
-    SetFixedBC_Col(mA0, aBCFlag.data());
-    SetFixedBC_Row(mA0, aBCFlag.data());
-    delfem2::setZero_Flag(vb0, aBCFlag, 0);
+    SetFixedBC_Dia(Aeig, aBCFlag.data(), 1.f);
+    SetFixedBC_Col(Aeig, aBCFlag.data());
+    SetFixedBC_Row(Aeig, aBCFlag.data());
+    delfem2::setZero_Flag(Veig0, aBCFlag, 0);
     // ----------
-    mA1.Initialize(np, 2, true);
-    mA1.SetPattern(psup_ind0.data(), psup_ind0.size(), psup0.data(), psup0.size());
-    mA1.setZero();
-    vb1.assign(nDoF,0.0);
+    for(unsigned int ip=0;ip<np;++ip){
+      Veig1(ip,0) = Veig0(ip*2+0);
+      Veig1(ip,1) = Veig0(ip*2+1);
+    }
+    // ----------
+    Astd.Initialize(np, 2, true);
+    Astd.SetPattern(psup_ind0.data(), psup_ind0.size(), psup0.data(), psup0.size());
+    Astd.setZero();
+    Vstd.assign(nDoF,0.0);
     dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
-        mA1, vb1.data(),
+        Astd, Vstd.data(),
         myu, lambda, rho, g_x, g_y,
         aXY1.data(), aXY1.size() / 2,
         aTri1.data(), aTri1.size() / 3,
         aVal.data());
-    mA1.SetFixedBC(aBCFlag.data());
-    dfm2::setRHS_Zero(vb1, aBCFlag, 0);
+    Astd.SetFixedBC(aBCFlag.data());
+    dfm2::setRHS_Zero(Vstd, aBCFlag, 0);
   }
   // ---------------
   double conv_ratio = 1.0e-6;
@@ -125,43 +131,58 @@ TEST(ls,test1)
     const auto time0 = std::chrono::system_clock::now();
     unsigned int nitr1 = 0;
     for(int itr=0;itr<max_itr;++itr){ // CG method std::vector
-      const std::size_t n = vb1.size();
+      const std::size_t n = Vstd.size();
       std::vector<double> tmp0(n), tmp1(n), vx1(n), vB1(n);
-      vB1 = vb1;
+      vB1 = Vstd;
       std::vector<double> aConv = Solve_CG(
           dfm2::CVecXd(vB1),
           dfm2::CVecXd(vx1),
           dfm2::CVecXd(tmp0),
           dfm2::CVecXd(tmp1),
-          conv_ratio, iteration, mA1);
+          conv_ratio, iteration, Astd);
       nitr1 = aConv.size();
     }
     const auto time1 = std::chrono::system_clock::now();
     // ---------------
     unsigned int nitr0 = 0;
     for(int itr=0;itr<max_itr;++itr){ // CG method with eigen
-      const std::size_t n = vb0.size();
+      const std::size_t n = Veig0.size();
       Eigen::VectorXd tmp0(n), tmp1(n), vx0(n), vB0(n);
-      vB0 = vb0;
+      vB0 = Veig0;
       std::vector<double> aConv = delfem2::Solve_CG(
           vB0, vx0, tmp0, tmp1,
-          conv_ratio, iteration, mA0);
+          conv_ratio, iteration, Aeig);
       nitr0 = aConv.size();
     }
-    EXPECT_NEAR(nitr0,nitr1,10);
     const auto time2 = std::chrono::system_clock::now();
+    // ---------------
+    unsigned int nitr2 = 0;
+    for(int itr=0;itr<max_itr;++itr){ // CG method with eigen
+      Eigen::Matrix<double,-1,2,Eigen::RowMajor> tmp0(np,2), tmp1(np,2), vx0(np,2), vB0(np,2);
+      vB0 = Veig1;
+      std::vector<double> aConv = delfem2::Solve_CG(
+          vB0, vx0, tmp0, tmp1,
+          conv_ratio, iteration, Aeig);
+      nitr2 = aConv.size();
+    }
+    const auto time3 = std::chrono::system_clock::now();
+    EXPECT_NEAR(nitr0,nitr1,10);
+    EXPECT_NEAR(nitr1,nitr2,10);
     double elapsed01 = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
     double elapsed12 = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1).count();
-    std::cout << "cg std::vector: " << elapsed01 << "   cg eigen: " << elapsed12 << " iteration: " << nitr0 << " " << nitr1 << std::endl;
+    double elapsed23 = std::chrono::duration_cast<std::chrono::milliseconds>(time3 - time2).count();
+    std::cout << "cg std::vector: " << elapsed01 << " " << nitr0 << std::endl;
+    std::cout << "cg eigen vec: " << elapsed12 << " " << nitr1 << std::endl;
+    std::cout << "cg eigen mat: " << elapsed23 << " " << nitr2 << std::endl;
   }
   delfem2::CILU_SparseBlock<Eigen::Matrix2d,Eigen::aligned_allocator<Eigen::Matrix2d>> ilu0;
   delfem2::CPreconditionerILU<double> ilu1;
   { // LU
-    ilu1.SetPattern0(mA1);
-    ilu1.CopyValue(mA1);
+    ilu1.SetPattern0(Astd);
+    ilu1.CopyValue(Astd);
     ilu1.Decompose();
-    delfem2::ILU_SetPattern0(ilu0, mA0);
-    delfem2::ILU_CopyValue(ilu0, mA0);
+    delfem2::ILU_SetPattern0(ilu0, Aeig);
+    delfem2::ILU_CopyValue(ilu0, Aeig);
     delfem2::ILU_Decompose(ilu0);
     // check if the entry is the same
     for(unsigned int icrs=0;icrs<ilu0.valCrs.size();++icrs) {
@@ -182,34 +203,50 @@ TEST(ls,test1)
     const unsigned int max_itr = 10;
     unsigned int nitr1 = 0;
     for (int itr = 0; itr < max_itr; ++itr) { // solve with ILU-CG std::vector
-      ilu1.CopyValue(mA1);
+      ilu1.CopyValue(Astd);
       ilu1.Decompose();
-      const std::size_t n = vb1.size();
+      const std::size_t n = Vstd.size();
       std::vector<double> tmp0(n), tmp1(n), vx1(n), vB1(n);
-      vB1 = vb1;
+      vB1 = Vstd;
       std::vector<double> aConv = Solve_PCG(
           dfm2::CVecXd(vB1), dfm2::CVecXd(vx1), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
-          conv_ratio, iteration, mA1, ilu1);
+          conv_ratio, iteration, Astd, ilu1);
       nitr1 = aConv.size();
     }
     const auto time1 = std::chrono::system_clock::now();
     unsigned int nitr0 = 0;
     for (int itr = 0; itr < max_itr; ++itr) { // solve with ILU-CG Eigen
-      delfem2::ILU_CopyValue(ilu0, mA0);
+      delfem2::ILU_CopyValue(ilu0, Aeig);
       delfem2::ILU_Decompose(ilu0);
-      const std::size_t n = vb1.size();
+      const std::size_t n = Vstd.size();
       Eigen::VectorXd tmp0(n), tmp1(n), vx0(n), vB0(n);
-      vB0 = vb0;
+      vB0 = Veig0;
       std::vector<double> aConv = Solve_PCG(
           vB0, vx0, tmp0, tmp1,
-          conv_ratio, iteration, mA0, ilu0);
+          conv_ratio, iteration, Aeig, ilu0);
       nitr0 = aConv.size();
     }
-    EXPECT_NEAR(nitr0,nitr1,10);
     const auto time2 = std::chrono::system_clock::now();
+    unsigned int nitr2 = 0;
+    for (int itr = 0; itr < max_itr; ++itr) { // solve with ILU-CG Eigen
+      delfem2::ILU_CopyValue(ilu0, Aeig);
+      delfem2::ILU_Decompose(ilu0);
+      Eigen::Matrix<double,-1,2,Eigen::RowMajor> tmp0(np,2), tmp1(np,2), vx0(np,2), vB0(np,2);
+      vB0 = Veig1;
+      std::vector<double> aConv = Solve_PCG(
+          vB0, vx0, tmp0, tmp1,
+          conv_ratio, iteration, Aeig, ilu0);
+      nitr2 = aConv.size();
+    }
+    const auto time3 = std::chrono::system_clock::now();
+    EXPECT_NEAR(nitr0,nitr1,10);
+    EXPECT_NEAR(nitr1,nitr2,10);
     double elapsed01 = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
     double elapsed12 = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1).count();
-    std::cout << "ilu-cg std::vector: " << elapsed01 << "   ilu-cg eigen: " << elapsed12 << " iteration: " << nitr0 << " " << nitr1 << std::endl;
+    double elapsed23 = std::chrono::duration_cast<std::chrono::milliseconds>(time3 - time2).count();
+    std::cout << "ilu-cg std::vector: " << elapsed01 << " " << nitr0 << std::endl;
+    std::cout << "ilu-cg eigen vec: " << elapsed12 << " " << nitr1 << std::endl;
+    std::cout << "ilu-cg eigen mat: " << elapsed23 << " " << nitr2 << std::endl;
   }
 }
 

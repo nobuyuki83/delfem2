@@ -742,7 +742,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
       for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
         assert( ijcrs<rowPtr.size() );
         const int jblk0 = rowptr[ijcrs];
-        assert( jblk0>(int)iblk && jblk0<nblk );
+        assert( jblk0>iblk && jblk0<(int)nblk );
         const T* vij = &vcrs[ijcrs*9];
         const T valj0 = vec[jblk0*3+0];
         const T valj1 = vec[jblk0*3+1];
@@ -763,7 +763,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     // -----------------------------
     T pTmpVec[4];
     for (int iblk = nblk-1; iblk>=0; iblk--){
-      assert((int)iblk < nblk);
+      assert(iblk < (int)nblk);
       pTmpVec[0] = vec[iblk*4+0];
       pTmpVec[1] = vec[iblk*4+1];
       pTmpVec[2] = vec[iblk*4+2];
