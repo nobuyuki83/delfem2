@@ -90,8 +90,8 @@ REAL Dot(
 
 template<typename REAL, int nDim>
 REAL Dot(
-    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &y,
-    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &x){
+    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor,-1,nDim> &y,
+    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor,-1,nDim> &x){
   assert(y.rows() == x.rows());
   return y.cwiseProduct(x).sum();
 }
