@@ -52,9 +52,9 @@ void AddScaledVec(
 
 template<typename REAL, int nDim>
 void AddScaledVec(
-    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &y,
+    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor,-1,nDim> &y,
     REAL alpha,
-    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &x) {
+    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor,-1,nDim> &x) {
   assert(y.rows() == x.rows());
   y += alpha * x;
 }
@@ -71,9 +71,9 @@ void ScaleAndAddVec(
 
 template<typename REAL, int nDim>
 void ScaleAndAddVec(
-    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &y,
+    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor,-1,nDim> &y,
     REAL beta,
-    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &x) {
+    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor,-1,nDim> &x) {
   assert(y.rows() == x.rows());
   y = beta * y + x;
 }
@@ -112,7 +112,7 @@ void setZero_Flag(
 
 template<typename REAL, int nDim>
 void setZero_Flag(
-    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &vec_b,
+    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor,-1,nDim> &vec_b,
     unsigned int np,
     const std::vector<int> &aBCFlag,
     int iflag_nonzero)
@@ -151,7 +151,7 @@ void XPlusAY(
     const unsigned int np,
     const std::vector<int> &aBCFlag,
     REAL alpha,
-    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &Y)
+    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor,-1,nDim> &Y)
 {
   const std::size_t ndim = aBCFlag.size()/np;
   assert( aBCFlag.size() % np == 0 );

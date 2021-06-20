@@ -201,11 +201,11 @@ void AddMatVec(
 template<typename REAL,
     class MAT, class ALLOCATOR, int RowsActive = MAT::RowsAtCompileTime >
 void AddMatVec(
-    Eigen::Matrix<REAL,-1,MAT::RowsAtCompileTime,Eigen::RowMajor> &lhs,
+    Eigen::Matrix<REAL,-1,MAT::RowsAtCompileTime,Eigen::RowMajor,-1,MAT::RowsAtCompileTime> &lhs,
     REAL beta,
     REAL alpha,
     const CMatrixSparseBlock<MAT, ALLOCATOR, RowsActive> &A,
-    const Eigen::Matrix<REAL,-1,MAT::ColsAtCompileTime,Eigen::RowMajor> &rhs) {
+    const Eigen::Matrix<REAL,-1,MAT::ColsAtCompileTime,Eigen::RowMajor,-1,MAT::ColsAtCompileTime> &rhs) {
   assert(lhs.rows() == rhs.rows());
   assert(lhs.rows()%MAT::RowsAtCompileTime==0);
   lhs *= beta;
