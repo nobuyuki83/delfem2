@@ -187,7 +187,7 @@ void SolvePrecond(
 
 template<typename REAL, class MAT, class ALLOCATOR>
 void SolvePrecond(
-    Eigen::Matrix<REAL,-1,MAT::RowsAtCompileTime,Eigen::RowMajor>& vec,
+    Eigen::Matrix<REAL,-1,MAT::RowsAtCompileTime,Eigen::RowMajor,-1,MAT::RowsAtCompileTime>& vec,
     const CILU_SparseBlock<MAT,ALLOCATOR>& ilu)
 {
   constexpr unsigned int nrowdim = MAT::RowsAtCompileTime;
