@@ -9,19 +9,14 @@
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/lsvecx.h"
-#include "delfem2/lsmats.h"
-#include "delfem2/lsilu_mats.h"
-#include "delfem2/vecxitrsol.h"
-#include "delfem2/femsolidlinear.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/jagarray.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri.h"
 #include "delfem2/eigen/ls_dense.h"
 #include "delfem2/eigen/ls_sparse.h"
 #include "delfem2/eigen/ls_ilu_sparse.h"
 #include "delfem2/lsitrsol.h"
+#include "delfem2/femsolidlinear.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
 #include <iostream>
@@ -67,63 +62,6 @@ void MakeMesh(
   std::cout<<"  ntri;"<<aTri1.size()/3<<"  nXY:"<<aXY1.size()/2<<std::endl;
 }
 
-// -------------------------
-void Solve0(
-    std::vector<double>& aVal,
-    const std::vector<double>& aXY1,
-    const std::vector<unsigned int>& aTri1,
-    const std::vector<int>& aBCFlag)
-{
-  const unsigned int np = aXY1.size()/2;
-  const unsigned int nDoF = np*2;
-  // -----------
-  std::vector<unsigned int> psup_ind0, psup0;
-  dfm2::JArray_PSuP_MeshElem(
-      psup_ind0, psup0,
-      aTri1.data(), aTri1.size()/3, 3,
-      aXY1.size()/2);
-  dfm2::JArray_Sort(psup_ind0, psup0);
-  // -------------
-  dfm2::CMatrixSparse<double> mat_A;
-  mat_A.Initialize(np, 2, true);
-  mat_A.SetPattern(psup_ind0.data(), psup_ind0.size(), psup0.data(), psup0.size());
-  // ----------------------
-  double myu = 10.0;
-  double lambda = 10.0;
-  double rho = 1.0;
-  double g_x = 0.0;
-  double g_y = -3.0;
-  mat_A.setZero();
-  std::vector<double> vec_b(nDoF, 0.0);
-  dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
-      mat_A,vec_b.data(),
-      myu,lambda,rho,g_x,g_y,
-      aXY1.data(), aXY1.size()/2,
-      aTri1.data(), aTri1.size()/3,
-      aVal.data());
-  mat_A.SetFixedBC(aBCFlag.data());
-  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
-  // ---------------
-  std::vector<double> vec_x(vec_b.size());
-  {
-    double conv_ratio = 1.0e-6;
-    int iteration = 1000;
-    const std::size_t n = vec_b.size();
-    std::vector<double> tmp0(n), tmp1(n);
-    std::vector<double> aConv = Solve_CG(
-        dfm2::CVecXd(vec_b),
-        dfm2::CVecXd(vec_x),
-        dfm2::CVecXd(tmp0),
-        dfm2::CVecXd(tmp1),
-        conv_ratio, iteration, mat_A);
-    std::cout << aConv.size() << std::endl;
-  }
-  // --------------
-  dfm2::XPlusAY(aVal,nDoF,aBCFlag,
-          1.0,vec_x);
-}
-
-// -------------------------
 void Solve1(
     std::vector<double>& aVal,
     const std::vector<double>& aXY1,
@@ -138,7 +76,6 @@ void Solve1(
       psup_ind0, psup0,
       aTri1.data(), aTri1.size()/3, 3,
       aXY1.size()/2);
-  dfm2::JArray_Sort(psup_ind0, psup0);
   // -------------
   delfem2::CMatrixSparseBlock<Eigen::Matrix2d,Eigen::aligned_allocator<Eigen::Matrix2d>> mA;
   mA.Initialize(np);
@@ -184,7 +121,8 @@ void Solve1(
     Eigen::VectorXd vecX1(vec_b.size());
   }
   // --------------
-  delfem2::XPlusAY(aVal,nDoF,aBCFlag,
+  delfem2::XPlusAY(aVal,
+      aBCFlag,
       1.0,vec_x);
 }
 
@@ -200,8 +138,6 @@ int main(int argc,char* argv[])
   std::vector<double> aVal;
   {
     const unsigned int np = aXY1.size()/2;
-    aVal.assign(np * 2, 0.0);
-    Solve0(aVal,aXY1,aTri1,aBCFlag);
     aVal.assign(np * 2, 0.0);
     Solve1(aVal,aXY1,aTri1,aBCFlag);
   }

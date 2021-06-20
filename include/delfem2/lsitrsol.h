@@ -43,7 +43,7 @@ std::vector<double> Solve_CG(
 {
   std::vector<double> aConv;
   u_vec.setZero();
-  double sqnorm_res = r_vec.dot(r_vec);
+  double sqnorm_res = Dot(r_vec,r_vec);
   if (sqnorm_res < 1.0e-30) { return aConv; }
   const double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
   p_vec = r_vec;  // {p} = {r}  (set initial serch direction, copy value not reference)
@@ -51,13 +51,13 @@ std::vector<double> Solve_CG(
     double alpha;
     {  // alpha = (r,r) / (p,Ap)
       AddMatVec(Ap_vec, 0.0, 1.0, mat, p_vec); // {Ap_vec} = [mat]*{p_vec}
-      const double pAp = p_vec.dot(Ap_vec);
+      const double pAp = Dot(p_vec,Ap_vec);
 //      std::cout << iitr << " pAp:" << pAp << std::endl;
       alpha = sqnorm_res / pAp;
     }
     AddScaledVec(u_vec, +alpha, p_vec);    // {x} = +alpha*{ p} + {x} (update x)
     AddScaledVec(r_vec, -alpha, Ap_vec);  // {r} = -alpha*{Ap} + {r}
-    const double sqnorm_res_new = r_vec.dot(r_vec);
+    const double sqnorm_res_new = Dot(r_vec, r_vec);
     double conv_ratio = sqrt(sqnorm_res_new * inv_sqnorm_res_ini);
 //    std::cout << iitr << " " << conv_ratio << std::endl;
     aConv.push_back(conv_ratio);
@@ -95,7 +95,7 @@ std::vector<double> Solve_PCG(
 
   double inv_sqnorm_res0;
   {
-    const double sqnorm_res0 = r_vec.dot(r_vec); // DotX(r_vec, r_vec, N);
+    const double sqnorm_res0 = Dot(r_vec,r_vec); // DotX(r_vec, r_vec, N);
     aResHistry.push_back(sqrt(sqnorm_res0));
     if (sqnorm_res0 < 1.0e-30) { return aResHistry; }
     inv_sqnorm_res0 = 1.0 / sqnorm_res0;
@@ -107,7 +107,7 @@ std::vector<double> Solve_PCG(
   // {p} = {Pr}
   p_vec = Pr_vec; // std::vector<double> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
-  double rPr = r_vec.dot(Pr_vec); // DotX(r_vec, Pr_vec.data(), N);
+  double rPr = Dot(r_vec,Pr_vec); // DotX(r_vec, Pr_vec.data(), N);
   for (unsigned int iitr = 0; iitr < max_nitr; iitr++) {
     {
       VEC& Ap_vec = Pr_vec; // just a name change
@@ -115,13 +115,13 @@ std::vector<double> Solve_PCG(
       AddMatVec(Ap_vec,0.0, 1.0,mat,p_vec);
 //      mat.MatVec( Ap_vec.data(), 1.0, p_vec.data(), 0.0);
       // alpha = ({r},{Pr})/({p},{Ap})
-      const double pAp = p_vec.dot(Ap_vec);
+      const double pAp = Dot(p_vec,Ap_vec);
       double alpha = rPr / pAp;
       AddScaledVec(r_vec,-alpha,Ap_vec); // AXPY(-alpha, Ap_vec.data(), r_vec, N);       // {r} = -alpha*{Ap} + {r}
       AddScaledVec(x_vec,+alpha,p_vec); //  AXPY(+alpha, p_vec.data(), x_vec, N);       // {x} = +alpha*{p } + {x}
     }
     {  // Converge Judgement
-      const double sqnorm_res = r_vec.dot(r_vec); // DotX(r_vec, r_vec, N);
+      const double sqnorm_res = Dot(r_vec,r_vec); // DotX(r_vec, r_vec, N);
       aResHistry.push_back(sqrt(sqnorm_res));
       const double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
       if (conv_ratio < conv_ratio_tol) { return aResHistry; }
@@ -131,7 +131,7 @@ std::vector<double> Solve_PCG(
       Pr_vec = r_vec; // for (unsigned int i = 0; i < N; i++) { Pr_vec[i] = r_vec[i]; }
       SolvePrecond(Pr_vec,ilu); // ilu.SolvePrecond(Pr_vec.data());
       // rPr1 = ({r},{Pr})
-      const double rPr1 = r_vec.dot(Pr_vec); // DotX(r_vec, Pr_vec.data(), N);
+      const double rPr1 = Dot(r_vec,Pr_vec); // DotX(r_vec, Pr_vec.data(), N);
       // beta = rPr1/rPr
       double beta = rPr1 / rPr;
       rPr = rPr1;
@@ -141,7 +141,7 @@ std::vector<double> Solve_PCG(
   }
   {
     // Converge Judgement
-    double sq_norm_res = r_vec.dot(r_vec); // DotX(r_vec, r_vec, N);
+    double sq_norm_res = Dot(r_vec,r_vec); // DotX(r_vec, r_vec, N);
     aResHistry.push_back(sqrt(sq_norm_res));
   }
   return aResHistry;

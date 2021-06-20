@@ -46,7 +46,16 @@ void AddScaledVec(
     Eigen::VectorX<REAL> &y,
     REAL alpha,
     const Eigen::VectorX<REAL> &x) {
-  assert(y.cols() == x.cols());
+  assert(y.rows() == x.rows());
+  y += alpha * x;
+}
+
+template<typename REAL, int nDim>
+void AddScaledVec(
+    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &y,
+    REAL alpha,
+    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &x) {
+  assert(y.rows() == x.rows());
   y += alpha * x;
 }
 
@@ -56,9 +65,38 @@ void ScaleAndAddVec(
     REAL beta,
     const Eigen::VectorX<REAL> &x) {
   assert(y.cols() == x.cols());
+  assert(y.rows() == x.rows());
   y = beta * y + x;
 }
 
+template<typename REAL, int nDim>
+void ScaleAndAddVec(
+    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &y,
+    REAL beta,
+    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &x) {
+  assert(y.rows() == x.rows());
+  y = beta * y + x;
+}
+
+// --------------------------------------
+
+template<typename REAL>
+REAL Dot(
+    const Eigen::VectorX<REAL> &y,
+    const Eigen::VectorX<REAL> &x) {
+  assert(y.rows() == x.rows());
+  return y.dot(x);
+}
+
+template<typename REAL, int nDim>
+REAL Dot(
+    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &y,
+    const Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &x){
+  assert(y.rows() == x.rows());
+  return y.cwiseProduct(x).sum();
+}
+
+// --------------------------------------------
 
 template<class VEC>
 void setZero_Flag(
@@ -72,16 +110,58 @@ void setZero_Flag(
   }
 }
 
+template<typename REAL, int nDim>
+void setZero_Flag(
+    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &vec_b,
+    unsigned int np,
+    const std::vector<int> &aBCFlag,
+    int iflag_nonzero)
+{
+  const std::size_t ndim = aBCFlag.size()/np;
+  assert( vec_b.size() % np == 0 );
+  assert( ndim <= nDim );
+  for (unsigned int ip = 0; ip < np; ++ip) {
+    for(unsigned int idim=0;idim<ndim;++idim) {
+      if (aBCFlag[ip * ndim + idim] == iflag_nonzero) continue;
+      vec_b(ip,idim) = 0;
+    }
+  }
+}
+
+// -------------------------------------------
+
 template<typename REAL>
 void XPlusAY(
     std::vector<REAL> &X,
-    const unsigned int nDoF,
     const std::vector<int> &aBCFlag,
     REAL alpha,
-    const Eigen::VectorX<REAL> &Y) {
+    const Eigen::VectorX<REAL> &Y)
+{
+  const unsigned int nDoF = aBCFlag.size();
+  assert(nDoF == Y.rows());
   for (unsigned int i = 0; i < nDoF; ++i) {
     if (aBCFlag[i] != 0) continue;
     X[i] += alpha * Y[i];
+  }
+}
+
+template<typename REAL, int nDim>
+void XPlusAY(
+    std::vector<REAL> &X,
+    const unsigned int np,
+    const std::vector<int> &aBCFlag,
+    REAL alpha,
+    Eigen::Matrix<REAL,-1,nDim,Eigen::RowMajor> &Y)
+{
+  const std::size_t ndim = aBCFlag.size()/np;
+  assert( aBCFlag.size() % np == 0 );
+  assert(X.size() == aBCFlag.size() );
+  assert( ndim <= nDim );
+  for (unsigned int ip = 0; ip < np; ++ip) {
+    for(unsigned int idim=0;idim<ndim;++idim){
+      if (aBCFlag[ip*ndim+idim] != 0) continue;
+      X[ip*ndim+idim] += alpha * Y(ip,idim);
+    }
   }
 }
 
