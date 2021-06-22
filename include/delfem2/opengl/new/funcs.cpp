@@ -107,19 +107,20 @@ DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::ADD_VBO
 
 
 DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Add_EBO
- (const std::vector<unsigned int>& aElem,
-  int GL_MODE)
+(const std::vector<unsigned int>& aElem,
+  int gl_primitive_type)
 {
   glBindVertexArray(this->VAO); // opengl4
   assert( glIsVertexArray(this->VAO) );
+  assert( gl_primitive_type != GL_QUADS ); // quad is for legacy OpenGL
   // -----
-  unsigned int EBO_Tri;
-  glGenBuffers(1, &EBO_Tri);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri); // gl24
+  unsigned int idEBO;
+  glGenBuffers(1, &idEBO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idEBO); // gl24
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aElem.size(), aElem.data(), GL_STATIC_DRAW); // gl24
   CGL4_VAO_Mesh::CEBO e0;
-  e0.EBO = EBO_Tri;
-  e0.GL_MODE = GL_MODE;
+  e0.EBO = idEBO;
+  e0.GL_MODE = gl_primitive_type;
   e0.size = aElem.size();
   this->aEBO.push_back(e0);
 }

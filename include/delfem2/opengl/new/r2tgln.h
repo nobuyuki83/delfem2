@@ -10,6 +10,7 @@
 #define DFM2_OPENGL_NEW_R2TGLN_H
 
 #include "delfem2/opengl/new/mshcolor.h" // shader definitions
+#include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/opengl/r2t.h"
 #include "delfem2/dfm2_inline.h"
 #include <stdio.h>
@@ -39,7 +40,7 @@ public:
   double draw_len_axis;
   unsigned int pointSize;
   CShader_LineMesh shdr0;
-  CShader_TriMesh_Tex shdr1;
+  CShader_MeshTex shdr1;
   CShader_Points shdr2;
 };
   

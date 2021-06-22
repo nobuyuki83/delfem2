@@ -102,7 +102,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr1.Initialize(aPos3d, aTri, aTex2d);
+    shdr1.Initialize(aPos3d, aTri, GL_TRIANGLES, aTex2d);
   }
   {
     shdr2.Compile();

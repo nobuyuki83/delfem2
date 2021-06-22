@@ -14,9 +14,9 @@
 
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/noise.h"
+#include "delfem2/opengl/new/shdr_mshtex.h"
 
 #if defined(_MSC_VER)
   #include <windows.h>
@@ -29,7 +29,7 @@
 namespace dfm2 = delfem2;
 
 // ---------------------------
-dfm2::opengl::CShader_TriMesh_Tex shdr;
+dfm2::opengl::CShader_MeshTex shdr;
 delfem2::glfw::CViewer2 viewer;
 GLuint m_texName = -1;
 
@@ -93,7 +93,7 @@ int main()
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr.Initialize(aPos3d, aTri, aTex2d);
+    shdr.Initialize(aPos3d, aTri, GL_TRIANGLES, aTex2d);
   }
 
   {

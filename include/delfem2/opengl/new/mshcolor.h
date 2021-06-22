@@ -130,26 +130,7 @@ public:
   int Loc_ValMin, Loc_ValMax;
 };
 
-class CShader_TriMesh_Tex{
-public:
-  void Initialize(
-      std::vector<double>& aXYZd,
-      std::vector<unsigned int>& aTri,
-      std::vector<double>& aTex);
-  void UpdateVertex(
-      std::vector<double>& aXYZd,
-      std::vector<unsigned int>& aTri,
-      std::vector<double>& aTex);
-  void Compile();
-  void Draw(float mP[16], float mMV[16]) const;
 
-public:
-  CGL4_VAO_Mesh vao; // gl4
-  int shaderProgram;
-  int Loc_MatrixProjection;
-  int Loc_MatrixModelView;
-  int Loc_Texture;
-};
 
 }
 }
