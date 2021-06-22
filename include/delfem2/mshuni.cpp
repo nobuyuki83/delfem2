@@ -560,23 +560,24 @@ delfem2::JArray_AddMasterSlavePattern(
 // ---------------------------------------
 
 DFM2_INLINE void delfem2::MarkConnectedElements(
-    std::vector<int>& aIndGroup,
-    int itri_ker,
+    std::vector<unsigned int>& aFlagElem,
+    unsigned int itri_ker,
     int igroup,
-    const std::vector<int>& aTriSurRel,
-    const int nfael)
+    const std::vector<unsigned int>& aElSuEl)
 {
-  aIndGroup[itri_ker] = igroup;
+  const unsigned int nel = aFlagElem.size();
+  const unsigned int nfael = aElSuEl.size()/nel;
+  aFlagElem[itri_ker] = igroup;
   std::stack<int> next;
   next.push(itri_ker);
   while(!next.empty()){
     int itri0 = next.top();
     next.pop();
-    for(int ie=0;ie<nfael;++ie){
-      const int ita = aTriSurRel[(itri0*nfael+ie)*2+0];
-      if( ita == -1 ) continue;
-      if( aIndGroup[ita] != igroup ){
-        aIndGroup[ita] = igroup;
+    for(unsigned int ie=0;ie<nfael;++ie){
+      const unsigned int ita = aElSuEl[itri0*nfael+ie];
+      if( ita == UINT_MAX ) continue;
+      if( aFlagElem[ita] != igroup ){
+        aFlagElem[ita] = igroup;
         next.push(ita);
       }
     }
@@ -585,9 +586,9 @@ DFM2_INLINE void delfem2::MarkConnectedElements(
 
 DFM2_INLINE void delfem2::MakeGroupElem(
     int& ngroup,
-    std::vector<int>& aIndGroup,
-    const std::vector<int>& aTri,
-    const std::vector<int>& aTriSurRel,
+    std::vector<unsigned int>& aIndGroup,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<unsigned int>& aTriSurRel,
     const int nfael,
     const int nnoel)
 {
@@ -601,19 +602,10 @@ DFM2_INLINE void delfem2::MakeGroupElem(
     }
     if( itri_ker == nelem ) break;
     igroup++;
-    MarkConnectedElements(aIndGroup, itri_ker, igroup, aTriSurRel,nfael);
+    MarkConnectedElements(aIndGroup, itri_ker, igroup, aTriSurRel);
   }
   ngroup = igroup+1;
 }
 
-DFM2_INLINE void delfem2::MakeGroupElem_Tri(
-    int& ngroup,
-    std::vector<int>& aIndGroup,
-    const std::vector<int>& aTri,
-    const std::vector<int>& aTriSurRel)
-{
-  MakeGroupElem(ngroup,aIndGroup,
-                aTri,aTriSurRel,3,3);
-}
 
 
