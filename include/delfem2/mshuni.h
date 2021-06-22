@@ -205,25 +205,18 @@ DFM2_INLINE void MeshLine_MeshElem(
 // ------------------------------------
 
 DFM2_INLINE void MarkConnectedElements(
-    std::vector<int>& aIndGroup,
-    int itri_ker,
+    std::vector<unsigned int>& aFlgElem,
+    unsigned int itri_ker,
     int igroup,
-    const std::vector<int>& aTriSurRel,
-    int nfael);
+    const std::vector<unsigned int>& aElSuEl);
 
 DFM2_INLINE void MakeGroupElem(
     int& ngroup,
-    std::vector<int>& aIndGroup,
-    const std::vector<int>& aElem,
-    const std::vector<int>& aElemSurRel,
+    std::vector<unsigned int>& aIndGroup,
+    const std::vector<unsigned int>& aElem,
+    const std::vector<unsigned int>& aElemSurRel,
     int nfael,
     int nnoel);
-
-DFM2_INLINE void MakeGroupElem_Tri(
-    int& ngroup,
-    std::vector<int>& aIndGroup,
-    const std::vector<int>& aTri,
-    const std::vector<int>& aTriSurRel);
 
 } // end namespace delfem2
 

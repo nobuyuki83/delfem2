@@ -44,6 +44,14 @@ public:
 }
 
 
+/**
+ * propergating from one element, finding the topologycal distance
+ * @param aDist
+ * @param aOrder
+ * @param ielm_ker
+ * @param aElSuEl
+ * @param nelem
+ */
 void DijkstraElem_MeshElemTopo(
     std::vector<unsigned int> &aDist,
     std::vector<unsigned int>& aOrder,

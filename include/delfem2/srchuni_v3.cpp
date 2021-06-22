@@ -463,7 +463,8 @@ void delfem2::IntersectionRay_MeshTri3(
 template <typename T>
 void delfem2::IntersectionRay_MeshTri3DPart(
     std::map<T,CPtElm2<T>>& mapDepthPES,
-    const CVec3<T>& org, const CVec3<T>& dir,
+    const CVec3<T>& org,
+    const CVec3<T>& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<T>& aXYZ,
     const std::vector<unsigned int>& aIndTri,
