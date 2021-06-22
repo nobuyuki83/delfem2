@@ -37,8 +37,9 @@
 // ---------------------------------------------------------------------------
 
 
-DFM2_INLINE int delfem2::opengl::GL24_CompileShader
- (const char *vert, const char* frag)
+DFM2_INLINE int delfem2::opengl::GL24_CompileShader(
+    const char *vert,
+    const char* frag)
 { // build and compile our shader program
   // ------------------------------------
   // vertex shader

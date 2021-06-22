@@ -61,9 +61,9 @@ void delfem2::opengl::SaveViewportAsImagePpm
   inum++;
 }
 
-int delfem2::opengl::SetTexture_RGB
- (unsigned int w, unsigned int h,
-  const std::vector<unsigned char>& image)
+int delfem2::opengl::SetTexture_RGB(
+    unsigned int w, unsigned int h,
+    const std::vector<unsigned char>& image)
 {
   glEnable(GL_TEXTURE_2D);
   GLuint m_texName = 0;

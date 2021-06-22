@@ -5,16 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/openglstb/glyph.h"
 #include "delfem2/mshprimitive.h"
-#include "delfem2/str.h"
 #include <iostream>
-#include <fstream>
 #include <cmath>
 
 namespace dfm2 = delfem2;
@@ -30,10 +27,6 @@ int main(int argc,char* argv[])
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
-    printf("Something went wrong in loading OpenGL functions!\n");
-    exit(-1);
-  }
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();

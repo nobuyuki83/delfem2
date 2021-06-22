@@ -56,11 +56,10 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
 )
 
-set(3RD_PARTY  "../../3rd_party")
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/glad4/include/glad/glad.h  
-  ${3RD_PARTY}/glad4/src/glad.c
-  main.cpp
+    ${PROJECT_SOURCE_DIR}/../../3rd_party/glad4/include/glad/glad.h
+    ${PROJECT_SOURCE_DIR}/../../3rd_party/glad4/src/glad.c
+    main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

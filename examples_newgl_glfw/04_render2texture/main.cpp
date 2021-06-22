@@ -14,6 +14,7 @@
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/noise.h"
 #include "delfem2/mshprimitive.h"
 
@@ -29,7 +30,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------
 dfm2::opengl::CShader_TriMesh shdr0;
-dfm2::opengl::CShader_TriMesh_Tex shdr;
+dfm2::opengl::CShader_MeshTex shdr;
 delfem2::glfw::CViewer2 viewer;
 unsigned int idTexColor = 0;
 unsigned int idTexDepth = 0;
@@ -115,7 +116,7 @@ int main()
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr.Initialize(aPos3d, aTri, aTex2d);
+    shdr.Initialize(aPos3d, aTri, GL_TRIANGLES, aTex2d);
   }
 
   const unsigned int targetTextureWidth = 256;

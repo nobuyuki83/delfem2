@@ -20,6 +20,7 @@ add_subdirectory(03_texture)
 add_subdirectory(04_render2texture)
 add_subdirectory(05_OffScreenProjection)
 add_subdirectory(06_VolumeRendering)
+add_subdirectory(07_RayCasting)
 
 add_subdirectory(20_cad2d)
 

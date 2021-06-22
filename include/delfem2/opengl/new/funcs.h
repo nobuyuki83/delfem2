@@ -120,7 +120,7 @@ const std::string glsl33frag =
 }
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/opengl/new/funcs.cpp"
+  #include "delfem2/opengl/new/funcs.cpp"
 #endif
 
 #endif /* utility_glew_h */
