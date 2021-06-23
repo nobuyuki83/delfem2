@@ -33,17 +33,17 @@ SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 
 # dfm2
-IF (DFM2_HEADER_ONLY)
+if(DFM2_HEADER_ONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)
-else ()
-  if (MSVC)
+else()
+  if(MSVC)
     set(DFM2_LIBRARY
-        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)
-  else ()
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
+  else()
     set(DFM2_LIBRARY
-        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a)
-  endif ()
-ENDIF ()
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
+  endif()
+endif()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 #################################################

@@ -13,16 +13,18 @@ namespace opengl {
 
 class CShader_MeshTex {
 public:
-  void Initialize(
-      std::vector<double> &aXYZd,
+  void setElement(
       std::vector<unsigned int> &aTri,
-      int gl_primitive_type,
-      std::vector<double> &aTex);
+      int gl_primitive_type);
 
-  void UpdateVertex(
-      std::vector<double> &aXYZd,
-      std::vector<unsigned int> &aTri,
-      std::vector<double> &aTex);
+  template <typename REAL>
+  void setCoords(
+      std::vector<REAL> &aXYZd,
+      unsigned int ndim);
+
+  template <typename REAL>
+  void setTexCoords(
+      std::vector<REAL> &aTex);
 
   void Compile();
 

@@ -22,9 +22,18 @@ namespace opengl {
 class CShader_Points{
 public:
   void Compile();
-  void Initialize(std::vector<double>& aXYZd);
-  void UpdateVertex(std::vector<double>& aXYZd);
-  void Draw(float mP[16], float mMV[16]) const;
+
+  template <typename REAL>
+  void Initialize(
+      std::vector<REAL>& aXYZd);
+
+  template <typename REAL>
+  void UpdateVertex(
+      std::vector<REAL>& aXYZd);
+
+  void Draw(
+      float mP[16],
+      float mMV[16]) const;
 public:
   CGL4_VAO_Mesh vao; // gl4
   int shaderProgram;
@@ -39,11 +48,15 @@ class CShader_LineMesh{
 public:
   void Compile();
 
-  void Initialize(std::vector<double>& aXYZd,
-                  std::vector<unsigned int>& aLine);
+  template <typename REAL>
+  void Initialize(
+      std::vector<REAL>& aXYZd,
+      std::vector<unsigned int>& aLine);
 
-  void UpdateVertex(std::vector<double>& aXYZd,
-                    std::vector<unsigned int>& aLine);
+  template <typename REAL>
+  void UpdateVertex(
+      std::vector<REAL>& aXYZd,
+      std::vector<unsigned int>& aLine);
 
   void Draw(float mP[16], float mMV[16]) const;
 
@@ -59,10 +72,15 @@ class CShader_TriMesh{
 public:
   void Compile();
 
-  void Initialize(std::vector<double>& aXYZd,
-                  std::vector<unsigned int>& aTri);
-  void UpdateVertex(std::vector<double>& aXYZd,
-                    std::vector<unsigned int>& aTri);
+  template <typename REAL>
+  void Initialize(
+      std::vector<REAL>& aXYZd,
+      std::vector<unsigned int>& aTri);
+
+  template <typename REAL>
+  void UpdateVertex(
+      std::vector<REAL>& aXYZd,
+      std::vector<unsigned int>& aTri);
 
   void Draw(float mP[16], float mMV[16]) const;
   
@@ -85,13 +103,20 @@ public:
     color_min = delfem2::CColor::Gray(0.0);
     color_max = delfem2::CColor::Gray(1.0);
   }
-  void Initialize(std::vector<double>& aPosD,
-                  unsigned int ndim,
-                  std::vector<unsigned int>& aTri,
-                  std::vector<double>& aValD);
-  void UpdateVertex(std::vector<double>& aPosD,
-                    unsigned int ndim,
-                    std::vector<double>& aValD);
+
+  template <typename REAL>
+  void Initialize(
+      std::vector<REAL>& aPosD,
+      unsigned int ndim,
+      std::vector<unsigned int>& aTri,
+      std::vector<REAL>& aValD);
+
+  template <typename REAL>
+  void UpdateVertex(
+      std::vector<REAL>& aPosD,
+      unsigned int ndim,
+      std::vector<REAL>& aValD);
+
   void Compile();
   void Draw(float mP[16], float mMV[16]);
   
@@ -111,13 +136,20 @@ class CShader_TriMesh_Disp{
 public:
   CShader_TriMesh_Disp(){
   }
-  void Initialize(std::vector<double>& aPosD,
-                  unsigned int ndim,
-                  std::vector<unsigned int>& aTri,
-                  std::vector<double>& aDispD);
-  void UpdateVertex(std::vector<double>& aPosD,
-                    unsigned int ndim,
-                    std::vector<double>& aDispD);
+
+  template <typename REAL>
+  void Initialize(
+      std::vector<REAL>& aPosD,
+      unsigned int ndim,
+      std::vector<unsigned int>& aTri,
+      std::vector<REAL>& aDispD);
+
+  template <typename REAL>
+  void UpdateVertex(
+      std::vector<REAL>& aPosD,
+      unsigned int ndim,
+      std::vector<REAL>& aDispD);
+
   void Compile();
   void Draw(float mP[16], float mMV[16]);
   

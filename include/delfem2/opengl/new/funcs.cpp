@@ -23,7 +23,8 @@ DFM2_INLINE void delfem2::opengl::GL4_VAO_Pos(
     unsigned int& VAO,
     unsigned int& VBO,
     const float* aP,
-    int nP, int nDim)
+    int nP,
+    int nDim)
 {
   glGenVertexArrays(1, &VAO); // opengl4
   glBindVertexArray(VAO); // opengl4
@@ -40,12 +41,14 @@ DFM2_INLINE void delfem2::opengl::GL4_VAO_Pos(
 }
 
 
-DFM2_INLINE void delfem2::opengl::GL4_VAO_PosNrm
-(unsigned int& VAO,
- unsigned int& VBO_pos,
- unsigned int& VBO_nrm,
- const float* aP, int nP, int nDim,
- const float* aN)
+DFM2_INLINE void delfem2::opengl::GL4_VAO_PosNrm(
+    unsigned int& VAO,
+    unsigned int& VBO_pos,
+    unsigned int& VBO_nrm,
+    const float* aP,
+    int nP,
+    int nDim,
+    const float* aN)
 {
   // set up vertex data (and buffer(s)) and configure vertex attributes
   glGenVertexArrays(1, &VAO); // opengl4
@@ -80,9 +83,13 @@ DFM2_INLINE void delfem2::opengl::GL4_VAO_PosNrm
 }
 
 
-DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Draw
- (unsigned int iel) const {
-  if( iel >= aEBO.size() ){ assert(0); return; }
+DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Draw(
+    unsigned int iel) const
+{
+  if( iel >= aEBO.size() ){
+    assert(0);
+    return;
+  }
   glBindVertexArray(VAO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aEBO[iel].EBO);
   glDrawElements(aEBO[iel].GL_MODE,
@@ -92,23 +99,23 @@ DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Draw
 }
 
 
-DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::ADD_VBO
-(unsigned int ivbo,
- const std::vector<float>& aXY0f)
+template <typename REAL>
+DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::ADD_VBO(
+    unsigned int ivbo,
+    const std::vector<REAL>& aXY0f)
 {
   glBindVertexArray(this->VAO); // opengl4
   assert( glIsVertexArray(this->VAO) );
-  // ----
   if( ivbo >= aVBO.size() ){ aVBO.resize(ivbo+1); }
   if( !glIsBuffer(aVBO[ivbo].VBO) ){ glGenBuffers(1, &aVBO[ivbo].VBO); }
   glBindBuffer(GL_ARRAY_BUFFER, aVBO[ivbo].VBO); // gl24
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
+  glBufferData(GL_ARRAY_BUFFER, sizeof(REAL)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
 }
 
 
-DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Add_EBO
-(const std::vector<unsigned int>& aElem,
-  int gl_primitive_type)
+DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Add_EBO(
+    const std::vector<unsigned int>& aElem,
+    int gl_primitive_type)
 {
   glBindVertexArray(this->VAO); // opengl4
   assert( glIsVertexArray(this->VAO) );

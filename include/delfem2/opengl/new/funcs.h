@@ -68,17 +68,27 @@ public:
   CGL4_VAO_Mesh(){
     VAO = 0;
   }
+
   void Draw(unsigned int iel) const;
-  // ----
-  void ADD_VBO(unsigned int ivbo,
-               const std::vector<float>& aF);
-  void ADD_VBO(unsigned int ivbo,
-               const std::vector<double>& aD){
+
+  template <typename REAL>
+  void ADD_VBO(
+      unsigned int ivbo,
+      const std::vector<REAL>& aF);
+
+  /*
+  void ADD_VBO(
+      unsigned int ivbo,
+      const std::vector<double>& aD)
+  {
     std::vector<float> aF(aD.begin(),aD.end());
     this->ADD_VBO(ivbo, aF);
   }
-  void Add_EBO(const std::vector<unsigned int>& aTri,
-               int GL_MODE);
+   */
+  void Add_EBO(
+      const std::vector<unsigned int>& aTri,
+      int GL_MODE);
+
   void Delete_EBOs(){
     for(size_t ie=0;ie<aEBO.size();++ie){
        unsigned int ebo = aEBO[ie].EBO;

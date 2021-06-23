@@ -78,10 +78,10 @@ int main()
   shdr.Compile();
   {
     std::vector<double> aPos3d = {
-        -0.5, -0.5, 0.0,
-        +0.5, -0.5, 0.0,
-        +0.5, +0.5, 0.0,
-        -0.5, +0.5, 0.0
+        -0.5, -0.5,
+        +0.5, -0.5,
+        +0.5, +0.5,
+        -0.5, +0.5,
     };
     std::vector<unsigned int> aTri = {
         0,1,2,
@@ -93,7 +93,9 @@ int main()
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr.Initialize(aPos3d, aTri, GL_TRIANGLES, aTex2d);
+    shdr.setCoords(aPos3d,2);
+    shdr.setTexCoords(aTex2d);
+    shdr.setElement( aTri, GL_TRIANGLES);
   }
 
   {
