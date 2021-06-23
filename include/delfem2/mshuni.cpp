@@ -504,12 +504,12 @@ delfem2::JArray_AddMasterSlavePattern(
       }
     }
   }
-  ////
+  //
   for(int ino=0;ino<nno;ino++){ index[ino+1] += index[ino]; }
   const int narray = index[nno];
   array.resize(narray);
   for(int ino=0;ino<nno;ino++){ aflg[ino] = -1; }
-  ////
+  //
   for(int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
     for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
@@ -562,7 +562,7 @@ delfem2::JArray_AddMasterSlavePattern(
 DFM2_INLINE void delfem2::MarkConnectedElements(
     std::vector<unsigned int>& aFlagElem,
     unsigned int itri_ker,
-    int igroup,
+    unsigned int igroup,
     const std::vector<unsigned int>& aElSuEl)
 {
   const unsigned int nel = aFlagElem.size();
@@ -598,7 +598,7 @@ DFM2_INLINE void delfem2::MakeGroupElem(
   for(;;){
     unsigned int itri_ker = 0;
     for(;itri_ker<nelem;++itri_ker){
-      if( aIndGroup[itri_ker]==-1) break;
+      if( aIndGroup[itri_ker] == UINT_MAX ) break;
     }
     if( itri_ker == nelem ) break;
     igroup++;
