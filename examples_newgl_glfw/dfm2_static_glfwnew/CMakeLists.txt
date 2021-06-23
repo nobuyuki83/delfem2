@@ -120,6 +120,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/new/r2tgln.h       ${DELFEM2_INC}/opengl/new/r2tgln.cpp
     ${DELFEM2_INC}/opengl/new/v23dtricad.h   ${DELFEM2_INC}/opengl/new/v23dtricad.cpp
     ${DELFEM2_INC}/opengl/new/shdr_mshtex.h  ${DELFEM2_INC}/opengl/new/shdr_mshtex.cpp
+    ${DELFEM2_INC}/opengl/new/shdr_mshtri.h  ${DELFEM2_INC}/opengl/new/shdr_mshtri.cpp
+    ${DELFEM2_INC}/opengl/new/shdr_points.h  ${DELFEM2_INC}/opengl/new/shdr_points.cpp
 
     ${DELFEM2_INC}/glfw/viewer3.h     ${DELFEM2_INC}/glfw/viewer3.cpp
     ${DELFEM2_INC}/glfw/viewer2.h     ${DELFEM2_INC}/glfw/viewer2.cpp

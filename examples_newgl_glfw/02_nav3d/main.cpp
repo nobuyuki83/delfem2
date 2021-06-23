@@ -8,7 +8,7 @@
 
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/opengl/new/shdr_mshtri.h"
 #include "delfem2/mshprimitive.h"
 
 #if defined(_MSC_VER)

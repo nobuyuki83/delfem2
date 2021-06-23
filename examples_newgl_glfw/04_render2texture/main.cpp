@@ -13,8 +13,8 @@
 #endif
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/opengl/new/shdr_mshtex.h"
+#include "delfem2/opengl/new/shdr_mshtri.h"
 #include "delfem2/noise.h"
 #include "delfem2/mshprimitive.h"
 

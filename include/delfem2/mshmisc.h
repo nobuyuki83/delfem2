@@ -109,12 +109,13 @@ DFM2_INLINE void RemoveUnreferencedPoints_MeshElem(
 /**
  * @brief Normal at the vertex of a triangle mesh.
  */
+template <typename REAL>
 DFM2_INLINE void Normal_MeshTri3D(
-    double *aNorm,
-    const double *aXYZ, 
-	size_t nXYZ,
+    REAL *aNorm,
+    const REAL *aXYZ,
+	  size_t nXYZ,
     const unsigned int *aTri, 
-	size_t nTri);
+	  size_t nTri);
  
 /**
  * @brief Normal at the vertex of a quad mesh. Defined for "float" and "double"

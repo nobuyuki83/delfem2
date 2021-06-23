@@ -689,12 +689,12 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     const T* vcrs = valCrs.data();
     // -------------------------------
     for(int iblk=nblk-1;iblk>=0;iblk--){
-      assert( (int)iblk < nblk );
+      assert( iblk < (int)nblk );
       T lvec_i = vec[iblk];
       for(unsigned int ijcrs=m_diaInd[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<rowPtr.size() );
-        const int jblk0 = rowptr[ijcrs];
-        assert( jblk0>(int)iblk && jblk0<nblk );
+        const unsigned int jblk0 = rowptr[ijcrs];
+        assert( (int)jblk0>iblk && jblk0<nblk );
         lvec_i -= vcrs[ijcrs]*vec[jblk0];
       }
       vec[iblk] = lvec_i;
@@ -707,7 +707,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     // ----------------------------
     T pTmpVec[2];
     for(int iblk=nblk-1;iblk>=0;iblk--){ // going backward
-      assert( (int)iblk < nblk );
+      assert( iblk < (int)nblk );
       pTmpVec[0] = vec[iblk*2+0];
       pTmpVec[1] = vec[iblk*2+1];
       const unsigned int icrs0 = m_diaInd[iblk];
@@ -715,7 +715,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
       for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
         assert( ijcrs<rowPtr.size() );
         const unsigned int jblk0 = rowptr[ijcrs];
-        assert( (int)jblk0>iblk && jblk0<(int)nblk );
+        assert( (int)jblk0>iblk && jblk0<nblk );
         const T* vij = &vcrs[ijcrs*4];
         const T valj0 = vec[jblk0*2+0];
         const T valj1 = vec[jblk0*2+1];
@@ -733,7 +733,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     // --------------------
     T pTmpVec[3];
     for(int iblk=nblk-1;iblk>=0;iblk--){
-      assert( (int)iblk < nblk );
+      assert( iblk <(int)nblk );
       pTmpVec[0] = vec[iblk*3+0];
       pTmpVec[1] = vec[iblk*3+1];
       pTmpVec[2] = vec[iblk*3+2];
@@ -772,8 +772,8 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
       const unsigned int icrs1 = colind[iblk+1];
       for (unsigned int ijcrs = icrs0; ijcrs<icrs1; ijcrs++){
         assert(ijcrs<rowPtr.size());
-        const int jblk0 = rowptr[ijcrs];
-        assert(jblk0>(int)iblk && jblk0<nblk);
+        const unsigned int jblk0 = rowptr[ijcrs];
+        assert((int)jblk0>iblk && jblk0<nblk);
         const T* vij = &vcrs[ijcrs*16];
         const T valj0 = vec[jblk0*4+0];
         const T valj1 = vec[jblk0*4+1];
@@ -794,14 +794,14 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     const int blksize = ndim*ndim;
     std::vector<T> pTmpVec(ndim);
     for(int iblk=nblk-1;iblk>=0;iblk--){
-      assert( (int)iblk < nblk );
+      assert( iblk <(int)nblk );
       for(unsigned int idof=0;idof<ndim;idof++){
         pTmpVec[idof] = vec[iblk*ndim+idof];
       }
       for(unsigned int ijcrs=m_diaInd[iblk];ijcrs<colInd[iblk+1];ijcrs++){
         assert( ijcrs<rowPtr.size() );
-        const int jblk0 = rowPtr[ijcrs];
-        assert( jblk0>(int)iblk && jblk0<nblk );
+        const unsigned int jblk0 = rowPtr[ijcrs];
+        assert( (int)jblk0>iblk && jblk0<nblk );
         const T* vij = &valCrs[ijcrs*blksize];
         for(unsigned int idof=0;idof<ndim;idof++){
           for(unsigned int jdof=0;jdof<ndim;jdof++){

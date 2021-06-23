@@ -11,7 +11,7 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/opengl/new/shdr_mshtri.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"

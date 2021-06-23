@@ -40,7 +40,11 @@ DFM2_INLINE double TriArea2D(const double p0[], const double p1[], const double 
   return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
 }
 
-DFM2_INLINE double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
+DFM2_INLINE double TriArea3D(
+    const double v1[3],
+    const double v2[3],
+    const double v3[3])
+{
   double n[3];
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
@@ -49,9 +53,12 @@ DFM2_INLINE double TriArea3D(const double v1[3], const double v2[3], const doubl
 }
 
 template <typename T>
-DFM2_INLINE void UnitNormalAreaTri3
- (T n[3], T& a,
-  const T v1[3], const T v2[3], const T v3[3])
+DFM2_INLINE void UnitNormalAreaTri3(
+    T n[3],
+    T& a,
+    const T v1[3],
+    const T v2[3],
+    const T v3[3])
 {
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
@@ -359,9 +366,10 @@ void delfem2::RemoveUnreferencedPoints_MeshElem
   }
 }
 
+template <typename REAL>
 void delfem2::Normal_MeshTri3D(
-    double* aNorm,
-    const double* aXYZ,
+    REAL* aNorm,
+    const REAL* aXYZ,
     size_t nXYZ,
     const unsigned int* aTri,
     size_t nTri)
@@ -371,23 +379,37 @@ void delfem2::Normal_MeshTri3D(
     const unsigned int i0 = aTri[itri*3+0]; assert( i0 < nXYZ );
     const unsigned int i1 = aTri[itri*3+1]; assert( i1 < nXYZ );
     const unsigned int i2 = aTri[itri*3+2]; assert( i2 < nXYZ );
-    const double* p0 = aXYZ+i0*3;
-    const double* p1 = aXYZ+i1*3;
-    const double* p2 = aXYZ+i2*3;
-    double un[3], area;
+    const REAL* p0 = aXYZ+i0*3;
+    const REAL* p1 = aXYZ+i1*3;
+    const REAL* p2 = aXYZ+i2*3;
+    REAL un[3], area;
     mshmisc::UnitNormalAreaTri3(un,area, p0,p1,p2);
     aNorm[i0*3+0] += un[0];  aNorm[i0*3+1] += un[1];  aNorm[i0*3+2] += un[2];
     aNorm[i1*3+0] += un[0];  aNorm[i1*3+1] += un[1];  aNorm[i1*3+2] += un[2];
     aNorm[i2*3+0] += un[0];  aNorm[i2*3+1] += un[1];  aNorm[i2*3+2] += un[2];
   }
   for(unsigned int ino=0;ino<nXYZ;ino++){
-    const double n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
-    const double invlen = 1.0/mshmisc::Length3(n);
+    const REAL invlen = 1.0/mshmisc::Length3(aNorm+ino*3);
     aNorm[ino*3+0] *= invlen;
     aNorm[ino*3+1] *= invlen;
     aNorm[ino*3+2] *= invlen;
   }
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Normal_MeshTri3D(
+    float* aNorm,
+    const float* aXYZ,
+    size_t nXYZ,
+    const unsigned int* aTri,
+    size_t nTri);
+template void delfem2::Normal_MeshTri3D(
+    double* aNorm,
+    const double* aXYZ,
+    size_t nXYZ,
+    const unsigned int* aTri,
+    size_t nTri);
+#endif
+
 
 template <typename REAL>
 void delfem2::Normal_MeshQuad3
