@@ -1,6 +1,7 @@
 
 /**
- * @file demo based on smallpt (https://www.kevinbeason.com/smallpt/)
+ * @file demo based on smallpt, a Path Tracer by Kevin Beason, 2008
+ * (https://www.kevinbeason.com/smallpt/)
  */
 
 #include <cmath>
@@ -11,6 +12,36 @@
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 using namespace delfem2;
+
+double my_erand48(unsigned short xseed[3])
+{
+  constexpr unsigned short my_rand48_mult[3] = {
+      0xe66d,
+      0xdeec,
+      0x0005
+  };
+  constexpr unsigned short my_rand48_add = 0x000b;
+
+  unsigned long accu;
+  unsigned short temp[2];
+
+  accu = (unsigned long) my_rand48_mult[0] * (unsigned long) xseed[0] +
+         (unsigned long) my_rand48_add;
+  temp[0] = (unsigned short) accu;	/* lower 16 bits */
+  accu >>= sizeof(unsigned short) * 8;
+  accu += (unsigned long) my_rand48_mult[0] * (unsigned long) xseed[1] +
+          (unsigned long) my_rand48_mult[1] * (unsigned long) xseed[0];
+  temp[1] = (unsigned short) accu;	/* middle 16 bits */
+  accu >>= sizeof(unsigned short) * 8;
+  accu += my_rand48_mult[0] * xseed[2] + my_rand48_mult[1] * xseed[1] + my_rand48_mult[2] * xseed[0];
+  xseed[0] = temp[0];
+  xseed[1] = temp[1];
+  xseed[2] = (unsigned short) accu;
+  // --------
+  return ldexp((double) xseed[0], -48) +
+         ldexp((double) xseed[1], -32) +
+         ldexp((double) xseed[2], -16);
+}
 
 struct Ray {
   CVec3d o, d;
@@ -81,14 +112,16 @@ CVec3d radiance(
   CVec3d nl = n.dot(r.d) < 0 ? n : n * -1., f = obj.c;
   double p = f.x > f.y && f.x > f.z ? f.x : f.y > f.z ? f.y : f.z;
   if (++depth > 5){
-    if (erand48(Xi) < p){
+    if (my_erand48(Xi) < p){
       f = f * (1 / p);
     } else{
       return obj.e;
     }
   }
   if (obj.refl == DIFF) {
-    double r1 = 2 * M_PI * erand48(Xi), r2 = erand48(Xi), r2s = sqrt(r2);
+    double r1 = 2 * M_PI * my_erand48(Xi);
+    double r2 = my_erand48(Xi);
+    double r2s = sqrt(r2);
     CVec3d w = nl;
     CVec3d u = ((fabs(w.x) > .1 ? CVec3d(0, 1, 0) : CVec3d(1,0,0)) ^ w).normalized(), v = w ^ u;
     CVec3d d = (u * cos(r1) * r2s + v * sin(r1) * r2s + w * sqrt(1 - r2)).normalized();
@@ -99,7 +132,11 @@ CVec3d radiance(
   }
   Ray reflRay(x, r.d - n * 2. * n.dot(r.d));
   bool into = n.dot(nl) > 0;
-  double nc = 1, nt = 1.5, nnt = into ? nc / nt : nt / nc, ddn = r.d.dot(nl), cos2t;
+  double nc = 1;
+  double nt = 1.5;
+  double nnt = into ? nc / nt : nt / nc;
+  double ddn = r.d.dot(nl);
+  double cos2t;
   if ((cos2t = 1 - nnt * nnt * (1 - ddn * ddn)) < 0) {
     return obj.e + f.mult(radiance(reflRay, depth, Xi, aSphere));
   }
@@ -113,7 +150,7 @@ CVec3d radiance(
   double P = .25 + .5 * Re, RP = Re / P;
   double TP = Tr / (1 - P);
   if( depth > 2 ){
-    if( erand48(Xi) < P ){
+    if( my_erand48(Xi) < P ){
       return obj.e + f.mult(
           radiance(reflRay, depth, Xi, aSphere) * RP );
     }
@@ -170,8 +207,8 @@ int main(int argc, char *argv[]) {
       for (unsigned int iw = 0; iw < nw; iw++){
         for (int sy = 0; sy < 2; sy++) {
           for (int sx = 0; sx < 2; sx++) {
-            const double r1 = 2 * erand48(Xi);
-            const double r2 = 2 * erand48(Xi);
+            const double r1 = 2 * my_erand48(Xi);
+            const double r2 = 2 * my_erand48(Xi);
             const double dx = r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 - r1);
             const double dy = r2 < 1 ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
             CVec3d d = cx * (((sx + .5 + dx) / 2 + iw) / nw - .5) +
