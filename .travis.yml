@@ -81,6 +81,15 @@ script: |
   make
   cd ../..
 
+  echo "# ----------------------------------"
+  echo "# build C++ oldGL glfw glad examples"  
+
+  cd examples_oldgl_glfw_glad
+  mkdir buildMakeHdronly && cd buildMakeHdronly
+  cmake ..
+  make
+  cd ../..
+
   echo "# -------------------------"
   echo "# build C++ newGL glfw examples"
   cd examples_newgl_glfw

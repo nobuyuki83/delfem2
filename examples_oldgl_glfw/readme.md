@@ -42,9 +42,6 @@ cmake --build .
 ### [103_Noise2d](103_Noise2)
 <img src="103_Noise2/thumbnail.png" width=200px>
 
-### [104_Noise3](104_Noise3)
-<img src="104_Noise3/thumbnail.png" width=200px>
-
 ### [105_MeshSlice](105_MeshSlices)
 <img src="105_MeshSlices/thumbnail.png" width=200px>
 
@@ -64,17 +61,7 @@ cmake --build .
 <img src="110_ClusteringMesh/thumbnail.png" width=200px>
 
 ### [111_ExponentialMapElem](111_ExponentialMapElem)
-
 <img src="111_ExponentialMapElem/thumbnail.png" width=200px>
-
-### [112_OffscreenRendering](112_OffscreenRendering)
-<img src="112_OffscreenRendering/thumbnail.png" width=200px>
-
-### [113_ProjectionBox](113_ProjectionBox)
-<img src="113_ProjectionBox/thumbnail.png" width=200px>
-
-### [114_CollisionLineHightfield](114_CollisionLineHightfield)
-<img src="114_CollisionLineHightfield/thumbnail.png" width=200px>
 
 ### [115_ExponentialMapPoint](115_ExponentialMapPoint)
 <img src="115_ExponentialMapPoint/thumbnail.png" width=200px>
@@ -115,32 +102,11 @@ cmake --build .
 ### [127_GizmoAffine](127_GizmoAffine)
 <img src="127_GizmoAffine/thumbnail.png" width=200>
 
-### [128_Voxelize](128_Voxelize)
-<img src="128_Voxelize/thumbnail.png" width=200 alt="128_Voxelize">
-
 ### [129_CubeGridEdit](129_CubeGridEdit)
 <img src="129_CubeGridEdit/thumbnail.png" width=200 alt="129_CubeVoxelEdit">
 
-### [130_VoxelMorph](130_VoxelMorph)
-<img src="130_VoxelMorph/thumbnail.png" width=200 alt="130_VoxelMorph">
-
-### [131_Shader](131_Shader)
-<img src="131_Shader/thumbnail.png" width=200 alt="131_Shadder">
-
-### [132_ShaderTexLaplace](132_ShaderTexLaplace)
-<img src="132_ShaderTexLaplace/thumbnail.png" width=200 alt="132_ShadderTexLaplace">
-
-### [133_ShaderContour](133_ShaderContour)
-<img src="133_ShaderContour/thumbnail.png" width=200 alt="133_ShadderContour">
-
 ### [134_Primitives](134_Primitives)
 <img src="134_Primitives/thumbnail.png" width=200 alt="134_Primitives">
-
-### [135_GlBuffer](135_GlBuffer)
-<img src="135_GlBuffer/thumbnail.png" width=200 alt="135_GlBuffer">
-
-### [136_VoxelGeodesic](136_VoxelGeodesic)
-<img src="136_VoxelGeodesic/thumbnail.png" width=200 alt="136_VoxelGeodesic">
 
 ### [137_VoxelLineIntersection](137_VoxelLineIntersection)
 <img src="137_VoxelLineIntersection/thumbnail.png" width=200 alt="137_VoxleLineIntersection">
@@ -148,14 +114,8 @@ cmake --build .
 ### [138_RigReadFileBiovision](138_RigReadFileBiovision)
 <img src="138_RigReadFileBiovision/thumbnail.png" width=200>
 
-
-
 ### [139_Pick](139_Pick)
-
 <img src="139_Pick/thumbnail.png" width=200>
-
-### [140_RigVoxelGeodesic](140_RigVoxelGeodesic)
-<img src="140_RigVoxelGeodesic/thumbnail.png" width=200>
 
 ### [141_RigBendCapsule](141_RigBendCapsule)
 <img src="141_RigBendCapsule/thumbnail.png" width=200>
@@ -182,7 +142,6 @@ cmake --build .
 <img src="148_RayCasting/thumbnail.png" width=200>
 
 ### [149_PathTracingSimple](149_PathTracingSimple)
-
 <img src="149_PathTracingSimple/thumbnail.png" width=200>
 
 
@@ -301,9 +260,6 @@ cmake --build .
 
 ### [624_DefArapUi](624_DefArapUi)
 <img src="624_DefArapUi/thumbnail.png" width=200>
-
-### [625_DefLaplacianFitProj](625_DefLaplacianFitProj)
-<img src="625_DefLaplacianFitProj/thumbnail.png" width=200>
 
 ### [626_RgdRotation](626_RgdRotation)
 <img src="626_RgdRotation/thumbnail.png" width=200>

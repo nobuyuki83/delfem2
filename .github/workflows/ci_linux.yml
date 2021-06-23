@@ -93,10 +93,10 @@ jobs:
         cmake --install . --prefix ../GLFW_Lib
         cd ../..
 
-    - name: build examples (glfw legacy opengl)
+    - name: build examples (oldgl,glfw)
       run: |
-        echo ########################################
-        echo ## build C++ glfw legacy Opengl examples
+        echo ###########################
+        echo ## build demo: oldgl,glfw
 
         cd examples_oldgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
@@ -107,6 +107,17 @@ jobs:
         cd examples_oldgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
         cmake .. -DDFM2_HEADER_ONLY=OFF
+        cmake --build .
+        cd ../..
+
+    - name: build examples (oldgl,glfw,glad)
+      run: |
+        echo ##############################
+        echo ## build demo: oldgl,glfw,glad
+
+        cd examples_oldgl_glfw_glad
+        mkdir buildMakeHdronly && cd buildMakeHdronly
+        cmake .. -DDFM2_HEADER_ONLY=ON
         cmake --build .
         cd ../..
 
