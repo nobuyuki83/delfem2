@@ -158,7 +158,7 @@ DFM2_INLINE void delfem2::ElSuEl_MeshElem(
     const int nnofa,
     const int (*noelElemFace)[4])
 {
-  assert( elsup_ind.size()>=1 );
+  assert( !elsup_ind.empty() );
   const std::size_t np = elsup_ind.size()-1;
   
   aElSuEl.assign(nEl*nfael,UINT_MAX);
