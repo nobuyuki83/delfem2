@@ -207,7 +207,7 @@ DFM2_INLINE void MeshLine_MeshElem(
 DFM2_INLINE void MarkConnectedElements(
     std::vector<unsigned int>& aFlgElem,
     unsigned int itri_ker,
-    int igroup,
+    unsigned int igroup,
     const std::vector<unsigned int>& aElSuEl);
 
 DFM2_INLINE void MakeGroupElem(
@@ -221,7 +221,7 @@ DFM2_INLINE void MakeGroupElem(
 } // end namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/mshuni.cpp"
+  #include "delfem2/mshuni.cpp"
 #endif
  
 #endif /* meshtopo_hpp */
