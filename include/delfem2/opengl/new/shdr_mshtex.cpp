@@ -26,6 +26,15 @@ void delfem2::opengl::CShader_MeshTex::setCoords(
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim * sizeof(REAL), (void *) 0); // gl24
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::opengl::CShader_MeshTex::setCoords(
+    std::vector<float>& aXYZd,
+    unsigned int ndim);
+template void delfem2::opengl::CShader_MeshTex::setCoords(
+    std::vector<double>& aXYZd,
+    unsigned int ndim);
+#endif
+
 
 template <typename REAL>
 void delfem2::opengl::CShader_MeshTex::setTexCoords(
@@ -36,7 +45,12 @@ void delfem2::opengl::CShader_MeshTex::setTexCoords(
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 2, convertToGlType<REAL>(), GL_FALSE, 2*sizeof(REAL), (void*)0); // gl24
 }
-
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::opengl::CShader_MeshTex::setTexCoords(
+    std::vector<float>& aTex);
+template void delfem2::opengl::CShader_MeshTex::setTexCoords(
+    std::vector<double>& aTex);
+#endif
 
 void delfem2::opengl::CShader_MeshTex::Compile()
 {
