@@ -30,7 +30,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------
 dfm2::opengl::CShader_TriMesh shdr0;
-dfm2::opengl::CShader_MeshTex shdr;
+dfm2::opengl::CShader_MeshTex shdr_mshtex;
 delfem2::glfw::CViewer2 viewer;
 unsigned int idTexColor = 0;
 unsigned int idTexDepth = 0;
@@ -61,7 +61,7 @@ void draw(GLFWwindow* window)
     float mP[16], mMV[16];
     viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
     mMV[3*4+0] -= 0.5;
-    shdr.Draw(mP, mMV);
+    shdr_mshtex.Draw(mP, mMV);
   }
 
   {
@@ -70,7 +70,7 @@ void draw(GLFWwindow* window)
     float mP[16], mMV[16];
     viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
     mMV[3*4+0] += 0.5;
-    shdr.Draw(mP, mMV);
+    shdr_mshtex.Draw(mP, mMV);
   }
   
   viewer.SwapBuffers();
@@ -98,25 +98,27 @@ int main()
     shdr0.Initialize(aXYZ, aTri);
   }
 
-  shdr.Compile();
+  shdr_mshtex.Compile();
   {
-    std::vector<double> aPos3d = {
-        -0.5, -0.5, 0.0,
-        +0.5, -0.5, 0.0,
-        +0.5, +0.5, 0.0,
-        -0.5, +0.5, 0.0
+    std::vector<float> aPos3d = {
+        -0.5, -0.5,
+        +0.5, -0.5,
+        +0.5, +0.5,
+        -0.5, +0.5,
     };
     std::vector<unsigned int> aTri = {
         0,1,2,
         0,2,3,
     };
-    std::vector<double> aTex2d = {
+    std::vector<float> aTex2d = {
         0.0, 0.0,
         1.0, 0.0,
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr.Initialize(aPos3d, aTri, GL_TRIANGLES, aTex2d);
+    shdr_mshtex.setCoords(aPos3d,2);
+    shdr_mshtex.setTexCoords(aTex2d);
+    shdr_mshtex.setElement( aTri, GL_TRIANGLES);
   }
 
   const unsigned int targetTextureWidth = 256;

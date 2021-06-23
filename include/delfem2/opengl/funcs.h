@@ -39,6 +39,15 @@ DFM2_INLINE int setUpGLSL(
     const std::string& str_glsl_frag);
 
 
+template <typename REAL>
+constexpr int convertToGlType(){ return 0; }
+
+template <>
+constexpr int convertToGlType<float>(){ return GL_FLOAT; }
+
+template <>
+constexpr int convertToGlType<double>(){ return GL_DOUBLE; }
+
 }
 }
 

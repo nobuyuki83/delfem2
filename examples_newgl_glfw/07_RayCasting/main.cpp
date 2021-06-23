@@ -139,23 +139,25 @@ int main(int argc,char* argv[])
   tex.InitGL();
   shdr.Compile();
   {
-    std::vector<double> aPos3d = {
-        -1, -1, 0.0,
-        +1, -1, 0.0,
-        +1, +1, 0.0,
-        -1, +1, 0.0
+    std::vector<float> aPos3d = {
+        -1, -1,
+        +1, -1,
+        +1, +1,
+        -1, +1,
     };
     std::vector<unsigned int> aTri0 = {
         0,1,2,
         0,2,3,
     };
-    std::vector<double> aTex2d = {
+    std::vector<float> aTex2d = {
         0.0, 0.0,
         1.0, 0.0,
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr.Initialize(aPos3d, aTri0, GL_TRIANGLES, aTex2d);
+    shdr.setCoords(aPos3d,2);
+    shdr.setTexCoords(aTex2d);
+    shdr.setElement( aTri0, GL_TRIANGLES);
   }
 
   while (!glfwWindowShouldClose(viewer.window))

@@ -7,32 +7,34 @@
 #include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/opengl/funcs.h"
 
-void delfem2::opengl::CShader_MeshTex::Initialize(
-    std::vector<double>& aXYZd,
+void delfem2::opengl::CShader_MeshTex::setElement(
     std::vector<unsigned int>& aElem,
-    int gl_primitive_type,
-    std::vector<double>& aTex)
+    int gl_primitive_type)
 {
   if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
   vao.Delete_EBOs();
   vao.Add_EBO(aElem,gl_primitive_type);
-  this->UpdateVertex(aXYZd, aElem, aTex);
 }
 
-void delfem2::opengl::CShader_MeshTex::UpdateVertex(
-    std::vector<double>& aXYZd,
-    std::vector<unsigned int>& aTri,
-    std::vector<double>& aTex)
+template <typename REAL>
+void delfem2::opengl::CShader_MeshTex::setCoords(
+    std::vector<REAL>& aXYZd,
+    unsigned int ndim)
 {
-  glBindVertexArray(vao.VAO); // opengl4
-
-  vao.ADD_VBO(0,aXYZd);
+  if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
+  vao.ADD_VBO(0, aXYZd);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0); // gl24
+  glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim * sizeof(REAL), (void *) 0); // gl24
+}
 
+template <typename REAL>
+void delfem2::opengl::CShader_MeshTex::setTexCoords(
+    std::vector<REAL>& aTex)
+{
+  if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
   vao.ADD_VBO(1,aTex);
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
+  glVertexAttribPointer(1, 2, convertToGlType<REAL>(), GL_FALSE, 2*sizeof(REAL), (void*)0); // gl24
 }
 
 
