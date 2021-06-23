@@ -64,6 +64,23 @@ cd ../../
 
 
 echo "################################"
+echo "build examples_glfwold_glad"
+echo "################################"
+
+cd examples_oldgl_glfw_glad
+mkdir buildXcode
+cd buildXcode
+cmake .. -G Xcode 
+cd ../../
+
+cd examples_oldgl_glfw_glad
+mkdir buildMake
+cd buildMake
+cmake .. 
+cmake --build .
+cd ../../
+
+echo "################################"
 echo "build examples_glfwnew"
 echo "################################"
 

@@ -18,7 +18,7 @@ ENDIF ()
 
 ####################################
 
-project(114_CollisionLineHightfield)
+project(13_CollisionLineHightfield)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

@@ -20,9 +20,6 @@ project(129_CubeGridEdit)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
-# glad
-get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
-
 # glfw
 SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
@@ -48,20 +45,16 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 
 include_directories(
     ${OPENGL_INCLUDE_DIR}
-    ${GLAD_INCLUDE_DIR}
     ${GLFW_INCLUDE_DIR}
     ${DELFEM2_INCLUDE_DIR}
 )
 
-set(3RD_PARTY "../../3rd_party")
 add_executable(${PROJECT_NAME}
-    ${3RD_PARTY}/glad3/include/glad/glad.h
-    ${3RD_PARTY}/glad3/src/glad.c
     main.cpp
-    )
+)
 
 target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARIES}
-    )
+)

@@ -6,14 +6,11 @@
  */
 
 
-#include <glad/glad.h>
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/color.h"
-#include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v3q.h"
-#include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridvoxel.h"
 #include <GLFW/glfw3.h>
@@ -113,10 +110,6 @@ int main(int argc,char* argv[])
   viewer.camera.view_height = 1.0;
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.camera.Rot_Camera(+0.2, -0.2);
-  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
-    printf("Something went wrong in loading OpenGL functions!\n");
-    exit(-1);
-  }
   dfm2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   

@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.12)
+
+project(examples_oldgl_glfw_glad)
+
+add_subdirectory(00_Noise3)
+add_subdirectory(01_GlBuffer)
+
+add_subdirectory(11_OffscreenRendering)
+add_subdirectory(12_ProjectionBox)
+add_subdirectory(13_CollisionLineHightfield)
+add_subdirectory(14_Voxelize)
+add_subdirectory(15_VoxelMorph)
+add_subdirectory(16_VoxelGeodesic)
+add_subdirectory(17_RigVoxelGeodesic)
+add_subdirectory(18_DefLaplacianFitProj)
+
+add_subdirectory(20_Shader)
+add_subdirectory(21_ShaderTexLaplace)
+add_subdirectory(22_ShaderContour)

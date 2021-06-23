@@ -75,13 +75,37 @@ jobs:
         cmake . -A x64
         cmake --build . --config Release
         mkdir ../GLFW_Lib
-        cmake --install . --prefix ../GLFW_Lib
+        cmake --install . --prefix ../GLFW_Lib        
         cd ../..
 
-    - name: build examples (tinygltf,glfw)
+    - name: build examples (oldgl,glfw)
       run: |
-        echo "######################"
-        echo "## build tinygltf demo"
+        echo "#############################"
+        echo "## build demo oldgl,glfw,glad"
+
+        cd examples_oldgl_glfw
+        mkdir buildVS64Static
+        cd buildVS64Static
+        cmake .. -A x64
+        cmake --build .
+        cd ../../
+
+    - name: build examples (glfw,glad)
+      run: |
+        echo "#######################"
+        echo "## build demo glfw,glad"
+
+        cd examples_oldgl_glfw_glad
+        mkdir buildVS64Static
+        cd buildVS64Static
+        cmake .. -A x64
+        cmake --build .
+        cd ../../
+
+    - name: build examples (glfw,tinygltf)
+      run: |
+        echo "###########################"
+        echo "## build demo glfw,tinygltf"
 
         git submodule update --init -- 3rd_party/tinygltf
 
@@ -94,8 +118,8 @@ jobs:
 
     - name: build examples (thread)
       run: |
-        echo "######################"
-        echo "## build thread demo"
+        echo "#########################"
+        echo "## build demo glfw,thread"
 
         cd examples_oldgl_glfw_thread
         mkdir buildVS64Static
@@ -121,8 +145,8 @@ jobs:
 
     - name: build examples (glfw,cnpy)
       run: |
-        echo "##############################"
-        echo "## examples_oldgl_glfw_cnpy"
+        echo "#######################"
+        echo "## build demo glfw,cnpy"
 
         $zlib_library=Convert-Path 3rd_party\zlib\buildMake\Release\zlib.lib
         $zlib_include_dir=Convert-Path 3rd_party\zlib
