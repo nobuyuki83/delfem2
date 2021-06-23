@@ -30,10 +30,12 @@ int main(int argc,char* argv[])
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
+
   std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<'\n';
   std::cout<<"GPU: "<<glGetString(GL_RENDERER)<<'\n';
   std::cout<<"OpenGL ver.: "<<glGetString(GL_VERSION)<<'\n';
-  std::cout<<"OpenGL shading ver.: " <<glGetString(GL_SHADING_LANGUAGE_VERSION)<<std::endl;
+  // GL_SHADING_LANGUAGE_VERSION is undefined on Windows
+  // std::cout<<"OpenGL shading ver.: " <<glGetString(GL_SHADING_LANGUAGE_VERSION)<<std::endl;
 
   glyph.InitGL();
   
