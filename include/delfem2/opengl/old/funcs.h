@@ -10,15 +10,15 @@
  * There are a lot of legacy commands such as glBegin(),glEnd()
  */
 
-#ifndef DFM2_FUNCS_GLOLD_H
-#define DFM2_FUNCS_GLOLD_H
+#ifndef DFM2_OPENGL_OLD_FUNCS_H
+#define DFM2_OPENGL_OLD_FUNCS_H
 
 #include "delfem2/dfm2_inline.h"
 #include <string>
 #include <vector>
 
 #ifndef M_PI
-#  define M_PI 3.14159265358979323846264338327950288
+  #define M_PI 3.14159265358979323846264338327950288
 #endif
 
 namespace delfem2{
@@ -46,13 +46,13 @@ DFM2_INLINE void drawFloorShadow
  (void (*DrawObject)(), float yfloor, float wfloor);
 
 
-DFM2_INLINE void DrawRectangle_FullCanvas();
+//DFM2_INLINE void DrawRectangle_FullCanvas();
 DFM2_INLINE void showdepth();
 
 // --------------------------------------------------
-DFM2_INLINE void getPosOnScreen_Camera2D
- (double& x, double& y,
-  int i, int j);
+DFM2_INLINE void getPosOnScreen_Camera2D(
+    double& x, double& y,
+    int i, int j);
 
 DFM2_INLINE void setGL_Camera2D();
 

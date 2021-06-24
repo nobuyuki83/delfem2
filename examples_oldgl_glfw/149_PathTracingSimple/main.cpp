@@ -13,6 +13,7 @@
 #include "delfem2/glfw/util.h"
 using namespace delfem2;
 
+// based on https://github.com/postgres/postgres/blob/master/src/port/erand48.c
 double my_erand48(unsigned short xseed[3])
 {
   constexpr unsigned short my_rand48_mult[3] = {
