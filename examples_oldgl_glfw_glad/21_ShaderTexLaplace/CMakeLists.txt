@@ -19,7 +19,8 @@ endif ()
 
 project(21_ShaderTexLaplace)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+add_definitions(-DPATH_ASSET_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+add_definitions(-DPATH_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 
 # glad
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)

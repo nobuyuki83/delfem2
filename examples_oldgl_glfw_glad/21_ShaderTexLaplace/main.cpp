@@ -70,8 +70,9 @@ int main(int argc,char* argv[])
     std::string name_img_in_test_inputs = "lenna.png";
     // -----
     int channels;
-    unsigned char *img = stbi_load((std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
-                                   &width, &height, &channels, 0);
+    unsigned char *img = stbi_load(
+        (std::string(PATH_ASSET_DIR)+"/"+name_img_in_test_inputs).c_str(),
+        &width, &height, &channels, 0);
     tex.Initialize(width, height, img, "rgb");
     delete[] img;
     tex.max_x = -scale*width*0.5;
@@ -106,8 +107,8 @@ int main(int argc,char* argv[])
   {
     {
       glfwSetWindowTitle(viewer.window, "naive");
-      std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.vert");
-      std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.frag");
+      std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_tex.vert");
+      std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_tex.frag");
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
@@ -122,8 +123,8 @@ int main(int argc,char* argv[])
     // -------
     {
       glfwSetWindowTitle(viewer.window, "diffx");
-      std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.vert");
-      std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex_diffx.frag");
+      std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_tex.vert");
+      std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_tex_diffx.frag");
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
@@ -138,8 +139,8 @@ int main(int argc,char* argv[])
     // -------
     {
       glfwSetWindowTitle(viewer.window, "sobel");
-      std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.vert");
-      std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex_sobel.frag");
+      std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_tex.vert");
+      std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_tex_sobel.frag");
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
@@ -154,8 +155,8 @@ int main(int argc,char* argv[])
     // -------
     {
       glfwSetWindowTitle(viewer.window, "laplace");
-      std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.vert");
-      std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex_laplace.frag");
+      std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_tex.vert");
+      std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_tex_laplace.frag");
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();

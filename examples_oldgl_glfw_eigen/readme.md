@@ -1,13 +1,15 @@
 # DelFEM2 Examples using Legacy OpenGL
 
-These demo uses [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) library for matrix operation. 
-Please take a look at the following document to set up Eigen library. 
+These demos depend on glfw library and [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) library for matrix operation. 
 
-[How to set up Eigen](../docs/setup_eigen.md)  
+Please take a look at the following document to set up these library. 
+
+- [How to set up Eigen](../docs/setup_eigen.md)  
+
+- [How to set up glfw](../docs/setup_glfw.md)  
 
 These demos use legacy OpenGL (version 2.1 and GLSL shaer version 1.2) which are depricated in many environment. 
 But still it is convenient to use legacy functions such as glBegin(), glEnd(). 
-We will eventually consider porting these demo into newer OpenGL >= 3.3 in the [examples_newgl_glfw](../examples_newgl_glfw) folder.
 
 
 ## EigenModes
@@ -24,3 +26,10 @@ We will eventually consider porting these demo into newer OpenGL >= 3.3 in the [
 ### [02_FemSolidLinear2](02_FemSolidLinear2)
 
 <img src="02_FemSolidLinear2/thumbnail.png" width=200px>
+
+
+
+### [03_FemSolidLinear3](03_FemSolidLinear3)
+
+<img src="03_FemSolidLinear3/thumbnail.png" width=200px>
+
