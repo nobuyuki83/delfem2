@@ -44,8 +44,9 @@ int main(int argc,char* argv[])
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
-                 aXYZ,aTri);
+  dfm2::Read_Obj(
+      std::string(PATH_ASSET_DIR)+"/bunny_1k.obj",
+      aXYZ,aTri);
   dfm2::Normalize_Points3(aXYZ,2.5);
   dfm2::Rotate_Points3(aXYZ,
       -M_PI*0.5, 0.0, 0.0);
@@ -97,8 +98,8 @@ int main(int argc,char* argv[])
 
   int id_shader_normal;
   {
-    std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR) + "/glsl120_normal.vert");
-    std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR) + "/glsl120_normal.frag");
+    std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl120_normal.vert");
+    std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl120_normal.frag");
     id_shader_normal = delfem2::opengl::setUpGLSL(glslVert, glslFrag);
     glUseProgram(0);
   }
@@ -154,8 +155,8 @@ int main(int argc,char* argv[])
 
   int id_shader_edge;
   {
-    std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR) + "/glsl120_edge.vert");
-    std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR) + "/glsl120_edge.frag");
+    std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl120_edge.vert");
+    std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl120_edge.frag");
     id_shader_edge = delfem2::opengl::setUpGLSL(glslVert, glslFrag);
     ::glUseProgram(id_shader_edge);
     {

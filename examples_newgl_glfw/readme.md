@@ -20,6 +20,12 @@
 ### [06_VolumeRendering](06_volumeRendering)
 <img src="06_VolumeRendering/thumbnail.png" width=200px>
 
+
+
+### [07_RayCasting](07_RayCasting)
+
+<img src="07_RayCasting/thumbnail.png" width=200px>
+
 ### [20_cad2d](20_cad2d)
 <img src="20_cad2d/thumbnail.png" width=200px>
 

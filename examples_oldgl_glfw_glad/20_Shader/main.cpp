@@ -107,8 +107,8 @@ int main(int argc,char* argv[])
   
   // -------------------------
   
-  dfm2::SFile_TGA tga_color;  LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_color.tga",  &tga_color);
-  dfm2::SFile_TGA tga_normal; LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_normal.tga", &tga_normal);
+  dfm2::SFile_TGA tga_color;  LoadTGAFile(std::string(PATH_ASSET_DIR)+"/rock_color.tga",  &tga_color);
+  dfm2::SFile_TGA tga_normal; LoadTGAFile(std::string(PATH_ASSET_DIR)+"/rock_normal.tga", &tga_normal);
   
   GLuint aIndTex[2];
   ::glGenTextures(2, aIndTex);
@@ -141,48 +141,10 @@ int main(int argc,char* argv[])
   while (true)
   {
     int id_shapder_program;
-    /*
     {
       glfwSetWindowTitle(viewer.window, "phong");
-      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsphong.vert");
-      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsphong.frag");
-      setShaderProgram(id_shapder_program, glslVert,glslFrag);
-      for(int iframe=0;iframe<100;++iframe){
-        viewer.DrawBegin_oldGL();
-        myGlutDisplay(id_shapder_program);
-        viewer.DrawEnd_oldGL();
-        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
-      }
-    }
-    {
-      glfwSetWindowTitle(viewer.window, "gouraud");
-      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsgouraud.vert");
-      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsgouraud.frag");
-      setShaderProgram(id_shapder_program, glslVert,glslFrag);
-      for(int iframe=0;iframe<100;++iframe){
-        viewer.DrawBegin_oldGL();
-        myGlutDisplay(id_shapder_program);
-        viewer.DrawEnd_oldGL();
-        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
-      }
-    }
-    {
-      glfwSetWindowTitle(viewer.window, "toon");
-      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_toon.vert");
-      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_toon.frag");
-      setShaderProgram(id_shapder_program, glslVert,glslFrag);
-      for(int iframe=0;iframe<100;++iframe){
-        viewer.DrawBegin_oldGL();
-        myGlutDisplay(id_shapder_program);
-        viewer.DrawEnd_oldGL();
-        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
-      }
-    }
-     */
-    {
-      glfwSetWindowTitle(viewer.window, "normalmap");
-      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_normalmap.vert");
-      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_normalmap.frag");
+      const std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_adsphong.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_adsphong.frag");
       setShaderProgram(id_shapder_program, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
@@ -192,20 +154,58 @@ int main(int argc,char* argv[])
         if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
       }
     }
-    /*
     {
-      glfwSetWindowTitle(viewer.window, "texture");
-      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_simpletexture.vert");
-      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_simpletexture.frag");
+      glfwSetWindowTitle(viewer.window, "gouraud");
+      const std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_adsgouraud.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_adsgouraud.frag");
       setShaderProgram(id_shapder_program, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
         myGlutDisplay(id_shapder_program);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
       }
     }
-     */
+    {
+      glfwSetWindowTitle(viewer.window, "toon");
+      const std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_toon.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_toon.frag");
+      setShaderProgram(id_shapder_program, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(id_shapder_program);
+        viewer.SwapBuffers();
+        glfwPollEvents();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
+    }
+    {
+      glfwSetWindowTitle(viewer.window, "normalmap");
+      const std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_normalmap.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_normalmap.frag");
+      setShaderProgram(id_shapder_program, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(id_shapder_program);
+        viewer.SwapBuffers();
+        glfwPollEvents();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
+    }
+    {
+      glfwSetWindowTitle(viewer.window, "texture");
+      const std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_simpletexture.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl120_simpletexture.frag");
+      setShaderProgram(id_shapder_program, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(id_shapder_program);
+        viewer.SwapBuffers();
+        glfwPollEvents();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
+    }
   }
 EXIT:
   glfwDestroyWindow(viewer.window);

@@ -1,15 +1,12 @@
 # DelFEM2 C++ Examples using Legacy OpenGL and Glad
 
-These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricated in many environment. But still it is convenient to use legacy functions such as glBegin(), glEnd(). We will eventually consider porting these demo into newer OpenGL >= 3.3 in the [examples_newgl_glfw](../examples_newgl_glfw) folder.
-
-
+These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricated in many environment. But still it is convenient to use legacy functions such as glBegin(), glEnd(). 
 
 ## How To Build
 
 These demos depend on the GLFW library to open an OpenGL window. If you haven't install `glfw` in your computer, please read following Document to set up GLFW.
 
 - [How to Set Up GLFW Library](../docs/setup_glfw.md)
-- [GLFWライブラリの設定方法](../docs/setup_glfw_jp.md)
 
 With `glfw` installed, you can build the demos simply by 
 
