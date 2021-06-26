@@ -51,7 +51,7 @@ void main()
   ray.direction = vec3(0, 0, -1.0);
   
   Sphere sphere;
-  sphere.radius = 1.0;
+  sphere.radius = 0.5;
   sphere.position = vec3(0.0);
   sphere.color = vec3(1.0);
   

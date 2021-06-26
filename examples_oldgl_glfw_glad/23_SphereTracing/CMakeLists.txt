@@ -16,7 +16,7 @@ endif ()
 
 project(23_SphereTracing)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}")
+add_definitions(-DPATH_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 
 # glad
 get_filename_component(GLAD_INCLUDE_DIR

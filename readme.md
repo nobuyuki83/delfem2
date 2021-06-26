@@ -26,7 +26,7 @@ There are currently no tutorial available for this library. To understand the co
 
 + examples using legacy OpenGL
   + [examples_oldgl_glfw](examples_oldgl_glfw):  dependency: GLFW
-  + [examples_oldgl_glfw_glad](examples_oldgl_glfw_gld): dependencies: GLFW and glad (shader,FBO)
+  + [examples_oldgl_glfw_glad](examples_oldgl_glfw_glad): dependencies: GLFW and glad (shader,FBO)
   + [examples_oldgl_glfw_cnpy](examples_oldgl_glfw_cnpy): dependencies: GLFW and cnpy (SMPL)
   + [examples_oldgl_glfw_thread](examples_oldgl_glfw_thread): dependencies: GLFW and thread
   + [examples_oldgl_glfw_tinygltf](examples_oldgl_glfw_tinygltf): dependencies: GLFW and TinyGLTF
