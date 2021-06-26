@@ -122,7 +122,7 @@ void draw(GLFWwindow* window)
   ::glPolygonOffset( 1.1f, 4.0f );
   
   StepTime();
-  shdr_trimsh.UpdateVertex(aXYZ, aTri);
+  shdr_trimsh.UpdateVertex(aXYZ, 3, aTri);
 
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float)nw/nh;
@@ -167,7 +167,7 @@ int main()
 #endif
   
   shdr_trimsh.Compile();
-  shdr_trimsh.Initialize(aXYZ, aTri);  
+  shdr_trimsh.Initialize(aXYZ, 3, aTri);
   
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;

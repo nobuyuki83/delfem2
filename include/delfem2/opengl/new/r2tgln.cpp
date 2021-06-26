@@ -80,7 +80,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
         2,  6,
         3,  7,
     };
-    shdr0.Initialize(aPos3d, aLine);
+    shdr0.Initialize(aPos3d, 3, aLine, GL_LINES);
   }
   // -----
   { // draw texture

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_OPENGL_NEW_SHDR_MSHTRI_H
-#define DFM2_OPENGL_NEW_SHDR_MSHTRI_H
+#ifndef DFM2_OPENGL_NEW_SHDR_MSH_H
+#define DFM2_OPENGL_NEW_SHDR_MSH_H
 
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/color.h"
@@ -19,7 +19,7 @@
 namespace delfem2 {
 namespace opengl {
 
-class CShader_TriMesh{
+class CShader_Mesh{
 public:
   void Compile();
 
@@ -27,24 +27,24 @@ public:
   void Initialize(
       std::vector<REAL>& aXYZd,
       unsigned int ndim,
-      std::vector<unsigned int>& aTri);
+      std::vector<unsigned int>& aLine,
+      int gl_primitive_type);
 
   template <typename REAL>
   void UpdateVertex(
       std::vector<REAL>& aXYZd,
       unsigned int ndim,
-      std::vector<unsigned int>& aTri);
+      std::vector<unsigned int>& aLine);
 
   void Draw(float mP[16], float mMV[16]) const;
-  
+
 public:
   CGL4_VAO_Mesh vao; // gl4
+  float color[3] = {0,0,0};
   int shaderProgram;
   int Loc_MatrixProjection;
   int Loc_MatrixModelView;
   int Loc_Color;
-  delfem2::CColor color_face = delfem2::CColor(1.0,0.0,0.0,0.0);
-  float line_width = 1.0;
 };
 
 
@@ -52,7 +52,7 @@ public:
 }
 
 #ifdef DFM2_HEADER_ONLY
-  #include "delfem2/opengl/new/shdr_mshtri.cpp"
+#  include "delfem2/opengl/new/shdr_msh.cpp"
 #endif
 
 #endif /* gl4_msh_hpp */
