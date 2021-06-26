@@ -88,7 +88,7 @@ int main()
     std::vector<unsigned int> aTri;
     dfm2::MeshTri3_Torus(aXYZ, aTri, 0.8, 0.1, 8, 8);
     shdr_trimsh.Compile();
-    shdr_trimsh.Initialize(aXYZ, aTri);
+    shdr_trimsh.Initialize(aXYZ,3, aTri);
   }
   r2t.Start();
   ::glClearColor(1.0, 1.0, 1.0, 1.0 );

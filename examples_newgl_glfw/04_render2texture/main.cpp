@@ -95,7 +95,7 @@ int main()
     std::vector<unsigned int> aTri;
     dfm2::MeshTri3_Torus(aXYZ, aTri, 0.5, 0.5, 10, 12);
     shdr0.Compile();
-    shdr0.Initialize(aXYZ, aTri);
+    shdr0.Initialize(aXYZ,3,aTri);
   }
 
   shdr_mshtex.Compile();

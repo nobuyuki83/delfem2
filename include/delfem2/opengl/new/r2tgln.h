@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,6 +10,7 @@
 #define DFM2_OPENGL_NEW_R2TGLN_H
 
 #include "delfem2/opengl/new/mshcolor.h" // shader definitions
+#include "delfem2/opengl/new/shdr_msh.h"
 #include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/opengl/new/shdr_points.h"
 #include "delfem2/opengl/r2t.h"
@@ -40,7 +41,7 @@ public:
   bool isDrawTex;
   double draw_len_axis;
   unsigned int pointSize;
-  CShader_LineMesh shdr0;
+  CShader_Mesh shdr0;
   CShader_MeshTex shdr1;
   CShader_Points shdr2;
 };

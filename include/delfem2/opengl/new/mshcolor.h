@@ -19,30 +19,6 @@
 namespace delfem2 {
 namespace opengl {
 
-class CShader_LineMesh{
-public:
-  void Compile();
-
-  template <typename REAL>
-  void Initialize(
-      std::vector<REAL>& aXYZd,
-      std::vector<unsigned int>& aLine);
-
-  template <typename REAL>
-  void UpdateVertex(
-      std::vector<REAL>& aXYZd,
-      std::vector<unsigned int>& aLine);
-
-  void Draw(float mP[16], float mMV[16]) const;
-
-public:
-  CGL4_VAO_Mesh vao; // gl4
-  int shaderProgram;
-  int Loc_MatrixProjection;
-  int Loc_MatrixModelView;
-  int Loc_Color;
-};
-
 
 class CShader_TriMesh_Scalar{
 public:
