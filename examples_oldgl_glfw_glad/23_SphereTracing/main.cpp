@@ -57,14 +57,17 @@ void DrawRectangle_FullCanvas()
 int main(int argc,char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
+  viewer.camera.view_height = 1.0;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.camera.is_pars = true;
+  viewer.camera.fovy = 45.0;
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<std::endl;
   std::cout<<"GPU: "<<glGetString(GL_RENDERER)<<std::endl;
@@ -74,16 +77,23 @@ int main(int argc,char* argv[])
 
   int id_shader0;
   {
-    std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR) + "/glsl.vert");
-    std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR) + "/glsl0.frag");
+    std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl.vert");
+    std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl0.frag");
     id_shader0 = delfem2::opengl::setUpGLSL(glslVert, glslFrag);
   }
 
   int id_shader1;
   {
-    std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR) + "/glsl.vert");
-    std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR) + "/glsl1.frag");
+    std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl.vert");
+    std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl1.frag");
     id_shader1 = delfem2::opengl::setUpGLSL(glslVert, glslFrag);
+  }
+
+  int id_shader2;
+  {
+    std::string glslVert = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl.vert");
+    std::string glslFrag = LoadFile(std::string(PATH_SOURCE_DIR) + "/glsl2.frag");
+    id_shader2 = delfem2::opengl::setUpGLSL(glslVert, glslFrag);
   }
 
   while ( !glfwWindowShouldClose(viewer.window) )
@@ -91,15 +101,16 @@ int main(int argc,char* argv[])
     ::glUseProgram(id_shader0);
     for(unsigned int iframe=0;iframe<100;++iframe){
       if( glfwWindowShouldClose(viewer.window) ){ break; }
-      GLint iloc = glGetUniformLocation(id_shader0, "resolution");
+      GLint iloc = ::glGetUniformLocation(id_shader0, "resolution");
       GLint viewport[4];
       ::glGetIntegerv(GL_VIEWPORT, viewport);
-      glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
+      ::glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
       viewer.DrawBegin_oldGL();
       DrawRectangle_FullCanvas();
       viewer.SwapBuffers();
       glfwPollEvents();
     }
+    // ---------------
     ::glUseProgram(id_shader1);
     for(unsigned int iframe=0;iframe<100;++iframe){
       if( glfwWindowShouldClose(viewer.window) ){ break; }
@@ -107,8 +118,40 @@ int main(int argc,char* argv[])
       GLint viewport[4];
       ::glGetIntegerv(GL_VIEWPORT, viewport);
       glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
-      iloc = glGetUniformLocation(id_shader1, "time");
-      glUniform1f(iloc, glfwGetTime() );
+
+      iloc = glGetUniformLocation(id_shader2, "mMVPinv");
+      float mMV[16], mP[16], mMVP[16], mMVPinv[16];
+      viewer.camera.Mat4_MVP_OpenGL(
+          mMV,mP,
+          (float) viewport[2] / (float) viewport[3]);
+      delfem2::MatMat4(mMVP,mMV,mP);
+      delfem2::Inverse_Mat4(mMVPinv,mMVP);
+      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);
+      iloc = glGetUniformLocation(id_shader2, "mMV");
+      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV);
+      viewer.DrawBegin_oldGL();
+      DrawRectangle_FullCanvas();
+      viewer.SwapBuffers();
+      glfwPollEvents();
+    }
+    // ---------
+    ::glUseProgram(id_shader2);
+    for(unsigned int iframe=0;iframe<100;++iframe){
+      if( glfwWindowShouldClose(viewer.window) ){ break; }
+      GLint iloc = glGetUniformLocation(id_shader2, "resolution");
+      GLint viewport[4];
+      ::glGetIntegerv(GL_VIEWPORT, viewport);
+      glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
+      iloc = glGetUniformLocation(id_shader2, "mMVPinv");
+      float mMV[16], mP[16], mMVP[16], mMVPinv[16];
+      viewer.camera.Mat4_MVP_OpenGL(
+          mMV,mP,
+          (float) viewport[2] / (float) viewport[3]);
+      delfem2::MatMat4(mMVP,mMV,mP);
+      delfem2::Inverse_Mat4(mMVPinv,mMVP);
+      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);
+      iloc = glGetUniformLocation(id_shader2, "mMV");
+      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV);
       viewer.DrawBegin_oldGL();
       DrawRectangle_FullCanvas();
       viewer.SwapBuffers();
