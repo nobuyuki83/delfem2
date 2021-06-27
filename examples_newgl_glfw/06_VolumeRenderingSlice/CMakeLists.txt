@@ -19,7 +19,7 @@ ENDIF()
 
 ######################################
 
-project(06_VolumeRendering)
+project(06_VolRenSlice)
 
 add_definitions(-DPATH_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 

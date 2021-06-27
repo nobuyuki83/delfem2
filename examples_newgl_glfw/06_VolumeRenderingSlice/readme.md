@@ -1,4 +1,4 @@
-### 06_VolumeRendering
+### 06_VolumeRenderingSlice
 <img src="thumbnail.png" width=200px>
 
 ## About

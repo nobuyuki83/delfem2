@@ -20,7 +20,7 @@ vec3 getNormal(vec3 p)
   return normalize( vec3(nx0,ny0,nz0) );
 }
 
-bool sphere_tracing(
+bool sphereTracing(
   inout vec3 normal,
   vec3 camPos1,
   vec3 camDir1)
@@ -35,7 +35,10 @@ bool sphere_tracing(
   return abs(distance) < 0.001;
 }
 
-void main() {
+void rayFromCamera(
+  out vec3 org,
+  out vec3 dir )
+{
   vec2 pos = vec2(
   (gl_FragCoord.x*2.0 - resolution.x) / resolution.x,
   (gl_FragCoord.y*2.0 - resolution.y) / resolution.y );
@@ -44,8 +47,16 @@ void main() {
   vec4 p1 = mMVPinv * vec4(pos.x,pos.y,+1,1);
   vec3 camPos0 = p0.xyz/p0.w;
   vec3 camPos1 = p1.xyz/p1.w;
+  org = camPos0;
+  dir = normalize(camPos1-camPos0);
+}
+
+void main() {
+  vec3 org,dir;
+  rayFromCamera(org,dir);
+
   vec3 normal;
-  bool is_hit = sphere_tracing(normal, camPos0, normalize(camPos1-camPos0));
+  bool is_hit = sphereTracing(normal, org, dir);
   normal = normalize((mMV * vec4(normal,0)).xyz);
   
   if( is_hit ){

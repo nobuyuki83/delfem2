@@ -14,7 +14,7 @@ endif ()
 
 ############################################
 
-project(08_SphereTracing)
+project(09_VolRenRayCast)
 
 add_definitions(-DPATH_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 

@@ -6,15 +6,10 @@ uniform mat4 mMV;
 
 out vec4 FragColor;
 
-vec3 trans(vec3 p){
-  return mod(p+1.5, 3.) - 1.5;
-}
-
-float distanceFunction(vec3 pos0){
-//  return length(trans(pos)) - 1.0;
-  vec3 pos1 = trans(pos0);
-  float x0 = max(abs(pos1.x),abs(pos1.y));
-  return max(x0,abs(pos1.z))-0.5;
+float distanceFunction(vec3 pos){
+  //  return length(pos) - 1.0;
+  float x0 = max(abs(pos.x),abs(pos.y));
+  return max(x0,abs(pos.z))-0.5;
 }
 
 vec3 getNormal(vec3 p)
