@@ -47,9 +47,11 @@ void delfem2::opengl::CShader_TriMesh::Initialize(
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::opengl::CShader_TriMesh::Initialize(
     std::vector<float>& aXYZd,
+    unsigned int ndim,
     std::vector<unsigned int>& aTri);
 template void delfem2::opengl::CShader_TriMesh::Initialize(
     std::vector<double>& aXYZd,
+    unsigned int ndim,
     std::vector<unsigned int>& aTri);
 #endif
 
@@ -78,9 +80,11 @@ void delfem2::opengl::CShader_TriMesh::UpdateVertex(
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::opengl::CShader_TriMesh::UpdateVertex(
     std::vector<float>& aXYZd,
+    unsigned int ndim,
     std::vector<unsigned int>& aTri);
 template void delfem2::opengl::CShader_TriMesh::UpdateVertex(
     std::vector<double>& aXYZd,
+    unsigned int ndim,
     std::vector<unsigned int>& aTri);
 #endif
 

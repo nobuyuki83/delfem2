@@ -19,9 +19,10 @@ add_subdirectory(02_nav3d)
 add_subdirectory(03_texture)
 add_subdirectory(04_render2texture)
 add_subdirectory(05_OffScreenProjection)
-add_subdirectory(06_VolumeRendering)
+add_subdirectory(06_VolumeRenderingSlice)
 add_subdirectory(07_RayCasting)
 add_subdirectory(08_SphereTracing)
+add_subdirectory(09_VolumeRenderingRayCasting)
 
 add_subdirectory(20_cad2d)
 

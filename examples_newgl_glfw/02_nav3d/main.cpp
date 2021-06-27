@@ -68,7 +68,7 @@ int main()
     delfem2::MeshTri3_Torus(aXYZd, aTri,
                             1.0, 0.2,
                             32,18);
-    shdr.Initialize(aXYZd, aTri);
+    shdr.Initialize(aXYZd, 3, aTri);
   }
  
   viewer.camera.view_height = 2.0;

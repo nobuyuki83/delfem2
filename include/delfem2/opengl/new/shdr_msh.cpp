@@ -38,12 +38,16 @@ void delfem2::opengl::CShader_Mesh::Initialize(
   this->UpdateVertex(aXYZd, ndim, aLine);
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::opengl::CShader_LineMesh::Initialize(
+template void delfem2::opengl::CShader_Mesh::Initialize(
     std::vector<float>& aXYZd,
-    std::vector<unsigned int>& aLine);
-template void delfem2::opengl::CShader_LineMesh::Initialize(
+    unsigned int ndim,
+    std::vector<unsigned int>& aLine,
+    int gl_primitive_type);
+template void delfem2::opengl::CShader_Mesh::Initialize(
     std::vector<double>& aXYZd,
-    std::vector<unsigned int>& aLine);
+    unsigned int ndim,
+    std::vector<unsigned int>& aLine,
+    int gl_primitive_type);
 #endif
 
 template <typename REAL>
@@ -59,11 +63,13 @@ void delfem2::opengl::CShader_Mesh::UpdateVertex(
   glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)0); // gl24
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::opengl::CShader_LineMesh::UpdateVertex(
+template void delfem2::opengl::CShader_Mesh::UpdateVertex(
     std::vector<float>& aXYZd,
+    unsigned int ndim,
     std::vector<unsigned int>& aLine);
-template void delfem2::opengl::CShader_LineMesh::UpdateVertex(
+template void delfem2::opengl::CShader_Mesh::UpdateVertex(
     std::vector<double>& aXYZd,
+    unsigned int ndim,
     std::vector<unsigned int>& aLine);
 #endif
 
