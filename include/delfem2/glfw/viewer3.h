@@ -36,6 +36,8 @@ public:
    */
   virtual void mouse_press(const float src[3], const float dir[3]) {}
 
+  virtual void mouse_release() {}
+
   /**
    * @details for function override. Do nothing here
    */
@@ -50,6 +52,8 @@ public:
   }
 
   virtual void key_release(int key, int mods) {}
+
+  virtual void mouse_wheel(double yoffset){}
 
 public:
   GLFWwindow *window = nullptr;
