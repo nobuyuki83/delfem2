@@ -17,7 +17,7 @@
 ### [05_OffScreenProjection](05_OffScreenProjection)
 <img src="05_OffScreenProjection/thumbnail.png" width=200px>
 
-### [06_VolumeRenderingSlice](06_volumeRenderingSlice)
+### [06_VolumeRenderingSlice](06_VolumeRenderingSlice)
 <img src="06_VolumeRenderingSlice/thumbnail.png" width=200px>
 
 ### [07_RayCasting](07_RayCasting)
@@ -26,7 +26,7 @@
 ### [08_SphereTracing](08_SphereTracing)
 <img src="08_SphereTracing/thumbnail.png" width=200px>
 
-### [09_VolumeRenderingRayCasting](09_volumeRenderingRayCasting)
+### [09_VolumeRenderingRayCasting](09_VolumeRenderingRayCasting)
 
 <img src="09_VolumeRenderingRayCasting/thumbnail.png" width=200px>
 
