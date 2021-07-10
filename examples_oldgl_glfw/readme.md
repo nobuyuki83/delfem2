@@ -117,6 +117,14 @@ cmake --build .
 ### [139_Pick](139_Pick)
 <img src="139_Pick/thumbnail.png" width=200>
 
+
+
+### [140_PickPropagate](140_PickPropagate)
+
+<img src="140_PickPropagate/thumbnail.png" width=200>
+
+
+
 ### [141_RigBendCapsule](141_RigBendCapsule)
 <img src="141_RigBendCapsule/thumbnail.png" width=200>
 

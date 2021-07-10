@@ -35,22 +35,26 @@ static void glfw_callback_mouse_button(GLFWwindow *window, int button, int actio
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   const float asp = width / (float) height;
-  {
+  { // save input
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     nav.imodifier = mods;
     double x, y;
     glfwGetCursorPos(window, &x, &y);
     nav.mouse_x = (2.0 * x - width) / width;
     nav.mouse_y = (height - 2.0 * y) / height;
-    if (action == 0) {
+    if (action == GLFW_RELEASE) {
       nav.ibutton = -1;
-    } else if (action == 1) { // mouse down
+    } else if (action == GLFW_PRESS) { // mouse down
       nav.ibutton = button;
       nav.mouse_x_down = nav.mouse_x;
       nav.mouse_y_down = nav.mouse_y;
     }
   }
-  if (action == GLFW_PRESS) {
+  if (action == GLFW_PRESS && (mods == GLFW_MOD_SHIFT || mods == GLFW_MOD_ALT)) {
+    // view control
+    return;
+  }
+  if (action == GLFW_PRESS) { // "press callback"
     float src[3], dir[3];
     float mMVP[16];
     {
@@ -61,11 +65,13 @@ static void glfw_callback_mouse_button(GLFWwindow *window, int button, int actio
     pViewer3->nav.MouseRay(src, dir, asp, mMVP);
     pViewer3->mouse_press(src, dir);
   }
+  if (action == GLFW_RELEASE) { // "release callback"
+    pViewer3->mouse_release();
+  }
 }
 
 static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, double ypos) {
   assert(pViewer3 != 0);
-//  pViewer->nav.Motion(window,xpos,ypos);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   const float asp = width / (float) height;
@@ -78,18 +84,18 @@ static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, doubl
     nav.mouse_x = mov_end_x;
     nav.mouse_y = mov_end_y;
   }
-  {
+  if (pViewer3->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT ) { // drag for view control
     ::delfem2::CMouseInput &nav = pViewer3->nav;
-    if (nav.ibutton == -1) {
-    } else {
-      ::delfem2::CCam3_OnAxisZplusLookOrigin<double> &camera = pViewer3->camera;
-      if (nav.imodifier == 4) {
-        camera.Rot_Camera(nav.dx, nav.dy);
-      } else if (nav.imodifier == 1) {
-        camera.Pan_Camera(nav.dx, nav.dy);
-      }
+    if (nav.imodifier == GLFW_MOD_ALT ) {
+      pViewer3->camera.Rot_Camera(nav.dx, nav.dy);
+      return;
+    }
+    else if (nav.imodifier == GLFW_MOD_SHIFT ) {
+      pViewer3->camera.Pan_Camera(nav.dx, nav.dy);
+      return;
     }
   }
+  // drag call back
   if (pViewer3->nav.ibutton == 0) {
     float src0[3], src1[3], dir0[3], dir1[3];
     float mMVP[16];
@@ -106,6 +112,7 @@ static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, doubl
 static void glfw_callback_scroll(GLFWwindow *window, double xoffset, double yoffset) {
   assert(pViewer3 != nullptr);
   pViewer3->camera.scale *= pow(1.01, yoffset);
+  pViewer3->mouse_wheel(yoffset);
 }
 
 }
