@@ -11,13 +11,13 @@ IF (MSVC)
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE ()
+  # -g: default debug information
   set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
 ENDIF ()
 
 ###########################################
 
-project(621_Fem2d)
-
+project(621_Fem2)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -52,10 +52,10 @@ include_directories(
 
 add_executable(${PROJECT_NAME}
     main.cpp
-    )
+)
 
 target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARIES}
-    )
+)

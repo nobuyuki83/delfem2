@@ -218,7 +218,6 @@ public:
   }
 
 public:
-//  T p[2];
   union {
     T p[2];
     struct {
