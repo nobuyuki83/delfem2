@@ -12,8 +12,8 @@ mkdir buildVS64
 cd buildVS64
 cmake -A x64 -Dgtest_force_shared_crt=ON ..
 cmake --build . --config Release
-mkdir ../GTest_Lib
-cmake --install . --prefix ../GTest_Lib
+mkdir ../../GTest_Lib
+cmake --install . --prefix ../../GTest_Lib
 cd ../../..
 
 set path_gtest_root=%~dp0..\3rd_party\GTEST_Lib

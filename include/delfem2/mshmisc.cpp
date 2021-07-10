@@ -1016,10 +1016,10 @@ DFM2_INLINE void delfem2::AddMesh(
     const std::vector<double>& aXYZ0,
     const std::vector<unsigned int>& aTri0)
 {
-  const unsigned int np0 = aXYZ.size()/3;
+  const unsigned int np0 = (unsigned int)aXYZ.size()/3;
   aXYZ.reserve( aXYZ.size()+aXYZ0.size() );
   aTri.reserve( aTri.size()+aTri0.size() );
   for(double p: aXYZ0){ aXYZ.push_back(p); }
-  for(double i: aTri0){ aTri.push_back(i+np0); }
+  for(unsigned int i: aTri0){ aTri.push_back(i+np0); }
 }
 
