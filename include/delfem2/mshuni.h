@@ -25,17 +25,6 @@
 
 namespace delfem2 {
   
-// ---------------------------------------------
-// function related to jagged array
-
-DFM2_INLINE void JArray_AddMasterSlavePattern(
-    std::vector<unsigned int> &index,
-    std::vector<unsigned int> &array,
-    const unsigned int* aMSFlag,
-    int ndim,
-    const unsigned int *psup_ind0,
-    int npsup_ind0,
-    const unsigned int *psup0);
 // ---------------------------------------------------
 
 DFM2_INLINE unsigned FindAdjEdgeIndex(

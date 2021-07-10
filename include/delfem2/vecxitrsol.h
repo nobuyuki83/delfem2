@@ -118,11 +118,6 @@ DFM2_INLINE void OrthogonalizeToUnitVectorX(
 
 // set boundary condition
 
-DFM2_INLINE void setRHS_MasterSlave(
-    double *vec_b,
-    unsigned int nDoF,
-    const unsigned int *aMSFlag);
-
 void MatVec(
     double* y,
     const double* A, unsigned int ncol, unsigned int nrow,

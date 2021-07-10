@@ -249,8 +249,8 @@ cmake --build .
 ### [620_FemClothSelfCollision](620_FemClothSelfCollision)
 <img src="620_FemClothSelfCollision/thumbnail.png" width=200>
 
-### [621_Fem2d](621_Fem2D)
-<img src="621_Fem2D/thumbnail.png" width=200 alt="621_Fem2d">
+### [621_Fem2](621_Fem2)
+<img src="621_Fem2/thumbnail.png" width=200 alt="621_Fem2">
 
 ### [622_FemRodHairStatic](622_FemRodHairStatic)
 <img src="622_FemRodHairStatic/thumbnail.png" width=200 alt="622_FemRodHairStatic">
@@ -260,6 +260,9 @@ cmake --build .
 
 ### [624_DefArapUi](624_DefArapUi)
 <img src="624_DefArapUi/thumbnail.png" width=200>
+
+### [625_Fem2MasterSlave](625_Fem2MasterSlave)
+<img src="625_Fem2MasterSlave/thumbnail.png" width=200 alt="625_Fem2MasterSlave">
 
 ### [626_RgdRotation](626_RgdRotation)
 <img src="626_RgdRotation/thumbnail.png" width=200>
