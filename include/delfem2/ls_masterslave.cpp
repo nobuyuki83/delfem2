@@ -1,14 +1,12 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
 #include <cassert>
-#include <cmath>
 #include <vector>
-#include <complex>
 #include <climits>
 #include "delfem2/ls_masterslave.h"
 
