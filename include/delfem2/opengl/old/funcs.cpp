@@ -30,6 +30,8 @@ namespace opengl{
 namespace old{
 namespace funcs{
 
+/*
+[[maybe_unused]]
 const int noelElemFace_Hex[8][4] = { // this numbering is corresponds to VTK_HEX
     { 0, 4, 7, 3 }, // -x
     { 1, 2, 6, 5 }, // +x
@@ -38,6 +40,7 @@ const int noelElemFace_Hex[8][4] = { // this numbering is corresponds to VTK_HEX
     { 0, 3, 2, 1 }, // -z
     { 4, 5, 6, 7 }  // +z
 };
+ */
 
 DFM2_INLINE void UnitNormalAreaTri3D
  (double n[3], double& a,
