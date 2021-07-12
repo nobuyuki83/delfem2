@@ -1,5 +1,10 @@
 #include "delfem2/rgd_v2m3.h"
 
+#ifndef M_PI
+  #define M_PI 3.141592653589793
+#endif  
+
+
 namespace delfem2{
 namespace rgd_v2m3{
 

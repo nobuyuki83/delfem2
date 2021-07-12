@@ -5,18 +5,21 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/cad2_dtri2.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v2.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
-#include "delfem2/cad2_dtri2.h"
+#include <GLFW/glfw3.h>
+//
 #include <cmath>
 #include <stack>
-#include <GLFW/glfw3.h>
 
 #ifndef M_PI
-#  define M_PI 3.141592653589793
+  #define M_PI 3.141592653589793
 #endif
 
 namespace dfm2 = delfem2;

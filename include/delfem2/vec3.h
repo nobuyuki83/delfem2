@@ -15,6 +15,11 @@
 #include <vector>
 #include "delfem2/dfm2_inline.h"
 
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4201 )  
+#endif    
+
 #define NEARLY_ZERO 1.e-16
 
 namespace delfem2 {
@@ -483,6 +488,10 @@ inline CVec3<T> Normal_Tri3(
 }
 
 } // end namespace delfem2
+
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif
 
 #ifdef DFM2_HEADER_ONLY
 #  include "delfem2/vec3.cpp"
