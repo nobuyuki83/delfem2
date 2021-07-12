@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <random>
+#include <algorithm> // std::max
 
 class CParticle {
 public:
