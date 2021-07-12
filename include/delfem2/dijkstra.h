@@ -17,6 +17,7 @@
 #include <climits>
 #include <random>
 #include <iostream>
+#include <cassert>
 
 namespace delfem2 {
 

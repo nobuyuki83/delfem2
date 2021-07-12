@@ -17,10 +17,10 @@
 #include <random>
 
 template <typename VAL>
-VAL max(VAL i, VAL j) { return (i>j?i:j); }
+VAL mymax(VAL i, VAL j) { return (i > j ? i : j); }
 
 template <typename VAL>
-VAL min(VAL i, VAL j) { return (i>j?j:i); }
+VAL mymin(VAL i, VAL j) { return (i > j ? j : i); }
 
 // Clamped Fetch
 double ClampedFetch(
@@ -30,8 +30,8 @@ double ClampedFetch(
     unsigned int nw,
     unsigned int nh)
 {
-	i = min(max((unsigned int)0,i),nw-1);
-	j = min(max((unsigned int)0,j),nh-1);
+	i = mymin(mymax((unsigned int) 0, i), nw - 1);
+	j = mymin(mymax((unsigned int) 0, j), nh - 1);
 	return x[i+j*nw];
 }
 
@@ -138,10 +138,10 @@ double linear_interpolate (
     double x,
     double y )
 {
-	x = max(0.0,min((double)nw,x));
-	y = max(0.0,min((double)nh,y));
-	int i = min(x,(double)nw-2);
-	int j = min(y,(double)nh-2);
+	x = mymax(0.0, mymin((double) nw, x));
+	y = mymax(0.0, mymin((double) nh, y));
+	int i = mymin(x, (double) nw - 2);
+	int j = mymin(y, (double) nh - 2);
 	return ( (i+1-x)*d[(i+j*nw    )*ndim+idim]+(x-i)*d[(i+1+j*nw    )*ndim+idim])*(j+1-y) 
         + ((i+1-x)*d[(i+(j+1)*nw)*ndim+idim]+(x-i)*d[(i+1+(j+1)*nw)*ndim+idim])*(y-j);
 }
