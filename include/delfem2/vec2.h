@@ -15,6 +15,11 @@
 #include <vector>
 #include "delfem2/dfm2_inline.h"
 
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4201 )  
+#endif   
+
 // -----------------------------------------------------
 
 namespace delfem2 {
@@ -411,6 +416,10 @@ void MakeMassMatrixTri(
     const std::vector<CVec2<T> >& aVec2);
       
 }
+
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif
 
 #ifdef DFM2_HEADER_ONLY
 #  include "delfem2/vec2.cpp"
