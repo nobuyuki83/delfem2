@@ -5,10 +5,21 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+  #define GL_SILENCE_DEPRECATION
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
+
+#include "delfem2/glfw/viewer3.h"
 #include <cstdlib>
 #include <cassert>
 #include <GLFW/glfw3.h>
-#include "delfem2/glfw/viewer3.h"
 
 // ---------------
 
@@ -198,4 +209,3 @@ void delfem2::glfw::CViewer3::ExitIfClosed() const
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }
-

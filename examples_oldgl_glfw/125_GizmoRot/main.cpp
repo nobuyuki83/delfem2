@@ -5,15 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include "delfem2/gizmo_geo3.h"
+#include "delfem2/mshio.h"
+#include "delfem2/points.h"
+#include "delfem2/mat4.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/gizmo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/gizmo_geo3.h"
-#include "delfem2/mshio.h"
-#include "delfem2/points.h"
-#include "delfem2/mat4.h"
 #include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_OPENGL_GLFW_VIEWER2_H
-#define DFM2_OPENGL_GLFW_VIEWER2_H
+#ifndef DFM2_GLFW_VIEWER2_H
+#define DFM2_GLFW_VIEWER2_H
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/glfw/mouseinput.h"

@@ -9,6 +9,8 @@
  * @brief simple demo of subdivision surface
  */
 
+
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"

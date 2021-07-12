@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -16,14 +16,13 @@
 #include <GLFW/glfw3.h>
 #include <cmath>
 
-
 namespace dfm2 = delfem2;
 
 // -----------------------------------
 
-static void drawShphere_Heatmap
-(double (*value)(double,double,double),
- void (*color)(double) )
+static void drawShphere_Heatmap(
+    double (*value)(double,double,double),
+    void (*color)(double) )
 {
   const double pi = 3.1415926535;
   int nla = 32; double dl = pi/nla;

@@ -15,6 +15,7 @@
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
+  #define GL_SILENCE_DEPRECATION
   #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
@@ -179,3 +180,4 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
     glTranslated(0,0,+0.2);
   }
 }
+

@@ -5,20 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/color.h"
+#include <climits>
 
 #if defined(_WIN32) // windows
   #include <windows.h>
 #endif
 #if defined(__APPLE__) && defined(__MACH__)
+  #define GL_SILENCE_DEPRECATION
   #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
 
-#include <climits>
 
 // header ends here
 // -------------------------------------------------
@@ -644,4 +644,3 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Cut(
    */
   if( is_lighting ){ glEnable(GL_LIGHTING); }
 }
-

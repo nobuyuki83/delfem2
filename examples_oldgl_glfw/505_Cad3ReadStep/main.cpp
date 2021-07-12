@@ -1,16 +1,16 @@
 
-
+#include "delfem2/pgeo.h"
+#include "delfem2/str.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v3q.h"
-#include "delfem2/pgeo.h"
-#include "delfem2/str.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
 #include <fstream>
-
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793

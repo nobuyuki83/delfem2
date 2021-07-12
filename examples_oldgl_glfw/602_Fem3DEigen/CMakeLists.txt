@@ -10,10 +10,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
   set(CMAKE_CXX_FLAGS "-O2 /W4\
   /wd4100 /wd4458 /wd4577 /wd4267 /wd4244\
-  /wd4800 /wd4996 /wd4530 /wd4245 /wd4505\
+  /wd4800  /wd4530 /wd4245 /wd4505\
   /wd4838 /wd4305 /wd4505 /wd4456")
 else ()
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations")
+  set(CMAKE_CXX_FLAGS "-Wall ")
 endif ()
 
 ############################################

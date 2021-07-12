@@ -9,21 +9,21 @@
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/vec3.h"
 
-#if defined(__APPLE__) && defined(__MACH__) // Mac
-#include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
-#include <windows.h>
-  #include <GL/gl.h>
-#else // linux
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+  #define GL_SILENCE_DEPRECATION
+  #include <OpenGL/gl.h>
+#else
   #include <GL/gl.h>
 #endif
 
-namespace dfm2 = delfem2;
-
 // ------------------------------------
 
-static void myGlNormal(const dfm2::CVec3d& n){ ::glNormal3d(n.x,n.y,n.z); }
-static void myGlVertex(const dfm2::CVec3d& v){ ::glVertex3d(v.x,v.y,v.z); }
+static void myGlNormal(const delfem2::CVec3d& n){ ::glNormal3d(n.x,n.y,n.z); }
+static void myGlVertex(const delfem2::CVec3d& v){ ::glVertex3d(v.x,v.y,v.z); }
 static void myGlColorDiffuse(float r, float g, float b, float a){
   ::glColor4d(r, g, b, a );
   float c[4] = {r, g, b, a};
@@ -40,33 +40,35 @@ const unsigned int noelElemFace_Vox[6][4] = {
   { 0, 2, 3, 1 }, // -z
   { 4, 5, 7, 6 } }; // +z
 
-const dfm2::CVec3d normalHexFace[6] = {
-  dfm2::CVec3d(-1, 0, 0),
-  dfm2::CVec3d(+1, 0, 0),
-  dfm2::CVec3d( 0,-1, 0),
-  dfm2::CVec3d( 0,+1, 0),
-  dfm2::CVec3d( 0, 0,-1),
-  dfm2::CVec3d( 0, 0,+1)
+const delfem2::CVec3d normalHexFace[6] = {
+  delfem2::CVec3d(-1, 0, 0),
+  delfem2::CVec3d(+1, 0, 0),
+  delfem2::CVec3d( 0,-1, 0),
+  delfem2::CVec3d( 0,+1, 0),
+  delfem2::CVec3d( 0, 0,-1),
+  delfem2::CVec3d( 0, 0,+1)
 };
 
-void delfem2::opengl::Draw_CubeGrid
-(bool is_picked, int iface_picked,
- double elen, const dfm2::CVec3d& org,
- const dfm2::CCubeGrid& cube)
+void delfem2::opengl::Draw_CubeGrid(
+    bool is_picked,
+    int iface_picked,
+    double elen,
+    const delfem2::CVec3d& org,
+    const delfem2::CCubeGrid& cube)
 {
   if( !cube.is_active ) return;
   int ih = cube.ivx;
   int jh = cube.ivy;
   int kh = cube.ivz;
-  dfm2::CVec3d aP[8] = {
-    org + elen * dfm2::CVec3d(ih+0,jh+0,kh+0),
-    org + elen * dfm2::CVec3d(ih+1,jh+0,kh+0),
-    org + elen * dfm2::CVec3d(ih+0,jh+1,kh+0),
-    org + elen * dfm2::CVec3d(ih+1,jh+1,kh+0),
-    org + elen * dfm2::CVec3d(ih+0,jh+0,kh+1),
-    org + elen * dfm2::CVec3d(ih+1,jh+0,kh+1),
-    org + elen * dfm2::CVec3d(ih+0,jh+1,kh+1),
-    org + elen * dfm2::CVec3d(ih+1,jh+1,kh+1) };
+  delfem2::CVec3d aP[8] = {
+    org + elen * delfem2::CVec3d(ih+0,jh+0,kh+0),
+    org + elen * delfem2::CVec3d(ih+1,jh+0,kh+0),
+    org + elen * delfem2::CVec3d(ih+0,jh+1,kh+0),
+    org + elen * delfem2::CVec3d(ih+1,jh+1,kh+0),
+    org + elen * delfem2::CVec3d(ih+0,jh+0,kh+1),
+    org + elen * delfem2::CVec3d(ih+1,jh+0,kh+1),
+    org + elen * delfem2::CVec3d(ih+0,jh+1,kh+1),
+    org + elen * delfem2::CVec3d(ih+1,jh+1,kh+1) };
   ::glEnable(GL_LIGHTING);
   ::glBegin(GL_QUADS);
   for(int iface=0;iface<6;++iface){
@@ -107,7 +109,8 @@ void delfem2::opengl::Draw_CubeGrid
 
 
 
-void Draw(const dfm2::CBV3d_AABB& aabb)
+void Draw(
+    const delfem2::CBV3d_AABB& aabb)
 {
   double x_min = aabb.bbmin[0];
   double x_max = aabb.bbmax[0];

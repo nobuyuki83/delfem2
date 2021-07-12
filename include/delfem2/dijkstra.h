@@ -16,6 +16,7 @@
 #include <queue>
 #include <climits>
 #include <random>
+#include <iostream>
 
 namespace delfem2 {
 

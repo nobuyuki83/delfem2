@@ -5,16 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/rig_geo3.h"
+#include <iostream>
+#include <vector>
+#include <set>
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/rigv3.h"
-#include "delfem2/rig_geo3.h"
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <vector>
-#include <set>
-
 
 namespace dfm2 = delfem2;
 

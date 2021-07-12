@@ -5,22 +5,24 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/opengl/old/color.h"
 #include "delfem2/dijkstra.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/color.h"
-#include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
 #include <cstdlib>
 #include <random>
 #include <set>
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/opengl/old/color.h"
+#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 

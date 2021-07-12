@@ -5,15 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/vec3.h"
+#include "delfem2/mat3.h"
+#include "delfem2/mshprimitive.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
-#include "delfem2/mshprimitive.h"
 #include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;

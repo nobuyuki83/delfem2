@@ -5,18 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/opengl/old/v2.h"
+#include "delfem2/vec2.h"
+
 #if defined(_WIN32) // windows
   #include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // mac
+  #define GL_SILENCE_DEPRECATION
   #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/opengl/old/v2.h"
-#include "delfem2/vec2.h"
 
 //----------------------------------------------------
 

@@ -4,13 +4,16 @@
  * (https://www.kevinbeason.com/smallpt/)
  */
 
-#include <cmath>
-#include <cstdlib>
-#include <vector>
 #include "delfem2/vec3.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/opengl/tex.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
+#include <cmath>
+#include <cstdlib>
+#include <vector>
+
 using namespace delfem2;
 
 // based on https://github.com/postgres/postgres/blob/master/src/port/erand48.c

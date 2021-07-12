@@ -20,11 +20,11 @@ IF(MSVC)
   # C4202 (lev4): nonstandard extension used : nameless struct/union
   set(CMAKE_CXX_FLAGS "/W4 \
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
-    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4456 /wd4201")
+    /wd4800  /wd4530 /wd4245 /wd4505 /wd4456 /wd4201")
 ELSE()
   # -g: default debug information
-  # -Wno-deprecated-declarations: for suppressing deprecation error for legacy OpenGL functions
-  set(CMAKE_CXX_FLAGS "-Wall -g -Wno-deprecated-declarations")
+  # : for suppressing deprecation error for legacy OpenGL functions
+  set(CMAKE_CXX_FLAGS "-Wall -g")
 ENDIF()
 
 ####################################
@@ -164,13 +164,13 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/old/colorv3.h      ${DELFEM2_INC}/opengl/old/colorv3.cpp
     ${DELFEM2_INC}/opengl/old/r2tglo.h       ${DELFEM2_INC}/opengl/old/r2tglo.cpp
     ${DELFEM2_INC}/opengl/old/gridcube.h     ${DELFEM2_INC}/opengl/old/gridcube.cpp
+    ${DELFEM2_INC}/opengl/old/gizmo.h        ${DELFEM2_INC}/opengl/old/gizmo.cpp
     
     ${DELFEM2_INC}/glfw/util.h     
     ${DELFEM2_INC}/glfw/viewer2.h     
     ${DELFEM2_INC}/glfw/viewer2.cpp
     ${DELFEM2_INC}/glfw/viewer3.h     
     ${DELFEM2_INC}/glfw/viewer3.cpp
-
 
     ${DELFEM2_INC}/openglstb/glyph.h         ${DELFEM2_INC}/openglstb/glyph.cpp
 )

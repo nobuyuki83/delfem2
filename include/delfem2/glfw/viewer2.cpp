@@ -6,11 +6,22 @@
  */
 
 #include <cstdlib>
-#include <cstdio>
 #include <cassert>
+#include "delfem2/mat4.h"
+
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+  #define GL_SILENCE_DEPRECATION
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
+
 #include <GLFW/glfw3.h>
 #include "delfem2/glfw/viewer2.h"
-#include "delfem2/mat4.h"
 
 // ---------------
 namespace delfem2 {

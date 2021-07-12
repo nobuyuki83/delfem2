@@ -5,14 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/mshprimitive.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/rig_geo3.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/mshprimitive.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/rig_geo3.h"
 #include <GLFW/glfw3.h>
 
 #ifndef M_PI

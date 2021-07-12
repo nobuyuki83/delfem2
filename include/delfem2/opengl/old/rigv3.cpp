@@ -5,28 +5,25 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/rig_geo3.h"
 
-// -------------------------
-#if defined(__APPLE__) // Mac
-  #include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
+#if defined(_WIN32) // windows
   #include <windows.h>
-  #include <GL/gl.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__) // mac
+  #define GL_SILENCE_DEPRECATION
+  #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
 
-
-#ifndef M_PI 
+#ifndef M_PI
   #define M_PI 3.1415926535
 #endif
-
-//namespace dfm2 = delfem2;
 
 // -------------------------------------------------------
 

@@ -9,11 +9,13 @@
 #include "delfem2/opengl/old/caddtri_v3.h"
 #include "delfem2/vec3.h"
 
-#if defined(__APPLE__) && defined(__MACH__)
-  #include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
+#if defined(_WIN32) // windows
   #include <windows.h>
-  #include <GL/gl.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+  #define GL_SILENCE_DEPRECATION
+  #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
@@ -190,3 +192,4 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri3D_Edge(
 }
 
 // -------------------------------------------------------------------------
+

@@ -5,16 +5,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/gridcube.h"
 #include "delfem2/cam3_m4q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridcube.h"
-#include <GLFW/glfw3.h>
 #include <cmath>
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/gridcube.h"
+#include <GLFW/glfw3.h>
 
 #ifndef M_PI
   #define M_PI 3.141592653589793

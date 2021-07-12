@@ -6,13 +6,30 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header only library" ON)
 
 set(CMAKE_CXX_STANDARD 14)
 if(MSVC)
-  # GTest is static compiled by default
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")  
-  set(CMAKE_CXX_FLAGS "/W4 -O2 \
+  #
+  # C4100 (lev4): 'identifier' : unreferenced formal parameter
+  # C4458 (lev4): declaration of 'identifier' hides class member
+  # C4577 (lev1): 'noexcept' used with no exception handling mode specified; termination on exception is not guaranteed. Specify /EHsc
+  # C4267 (lev3): 'var' : conversion from 'size_t' to 'type', possible loss of data
+  # C4244 (lev2): 'argument' : conversion from 'type1' to 'type2', possible loss of data
+  # C4505 (lev4): 'function' : unreferenced local function has been removed
+  # C4838 (lev1): conversion from 'type_1' to 'type_2' requires a narrowing conversion
+  # C4800 (lev4): Implicit conversion from 'type' to bool. Possible information loss
+  # C4996 (lev3): Your code uses a function, class member, variable, or typedef that's marked deprecated.
+  # C4530 (lev1): C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
+  # C4245 (lev4): 'conversion' : conversion from 'type1' to 'type2', signed/unsigned mismatch
+  # C4505 (lev4): 'function' : unreferenced local function has been removed
+  # C4456 (lev4): declaration of 'identifier' hides previous local declaration
+  # C4202 (lev4): nonstandard extension used : nameless struct/union
+  # GTest is static compiled by default
+  # GTest requires multi-threading
+  set(CMAKE_CXX_FLAGS "/W4 \
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456")
 endif()
+
 
 ################################
 

@@ -10,6 +10,7 @@
  * @details this demo is for showing CViewer_GLFW funtinoalities
  */
 
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include <cstdlib>

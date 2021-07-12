@@ -5,15 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/vec2.h"
+#include "delfem2/pgeo.h"
+#include <iostream>
+#include <random>
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v2.h"
 #include "delfem2/opengl/old/funcs.h"
-#include "delfem2/vec2.h"
-#include "delfem2/pgeo.h"
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <random>
 
 namespace dfm2 = delfem2;
 
@@ -73,6 +74,7 @@ void myGlutDisplay()
 int main(int argc,char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::InitGLOld();
   viewer.InitGL();
   
   // -----------
