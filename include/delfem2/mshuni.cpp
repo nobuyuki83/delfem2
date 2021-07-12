@@ -451,8 +451,8 @@ DFM2_INLINE void delfem2::MarkConnectedElements(
     unsigned int igroup,
     const std::vector<unsigned int>& aElSuEl)
 {
-  const unsigned int nel = aFlagElem.size();
-  const unsigned int nfael = aElSuEl.size()/nel;
+  const std::size_t nel = aFlagElem.size();
+  const std::size_t nfael = aElSuEl.size()/nel;
   aFlagElem[itri_ker] = igroup;
   std::stack<int> next;
   next.push(itri_ker);
