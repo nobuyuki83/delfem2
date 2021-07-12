@@ -10,8 +10,10 @@
 #include <climits>
 
 #if defined(_WIN32) // windows
+  #define NOMINMAX   // to remove min,max macro
   #include <windows.h>
 #endif
+
 #if defined(__APPLE__) && defined(__MACH__)
   #define GL_SILENCE_DEPRECATION
   #include <OpenGL/gl.h>
