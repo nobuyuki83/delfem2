@@ -5,22 +5,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cassert>
-#include <iostream>
-#include <vector>
-#include <ctime>
-#include <random>
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/dtet_v3.h"
-
 // ------------
-
-#include <GLFW/glfw3.h>
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
+#include <GLFW/glfw3.h>
+//
+#include <cassert>
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <random>
 
 namespace dfm2 = delfem2;
 

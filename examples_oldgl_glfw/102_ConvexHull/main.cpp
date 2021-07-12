@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/geoconvhull3.h"

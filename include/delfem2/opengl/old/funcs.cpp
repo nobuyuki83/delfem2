@@ -5,23 +5,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include "delfem2/opengl/old/funcs.h"
-
-#if defined(_WIN32) // windows
-  #include <windows.h>
-#endif
-#if defined(__APPLE__) && defined(__MACH__) // Mac
-  #include <OpenGL/gl.h>
-#else
-  #include <GL/gl.h>
-#endif
-
 #include <cassert>
 #include <cmath>
 #include <vector>
 #include <climits>
 
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__) // Mac
+  #define GL_SILENCE_DEPRECATION
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
 
 // -----------------------------------------------------------
 
@@ -1219,3 +1218,4 @@ DFM2_INLINE void delfem2::opengl::setGL_Camera2D()
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
 }
+

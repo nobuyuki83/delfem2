@@ -5,16 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v3q.h"
 #include <GLFW/glfw3.h>
+//
 #include <vector>
 #include <string>
 #include <cassert>

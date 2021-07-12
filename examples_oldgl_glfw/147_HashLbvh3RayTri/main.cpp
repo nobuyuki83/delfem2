@@ -1,18 +1,20 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2019-2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbvh.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <algorithm>

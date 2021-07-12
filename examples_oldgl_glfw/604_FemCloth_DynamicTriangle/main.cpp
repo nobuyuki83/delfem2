@@ -1,14 +1,10 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2019-2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/cloth_internal.h"
@@ -16,15 +12,19 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/femcloth.h"
 #include "delfem2/jagarray.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <vector>
 
-
 namespace dfm2 = delfem2;
 
 // -------------------------------------------
-
 
 class CInput_ContactNothing: public dfm2::CInput_Contact
 {

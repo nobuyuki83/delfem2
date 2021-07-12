@@ -5,14 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/v3q.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/femrod.h"
 #include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/srchbv3sphere.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/v3q.h"
+#include "delfem2/opengl/old/funcs.h"
 #include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;

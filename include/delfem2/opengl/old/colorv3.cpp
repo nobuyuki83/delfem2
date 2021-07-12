@@ -12,13 +12,15 @@
 
 // -------
 
-#if defined(__APPLE__)
-#  include <OpenGL/gl.h>
-#elif defined(_MSC_VER) // windows
-#  include <windows.h>
-#  include <GL/gl.h>
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+  #define GL_SILENCE_DEPRECATION
+  #include <OpenGL/gl.h>
 #else
-#  include <GL/gl.h>
+  #include <GL/gl.h>
 #endif
 
 // -----------------------------
@@ -58,3 +60,4 @@ DFM2_INLINE void DrawQuad_ScalarQ1
   }
   ::glEnd();
 }
+

@@ -1,15 +1,4 @@
 
-
-#if defined(_WIN32) // windows
-  #include <windows.h>
-#endif
-
-#if defined(__APPLE__) && defined(__MACH__)
-  #include <OpenGL/gl.h>
-#else
-  #include <GL/gl.h>
-#endif
-
 #include <iostream>
 #include <fstream>
 #include "delfem2/openglstb/glyph.h"
@@ -17,6 +6,17 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
+
+#if defined(_WIN32) // windows
+  #include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+  #define GL_SILENCE_DEPRECATION
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
 
  delfem2::openglstb::CGlyph::CGlyph(const std::string &fpath) {
   int channels;
@@ -121,3 +121,7 @@ void delfem2::openglstb::CGlyph::DrawStringAt(const std::string &str, double sca
     px = DrawCharAt(c, scale, px, py);
   }
 }
+
+#if defined(__APPLE__) && defined(__MACH__)
+  #undef GL_SILENCE_DEPRECATION
+#endif

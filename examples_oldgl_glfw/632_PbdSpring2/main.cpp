@@ -1,8 +1,11 @@
 
-#include "delfem2/glfw/viewer2.h"
 #include "delfem2/dtri2_v2dtri.h" // triangle mesh generation
 #include "delfem2/mshuni.h" // line mesh from triangle mesh
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer2.h"
 #include <GLFW/glfw3.h>
+//
 #include <cstdlib>
 #include <cstdio>
 

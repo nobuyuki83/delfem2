@@ -7,6 +7,7 @@
 
 #include "glad/glad.h" // gl3.0+
 #if defined(__APPLE__) && defined(__MACH__) // Mac
+  #define GL_SILENCE_DEPRECATION
   #include <OpenGL/gl.h>
 #elif defined(_WIN32) // windows
   #include <windows.h>

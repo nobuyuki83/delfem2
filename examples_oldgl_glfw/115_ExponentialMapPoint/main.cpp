@@ -1,15 +1,10 @@
 /*
- * Copyright (c) 2019-2020 Nobuyuki Umetani
+ * Copyright (c) 2019-2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/opengl/tex.h"
 #include "delfem2/expmap_geo3dijk.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
@@ -17,12 +12,19 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/color.h"
 #include "delfem2/imgio.h"
-#include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
 #include <cassert>
 #include <cstdlib>
 #include <set>
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/opengl/tex.h"
+#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 

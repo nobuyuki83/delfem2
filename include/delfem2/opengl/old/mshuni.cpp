@@ -1,28 +1,27 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include "delfem2/opengl/old/mshuni.h"
+#include <cassert>
+#include <cmath>
+#include <vector>
+#include <climits>
 
 #if defined(_WIN32) // windows
   #include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
+  #define GL_SILENCE_DEPRECATION
   #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
 
-#include <cstdlib>
-#include <cassert>
-#include <math.h>
-#include <vector>
-#include <climits>
 
 
 // -----------------------------------------------------------
@@ -1481,3 +1480,5 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl(
     }
   }
 }
+
+

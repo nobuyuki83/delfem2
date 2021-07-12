@@ -5,16 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/femcloth.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
+//
 #include <GLFW/glfw3.h>
 #include <vector>
 

@@ -10,11 +10,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF (MSVC)
   set(CMAKE_CXX_FLAGS "/W4 -O2 \
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
-    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
+    /wd4800  /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE ()
   # "-stdlib=libc++" is necessacry for STL in C++11
   set(CMAKE_CXX_FLAGS "-g\
-    -Wall -Wno-deprecated-declarations")
+    -Wall ")
 ENDIF ()
 
 ####################################

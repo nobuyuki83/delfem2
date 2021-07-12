@@ -4,13 +4,16 @@
  * @file demo inspired by taichi_mpm (https://github.com/yuanming-hu/taichi_mpm)
  */
 
-#include "delfem2/glfw/viewer2.h"
-#include "delfem2/glfw/util.h"
 #include "delfem2/color.h"
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat2.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer2.h"
+#include "delfem2/glfw/util.h"
 #include <GLFW/glfw3.h>
+//
 #include <cstdlib>
 #include <cstdio>
 #include <random>

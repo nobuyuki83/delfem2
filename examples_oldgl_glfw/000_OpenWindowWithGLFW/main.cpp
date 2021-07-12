@@ -9,6 +9,7 @@
  * @brief this demo just open window and it doesn't use DelFEM2 library
  */
 
+#define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <cstdio>

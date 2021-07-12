@@ -5,13 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
+#include "delfem2/cad2_dtri2.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
 #include "delfem2/openglstb/glyph.h"
-#include "delfem2/cad2_dtri2.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
 #include <stack>

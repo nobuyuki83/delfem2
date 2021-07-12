@@ -5,22 +5,31 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
+#include "delfem2/opengl/tex.h"
 #include <fstream>
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
 
-#if defined(__APPLE__) && defined(__MACH__) // Mac
-  #include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  // C4996 (lev3): Your code uses a function, class member, variable, or typedef that's marked deprecated.
+  #pragma warning( disable : 4996 )
+#elif defined(__GNUC__) || defined(__clang__)
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+#if defined(_WIN32) // windows
   #include <windows.h>
-  #include <GL/gl.h>
-#else // linux
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__) // mac
+  #include <OpenGL/gl.h>
+#else
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/opengl/tex.h"
 
 // ------------------------
 
@@ -252,3 +261,9 @@ void delfem2::opengl::CTexManager::BindTexturePath(const std::string& path) cons
     glEnable(GL_TEXTURE_2D);
   }
 }
+
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#elif defined(__GNUC__) || defined(__clang__)
+  #pragma GCC diagnostic pop
+#endif

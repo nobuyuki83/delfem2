@@ -1,17 +1,19 @@
 /*
-* Copyright (c) 2019 Nobuyuki Umetani
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
+ * Copyright (c) 2019-2021 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
-#include "delfem2/glfw/util.h"
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/rgd_v2m3.h"
 #include "delfem2/geoplygn2_v2.h"
 #include "delfem2/vec2.h"
 #include "delfem2/mat3.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/util.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/opengl/old/funcs.h"
 #include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;

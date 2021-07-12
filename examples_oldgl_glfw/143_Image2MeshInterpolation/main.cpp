@@ -1,18 +1,20 @@
 /*
- * Copyright (c) 2020 Nobuyuki Umetani
+ * Copyright (c) 2020-2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/imgio.h"
+#include <cstdlib>
+#include <vector>
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/imgio.h"
 #include <GLFW/glfw3.h>
-#include <cstdlib>
-#include <vector>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"

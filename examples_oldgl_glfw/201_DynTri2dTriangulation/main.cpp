@@ -5,15 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/dtri2_v2dtri.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
-#include "delfem2/dtri2_v2dtri.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <cmath>
 #include <vector>
-
 
 namespace dfm2 = delfem2;
 

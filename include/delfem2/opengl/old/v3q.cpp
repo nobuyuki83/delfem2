@@ -5,21 +5,21 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cassert>
+#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
+#include <cassert>
 
 #if defined(_WIN32) // windows
   #include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // mac
+  #define GL_SILENCE_DEPRECATION
   #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
-
-#include "delfem2/opengl/old/v3q.h"
 
 //----------------------------------------------------
 
@@ -810,3 +810,4 @@ DFM2_INLINE void delfem2::opengl::Draw_QuaternionsCoordinateAxes
   }
   ::glEnd();
 }
+

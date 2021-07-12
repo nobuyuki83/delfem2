@@ -6,12 +6,6 @@
  */
 
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/color.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/opengl/old/v3q.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
@@ -25,7 +19,16 @@
 #include "delfem2/mshprimitive.h"
 #include "delfem2/isrf_iss.h"
 #include "delfem2/jagarray.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/color.h"
+#include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/opengl/old/v3q.h"
+#include "delfem2/opengl/old/funcs.h"
 #include <GLFW/glfw3.h>
+//
 #include <cassert>
 #include <vector>
 #include <algorithm>

@@ -5,14 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "delfem2/glfw/util.h"
-#include "delfem2/glfw/viewer2.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
 #include "delfem2/femutil.h"
 #include "delfem2/femrod.h"
 #include "delfem2/lsvecx.h"
 #include "delfem2/lsitrsol.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/util.h"
+#include "delfem2/glfw/viewer2.h"
+#include "delfem2/opengl/old/mshuni.h"
+#include <GLFW/glfw3.h>
+//
 #include <random>
 
 #include "delfem2/vec2.h"

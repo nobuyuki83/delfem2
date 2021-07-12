@@ -5,11 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+
 #include <cassert>
 #include <vector>
 #include <random>
 #include "delfem2/vec3.h"
 #include "delfem2/pgeo.h"
+#define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
