@@ -10,14 +10,6 @@
  * @details skinning
  */
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/v3q.h"
-#include "delfem2/opengl/old/caddtri_v3.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/opengl/old/color.h"
-#include "delfem2/opengl/tex.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/rig_geo3.h"
@@ -28,8 +20,18 @@
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/v3q.h"
+#include "delfem2/opengl/old/caddtri_v3.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/opengl/old/color.h"
+#include "delfem2/opengl/tex.h"
 #include <GLFW/glfw3.h>
-#include <cstdlib>
+//
 #include <random>
 
 

@@ -11,16 +11,19 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
+#include "delfem2/rigopt.h"
+#include "delfem2/rig_geo3.h"
+#include "inputs_imgboneloc.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/tex.h"
-#include "delfem2/rigopt.h"
-#include "delfem2/rig_geo3.h"
-#include "inputs_imgboneloc.h"
 #include <GLFW/glfw3.h>
+//
 #include <cstdlib>
 
 #define STB_IMAGE_IMPLEMENTATION

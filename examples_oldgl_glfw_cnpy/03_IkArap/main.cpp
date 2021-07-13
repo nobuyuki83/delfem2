@@ -11,12 +11,6 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/rigv3.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/defarapenergy_geo3.h"
 #include "delfem2/rig_geo3.h"
@@ -25,7 +19,16 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/jagarray.h"
+//
+#define GL_SILENCE_DEPRECATION
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/rigv3.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/opengl/old/v3q.h"
 #include <GLFW/glfw3.h>
+//
 #include <cstdlib>
 #include <random>
 

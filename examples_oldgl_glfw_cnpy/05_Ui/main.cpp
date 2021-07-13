@@ -11,15 +11,18 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
+#include "delfem2/rig_geo3.h"
+#include "delfem2/mat4.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/ViewRig.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/tex.h"
-#include "delfem2/rig_geo3.h"
-#include "delfem2/mat4.h"
+#include <GLFW/glfw3.h>
+//
 #include <cstdlib>
 #include <fstream>
-#include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"

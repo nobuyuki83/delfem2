@@ -39,7 +39,7 @@ int main(int argc,char* argv[])
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
   dfm2::Read_Obj(
-      std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
+      std::string(PATH_ASSET_DIR)+"/bunny_1k.obj",
     aXYZ,aTri);
   dfm2::Normalize_Points3(
       aXYZ,
@@ -83,8 +83,8 @@ int main(int argc,char* argv[])
 
   int shaderProgram;
   {
-    std::string vrt_path = std::string(PATH_INPUT_DIR) + "/glsl120_normalmap.vert";
-    std::string frg_path = std::string(PATH_INPUT_DIR) + "/glsl120_normalmap.frag";
+    std::string vrt_path = std::string(PATH_SOURCE_DIR) + "/glsl120_normalmap.vert";
+    std::string frg_path = std::string(PATH_SOURCE_DIR) + "/glsl120_normalmap.frag";
     std::string vrt = dfm2::LoadFile(vrt_path);
     std::string frg = dfm2::LoadFile(frg_path);
     shaderProgram = dfm2::opengl::setUpGLSL(vrt, frg);

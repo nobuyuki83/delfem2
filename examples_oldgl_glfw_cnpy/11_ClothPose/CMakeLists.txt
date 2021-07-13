@@ -4,13 +4,11 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(MSVC)
-  set(CMAKE_CXX_FLAGS "/W4 -O2 \
+  set(CMAKE_CXX_FLAGS "/W4 \
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
-    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
+    /wd4800 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -g \
-    -Wno-unused-variable \
-    -Wno-deprecated-declarations")
+  set(CMAKE_CXX_FLAGS "-Wall -g")
 ENDIF()
 
 ####################################
