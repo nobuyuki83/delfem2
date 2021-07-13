@@ -22,7 +22,7 @@ echo "path_gtest_root: %path_gtest_root%"
 cd test_cpp
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake .. -A x64 -DUSE_HEADERONLY=ON  -DGTEST_ROOT="%path_gtest_root%"
+cmake .. -A x64 -DDFM2_HEADER_ONLY=ON  -DGTEST_ROOT="%path_gtest_root%"
 cmake --build . --config Release
 "Release/runUnitTests.exe"
 cd ../../
@@ -30,7 +30,8 @@ cd ../../
 cd test_cpp
 mkdir buildVS64Static
 cd buildVS64Static
-cmake .. -A x64 -DUSE_HEADERONLY=OFF -DGTEST_ROOT="%path_gtest_root%"
+cmake .. -A x64 -DDFM2_HEADER_ONLY=OFF -DGTEST_ROOT="%path_gtest_root%"
+cmake --build . --config Release
 cd ../../
 
 : ################################

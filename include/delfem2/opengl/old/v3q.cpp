@@ -22,6 +22,10 @@
   #include <GL/gl.h>
 #endif
 
+#ifndef M_PI
+  #define M_PI 3.141592653589793238462643383279502
+#endif
+
 //----------------------------------------------------
 
 namespace delfem2 {

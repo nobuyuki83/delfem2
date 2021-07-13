@@ -102,9 +102,9 @@ T delfem2::Distance(
     const std::vector<T>& va,
     const std::vector<T>& vb)
 {
-  const unsigned int n = va.size();
+  const size_t n = va.size();
   T r = 0.0;
-  for(unsigned int i=0;i<n;i++){ r += (va[i]-vb[i])*(va[i]-vb[i]); }
+  for(unsigned i=0;i<n;i++){ r += (va[i]-vb[i])*(va[i]-vb[i]); }
   return r;
 }
 #ifndef DFM2_HEADER_ONLY

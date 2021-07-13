@@ -182,7 +182,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     REAL zmin,
     REAL zmax)
 {
-  const REAL yratio = 0.5/std::tan(fovyInRad*0.5); // how z change w.r.t. the y change
+  const REAL yratio = 1/(std::tan(fovyInRad*2)/2); // how z change w.r.t. the y change
   const REAL xratio = yratio/aspectRatio;
   // column 0
   mP[0*4+0] = xratio;
@@ -205,6 +205,26 @@ DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
   mP[3*4+2] = +(zmin*zmax*2) / (zmax - zmin);
   mP[3*4+3] = 0.0;
 }
+#ifndef DFM2_HEADER_ONLY
+template DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
+	float mP[16],
+	float fovyInRad,
+	float aspectRatio,
+	float zmin,
+	float zmax);
+template DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
+	double mP[16],
+	double fovyInRad,
+	double aspectRatio,
+	double zmin,
+	double zmax);
+#endif
+
+
+// -----------------------------------------
+
+
+
 
 template <typename T0, typename T1>
 DFM2_INLINE void delfem2::MultMat4AffineTransTranslateFromRight(
@@ -270,6 +290,19 @@ DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
       Mr,
       -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
 }
+#ifndef DFM2_HEADER_ONLY
+template DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
+	double* Mr,
+	double eyex, double eyey, double eyez,
+	double cntx, double cnty,   double cntz,
+	double upx,  double upy,  double upz);
+template DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
+	float* Mr,
+	float eyex, float eyey, float eyez,
+	float cntx, float cnty, float cntz,
+	float upx,  float upy,  float upz);
+#endif
+
 
 // ------------------------
 // below: mat vec
@@ -555,6 +588,7 @@ template void delfem2::Rotate_Mat4AffineRodriguez(float A[16], const float V[3])
 template void delfem2::Rotate_Mat4AffineRodriguez(double A[16], const double V[3]);
 #endif
 
+// -----------------------------------
 
 template <typename REAL>
 void delfem2::Mat4_Rotation_Cartesian(
@@ -632,6 +666,7 @@ template void delfem2::Translate_Mat4Affine(float A[16], const float V[3]);
 template void delfem2::Translate_Mat4Affine(double A[16], const double V[3]);
 #endif
 
+// -------------------
 
 DFM2_INLINE void delfem2::Mat4_ScaleRotTrans(
      double m[16],
@@ -649,6 +684,8 @@ DFM2_INLINE void delfem2::Mat4_ScaleRotTrans(
   m[1*4+3] = trans[1];
   m[2*4+3] = trans[2];
 }
+
+// ----------------------------
 
 template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_Quat(
@@ -790,26 +827,26 @@ template delfem2::CMat4<float> delfem2::CMat4<float>::MatMat(const CMat4<float>&
 template delfem2::CMat4<double> delfem2::CMat4<double>::MatMat(const CMat4<double>& mat0) const;
 #endif
 
-
+// -----------------------------------
 
 template <typename REAL>
 delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL* q)
 {
   CMat4<REAL> m;
-  const REAL x2 = q[1] * q[1] * 2.0;
-  const REAL y2 = q[2] * q[2] * 2.0;
-  const REAL z2 = q[3] * q[3] * 2.0;
-  const REAL xy = q[1] * q[2] * 2.0;
-  const REAL yz = q[2] * q[3] * 2.0;
-  const REAL zx = q[3] * q[1] * 2.0;
-  const REAL xw = q[1] * q[0] * 2.0;
-  const REAL yw = q[2] * q[0] * 2.0;
-  const REAL zw = q[3] * q[0] * 2.0;
+  const REAL x2 = q[1] * q[1] * 2;
+  const REAL y2 = q[2] * q[2] * 2;
+  const REAL z2 = q[3] * q[3] * 2;
+  const REAL xy = q[1] * q[2] * 2;
+  const REAL yz = q[2] * q[3] * 2;
+  const REAL zx = q[3] * q[1] * 2;
+  const REAL xw = q[1] * q[0] * 2;
+  const REAL yw = q[2] * q[0] * 2;
+  const REAL zw = q[3] * q[0] * 2;
   m.SetZero();
-  m.mat[0*4+0] = 1.0 - y2 - z2; m.mat[0*4+1] = xy - zw;         m.mat[0*4+2] = zx + yw;
-  m.mat[1*4+0] = xy + zw;       m.mat[1*4+1] = 1.0 - z2 - x2;   m.mat[1*4+2] = yz - xw;
-  m.mat[2*4+0] = zx - yw;       m.mat[2*4+1] = yz + xw;         m.mat[2*4+2] = 1.0 - x2 - y2;
-  m.mat[3*4+3] = 1.0;
+  m.mat[0*4+0] = 1 - y2 - z2; m.mat[0*4+1] = xy - zw;       m.mat[0*4+2] = zx + yw;
+  m.mat[1*4+0] = xy + zw;     m.mat[1*4+1] = 1 - z2 - x2;   m.mat[1*4+2] = yz - xw;
+  m.mat[2*4+0] = zx - yw;     m.mat[2*4+1] = yz + xw;       m.mat[2*4+2] = 1 - x2 - y2;
+  m.mat[3*4+3] = 1;
   return m;
 }
 #ifndef DFM2_HEADER_ONLY

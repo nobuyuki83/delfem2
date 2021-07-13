@@ -157,17 +157,17 @@ DFM2_INLINE  void Mat3_Bryant(
 // exposed function below
 
 template <typename T>
-void CenterWidth_MinMaxXYZ
-(T& cx, T& cy, T& cz,
- T& wx, T& wy, T& wz,
- //
- T x_min, T x_max,
- T y_min, T y_max,
- T z_min, T z_max)
+void CenterWidth_MinMaxXYZ(
+	T& cx, T& cy, T& cz,
+	T& wx, T& wy, T& wz,
+	//
+	T x_min, T x_max,
+	T y_min, T y_max,
+	T z_min, T z_max)
 {
-  cx = (x_min+x_max)*0.5;
-  cy = (y_min+y_max)*0.5;
-  cz = (z_min+z_max)*0.5;
+  cx = (x_min+x_max)/2;
+  cy = (y_min+y_max)/2;
+  cz = (z_min+z_max)/2;
   wx = x_max-x_min;
   wy = y_max-y_min;
   wz = z_max-z_min;
