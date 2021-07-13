@@ -10,16 +10,19 @@
  * @details skinning
  */
 
+#include "delfem2/cnpy/smpl_cnpy.h"
+#include "delfem2/rig_geo3.h"
+#include "delfem2/quat.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/rigv3.h"
-#include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/rig_geo3.h"
-#include "delfem2/quat.h"
-#include <random>
 #include <GLFW/glfw3.h>
+//
+#include <random>
 
 namespace dfm2 = delfem2;
 

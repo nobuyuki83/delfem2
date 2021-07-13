@@ -6,6 +6,17 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/garment.h"
+#include "delfem2/cad2_dtri2.h"
+#include "delfem2/rig_geo3.h"
+#include "inputs_garment.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
+#include "delfem2/dtri.h"
+#include "delfem2/color.h"
+//
+#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
@@ -13,22 +24,10 @@
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/garment.h"
-#include "delfem2/cad2_dtri2.h"
-#include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/rig_geo3.h"
-#include "inputs_garment.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
-#include "delfem2/dtri.h"
-#include "delfem2/srchbv3sphere.h"
-#include "delfem2/color.h"
 #include <GLFW/glfw3.h>
-#include <cstdlib>
+//
 #include <iostream>
 #include <vector>
-#include <set>
 
 // ----------------------------
 
