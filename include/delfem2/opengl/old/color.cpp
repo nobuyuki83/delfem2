@@ -21,6 +21,10 @@
   #include <GL/gl.h>
 #endif
 
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4100 )
+#endif
 
 // header ends here
 // -------------------------------------------------
@@ -433,7 +437,7 @@ DFM2_INLINE void delfem2::opengl::drawMeshTri3D_ScalarP0(
     const std::vector<double>& aValSrf,
     const std::vector<std::pair<double, CColor> >& colorMap)
 {
-  const unsigned int nTri = aTri.size()/3;
+  const unsigned int nTri = static_cast<unsigned int>(aTri.size()/3);
   if( aValSrf.size()!=nTri ){ return; }
   // ---
   ::glBegin(GL_TRIANGLES);
@@ -646,3 +650,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Cut(
    */
   if( is_lighting ){ glEnable(GL_LIGHTING); }
 }
+
+// -------------------------
+
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif

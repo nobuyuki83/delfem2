@@ -13,6 +13,11 @@
 
 #include "delfem2/mshuni.h"
 
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4100 )
+#endif
+
 // ---------------------------------------------
 
 DFM2_INLINE void delfem2::JArray_ElSuP_MeshElem(
@@ -479,7 +484,7 @@ DFM2_INLINE void delfem2::MakeGroupElem(
     const int nnoel)
 {
   const std::size_t nelem = aTri.size()/nnoel;
-  aIndGroup.assign(nelem,-1);
+  aIndGroup.assign(nelem,UINT_MAX);
   int igroup = -1;
   for(;;){
     unsigned int itri_ker = 0;
@@ -493,5 +498,6 @@ DFM2_INLINE void delfem2::MakeGroupElem(
   ngroup = igroup+1;
 }
 
-
-
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif

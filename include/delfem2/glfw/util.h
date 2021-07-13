@@ -2,6 +2,11 @@
 #include <cstdio>
 #include <cstdlib>
 
+#if defined(_MSC_VER)
+  #pragma warning (push)
+  #pragma warning( disable : 4100 )
+#endif
+
 namespace delfem2{
 namespace glfw{
 
@@ -57,4 +62,6 @@ void InitGLNew(){
 }
 }
 
-
+#if defined(_MSC_VER)
+  #pragma warning (pop)
+#endif

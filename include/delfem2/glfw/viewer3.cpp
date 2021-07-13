@@ -17,6 +17,11 @@
   #include <GL/gl.h>
 #endif
 
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4100 )
+#endif
+
 #include "delfem2/glfw/viewer3.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
@@ -168,10 +173,10 @@ void delfem2::glfw::CViewer3::DrawBegin_oldGL() const
   ::glfwMakeContextCurrent(window);
   //::glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
   ::glClearColor(
-      this->bgcolor[0],
-      this->bgcolor[1],
-      this->bgcolor[2],
-      this->bgcolor[3]);
+      static_cast<GLclampf>(this->bgcolor[0]),
+      static_cast<GLclampf>(this->bgcolor[1]),
+      static_cast<GLclampf>(this->bgcolor[2]),
+      static_cast<GLclampf>(this->bgcolor[3]));
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   ::glDepthFunc(GL_LESS);
@@ -218,3 +223,7 @@ void delfem2::glfw::CViewer3::ExitIfClosed() const
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }
+
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif

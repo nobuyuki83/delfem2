@@ -100,9 +100,9 @@ DFM2_INLINE void DrawMeshTri2D_FaceDisp2D(
 
 DFM2_INLINE void DrawMeshTri2D_Edge(
     const double* aXY,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aTri,
-    unsigned int nTri);
+    size_t nTri);
 
 DFM2_INLINE void DrawMeshTri2D_Edge(
     const std::vector<unsigned int>& aTri,
@@ -126,7 +126,7 @@ DFM2_INLINE void DrawMeshTri3D_FaceEdge(
 DFM2_INLINE void DrawMeshTri3D_FaceNorm(
     const double* paXYZ,
     const unsigned int* paTri,
-    unsigned int nTri);
+    size_t nTri);
 
 DFM2_INLINE void DrawMeshTri3D_FaceNorm(
     const std::vector<double>& aXYZ,
@@ -176,9 +176,9 @@ DFM2_INLINE void DrawMeshTri3D_FaceNorm_TexVtx(
 template <typename REAL>
 DFM2_INLINE void DrawMeshTri3D_Edge(
     const REAL* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aTri,
-    unsigned int nTri);
+    size_t nTri);
 
 DFM2_INLINE void DrawMeshTri3D_Edge(
     const std::vector<double>& aXYZ,
@@ -192,12 +192,11 @@ DFM2_INLINE void DrawMeshTriMap3D_Edge(
 // =====================================
 // Draw Quad Mesh
 
-
 DFM2_INLINE void DrawMeshQuad2D_Edge(
     const double* aXY,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aQuad,
-    unsigned int nQuad);
+    size_t nQuad);
 
 DFM2_INLINE void DrawMeshQuad2D_Edge(
     const std::vector<double>& aXY,
@@ -221,9 +220,9 @@ DFM2_INLINE void DrawMeshTri2D_EdgeDisp(
 
 DFM2_INLINE void DrawMeshQuad3D_Edge(
     const double* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aQuad,
-    unsigned int nQuad);
+    size_t nQuad);
 
 DFM2_INLINE void DrawMeshQuad3D_Edge(
     const std::vector<double>& aXYZ,
@@ -232,7 +231,7 @@ DFM2_INLINE void DrawMeshQuad3D_Edge(
 DFM2_INLINE void DrawMeshQuad3D_FaceNorm(
     const double* aXYZ,
     const unsigned int* aQuad,
-    unsigned int nQuad);
+    size_t nQuad);
 
 DFM2_INLINE void DrawMeshQuad3D_FaceNorm(
     const std::vector<double>& aXYZ,

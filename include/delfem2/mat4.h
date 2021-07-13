@@ -124,7 +124,8 @@ void MatMat4(
 {
   for(int i=0;i<4;i++){
     for(int j=0;j<4;j++){
-      C[i*4+j] = A[i*4+0]*B[0*4+j] + A[i*4+1]*B[1*4+j] + A[i*4+2]*B[2*4+j] + A[i*4+3]*B[3*4+j];
+	  const T1 c = A[i * 4 + 0] * B[0 * 4 + j] + A[i * 4 + 1] * B[1 * 4 + j] + A[i * 4 + 2] * B[2 * 4 + j] + A[i * 4 + 3] * B[3 * 4 + j];
+	  C[i * 4 + j] = static_cast<T0>(c);
     }
   }
 }
@@ -140,17 +141,19 @@ void Mat4_AffineTransProjectionOrtho(
     double ymin, double ymax,
     double zmin, double zmax);
 
+template <typename REAL>
 void Mat4_AffineTransLookAt(
-    float* Mr,
-    float eyex, float eyey, float eyez,
-    float cntx, float cnty, float cntz,
-    float upx, float upy, float upz );
+    REAL* Mr,
+    REAL eyex, REAL eyey, REAL eyez,
+    REAL cntx, REAL cnty, REAL cntz,
+    REAL upx,  REAL upy,  REAL upz );
 
+template <typename T0, typename T1>
 void MultMat4AffineTransTranslateFromRight(
-    float *matrix,
-    float x,
-    float y,
-    float z);
+    T0 *matrix,
+    T1 x,
+    T1 y,
+    T1 z);
 
 /**
  * construct projection matrix mapping perspective view frustrum to a cube [-1,+1, -1,+1, -1,+1]
@@ -161,12 +164,13 @@ void MultMat4AffineTransTranslateFromRight(
  * @param[in] zmin minimum Z coordinate for the view frustrum (mapped to the plane Z==-1)
  * @param[in] zmax maximum Z coordinate for the view frustrum (mapped to the plane Z==+1)
  */
+template <typename REAL>
 void Mat4_AffineTransProjectionFrustum(
-    float mP[16],
-    float fovyInRad,
-    float aspectRatio,
-    float zmin,
-    float zmax);
+    REAL mP[16],
+    REAL fovyInRad,
+    REAL aspectRatio,
+    REAL zmin,
+    REAL zmax);
 
 template <typename REAL>
 void Mat4_Identity(

@@ -14,6 +14,11 @@
 #include <cstdio>
 #include <iostream>
 
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4100 )
+#endif
+
 // ------------------------------------------------------
 
 struct GLFWwindow;
@@ -62,6 +67,10 @@ public:
 
 } // opengl
 } // delfem2
+
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif
 
 #ifdef DFM2_HEADER_ONLY
   #include "delfem2/glfw/viewer3.cpp"

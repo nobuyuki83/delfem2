@@ -23,17 +23,19 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransProjection(
     float mP[16],
     float asp) const
 {
-  const float mS[16] = {
-      (float)scale, 0, 0, 0,
-      0, (float)scale, 0, 0,
-      0, 0, (float)scale, 0,
+  const REAL mS[16] = {
+      scale, 0, 0, 0,
+      0, scale, 0, 0,
+      0, 0, scale, 0,
       0, 0, 0, 1 };
-  float depth = (0.5*view_height)/tan(fovy*0.5*(2*M_PI)/360.0);
-  float mP0[16];
+  REAL depth = (0.5f*view_height)/tan(fovy*0.5f*(2.f*M_PI)/360.f);
+  REAL mP0[16];
   if( is_pars ){
-    Mat4_AffineTransProjectionFrustum(mP0,
-        fovy*(2*M_PI)/360.0, asp,
-        -depth*2, -depth*0.01);
+    Mat4_AffineTransProjectionFrustum(
+		mP0,
+        fovy*(2.*M_PI)/360.0, 
+		static_cast<REAL>(asp),
+        -depth*2., -depth*0.01);
   }
   else{
     Mat4_AffineTransProjectionOrtho(mP0,
@@ -44,20 +46,20 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransProjection(
         -2*depth,
         0);
   }
-  float mT0[16];
+  REAL mT0[16];
   {
     // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
     // to view the object we translate the object at the origin (0,0,-depth)
-    const float t0[3] = {0.f,0.f,-(float)depth };
+    const REAL t0[3] = {0.f,0.f,-depth };
     ::delfem2::Mat4_AffineTransTranslate(mT0, t0 );
   }
-  const float mRefZ[16] = { // reflection with the XY plane
+  const REAL mRefZ[16] = { // reflection with the XY plane
       +1.f,  0.f,  0.f,  0.f,
        0.f, +1.f,  0.f,  0.f,
        0.f,  0.f, -1.f,  0.f,
        0.f,  0.f,  0.f, +1.f };
-  float mTmp1[16]; ::delfem2::MatMat4(mTmp1,mS,mT0);
-  float mTmp0[16]; ::delfem2::MatMat4(mTmp0,mTmp1,mP0);
+  REAL mTmp1[16]; ::delfem2::MatMat4(mTmp1,mS,mT0);
+  REAL mTmp0[16]; ::delfem2::MatMat4(mTmp0,mTmp1,mP0);
   ::delfem2::MatMat4(mP,mTmp0,mRefZ);
 }
 template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Mat4_AffineTransProjection(
@@ -69,29 +71,31 @@ template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Mat4_AffineTransProj
 template <typename REAL>
 void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransModelView(float mMV[16]) const
 {
-  float Mt[16];
+  REAL Mt[16];
   {
-    const float transd[3] = { (float)trans[0], (float)trans[1], (float)trans[2] };
+    const REAL transd[3] = { trans[0], trans[1], trans[2] };
     Mat4_AffineTransTranslate(Mt, transd);
   }
-  float Mr[16];
+  REAL Mr[16];
   {
     if (camera_rot_mode == CAMERA_ROT_MODE::YTOP) {
-      double x = sin(theta);
-      double z = cos(theta);
-      double y = sin(psi);
-      x *= cos(psi);
-      z *= cos(psi);
-      Mat4_AffineTransLookAt(Mr, x, y, z, 0, 0, 0, 0, 1, 0);
-    } else if (camera_rot_mode == CAMERA_ROT_MODE::ZTOP) {
-      double x = sin(theta);
-      double y = cos(theta);
-      double z = sin(psi);
-      x *= cos(psi);
-      y *= cos(psi);
-      Mat4_AffineTransLookAt(Mr, x, y, z, 0, 0, 0, 0, 0, 1);
-    } else if (camera_rot_mode == CAMERA_ROT_MODE::TBALL) {
-      const float q[4] = {
+      REAL x = std::sin(theta);
+      REAL z = std::cos(theta);
+      REAL y = std::sin(psi);
+      x *= std::cos(psi);
+      z *= std::cos(psi);
+      Mat4_AffineTransLookAt(Mr, x, y, z, 0., 0., 0., 0., 1., 0.);
+    } 
+	else if (camera_rot_mode == CAMERA_ROT_MODE::ZTOP) {
+      REAL x = std::sin(theta);
+      REAL y = std::cos(theta);
+      REAL z = std::sin(psi);
+      x *= std::cos(psi);
+      y *= std::cos(psi);
+      Mat4_AffineTransLookAt(Mr, x, y, z, 0., 0., 0., 0., 0., 1.);
+    }
+	else if (camera_rot_mode == CAMERA_ROT_MODE::TBALL) {
+      const REAL q[4] = {
           static_cast<float>(Quat_tball[0]),
           static_cast<float>(Quat_tball[1]),
           static_cast<float>(Quat_tball[2]),
@@ -116,7 +120,7 @@ template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Scale(double s);
 // --------------------------
 
 template <typename REAL>
-void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Rot_Camera(double dx, double dy){
+void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Rot_Camera(REAL dx, REAL dy){
   if(      camera_rot_mode == CAMERA_ROT_MODE::YTOP ){
     theta -= dx;
     psi   -= dy;
@@ -142,7 +146,7 @@ template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Rot_Camera(double dx
 // ------------------------
 
 template <typename REAL>
-void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Pan_Camera(double dx, double dy){
+void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Pan_Camera(REAL dx, REAL dy){
     double s = view_height/scale;
     trans[0] += s*dx;
     trans[1] += s*dy;

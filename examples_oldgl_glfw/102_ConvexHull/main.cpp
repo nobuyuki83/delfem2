@@ -14,6 +14,10 @@
 #include <vector>
 #include <cstdlib>
 
+#if defined(_MSC_VER)
+  #pragma warning( disable : 4100 )
+#endif
+
 namespace dfm2 = delfem2;
 
 // ---------------------------------------
@@ -74,7 +78,7 @@ int main(int argc,char* argv[])
       }
       ::glEnd();
       
-      const unsigned int nTri = aTri.size()/3;
+      const size_t nTri = aTri.size()/3;
       ::glColor4d(1,1,1,0.8);
       ::glBegin(GL_TRIANGLES);
       for(unsigned int itri=0;itri<nTri;itri++){
