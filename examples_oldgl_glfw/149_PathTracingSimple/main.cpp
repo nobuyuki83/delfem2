@@ -226,8 +226,8 @@ int main(int argc, char *argv[]) {
       }
     }
     isample++;
-    for(int ih=0;ih<tex.h;++ih){
-      for(int iw=0;iw<tex.w;++iw) {
+    for(unsigned int ih=0;ih<tex.h;++ih){
+      for(unsigned int iw=0;iw<tex.w;++iw) {
         for(int ic=0;ic<3;++ic) {
           float fc = afRGB[(ih * tex.w + iw) * 3 + ic]*0.25f/float(isample);
           fc = (fc>1.f) ? 1.f:fc;

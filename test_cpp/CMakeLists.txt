@@ -6,6 +6,8 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header only library" ON)
 
 set(CMAKE_CXX_STANDARD 14)
 if(MSVC)
+  # GTest is static compiled by default
+  # GTest requires multi-threading
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")  
   #
@@ -23,11 +25,9 @@ if(MSVC)
   # C4505 (lev4): 'function' : unreferenced local function has been removed
   # C4456 (lev4): declaration of 'identifier' hides previous local declaration
   # C4202 (lev4): nonstandard extension used : nameless struct/union
-  # GTest is static compiled by default
-  # GTest requires multi-threading
-  set(CMAKE_CXX_FLAGS "/W4 \
-    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
-    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+  #    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
+  #    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456")
 endif()
 
 

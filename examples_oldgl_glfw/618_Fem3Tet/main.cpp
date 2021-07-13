@@ -243,7 +243,7 @@ void InitializeProblem_ShellEigenPB(
   const unsigned int nDoF = np*3;
   aVal.assign(nDoF, 0.0);
   aBCFlag.assign(nDoF, 0);
-  for (int ip = 0; ip<np; ++ip){
+  for (unsigned int ip = 0; ip<np; ++ip){
     const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
     const double pz = aXYZ[ip*3+2];
@@ -332,7 +332,7 @@ void InitializeProblem_LinearSolid_Dynamic(
   aVelo.assign(nDoF, 0.0);
   aAcc.assign(nDoF, 0.0);
   aBCFlag.assign(nDoF, 0);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
     const double pz = aXYZ[ip*3+2];

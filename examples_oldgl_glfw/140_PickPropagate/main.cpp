@@ -21,8 +21,10 @@
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
 #include <GLFW/glfw3.h>
+//
 #include <vector>
 #include <algorithm>
+#include <cstddef> // std::size_t
 
 namespace dfm2 = delfem2;
 
@@ -88,7 +90,7 @@ public:
         aDist,aOrder,
         itri,aTriSuTri,
         aTri.size()/3);
-    for(int ie=0;ie<aTri.size()/3;++ie){
+    for(std::size_t ie=0;ie<aTri.size()/3;++ie){
       if( aDist[ie] > 10 ) continue;
       aFlagElem[ie] = 1;
     }
@@ -97,8 +99,8 @@ public:
   void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
     unsigned int itri = this->PickTri(src1, dir);
     if( itri == UINT_MAX ){ return; }
-    int idist = aDist[itri];
-    for(int ie=0;ie<aTri.size()/3;++ie){
+    unsigned int idist = aDist[itri];
+    for(std::size_t ie=0;ie<aTri.size()/3;++ie){
       if( aDist[ie] > idist ){ aFlagElem[ie] = 0; }
       else { aFlagElem[ie] = 1; }
     }
