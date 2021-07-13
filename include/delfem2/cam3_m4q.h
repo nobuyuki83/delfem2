@@ -101,8 +101,8 @@ public:
   // ------------------------
   
   void Scale(double s);
-  void Rot_Camera(double dx, double dy);
-  void Pan_Camera(double dx, double dy);
+  void Rot_Camera(REAL dx, REAL dy);
+  void Pan_Camera(REAL dx, REAL dy);
 private:
 public:
   bool is_pars;
@@ -115,8 +115,8 @@ public:
   CAMERA_ROT_MODE camera_rot_mode;
   
   // ytop
-  double theta;
-  double psi;
+  REAL theta;
+  REAL psi;
   
   // tball
   double Quat_tball[4];

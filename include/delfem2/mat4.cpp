@@ -31,7 +31,7 @@ DFM2_INLINE void CalcInvMat(
     if (a[i * n + i] < 0.0) {
       info--;
     }
-    tmp1 = 1.0 / a[i * n + i];
+    tmp1 = 1 / a[i * n + i];
     a[i * n + i] = 1.0;
     for (unsigned int k = 0; k < n; k++) {
       a[i * n + k] *= tmp1;
@@ -74,7 +74,7 @@ bool CalcInvMatPivot(REAL* a, unsigned int n, unsigned int* tmp)
     }
 
     // set diagonal 1 for for pivotting column
-    REAL inv_pivot = 1.0/a[ipv*n+ipv];
+    REAL inv_pivot = 1/a[ipv*n+ipv];
     a[ipv*n+ipv]=1.0;
     for(unsigned int j=0 ; j < n ; j++){
       a[ipv*n+j] *= inv_pivot;
@@ -104,18 +104,20 @@ bool CalcInvMatPivot(REAL* a, unsigned int n, unsigned int* tmp)
   return true;
 }
 
+template <typename REAL>
 DFM2_INLINE void Normalize3D(
-    float vec[3])
+    REAL vec[3])
 {
-  const float len = sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
-  const float leninv = 1.f/len;
+  const REAL len = std::sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
+  const REAL leninv = 1/len;
   vec[0] *= leninv;
   vec[1] *= leninv;
   vec[2] *= leninv;
 }
 
+template <typename REAL>
 DFM2_INLINE void Cross3D(
-    float r[3], const float v1[3], const float v2[3]){
+    REAL r[3], const REAL v1[3], const REAL v2[3]){
   r[0] = v1[1]*v2[2] - v2[1]*v1[2];
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
@@ -172,16 +174,16 @@ template void delfem2::Mat4_AffineTransProjectionOrtho(
 #endif
 
 
-
+template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
-    float mP[16],
-    float fovyInRad,
-    float aspectRatio,
-    float zmin,
-    float zmax)
+    REAL mP[16],
+    REAL fovyInRad,
+    REAL aspectRatio,
+    REAL zmin,
+    REAL zmax)
 {
-  const float yratio = 0.5f/tanf(fovyInRad*0.5f); // how z change w.r.t. the y change
-  const float xratio = yratio/aspectRatio;
+  const REAL yratio = 0.5/std::tan(fovyInRad*0.5); // how z change w.r.t. the y change
+  const REAL xratio = yratio/aspectRatio;
   // column 0
   mP[0*4+0] = xratio;
   mP[0*4+1] = 0.0;
@@ -204,11 +206,12 @@ DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
   mP[3*4+3] = 0.0;
 }
 
+template <typename T0, typename T1>
 DFM2_INLINE void delfem2::MultMat4AffineTransTranslateFromRight(
-    float *matrix,
-    float x,
-    float y,
-    float z)
+    T0 *matrix,
+    T1 x,
+    T1 y,
+    T1 z)
 {
   matrix[12]=matrix[0]*x+matrix[4]*y+matrix[8]*z+matrix[12];
   matrix[13]=matrix[1]*x+matrix[5]*y+matrix[9]*z+matrix[13];
@@ -217,29 +220,30 @@ DFM2_INLINE void delfem2::MultMat4AffineTransTranslateFromRight(
 }
 
 
+template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
-    float* Mr,
-    float eyex, float eyey, float eyez,
-    float cntx, float cnty, float cntz,
-    float upx, float upy, float upz )
+    REAL* Mr,
+    REAL eyex, REAL eyey, REAL eyez,
+    REAL cntx, REAL cnty, REAL cntz,
+    REAL upx,  REAL upy,  REAL upz )
 {
-  const float eyePosition3D[3] = {eyex, eyey, eyez};
-  const float center3D[3] = {cntx, cnty, cntz};
-  const float upVector3D[3] = {upx, upy, upz};
+  const REAL eyePosition3D[3] = {eyex, eyey, eyez};
+  const REAL center3D[3] = {cntx, cnty, cntz};
+  const REAL upVector3D[3] = {upx, upy, upz};
   // ------------------
-  float forward[3] = {
+  REAL forward[3] = {
       center3D[0] - eyePosition3D[0],
       center3D[1] - eyePosition3D[1],
       center3D[2] - eyePosition3D[2] };
   mat4::Normalize3D(forward);
   // ------------------
   // Side = forward x up
-  float side[3] = {1,0,0};
+  REAL side[3] = {1,0,0};
   mat4::Cross3D(side, forward, upVector3D);
   mat4::Normalize3D(side);
   // ------------------
   //Recompute up as: up = side x forward
-  float up[3] = {0,1,0};
+  REAL up[3] = {0,1,0};
   mat4::Cross3D(up, side, forward);
   // ------------------
   Mr[ 0] = side[0];

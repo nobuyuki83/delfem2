@@ -3,6 +3,12 @@
 
 #include "delfem2/mat4.h"
 
+
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4100 )
+#endif
+
 namespace delfem2 {
 
 class CMouseInput {
@@ -81,5 +87,9 @@ public:
 
 
 }
+
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif
 
 #endif

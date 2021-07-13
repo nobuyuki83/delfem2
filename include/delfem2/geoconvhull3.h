@@ -139,10 +139,11 @@ void delfem2::ConvexHull(
       {1, 2},
       {2, 0},
       {0, 1}};
-  for (std::size_t iv = 4; iv < aXYZ.size(); iv++) {
+  for (unsigned iv = 4; iv < static_cast<unsigned int>(aXYZ.size()); iv++) {
     VEC v = aXYZ[iv];
     int itri_ker = -1;
-    for (std::size_t itri = 0; itri < aTri.size() / 3; itri++) {
+	const unsigned int ntri = static_cast<unsigned int>(aTri.size() / 3);
+    for (unsigned int itri = 0; itri < ntri; itri++) {
       if (lcl::IsOut<REAL>(itri, v, aXYZ, aTri)) {
         itri_ker = itri;
         break;
@@ -204,7 +205,7 @@ void delfem2::ConvexHull(
         }
       }
     }
-    std::vector<int> aBSur(aB.size() * 2, -1);
+    std::vector<unsigned int> aBSur(aB.size() * 2, UINT_MAX);
     {
       for (auto &ib : aB) {
         int itri0 = ib.first;
@@ -224,21 +225,21 @@ void delfem2::ConvexHull(
         int iv1 = aTri[itri0 * 3 + itn1];
         int iv2 = aTri[itri0 * 3 + itn2];
         if (aBflg[iv1] == -2) {}
-        else if (aBflg[iv1] == -1) { aBflg[iv1] = ib; }
+        else if (aBflg[iv1] == -1) { aBflg[iv1] = static_cast<int>(ib); }
         else {
           assert(aBflg[iv1] >= 0);
           int ib0 = aBflg[iv1];
           aBSur[ib * 2 + 1] = ib0;
-          aBSur[ib0 * 2 + 0] = ib;
+          aBSur[ib0 * 2 + 0] = static_cast<int>(ib);
           aBflg[iv1] = -2;
         }
         if (aBflg[iv2] == -2) {}
-        else if (aBflg[iv2] == -1) { aBflg[iv2] = ib; }
+        else if (aBflg[iv2] == -1) { aBflg[iv2] = static_cast<int>(ib); }
         else {
           assert(aBflg[iv2] >= 0);
           int ib0 = aBflg[iv2];
           aBSur[ib * 2 + 0] = ib0;
-          aBSur[ib0 * 2 + 1] = ib;
+          aBSur[ib0 * 2 + 1] = static_cast<int>(ib);
           aBflg[iv2] = -2;
         }
       }
@@ -265,11 +266,11 @@ void delfem2::ConvexHull(
     std::vector<std::pair<unsigned int, int> > aTriSur1;
     aTri1.reserve(aTri.size() + 60);
     aTriSur1.reserve(aTriSur.size() + 60);
-    for (std::size_t itri = 0; itri < aTri.size() / 3; itri++) {
+    for (unsigned int itri = 0; itri < ntri; itri++) {
       if (isDelTri[itri] == 1) continue;
       assert(!::delfem2::convhull3::IsOut<REAL>(itri, v, aXYZ, aTri));
       // itri is inside
-      mapOld2New[itri] = aTri1.size() / 3;
+      mapOld2New[itri] = static_cast<unsigned int>(aTri1.size() / 3);
       aTri1.push_back(aTri[itri * 3 + 0]);
       aTri1.push_back(aTri[itri * 3 + 1]);
       aTri1.push_back(aTri[itri * 3 + 2]);
@@ -288,9 +289,9 @@ void delfem2::ConvexHull(
         aTriSur1[jtri0 * 3 + iet].second = aTriSur[itri * 3 + iet].second;
       }
     }
-    const std::size_t ntri_old = aTri1.size() / 3;
+    const unsigned int ntri_old = static_cast<unsigned int>(aTri1.size() / 3);
     for (std::size_t ib = 0; ib < aB.size(); ib++) {
-      int itri0 = aB[ib].first;
+      const unsigned int itri0 = aB[ib].first;
       int itn0 = aB[ib].second;
       int itn1 = triEd[itn0][0];
       int itn2 = triEd[itn0][1];
@@ -311,15 +312,15 @@ void delfem2::ConvexHull(
       assert(isDelTri[itri0] == 0);
       const unsigned int jtri0 = mapOld2New[itri0];
       assert(jtri0 != UINT_MAX);
-      const unsigned int jtri1 = aTri1.size() / 3;
+      const unsigned int jtri1 = static_cast<unsigned int>(aTri1.size() / 3);
       assert(jtri1 == ntri_old + ib);
       aTri1.push_back(iv);
       aTri1.push_back(aTri[itri0 * 3 + itn2]);
       aTri1.push_back(aTri[itri0 * 3 + itn1]);
       aTriSur1[jtri0 * 3 + itn0] = std::make_pair(jtri1, 0);
       //
-      int jtri2 = aBSur[ib * 2 + 0] + ntri_old;
-      int jtri3 = aBSur[ib * 2 + 1] + ntri_old;
+      const unsigned int jtri2 = aBSur[ib * 2 + 0] + ntri_old;
+      const unsigned int jtri3 = aBSur[ib * 2 + 1] + ntri_old;
       aTriSur1.emplace_back(jtri0, itn0);
       aTriSur1.emplace_back(jtri3, 2);
       aTriSur1.emplace_back(jtri2, 1);

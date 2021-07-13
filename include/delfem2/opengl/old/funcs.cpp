@@ -23,6 +23,11 @@
   #include <GL/gl.h>
 #endif
 
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4100 )
+#endif
+
 // -----------------------------------------------------------
 
 namespace delfem2{
@@ -179,9 +184,11 @@ DFM2_INLINE void DrawSingleQuad3D_FaceNorm
   }
 }
 
-DFM2_INLINE void Draw_SurfaceMeshEdge
- (unsigned int nXYZ, const double* paXYZ,
-  unsigned int nTri, const unsigned int* paTri)
+DFM2_INLINE void Draw_SurfaceMeshEdge(
+	unsigned int nXYZ, 
+	const double* paXYZ, 
+	unsigned int nTri, 
+	const unsigned int* paTri)
 {
   ::glEnableClientState(GL_VERTEX_ARRAY);
   ::glVertexPointer(3 , GL_DOUBLE , 0 , paXYZ);
@@ -201,9 +208,11 @@ DFM2_INLINE void Draw_SurfaceMeshEdge
   ::glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-DFM2_INLINE void Draw_SurfaceMeshFace
- (unsigned int nXYZ, const double* paXYZ,
-  unsigned int nTri, const unsigned int* paTri)
+DFM2_INLINE void Draw_SurfaceMeshFace(
+	unsigned int nXYZ, 
+	const double* paXYZ, 
+	unsigned int nTri, 
+	const unsigned int* paTri)
 {
   ::glEnableClientState(GL_VERTEX_ARRAY);
   ::glVertexPointer(3 , GL_DOUBLE , 0 , paXYZ);
@@ -398,7 +407,7 @@ DFM2_INLINE void delfem2::opengl::DrawAxis(double s)
 }
 
 DFM2_INLINE void delfem2::opengl::CAxisXYZ::Draw() const{
-  glLineWidth(line_width);
+  glLineWidth(static_cast<GLfloat>(line_width));
   DrawAxis(len);
 }
 
@@ -860,7 +869,7 @@ DFM2_INLINE void delfem2::opengl::drawFloorShadow(void (*DrawObject)(), float yf
     ::glClearStencil(0);
     { // draw floor (stencil 1)
       glEnable(GL_STENCIL_TEST);
-      glStencilFunc( GL_ALWAYS, 1, ~0);
+      glStencilFunc( GL_ALWAYS, 1, static_cast<GLuint>(~0));
       glStencilOp(GL_KEEP,GL_KEEP ,GL_REPLACE);
       { // floor
         ::glDisable(GL_LIGHTING);
@@ -878,7 +887,7 @@ DFM2_INLINE void delfem2::opengl::drawFloorShadow(void (*DrawObject)(), float yf
       glColorMask(0,0,0,0);
       glDepthMask(0);
       glEnable(GL_STENCIL_TEST);
-      glStencilFunc( GL_EQUAL, 1, ~0);
+      glStencilFunc( GL_EQUAL, 1, static_cast<GLuint>(~0));
       glStencilOp(GL_KEEP,GL_KEEP ,GL_INCR);
       glPushMatrix();
       {
@@ -893,7 +902,7 @@ DFM2_INLINE void delfem2::opengl::drawFloorShadow(void (*DrawObject)(), float yf
       glDepthMask(1);
     }
     { // draw shadow
-      glStencilFunc( GL_EQUAL, 2, ~0 );
+      glStencilFunc( GL_EQUAL, 2, static_cast<GLuint>(~0) );
       glStencilOp(GL_KEEP, GL_KEEP ,GL_KEEP);
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1220,3 +1229,6 @@ DFM2_INLINE void delfem2::opengl::setGL_Camera2D()
   ::glLoadIdentity();
 }
 
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif

@@ -12,6 +12,11 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/mshsubdiv.h"
 
+#if defined(_MSC_VER)
+  #pragma warning( push )
+  #pragma warning( disable : 4100 )
+#endif
+
 // ----------------------------------------------------
 
 DFM2_INLINE unsigned int delfem2::findEdge(
@@ -72,13 +77,14 @@ DFM2_INLINE void delfem2::SubdivTopo_MeshQuad(
     size_t nPoint0)
 {
   const size_t nq0 = nQuad0;
+  const unsigned int np0 = static_cast<unsigned int>(nPoint0);
   std::vector<unsigned int> elsup_ind, elsup;
   JArray_ElSuP_MeshElem(elsup_ind,elsup,
       aQuad0,nQuad0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
       aQuad0, MESHELEM_QUAD, elsup_ind, elsup,
       false); // is_bidirectional = false
-  const size_t ne0 = psup.size();
+  const unsigned int ne0 = static_cast<unsigned int>(psup.size());
   aEdgeFace0.resize(0);
   aEdgeFace0.reserve(ne0*4);
   for(unsigned int ip=0;ip<nPoint0;++ip){
@@ -117,11 +123,11 @@ DFM2_INLINE void delfem2::SubdivTopo_MeshQuad(
     const unsigned int ie12 = findEdge(ip1,ip2, psup_ind,psup); assert( ie12 != UINT_MAX );
     const unsigned int ie23 = findEdge(ip2,ip3, psup_ind,psup); assert( ie23 != UINT_MAX );
     const unsigned int ie30 = findEdge(ip3,ip0, psup_ind,psup); assert( ie30 != UINT_MAX );
-    const unsigned int ip01 = ie01 + nPoint0;
-    const unsigned int ip12 = ie12 + nPoint0;
-    const unsigned int ip23 = ie23 + nPoint0;
-    const unsigned int ip30 = ie30 + nPoint0;
-    const unsigned int ip0123 = iq + nPoint0 + ne0;
+    const unsigned int ip01 = ie01 + np0;
+    const unsigned int ip12 = ie12 + np0;
+    const unsigned int ip23 = ie23 + np0;
+    const unsigned int ip30 = ie30 + np0;
+    const unsigned int ip0123 = iq + np0 + ne0;
     aQuad1.push_back(ip0);   aQuad1.push_back(ip01); aQuad1.push_back(ip0123); aQuad1.push_back(ip30);
     aQuad1.push_back(ip1);   aQuad1.push_back(ip12); aQuad1.push_back(ip0123); aQuad1.push_back(ip01);
     aQuad1.push_back(ip2);   aQuad1.push_back(ip23); aQuad1.push_back(ip0123); aQuad1.push_back(ip12);
@@ -340,9 +346,9 @@ void delfem2::SubdivTopo_MeshHex(
     //
     const unsigned int* aHex0,
     size_t nHex0,
-    const size_t nhp0)
+    const size_t nHexPoint0)
 {
-  //  int nhp0 = (int)aHexPoint0.size(); // hex point
+  const unsigned int nhp0 = static_cast<unsigned int>(nHexPoint0);
   std::vector<unsigned int> elsupIndHex0, elsupHex0;
   JArray_ElSuP_MeshElem(elsupIndHex0, elsupHex0,
       aHex0,nHex0,8,nhp0);
@@ -378,8 +384,8 @@ void delfem2::SubdivTopo_MeshHex(
   JArray_ElSuP_MeshElem(elsupIndQuadHex0,elsupQuadHex0,
       aQuadHex0.data(),aQuadHex0.size()/4,4,nhp0);
   
-  const size_t neh0 = psupHex0.size();
-  const size_t nfh0 = aQuadHex0.size()/4;
+  const unsigned int neh0 = static_cast<unsigned int>(psupHex0.size());
+  const unsigned int nfh0 = static_cast<unsigned int>(aQuadHex0.size()/4);
 //  std::cout << nfh0 << " " << aQuadHex0.size() << std::endl;
 
   /*
@@ -518,11 +524,11 @@ void delfem2::SubdivisionPoints_QuadCatmullClark(
     const double* aXYZ0,
     size_t nXYZ0)
 {
-  const unsigned int nv0 = nXYZ0;
-  const unsigned int ne0 = psupQuad0.size();
-  const unsigned int nq0 = nQuad0;
+  const std::size_t nv0 = nXYZ0;
+  const std::size_t ne0 = psupQuad0.size();
+  const size_t nq0 = nQuad0;
   assert( aEdgeFace0.size() == ne0*4 );
-  const unsigned int nv1 = nv0+ne0+nq0;
+  const std::size_t nv1 = nv0+ne0+nq0;
   aXYZ1.resize(nv1*3);
   std::vector<unsigned int> aNFace(nv0,0); // number of faces touching vertex
   for(unsigned int iv=0;iv<nv0;++iv){
@@ -555,16 +561,16 @@ void delfem2::SubdivisionPoints_QuadCatmullClark(
     const unsigned int iq0 = aEdgeFace0[ie*4+2];
     const unsigned int iq1 = aEdgeFace0[ie*4+3];
     if( iq1 != UINT_MAX ) {
-      const unsigned int iv1e = nv0 + ie; assert(iv1e<nv1);
-      const unsigned int iv1q0 = nv0+ne0+iq0; assert(iv1q0<nv1);
-      const unsigned int iv1q1 = nv0+ne0+iq1; assert(iv1q1<nv1);
+      const size_t iv1e = nv0 + ie; assert(iv1e<nv1);
+      const size_t iv1q0 = nv0+ne0+iq0; assert(iv1q0<nv1);
+      const size_t iv1q1 = nv0+ne0+iq1; assert(iv1q1<nv1);
       aXYZ1[iv1e * 3 + 0] = (aXYZ0[iv0 * 3 + 0] + aXYZ0[iv1 * 3 + 0] + aXYZ1[iv1q0 * 3 + 0] + aXYZ1[iv1q1 * 3 + 0]) * 0.25;
       aXYZ1[iv1e * 3 + 1] = (aXYZ0[iv0 * 3 + 1] + aXYZ0[iv1 * 3 + 1] + aXYZ1[iv1q0 * 3 + 1] + aXYZ1[iv1q1 * 3 + 1]) * 0.25;
       aXYZ1[iv1e * 3 + 2] = (aXYZ0[iv0 * 3 + 2] + aXYZ0[iv1 * 3 + 2] + aXYZ1[iv1q0 * 3 + 2] + aXYZ1[iv1q1 * 3 + 2]) * 0.25;
     }
     else{
-      const unsigned int iv1e = nv0 + ie; assert(iv1e<nv1);
-      const unsigned int iv1q0 = nv0+ne0+iq0; assert(iv1q0<nv1);
+      const size_t iv1e = nv0 + ie; assert(iv1e<nv1);
+      const size_t iv1q0 = nv0+ne0+iq0; assert(iv1q0<nv1);
       aXYZ1[iv1e * 3 + 0] = (aXYZ0[iv0 * 3 + 0] + aXYZ0[iv1 * 3 + 0] ) * 0.5;
       aXYZ1[iv1e * 3 + 1] = (aXYZ0[iv0 * 3 + 1] + aXYZ0[iv1 * 3 + 1] ) * 0.5;
       aXYZ1[iv1e * 3 + 2] = (aXYZ0[iv0 * 3 + 2] + aXYZ0[iv1 * 3 + 2] ) * 0.5;
@@ -611,9 +617,9 @@ void delfem2::SubdivPoints3_MeshQuad
      const std::vector<unsigned int>& aQuad0,
      const std::vector<double>& aXYZ0)
 {
-  const unsigned int nv0 = aXYZ0.size()/3;
-  const unsigned int ne0 = aEdgeFace0.size()/4;
-  const unsigned int nq0 = aQuad0.size()/4;
+  const std::size_t nv0 = aXYZ0.size()/3;
+  const std::size_t ne0 = aEdgeFace0.size()/4;
+  const std::size_t nq0 = aQuad0.size()/4;
   assert( aEdgeFace0.size() == ne0*4 );
   aXYZ1.resize((nv0+ne0+nq0)*3);
   for(unsigned int iv=0;iv<nv0;++iv){
@@ -640,18 +646,20 @@ void delfem2::SubdivPoints3_MeshQuad
 }
 
 
-void delfem2::SubdivisionPoints_Hex
-    (std::vector<double>& aXYZ1,
-        // -------------
-     const std::vector<unsigned int> &psupIndHex0,
-     const std::vector<unsigned int> &psupHex0,
-     const std::vector<unsigned int>& aQuadHex0,
-     const unsigned int* aHex0, unsigned int nHex0,
-     const double* aXYZ0, unsigned int nXYZ0)
+void delfem2::SubdivisionPoints_Hex(
+	std::vector<double>& aXYZ1,
+	//
+    const std::vector<unsigned int> &psupIndHex0,
+    const std::vector<unsigned int> &psupHex0,
+    const std::vector<unsigned int>& aQuadHex0,
+    const unsigned int* aHex0, 
+	unsigned int nHex0,
+    const double* aXYZ0, 
+	unsigned int nXYZ0)
 {
   const unsigned int nv0 = nXYZ0;
-  const unsigned int ne0 = psupHex0.size();
-  const unsigned int nq0 = aQuadHex0.size()/4;
+  const std::size_t ne0 = psupHex0.size();
+  const std::size_t nq0 = aQuadHex0.size()/4;
   const unsigned int nh0 = nHex0;
   aXYZ1.resize((nv0+ne0+nq0+nh0)*3);
   for(unsigned int iv=0;iv<nv0;++iv){
@@ -691,3 +699,8 @@ void delfem2::SubdivisionPoints_Hex
   }
 }
 
+// --------------------------------
+
+#if defined(_MSC_VER)
+  #pragma warning( pop )
+#endif

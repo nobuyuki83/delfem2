@@ -173,15 +173,15 @@ DFM2_INLINE void delfem2::ColorMap_RedYellowGreenCyanBlue(
 
 // ----------------------------------------------------
 
-DFM2_INLINE void delfem2::Write_Ply_Tri2DMesh_HeightColor
-(const std::string& fname,
- const std::vector<int>& aTri1,
- const std::vector<double>& aXY1,
- const std::vector<double>& aVal,
- std::vector< std::pair<double,CColor> >& colorMap)
+DFM2_INLINE void delfem2::Write_Ply_Tri2DMesh_HeightColor(
+	const std::string& fname,
+	const std::vector<int>& aTri1,
+	const std::vector<double>& aXY1,
+	const std::vector<double>& aVal,
+	std::vector< std::pair<double,CColor> >& colorMap)
 {
-  const unsigned int np = aXY1.size()/2;
-  const unsigned int ntri = aTri1.size()/3;
+  const size_t np = aXY1.size()/2;
+  const size_t ntri = aTri1.size()/3;
   std::ofstream fout;
   fout.open(fname.c_str(),std::ios::out);
   fout << "ply" << std::endl;

@@ -29,7 +29,7 @@ double grad2
  int igrad,
  const std::vector<double>& aGrad)
 {
-  const int ng = aGrad.size()/2;
+  const int ng = static_cast<int>(aGrad.size()/2);
   const int ig0 = igrad%ng;
   return aGrad[ig0*2+0]*x + aGrad[ig0*2+1]*y;
 }
@@ -39,14 +39,15 @@ double grad3
  int igrad,
  const std::vector<double>& aGrad)
 {
-  const int ng = aGrad.size()/3;
+  const int ng = static_cast<int>(aGrad.size()/3);
   const int ig0 = igrad%ng;
   return aGrad[ig0*3+0]*x + aGrad[ig0*3+1]*y + aGrad[ig0*3+2]*z;
 }
 
-float fade(float t) {
+template <typename REAL>
+REAL fade(REAL t) {
   //  return t;
-  return t*t*t*(t*(t*6.0 - 15.0) + 10.0);
+  return t*t*t*(t*(t*6 - 15) + 10);
 }
 
 double noise_perlin_2d
@@ -76,10 +77,13 @@ double noise_perlin_2d
   return (1-fuy)*vxa + fuy*vxb;
 }
 
-double noise_perlin_3d
-(double x, double y, double z, int np,
- const std::vector<double>& aGrad,
- const std::vector<int>& aP)
+double noise_perlin_3d(
+	double x, 
+	double y, 
+	double z, 
+	int np,
+	const std::vector<double>& aGrad,
+	const std::vector<int>& aP)
 {
   assert( aP.size() > 2 );
   const int ix0 = (int)x % np; // ix [0,255]
@@ -127,29 +131,38 @@ double noise_perlin_2d_oct
  const std::vector<double>& aGrad,
  const std::vector<int>& aP)
 {
-  double val = 0;
-  double  mag = 1;
+  double val = 0.;
+  double mag = 1.;
   double freq = 1.0;
   for(int ioct=0;ioct<noct;++ioct){
-    val += mag*noise_perlin_2d(x*freq,y*freq, nrep*freq, aGrad,aP);
+    val += mag*noise_perlin_2d(
+		x*freq,y*freq, 
+		static_cast<int>(nrep*freq), 
+		aGrad,aP);
     freq *= 2.0;
     mag *= persistence;
   }
   return val;
 }
 
-double noise_perlin_3d_oct
-(double x, double y, double z,
- int nrep,
- int noct, double persistence,
- const std::vector<double>& aGrad,
- const std::vector<int>& aP)
+double noise_perlin_3d_oct(
+	double x, 
+	double y, 
+	double z,
+	int nrep,
+	int noct, 
+	double persistence,
+	const std::vector<double>& aGrad,
+	const std::vector<int>& aP)
 {
   double val = 0;
   double  mag = 1;
   double freq = 1;
   for(int ioct=0;ioct<noct;++ioct){
-    val += mag*noise_perlin_3d(x*freq,y*freq,z*freq,nrep*freq, aGrad,aP);
+    val += mag*noise_perlin_3d(
+		x*freq,y*freq,z*freq,
+		static_cast<int>(nrep*freq), 
+		aGrad,aP);
     freq *= 2.0;
     mag *= persistence;
   }

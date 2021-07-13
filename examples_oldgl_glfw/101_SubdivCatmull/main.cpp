@@ -24,6 +24,10 @@
 
 namespace dfm2 = delfem2;
 
+#if defined(_MSC_VER)
+  #pragma warning( disable : 4100 )
+#endif
+
 // --------------------------------------------------
 
 int main(int argc,char* argv[])

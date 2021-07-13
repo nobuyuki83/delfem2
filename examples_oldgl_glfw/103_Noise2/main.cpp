@@ -14,6 +14,10 @@
 #include <cstdlib>
 #include <vector>
 
+#if defined(_MSC_VER)
+  #pragma warning( disable : 4100 )
+#endif
+
 namespace dfm2 = delfem2;
 
 // ---------------------
