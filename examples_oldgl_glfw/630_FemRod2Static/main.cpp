@@ -79,7 +79,7 @@ void Solve(
     }
   }
   std::cout << W << std::endl;
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     axy[ip*2+0] += vec_x[ip*2+0];
     axy[ip*2+1] += vec_x[ip*2+1];
   }

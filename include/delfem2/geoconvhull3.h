@@ -171,7 +171,7 @@ void delfem2::ConvexHull(
     std::vector<int> isDelTri(aTri.size() / 3, -1);
     {
       std::vector<int> isLookedEdge(aTri.size(), -1);
-      std::stack<std::pair<int, int> > sBound;
+      std::stack<std::pair<unsigned int, int> > sBound; // itri,iedge
       { // initialize
         sBound.push(aTriSur[itri_ker * 3 + 0]);
         sBound.push(aTriSur[itri_ker * 3 + 1]);
@@ -180,8 +180,8 @@ void delfem2::ConvexHull(
       }
       for (;;) {
         if (sBound.empty()) break;
-        int itri0 = sBound.top().first;
-        int ied0 = sBound.top().second;
+        const unsigned int itri0 = sBound.top().first;
+        const int ied0 = sBound.top().second;
         sBound.pop();
         if (isLookedEdge[itri0 * 3 + ied0] == 1) continue;
         isLookedEdge[itri0 * 3 + ied0] = 1;
@@ -297,9 +297,9 @@ void delfem2::ConvexHull(
       assert(!lcl::IsOut<REAL>(itri0, v, aXYZ, aTri));
 #ifndef NDEBUG
       {
-        int itri_s = aTriSur[itri0 * 3 + itn0].first;
+        const unsigned int itri_s = aTriSur[itri0 * 3 + itn0].first;
         assert(lcl::IsOut<REAL>(itri_s, v, aXYZ, aTri));
-        int ied_s0 = aTriSur[itri0 * 3 + itn0].second;
+        const int ied_s0 = aTriSur[itri0 * 3 + itn0].second;
         assert(aTriSur[itri_s * 3 + ied_s0].first == itri0);
         assert(aTriSur[itri_s * 3 + ied_s0].second == itn0);
         int ied_s1 = triEd[ied_s0][0];

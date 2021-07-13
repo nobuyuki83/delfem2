@@ -172,8 +172,8 @@ void StepTime_Mpm2Snow(
       vol, particle_mass,
       mu_0, lambda_0, hardening);
   const unsigned int mgrid = ngrid+1;
-  for(int igrid = 0; igrid < mgrid; igrid++){
-    for(int jgrid = 0; jgrid < mgrid; jgrid++) { //For all grid nodes
+  for(unsigned int igrid = 0; igrid < mgrid; igrid++){
+    for(unsigned int jgrid = 0; jgrid < mgrid; jgrid++) { //For all grid nodes
       auto &grid = aVeloGrid[igrid * mgrid + jgrid];
       if (grid[2] <= 0 ) { continue; } // grid is empty
       grid /= grid[2];                                   // Normalize by mass
