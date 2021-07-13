@@ -18,9 +18,9 @@
 #endif
 
 #include "delfem2/glfw/viewer3.h"
+#include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <cassert>
-#include <GLFW/glfw3.h>
 
 // ---------------
 
@@ -34,7 +34,15 @@ static void glfw_callback_key(GLFWwindow *window, int key, int scancode, int act
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
-  if (action == GLFW_PRESS) { pViewer3->key_press(key, mods); }
+  if (action == GLFW_PRESS) {
+    auto& camera = pViewer3->camera;
+    if (key == GLFW_KEY_PAGE_UP) { camera.Scale(1.03); }
+    if (key == GLFW_KEY_PAGE_DOWN) { camera.Scale(1.0 / 1.03); }
+    if (key == GLFW_KEY_BACKSPACE) { camera.is_pars = !camera.is_pars; }
+    if (key == GLFW_KEY_HOME) { camera.fovy *= 1.03; }
+    if (key == GLFW_KEY_END) { camera.fovy *= 1.0 / 1.03; }
+    pViewer3->key_press(key, mods);
+  }
   else if (action == GLFW_RELEASE) { pViewer3->key_release(key, mods); }
 }
 

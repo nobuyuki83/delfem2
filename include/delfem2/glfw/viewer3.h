@@ -11,11 +11,12 @@
 #include "delfem2/cam3_m4q.h" // for CNav3D_GLFW
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/glfw/mouseinput.h"
-#include <GLFW/glfw3.h>
 #include <cstdio>
 #include <iostream>
 
 // ------------------------------------------------------
+
+struct GLFWwindow;
 
 namespace delfem2{
 
@@ -43,13 +44,7 @@ public:
    */
   virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {}
 
-  virtual void key_press(int key, int mods) {
-    if (key == GLFW_KEY_PAGE_UP) { camera.Scale(1.03); }
-    if (key == GLFW_KEY_PAGE_DOWN) { camera.Scale(1.0 / 1.03); }
-    if (key == GLFW_KEY_BACKSPACE) { camera.is_pars = !camera.is_pars; }
-    if (key == GLFW_KEY_HOME) { camera.fovy *= 1.03; }
-    if (key == GLFW_KEY_END) { camera.fovy *= 1.0 / 1.03; }
-  }
+  virtual void key_press(int key, int mods) {}
 
   virtual void key_release(int key, int mods) {}
 

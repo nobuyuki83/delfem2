@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2019-2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,11 +10,13 @@
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/glfw/mouseinput.h"
-#include <GLFW/glfw3.h>
+//
 #include <cstdio>
 #include <iostream>
 
 // ------------------------------------------------------
+
+struct GLFWwindow;
 
 namespace delfem2{
 
@@ -40,15 +42,7 @@ public:
    */
   virtual void mouse_drag(const float src0[2], const float src1[2]) {}
 
-  virtual void key_press(int key, int mods) {
-    /*
-    if (key == GLFW_KEY_PAGE_UP) { camera.Scale(1.03); }
-    if (key == GLFW_KEY_PAGE_DOWN) { camera.Scale(1.0 / 1.03); }
-    if (key == GLFW_KEY_BACKSPACE) { camera.is_pars = !camera.is_pars; }
-    if (key == GLFW_KEY_HOME) { camera.fovy *= 1.03; }
-    if (key == GLFW_KEY_END) { camera.fovy *= 1.0 / 1.03; }
-     */
-  }
+  virtual void key_press(int key, int mods) {}
 
   virtual void key_release(int key, int mods) {}
 
