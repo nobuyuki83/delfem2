@@ -222,8 +222,8 @@ void delfem2::CgArea_Polygon(
     const T y1 = aVec2D[ip1].p[1];
     const T ai = x0*y1 - x1*y0;
     area += ai;
-    cg.p[0] += ai*(x0+x1)/3.0;
-    cg.p[1] += ai*(y0+y1)/3.0;
+    cg.p[0] += ai*(x0+x1)/3;
+    cg.p[1] += ai*(y0+y1)/3;
   }
   cg.p[0] /= area;
   cg.p[1] /= area;
@@ -246,7 +246,7 @@ T delfem2::RotationalMomentPolar_Polygon2(
     const std::vector<CVec2<T>>& aVec2,
     const CVec2<T>& pivot)
 {
-  const unsigned int ne = aVec2.size();
+  const size_t ne = aVec2.size();
   T sum_I = 0.0;
   for(unsigned int ie=0;ie<ne;++ie){
     const unsigned int ip0 = ie;

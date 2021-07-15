@@ -16,9 +16,9 @@
 // ----------------------------------
 
 template <typename REAL>
-DFM2_INLINE double delfem2::Dot_Quat
-(const REAL p[],
- const REAL q[])
+DFM2_INLINE REAL delfem2::Dot_Quat(
+  const REAL p[],
+  const REAL q[])
 {
   return p[0]*q[0] + p[1]*q[1] + p[2]*q[2] + p[3]*q[3];
 }
@@ -28,8 +28,8 @@ DFM2_INLINE double delfem2::Dot_Quat
 template <typename T>
 DFM2_INLINE void delfem2::Normalize_Quat(T q[])
 {
-  const double len = sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);
-  double invlen = 1.0/len;
+  const T len = sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);
+  const T invlen = 1/len;
   q[0] *= invlen;
   q[1] *= invlen;
   q[2] *= invlen;
@@ -74,9 +74,9 @@ DFM2_INLINE void delfem2::QuatVec(
   const T xw = q[1] * q[0] * 2;
   const T yw = q[2] * q[0] * 2;
   const T zw = q[3] * q[0] * 2;
-  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
-  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
-  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+  vo[0] = (1 - y2 - z2)*vi[0] + (xy - zw    )*vi[1] + (zx + yw    )*vi[2];
+  vo[1] = (xy + zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz - xw    )*vi[2];
+  vo[2] = (zx - yw    )*vi[0] + (yz + xw    )*vi[1] + (1 - x2 - y2)*vi[2];
 //  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
 //  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
 //  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
@@ -323,15 +323,15 @@ delfem2::CQuat<T> delfem2::SphericalLinearInterp
   const delfem2::CQuat<T>& q1,
   T t)
 {
-  T qr = Dot_Quat(q0.q, q1.q);
-  double ss = 1.0 - qr * qr;
+  const T qr = Dot_Quat(q0.q, q1.q);
+  const T ss = 1 - qr * qr;
   
   if (ss == 0.0) { return q0; }
-  double sp = sqrt(ss);
-  double ph = acos(qr);
-  double pt = ph * t;
-  double t1 = sin(pt) / sp;
-  double t0 = sin(ph - pt) / sp;
+  const T sp = std::sqrt(ss);
+  const T ph = std::acos(qr);
+  const T pt = ph * t;
+  const T t1 = std::sin(pt) / sp;
+  const T t0 = std::sin(ph - pt) / sp;
   CQuat<T> q;
   q.q[0] = t0*q0.q[0] + t1*q1.q[0];
   q.q[1] = t0*q0.q[1] + t1*q1.q[1];

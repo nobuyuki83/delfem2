@@ -60,23 +60,23 @@ DFM2_INLINE double FindRootCubic_Bisect(
 // there is another impelemntation in quat.h so this is "static function"
 // transform vector with quaternion
 template <typename REAL>
-DFM2_INLINE void MyQuatVec
- (REAL vo[],
+DFM2_INLINE void MyQuatVec(
+  REAL vo[],
   const REAL q[],
   const REAL vi[])
 {
-  REAL x2 = q[1] * q[1] * 2.0;
-  REAL y2 = q[2] * q[2] * 2.0;
-  REAL z2 = q[3] * q[3] * 2.0;
-  REAL xy = q[1] * q[2] * 2.0;
-  REAL yz = q[2] * q[3] * 2.0;
-  REAL zx = q[3] * q[1] * 2.0;
-  REAL xw = q[1] * q[0] * 2.0;
-  REAL yw = q[2] * q[0] * 2.0;
-  REAL zw = q[3] * q[0] * 2.0;
-  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
-  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
-  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+  REAL x2 = q[1] * q[1] * 2;
+  REAL y2 = q[2] * q[2] * 2;
+  REAL z2 = q[3] * q[3] * 2;
+  REAL xy = q[1] * q[2] * 2;
+  REAL yz = q[2] * q[3] * 2;
+  REAL zx = q[3] * q[1] * 2;
+  REAL xw = q[1] * q[0] * 2;
+  REAL yw = q[2] * q[0] * 2;
+  REAL zw = q[3] * q[0] * 2;
+  vo[0] = (1 - y2 - z2)*vi[0] + (xy - zw    )*vi[1] + (zx + yw    )*vi[2];
+  vo[1] = (xy + zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz - xw    )*vi[2];
+  vo[2] = (zx - yw    )*vi[0] + (yz + xw    )*vi[1] + (1 - x2 - y2)*vi[2];
 }
 #ifndef DFM2_HEADER_ONLY
 template void MyQuatVec(float vo[], const float q[], const float vi[]);
@@ -110,18 +110,18 @@ DFM2_INLINE void MyQuatConjVec(
     const REAL q[4],
     const REAL vi[3])
 {
-  REAL x2 = q[1] * q[1] * 2.0;
-  REAL y2 = q[2] * q[2] * 2.0;
-  REAL z2 = q[3] * q[3] * 2.0;
-  REAL xy = q[1] * q[2] * 2.0;
-  REAL yz = q[2] * q[3] * 2.0;
-  REAL zx = q[3] * q[1] * 2.0;
-  REAL xw = q[1] * q[0] * 2.0;
-  REAL yw = q[2] * q[0] * 2.0;
-  REAL zw = q[3] * q[0] * 2.0;
-  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
-  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
-  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+  REAL x2 = q[1] * q[1] * 2;
+  REAL y2 = q[2] * q[2] * 2;
+  REAL z2 = q[3] * q[3] * 2;
+  REAL xy = q[1] * q[2] * 2;
+  REAL yz = q[2] * q[3] * 2;
+  REAL zx = q[3] * q[1] * 2;
+  REAL xw = q[1] * q[0] * 2;
+  REAL yw = q[2] * q[0] * 2;
+  REAL zw = q[3] * q[0] * 2;
+  vo[0] = (1 - y2 - z2)*vi[0] + (xy + zw    )*vi[1] + (zx - yw    )*vi[2];
+  vo[1] = (xy - zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz + xw    )*vi[2];
+  vo[2] = (zx + yw    )*vi[0] + (yz - xw    )*vi[1] + (1 - x2 - y2)*vi[2];
 //  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
 //  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
 //  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
@@ -275,7 +275,7 @@ T delfem2::Area_Tri3(const T v1[3], const T v2[3], const T v3[3]){
     ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] ),
     ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] ),
     ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] ) };
-  return 0.5*Length3(n);
+  return Length3(n)/2;
 }
 #ifndef DFM2_HEADER_ONLY
 template float delfem2::Area_Tri3(const float v1[3], const float v2[3], const float v3[3]);
@@ -346,9 +346,11 @@ void delfem2::UnitNormalAreaTri3(
 {
   NormalTri3(n,
              v1, v2, v3);
-  a = Length3(n)*0.5;//sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-  const double invlen = 0.5/a;
-  n[0]*=invlen;  n[1]*=invlen;  n[2]*=invlen;
+  a = Length3(n)/2;
+  const REAL invlen = 1/(a*2);
+  n[0]*=invlen;  
+  n[1]*=invlen;  
+  n[2]*=invlen;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::UnitNormalAreaTri3(float n[3], float& a,
@@ -415,9 +417,10 @@ void delfem2::AverageTwo3(
     REAL po[3],
     const REAL p0[3], const REAL p1[3])
 {
-  po[0] = (p0[0]+p1[0])*0.5;
-  po[1] = (p0[1]+p1[1])*0.5;
-  po[2] = (p0[2]+p1[2])*0.5;
+  constexpr REAL half = static_cast<REAL>(0.5);
+  po[0] = (p0[0]+p1[0])*half;
+  po[1] = (p0[1]+p1[1])*half;
+  po[2] = (p0[2]+p1[2])*half;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::AverageTwo3(float po[3], const float p0[3], const float p1[3]);
@@ -431,9 +434,10 @@ void delfem2::AverageFour3(
     REAL po[3],
     const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3])
 {
-  po[0] = (p0[0]+p1[0]+p2[0]+p3[0])*0.25;
-  po[1] = (p0[1]+p1[1]+p2[1]+p3[1])*0.25;
-  po[2] = (p0[2]+p1[2]+p2[2]+p3[2])*0.25;
+  constexpr REAL quarter(0.25);
+  po[0] = (p0[0]+p1[0]+p2[0]+p3[0])*quarter;
+  po[1] = (p0[1]+p1[1]+p2[1]+p3[1])*quarter;
+  po[2] = (p0[2]+p1[2]+p2[2]+p3[2])*quarter;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::AverageFour3(float po[3],
@@ -628,7 +632,7 @@ bool operator!= (const CVec3<T>& lhs, const CVec3<T>& rhs){
 template <typename T>
 void delfem2::CVec3<T>::normalize()
 {
-  double invmag = 1.0/norm();
+  T invmag = 1/norm();
   p[0] *= invmag;
   p[1] *= invmag;
   p[2] *= invmag;
@@ -678,14 +682,14 @@ void delfem2::GetVertical2Vector
  CVec3<T>& vec_y)
 {
   vec_x = Cross(CVec3<T>(0,1,0),vec_n);
-  const double len = vec_x.norm();
+  const T len = vec_x.norm();
   if( len < 1.0e-10 ){
     vec_x = Cross(CVec3<T>(1,0,0),vec_n);  // z????
     vec_x.normalize();
     vec_y = Cross(vec_n,vec_x);  // x????
   }
   else{
-    const double invlen = 1.0/len;
+    const T invlen = 1/len;
     vec_x *= invlen;
     vec_y = Cross(vec_n,vec_x);
   }
@@ -975,7 +979,7 @@ void delfem2::UnitNormal(
   vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
   vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
   vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-  const T dtmp1 = 1.0 / vnorm.norm();
+  const T dtmp1 = 1 / vnorm.norm();
   vnorm.p[0] *= dtmp1;
   vnorm.p[1] *= dtmp1;
   vnorm.p[2] *= dtmp1;
@@ -997,7 +1001,7 @@ delfem2::CVec3<T> delfem2::UnitNormal(
   vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
   vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
   vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
-  const T dtmp1 = 1.0 / vnorm.norm();
+  const T dtmp1 = 1 / vnorm.norm();
   vnorm.p[0] *= dtmp1;
   vnorm.p[1] *= dtmp1;
   vnorm.p[2] *= dtmp1;

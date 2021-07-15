@@ -26,7 +26,7 @@ DFM2_INLINE double Length3(const double p[3]){
 }
 
 //! @details we have "float" and "double" versions Length3 because of sqrtf and sqrt
-DFM2_INLINE double Length3(const float p[3]){
+DFM2_INLINE float Length3(const float p[3]){
   return sqrtf(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
 }
 
@@ -40,16 +40,17 @@ DFM2_INLINE double TriArea2D(const double p0[], const double p1[], const double 
   return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
 }
 
-DFM2_INLINE double TriArea3D(
-    const double v1[3],
-    const double v2[3],
-    const double v3[3])
+template <typename T>
+DFM2_INLINE T TriArea3D(
+    const T v1[3],
+    const T v2[3],
+    const T v3[3])
 {
-  double n[3];
+  T n[3];
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  return sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
+  return std::sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])/2;
 }
 
 template <typename T>
@@ -63,8 +64,8 @@ DFM2_INLINE void UnitNormalAreaTri3(
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-  const T invlen = 0.5/a;
+  a = std::sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])/2;
+  const T invlen = 1/(a*2);
   n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
 }
 
@@ -103,17 +104,17 @@ DFM2_INLINE double largest(double x0, double x1, double x2) {
 }
 
 template <typename T>
-DFM2_INLINE  T TetVolume3D
- (const T v1[3],
+DFM2_INLINE  T TetVolume3D(
+  const T v1[3],
   const T v2[3],
   const T v3[3],
   const T v4[3])
 {
   return
   ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
-   -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
-   +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
-   ) * 0.16666666666666666666666666666667;
+  -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
+  +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
+   ) * static_cast<T>(1.0/6.0);
 }
 
 DFM2_INLINE void Mat3_Bryant
@@ -298,9 +299,9 @@ T delfem2::CentsMaxRad_MeshTri3(
     const std::vector<unsigned int>& aTri)
 {
   T max_rad0 = -1;
-  const unsigned int nTri = aTri.size()/3;
+  const size_t nTri = aTri.size()/3;
   aXYZ_c0.resize(nTri*3);
-  for(std::size_t itri=0;itri<nTri;++itri) {
+  for(unsigned int itri=0;itri<nTri;++itri) {
     const unsigned int i0 = aTri[itri*3+0];
     const unsigned int i1 = aTri[itri*3+1];
     const unsigned int i2 = aTri[itri*3+2];
@@ -389,7 +390,7 @@ void delfem2::Normal_MeshTri3D(
     aNorm[i2*3+0] += un[0];  aNorm[i2*3+1] += un[1];  aNorm[i2*3+2] += un[2];
   }
   for(unsigned int ino=0;ino<nXYZ;ino++){
-    const REAL invlen = 1.0/mshmisc::Length3(aNorm+ino*3);
+    const REAL invlen = 1/mshmisc::Length3(aNorm+ino*3);
     aNorm[ino*3+0] *= invlen;
     aNorm[ino*3+1] *= invlen;
     aNorm[ino*3+2] *= invlen;
@@ -412,13 +413,13 @@ template void delfem2::Normal_MeshTri3D(
 
 
 template <typename REAL>
-void delfem2::Normal_MeshQuad3
- (std::vector<REAL>& aNorm,
+void delfem2::Normal_MeshQuad3(
+  std::vector<REAL>& aNorm,
   const std::vector<REAL>& aXYZ,
   const std::vector<unsigned int>& aQuad)
 {
-  const unsigned int nXYZ = aXYZ.size()/3;
-  const unsigned int nQuad = aQuad.size()/4;
+  const size_t nXYZ = aXYZ.size()/3;
+  const size_t nQuad = aQuad.size()/4;
   aNorm.resize(nXYZ*3);
   // -------
   for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
@@ -442,7 +443,7 @@ void delfem2::Normal_MeshQuad3
   }
   for(unsigned int ino=0;ino<nXYZ;ino++){
     const REAL n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
-    const REAL invlen = 1.0/mshmisc::Length3(n);
+    const REAL invlen = 1/mshmisc::Length3(n);
     aNorm[ino*3+0] *= invlen;
     aNorm[ino*3+1] *= invlen;
     aNorm[ino*3+2] *= invlen;
@@ -500,21 +501,22 @@ void delfem2::CG_MeshTri3_Solid(
     const std::vector<unsigned int>& aTri)
 { // center of gravity
   cg[0] = cg[1] = cg[2] = 0.0;
-  double tw = 0;
-  const unsigned int nTri = aTri.size()/3;
-  for (std::size_t itri = 0; itri<nTri; itri++){
-    unsigned int i1 = aTri[itri*3+0];
-    unsigned int i2 = aTri[itri*3+1];
-    unsigned int i3 = aTri[itri*3+2];
+  T tw = 0;
+  const size_t nTri = aTri.size()/3;
+  constexpr T quarter = static_cast<T>(0.25);
+  for (unsigned int itri = 0; itri<nTri; itri++){
+    const unsigned int i1 = aTri[itri*3+0];
+    const unsigned int i2 = aTri[itri*3+1];
+    const unsigned int i3 = aTri[itri*3+2];
     const T q0[3] = { 0, 0, 0 };
     const T q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const T q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     const T q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
     T v = mshmisc::TetVolume3D(q0, q1, q2, q3);
     tw += v;
-    cg[0] += (q0[0]+q1[0]+q2[0]+q3[0])*0.25*v;
-    cg[1] += (q0[1]+q1[1]+q2[1]+q3[1])*0.25*v;
-    cg[2] += (q0[2]+q1[2]+q2[2]+q3[2])*0.25*v;
+    cg[0] += (q0[0]+q1[0]+q2[0]+q3[0])*quarter*v;
+    cg[1] += (q0[1]+q1[1]+q2[1]+q3[1])*quarter*v;
+    cg[2] += (q0[2]+q1[2]+q2[2]+q3[2])*quarter*v;
   }
   cg[0] /= tw;
   cg[1] /= tw;
@@ -534,26 +536,27 @@ template void delfem2::CG_MeshTri3_Solid(
 // ----------------------------------------
 
 template <typename T>
-void delfem2::CG_MeshTri3_Shell
-(T cg[3],
- const std::vector<T>& aXYZ,
- const std::vector<unsigned int>& aTri)
+void delfem2::CG_MeshTri3_Shell(
+  T cg[3],
+  const std::vector<T>& aXYZ,
+  const std::vector<unsigned int>& aTri)
 { // center of gravity
-  cg[0] = cg[1] = cg[2] = 0.0;
-  double tw = 0;
-  const unsigned int nTri = aTri.size()/3;
-  for (std::size_t itri = 0; itri<nTri; itri++){
-    unsigned int i1 = aTri[itri*3+0];
-    unsigned int i2 = aTri[itri*3+1];
-    unsigned int i3 = aTri[itri*3+2];
-    const double q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
-    const double q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-    const double q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    double a = mshmisc::TriArea3D(q1, q2, q3);
+  constexpr T onethird = static_cast<T>(1.0 / 3.0);
+  cg[0] = cg[1] = cg[2] = 0;
+  T tw = 0;
+  const size_t nTri = aTri.size()/3;
+  for (unsigned int itri = 0; itri<nTri; itri++){
+    const unsigned int i1 = aTri[itri*3+0];
+    const unsigned int i2 = aTri[itri*3+1];
+    const unsigned int i3 = aTri[itri*3+2];
+    const T q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
+    const T q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
+    const T q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
+    T a = mshmisc::TriArea3D(q1, q2, q3);
     tw += a;
-    cg[0] += (q1[0]+q2[0]+q3[0])*0.333333*a;
-    cg[1] += (q1[1]+q2[1]+q3[1])*0.333333*a;
-    cg[2] += (q1[2]+q2[2]+q3[2])*0.333333*a;
+    cg[0] += (q1[0]+q2[0]+q3[0])*onethird*a;
+    cg[1] += (q1[1]+q2[1]+q3[1])*onethird*a;
+    cg[2] += (q1[2]+q2[2]+q3[2])*onethird*a;
   }
   cg[0] /= tw;
   cg[1] /= tw;
@@ -573,29 +576,30 @@ template void delfem2::CG_MeshTri3_Shell(
 // ------------------------------------------
 
 template <typename T>
-T delfem2::CG_TriMsh3Flg_Shell
-(T cg[3],
- const std::vector<T>& aXYZ,
- const std::vector<unsigned int>& aTri,
- int iflg,
- const std::vector<int>& aFlg)
+T delfem2::CG_TriMsh3Flg_Shell(
+  T cg[3],
+  const std::vector<T>& aXYZ,
+  const std::vector<unsigned int>& aTri,
+  int iflg,
+  const std::vector<int>& aFlg)
 {
-  cg[0] = cg[1] = cg[2] = 0.0;
-  double tw = 0;
+  constexpr T onethird = static_cast<T>(1.0 / 3.0);
+  cg[0] = cg[1] = cg[2] = 0;
+  T tw = 0;
   const std::size_t nTri = aTri.size()/3;
   for (std::size_t itri = 0; itri<nTri; itri++){
     if( aFlg[itri] != iflg ) continue;
     const unsigned int i1 = aTri[itri*3+0];
     const unsigned int i2 = aTri[itri*3+1];
     const unsigned int i3 = aTri[itri*3+2];
-    const double q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
-    const double q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-    const double q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    double a = mshmisc::TriArea3D(q1, q2, q3);
+    const T q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
+    const T q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
+    const T q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
+    T a = mshmisc::TriArea3D(q1, q2, q3);
     tw += a;
-    cg[0] += (q1[0]+q2[0]+q3[0])*0.333333*a;
-    cg[1] += (q1[1]+q2[1]+q3[1])*0.333333*a;
-    cg[2] += (q1[2]+q2[2]+q3[2])*0.333333*a;
+    cg[0] += (q1[0]+q2[0]+q3[0])*onethird*a;
+    cg[1] += (q1[1]+q2[1]+q3[1])*onethird*a;
+    cg[2] += (q1[2]+q2[2]+q3[2])*onethird*a;
   }
   cg[0] /= tw;
   cg[1] /= tw;
@@ -645,6 +649,7 @@ void delfem2::CG_MeshTet3
   const std::vector<T>& aXYZC,
   const std::vector<unsigned int>& aTet)
 {
+  constexpr T quarter = static_cast<T>(1.0/4.0);
   v_tot = cg[0] = cg[1] = cg[2] = 0.0;
   const T* pXYZ = aXYZC.data();
   const std::size_t nTet = aTet.size()/4;
@@ -653,11 +658,11 @@ void delfem2::CG_MeshTet3
     const T* p1 = pXYZ+aTet[it*4+1]*3;
     const T* p2 = pXYZ+aTet[it*4+2]*3;
     const T* p3 = pXYZ+aTet[it*4+3]*3;
-    const double v = mshmisc::TetVolume3D(p0, p1, p2, p3);
+    const T v = mshmisc::TetVolume3D(p0, p1, p2, p3);
     v_tot += v;
-    cg[0] += v*(p0[0]+p1[0]+p2[0]+p3[0])*0.25;
-    cg[1] += v*(p0[1]+p1[1]+p2[1]+p3[1])*0.25;
-    cg[2] += v*(p0[2]+p1[2]+p2[2]+p3[2])*0.25;
+    cg[0] += v*(p0[0]+p1[0]+p2[0]+p3[0])*quarter;
+    cg[1] += v*(p0[1]+p1[1]+p2[1]+p3[1])*quarter;
+    cg[2] += v*(p0[2]+p1[2]+p2[2]+p3[2])*quarter;
   }
   cg[0] /= v_tot;
   cg[1] /= v_tot;
