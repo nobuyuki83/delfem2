@@ -66,26 +66,20 @@ DFM2_INLINE void GaussianDistribution2(
 template <typename T>
 class CVec2;
 
-template <typename T>
-CVec2<T> operator*(double, const CVec2<T>&);
+template <typename T, typename T1>
+CVec2<T> operator*(T1, const CVec2<T>&);
   
+template <typename T, typename T1>
+CVec2<T> operator*(const CVec2<T>&, T1);
+
 template <typename T>
-CVec2<T> operator*(const CVec2<T>&, double);
-  
+T operator * (const CVec2<T>& lhs, const CVec2<T>& rhs);
+
 template <typename T>
 std::ostream &operator<<(std::ostream &output, const CVec2<T>& v);
   
 template <typename T>
 std::istream &operator>>(std::istream &input, CVec2<T>& v);
-  
-template <typename T>
-CVec2<T> operator*(double c, const CVec2<T>& v0);
-
-template <typename T>
-CVec2<T> operator*(const CVec2<T>& v0, double c);
-
-template <typename T>
-T operator * (const CVec2<T>& lhs, const CVec2<T>& rhs);
 
 template <typename T>
 T operator ^ (const CVec2<T>& lhs, const CVec2<T>& rhs);

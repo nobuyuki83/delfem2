@@ -99,8 +99,8 @@ DFM2_INLINE void GetVertical2Vector3D(
 template <typename T>
 class CVec3;
   
-template <typename T>
-CVec3<T> operator * (T d, const CVec3<T>& rhs);
+template <typename T0, typename T1>
+CVec3<T0> operator * (T1 d, const CVec3<T0>& rhs);
   
 template <typename T>
 CVec3<T> operator / (const CVec3<T>& vec, T d);

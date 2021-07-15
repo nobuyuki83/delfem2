@@ -13,10 +13,10 @@
 
 namespace delfem2 {
 
-inline void FlatKnot
-(std::vector<double>& aKnotFlat,
- const std::vector<int>& aKnotMulti,
- const std::vector<double>& aKnot)
+inline void FlatKnot(
+    std::vector<double>& aKnotFlat,
+    const std::vector<int>& aKnotMulti,
+    const std::vector<double>& aKnot)
 {
   assert(aKnot.size()==aKnotMulti.size());
   aKnotFlat.clear();
@@ -69,11 +69,12 @@ void getCubicBezierSurface(
     for (int j = 0; j<(n+1); ++j){
       double u = (double)i/n;
       double v = (double)j/n;
-      aP[i*(n+1)+j] = getPointSurfaceBezierCubic(u,v,
-                                                 aCP[ 0], aCP[ 1], aCP[ 2], aCP[ 3],
-                                                 aCP[ 4], aCP[ 5], aCP[ 6], aCP[ 7],
-                                                 aCP[ 8], aCP[ 9], aCP[10], aCP[11],
-                                                 aCP[12], aCP[13], aCP[14], aCP[15]);
+      aP[i*(n+1)+j] = getPointSurfaceBezierCubic(
+          u,v,
+          aCP[ 0], aCP[ 1], aCP[ 2], aCP[ 3],
+          aCP[ 4], aCP[ 5], aCP[ 6], aCP[ 7],
+          aCP[ 8], aCP[ 9], aCP[10], aCP[11],
+          aCP[12], aCP[13], aCP[14], aCP[15]);
     }
   }
 }
@@ -130,10 +131,13 @@ T getPointHermetianQuad(
   return p+q+r;
 }
 
-template <typename T>
-T getPointCubicBezierCurve(
+template <typename VEC>
+VEC getPointCubicBezierCurve(
     double t,
-    const T& p1, const T& p2, const T& p3, const T& p4)
+    const VEC& p1,
+    const VEC& p2,
+    const VEC& p3,
+    const VEC& p4)
 {
   double tp = 1.0-t;
   return t*t*t*p4

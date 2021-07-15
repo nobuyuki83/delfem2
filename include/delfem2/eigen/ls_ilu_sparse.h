@@ -152,7 +152,7 @@ bool ILU_Decompose(
 
 template<typename REAL, class MAT, class ALLOCATOR>
 void SolvePrecond(
-    Eigen::VectorX<REAL>& vec,
+    Eigen::Matrix<REAL,-1,1>& vec,
     const CILU_SparseBlock<MAT,ALLOCATOR>& ilu)
 {
   constexpr unsigned int nrowdim = MAT::RowsAtCompileTime;

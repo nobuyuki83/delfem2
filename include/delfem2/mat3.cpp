@@ -447,6 +447,8 @@ template void delfem2::Mat3_Quat(float r[], const float q[]);
 template void delfem2::Mat3_Quat(double r[], const double q[]);
 #endif
 
+// ----------------------------------------------
+
 template <typename T0, typename T1, typename T2>
 void delfem2::MatMat3(
     T0* C,
@@ -802,8 +804,40 @@ DFM2_INLINE void delfem2::GetRotPolarDecomp
            U,V);
 }
 
+// -----------------------------------
 
+// https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation
+template <typename T>
+DFM2_INLINE void delfem2::AxisAngleVectorCartesian_Mat3(
+    T v[3],
+    const T m[9])
+{
+  const T cos_t0 = (m[0]+m[4]+m[8]-1)/2;
+  if( std::fabs(cos_t0-1) < 1.0e-5 ){ // very small rotation
+    v[0] = (m[3*2+1]-m[3*1+2])/2;
+    v[1] = (m[3*0+2]-m[3*2+0])/2;
+    v[2] = (m[3*1+0]-m[3*0+1])/2;
+    return;
+  }
+  const T t0 = std::acos(cos_t0);
+  const T c0 = t0/(2*std::sin(t0));
+  v[0] = c0*(m[3*2+1]-m[3*1+2]);
+  v[1] = c0*(m[3*0+2]-m[3*2+0]);
+  v[2] = c0*(m[3*1+0]-m[3*0+1]);
+}
 
+template <typename T>
+DFM2_INLINE void delfem2::AxisAngleVectorCRV_Mat3(
+    T crv[3],
+    const T mat[9])
+{
+  T eparam2[4];
+  const CMat3<T> m(mat);
+  m.GetQuat_RotMatrix(eparam2);
+  crv[0] = 4*eparam2[1]/(1+eparam2[0]);
+  crv[1] = 4*eparam2[2]/(1+eparam2[0]);
+  crv[2] = 4*eparam2[3]/(1+eparam2[0]);
+}
 
 // -----------------------------------
 
@@ -1213,12 +1247,12 @@ void delfem2::CMat3<T>::GetQuat_RotMatrix(T quat[]) const{
     mat[1*3+2]+mat[2*3+1],
     1-mat[0*3+0]-mat[1*3+1]+mat[2*3+2],
   };
-  
+
   unsigned int imax;
   imax = ( smat[0   *4+   0] > smat[1*4+1] ) ? 0    : 1;
   imax = ( smat[imax*4+imax] > smat[2*4+2] ) ? imax : 2;
   imax = ( smat[imax*4+imax] > smat[3*4+3] ) ? imax : 3;
-  
+
   quat[imax] = 0.5*sqrt(smat[imax*4+imax]);
   for(unsigned int k=0;k<4;k++){
     if( k==imax ) continue;
@@ -1228,21 +1262,6 @@ void delfem2::CMat3<T>::GetQuat_RotMatrix(T quat[]) const{
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::CMat3<float>::GetQuat_RotMatrix(float quat[]) const;
 template void delfem2::CMat3<double>::GetQuat_RotMatrix(double quat[]) const;
-#endif
-
-// ----------------------------
-
-template <typename T>
-void delfem2::CMat3<T>::GetCRV_RotMatrix(T crv[]) const{
-  T eparam2[4];
-  this->GetQuat_RotMatrix(eparam2);
-  crv[0] = 4*eparam2[1]/(1+eparam2[0]);
-  crv[1] = 4*eparam2[2]/(1+eparam2[0]);
-  crv[2] = 4*eparam2[3]/(1+eparam2[0]);
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::CMat3<float>::GetCRV_RotMatrix(float crv[]) const;
-template void delfem2::CMat3<double>::GetCRV_RotMatrix(double crv[]) const;
 #endif
 
 // -------------------------------

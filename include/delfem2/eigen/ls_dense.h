@@ -41,11 +41,12 @@ bool Merge(
 // ------------------------------
 // below: Eigen::VectorX
 
-template<typename REAL>
+
+template <typename REAL>
 void AddScaledVec(
-    Eigen::VectorX<REAL> &y,
+    Eigen::Matrix<REAL,-1,1> &y,
     REAL alpha,
-    const Eigen::VectorX<REAL> &x) {
+    const Eigen::Matrix<REAL,-1,1> &x) {
   assert(y.rows() == x.rows());
   y += alpha * x;
 }
@@ -61,13 +62,14 @@ void AddScaledVec(
 
 template<typename REAL>
 void ScaleAndAddVec(
-    Eigen::VectorX<REAL> &y,
+    Eigen::Matrix<REAL,-1,1> &y,
     REAL beta,
-    const Eigen::VectorX<REAL> &x) {
+    const Eigen::Matrix<REAL,-1,1> &x) {
   assert(y.cols() == x.cols());
   assert(y.rows() == x.rows());
   y = beta * y + x;
 }
+
 
 template<typename REAL, int nDim>
 void ScaleAndAddVec(
@@ -82,11 +84,12 @@ void ScaleAndAddVec(
 
 template<typename REAL>
 REAL Dot(
-    const Eigen::VectorX<REAL> &y,
-    const Eigen::VectorX<REAL> &x) {
+    const Eigen::Matrix<REAL,-1,1> &y,
+    const Eigen::Matrix<REAL,-1,1> &x) {
   assert(y.rows() == x.rows());
   return y.dot(x);
 }
+
 
 template<typename REAL, int nDim>
 REAL Dot(
@@ -135,7 +138,7 @@ void XPlusAY(
     std::vector<REAL> &X,
     const std::vector<int> &aBCFlag,
     REAL alpha,
-    const Eigen::VectorX<REAL> &Y)
+    const Eigen::Matrix<REAL,-1,1> &Y)
 {
   const unsigned int nDoF = aBCFlag.size();
   assert(nDoF == Y.rows());
