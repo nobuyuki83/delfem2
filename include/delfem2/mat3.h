@@ -165,6 +165,16 @@ DFM2_INLINE void GetRotPolarDecomp(
     const double am[9],
     int nitr);
 
+template <typename T>
+DFM2_INLINE void AxisAngleVectorCartesian_Mat3(
+    T v[3],
+    const T m[9]);
+
+template <typename T>
+DFM2_INLINE void AxisAngleVectorCRV_Mat3(
+    T crv[3],
+    const T mat[9]);
+
 // ------------------------------------------------
 // below: mat3 and vec3
 
@@ -264,12 +274,12 @@ class CMat3
 {
 public:
   CMat3();
-  CMat3(const REAL s);
+  explicit CMat3(REAL s);
+  explicit CMat3(const REAL m[9]);
   CMat3(REAL v00, REAL v01, REAL v02,
         REAL v10, REAL v11, REAL v12,
         REAL v20, REAL v21, REAL v22);
   CMat3(REAL x, REAL y, REAL z);
-  CMat3(const REAL m[9]);
   // ---------------
   REAL* data() { return mat; }
   const REAL* data() const { return mat; }
@@ -315,8 +325,8 @@ public:
     }
     return m;
   }
-  inline const CMat3 operator-() const{ return (*this)*(-1.0); }
-  inline const CMat3 operator+() const{ return (*this); }
+  inline CMat3 operator-() const{ return (*this)*(-1.0); }
+  inline CMat3 operator+() const{ return (*this); }
   inline CMat3& operator+=(const CMat3& rhs){
     for(unsigned int i=0;i<9;i++){ mat[i] += rhs.mat[i]; }
 		return *this;
@@ -363,7 +373,6 @@ public:
     }
   }
   // ------------------------
-  void GetCRV_RotMatrix(REAL crv[]) const;
   void GetQuat_RotMatrix(REAL quat[]) const;
   // ------------------------
   CMat3 transpose() const {
@@ -384,8 +393,8 @@ public:
   }
   double SqNorm_Frobenius() const {
     double s = 0.0;
-    for(int i=0;i<9;++i){
-      s += mat[i]*mat[i];
+    for(auto & i : mat){
+      s += i*i;
     }
     return s;
   }

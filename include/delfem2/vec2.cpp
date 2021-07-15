@@ -178,24 +178,30 @@ std::istream &operator>>(std::istream &input, CVec2<T>& v)
   return input;
 }
 
-template <typename T>
-delfem2::CVec2<T> operator*(double c, const CVec2<T>& v0)
+template <typename T1, typename T0>
+DFM2_INLINE delfem2::CVec2<T1> operator*(T0 c, const CVec2<T1>& v0)
 {
-  return CVec2<T>(v0.p[0]*c, v0.p[1]*c);
+  return CVec2<T1>(v0.p[0]*c, v0.p[1]*c);
 }
 #ifndef DFM2_HEADER_ONLY
-template CVec2d operator*(double c, const CVec2d& v0);
+template CVec2d operator*(double, const CVec2d&);
+template CVec2d operator*(float, const CVec2d&);
+template CVec2d operator*(int, const CVec2d&);
+template CVec2d operator*(unsigned int, const CVec2d&);
 #endif
   
 //  ---------------------
 
-template <typename T>
-delfem2::CVec2<T> operator*(const CVec2<T>& v0, double c)
+template <typename T, typename T1>
+delfem2::CVec2<T> operator*(const CVec2<T>& v0, T1 c)
 {
   return CVec2<T>(v0.p[0]*c, v0.p[1]*c);
 }
 #ifndef DFM2_HEADER_ONLY
 template CVec2d operator*(const CVec2d& v0, double c);
+template CVec2d operator*(const CVec2d& v0, float c);
+template CVec2d operator*(const CVec2d& v0, int c);
+template CVec2d operator*(const CVec2d& v0, unsigned int c);
 #endif
 
 //  ---------------------

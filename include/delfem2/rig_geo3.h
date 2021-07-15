@@ -11,7 +11,7 @@
 
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dfm2_inline.h"
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -76,7 +76,9 @@ DFM2_INLINE void SetMat4AffineBone_FromJointRelativeRotation(
  */
 class CRigBone {
 public:
-  CRigBone() {
+  CRigBone()
+  : invBindMat{}, transRelative{}, quatRelativeRot{}, affmat3Global{}
+  {
     Mat4_Identity(invBindMat);
     Quat_Identity(quatRelativeRot);
     scale = 1;
@@ -101,9 +103,6 @@ public:
 
   void SetTranslation(
       double tx, double ty, double tz);
-
-  void AffineJoint(
-      const double a[16]) const;
 
 public:
   std::string name; // initialized and stay constant

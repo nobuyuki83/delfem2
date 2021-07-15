@@ -451,15 +451,16 @@ template void delfem2::AverageFour3(double po[3],
 namespace delfem2 {
 
 //! scale
-template <typename T>
-CVec3<T> operator* (T d, const CVec3<T>& rhs){
-  CVec3<T> temp = rhs;
+template <typename T0, typename T1>
+CVec3<T0> operator* (T1 d, const CVec3<T0>& rhs){
+  CVec3<T0> temp = rhs;
   temp *= d;
   return temp;
 }
 #ifndef DFM2_HEADER_ONLY
 template CVec3f operator* (float d, const CVec3f& rhs);
 template CVec3d operator* (double d, const CVec3d& rhs);
+template CVec3d operator* (int d, const CVec3d& rhs);
 #endif
  
 // -----------------------

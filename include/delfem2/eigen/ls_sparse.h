@@ -177,11 +177,12 @@ void SetFixedBC_Col(
 template<typename REAL,
     class MAT, class ALLOCATOR, int RowsActive = MAT::RowsAtCompileTime >
 void AddMatVec(
-    Eigen::VectorX<REAL> &lhs,
+    Eigen::Matrix<REAL,-1,1> &lhs,
     REAL beta,
     REAL alpha,
     const CMatrixSparseBlock<MAT, ALLOCATOR, RowsActive> &A,
-    const Eigen::VectorX<REAL> &rhs) {
+    const Eigen::Matrix<REAL,-1,1> &rhs)
+{
   assert(lhs.rows() == rhs.rows());
   constexpr int nrowdim = MAT::RowsAtCompileTime;
   constexpr int ncoldim = MAT::ColsAtCompileTime;
