@@ -18,24 +18,24 @@ DFM2_INLINE void SetMatrix3_Quaternion
  (T r[],
   const T q[])
 {
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  r[0] = 1.0 - y2 - z2;
+  const T x2 = q[1] * q[1] * 2;
+  const T y2 = q[2] * q[2] * 2;
+  const T z2 = q[3] * q[3] * 2;
+  const T xy = q[1] * q[2] * 2;
+  const T yz = q[2] * q[3] * 2;
+  const T zx = q[3] * q[1] * 2;
+  const T xw = q[1] * q[0] * 2;
+  const T yw = q[2] * q[0] * 2;
+  const T zw = q[3] * q[0] * 2;
+  r[0] = 1 - y2 - z2;
   r[1] = xy - zw;
   r[2] = zx + yw;
   r[3] = xy + zw;
-  r[4] = 1.0 - z2 - x2;
+  r[4] = 1 - z2 - x2;
   r[5] = yz - xw;
   r[6] = zx - yw;
   r[7] = yz + xw;
-  r[8] = 1.0 - x2 - y2;
+  r[8] = 1 - x2 - y2;
 }
 #ifndef DFM2_HEADER_ONLY
 template void SetMatrix3_Quaternion(float r[], const float q[]);
@@ -110,7 +110,7 @@ void delfem2::Inverse_Mat3(
   const T0 det =
   + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
   - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
-  const T0 inv_det = 1.0/det;
+  const T0 inv_det = 1/det;
   Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
   Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
   Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
@@ -140,7 +140,7 @@ void delfem2::Inverse_Mat3(
   const REAL det =
   + B[0]*B[4]*B[8] + B[3]*B[7]*B[2] + B[6]*B[1]*B[5]
   - B[0]*B[7]*B[5] - B[6]*B[4]*B[2] - B[3]*B[1]*B[8];
-  const REAL inv_det = 1.0/det;
+  const REAL inv_det = 1/det;
   A[0] = inv_det*(B[4]*B[8]-B[5]*B[7]);
   A[1] = inv_det*(B[2]*B[7]-B[1]*B[8]);
   A[2] = inv_det*(B[1]*B[5]-B[2]*B[4]);
@@ -423,24 +423,24 @@ DFM2_INLINE void delfem2::Mat3_Quat(
     REAL r[],
     const REAL q[])
 {
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  r[ 0] = 1.0 - y2 - z2;
+  const REAL x2 = q[1] * q[1] * 2;
+  const REAL y2 = q[2] * q[2] * 2;
+  const REAL z2 = q[3] * q[3] * 2;
+  const REAL xy = q[1] * q[2] * 2;
+  const REAL yz = q[2] * q[3] * 2;
+  const REAL zx = q[3] * q[1] * 2;
+  const REAL xw = q[1] * q[0] * 2;
+  const REAL yw = q[2] * q[0] * 2;
+  const REAL zw = q[3] * q[0] * 2;
+  r[ 0] = 1 - y2 - z2;
   r[ 1] = xy - zw;
   r[ 2] = zx + yw;
   r[ 3] = xy + zw;
-  r[ 4] = 1.0 - z2 - x2;
+  r[ 4] = 1 - z2 - x2;
   r[ 5] = yz - xw;
   r[ 6] = zx - yw;
   r[ 7] = yz + xw;
-  r[ 8] = 1.0 - x2 - y2;
+  r[ 8] = 1 - x2 - y2;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Mat3_Quat(float r[], const float q[]);
@@ -560,18 +560,18 @@ void delfem2::Mat3_Rotation_Cartesian(
     REAL mat[9],
     const REAL vec[3])
 {
-  double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
+  REAL sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
     mat[0] = 1;        mat[1] = -vec[2];  mat[2] = +vec[1];
     mat[3] = +vec[2];  mat[4] = 1;        mat[5] = -vec[0];
     mat[6] = -vec[1];  mat[7] = +vec[0];  mat[8] = 1;
     return;
   }
-  double t = sqrt(sqt);
-  double invt = 1.0/t;
-  double n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
-  const double c0 = cos(t);
-  const double s0 = sin(t);
+  REAL t = std::sqrt(sqt);
+  REAL invt = 1/t;
+  REAL n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
+  const REAL c0 = std::cos(t);
+  const REAL s0 = std::sin(t);
   mat[0*3+0] = c0        +(1-c0)*n[0]*n[0];
   mat[0*3+1] =   -n[2]*s0+(1-c0)*n[0]*n[1];
   mat[0*3+2] =   +n[1]*s0+(1-c0)*n[0]*n[2];
@@ -1120,8 +1120,8 @@ void delfem2::CMat3<REAL>::SetRotMatrix_Cartesian(const REAL vec[])
     mat[6] = -vec[1];  mat[7] = +vec[0];  mat[8] = 1;
     return;
   }
-  REAL t = sqrt(sqt);
-  REAL invt = 1.0/t;
+  REAL t = std::sqrt(sqt);
+  REAL invt = 1/t;
   REAL n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
   const REAL c0 = cos(t);
   const REAL s0 = sin(t);
@@ -1157,17 +1157,19 @@ template void delfem2::CMat3<double>::SetRotMatrix_Cartesian(double x, double y,
 template <typename T>
 void delfem2::CMat3<T>::SetRotMatrix_Rodrigues(const T vec[])
 {
+	constexpr T half = static_cast<T>(0.5);
+	constexpr T quarter = static_cast<T>(0.25);
   const T sqlen = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
-  const T tmp1 = 1.0/(1+0.25*sqlen);
-  mat[0] = 1+tmp1*(       +0.5*vec[0]*vec[0]-0.5*sqlen);
-  mat[1] =  +tmp1*(-vec[2]+0.5*vec[0]*vec[1]          );
-  mat[2] =  +tmp1*(+vec[1]+0.5*vec[0]*vec[2]          );
-  mat[3] =  +tmp1*(+vec[2]+0.5*vec[1]*vec[0]          );
-  mat[4] = 1+tmp1*(       +0.5*vec[1]*vec[1]-0.5*sqlen);
-  mat[5] =  +tmp1*(-vec[0]+0.5*vec[1]*vec[2]          );
-  mat[6] =  +tmp1*(-vec[1]+0.5*vec[2]*vec[0]          );
-  mat[7] =  +tmp1*(+vec[0]+0.5*vec[2]*vec[1]          );
-  mat[8] = 1+tmp1*(       +0.5*vec[2]*vec[2]-0.5*sqlen);
+  const T tmp1 = 1/(1+quarter*sqlen);
+  mat[0] = 1+tmp1*(       +half*vec[0]*vec[0]-half*sqlen);
+  mat[1] =  +tmp1*(-vec[2]+half*vec[0]*vec[1]          );
+  mat[2] =  +tmp1*(+vec[1]+half*vec[0]*vec[2]          );
+  mat[3] =  +tmp1*(+vec[2]+half*vec[1]*vec[0]          );
+  mat[4] = 1+tmp1*(       +half*vec[1]*vec[1]-half*sqlen);
+  mat[5] =  +tmp1*(-vec[0]+half*vec[1]*vec[2]          );
+  mat[6] =  +tmp1*(-vec[1]+half*vec[2]*vec[0]          );
+  mat[7] =  +tmp1*(+vec[0]+half*vec[2]*vec[1]          );
+  mat[8] = 1+tmp1*(       +half*vec[2]*vec[2]-half*sqlen);
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::CMat3<float>::SetRotMatrix_Rodrigues(const float vec[]);
@@ -1180,8 +1182,9 @@ template void delfem2::CMat3<double>::SetRotMatrix_Rodrigues(const double vec[])
 template <typename T>
 void delfem2::CMat3<T>::SetRotMatrix_CRV(const T crv[])
 {
-  const T c0 = 0.125*( 16.0 - crv[0]*crv[0] - crv[1]*crv[1] - crv[2]*crv[2] );
-  const T tmp = 1.0/( (4.0-c0)*(4.0-c0) );
+  constexpr T one8th = static_cast<T>(1.0 / 8.0);
+  const T c0 = one8th*( 16 - crv[0]*crv[0] - crv[1]*crv[1] - crv[2]*crv[2] );
+  const T tmp = 1/( (4-c0)*(4-c0) );
   mat[0*3+0] = tmp*( (c0*c0+8*c0-16) + 2*crv[0]*crv[0] );
   mat[0*3+1] = tmp*(                   2*crv[0]*crv[1] - 2*c0*crv[2] );
   mat[0*3+2] = tmp*(                   2*crv[0]*crv[2] + 2*c0*crv[1] );
@@ -1229,7 +1232,8 @@ template void delfem2::CMat3d::SetRotMatrix_BryantAngle(double rx, double ry, do
 
 template <typename T>
 void delfem2::CMat3<T>::GetQuat_RotMatrix(T quat[]) const{
-  const double smat[16] = {
+  constexpr T one4th = static_cast<T>(1.0 / 4.0);
+  const T smat[16] = {
     1+mat[0*3+0]+mat[1*3+1]+mat[2*3+2],
     mat[2*3+1]-mat[1*3+2],
     mat[0*3+2]-mat[2*3+0],
@@ -1253,10 +1257,10 @@ void delfem2::CMat3<T>::GetQuat_RotMatrix(T quat[]) const{
   imax = ( smat[imax*4+imax] > smat[2*4+2] ) ? imax : 2;
   imax = ( smat[imax*4+imax] > smat[3*4+3] ) ? imax : 3;
 
-  quat[imax] = 0.5*sqrt(smat[imax*4+imax]);
+  quat[imax] = sqrt(smat[imax*4+imax])/2;
   for(unsigned int k=0;k<4;k++){
     if( k==imax ) continue;
-    quat[k] = smat[imax*4+k]*0.25/quat[imax];
+    quat[k] = smat[imax*4+k]*one4th/quat[imax];
   }
 }
 #ifndef DFM2_HEADER_ONLY

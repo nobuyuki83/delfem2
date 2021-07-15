@@ -516,29 +516,31 @@ DFM2_INLINE void delfem2::Mat4_AffineRotationRodriguez(
     T A[16],
     T dx, T dy, T dz)
 {
-  for(int i=0;i<16;++i){ A[i] = 0.0; }
+	constexpr T half = static_cast<T>(0.5);
+	constexpr T one4th = static_cast<T>(0.25);
+  for(int i=0;i<16;++i){ A[i] = 0; }
   //
-  const double sqlen = dx*dx+dy*dy+dz*dz;
-  const double tmp1 = 1.0/(1+0.25*sqlen);
-  A[0*4+0] = 1+tmp1*(+0.5*dx*dx-0.5*sqlen);
-  A[0*4+1] =  +tmp1*(-dz+0.5*dx*dy);
-  A[0*4+2] =  +tmp1*(+dy+0.5*dx*dz);
-  A[0*4+3] = 0.0;
+  const T sqlen = dx*dx+dy*dy+dz*dz;
+  const T tmp1 = 1/(1+one4th*sqlen);
+  A[0*4+0] = 1+tmp1*(+half*dx*dx-half*sqlen);
+  A[0*4+1] =  +tmp1*(-dz+half*dx*dy);
+  A[0*4+2] =  +tmp1*(+dy+half*dx*dz);
+  A[0*4+3] = 0;
   //
-  A[1*4+0] =  +tmp1*(+dz+0.5*dy*dx);
-  A[1*4+1] = 1+tmp1*(+0.5*dy*dy-0.5*sqlen);
-  A[1*4+2] =  +tmp1*(-dx+0.5*dy*dz);
-  A[1*4+3] = 0.0;
+  A[1*4+0] =  +tmp1*(+dz+half*dy*dx);
+  A[1*4+1] = 1+tmp1*(+half*dy*dy-half*sqlen);
+  A[1*4+2] =  +tmp1*(-dx+half*dy*dz);
+  A[1*4+3] = 0;
   //
-  A[2*4+0] =  +tmp1*(-dy+0.5*dz*dx);
-  A[2*4+1] =  +tmp1*(+dx+0.5*dz*dy);
-  A[2*4+2] = 1+tmp1*(+0.5*dz*dz-0.5*sqlen);
-  A[2*4+3] = 0.0;
+  A[2*4+0] =  +tmp1*(-dy+half*dz*dx);
+  A[2*4+1] =  +tmp1*(+dx+half*dz*dy);
+  A[2*4+2] = 1+tmp1*(+half*dz*dz-half*sqlen);
+  A[2*4+3] = 0;
   //
-  A[3*4+0] = 0.0;
-  A[3*4+1] = 0.0;
-  A[3*4+2] = 0.0;
-  A[3*4+3] = 1.0;
+  A[3*4+0] = 0;
+  A[3*4+1] = 0;
+  A[3*4+2] = 0;
+  A[3*4+3] = 1;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Mat4_AffineRotationRodriguez(
@@ -595,7 +597,7 @@ void delfem2::Mat4_Rotation_Cartesian(
     REAL mat[16],
     const REAL vec[3])
 {
-  double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
+  const REAL sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
     // row0
     mat[0*4+0] = 1;
@@ -619,31 +621,31 @@ void delfem2::Mat4_Rotation_Cartesian(
     mat[3*4+3] = 1;
     return;
   }
-  double t = sqrt(sqt);
-  double invt = 1.0/t;
-  double n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
-  const double c0 = cos(t);
-  const double s0 = sin(t);
+  REAL t = std::sqrt(sqt);
+  REAL invt = 1/t;
+  REAL n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
+  const REAL c0 = std::cos(t);
+  const REAL s0 = std::sin(t);
   // row0
   mat[0*4+0] = c0        +(1-c0)*n[0]*n[0];
   mat[0*4+1] =   -n[2]*s0+(1-c0)*n[0]*n[1];
   mat[0*4+2] =   +n[1]*s0+(1-c0)*n[0]*n[2];
-  mat[0*4+3] = 0.0;
+  mat[0*4+3] = 0;
   // row1
   mat[1*4+0] =   +n[2]*s0+(1-c0)*n[1]*n[0];
   mat[1*4+1] = c0        +(1-c0)*n[1]*n[1];
   mat[1*4+2] =   -n[0]*s0+(1-c0)*n[1]*n[2];
-  mat[1*4+3] = 0.0;
+  mat[1*4+3] = 0;
   // row2
   mat[2*4+0] =   -n[1]*s0+(1-c0)*n[2]*n[0];
   mat[2*4+1] =   +n[0]*s0+(1-c0)*n[2]*n[1];
   mat[2*4+2] = c0        +(1-c0)*n[2]*n[2];
-  mat[2*4+3] = 0.0;
+  mat[2*4+3] = 0;
   // row3
-  mat[3*4+0] = 0.0;
-  mat[3*4+1] = 0.0;
-  mat[3*4+2] = 0.0;
-  mat[3*4+3] = 1.0;
+  mat[3*4+0] = 0;
+  mat[3*4+1] = 0;
+  mat[3*4+2] = 0;
+  mat[3*4+3] = 1;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Mat4_Rotation_Cartesian(float mat[16], const float vec[3]);
@@ -692,19 +694,19 @@ DFM2_INLINE void delfem2::Mat4_Quat(
     REAL r[],
     const REAL q[])
 {
-  const double x2 = q[1] * q[1] * 2.0;
-  const double y2 = q[2] * q[2] * 2.0;
-  const double z2 = q[3] * q[3] * 2.0;
-  const double xy = q[1] * q[2] * 2.0;
-  const double yz = q[2] * q[3] * 2.0;
-  const double zx = q[3] * q[1] * 2.0;
-  const double xw = q[1] * q[0] * 2.0;
-  const double yw = q[2] * q[0] * 2.0;
-  const double zw = q[3] * q[0] * 2.0;
-  r[ 0] = 1.0 - y2 - z2;  r[ 1] = xy - zw;        r[ 2] = zx + yw;       r[ 3] = 0.0;
-  r[ 4] = xy + zw;        r[ 5] = 1.0 - z2 - x2;  r[ 6] = yz - xw;       r[ 7] = 0.0;
-  r[ 8] = zx - yw;        r[ 9] = yz + xw;        r[10] = 1.0 - x2 - y2; r[11] = 0.0;
-  r[12] = 0.0;            r[13] = 0.0;            r[14] = 0.0;           r[15] = 1.0;
+  const REAL x2 = q[1] * q[1] * 2;
+  const REAL y2 = q[2] * q[2] * 2;
+  const REAL z2 = q[3] * q[3] * 2;
+  const REAL xy = q[1] * q[2] * 2;
+  const REAL yz = q[2] * q[3] * 2;
+  const REAL zx = q[3] * q[1] * 2;
+  const REAL xw = q[1] * q[0] * 2;
+  const REAL yw = q[2] * q[0] * 2;
+  const REAL zw = q[3] * q[0] * 2;
+  r[ 0] = 1 - y2 - z2;  r[ 1] = xy - zw;      r[ 2] = zx + yw;     r[ 3] = 0;
+  r[ 4] = xy + zw;      r[ 5] = 1 - z2 - x2;  r[ 6] = yz - xw;     r[ 7] = 0;
+  r[ 8] = zx - yw;      r[ 9] = yz + xw;      r[10] = 1 - x2 - y2; r[11] = 0;
+  r[12] = 0;            r[13] = 0;            r[14] = 0;           r[15] = 1;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Mat4_Quat(float r[], const float q[]);

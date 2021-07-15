@@ -32,7 +32,7 @@ T delfem2::Area_Tri2(
     const T v3[2])
 {
   T v0 = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  return 0.5*v0;
+  return v0/2;
 }
 #ifndef DFM2_HEADER_ONLY
 template float delfem2::Area_Tri2(const float v1[2], const float v2[2], const float v3[2]);
@@ -147,8 +147,8 @@ DFM2_INLINE void GaussianDistribution2(double noise[2])
 template <typename T>
 void delfem2::Normalize2(T w[2])
 {
-  double l = Length2(w);
-  double invl = 1.0/l;
+  const T l = Length2(w);
+  const T invl = 1/l;
   w[0] *= invl;
   w[1] *= invl;
 }

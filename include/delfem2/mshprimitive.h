@@ -91,8 +91,8 @@ template <typename REAL>
 DFM2_INLINE void MeshTri3_Torus(
     std::vector<REAL>& aXYZ,
     std::vector<unsigned int>& aTri,
-    double len_latitutde,
-    double len_meridian,
+    REAL len_latitutde,
+    REAL len_meridian,
     unsigned int ndiv_latittude,
     unsigned int ndiv_meridian);
                               

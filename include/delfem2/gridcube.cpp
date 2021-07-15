@@ -41,7 +41,7 @@ void delfem2::Pick_CubeGrid(
   //
   icube_pic = UINT_MAX;
   double depth_min = 0;
-  for(std::size_t ivox=0;ivox<aCube.size();++ivox){
+  for(unsigned int ivox=0;ivox<aCube.size();++ivox){
     if( !aCube[ivox].is_active ) continue;
     int ih = aCube[ivox].ivx;
     int jh = aCube[ivox].ivy;

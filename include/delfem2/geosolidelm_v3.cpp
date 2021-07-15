@@ -61,23 +61,23 @@ DFM2_INLINE double FindRootCubic_Bisect(
 // there is another impelemntation in quat.h so this is "static function"
 // transform vector with quaternion
 template <typename REAL>
-DFM2_INLINE void MyQuatVec
- (REAL vo[],
+DFM2_INLINE void MyQuatVec(
+  REAL vo[],
   const REAL q[],
   const REAL vi[])
 {
-  REAL x2 = q[1] * q[1] * 2.0;
-  REAL y2 = q[2] * q[2] * 2.0;
-  REAL z2 = q[3] * q[3] * 2.0;
-  REAL xy = q[1] * q[2] * 2.0;
-  REAL yz = q[2] * q[3] * 2.0;
-  REAL zx = q[3] * q[1] * 2.0;
-  REAL xw = q[1] * q[0] * 2.0;
-  REAL yw = q[2] * q[0] * 2.0;
-  REAL zw = q[3] * q[0] * 2.0;
-  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
-  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
-  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+  REAL x2 = q[1] * q[1] * 2;
+  REAL y2 = q[2] * q[2] * 2;
+  REAL z2 = q[3] * q[3] * 2;
+  REAL xy = q[1] * q[2] * 2;
+  REAL yz = q[2] * q[3] * 2;
+  REAL zx = q[3] * q[1] * 2;
+  REAL xw = q[1] * q[0] * 2;
+  REAL yw = q[2] * q[0] * 2;
+  REAL zw = q[3] * q[0] * 2;
+  vo[0] = (1 - y2 - z2)*vi[0] + (xy - zw    )*vi[1] + (zx + yw    )*vi[2];
+  vo[1] = (xy + zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz - xw    )*vi[2];
+  vo[2] = (zx - yw    )*vi[0] + (yz + xw    )*vi[1] + (1 - x2 - y2)*vi[2];
 }
 #ifndef DFM2_HEADER_ONLY
 template void MyQuatVec(float vo[], const float q[], const float vi[]);
@@ -111,18 +111,18 @@ DFM2_INLINE void MyQuatConjVec(
     const REAL q[4],
     const REAL vi[3])
 {
-  REAL x2 = q[1] * q[1] * 2.0;
-  REAL y2 = q[2] * q[2] * 2.0;
-  REAL z2 = q[3] * q[3] * 2.0;
-  REAL xy = q[1] * q[2] * 2.0;
-  REAL yz = q[2] * q[3] * 2.0;
-  REAL zx = q[3] * q[1] * 2.0;
-  REAL xw = q[1] * q[0] * 2.0;
-  REAL yw = q[2] * q[0] * 2.0;
-  REAL zw = q[3] * q[0] * 2.0;
-  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
-  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
-  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+  REAL x2 = q[1] * q[1] * 2;
+  REAL y2 = q[2] * q[2] * 2;
+  REAL z2 = q[3] * q[3] * 2;
+  REAL xy = q[1] * q[2] * 2;
+  REAL yz = q[2] * q[3] * 2;
+  REAL zx = q[3] * q[1] * 2;
+  REAL xw = q[1] * q[0] * 2;
+  REAL yw = q[2] * q[0] * 2;
+  REAL zw = q[3] * q[0] * 2;
+  vo[0] = (1 - y2 - z2)*vi[0] + (xy + zw    )*vi[1] + (zx - yw    )*vi[2];
+  vo[1] = (xy - zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz + xw    )*vi[2];
+  vo[2] = (zx + yw    )*vi[0] + (yz - xw    )*vi[1] + (1 - x2 - y2)*vi[2];
 //  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
 //  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
 //  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
@@ -180,7 +180,7 @@ T delfem2::Volume_Tet3(
   ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
    -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
    +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
-   ) * 0.16666666666666666666666666666667;
+   ) * static_cast<T>(1.0/6.0);
 }
 #ifndef DFM2_HEADER_ONLY
 template float delfem2::Volume_Tet3(const float v1[3],
@@ -388,10 +388,10 @@ T delfem2::Volume_OrgTet(
     const CVec3<T>& v2,
     const CVec3<T>& v3 )
 {
-  double v = v1.p[0]*(v2.p[1]*v3.p[2]-v3.p[1]*v2.p[2])
-           + v1.p[1]*(v2.p[2]*v3.p[0]-v3.p[2]*v2.p[0])
-           + v1.p[2]*(v2.p[0]*v3.p[1]-v3.p[0]*v2.p[1]);
-  return v*0.16666666666666666666666666666667;
+  T v = v1.p[0]*(v2.p[1]*v3.p[2]-v3.p[1]*v2.p[2])
+      + v1.p[1]*(v2.p[2]*v3.p[0]-v3.p[2]*v2.p[0])
+      + v1.p[2]*(v2.p[0]*v3.p[1]-v3.p[0]*v2.p[1]);
+  return v * static_cast<T>(1.0 / 6.0); 
 }
 #ifndef DFM2_HEADER_ONLY
 template double delfem2::Volume_OrgTet(

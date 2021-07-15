@@ -70,7 +70,7 @@ DFM2_INLINE void QuatQuat(
     const REAL q[]);
 
 template <typename REAL>
-DFM2_INLINE double Dot_Quat(
+DFM2_INLINE REAL Dot_Quat(
     const REAL p[],
     const REAL q[]);
 

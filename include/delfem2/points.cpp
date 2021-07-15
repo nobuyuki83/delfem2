@@ -94,8 +94,9 @@ DFM2_INLINE double Dot3(const double p0[3], const double p1[3]){
   return p0[0]*p1[0] + p0[1]*p1[1] + p0[2]*p1[2];
 }
 
-DFM2_INLINE double largest(double x0, double x1, double x2) {
-  double wmax = x0;
+template <typename REAL>
+DFM2_INLINE REAL largest(REAL x0, REAL x1, REAL x2) {
+  REAL wmax = x0;
   wmax = (x1 > wmax) ? x1 : wmax;
   wmax = (x2 > wmax) ? x2 : wmax;
   return wmax;
@@ -502,8 +503,8 @@ DFM2_INLINE void delfem2::NormalizeVector_Points(
   if( ndim == 2 ){
     for(unsigned int ip=0;ip<np;++ip){
       REAL* p = aVec+ip*2;
-      const double len =points::Length2(p);
-      double linv = 1.0/len;
+      const REAL len =points::Length2(p);
+      REAL linv = 1/len;
       p[0] *= linv;
       p[1] *= linv;
     }
@@ -511,8 +512,8 @@ DFM2_INLINE void delfem2::NormalizeVector_Points(
   else if( ndim == 3 ){
     for(unsigned int ip=0;ip<np;++ip){
       REAL* p = aVec+ip*3;
-      const double len = points::Length3(p);
-      double linv = 1.0/len;
+      const REAL len = points::Length3(p);
+      const REAL linv = 1/len;
       p[0] *= linv;
       p[1] *= linv;
       p[2] *= linv;
@@ -552,7 +553,7 @@ void delfem2::CG_Point3(
     const std::vector<T>& aXYZ)
 {
   cg[0] = cg[1] = cg[2] = 0;
-  unsigned int nXYZ = aXYZ.size()/3;
+  const size_t nXYZ = aXYZ.size()/3;
   for (unsigned int ixyz = 0; ixyz<nXYZ; ixyz++){
     cg[0] += aXYZ[ixyz*3+0];
     cg[1] += aXYZ[ixyz*3+1];

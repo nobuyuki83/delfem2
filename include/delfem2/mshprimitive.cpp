@@ -264,8 +264,8 @@ DFM2_INLINE void delfem2::MeshTri3D_CylinderOpen
 }
 
 template <typename T>
-DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed
- (std::vector<T>& aXYZ,
+DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed(
+  std::vector<T>& aXYZ,
   std::vector<unsigned int>& aTri,
   T r,
   T l,
@@ -275,20 +275,20 @@ DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed
   aXYZ.clear();
   aTri.clear();
   if (nl<1||nr<=2){ return; }
-  const double pi = 3.1415926535;
-  double dl = l/nl;
-  double dr = 2.0*pi/nr;
+  const T pi = static_cast<T>(3.1415926535);
+  T dl = l/nl;
+  T dr = 2*pi/nr;
   aXYZ.reserve((nr*(nl+1)+2)*3);
   {
     aXYZ.push_back(0);
-    aXYZ.push_back(-0.5*l);
+    aXYZ.push_back(-l/2);
     aXYZ.push_back(0);
   }
   for (unsigned int il = 0; il<nl+1; il++){
-    double y0 = -0.5*l+dl*il;
+    T y0 = -l/2+dl*il;
     for (unsigned int ilo = 0; ilo<nr; ilo++){
-      double x0 = r*cos(dr*ilo);
-      double z0 = r*sin(dr*ilo);
+      T x0 = r*std::cos(dr*ilo);
+      T z0 = r*std::sin(dr*ilo);
       aXYZ.push_back(x0);
       aXYZ.push_back(y0);
       aXYZ.push_back(z0);
@@ -296,7 +296,7 @@ DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed
   }
   {
     aXYZ.push_back(0);
-    aXYZ.push_back(+0.5*l);
+    aXYZ.push_back(+l/2);
     aXYZ.push_back(0);
   }
   // ------------------------------------
@@ -406,51 +406,52 @@ DFM2_INLINE void delfem2::MeshTri3D_Sphere
 }
 
 template <typename T>
-DFM2_INLINE void delfem2::MeshTri3D_Cube
-(std::vector<T>& aXYZ,
- std::vector<unsigned int>& aTri,
- unsigned int n)
+DFM2_INLINE void delfem2::MeshTri3D_Cube(
+	std::vector<T>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    unsigned int n)
 {
   aXYZ.clear();
   aTri.clear();
   if( n < 1 ){ return; }
-  double r = 1.0/n;
+  const T r = static_cast<T>(1.0)/n;
   const unsigned int np = 4*n*(n+1)+(n-1)*(n-1)*2;
   aXYZ.reserve( np*3 );
+  constexpr T half(0.5);
   for(unsigned int iz=0;iz<n+1;++iz){ // height
     for(unsigned int ix=0;ix<n;++ix){
-      aXYZ.push_back(-0.5+r*ix);
-      aXYZ.push_back(-0.5);
-      aXYZ.push_back(-0.5+r*iz);
+      aXYZ.push_back(-half+r*ix);
+      aXYZ.push_back(-half);
+      aXYZ.push_back(-half+r*iz);
     }
     for(unsigned int iy=0;iy<n;++iy){
-      aXYZ.push_back(+0.5);
-      aXYZ.push_back(-0.5+r*iy);
-      aXYZ.push_back(-0.5+r*iz);
+      aXYZ.push_back(+half);
+      aXYZ.push_back(-half+r*iy);
+      aXYZ.push_back(-half+r*iz);
     }
     for(int ix=n;ix>0;--ix){
-      aXYZ.push_back(-0.5+r*ix);
-      aXYZ.push_back(+0.5);
-      aXYZ.push_back(-0.5+r*iz);
+      aXYZ.push_back(-half+r*ix);
+      aXYZ.push_back(+half);
+      aXYZ.push_back(-half+r*iz);
     }
     for(int iy=n;iy>0;--iy){
-      aXYZ.push_back(-0.5);
-      aXYZ.push_back(-0.5+r*iy);
-      aXYZ.push_back(-0.5+r*iz);
+      aXYZ.push_back(-half);
+      aXYZ.push_back(-half+r*iy);
+      aXYZ.push_back(-half+r*iz);
     }
   }
   for(unsigned int iy=1;iy<n;++iy){
     for(unsigned int ix=1;ix<n;++ix){
-      aXYZ.push_back(-0.5+r*ix);
-      aXYZ.push_back(-0.5+r*iy);
-      aXYZ.push_back(-0.5);
+      aXYZ.push_back(-half+r*ix);
+      aXYZ.push_back(-half+r*iy);
+      aXYZ.push_back(-half);
     }
   }
   for(unsigned int iy=1;iy<n;++iy){
     for(unsigned int ix=1;ix<n;++ix){
-      aXYZ.push_back(-0.5+r*ix);
-      aXYZ.push_back(-0.5+r*iy);
-      aXYZ.push_back(+0.5);
+      aXYZ.push_back(-half+r*ix);
+      aXYZ.push_back(-half+r*iy);
+      aXYZ.push_back(+half);
     }
   }
   // -------------------------------------------------
@@ -803,47 +804,49 @@ void delfem2::MeshTri3_Capsule(
     unsigned int nr,
     unsigned int nl)
 {
+  constexpr T half(0.5);
+  constexpr T pi = static_cast<T>(M_PI);
   MeshTri3D_CylinderClosed(aXYZ,aTri,
       (T)1.,(T)1.,
       nc,2*nr+nl-2);
   assert( aXYZ.size()/3 == (2*nr+nl-1)*nc+2 );
   {
     aXYZ[0*3+0] = 0;
-    aXYZ[0*3+1] = -l*0.5-r;
+    aXYZ[0*3+1] = -l*half-r;
     aXYZ[0*3+2] = 0;
   }
   for(unsigned int ir=0;ir<nr;++ir){
-    const T t0 = M_PI*0.5*(nr-1-ir)/nr;
-    const T y0 = -l*0.5-r*sin(t0);
-    const T c0 = r*cos(t0);
+    const T t0 = pi*half*(nr-1-ir)/nr;
+    const T y0 = -l*half-r*sin(t0);
+    const T c0 = r*std::cos(t0);
     for(unsigned int ic=0;ic<nc;++ic){
-      aXYZ[(1+ir*nc+ic)*3+0] = c0*cos(2*M_PI*ic/nc);
+      aXYZ[(1+ir*nc+ic)*3+0] = c0*std::cos(2*pi*ic/nc);
       aXYZ[(1+ir*nc+ic)*3+1] = y0;
-      aXYZ[(1+ir*nc+ic)*3+2] = c0*sin(2*M_PI*ic/nc);
+      aXYZ[(1+ir*nc+ic)*3+2] = c0*std::sin(2*pi*ic/nc);
     }
   }
   for(unsigned int il=0;il<nl-1;++il){
-    const T y0 = -l*0.5+(il+1)*l/nl;
+    const T y0 = -l*half+(il+1)*l/nl;
     for(unsigned int ic=0;ic<nc;++ic) {
-      aXYZ[(1+(il+nr)*nc+ic)*3+0] = r*cos(2*M_PI*ic/nc);
+      aXYZ[(1+(il+nr)*nc+ic)*3+0] = r*cos(2*pi*ic/nc);
       aXYZ[(1+(il+nr)*nc+ic)*3+1] = y0;
-      aXYZ[(1+(il+nr)*nc+ic)*3+2] = r*sin(2*M_PI*ic/nc);
+      aXYZ[(1+(il+nr)*nc+ic)*3+2] = r*sin(2*pi*ic/nc);
     }
   }
   for(unsigned int ir=0;ir<nr;++ir){
-    const T t0 = M_PI*0.5*ir/nr;
-    const T y0 = +l*0.5+r*sin(t0);
-    const T c0 = r*cos(t0);
+    const T t0 = pi*half*ir/nr;
+    const T y0 = +l*half+r*std::sin(t0);
+    const T c0 = r*std::cos(t0);
     for(unsigned int ic=0;ic<nc;++ic){
-      aXYZ[(1+(ir+nl+nr-1)*nc+ic)*3+0] = c0*cos(2*M_PI*ic/nc);
+      aXYZ[(1+(ir+nl+nr-1)*nc+ic)*3+0] = c0*std::cos(2*pi*ic/nc);
       aXYZ[(1+(ir+nl+nr-1)*nc+ic)*3+1] = y0;
-      aXYZ[(1+(ir+nl+nr-1)*nc+ic)*3+2] = c0*sin(2*M_PI*ic/nc);
+      aXYZ[(1+(ir+nl+nr-1)*nc+ic)*3+2] = c0*std::sin(2*pi*ic/nc);
     }
   }
   {
-    unsigned int np = aXYZ.size()/3;
+    const size_t np = aXYZ.size()/3;
     aXYZ[(np-1)*3+0] = 0;
-    aXYZ[(np-1)*3+1] = +l*0.5+r;
+    aXYZ[(np-1)*3+1] = +l*half+r;
     aXYZ[(np-1)*3+2] = 0;
   }
 }
@@ -863,21 +866,21 @@ template void delfem2::MeshTri3_Capsule(
 // ------------------------------------------------------------
 
 template <typename T>
-DFM2_INLINE void delfem2::MeshTri3_Torus
- (std::vector<T>& aXYZ,
+DFM2_INLINE void delfem2::MeshTri3_Torus(
+  std::vector<T>& aXYZ,
   std::vector<unsigned int>& aTri,
-  double radius_, // latitude
-  double radius_tube_, // meridian
+  T radius_, // latitude
+  T radius_tube_, // meridian
   unsigned int nlg, // latitude
   unsigned int nlt) // meridian
 {
-  const T rlg = 6.28/nlg;  // latitude
-  const T rlt = 6.28/nlt;  // meridian
+  const T rlg = static_cast<T>(M_PI*2)/nlg;  // latitude
+  const T rlt = static_cast<T>(M_PI*2)/nlt;  // meridian
   aXYZ.resize(nlg*nlt*3);
   for(unsigned int ilg=0;ilg<nlg;ilg++){
     for(unsigned int ilt=0;ilt<nlt;ilt++){
-      aXYZ[(ilg*nlt+ilt)*3+0] = ( radius_ + radius_tube_*cos(ilt*rlt) )*sin(ilg*rlg);
-      aXYZ[(ilg*nlt+ilt)*3+1] = ( radius_ + radius_tube_*cos(ilt*rlt) )*cos(ilg*rlg);
+      aXYZ[(ilg*nlt+ilt)*3+0] = ( radius_ + radius_tube_*std::cos(ilt*rlt) )*std::sin(ilg*rlg);
+      aXYZ[(ilg*nlt+ilt)*3+1] = ( radius_ + radius_tube_*std::cos(ilt*rlt) )*std::cos(ilg*rlg);
       aXYZ[(ilg*nlt+ilt)*3+2] = radius_tube_*sin(ilt*rlt);
     }
   }
@@ -900,8 +903,8 @@ DFM2_INLINE void delfem2::MeshTri3_Torus
 template void delfem2::MeshTri3_Torus(
     std::vector<float>& aXYZ,
     std::vector<unsigned int>& aTri,
-    double radius_,      // latitude
-    double radius_tube_, // meridian
+    float radius_,      // latitude
+    float radius_tube_, // meridian
     unsigned int nr,     // latitude
     unsigned int nl);    // meridian
 

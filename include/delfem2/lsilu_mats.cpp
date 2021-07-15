@@ -909,7 +909,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
       listNonzero[inz-1].next = -1;
     }
     
-    int knz_cur = 0;
+    unsigned int knz_cur = 0;
     for (;;){
       const unsigned int kblk0 = listNonzero[knz_cur].row;
       assert(kblk0<nblk);
@@ -945,7 +945,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
         
         // pick up fill in
         const unsigned int max_lev0 = (ik_lev0 > kj_lev0) ? ik_lev0 : kj_lev0;
-        const size_t inz_last = listNonzero.size();
+        const unsigned int inz_last = static_cast<unsigned int>(listNonzero.size());
         listNonzero.resize(listNonzero.size()+1);
         listNonzero[inz_last].row = jblk0;
         listNonzero[inz_last].lev = max_lev0+1;
