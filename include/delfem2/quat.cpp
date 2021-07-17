@@ -26,6 +26,18 @@ DFM2_INLINE REAL delfem2::Dot_Quat(
 // ---------------------
 
 template <typename T>
+DFM2_INLINE T delfem2::Length_Quat(const T q[]) {
+  return std::sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
+}
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::Length_Quat(const float q[]);
+template double delfem2::Length_Quat(const double q[]);
+#endif
+
+// -----------------------------
+
+
+template <typename T>
 DFM2_INLINE void delfem2::Normalize_Quat(T q[])
 {
   const T len = sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);

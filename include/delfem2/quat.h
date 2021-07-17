@@ -22,6 +22,20 @@ template <typename T>
 DFM2_INLINE void Normalize_Quat(
     T q[4]);
 
+template <typename T>
+DFM2_INLINE void Inverse_Quat(
+    T qinv[4],
+    T q[4])
+{
+  const T sqlen = q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3];
+  const T sqleninv = 1/sqlen;
+  qinv[0] = +q[0]*sqleninv;
+  qinv[1] = -q[1]*sqleninv;
+  qinv[2] = -q[2]*sqleninv;
+  qinv[3] = -q[3]*sqleninv;
+}
+
+
 /**
  * @brief Set Identity in the quaternion
  */
@@ -74,6 +88,10 @@ DFM2_INLINE REAL Dot_Quat(
     const REAL p[],
     const REAL q[]);
 
+template <typename T>
+DFM2_INLINE T Length_Quat(
+    const T q[]);
+
 // -----------------------------
 // below: quaternion and vector
 
@@ -92,31 +110,6 @@ DFM2_INLINE void QuatConjVec(
     const double q[],
     const double vi[]);
 
-// ----------
-
-
-/*
-DFM2_INLINE void Mat4_Quat(
-    double r[],
-    const double q[]);
-
-DFM2_INLINE void Mat4_QuatConj(
-    double r[],
-    const double q[]);
- */
-
-/**
- * @brief applying transformation in the order of scale, rotation and translation
- */
- /*
-void Mat4_ScaleRotTrans(double m[16],
-                        double scale, const double quat[4], const double trans[3]);
-void MatMat4(double m01[16],
-             const double m0[16], const double m1[16]);
-void Copy_Mat4(double m1[16],
-               const double m0[16]);
-               */
-  
 // -------------------------------------------------------
 
 template <typename T>
@@ -144,9 +137,6 @@ CQuat<T> SphericalLinearInterp(const CQuat<T>&, const CQuat<T>&, T);
 template <typename T>
 CQuat<T> operator*(T, const CQuat<T>&);  //!< multiply scalar
 
-template <typename T>
-CQuat<T> operator * (const CQuat<T>& vec, T d);
-
   
 /**
  * @class class of Quaternion
@@ -156,9 +146,9 @@ class CQuat
 {
 public:
   CQuat() : q{1,0,0,0} {}
-  CQuat(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
+  explicit CQuat(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
   CQuat(T r, T v0, T v1, T v2) : q{r, v0, v1, v2} {};
-  ~CQuat(){}
+  ~CQuat()= default;
   // -----------
   static CQuat Random(T a){
     CQuat<T> q;
@@ -194,49 +184,8 @@ public:
   static CQuat<T> Identity() {
     return CQuat<T>(1,0,0,0);
   }
-  /*
-	CQuaternion(const CQuaternion& rhs)
-		:vector( rhs.vector ){
-		real = rhs.real;
-	}
-	CQuaternion(const CVector3D& axis);
-	CQuaternion(double real, const CVector3D& vector);
-	CQuaternion(const CVector3D& a_vector, const CVector3D& b_vector);
-	~CQuaternion();
-
-	CQuaternion GetConjugate() const;	//!< get conjugate quaternion
-  CQuaternion GetInverse() const;
-	double GetReal() const{ return real; }	//!< get real part
-	CVector3D GetVector(){ return vector; }	//!< get imaginary part
-
-	//! normalization
-	//! set unit quaternion
-	void SetUnit(){ real = 1.0; vector.SetZero(); }
-	//! initialize from axial rotation vector
-	void AxisToQuat(const CVector3D& axis);
-	void VectorTrans(const CVector3D& a_vector, const CVector3D& b_vector);
-  void RotMatrix33(double* m) const;
-  void RotMatrix44(double* m) const;
-  
-
-	friend bool operator==(const CQuaternion&, const CQuaternion&);
-	friend bool operator!=(const CQuaternion&, const CQuaternion&);
-  friend CQuaternion SphericalLinearInterp(const CQuaternion&, const CQuaternion&, double);
-
-	CQuaternion& operator=(const CQuaternion&);
-	CQuaternion& operator+=(const CQuaternion&);
-	CQuaternion& operator-=(const CQuaternion&);
-	CQuaternion& operator*=(const CQuaternion&);
-	CQuaternion& operator*=(double);
-	CQuaternion& operator/=(const CQuaternion&);
-  
-	double Length() const;
-  double SquareLength() const;
-	*/
 public:
   T q[4]; // w,x,y,z
-//	CVector3D vector;	//!< imaginary part
-//	double real;	//!< real part
 };
 using CQuatd = CQuat<double>;
 using CQuatf = CQuat<float>;
@@ -244,7 +193,7 @@ using CQuatf = CQuat<float>;
 }
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/quat.cpp"
+  #include "delfem2/quat.cpp"
 #endif
 
 #endif // !defined(DFM2_QUAT_H)

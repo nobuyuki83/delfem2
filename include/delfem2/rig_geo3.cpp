@@ -452,7 +452,7 @@ delfem2::Read_BioVisionHierarchy(
       assert(aBone.empty());
     }
     else if( aToken[0] == "ROOT" ){
-      assert(aBone.size()==0);
+      assert(aBone.empty());
       CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
@@ -462,7 +462,7 @@ delfem2::Read_BioVisionHierarchy(
       stackIndBone.push_back(static_cast<unsigned int>(aBone.size()-1));
       if( stackIndBone.size() > 1 ){
         int ibp = stackIndBone[stackIndBone.size()-2];
-        unsigned int ib = static_cast<unsigned int>(aBone.size()-1);
+        auto ib = static_cast<unsigned int>(aBone.size()-1);
         aBone[ib].ibone_parent  = ibp;
       }
     }
@@ -491,7 +491,7 @@ delfem2::Read_BioVisionHierarchy(
       int nch = rig_v3q::myStoi(aToken[1]);
       assert((int)aToken.size()==nch+2);
       assert( !aBone.empty() );
-      const unsigned int ib = static_cast<unsigned int>(aBone.size()-1);
+      const auto ib = static_cast<unsigned int>(aBone.size()-1);
       for(int ich=0;ich<nch;++ich){
         const std::string& type_ch = aToken[ich+2];
         if(      type_ch == "Xposition" ){ aChannelRotTransBone.emplace_back(ib,0,false ); }
