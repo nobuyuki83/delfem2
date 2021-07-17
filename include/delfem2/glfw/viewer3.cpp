@@ -33,9 +33,10 @@ namespace delfem2 {
 namespace glfw {
 namespace viewer3 {
 
-static delfem2::glfw::CViewer3 *pViewer3 = 0;
+//static delfem2::glfw::CViewer3 *pViewer3 = nullptr; // this is only one even though there are multiple viewer3
 
 static void glfw_callback_key(GLFWwindow *window, int key, int scancode, int action, int mods) {
+  auto pViewer3 = static_cast<delfem2::glfw::CViewer3*>(glfwGetWindowUserPointer(window));
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
@@ -55,11 +56,18 @@ static void glfw_callback_resize(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
-static void glfw_callback_mouse_button(GLFWwindow *window, int button, int action, int mods) {
-  assert(pViewer3 != 0);
+static void glfw_callback_mouse_button(
+    GLFWwindow *window,
+    int button,
+    int action,
+    int mods)
+{
+  auto pViewer3 = static_cast<delfem2::glfw::CViewer3*>(glfwGetWindowUserPointer(window));
+//  std::cout << window << " key" << " " << pViewer3 << std::endl;
+  assert(pViewer3 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  const float asp = width / (float) height;
+  const float asp = static_cast<float>(width) / static_cast<float>(height);
   { // save input
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     nav.imodifier = mods;
@@ -96,10 +104,11 @@ static void glfw_callback_mouse_button(GLFWwindow *window, int button, int actio
 }
 
 static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, double ypos) {
-  assert(pViewer3 != 0);
+  auto pViewer3 = static_cast<delfem2::glfw::CViewer3*>(glfwGetWindowUserPointer(window));
+  assert(pViewer3 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  const float asp = width / (float) height;
+  const float asp = static_cast<float>(width) / static_cast<float>(height);
   { // update nav
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     const double mov_end_x = (2.0 * xpos - width) / width;
@@ -135,6 +144,7 @@ static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, doubl
 }
 
 static void glfw_callback_scroll(GLFWwindow *window, double xoffset, double yoffset) {
+  auto pViewer3 = static_cast<delfem2::glfw::CViewer3*>(glfwGetWindowUserPointer(window));
   assert(pViewer3 != nullptr);
   pViewer3->camera.scale *= pow(1.01, yoffset);
   pViewer3->mouse_wheel(yoffset);
@@ -146,11 +156,11 @@ static void glfw_callback_scroll(GLFWwindow *window, double xoffset, double yoff
 
 void delfem2::glfw::CViewer3::InitGL()
 {
-  delfem2::glfw::viewer3::pViewer3 = this;
+//  delfem2::glfw::viewer3::pViewer3 = this;
     // glfw window creation
     // --------------------
-  this->window = glfwCreateWindow(width,
-                                  height,
+  this->window = glfwCreateWindow(static_cast<int>(width),
+                                  static_cast<int>(height),
                                   "LearnOpenGL",
                                   nullptr,
                                   nullptr);
@@ -160,6 +170,7 @@ void delfem2::glfw::CViewer3::InitGL()
   }
   
   glfwMakeContextCurrent(this->window);
+  glfwSetWindowUserPointer(this->window, this);
   glfwSetFramebufferSizeCallback(this->window, delfem2::glfw::viewer3::glfw_callback_resize);
   glfwSetKeyCallback(            this->window, delfem2::glfw::viewer3::glfw_callback_key);
   glfwSetMouseButtonCallback(    this->window, delfem2::glfw::viewer3::glfw_callback_mouse_button);
@@ -196,7 +207,7 @@ void delfem2::glfw::CViewer3::DrawBegin_oldGL() const
   {
     int width0, height0;
     glfwGetFramebufferSize(window, &width0, &height0);
-    float asp = width0 / (float) height0;
+    float asp = static_cast<float>(width0) / static_cast<float>(height0);
     camera.Mat4_MVP_OpenGL(mMV,mP, asp);
   }
 
