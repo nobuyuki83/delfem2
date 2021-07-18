@@ -12,11 +12,10 @@ mkdir buildVS64
 cd buildVS64
 cmake -A x64 -Dgtest_force_shared_crt=ON ..
 cmake --build . --config Release
-mkdir ../../GTest_Lib
-cmake --install . --prefix ../../GTest_Lib
+cmake --install . --prefix ../../libgtest
 cd ../../..
 
-set path_gtest_root=%~dp0..\3rd_party\GTEST_Lib
+set path_gtest_root=%~dp0..\3rd_party\libgtest
 echo "path_gtest_root: %path_gtest_root%"
 
 cd test_cpp
@@ -41,47 +40,46 @@ git submodule update --init 3rd_party/glfw
 cd 3rd_party/glfw
 cmake . -A x64
 cmake --build . --config Release
-mkdir ../GLFW_Lib
-cmake --install . --prefix ../GLFW_Lib
+cmake --install . --prefix ../libglfw
 cd ../..
 
 : ##############################
 : glfw_oldgl
 
-set path_glfw_root=%~dp0..\3rd_party\GLFW_Lib
+set path_glfw_root=%~dp0..\3rd_party\libglfw
 echo "path_glfw_root: %path_glfw_root%"
 
 cd examples_oldgl_glfw
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake .. -A x64 -DUSE_HEADERONLY=ON -DGLFW_ROOT=%path_glfw_root%
+cmake .. -A x64 -DUSE_HEADERONLY=ON
 cmake --build . --config Release
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildVS64Static
 cd buildVS64Static
-cmake .. -A x64 -DUSE_HEADERONLY=OFF -DGLFW_ROOT=%path_glfw_root%
+cmake .. -A x64 -DUSE_HEADERONLY=OFF
 cmake --build . --config Release
 cd ../../
 
 : ##############################
 : glfw_newgl
 
-set path_glfw_root=%~dp0..\3rd_party\GLFW_Lib
+set path_glfw_root=%~dp0..\3rd_party\libglfw
 echo "path_glfw_root: %path_glfw_root%"
 
 cd examples_newgl_glfw
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake .. -A x64 -DUSE_HEADERONLY=ON -DGLFW_ROOT=%path_glfw_root%
+cmake .. -A x64 -DUSE_HEADERONLY=ON
 cmake --build . --config Release
 cd ../../
 
 cd examples_newgl_glfw
 mkdir buildVS64Static
 cd buildVS64Static
-cmake .. -A x64 -DUSE_HEADERONLY=OFF -DGLFW_ROOT=%path_glfw_root%
+cmake .. -A x64 -DUSE_HEADERONLY=OFF
 cmake --build . --config Release
 cd ../../
 
@@ -100,7 +98,7 @@ cd ../../../
 : ##############################
 : glfw_cnpy
 
-set path_glfw_root=%~dp0..\3rd_party\GLFW_Lib
+set path_glfw_root=%~dp0..\3rd_party\libglfw
 set path_zlib_lib=%~dp0..\3rd_party\zlib\buildMake\Release\zlib.lib
 set path_zlib_inc=%~dp0..\3rd_party\zlib
 echo "path_glfw_root: %path_glfw_root%"
@@ -131,8 +129,7 @@ cmake . -A x64 ^
   -DPYILMBASE_ENABLE=OFF ^ 
   -DBUILD_TESTING=OFF
 cmake --build . --config Release
-mkdir %path3rdparty%\OpenEXR_Lib
-cmake --install . --prefix %path3rdparty%\OpenEXR_Lib
+cmake --install . --prefix %path3rdparty%\libopenexr
 cd ../../
 
 : ##############################
@@ -148,10 +145,9 @@ git pull origin master
 cmake -A x64 . ^
   -DUSE_TESTS=OFF ^
   -DALEMBIC_SHARED_LIBS=ON ^
-  -DILMBASE_ROOT=%path3rdparty%\OpenEXR_Lib
+  -DILMBASE_ROOT=%path3rdparty%\libopenexr
 cmake --build . --config Release
-mkdir %path3rdparty%\Alembic_Lib
-cmake --install . --prefix %path3rdparty%\Alembic_Lib
+cmake --install . --prefix %path3rdparty%\libalembic
 cd ../../
 
 : ###############################
@@ -160,6 +156,6 @@ cd ../../
 cd examples_alembic
 mkdir buildVS64Static
 cd buildVS64Static
-cmake -A x64 .. -DILMBASE_ROOT=%path3rdparty%\OpenEXR_Lib
+cmake -A x64 .. -DILMBASE_ROOT=%path3rdparty%\libopenexr
 cmake --build .
 cd ../..
