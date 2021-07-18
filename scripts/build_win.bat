@@ -122,6 +122,7 @@ set path3rdparty=%~dp0..\3rd_party
 cd 3rd_party
 curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
 7z x openexr.zip -y
+mkdir libopenexr
 cd openexr-2.5.2
 cmake . -A x64 ^ 
   -DZLIB_ROOT=%path_zlib_root% ^
