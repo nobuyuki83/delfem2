@@ -183,6 +183,7 @@ jobs:
           -DBUILD_TESTING=OFF
         cmake --build . --config Release
         cd ..
+        mkdir libopenexr
         cd openexr-2.5.2
         $openexr_root=Convert-Path ../libopenexr
         echo "openexr_root: $openexr_root"
