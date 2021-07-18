@@ -7,12 +7,9 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "-O2 /W4 \
-     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 \
-     /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456")
+  set(CMAKE_CXX_FLAGS "/W4")
 else ()
-  set(CMAKE_CXX_FLAGS "-g \
-    -Wall -Wno-deprecated-declarations")
+  set(CMAKE_CXX_FLAGS "-g -Wall")
 endif ()
 
 #######################
@@ -26,7 +23,7 @@ add_definitions(-DPATH_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 
 # glfw
-SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/GLFW_Lib)
+SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 
 # opengl

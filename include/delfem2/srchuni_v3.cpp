@@ -35,23 +35,25 @@ T Volume_Tet(
 
 template <typename T>
 delfem2::CVec3<T> delfem2::CPtElm3<T>::getPos_Tet
-(const std::vector<double> &aXYZ,
- const std::vector<int> &aTet) const
+(const std::vector<double> &aXYZ_,
+ const std::vector<int> &aTet_) const
 {
-  assert(ielem>=0&&ielem<(int)aTet.size()/4);
-  int ip0 = aTet[ielem*4+0];
-  int ip1 = aTet[ielem*4+1];
-  int ip2 = aTet[ielem*4+2];
-  int ip3 = aTet[ielem*4+3];
-  const CVec3<T> p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-  const CVec3<T> p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-  const CVec3<T> p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
-  const CVec3<T> p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
+  assert(ielem>=0&&ielem<(int)aTet_.size()/4);
+  int ip0 = aTet_[ielem*4+0];
+  int ip1 = aTet_[ielem*4+1];
+  int ip2 = aTet_[ielem*4+2];
+  int ip3 = aTet_[ielem*4+3];
+  const CVec3<T> p0(aXYZ_[ip0*3+0], aXYZ_[ip0*3+1], aXYZ_[ip0*3+2]);
+  const CVec3<T> p1(aXYZ_[ip1*3+0], aXYZ_[ip1*3+1], aXYZ_[ip1*3+2]);
+  const CVec3<T> p2(aXYZ_[ip2*3+0], aXYZ_[ip2*3+1], aXYZ_[ip2*3+2]);
+  const CVec3<T> p3(aXYZ_[ip3*3+0], aXYZ_[ip3*3+1], aXYZ_[ip3*3+2]);
   return r0*p0+r1*p1+r2*p2+(1.0-r0-r1-r2)*p3;
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CVec3d delfem2::CPtElm3<double>::getPos_Tet
  (const std::vector<double> &aXYZ,
   const std::vector<int> &aTet) const;
+#endif
 
 // ----------------------------------------
 
@@ -59,19 +61,19 @@ template <typename T>
 void delfem2::CPtElm3<T>::setPos_Tet(
     int it0,
     const CVec3<T> &q,
-    const std::vector<double> &aXYZ,
-    const std::vector<int> &aTet)
+    const std::vector<double> &aXYZ_,
+    const std::vector<int> &aTet_)
 {
   namespace lcl = delfem2::srchuni;
-  assert(it0>=0&&it0<(int)aTet.size()/4);
-  int ip0 = aTet[it0*4+0];
-  int ip1 = aTet[it0*4+1];
-  int ip2 = aTet[it0*4+2];
-  int ip3 = aTet[it0*4+3];
-  const CVec3<T> p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-  const CVec3<T> p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-  const CVec3<T> p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
-  const CVec3<T> p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
+  assert(it0>=0&&it0<(int)aTet_.size()/4);
+  int ip0 = aTet_[it0*4+0];
+  int ip1 = aTet_[it0*4+1];
+  int ip2 = aTet_[it0*4+2];
+  int ip3 = aTet_[it0*4+3];
+  const CVec3<T> p0(aXYZ_[ip0*3+0], aXYZ_[ip0*3+1], aXYZ_[ip0*3+2]);
+  const CVec3<T> p1(aXYZ_[ip1*3+0], aXYZ_[ip1*3+1], aXYZ_[ip1*3+2]);
+  const CVec3<T> p2(aXYZ_[ip2*3+0], aXYZ_[ip2*3+1], aXYZ_[ip2*3+2]);
+  const CVec3<T> p3(aXYZ_[ip3*3+0], aXYZ_[ip3*3+1], aXYZ_[ip3*3+2]);
   double v0 = lcl::Volume_Tet( q,p1,p2,p3);
   double v1 = lcl::Volume_Tet(p0, q,p2,p3);
   double v2 = lcl::Volume_Tet(p0,p1, q,p3);
@@ -82,54 +84,60 @@ void delfem2::CPtElm3<T>::setPos_Tet(
   this->r1 = v1/vt;
   this->r2 = v2/vt;
 }
+#ifndef DFM2_HEADER_ONLY
 template void delfem2::CPtElm3<double>::setPos_Tet
- (int it0, const CVec3d& q,
-  const std::vector<double> &aXYZ,
-  const std::vector<int> &aTet);
+ (int, const CVec3d&,
+  const std::vector<double>&,
+  const std::vector<int>&);
+#endif
 
 // --------------------------------------------
 
 template <typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_Tri(
-    const std::vector<double>& aXYZ,
-    const std::vector<unsigned int>& aTri) const
+    const std::vector<double>& aXYZ_,
+    const std::vector<unsigned int>& aTri_) const
 {
-  assert( itri < aTri.size()/3 );
-  const int i0 = aTri[itri*3+0];
-  const int i1 = aTri[itri*3+1];
-  const int i2 = aTri[itri*3+2];
-  const CVec3<T> p0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
-  const CVec3<T> p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
-  const CVec3<T> p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
+  assert( itri < aTri_.size()/3 );
+  const int i0 = aTri_[itri*3+0];
+  const int i1 = aTri_[itri*3+1];
+  const int i2 = aTri_[itri*3+2];
+  const CVec3<T> p0(aXYZ_[i0*3+0], aXYZ_[i0*3+1], aXYZ_[i0*3+2]);
+  const CVec3<T> p1(aXYZ_[i1*3+0], aXYZ_[i1*3+1], aXYZ_[i1*3+2]);
+  const CVec3<T> p2(aXYZ_[i2*3+0], aXYZ_[i2*3+1], aXYZ_[i2*3+2]);
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Tri(
     const std::vector<double>&,
     const std::vector<unsigned int>&) const;
+#endif
 
 // --------------------------------------------
 
 template <typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_Tri(
-    const double* aXYZ,
+    const double* aXYZ_,
     unsigned int nXYZ,
-    const unsigned int* aTri,
+    const unsigned int* aTri_,
     unsigned int nTri) const
 {
   assert( itri < nTri );
-  const unsigned int i0 = aTri[itri*3+0];
-  const unsigned int i1 = aTri[itri*3+1];
-  const unsigned int i2 = aTri[itri*3+2];
-  const CVec3<T> p0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
-  const CVec3<T> p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
-  const CVec3<T> p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
+  const unsigned int i0 = aTri_[itri*3+0];
+  const unsigned int i1 = aTri_[itri*3+1];
+  const unsigned int i2 = aTri_[itri*3+2];
+  const CVec3<T> p0(aXYZ_[i0*3+0], aXYZ_[i0*3+1], aXYZ_[i0*3+2]);
+  const CVec3<T> p1(aXYZ_[i1*3+0], aXYZ_[i1*3+1], aXYZ_[i1*3+2]);
+  const CVec3<T> p2(aXYZ_[i2*3+0], aXYZ_[i2*3+1], aXYZ_[i2*3+2]);
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Tri(
     const double*,
     unsigned int,
     const unsigned int*,
     unsigned int) const;
+#endif
 
 // -----------------------------------------------
 
@@ -149,11 +157,14 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri
   const CVec3<T> n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).normalized();
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CVec3d delfem2::CPtElm2<double>::UNorm_Tri(
     const std::vector<double>&,
     const std::vector<unsigned int>&,
     const std::vector<double>&) const;
+#endif
 
+// ------------------------------------------
 
 template <typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
@@ -172,12 +183,16 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
   const CVec3<T> n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).normalized();
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CVec3d delfem2::CPtElm2<double>::UNorm_Tri(
     const double* aXYZ,
     unsigned int nXYZ,
     const unsigned int* aTri,
     unsigned int nTri,
     const double* aNorm) const;
+#endif
+
+// ------------------------------------------
 
 template <typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_TetFace
@@ -205,10 +220,12 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_TetFace
   p.p[2] = r0*aXYZ[iq0*3+2]+r1*aXYZ[iq1*3+2]+r2*aXYZ[iq2*3+2];
   return p;
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_TetFace(
     const std::vector<double>& aXYZ,
     const std::vector<int>& aTet,
     const std::vector<int>& aTetFace) const;
+#endif
 
 // ----------------------------------------
 
@@ -225,9 +242,11 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_Grid(
   if( this->itri%2 == 0 ){ return p00*r0 + p10*r1 + p11*(1-r0-r1); }
   return p00*r0 + p11*r1 + p01*(1-r0-r1);
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Grid(
     unsigned int nx, unsigned int ny,
     double el, std::vector<float>& aH) const;
+#endif
 
 // ----------------------------------------
 
@@ -244,13 +263,13 @@ bool delfem2::CPtElm2<T>::Check
   if( r2 < -eps || r2 > 1+eps ){ return false; }
   return true;
 }
+#ifndef DFM2_HEADER_ONLY
 template bool delfem2::CPtElm2<double>::Check (const std::vector<double>& aXYZ,
                                                    const std::vector<unsigned int>& aTri,
                                                    double eps) const;
+#endif
 
-
-
-
+// ------------------------------------------
 
 
 
@@ -387,25 +406,24 @@ void weightInTriangle
  */
 
 // ---------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------
 
 template <typename T>
 std::vector<delfem2::CPtElm2<T>>
 delfem2::IntersectionLine_MeshTri3(
     const CVec3<T>& org,
     const CVec3<T>& dir,
-    const std::vector<unsigned int>& aTri,
-    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri_,
+    const std::vector<T>& aXYZ_,
     T eps)
 {
   std::vector<CPtElm2<T>> aPES;
-  for(unsigned int itri=0;itri<aTri.size()/3;++itri){
-    const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
-    const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
-    const unsigned int ip2 = aTri[itri*3+2];  assert(ip2<aXYZ.size()/3);
-    const CVec3<T> p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-    const CVec3<T> p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-    const CVec3<T> p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
+  for(unsigned int itri=0;itri<aTri_.size()/3;++itri){
+    const unsigned int ip0 = aTri_[itri*3+0];  assert(ip0<aXYZ_.size()/3);
+    const unsigned int ip1 = aTri_[itri*3+1];  assert(ip1<aXYZ_.size()/3);
+    const unsigned int ip2 = aTri_[itri*3+2];  assert(ip2<aXYZ_.size()/3);
+    const CVec3<T> p0(aXYZ_[ip0*3+0], aXYZ_[ip0*3+1], aXYZ_[ip0*3+2]);
+    const CVec3<T> p1(aXYZ_[ip1*3+0], aXYZ_[ip1*3+1], aXYZ_[ip1*3+2]);
+    const CVec3<T> p2(aXYZ_[ip2*3+0], aXYZ_[ip2*3+1], aXYZ_[ip2*3+2]);
     double r0, r1;
     bool res = delfem2::IntersectRay_Tri3(r0,r1,
                                        org, dir, p0,p1,p2,
@@ -432,17 +450,17 @@ void delfem2::IntersectionRay_MeshTri3 (
     std::map<T,CPtElm2<T>>& mapDepthPES,
     const CVec3<T>& org,
     const CVec3<T>& dir,
-    const std::vector<unsigned int>& aTri,
-    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri_,
+    const std::vector<T>& aXYZ_,
     T eps)
 {
   const std::vector<CPtElm2<T>> aPES = IntersectionLine_MeshTri3(
       org, dir,
-      aTri, aXYZ,
+      aTri_, aXYZ_,
       eps);
   mapDepthPES.clear();
   for(auto pes : aPES){
-    CVec3<T> p0 = pes.Pos_Tri(aXYZ,aTri);
+    CVec3<T> p0 = pes.Pos_Tri(aXYZ_,aTri_);
     double depth = (p0-org).dot(dir);
     if( depth < 0 ) continue;
     mapDepthPES.insert( std::make_pair(depth, pes) );
@@ -465,19 +483,19 @@ void delfem2::IntersectionRay_MeshTri3DPart(
     std::map<T,CPtElm2<T>>& mapDepthPES,
     const CVec3<T>& org,
     const CVec3<T>& dir,
-    const std::vector<unsigned int>& aTri,
-    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri_,
+    const std::vector<T>& aXYZ_,
     const std::vector<unsigned int>& aIndTri,
     T eps)
 {
   mapDepthPES.clear();
   for(int itri : aIndTri){
-    const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
-    const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
-    const unsigned int ip2 = aTri[itri*3+2];  assert(ip2<aXYZ.size()/3);
-    const CVec3<T> p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-    const CVec3<T> p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-    const CVec3<T> p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
+    const unsigned int ip0 = aTri_[itri*3+0];  assert(ip0<aXYZ_.size()/3);
+    const unsigned int ip1 = aTri_[itri*3+1];  assert(ip1<aXYZ_.size()/3);
+    const unsigned int ip2 = aTri_[itri*3+2];  assert(ip2<aXYZ_.size()/3);
+    const CVec3<T> p0(aXYZ_[ip0*3+0], aXYZ_[ip0*3+1], aXYZ_[ip0*3+2]);
+    const CVec3<T> p1(aXYZ_[ip1*3+0], aXYZ_[ip1*3+1], aXYZ_[ip1*3+2]);
+    const CVec3<T> p2(aXYZ_[ip2*3+0], aXYZ_[ip2*3+1], aXYZ_[ip2*3+2]);
     double r0, r1;
     bool res = IntersectRay_Tri3(r0,r1,
                                  org, dir, p0,p1,p2,
@@ -659,12 +677,15 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTri3D(
   assert( pes.itri != UINT_MAX );
   return pes;
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CPtElm2<double> delfem2::Nearest_Point_MeshTri3D(
     const CVec3d&,
     const std::vector<double>&,
     const std::vector<unsigned int>&);
+#endif
 
-  
+// ----------------------------------------------
+
 
 template <typename T>
 delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTri3DPart(
@@ -693,11 +714,13 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTri3DPart(
   }
   return pes;
 }
+#ifndef DFM2_HEADER_ONLY
 template delfem2::CPtElm2<double> delfem2::Nearest_Point_MeshTri3DPart(
     const CVec3d&,
     const std::vector<double>&,
     const std::vector<unsigned int>&,
     const std::vector<int>&);
+#endif
 
 // ----------------------------------------------------------------------------
 
@@ -716,6 +739,8 @@ delfem2::CPtElm3<T> delfem2::Nearest_Point_MeshTet3D
   }
   return CPtElm3<T>();
 }
+
+// ------------------------------
 
 template <typename T>
 delfem2::CPtElm3<T> delfem2::Nearest_Point_MeshTet3D
@@ -819,6 +844,8 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTetFace3D
   }
 }
 
+// ----------------------------------------
+
 template <typename T>
 double delfem2::SDFNormal_NearestPoint
 (CVec3<T>& n0,
@@ -842,6 +869,7 @@ double delfem2::SDFNormal_NearestPoint
     return -dist;
   }
 }
+#ifndef DFM2_HEADER_ONLY
 template double delfem2::SDFNormal_NearestPoint
  (CVec3d& n0,
   const CVec3d& p0,
@@ -849,6 +877,7 @@ template double delfem2::SDFNormal_NearestPoint
   const double* aXYZ, unsigned int nXYZ,
   const unsigned int* aTri, unsigned int nTri,
   const double* aNorm);
+#endif
 
 // ------------------------------------------------------
 
@@ -875,6 +904,7 @@ double delfem2::SDFNormal_NearestPoint
     return -dist;
   }
 }
+#ifndef DFM2_HEADER_ONLY
 template double delfem2::SDFNormal_NearestPoint
  (CVec3d& n0,
   const CVec3d& p0,
@@ -882,23 +912,24 @@ template double delfem2::SDFNormal_NearestPoint
   const std::vector<double>& aXYZ,
   const std::vector<unsigned int>& aTri,
   const std::vector<double>& aNorm);
+#endif
 
-
+// ---------------------------------------------
 
 template <typename T>
 double delfem2::DistanceToTri
 (CPtElm2<T>& pes,
  const CVec3<T>& p,
  unsigned int itri0,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri)
+ const std::vector<double>& aXYZ_,
+ const std::vector<unsigned int>& aTri_)
 {
-  const unsigned int i0 = aTri[itri0*3+0];
-  const unsigned int i1 = aTri[itri0*3+1];
-  const unsigned int i2 = aTri[itri0*3+2];
-  const CVec3<T> p0(aXYZ[i0*3+0]-p.p[0], aXYZ[i0*3+1]-p.p[1], aXYZ[i0*3+2]-p.p[2]);
-  const CVec3<T> p1(aXYZ[i1*3+0]-p.p[0], aXYZ[i1*3+1]-p.p[1], aXYZ[i1*3+2]-p.p[2]);
-  const CVec3<T> p2(aXYZ[i2*3+0]-p.p[0], aXYZ[i2*3+1]-p.p[1], aXYZ[i2*3+2]-p.p[2]);
+  const unsigned int i0 = aTri_[itri0*3+0];
+  const unsigned int i1 = aTri_[itri0*3+1];
+  const unsigned int i2 = aTri_[itri0*3+2];
+  const CVec3<T> p0(aXYZ_[i0*3+0]-p.p[0], aXYZ_[i0*3+1]-p.p[1], aXYZ_[i0*3+2]-p.p[2]);
+  const CVec3<T> p1(aXYZ_[i1*3+0]-p.p[0], aXYZ_[i1*3+1]-p.p[1], aXYZ_[i1*3+2]-p.p[2]);
+  const CVec3<T> p2(aXYZ_[i2*3+0]-p.p[0], aXYZ_[i2*3+1]-p.p[1], aXYZ_[i2*3+2]-p.p[2]);
   double r0,r1;
   CVec3<T> p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
   assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
@@ -907,30 +938,33 @@ double delfem2::DistanceToTri
   pes.r1 = r1;
   return p_min.norm();
 }
+#ifndef DFM2_HEADER_ONLY
 template double delfem2::DistanceToTri
  (CPtElm2<double>& pes,
   const CVec3<double>& p,
   unsigned int itri0,
   const std::vector<double>& aXYZ,
   const std::vector<unsigned int>& aTri);
+#endif
 
+// -------------------------------------------
 
 template <typename T>
 double delfem2::DistanceToTri(
 	CPtElm2<T>& pes,
 	const CVec3<T>& p,
 	unsigned int itri0,
-	const double* aXYZ, 
+	const double* aXYZ_, 
 	size_t nXYZ,
-	const unsigned int* aTri, 
+	const unsigned int* aTri_, 
 	size_t nTri)
 {
-  const unsigned int i0 = aTri[itri0*3+0];
-  const unsigned int i1 = aTri[itri0*3+1];
-  const unsigned int i2 = aTri[itri0*3+2];
-  const CVec3<T> p0(aXYZ[i0*3+0]-p.p[0], aXYZ[i0*3+1]-p.p[1], aXYZ[i0*3+2]-p.p[2]);
-  const CVec3<T> p1(aXYZ[i1*3+0]-p.p[0], aXYZ[i1*3+1]-p.p[1], aXYZ[i1*3+2]-p.p[2]);
-  const CVec3<T> p2(aXYZ[i2*3+0]-p.p[0], aXYZ[i2*3+1]-p.p[1], aXYZ[i2*3+2]-p.p[2]);
+  const unsigned int i0 = aTri_[itri0*3+0];
+  const unsigned int i1 = aTri_[itri0*3+1];
+  const unsigned int i2 = aTri_[itri0*3+2];
+  const CVec3<T> p0(aXYZ_[i0*3+0]-p.p[0], aXYZ_[i0*3+1]-p.p[1], aXYZ_[i0*3+2]-p.p[2]);
+  const CVec3<T> p1(aXYZ_[i1*3+0]-p.p[0], aXYZ_[i1*3+1]-p.p[1], aXYZ_[i1*3+2]-p.p[2]);
+  const CVec3<T> p2(aXYZ_[i2*3+0]-p.p[0], aXYZ_[i2*3+1]-p.p[1], aXYZ_[i2*3+2]-p.p[2]);
   double r0,r1;
   CVec3<T> p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
   assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
@@ -939,6 +973,7 @@ double delfem2::DistanceToTri(
   pes.r1 = r1;
   return p_min.norm();
 }
+#ifndef DFM2_HEADER_ONLY
 template double delfem2::DistanceToTri(
 	CPtElm2<double>& pes,
 	const CVec3<double>& p,
@@ -947,4 +982,5 @@ template double delfem2::DistanceToTri(
 	size_t nXYZ,
 	const unsigned int* aTri, 
 	size_t nTri);
+#endif
 

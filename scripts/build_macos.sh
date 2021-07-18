@@ -27,7 +27,7 @@ git checkout master
 git pull origin master
 cmake .
 cmake --build .
-mkdir ../GLFW_Lib
+mkdir ../libglfw
 cmake --install . --prefix ../GLFW_Lib
 cd ../..
 
@@ -199,7 +199,7 @@ git pull origin master
 mkdir build 
 cd build
 cmake ..
-cmake --install . --prefix ../../Eigen_Lib
+cmake --install . --prefix ../../libeigen
 cd ../../../
 
 echo "################################"
@@ -249,8 +249,8 @@ git checkout master
 git pull origin master
 cmake .
 cmake --build . 
-mkdir ../GTest_Lib
-cmake --install . --prefix ../GTest_Lib
+mkdir ../libgtest
+cmake --install . --prefix ../libgtest
 cd ../../
 
 echo "###############################"
@@ -309,8 +309,8 @@ git checkout master
 git pull origin master
 cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
 cmake --build .
-mkdir ../Alembic_Lib
-cmake --install . --prefix ../Alembic_Lib
+mkdir ../libalembic
+cmake --install . --prefix ../libalembic
 cd ../..
 
 cd examples_alembic
