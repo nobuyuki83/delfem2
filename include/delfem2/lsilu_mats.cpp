@@ -129,7 +129,7 @@ class CRowLevNext {
 public:
   unsigned int row;
   unsigned int lev;
-  int next;
+  unsigned int next;
 };
 
 } // ilu
@@ -906,7 +906,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
         listNonzero[inz].next = inz+1;
         inz++;
       }
-      listNonzero[inz-1].next = -1;
+      listNonzero[inz-1].next = UINT_MAX;
     }
     
     unsigned int knz_cur = 0;
@@ -916,7 +916,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
       const unsigned int ik_lev0 = listNonzero[knz_cur].lev;
       if ((int)ik_lev0+1>lev_fill && lev_fill!=-1){
         knz_cur = listNonzero[knz_cur].next;
-        if (knz_cur==-1) break;
+        if (knz_cur==UINT_MAX) break;
         continue;
       }
       if (kblk0>=iblk) break;
@@ -933,9 +933,9 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
         // check if this is fill in
         bool is_fill_in = false;
         for (;;){
-          const int jnz_nex = listNonzero[jnz_cur].next;
-          assert((jnz_nex>=0&&jnz_nex<(int)nblk)||jnz_nex==-1);
-          if (jnz_nex==-1){ is_fill_in = true; break; }
+          const unsigned int jnz_nex = listNonzero[jnz_cur].next;
+          assert( jnz_nex<nblk || jnz_nex==UINT_MAX );
+          if (jnz_nex==UINT_MAX){ is_fill_in = true; break; }
           if (listNonzero[jnz_nex].row>jblk0){ is_fill_in = true; break; }
           if (listNonzero[jnz_nex].row==jblk0){ break; }
           assert(listNonzero[jnz_nex].row < jblk0);
@@ -954,8 +954,8 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
         jnz_cur = inz_last;
       }
       knz_cur = listNonzero[knz_cur].next;
-      assert((knz_cur>=0&&knz_cur<(int)nblk)||knz_cur==-1);
-      if (knz_cur==-1) break;
+      assert( knz_cur<nblk || knz_cur==UINT_MAX );
+      if (knz_cur==UINT_MAX) break;
     }
     
     // -------------------------------------
