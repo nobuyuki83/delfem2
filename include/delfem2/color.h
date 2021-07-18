@@ -72,26 +72,27 @@ public:
     this->b = b;
     this->a = a;
   }
-  explicit CColor(const std::vector<double>& v){
-    this->r = 1.0;
-    this->g = 1.0;
-    this->b = 1.0;
-    this->a = 1.0;
+  template <typename T>
+  explicit CColor(const std::vector<T>& v){
+    this->r = 1;
+    this->g = 1;
+    this->b = 1;
+    this->a = 1;
     if( v.size() == 4 ){
-      this->r = v[0];
-      this->g = v[1];
-      this->b = v[2];
-      this->a = v[3];
+      this->r = static_cast<float>(v[0]);
+      this->g = static_cast<float>(v[1]);
+      this->b = static_cast<float>(v[2]);
+      this->a = static_cast<float>(v[3]);
     }
     else if( v.size() == 3 ){
-      this->r = v[0];
-      this->g = v[1];
-      this->b = v[2];
+      this->r = static_cast<float>(v[0]);
+      this->g = static_cast<float>(v[1]);
+      this->b = static_cast<float>(v[2]);
     }
     else if( !v.empty() ){
-      this->r = v[0];
-      this->g = v[0];
-      this->b = v[0];
+      this->r = static_cast<float>(v[0]);
+      this->g = static_cast<float>(v[0]);
+      this->b = static_cast<float>(v[0]);
     }
   }
   void setRandomColor(){
@@ -100,7 +101,7 @@ public:
     b = (float)rand()/(float(RAND_MAX)+1.0f);
   }
   void setRandomVividColor(){
-    const float hue = rand()/(RAND_MAX+1.0);
+    const float hue = (float)rand()/float(RAND_MAX+1.f);
     GetRGB_HSV(r,g,b, hue,1.f,1.f);
   }
   /*
@@ -170,7 +171,7 @@ class CColorMap
 {
 public:
   CColorMap() = default;
-  CColorMap(double min, double max, const std::string& str){
+  CColorMap(float min, float max, const std::string& str){
     if( str == "bgr" ){
       ColorMap_BlueGrayRed(aColor, min, max);
     }

@@ -412,17 +412,18 @@ DFM2_INLINE void delfem2::opengl::DrawCircleArrow(
 // --------------------------------------------------------
 
 template <typename REAL>
-DFM2_INLINE void delfem2::opengl::DrawCircleWire
-(const CVec3<REAL>& axis,
- const CVec3<REAL>& org,
- REAL r)
+DFM2_INLINE void delfem2::opengl::DrawCircleWire(
+  const CVec3<REAL>& axis,
+  const CVec3<REAL>& org,
+  REAL r)
 {
   const REAL pi = 3.1415926535;
-  int n = 32; REAL dt = 2*pi/n;
+  int n = 32; 
+  REAL dt0 = 2*pi/n;
   CVec3<REAL> vh,vw; GetVertical2Vector(axis, vh, vw);
   ::glBegin(GL_LINE_STRIP);
   for(int i=0;i<n+1;i++) {
-    CVec3<REAL> p  = org + (REAL)(r*sin(dt*i))*vh + (REAL)(r*cos(dt*i))*vw;
+    CVec3<REAL> p  = org + (REAL)(r*sin(dt0*i))*vh + (REAL)(r*cos(dt0*i))*vw;
     myGlVertex(p);
   }
   ::glEnd();
@@ -543,7 +544,7 @@ DFM2_INLINE void delfem2::opengl::drawPolyLine3D
 {
   if( aP.empty() ) return;
   ::glBegin(GL_LINES);
-  for (size_t ip = 0; ip<aP.size()-1; ip++){
+  for (unsigned int ip = 0; ip<aP.size()-1; ip++){
     unsigned int jp = ip+1;
     myGlVertex(ip,aP);
     myGlVertex(jp,aP);
@@ -551,7 +552,7 @@ DFM2_INLINE void delfem2::opengl::drawPolyLine3D
   ::glEnd();
   //
   ::glBegin(GL_POINTS);
-  for (size_t ip = 0; ip<aP.size(); ip++){
+  for (unsigned int ip = 0; ip<aP.size(); ip++){
     myGlVertex(ip,aP);
   }
   ::glEnd();

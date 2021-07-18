@@ -50,7 +50,7 @@ void Draw_CGrid3(
   }
    */
   {
-    dfm2::opengl::myGlMaterialDiffuse(dfm2::CColor::Gray(0.9));
+    dfm2::opengl::myGlMaterialDiffuse(dfm2::CColor::Gray(0.9f));
     ::glEnable(GL_LIGHTING);
     ::glEnable(GL_NORMALIZE);
     const unsigned int nx = grid.ndivx;
