@@ -173,7 +173,7 @@ void MeshClustering(
       aDist0,aOrder,
       itri_ker, aTriSuTri,ntri);
   for (unsigned int icluster = 1; icluster < ncluster; ++icluster) {
-    unsigned int itri_maxdist;
+	unsigned int itri_maxdist = UINT_MAX;
     { // find triangle with maximum distance
       double idist_max = 0;
       for (unsigned int it = 0; it < ntri; ++it) {
@@ -182,6 +182,7 @@ void MeshClustering(
         itri_maxdist = it;
       }
     }
+	assert(itri_maxdist != UINT_MAX);
     std::vector<unsigned int> aDist1(ntri, UINT_MAX);
     DijkstraElem_MeshElemTopo(
         aDist1,aOrder,
