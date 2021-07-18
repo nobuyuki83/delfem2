@@ -36,8 +36,7 @@ jobs:
         cd 3rd_party/googletest
         cmake .
         cmake --build .
-        mkdir ../GTest_Lib
-        cmake --install . --prefix ../GTest_Lib
+        cmake --install . --prefix ../libgtest
         cd ../../        
 
     - name: test_cpp
@@ -89,8 +88,8 @@ jobs:
         cd 3rd_party/glfw
         cmake .
         cmake --build . 
-        mkdir ../GLFW_Lib
-        cmake --install . --prefix ../GLFW_Lib
+        mkdir ../libglfw
+        cmake --install . --prefix ../libglfw
         cd ../..
 
     - name: build examples (oldgl,glfw)
@@ -201,7 +200,8 @@ jobs:
         git checkout master
         git pull origin master
         cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
-        make
+        cmake --build . 
+        cmake --install . --prefix=libalembic
         cd ../..
 
         cd examples_alembic

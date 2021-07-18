@@ -39,7 +39,8 @@ script: |
   git submodule update --init -- 3rd_party/googletest
   cd 3rd_party/googletest
   cmake .
-  make
+  cmake --build .
+  cmake --install . --prefix=../libgtest
   cd ../../
 
   echo "# ----------------"
@@ -66,7 +67,8 @@ script: |
   git submodule update --init -- 3rd_party/glfw
   cd 3rd_party/glfw
   cmake .
-  make
+  cmake --build .
+  cmake --install . --prefix=../libglfw
   cd ../..
 
   cd examples_oldgl_glfw

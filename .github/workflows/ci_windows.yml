@@ -34,8 +34,7 @@ jobs:
         cd buildVS64
         cmake -A x64 -Dgtest_force_shared_crt=ON ..
         cmake --build . --config Release
-        mkdir ../../GTest_Lib
-        cmake --install . --prefix ../../GTest_Lib
+        cmake --install . --prefix ../../libgtest
         cd ../../..
 
     - name: build & run test_cpp    
@@ -74,8 +73,7 @@ jobs:
         cd 3rd_party/glfw
         cmake . -A x64
         cmake --build . --config Release
-        mkdir ../GLFW_Lib
-        cmake --install . --prefix ../GLFW_Lib        
+        cmake --install . --prefix ../libglfw
         cd ../..
 
     - name: build examples (oldgl,glfw)
@@ -185,9 +183,8 @@ jobs:
           -DBUILD_TESTING=OFF
         cmake --build . --config Release
         cd ..
-        mkdir OpenEXR_Lib     
         cd openexr-2.5.2
-        $openexr_root=Convert-Path ../OpenEXR_Lib
+        $openexr_root=Convert-Path ../libopenexr
         echo "openexr_root: $openexr_root"
         cmake --install . --prefix "$openexr_root"
         cd ../../
@@ -197,7 +194,7 @@ jobs:
         echo "###############################"
         echo "## build alembic"
 
-        $openexr_root=Convert-Path 3rd_party/OpenEXR_Lib
+        $openexr_root=Convert-Path 3rd_party/libopenexr
         echo "openexr_root: $openexr_root"
 
         git submodule update --init -- 3rd_party/alembic        
@@ -208,10 +205,9 @@ jobs:
             -DILMBASE_ROOT="$openexr_root"
         cmake --build . --config Release
         cd ..
-        mkdir Alembic_Lib
         cd alembic
-        $alembic_root=Convert-Path ../Alembic_Lib
-        echo "alembic_root: $alembic_root"        
+        $alembic_root=Convert-Path ../libalembic
+        echo "alembic_root: $alembic_root" 
         cmake --install . --prefix "$alembic_root"
         cd ../..
 
@@ -220,7 +216,7 @@ jobs:
         echo "###############################"
         echo "## build examples alembic"
 
-        $openexr_root=Convert-Path 3rd_party/OpenEXR_Lib
+        $openexr_root=Convert-Path 3rd_party/libopenexr
         echo "openexr_root: $openexr_root"
 
         cd examples_alembic
@@ -240,7 +236,7 @@ jobs:
         mkdir build
         cd build
         cmake ..
-        cmake --install . --prefix ../../Eigen_Lib
+        cmake --install . --prefix ../../libeigen
 
 
     - name: build & run test_eigen
