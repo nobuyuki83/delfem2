@@ -26,9 +26,9 @@ cd 3rd_party/glfw
 git checkout master
 git pull origin master
 cmake .
-cmake --build .
+cmake --build . 
 mkdir ../libglfw
-cmake --install . --prefix ../GLFW_Lib
+cmake --install . --prefix ../libglfw
 cd ../..
 
 
