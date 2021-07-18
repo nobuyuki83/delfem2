@@ -206,6 +206,7 @@ jobs:
             -DILMBASE_ROOT="$openexr_root"
         cmake --build . --config Release
         cd ..
+        mkdir libalembic
         cd alembic
         $alembic_root=Convert-Path ../libalembic
         echo "alembic_root: $alembic_root" 

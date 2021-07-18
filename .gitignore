@@ -64,6 +64,7 @@ test_inputs/smpl_model_f.npz
 test_inputs/smpl_model_m.npz
 3rd_party/GLFW_Lib
 3rd_party/libglfw
+3rd_party/libopenexr
 3rd_party/OpenEXR_Lib
 3rd_party/openexr-2.5.2
 3rd_party/openexr.zip
