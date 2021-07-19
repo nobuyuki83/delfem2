@@ -33,7 +33,7 @@ TEST(matvec,vecscale)
   std::mt19937 engin(randomDevice());
 
   for(int itr=0;itr<1000;++itr) {
-    const int n = distUI(engin);
+    const unsigned int n = distUI(engin);
     std::vector<float> in(n), out(n);
     for (int i = 0; i < n; i++) in[i] = distF(engin);
 
@@ -129,9 +129,9 @@ TEST(bvh,minmax_po3d)
       const unsigned int np = dist0(engine);
       aXYZ.resize(np * 3);
       for (int ip = 0; ip < np; ++ip) {
-        aXYZ[ip * 3 + 0] = dist1(engine) * 1.0 + dist2(engine);
-        aXYZ[ip * 3 + 1] = dist1(engine) * 0.5 + dist2(engine);
-        aXYZ[ip * 3 + 2] = dist1(engine) * 0.3 + dist2(engine);
+        aXYZ[ip * 3 + 0] = dist1(engine) * 1.0f + dist2(engine);
+        aXYZ[ip * 3 + 1] = dist1(engine) * 0.5f + dist2(engine);
+        aXYZ[ip * 3 + 2] = dist1(engine) * 0.3f + dist2(engine);
       }
     }
 
@@ -163,7 +163,7 @@ TEST(bvh,meshtri3d_centrad)
     unsigned int nr = dist0(engin);
     unsigned int nl = dist0(engin);
     dfm2::MeshTri3_Torus(aXYZ, aTri,
-                         0.5, 0.20, nr, nl );
+                         0.5f, 0.2f, nr, nl );
     const unsigned int nTri = aTri.size() / 3;
     // -----------------------------------------------------
     std::vector<float> aXYZ_c0;
@@ -212,8 +212,8 @@ void FlagBVHMortonCode(
 }
 
 TEST(bvh,morton_code) {
-  std::uniform_real_distribution<> udist0(0.0, 1.0);
-  std::uniform_int_distribution<> udist1(0, 100000);
+  std::uniform_real_distribution<float> udist0(0.0, 1.0);
+  std::uniform_int_distribution<unsigned int> udist1(0, 100000);
   std::random_device randomDevice;
   std::mt19937 rng(randomDevice());
   // -----------------------------------
@@ -229,13 +229,13 @@ TEST(bvh,morton_code) {
         aXYZ[i * 3 + 1] = udist0(rng);
         aXYZ[i * 3 + 2] = udist0(rng);
       }
-      std::uniform_int_distribution<> udist2(0, N-1);
+      std::uniform_int_distribution<unsigned int> udist2(0, N-1);
       for(int iip=0;iip<3;++iip){ // hash collision
         const unsigned int ip = udist2(rng);
         assert( N >= 0 && ip < N);
-        const double x0 = aXYZ[ip*3+0];
-        const double y0 = aXYZ[ip*3+1];
-        const double z0 = aXYZ[ip*3+2];
+        const float x0 = aXYZ[ip*3+0];
+        const float y0 = aXYZ[ip*3+1];
+        const float z0 = aXYZ[ip*3+2];
         for(int iduplicate=0;iduplicate<2;iduplicate++){
           aXYZ.insert(aXYZ.begin(), z0);
           aXYZ.insert(aXYZ.begin(), y0);
@@ -353,11 +353,11 @@ TEST(bvh,aabb_tri)
     unsigned int nr = dist0(engin);
     unsigned int nl = dist0(engin);
     dfm2::MeshTri3_Torus(aXYZ, aTri,
-                         0.5, 0.20, nr, nl);
+                         0.5f, 0.2f, nr, nl);
     for (int ip = 0; ip < aXYZ.size() / 3; ++ip) {
-      aXYZ[ip * 3 + 0] += 0.05 * dist1(engin);
-      aXYZ[ip * 3 + 1] += 0.05 * dist1(engin);
-      aXYZ[ip * 3 + 2] += 0.05 * dist1(engin);
+      aXYZ[ip * 3 + 0] += 0.05f * dist1(engin);
+      aXYZ[ip * 3 + 1] += 0.05f * dist1(engin);
+      aXYZ[ip * 3 + 2] += 0.05f * dist1(engin);
     }
     const unsigned int nTri = aTri.size() / 3;
     // -----------------------------------------------------
