@@ -17,7 +17,8 @@ cd 3rd_party/googletest
 git checkout master 
 git pull origin master
 cmake .
-make
+cmake --build .
+cmake --install . --prefix ../libgtest
 cd ../..
 
 echo "#############################"
@@ -41,14 +42,15 @@ cd ../../
 
 echo "test for C++ finished"
 
-#######################
+echo "#######################"
 
 git submodule update --init -- 3rd_party/glfw
 cd 3rd_party/glfw
 git checkout master
 git pull origin master
 cmake .
-make
+cmake --build . 
+cmake --install . --prefix ../libglfw
 cd ../..
 
 cd examples_oldgl_glfw
@@ -72,4 +74,17 @@ cmake ..
 make
 cd ../../
 
+
+echo "#######################"
+
+git submodule update --init -- 3rd_party/eigen
+cd 3rd_party/eigen
+git checkout master
+git pull origin master
+mkdir build
+cd build
+cmake ..
+cmake --build . 
+cmake --install . --prefix ../../libeigen
+cd ../../../
 
