@@ -713,11 +713,13 @@ template void delfem2::Mat4_Quat(float r[], const float q[]);
 template void delfem2::Mat4_Quat(double r[], const double q[]);
 #endif
 
+// --------------------------------
+
 // return transpose matrix of Mat4_Quat
 template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_QuatConj(
-    REAL r[],
-    const REAL q[])
+    REAL* r,
+    const REAL* q)
 {
   const REAL x2 = q[0] * q[0] * 2;
   const REAL y2 = q[1] * q[1] * 2;
@@ -745,6 +747,10 @@ DFM2_INLINE void delfem2::Mat4_QuatConj(
   r[14] = 0;
   r[15] = 1;
 }
+#ifndef DFM2_HEADER_ONLY
+template DFM2_INLINE void delfem2::Mat4_QuatConj(float* r,const float* q);
+template DFM2_INLINE void delfem2::Mat4_QuatConj(double* r,const double* q);
+#endif
 
 /*
 // maybe same as above ?

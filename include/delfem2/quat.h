@@ -175,8 +175,11 @@ class CQuat
 {
 public:
   CQuat() : q{0,0,0,1} {}
+
   explicit CQuat(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
-  CQuat(T r, T v0, T v1, T v2) : q{r, v0, v1, v2} {};
+
+  CQuat(T w, T x, T y, T z) : q{x, y, z, w} {};
+
   ~CQuat()= default;
   // -----------
   static CQuat Random(T a){

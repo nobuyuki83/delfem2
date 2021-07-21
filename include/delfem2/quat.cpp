@@ -147,7 +147,7 @@ DFM2_INLINE void delfem2::Copy_Quat(
     REAL r[],
     const REAL p[])
 {
-  memcpy(r,p,sizeof(REAL)*4);
+  std::memcpy(r,p,sizeof(REAL)*4);
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Copy_Quat(float r[], const float p[]);
@@ -171,7 +171,10 @@ DFM2_INLINE void delfem2::Quat_Bryant(
   delfem2::QuatQuat(qtmp_yx, dqy, dqx);
   delfem2::QuatQuat(q, dqz, qtmp_yx);
 }
-
+#ifndef DFM2_HEADER_ONLY
+template DFM2_INLINE void delfem2::Quat_Bryant(float q[4],float x,float y,float z);
+template DFM2_INLINE void delfem2::Quat_Bryant(double q[4],double x,double y,double z);
+#endif
 
 // ------------------------
 
@@ -195,6 +198,10 @@ DFM2_INLINE void delfem2::Quat_CartesianAngle(
   q[2] = std::sin(lena * half) * a[2] / lena;
   q[3] = std::cos(lena * half);
 }
+#ifndef DFM2_HEADER_ONLY
+template DFM2_INLINE void delfem2::Quat_CartesianAngle(float q[4], const float a[3]);
+template DFM2_INLINE void delfem2::Quat_CartesianAngle(double q[4], const double a[3]);
+#endif
 
 
 // ---------------------------------------------------------------------
