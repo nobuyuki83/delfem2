@@ -128,7 +128,7 @@ public:
   double scale; // scale
 
   /**
-   * @brief rotation of the joint from parent joint (quaternion w,x,y,z).
+   * @brief rotation of the joint from parent joint (quaternion x,y,z,w).
    * @details this value will be changed  when pose is edited
    */
   double quatRelativeRot[4];

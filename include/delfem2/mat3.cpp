@@ -18,15 +18,15 @@ DFM2_INLINE void SetMatrix3_Quaternion
  (T r[],
   const T q[])
 {
-  const T x2 = q[1] * q[1] * 2;
-  const T y2 = q[2] * q[2] * 2;
-  const T z2 = q[3] * q[3] * 2;
-  const T xy = q[1] * q[2] * 2;
-  const T yz = q[2] * q[3] * 2;
-  const T zx = q[3] * q[1] * 2;
-  const T xw = q[1] * q[0] * 2;
-  const T yw = q[2] * q[0] * 2;
-  const T zw = q[3] * q[0] * 2;
+  const T x2 = q[0] * q[0] * 2;
+  const T y2 = q[1] * q[1] * 2;
+  const T z2 = q[2] * q[2] * 2;
+  const T xy = q[0] * q[1] * 2;
+  const T yz = q[1] * q[2] * 2;
+  const T zx = q[2] * q[0] * 2;
+  const T xw = q[0] * q[3] * 2;
+  const T yw = q[1] * q[3] * 2;
+  const T zw = q[2] * q[3] * 2;
   r[0] = 1 - y2 - z2;
   r[1] = xy - zw;
   r[2] = zx + yw;
@@ -423,15 +423,15 @@ DFM2_INLINE void delfem2::Mat3_Quat(
     REAL r[],
     const REAL q[])
 {
-  const REAL x2 = q[1] * q[1] * 2;
-  const REAL y2 = q[2] * q[2] * 2;
-  const REAL z2 = q[3] * q[3] * 2;
-  const REAL xy = q[1] * q[2] * 2;
-  const REAL yz = q[2] * q[3] * 2;
-  const REAL zx = q[3] * q[1] * 2;
-  const REAL xw = q[1] * q[0] * 2;
-  const REAL yw = q[2] * q[0] * 2;
-  const REAL zw = q[3] * q[0] * 2;
+  const REAL x2 = q[0] * q[0] * 2;
+  const REAL y2 = q[1] * q[1] * 2;
+  const REAL z2 = q[2] * q[2] * 2;
+  const REAL xy = q[0] * q[1] * 2;
+  const REAL yz = q[1] * q[2] * 2;
+  const REAL zx = q[2] * q[0] * 2;
+  const REAL xw = q[0] * q[3] * 2;
+  const REAL yw = q[1] * q[3] * 2;
+  const REAL zw = q[2] * q[3] * 2;
   r[ 0] = 1 - y2 - z2;
   r[ 1] = xy - zw;
   r[ 2] = zx + yw;
@@ -789,11 +789,11 @@ DFM2_INLINE void delfem2::svd3(
   U[6]=u0[2]; U[7]=u1[2]; U[8]=u2[2];
 }
 
-DFM2_INLINE void delfem2::GetRotPolarDecomp
-(double R[9],
- //
- const double am[9],
- int nitr)
+DFM2_INLINE void delfem2::GetRotPolarDecomp(
+    double R[9],
+    //
+    const double am[9],
+    int nitr)
 {
   double U[9], G[3], V[9];
   // am = UGV^T
@@ -834,9 +834,9 @@ DFM2_INLINE void delfem2::AxisAngleVectorCRV_Mat3(
   T eparam2[4];
   const CMat3<T> m(mat);
   m.GetQuat_RotMatrix(eparam2);
-  crv[0] = 4*eparam2[1]/(1+eparam2[0]);
-  crv[1] = 4*eparam2[2]/(1+eparam2[0]);
-  crv[2] = 4*eparam2[3]/(1+eparam2[0]);
+  crv[0] = 4*eparam2[0]/(1+eparam2[3]);
+  crv[1] = 4*eparam2[1]/(1+eparam2[3]);
+  crv[2] = 4*eparam2[2]/(1+eparam2[3]);
 }
 
 // -----------------------------------
@@ -1231,25 +1231,27 @@ template void delfem2::CMat3d::SetRotMatrix_BryantAngle(double rx, double ry, do
 // ---------------------------------
 
 template <typename T>
-void delfem2::CMat3<T>::GetQuat_RotMatrix(T quat[]) const{
-  constexpr T one4th = static_cast<T>(1.0 / 4.0);
+void delfem2::CMat3<T>::GetQuat_RotMatrix(
+    T quat[]) const
+{
+  constexpr T one4th = static_cast<T>(0.25);
   const T smat[16] = {
-    1+mat[0*3+0]+mat[1*3+1]+mat[2*3+2],
-    mat[2*3+1]-mat[1*3+2],
-    mat[0*3+2]-mat[2*3+0],
-    mat[1*3+0]-mat[0*3+1],
-    mat[2*3+1]-mat[1*3+2],
-    1+mat[0*3+0]-mat[1*3+1]-mat[2*3+2],
-    mat[0*3+1]+mat[1*3+0],
-    mat[0*3+2]+mat[2*3+0],
-    mat[0*3+2]-mat[2*3+0],
-    mat[1*3+0]+mat[0*3+1],
-    1-mat[0*3+0]+mat[1*3+1]-mat[2*3+2],
-    mat[1*3+2]+mat[2*3+1],
-    mat[1*3+0]-mat[0*3+1],
-    mat[0*3+2]+mat[2*3+0],
-    mat[1*3+2]+mat[2*3+1],
-    1-mat[0*3+0]-mat[1*3+1]+mat[2*3+2],
+    1+mat[0*3+0]-mat[1*3+1]-mat[2*3+2], // 00
+    mat[0*3+1]+mat[1*3+0], // 01
+    mat[0*3+2]+mat[2*3+0], // 02
+    mat[2*3+1]-mat[1*3+2], // 03
+    mat[1*3+0]+mat[0*3+1], // 10
+    1-mat[0*3+0]+mat[1*3+1]-mat[2*3+2], // 11
+    mat[1*3+2]+mat[2*3+1], // 12
+    mat[0*3+2]-mat[2*3+0], // 13
+    mat[0*3+2]+mat[2*3+0], // 20
+    mat[1*3+2]+mat[2*3+1], // 21
+    1-mat[0*3+0]-mat[1*3+1]+mat[2*3+2], // 22
+    mat[1*3+0]-mat[0*3+1], // 23
+    mat[2*3+1]-mat[1*3+2], // 30
+    mat[0*3+2]-mat[2*3+0], // 31
+    mat[1*3+0]-mat[0*3+1], // 32
+    1+mat[0*3+0]+mat[1*3+1]+mat[2*3+2], // 33
   };
 
   unsigned int imax;
@@ -1257,7 +1259,7 @@ void delfem2::CMat3<T>::GetQuat_RotMatrix(T quat[]) const{
   imax = ( smat[imax*4+imax] > smat[2*4+2] ) ? imax : 2;
   imax = ( smat[imax*4+imax] > smat[3*4+3] ) ? imax : 3;
 
-  quat[imax] = sqrt(smat[imax*4+imax])/2;
+  quat[imax] = std::sqrt(smat[imax*4+imax])/2;
   for(unsigned int k=0;k<4;k++){
     if( k==imax ) continue;
     quat[k] = smat[imax*4+k]*one4th/quat[imax];

@@ -694,15 +694,15 @@ DFM2_INLINE void delfem2::Mat4_Quat(
     REAL r[],
     const REAL q[])
 {
-  const REAL x2 = q[1] * q[1] * 2;
-  const REAL y2 = q[2] * q[2] * 2;
-  const REAL z2 = q[3] * q[3] * 2;
-  const REAL xy = q[1] * q[2] * 2;
-  const REAL yz = q[2] * q[3] * 2;
-  const REAL zx = q[3] * q[1] * 2;
-  const REAL xw = q[1] * q[0] * 2;
-  const REAL yw = q[2] * q[0] * 2;
-  const REAL zw = q[3] * q[0] * 2;
+  const REAL x2 = q[0] * q[0] * 2;
+  const REAL y2 = q[1] * q[1] * 2;
+  const REAL z2 = q[2] * q[2] * 2;
+  const REAL xy = q[0] * q[1] * 2;
+  const REAL yz = q[1] * q[2] * 2;
+  const REAL zx = q[2] * q[0] * 2;
+  const REAL xw = q[0] * q[3] * 2;
+  const REAL yw = q[1] * q[3] * 2;
+  const REAL zw = q[2] * q[3] * 2;
   r[ 0] = 1 - y2 - z2;  r[ 1] = xy - zw;      r[ 2] = zx + yw;     r[ 3] = 0;
   r[ 4] = xy + zw;      r[ 5] = 1 - z2 - x2;  r[ 6] = yz - xw;     r[ 7] = 0;
   r[ 8] = zx - yw;      r[ 9] = yz + xw;      r[10] = 1 - x2 - y2; r[11] = 0;
@@ -714,40 +714,54 @@ template void delfem2::Mat4_Quat(double r[], const double q[]);
 #endif
 
 // return transpose matrix of Mat4_Quat
+template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_QuatConj(
-    double r[],
-    const double q[])
+    REAL r[],
+    const REAL q[])
 {
-  const double x2 = q[1] * q[1] * 2.0;
-  const double y2 = q[2] * q[2] * 2.0;
-  const double z2 = q[3] * q[3] * 2.0;
-  const double xy = q[1] * q[2] * 2.0;
-  const double yz = q[2] * q[3] * 2.0;
-  const double zx = q[3] * q[1] * 2.0;
-  const double xw = q[1] * q[0] * 2.0;
-  const double yw = q[2] * q[0] * 2.0;
-  const double zw = q[3] * q[0] * 2.0;
-  r[ 0] = 1.0 - y2 - z2;  r[ 1] = xy + zw;        r[ 2] = zx - yw;        r[ 3] = 0;
-  r[ 4] = xy - zw;        r[ 5] = 1.0 - z2 - x2;  r[ 6] = yz + xw;        r[ 7] = 0;
-  r[ 8] = zx + yw;        r[ 9] = yz - xw;        r[10] = 1.0 - x2 - y2;  r[11] = 0;
-  r[12] = 0;              r[13] = 0;              r[14] = 0;              r[15] = 1.0;
+  const REAL x2 = q[0] * q[0] * 2;
+  const REAL y2 = q[1] * q[1] * 2;
+  const REAL z2 = q[2] * q[2] * 2;
+  const REAL xy = q[0] * q[1] * 2;
+  const REAL yz = q[1] * q[2] * 2;
+  const REAL zx = q[2] * q[0] * 2;
+  const REAL xw = q[0] * q[3] * 2;
+  const REAL yw = q[1] * q[3] * 2;
+  const REAL zw = q[2] * q[3] * 2;
+  r[ 0] = 1 - y2 - z2;
+  r[ 1] = xy + zw;
+  r[ 2] = zx - yw;
+  r[ 3] = 0;
+  r[ 4] = xy - zw;
+  r[ 5] = 1 - z2 - x2;
+  r[ 6] = yz + xw;
+  r[ 7] = 0;
+  r[ 8] = zx + yw;
+  r[ 9] = yz - xw;
+  r[10] = 1 - x2 - y2;
+  r[11] = 0;
+  r[12] = 0;
+  r[13] = 0;
+  r[14] = 0;
+  r[15] = 1;
 }
 
+/*
 // maybe same as above ?
 template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransQuat(
     REAL r[],
     const REAL q[])
 {
-  REAL x2 = q[1] * q[1] * 2;
-  REAL y2 = q[2] * q[2] * 2;
-  REAL z2 = q[3] * q[3] * 2;
-  REAL xy = q[1] * q[2] * 2;
-  REAL yz = q[2] * q[3] * 2;
-  REAL zx = q[3] * q[1] * 2;
-  REAL xw = q[1] * q[0] * 2;
-  REAL yw = q[2] * q[0] * 2;
-  REAL zw = q[3] * q[0] * 2;
+  REAL x2 = q[0] * q[0] * 2;
+  REAL y2 = q[1] * q[1] * 2;
+  REAL z2 = q[2] * q[2] * 2;
+  REAL xy = q[0] * q[1] * 2;
+  REAL yz = q[1] * q[2] * 2;
+  REAL zx = q[2] * q[0] * 2;
+  REAL xw = q[0] * q[3] * 2;
+  REAL yw = q[1] * q[3] * 2;
+  REAL zw = q[2] * q[3] * 2;
   // column 0
   r[ 0] = 1 - y2 - z2;
   r[ 1] = xy + zw;
@@ -773,7 +787,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransQuat(
 template void delfem2::Mat4_AffineTransQuat(float r[], const float q[]);
 template void delfem2::Mat4_AffineTransQuat(double r[], const double q[]);
 #endif
-
+*/
 
 /*
 void delfem2::MatMat4(
@@ -835,15 +849,15 @@ template <typename REAL>
 delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL* q)
 {
   CMat4<REAL> m;
-  const REAL x2 = q[1] * q[1] * 2;
-  const REAL y2 = q[2] * q[2] * 2;
-  const REAL z2 = q[3] * q[3] * 2;
-  const REAL xy = q[1] * q[2] * 2;
-  const REAL yz = q[2] * q[3] * 2;
-  const REAL zx = q[3] * q[1] * 2;
-  const REAL xw = q[1] * q[0] * 2;
-  const REAL yw = q[2] * q[0] * 2;
-  const REAL zw = q[3] * q[0] * 2;
+  const REAL x2 = q[0] * q[0] * 2;
+  const REAL y2 = q[1] * q[1] * 2;
+  const REAL z2 = q[2] * q[2] * 2;
+  const REAL xy = q[0] * q[1] * 2;
+  const REAL yz = q[1] * q[2] * 2;
+  const REAL zx = q[2] * q[0] * 2;
+  const REAL xw = q[0] * q[3] * 2;
+  const REAL yw = q[1] * q[3] * 2;
+  const REAL zw = q[2] * q[3] * 2;
   m.SetZero();
   m.mat[0*4+0] = 1 - y2 - z2; m.mat[0*4+1] = xy - zw;       m.mat[0*4+2] = zx + yw;
   m.mat[1*4+0] = xy + zw;     m.mat[1*4+1] = 1 - z2 - x2;   m.mat[1*4+2] = yz - xw;

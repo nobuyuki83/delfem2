@@ -40,7 +40,7 @@ template double delfem2::Length_Quat(const double q[]);
 template <typename T>
 DFM2_INLINE void delfem2::Normalize_Quat(T q[])
 {
-  const T len = sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);
+  const T len = std::sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);
   const T invlen = 1/len;
   q[0] *= invlen;
   q[1] *= invlen;
@@ -56,10 +56,10 @@ template void delfem2::Normalize_Quat(double q[]);
 
 template <typename T>
 DFM2_INLINE void delfem2::Quat_Identity(T q[4]){
-  q[0] = 1;
+  q[0] = 0;
   q[1] = 0;
   q[2] = 0;
-  q[3] = 0;
+  q[3] = 1;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Quat_Identity(float q[4]);
@@ -69,7 +69,8 @@ template void delfem2::Quat_Identity(double q[4]);
 // ----------------------------------
 
 /**
- * @details for the relationship between quaternion and rotation matrix, take a look at https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+ * @details for the relationship between quaternion and rotation matrix,
+ * take a look at https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
  */
 template <typename T>
 DFM2_INLINE void delfem2::QuatVec(
@@ -77,21 +78,18 @@ DFM2_INLINE void delfem2::QuatVec(
     const T q[4],
     const T vi[3])
 {
-  const T x2 = q[1] * q[1] * 2;
-  const T y2 = q[2] * q[2] * 2;
-  const T z2 = q[3] * q[3] * 2;
-  const T xy = q[1] * q[2] * 2;
-  const T yz = q[2] * q[3] * 2;
-  const T zx = q[3] * q[1] * 2;
-  const T xw = q[1] * q[0] * 2;
-  const T yw = q[2] * q[0] * 2;
-  const T zw = q[3] * q[0] * 2;
+  const T x2 = q[0] * q[0] * 2;
+  const T y2 = q[1] * q[1] * 2;
+  const T z2 = q[2] * q[2] * 2;
+  const T xy = q[0] * q[1] * 2;
+  const T yz = q[1] * q[2] * 2;
+  const T zx = q[2] * q[0] * 2;
+  const T xw = q[0] * q[3] * 2;
+  const T yw = q[1] * q[3] * 2;
+  const T zw = q[2] * q[3] * 2;
   vo[0] = (1 - y2 - z2)*vi[0] + (xy - zw    )*vi[1] + (zx + yw    )*vi[2];
   vo[1] = (xy + zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz - xw    )*vi[2];
   vo[2] = (zx - yw    )*vi[0] + (yz + xw    )*vi[1] + (1 - x2 - y2)*vi[2];
-//  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
-//  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
-//  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::QuatVec(float vo[3], const float q[4], const float vi[3]);
@@ -100,17 +98,17 @@ template void delfem2::QuatVec(double vo[3], const double q[4], const double vi[
 
 // -------------------------------------
 
-// multiply two quaternions
+// multiply two quaternions (x,y,z,w)
 template <typename REAL>
 DFM2_INLINE void delfem2::QuatQuat(
     REAL r[],
     const REAL p[],
     const REAL q[])
 {
-  r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3];
-  r[1] = p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2];
-  r[2] = p[0] * q[2] - p[1] * q[3] + p[2] * q[0] + p[3] * q[1];
-  r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
+  r[0] = p[3] * q[0] + p[0] * q[3] + p[1] * q[2] - p[2] * q[1];
+  r[1] = p[3] * q[1] - p[0] * q[2] + p[1] * q[3] + p[2] * q[0];
+  r[2] = p[3] * q[2] + p[0] * q[1] - p[1] * q[0] + p[2] * q[3];
+  r[3] = p[3] * q[3] - p[0] * q[0] - p[1] * q[1] - p[2] * q[2];
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::QuatQuat(float r[], const float p[], const float q[]);
@@ -121,26 +119,24 @@ template void delfem2::QuatQuat(double r[], const double p[], const double q[]);
 // ----------------------------------------
 
 // transform vector with conjugate of quaternion
+template <typename T>
 DFM2_INLINE void delfem2::QuatConjVec(
-    double vo[],
-    const double q[],
-    const double vi[])
+    T vo[],
+    const T q[],
+    const T vi[])
 {
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
-  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
-  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
-//  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
-//  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
-//  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+  const T x2 = q[0] * q[0] * 2;
+  const T y2 = q[1] * q[1] * 2;
+  const T z2 = q[2] * q[2] * 2;
+  const T xy = q[0] * q[1] * 2;
+  const T yz = q[1] * q[2] * 2;
+  const T zx = q[2] * q[0] * 2;
+  const T xw = q[0] * q[3] * 2;
+  const T yw = q[1] * q[3] * 2;
+  const T zw = q[2] * q[3] * 2;
+  vo[0] = (1 - y2 - z2)*vi[0] + (xy + zw    )*vi[1] + (zx - yw    )*vi[2];
+  vo[1] = (xy - zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz + xw    )*vi[2];
+  vo[2] = (zx + yw    )*vi[0] + (yz - xw    )*vi[1] + (1 - x2 - y2)*vi[2];
 }
 
 // -------------------------
@@ -151,10 +147,7 @@ DFM2_INLINE void delfem2::Copy_Quat(
     REAL r[],
     const REAL p[])
 {
-  r[0] = p[0];
-  r[1] = p[1];
-  r[2] = p[2];
-  r[3] = p[3];
+  memcpy(r,p,sizeof(REAL)*4);
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Copy_Quat(float r[], const float p[]);
@@ -163,59 +156,46 @@ template void delfem2::Copy_Quat(double r[], const double p[]);
 
 // -------------------------
 
-namespace delfem2 {
-
-template<>
-DFM2_INLINE void Quat_Bryant(
-    double q[4],
-    double x, double y, double z)
+template <typename T>
+DFM2_INLINE void delfem2::Quat_Bryant(
+    T q[4],
+    T x,
+    T y,
+    T z)
 {
-  const double dqx[4] = {cos(x * 0.5), sin(x * 0.5), 0.0, 0.0};
-  const double dqy[4] = {cos(y * 0.5), 0.0, sin(y * 0.5), 0.0};
-  const double dqz[4] = {cos(z * 0.5), 0.0, 0.0, sin(z * 0.5)};
-  double qtmp_yx[4];
+  constexpr T half = static_cast<T>(0.5);
+  const T dqx[4] = {std::sin(x * half), 0.0, 0.0, std::cos(x * half)};
+  const T dqy[4] = {0.0, std::sin(y * half), 0.0, std::cos(y * half)};
+  const T dqz[4] = {0.0, 0.0, std::sin(z * half), std::cos(z * half)};
+  T qtmp_yx[4];
   delfem2::QuatQuat(qtmp_yx, dqy, dqx);
   delfem2::QuatQuat(q, dqz, qtmp_yx);
 }
 
-template<>
-DFM2_INLINE void Quat_Bryant(
-    float q[4],
-    float x, float y, float z) {
-  const float dqx[4] = {cosf(x * 0.5f), sinf(x * 0.5f), 0.f, 0.f};
-  const float dqy[4] = {cosf(y * 0.5f), 0.f, sinf(y * 0.5f), 0.f};
-  const float dqz[4] = {cosf(z * 0.5f), 0.f, 0.f, sinf(z * 0.5f)};
-  float qtmp_yx[4];
-  delfem2::QuatQuat(qtmp_yx, dqy, dqx);
-  delfem2::QuatQuat(q, dqz, qtmp_yx);
-}
-
-}
 
 // ------------------------
 
-namespace delfem2 {
-
-template <>
-DFM2_INLINE void Quat_CartesianAngle(
-    double q[4],
-    const double a[3]) {
-  const double sqlen = a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
+template <typename T>
+DFM2_INLINE void delfem2::Quat_CartesianAngle(
+    T q[4],
+    const T a[3])
+{
+  constexpr T half = static_cast<T>(0.5);
+  const T sqlen = a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
   if( sqlen < 1.0e-10 ){
-    q[0] = 1-0.125*sqlen;
-    q[1] = 0.5 * a[0];
-    q[2] = 0.5 * a[1];
-    q[3] = 0.5 * a[2];
+    q[0] = half * a[0];
+    q[1] = half * a[1];
+    q[2] = half * a[2];
+    q[3] = 1-0.125*sqlen;
     return;
   }
-  const double lena = sqrt(sqlen);
-  q[0] = cos(lena * 0.5);
-  q[1] = sin(lena * 0.5) * a[0] / lena;
-  q[2] = sin(lena * 0.5) * a[1] / lena;
-  q[3] = sin(lena * 0.5) * a[2] / lena;
+  const T lena = std::sqrt(sqlen);
+  q[0] = std::sin(lena * half) * a[0] / lena;
+  q[1] = std::sin(lena * half) * a[1] / lena;
+  q[2] = std::sin(lena * half) * a[2] / lena;
+  q[3] = std::cos(lena * half);
 }
 
-}
 
 // ---------------------------------------------------------------------
 
@@ -258,9 +238,9 @@ template <typename T>
 CQuat<T> operator + (const CQuat<T>& lhs, const CQuat<T>& rhs)
 {
   return CQuat<T>(lhs.q[0]+rhs.q[0],
-                        lhs.q[1]+rhs.q[1],
-                        lhs.q[2]+rhs.q[2],
-                        lhs.q[3]+rhs.q[3]);
+                  lhs.q[1]+rhs.q[1],
+                  lhs.q[2]+rhs.q[2],
+                  lhs.q[3]+rhs.q[3]);
 }
 #ifndef DFM2_HEADER_ONLY
 template CQuat<double> operator + (const CQuat<double>& lhs, const CQuat<double>& rhs);
@@ -299,11 +279,12 @@ template CQuat<float> operator * (const CQuat<float>& lhs, float rhs);
 template <typename T>
 void delfem2::CQuat<T>::SetNormalized()
 {
-  const T len = (T)sqrt(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
-  q[0] /= len;
-  q[1] /= len;
-  q[2] /= len;
-  q[3] /= len;
+  const T len = std::sqrt(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
+  const T leninv = 1/len;
+  q[0] *= leninv;
+  q[1] *= leninv;
+  q[2] *= leninv;
+  q[3] *= leninv;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::CQuat<double>::SetNormalized();
@@ -315,7 +296,7 @@ template void delfem2::CQuat<float>::SetNormalized();
 template <typename T>
 void delfem2::CQuat<T>::SetSmallerRotation()
 {
-  if( q[0] > 0 ){ return; }
+  if( q[3] > 0 ){ return; }
   q[0] = -q[0];
   q[1] = -q[1];
   q[2] = -q[2];
@@ -330,10 +311,10 @@ template void delfem2::CQuat<float>::SetSmallerRotation();
 // ======================================================================
 
 template <typename T>
-delfem2::CQuat<T> delfem2::SphericalLinearInterp
- (const delfem2::CQuat<T>& q0,
-  const delfem2::CQuat<T>& q1,
-  T t)
+delfem2::CQuat<T> delfem2::SphericalLinearInterp(
+    const delfem2::CQuat<T>& q0,
+    const delfem2::CQuat<T>& q1,
+    T t)
 {
   const T qr = Dot_Quat(q0.q, q1.q);
   const T ss = 1 - qr * qr;
@@ -344,11 +325,11 @@ delfem2::CQuat<T> delfem2::SphericalLinearInterp
   const T pt = ph * t;
   const T t1 = std::sin(pt) / sp;
   const T t0 = std::sin(ph - pt) / sp;
-  CQuat<T> q;
-  q.q[0] = t0*q0.q[0] + t1*q1.q[0];
-  q.q[1] = t0*q0.q[1] + t1*q1.q[1];
-  q.q[2] = t0*q0.q[2] + t1*q1.q[2];
-  q.q[3] = t0*q0.q[3] + t1*q1.q[3];
+  CQuat<T> q(
+    t0*q0.q[0] + t1*q1.q[0],
+    t0*q0.q[1] + t1*q1.q[1],
+    t0*q0.q[2] + t1*q1.q[2],
+    t0*q0.q[3] + t1*q1.q[3]);
   return q;
 }
 #ifndef DFM2_HEADER_ONLY

@@ -356,9 +356,9 @@ DFM2_INLINE void delfem2::Mat4_ScaleMatTransl
 namespace delfem2 {
 
 template <typename REAL>
-DFM2_INLINE CVec3<REAL> operator*
- (const CQuat<REAL>& q,
-  const CVec3<REAL>& v)
+DFM2_INLINE CVec3<REAL> operator*(
+    const CQuat<REAL>& q,
+    const CVec3<REAL>& v)
 {
   CVec3<REAL> p;
   QuatVec(p.p,
@@ -382,12 +382,12 @@ DFM2_INLINE delfem2::CQuatd delfem2::Quat_CartesianAngle(const CVec3d& p)
 }
 
 
-DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_Linear
- (std::vector<double>& aQuat1,
-  const std::vector<double>& aXYZ0,
-  const std::vector<double>& aXYZ1,
-  const std::vector<unsigned int>& psup_ind,
-  const std::vector<unsigned int>& psup)
+DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_Linear (
+    std::vector<double>& aQuat1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup)
 {
   const size_t np = aXYZ0.size()/3;
   for(unsigned int ip=0;ip<np;++ip){

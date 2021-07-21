@@ -22,6 +22,12 @@ template <typename T>
 DFM2_INLINE void Normalize_Quat(
     T q[4]);
 
+/**
+ *
+ * @tparam T
+ * @param[out] qinv (x,y,z,w)
+ * @param[in] q quaternion (x,y,z,w)
+ */
 template <typename T>
 DFM2_INLINE void Inverse_Quat(
     T qinv[4],
@@ -29,20 +35,29 @@ DFM2_INLINE void Inverse_Quat(
 {
   const T sqlen = q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3];
   const T sqleninv = 1/sqlen;
-  qinv[0] = +q[0]*sqleninv;
+  qinv[0] = -q[0]*sqleninv;
   qinv[1] = -q[1]*sqleninv;
   qinv[2] = -q[2]*sqleninv;
-  qinv[3] = -q[3]*sqleninv;
+  qinv[3] = +q[3]*sqleninv;
 }
 
 
 /**
  * @brief Set Identity in the quaternion
+ * @param[out] q (x,y,z,w)
  */
 template <typename T>
 DFM2_INLINE void Quat_Identity(
     T q[4]);
 
+/**
+ * rotation arounc axis (order x->y->z)
+ * @tparam REAL
+ * @param[out] q (x,y,z,w)
+ * @param[in] x radian
+ * @param[in] y radian
+ * @param[in] z radian
+ */
 template <typename REAL>
 DFM2_INLINE void Quat_Bryant(
     REAL q[4],
@@ -51,8 +66,8 @@ DFM2_INLINE void Quat_Bryant(
 /**
  * @brief Quaternion for cartesian rotation angle (3D axis with magnitude of rotation angle)
  * @tparam REAL float and double
- * @param q (out)
- * @param a (in)
+ * @param[out] q (x,y,z,w)
+ * @param[in] a 3D vector (x,y,z)
  */
 template <typename REAL>
 DFM2_INLINE void Quat_CartesianAngle(
@@ -73,8 +88,8 @@ DFM2_INLINE void Copy_Quat(
  * @brief multiply two quaternion
  * @tparam REAL float or double
  * @param r (out)
- * @param p (in) lhs quaternion as 4D array (r,x,y,z)
- * @param q (in) rhs quaternion as 4D array (r,z,y,z)
+ * @param p (in) lhs quaternion as 4D array (x,y,z,w)
+ * @param q (in) rhs quaternion as 4D array (x,y,z,w)
  * @details quaternions don't commute (qp!=pq)
  */
 template <typename REAL>
@@ -83,6 +98,13 @@ DFM2_INLINE void QuatQuat(
     const REAL p[],
     const REAL q[]);
 
+/**
+ * inner product of two quaternion
+ * @tparam REAL
+ * @param[in] p (x,y,z,w)
+ * @param[in] q (x,y,z,w)
+ * @return
+ */
 template <typename REAL>
 DFM2_INLINE REAL Dot_Quat(
     const REAL p[],
@@ -105,10 +127,17 @@ DFM2_INLINE void QuatVec(
     const REAL q[],
     const REAL vi[]);
 
+/**
+ *
+ * @param[out] vo
+ * @param[in] q quaternion
+ * @param[in] vi vector
+ */
+template <typename T>
 DFM2_INLINE void QuatConjVec(
-    double vo[],
-    const double q[],
-    const double vi[]);
+    T vo[],
+    const T q[],
+    const T vi[]);
 
 // -------------------------------------------------------
 
@@ -145,17 +174,17 @@ template <typename T>
 class CQuat  
 {
 public:
-  CQuat() : q{1,0,0,0} {}
+  CQuat() : q{0,0,0,1} {}
   explicit CQuat(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
   CQuat(T r, T v0, T v1, T v2) : q{r, v0, v1, v2} {};
   ~CQuat()= default;
   // -----------
   static CQuat Random(T a){
     CQuat<T> q;
-    q.q[0] = 1.0;
+    q.q[0] = 2*a*rand()/(RAND_MAX+1.0)-a;
     q.q[1] = 2*a*rand()/(RAND_MAX+1.0)-a;
     q.q[2] = 2*a*rand()/(RAND_MAX+1.0)-a;
-    q.q[3] = 2*a*rand()/(RAND_MAX+1.0)-a;
+    q.q[3] = 1.0;
     Normalize_Quat(q.q);
     return q;
   }
@@ -175,17 +204,17 @@ public:
     return CQuat<double>((double)q[0], (double)q[1], (double)q[2], (double)q[3]);
   }
   CQuat<T> Conjugate() const {
-    return CQuat<T>(q[0], -q[1], -q[2], -q[3]);
+    return CQuat<T>(-q[0], -q[1], -q[2], +q[3]);
   }
   
   void SetNormalized();
   void SetSmallerRotation();
   
   static CQuat<T> Identity() {
-    return CQuat<T>(1,0,0,0);
+    return CQuat<T>(0,0,0,1);
   }
 public:
-  T q[4]; // w,x,y,z
+  T q[4]; // x,y,z,w
 };
 using CQuatd = CQuat<double>;
 using CQuatf = CQuat<float>;

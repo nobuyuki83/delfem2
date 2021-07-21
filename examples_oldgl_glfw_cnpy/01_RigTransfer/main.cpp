@@ -174,10 +174,10 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
       const unsigned int nBone = aBone.size();
       for(unsigned int ibone=0;ibone<nBone;++ibone){
         double* q = aBone[ibone].quatRelativeRot;
-        q[0] = 1.0;
-        q[1] = 0.00;
-        q[2] = 0.00;
-        q[3] = 0.00;
+        q[0] = 0.0;
+        q[1] = 0.0;
+        q[2] = 0.0;
+        q[3] = 1.0;
         dfm2::Normalize_Quat(q);
       }
       for(unsigned int ibs=0;ibs<nBone;++ibs){

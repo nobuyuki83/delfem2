@@ -351,10 +351,10 @@ void dfm2::SetBone(
     aBone[ibone0].transRelative[2] = node.translation[2];
   }
   if( node.rotation.size() == 4 ) { // there is a chance node.rotation is omitted
-    aBone[ibone0].quatRelativeRot[0] = node.rotation[3];
-    aBone[ibone0].quatRelativeRot[1] = node.rotation[0];
-    aBone[ibone0].quatRelativeRot[2] = node.rotation[1];
-    aBone[ibone0].quatRelativeRot[3] = node.rotation[2];
+    aBone[ibone0].quatRelativeRot[0] = node.rotation[0];
+    aBone[ibone0].quatRelativeRot[1] = node.rotation[1];
+    aBone[ibone0].quatRelativeRot[2] = node.rotation[2];
+    aBone[ibone0].quatRelativeRot[3] = node.rotation[3];
   }
   if( !node.scale.empty() ){
     aBone[ibone0].scale = node.scale[0];

@@ -75,35 +75,41 @@ DFM2_INLINE bool isPickCircle(
  * @details defiend for float and double for static library
  */
 template <typename REAL>
-DFM2_INLINE int PickHandlerRotation_PosQuat
-(const CVec3<REAL>& src, const CVec3<REAL>& dir,
- const CVec3<REAL>& pos, const REAL quat[4], REAL rad,
- REAL tol);
+DFM2_INLINE int PickHandlerRotation_PosQuat(
+    const CVec3<REAL>& src,
+    const CVec3<REAL>& dir,
+    const CVec3<REAL>& pos,
+    const REAL quat[4],
+    REAL rad,
+    REAL tol);
 
-DFM2_INLINE bool DragHandlerRot_PosQuat
-(double quat[4], int ielem,
- const CVec2d& sp0, const CVec2d& sp1,
- const CVec3d& pos,
- const float mMV[16], const float mPj[16]);
+DFM2_INLINE bool DragHandlerRot_PosQuat(
+    double quat[4],
+    int ielem,
+    const CVec2d& sp0,
+    const CVec2d& sp1,
+    const CVec3d& pos,
+    const float mMV[16],
+    const float mPj[16]);
 
-DFM2_INLINE CVec3d drag_AxisHandler
-(const CVec2d& sp0,
- const CVec2d& sp1,
- const CVec3d& p,
- const CVec3d& axis,
- double len,
- const float* mMV,
- const float* mPj);
+DFM2_INLINE CVec3d drag_AxisHandler(
+    const CVec2d& sp0,
+    const CVec2d& sp1,
+    const CVec3d& p,
+    const CVec3d& axis,
+    double len,
+    const float* mMV,
+    const float* mPj);
 
 template <typename REAL>
 class CGizmo_Rotation{
 public:
   CGizmo_Rotation(){
     size = 1.1;
-    quat[0] = 1.0;
+    quat[0] = 0.0;
     quat[1] = 0.0;
     quat[2] = 0.0;
-    quat[3] = 0.0;
+    quat[3] = 1.0;
     ielem_picked = -1;
     pos = CVec3<REAL>(0,0,0);
   }
