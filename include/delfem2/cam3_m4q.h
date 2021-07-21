@@ -47,7 +47,7 @@ public:
 
 public:
   CCam3_OnAxisZplusLookOrigin() :
-  trans{0,0,0}, Quat_tball{1,0,0,0}
+  trans{0,0,0}, Quat_tball{0,0,0,1}
   {
     is_pars = false;
     fovy = 10;

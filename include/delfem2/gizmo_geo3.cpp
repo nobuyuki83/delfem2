@@ -50,10 +50,13 @@ bool delfem2::isPickQuad
 }
 
 template <typename REAL>
-DFM2_INLINE int delfem2::PickHandlerRotation_PosQuat
-(const CVec3<REAL>& src, const CVec3<REAL>& dir,
- const CVec3<REAL>& pos, const REAL quat[4], REAL rad,
- REAL tol)
+DFM2_INLINE int delfem2::PickHandlerRotation_PosQuat(
+    const CVec3<REAL>& src,
+    const CVec3<REAL>& dir,
+    const CVec3<REAL>& pos,
+    const REAL quat[4],
+    REAL rad,
+    REAL tol)
 {
   using CV3 = CVec3<REAL>;
   const CV3 ax = QuatVec(quat,CV3(1,0,0));
@@ -120,12 +123,14 @@ DFM2_INLINE int delfem2::PickHandlerRotation_Mat4
 }
 
 
-DFM2_INLINE bool delfem2::DragHandlerRot_PosQuat
-(double quat[4], int ielem,
- const CVec2d& sp0,
- const CVec2d& sp1,
- const CVec3d& pos,
- const float mMV[16], const float mPj[16])
+DFM2_INLINE bool delfem2::DragHandlerRot_PosQuat(
+    double quat[4],
+    int ielem,
+    const CVec2d& sp0,
+    const CVec2d& sp1,
+    const CVec3d& pos,
+    const float mMV[16],
+    const float mPj[16])
 {
   if( ielem>=0 && ielem<3 ){
     double vi[3] = {0,0,0}; vi[ielem] = 1;
@@ -133,7 +138,7 @@ DFM2_INLINE bool delfem2::DragHandlerRot_PosQuat
     CVec3d v0(0,0,0); v0[ielem] = 1;
     CVec3d v1(vo[0],vo[1],vo[2]); v1.normalize();
     double ar = -DragCircle(sp0,sp1, pos, v1, mMV, mPj);
-    double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
+    const double dq[4] = { v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5), cos(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, dq, quat);
     Copy_Quat(quat,qtmp);
     return true;
@@ -141,10 +146,14 @@ DFM2_INLINE bool delfem2::DragHandlerRot_PosQuat
   return false;
 }
 
-bool delfem2::DragHandlerRot_Mat4
-(double quat[4], int ielem,
- const delfem2::CVec2d& sp0, const delfem2::CVec2d& sp1, double mat[16],
- const float mMV[16], const float mPj[16])
+bool delfem2::DragHandlerRot_Mat4(
+    double quat[4],
+    int ielem,
+    const delfem2::CVec2d& sp0,
+    const delfem2::CVec2d& sp1,
+    double mat[16],
+    const float mMV[16],
+    const float mPj[16])
 {
   if( ielem>=0 && ielem<3 ){
     double vi[3] = {0,0,0}; vi[ielem] = 1;
@@ -153,7 +162,7 @@ bool delfem2::DragHandlerRot_Mat4
     CVec3d v1(vo[0],vo[1],vo[2]); v1.normalize();
     CVec3d pos(mat[3],mat[7],mat[11]);
     const double ar = DragCircle(sp0,sp1, pos, v1, mMV, mPj);
-    const double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
+    const double dq[4] = { v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5), cos(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, quat, dq);
     Copy_Quat(quat,qtmp);
     return true;
@@ -299,10 +308,10 @@ void delfem2::CGizmo_Rotation<REAL>::Drag
     CV3 a1 = (qz1-pos)/size;
     const double ar = atan2((a0^a1).dot(va), a0.dot(a1));
     const REAL dq[4] = {
-      (REAL)cos(ar*0.5),
       (REAL)(va.x*sin(ar*0.5)),
       (REAL)(va.y*sin(ar*0.5)),
-      (REAL)(va.z*sin(ar*0.5)) };
+      (REAL)(va.z*sin(ar*0.5)),
+      (REAL)cos(ar*0.5) };
     REAL qtmp[4]; QuatQuat(qtmp, dq, quat);
     Copy_Quat(quat,qtmp);
   }

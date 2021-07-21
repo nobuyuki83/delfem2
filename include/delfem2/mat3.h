@@ -432,26 +432,28 @@ public:
     Mat3_Spin(m.mat, v);
     return m;
   }
+
+  // quaternion order of (x,y,z,w)
   static CMat3 Quat(const REAL* q){
-    REAL x2 = q[1] * q[1] * 2.0;
-    REAL y2 = q[2] * q[2] * 2.0;
-    REAL z2 = q[3] * q[3] * 2.0;
-    REAL xy = q[1] * q[2] * 2.0;
-    REAL yz = q[2] * q[3] * 2.0;
-    REAL zx = q[3] * q[1] * 2.0;
-    REAL xw = q[1] * q[0] * 2.0;
-    REAL yw = q[2] * q[0] * 2.0;
-    REAL zw = q[3] * q[0] * 2.0;
+    const REAL x2 = q[0] * q[0] * 2;
+    const REAL y2 = q[1] * q[1] * 2;
+    const REAL z2 = q[2] * q[2] * 2;
+    const REAL xy = q[0] * q[1] * 2;
+    const REAL yz = q[1] * q[2] * 2;
+    const REAL zx = q[2] * q[0] * 2;
+    const REAL xw = q[0] * q[3] * 2;
+    const REAL yw = q[1] * q[3] * 2;
+    const REAL zw = q[2] * q[3] * 2;
     CMat3<REAL> m;
-    m.mat[0*3+0] = 1.0 - y2 - z2;
+    m.mat[0*3+0] = 1 - y2 - z2;
     m.mat[0*3+1] = xy - zw;
     m.mat[0*3+2] = zx + yw;
     m.mat[1*3+0] = xy + zw;
-    m.mat[1*3+1] = 1.0 - z2 - x2;
+    m.mat[1*3+1] = 1 - z2 - x2;
     m.mat[1*3+2] = yz - xw;
     m.mat[2*3+0] = zx - yw;
     m.mat[2*3+1] = yz + xw;
-    m.mat[2*3+2] = 1.0 - x2 - y2;
+    m.mat[2*3+2] = 1 - x2 - y2;
     return m;
   }
 public:

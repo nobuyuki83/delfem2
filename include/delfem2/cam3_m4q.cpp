@@ -100,7 +100,7 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransModelView(float
           static_cast<float>(Quat_tball[1]),
           static_cast<float>(Quat_tball[2]),
           static_cast<float>(Quat_tball[3])};
-      Mat4_AffineTransQuat(Mr, q);
+      Mat4_QuatConj(Mr, q);
     }
   }
   MatMat4(mMV, Mr,Mt);
@@ -132,7 +132,7 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Rot_Camera(REAL dx, REAL dy){
   else if( camera_rot_mode == CAMERA_ROT_MODE::TBALL ){
     double a = sqrt(dx * dx + dy * dy);
     double ar = a*0.5; // angle
-    double dq[4] = { cos(ar), -dy*sin(ar)/a, dx*sin(ar)/a, 0.0 };
+    double dq[4] = { -dy*sin(ar)/a, dx*sin(ar)/a, 0.0, cos(ar) };
     if (a != 0.0) {
       double qtmp[4]; QuatQuat(qtmp, dq, Quat_tball);
       Copy_Quat(Quat_tball,qtmp);

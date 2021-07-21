@@ -59,21 +59,22 @@ DFM2_INLINE double FindRootCubic_Bisect(
 
 // there is another impelemntation in quat.h so this is "static function"
 // transform vector with quaternion
+// quaternion order (x,y,z,w)
 template <typename REAL>
 DFM2_INLINE void MyQuatVec(
   REAL vo[],
   const REAL q[],
   const REAL vi[])
 {
-  REAL x2 = q[1] * q[1] * 2;
-  REAL y2 = q[2] * q[2] * 2;
-  REAL z2 = q[3] * q[3] * 2;
-  REAL xy = q[1] * q[2] * 2;
-  REAL yz = q[2] * q[3] * 2;
-  REAL zx = q[3] * q[1] * 2;
-  REAL xw = q[1] * q[0] * 2;
-  REAL yw = q[2] * q[0] * 2;
-  REAL zw = q[3] * q[0] * 2;
+  REAL x2 = q[0] * q[0] * 2;
+  REAL y2 = q[1] * q[1] * 2;
+  REAL z2 = q[2] * q[2] * 2;
+  REAL xy = q[0] * q[1] * 2;
+  REAL yz = q[1] * q[2] * 2;
+  REAL zx = q[2] * q[0] * 2;
+  REAL xw = q[0] * q[3] * 2;
+  REAL yw = q[1] * q[3] * 2;
+  REAL zw = q[2] * q[3] * 2;
   vo[0] = (1 - y2 - z2)*vi[0] + (xy - zw    )*vi[1] + (zx + yw    )*vi[2];
   vo[1] = (xy + zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz - xw    )*vi[2];
   vo[2] = (zx - yw    )*vi[0] + (yz + xw    )*vi[1] + (1 - x2 - y2)*vi[2];
@@ -104,27 +105,25 @@ template void MyMat4Vec3(double vo[3],
 // ----------------------
 
 // there is formal implementation in quat.cpp so this is static to avoid dumplicated
+// quaternion order (x,y,z,w)
 template <typename REAL>
 DFM2_INLINE void MyQuatConjVec(
     REAL vo[3],
     const REAL q[4],
     const REAL vi[3])
 {
-  REAL x2 = q[1] * q[1] * 2;
-  REAL y2 = q[2] * q[2] * 2;
-  REAL z2 = q[3] * q[3] * 2;
-  REAL xy = q[1] * q[2] * 2;
-  REAL yz = q[2] * q[3] * 2;
-  REAL zx = q[3] * q[1] * 2;
-  REAL xw = q[1] * q[0] * 2;
-  REAL yw = q[2] * q[0] * 2;
-  REAL zw = q[3] * q[0] * 2;
+  const REAL x2 = q[0] * q[0] * 2;
+  const REAL y2 = q[1] * q[1] * 2;
+  const REAL z2 = q[2] * q[2] * 2;
+  const REAL xy = q[0] * q[1] * 2;
+  const REAL yz = q[1] * q[2] * 2;
+  const REAL zx = q[2] * q[0] * 2;
+  const REAL xw = q[0] * q[3] * 2;
+  const REAL yw = q[1] * q[3] * 2;
+  const REAL zw = q[2] * q[3] * 2;
   vo[0] = (1 - y2 - z2)*vi[0] + (xy + zw    )*vi[1] + (zx - yw    )*vi[2];
   vo[1] = (xy - zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz + xw    )*vi[2];
   vo[2] = (zx + yw    )*vi[0] + (yz - xw    )*vi[1] + (1 - x2 - y2)*vi[2];
-//  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
-//  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
-//  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 #ifndef DFM2_HEADER_ONLY
 template void MyQuatConjVec(float vo[3], const float q[4], const float vi[3]);
@@ -565,9 +564,9 @@ template delfem2::CVec3d delfem2::Mat4Vec(const double mat[16], const CVec3d& v)
 // ------------------------
 
 template <typename T>
-DFM2_INLINE delfem2::CVec3<T> delfem2::QuatVec
-(const T quat[4],
- const CVec3<T>& v0)
+DFM2_INLINE delfem2::CVec3<T> delfem2::QuatVec(
+    const T quat[4],
+    const CVec3<T>& v0)
 {
   T v1a[3]; vec3::MyQuatVec(v1a,quat,v0.p);
   return CVec3<T>(v1a[0],v1a[1],v1a[2]);

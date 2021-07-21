@@ -278,13 +278,23 @@ template <typename REAL>
 DFM2_INLINE void Mat4_Quat(
     REAL r[], const REAL q[]);
 
+/**
+ *
+ * @tparam REAL
+ * @param r
+ * @param q quaternion (x,y,z,w)
+ */
+template <typename REAL>
 DFM2_INLINE void Mat4_QuatConj(
-    double r[], const double q[]);
+    REAL r[],
+    const REAL q[]);
 
+/*
 template <typename REAL>
 DFM2_INLINE void Mat4_AffineTransQuat(
     REAL r[],
     const REAL q[]);
+*/
 
 DFM2_INLINE void Mat4_ScaleRotTrans(
     double m[16],

@@ -552,10 +552,10 @@ delfem2::Read_BioVisionHierarchy(
   for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     CRigBone& bone = aBone[ibone];
     bone.scale = 1.0;
-    bone.quatRelativeRot[0] = 1.0;
+    bone.quatRelativeRot[0] = 0.0;
     bone.quatRelativeRot[1] = 0.0;
     bone.quatRelativeRot[2] = 0.0;
-    bone.quatRelativeRot[3] = 0.0;
+    bone.quatRelativeRot[3] = 1.0;
     bone.transRelative[0] = 0.0;
     bone.transRelative[1] = 0.0;
     bone.transRelative[2] = 0.0;
@@ -579,10 +579,10 @@ DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy(
     const double *aVal)
 {
   for(auto & bone : aBone){
-    bone.quatRelativeRot[0] = 1.0;
+    bone.quatRelativeRot[0] = 0.0;
     bone.quatRelativeRot[1] = 0.0;
     bone.quatRelativeRot[2] = 0.0;
-    bone.quatRelativeRot[3] = 0.0;
+    bone.quatRelativeRot[3] = 1.0;
   }
   const size_t nch = aChannelRotTransBone.size();
   for(unsigned int ich=0;ich<nch;++ich){
@@ -599,7 +599,7 @@ DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy(
       const double ar = val*M_PI/180.0;
       double v0[3] = {0,0,0};
       v0[iaxis] = 1.0;
-      double dq[4] = { cos(ar*0.5), v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5) };
+      double dq[4] = { v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5), cos(ar*0.5) };
       double qtmp[4]; QuatQuat(qtmp,
           aBone[ibone].quatRelativeRot, dq);
       Copy_Quat(aBone[ibone].quatRelativeRot,qtmp);
@@ -652,7 +652,7 @@ delfem2::SetMat4AffineBone_FromJointRelativeRotation(
   assert( nBone >= 1 );
   assert( aMat4AffineBone.size() == nBone*16 );
   Mat4_ScaleRotTrans(aMat4AffineBone.data(),
-                           1.0, aQuatRelativeRot.data(), trans_root);
+                     1.0, aQuatRelativeRot.data(), trans_root);
   for(unsigned int ibone=1;ibone<nBone;++ibone){
     int ibp = aIndBoneParent[ibone];
     assert( ibp >= 0 && ibp < (int)nBone );
@@ -661,7 +661,7 @@ delfem2::SetMat4AffineBone_FromJointRelativeRotation(
     CMat4<double> M0, M1, M2;
     M0.Set_AffineTranslate(-p1[0], -p1[1], -p1[2]);
     Mat4_Quat(M1.mat,
-                    aQuatRelativeRot.data()+ibone*4);
+              aQuatRelativeRot.data()+ibone*4);
     M2.Set_AffineTranslate(+p1[0], +p1[1], +p1[2]);
     CMat4<double> M3 = M1.MatMat(M0);
     CMat4<double> M4 = M2.MatMat(M3);

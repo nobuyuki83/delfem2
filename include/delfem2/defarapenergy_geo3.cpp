@@ -70,9 +70,9 @@ DFM2_INLINE void delfem2::dW_ArapEnergy
 
 DFM2_INLINE void delfem2::ddW_ArapEnergy(
 	std::vector<double>& eM,
-    const std::vector<unsigned int>& aIP,
-    const std::vector<double>& aXYZ0,
-    const std::vector<double>& aQuat1)
+	const std::vector<unsigned int>& aIP,
+	const std::vector<double>& aXYZ0,
+	const std::vector<double>& aQuat1)
 {
   const size_t nIP = aIP.size();
   const size_t nNg = nIP-1; // number of neighbor
