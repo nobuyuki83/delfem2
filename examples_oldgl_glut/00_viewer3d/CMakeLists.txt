@@ -32,9 +32,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/color.h                ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
-      
       ${DELFEM2_INC}/cam3_m4q.h             ${DELFEM2_INC}/cam3_m4q.cpp
-      
       ${DELFEM2_INC}/opengl/old/color.h   ${DELFEM2_INC}/opengl/old/color.cpp
       ${DELFEM2_INC}/opengl/old/funcs.h   ${DELFEM2_INC}/opengl/old/funcs.cpp
       )

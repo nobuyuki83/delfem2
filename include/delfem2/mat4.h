@@ -9,7 +9,6 @@
  * @file 4x4 matrix class (CMat4) and functions
  */
 
-
 #ifndef DFM2_MAT4_H
 #define DFM2_MAT4_H
 
@@ -276,7 +275,8 @@ void Vec3_Mat4Vec3_Affine(
 
 template <typename REAL>
 DFM2_INLINE void Mat4_Quat(
-    REAL r[], const REAL q[]);
+    REAL r[],
+    const REAL q[]);
 
 /**
  *
@@ -286,8 +286,8 @@ DFM2_INLINE void Mat4_Quat(
  */
 template <typename REAL>
 DFM2_INLINE void Mat4_QuatConj(
-    REAL r[],
-    const REAL q[]);
+    REAL* r,
+    const REAL* q);
 
 /*
 template <typename REAL>
@@ -423,7 +423,7 @@ using CMat4f = CMat4<float>;
 }
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/mat4.cpp"
+  #include "delfem2/mat4.cpp"
 #endif
 
 #endif
