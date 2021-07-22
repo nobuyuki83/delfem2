@@ -197,6 +197,10 @@ public:
     Normalize_Quat(q.p);
     return q;
   }
+
+  /**
+   * raw pointer copy (order of x,y,z,w)
+   */
   template <typename T1>
   void CopyTo(T1* q1) const {
     q1[0] = static_cast<T1>(p[0]);
