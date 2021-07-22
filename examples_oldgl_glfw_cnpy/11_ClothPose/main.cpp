@@ -172,6 +172,7 @@ int main()
   dfm2::opengl::setSomeLighting();
 
   {
+    // putting cloth on T-pose
     for(int iframe = 0; iframe< 300; ++iframe){
       dfm2::StepTime_PbdClothSim(
           aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth,
@@ -181,12 +182,13 @@ int main()
       damper.Damp(aUVW_Cloth);
       Draw(aETri_Cloth,aXYZ_Cloth,projector_smpl,viewer);
     }
+    // moving from T-pose to target pose
     for(int iframe = 0; iframe<1200; ++iframe){
       double r = (double)(iframe)/1200;
       if( r > 1 ){ r = 1; }
       for(unsigned int ib=0;ib<projector_smpl.aBone.size();++ib){
         dfm2::CQuatd q = dfm2::SphericalLinearInterp( dfm2::CQuatd::Identity(), aQuatTarget[ib], r);
-        q.SetNormalized();
+        q.normalize();
         q.CopyTo(projector_smpl.aBone[ib].quatRelativeRot);
       }
       projector_smpl.UpdatePose(iframe%100==0);

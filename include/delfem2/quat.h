@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2019-2021 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -64,7 +64,7 @@ DFM2_INLINE void Quat_Bryant(
     REAL x, REAL y, REAL z);
 
 /**
- * @brief Quaternion for cartesian rotation angle (3D axis with magnitude of rotation angle)
+ * Quaternion for cartesian rotation angle (3D axis with magnitude of rotation angle)
  * @tparam REAL float and double
  * @param[out] q (x,y,z,w)
  * @param[in] a 3D vector (x,y,z)
@@ -76,7 +76,7 @@ DFM2_INLINE void Quat_CartesianAngle(
 
 
 /**
- * @func copy quaternion
+ * copy quaternion
  * @tparam REAL float or double
  */
 template <typename REAL>
@@ -85,7 +85,7 @@ DFM2_INLINE void Copy_Quat(
     const REAL p[]);
 
 /**
- * @brief multiply two quaternion
+ * multiply two quaternion
  * @tparam REAL float or double
  * @param r (out)
  * @param p (in) lhs quaternion as 4D array (x,y,z,w)
@@ -118,7 +118,7 @@ DFM2_INLINE T Length_Quat(
 // below: quaternion and vector
 
 /**
- * @func transform a 3D vector with quaternion vo  = q*vi*adj(q)
+ * transform a 3D vector with quaternion vo  = q*vi*adj(q)
  * @tparam REAL float or double
  */
 template <typename REAL>
@@ -128,7 +128,7 @@ DFM2_INLINE void QuatVec(
     const REAL vi[]);
 
 /**
- *
+ * trasnsform a 3D vector with conjusgate of a quaternion
  * @param[out] vo
  * @param[in] q quaternion
  * @param[in] vi vector
@@ -160,6 +160,9 @@ template <typename T>
 CQuat<T> operator*(const CQuat<T>&, const CQuat<T>&);
 
 template <typename T>
+std::ostream &operator<<(std::ostream &output, const CQuat<T>& q);
+
+template <typename T>
 CQuat<T> SphericalLinearInterp(const CQuat<T>&, const CQuat<T>&, T);
 
 
@@ -174,50 +177,58 @@ template <typename T>
 class CQuat  
 {
 public:
-  CQuat() : q{0,0,0,1} {}
+  CQuat() : p{0,0,0,1} {}
 
-  explicit CQuat(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
+  explicit CQuat(const T rhs[4]) : p{rhs[0], rhs[1], rhs[2], rhs[3]} {};
 
-  CQuat(T w, T x, T y, T z) : q{x, y, z, w} {};
+  /**
+   * the order of the argument is (r,x,y,z) but internal storage order is (x,y,z,r)
+   */
+  CQuat(T w, T x, T y, T z) : p{x, y, z, w} {};
 
   ~CQuat()= default;
   // -----------
   static CQuat Random(T a){
     CQuat<T> q;
-    q.q[0] = 2*a*rand()/(RAND_MAX+1.0)-a;
-    q.q[1] = 2*a*rand()/(RAND_MAX+1.0)-a;
-    q.q[2] = 2*a*rand()/(RAND_MAX+1.0)-a;
-    q.q[3] = 1.0;
-    Normalize_Quat(q.q);
+    q.p[0] = 2*a*rand()/(RAND_MAX+1.0)-a;
+    q.p[1] = 2*a*rand()/(RAND_MAX+1.0)-a;
+    q.p[2] = 2*a*rand()/(RAND_MAX+1.0)-a;
+    q.p[3] = 1.0;
+    Normalize_Quat(q.p);
     return q;
   }
-  void CopyTo(float* q1) const {
-    q1[0] = q[0];
-    q1[1] = q[1];
-    q1[2] = q[2];
-    q1[3] = q[3];
+  template <typename T1>
+  void CopyTo(T1* q1) const {
+    q1[0] = static_cast<T1>(p[0]);
+    q1[1] = static_cast<T1>(p[1]);
+    q1[2] = static_cast<T1>(p[2]);
+    q1[3] = static_cast<T1>(p[3]);
   }
-  void CopyTo(double* q1) const {
-    q1[0] = q[0];
-    q1[1] = q[1];
-    q1[2] = q[2];
-    q1[3] = q[3];
+  template <typename T1>
+  CQuat<T1> cast() const {
+    // initailzation is in the order of (w,x,y,z)
+    return CQuat<T1>(static_cast<T1>(p[3]),
+                     static_cast<T1>(p[0]),
+                     static_cast<T1>(p[1]),
+                     static_cast<T1>(p[2]));
   }
-  CQuat<double> Double() const {
-    return CQuat<double>((double)q[0], (double)q[1], (double)q[2], (double)q[3]);
-  }
-  CQuat<T> Conjugate() const {
-    return CQuat<T>(-q[0], -q[1], -q[2], +q[3]);
+  CQuat<T> conjugate() const {
+    return CQuat<T>(+p[3], -p[0], -p[1], -p[2]); // initialization is in the order of (w,x,y,z)
   }
   
-  void SetNormalized();
+  void normalize();
   void SetSmallerRotation();
   
   static CQuat<T> Identity() {
-    return CQuat<T>(0,0,0,1);
+    return CQuat<T>(1,0,0,0); // initialization is (w,x,y,z)
   }
 public:
-  T q[4]; // x,y,z,w
+  union {
+    T p[4];
+    struct {
+      T x, y, z, w;
+    };
+  };
 };
 using CQuatd = CQuat<double>;
 using CQuatf = CQuat<float>;

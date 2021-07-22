@@ -70,9 +70,9 @@ public:
         if (ibp == -1) { m3.SetIdentity(); }
         else { m3.SetMat4(aBone[ibp].affmat3Global); }
         CQuatd qp;
-        m3.GetQuat_RotMatrix(qp.q);
-        CQuatd qg = CQuatf(gizmo_rot.quat).Double();
-        CQuatd qj = qp.Conjugate() * qg;
+        m3.GetQuat_RotMatrix(qp.p);
+        CQuatd qg = CQuatf(gizmo_rot.quat).cast<double>();
+        CQuatd qj = qp.conjugate() * qg;
         qj.CopyTo(aBone[ipicked_bone].quatRelativeRot);
       }
       UpdateBoneRotTrans(aBone);
@@ -123,7 +123,7 @@ DFM2_INLINE void Draw(
         CMat3<double> m3;
         m3.SetMat4(aBone[giz.ipicked_bone].affmat3Global);
         CQuat<double> qj;
-        m3.GetQuat_RotMatrix(qj.q);
+        m3.GetQuat_RotMatrix(qj.p);
         qj.CopyTo(giz.gizmo_rot.quat);
       }
       opengl::Draw(giz.gizmo_rot);

@@ -7,6 +7,7 @@
 
 
 #include <cmath>
+#include <cstring>
 #include "delfem2/quat.h"
 
 #ifndef M_PI
@@ -98,7 +99,9 @@ template void delfem2::QuatVec(double vo[3], const double q[4], const double vi[
 
 // -------------------------------------
 
-// multiply two quaternions (x,y,z,w)
+/**
+ * multiply two quaternions (x,y,z,w)
+ */
 template <typename REAL>
 DFM2_INLINE void delfem2::QuatQuat(
     REAL r[],
@@ -244,22 +247,23 @@ namespace delfem2{
 template <typename T>
 CQuat<T> operator + (const CQuat<T>& lhs, const CQuat<T>& rhs)
 {
-  return CQuat<T>(lhs.q[0]+rhs.q[0],
-                  lhs.q[1]+rhs.q[1],
-                  lhs.q[2]+rhs.q[2],
-                  lhs.q[3]+rhs.q[3]);
+  return CQuat<T>(lhs.w+rhs.w,
+                  lhs.x+rhs.x,
+                  lhs.y+rhs.y,
+                  lhs.z+rhs.z);
 }
 #ifndef DFM2_HEADER_ONLY
 template CQuat<double> operator + (const CQuat<double>& lhs, const CQuat<double>& rhs);
 template CQuat<float> operator + (const CQuat<float>& lhs, const CQuat<float>& rhs);
 #endif
   
+// -----------------------
 
 template <typename T>
 CQuat<T> operator * (const CQuat<T>& lhs, const CQuat<T>& rhs)
 {
   CQuat<T> q;
-  QuatQuat(q.q, lhs.q, rhs.q);
+  QuatQuat(q.p, lhs.p, rhs.p);
   return q;
 }
 #ifndef DFM2_HEADER_ONLY
@@ -267,35 +271,47 @@ template CQuat<double> operator * (const CQuat<double>& lhs, const CQuat<double>
 template CQuat<float> operator * (const CQuat<float>& lhs, const CQuat<float>& rhs);
 #endif
 
+// ---------------------
+
 template <typename T>
 CQuat<T> operator * (const CQuat<T>& lhs, const T rhs)
 {
-  CQuat<T> q(lhs.q[0]*rhs,
-             lhs.q[1]*rhs,
-             lhs.q[2]*rhs,
-             lhs.q[3]*rhs);
+  CQuat<T> q(lhs.w*rhs,
+             lhs.x*rhs,
+             lhs.y*rhs,
+             lhs.z*rhs);
   return q;
 }
 #ifndef DFM2_HEADER_ONLY
 template CQuat<double> operator * (const CQuat<double>& lhs, double rhs);
 template CQuat<float> operator * (const CQuat<float>& lhs, float rhs);
 #endif
+
+// ---------------------
+
+template <typename T>
+std::ostream &operator<<(std::ostream &output, const CQuat<T>& q){
+  output << q.w << " " << q.x << " " << q.y << " " << q.z;
+  return output;
+}
   
 } // end namespace delfem2
 
+// -------------------------
+
 template <typename T>
-void delfem2::CQuat<T>::SetNormalized()
+void delfem2::CQuat<T>::normalize()
 {
-  const T len = std::sqrt(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
+  const T len = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + p[3]*p[3]);
   const T leninv = 1/len;
-  q[0] *= leninv;
-  q[1] *= leninv;
-  q[2] *= leninv;
-  q[3] *= leninv;
+  p[0] *= leninv;
+  p[1] *= leninv;
+  p[2] *= leninv;
+  p[3] *= leninv;
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CQuat<double>::SetNormalized();
-template void delfem2::CQuat<float>::SetNormalized();
+template void delfem2::CQuat<double>::normalize();
+template void delfem2::CQuat<float>::normalize();
 #endif
 
 // ------------------------
@@ -303,11 +319,11 @@ template void delfem2::CQuat<float>::SetNormalized();
 template <typename T>
 void delfem2::CQuat<T>::SetSmallerRotation()
 {
-  if( q[3] > 0 ){ return; }
-  q[0] = -q[0];
-  q[1] = -q[1];
-  q[2] = -q[2];
-  q[3] = -q[3];
+  if( w > 0 ){ return; }
+  x = -x;
+  y = -y;
+  z = -z;
+  w = -w;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::CQuat<double>::SetSmallerRotation();
@@ -323,7 +339,7 @@ delfem2::CQuat<T> delfem2::SphericalLinearInterp(
     const delfem2::CQuat<T>& q1,
     T t)
 {
-  const T qr = Dot_Quat(q0.q, q1.q);
+  const T qr = Dot_Quat(q0.p, q1.p);
   const T ss = 1 - qr * qr;
   
   if (ss == 0.0) { return q0; }
@@ -333,10 +349,10 @@ delfem2::CQuat<T> delfem2::SphericalLinearInterp(
   const T t1 = std::sin(pt) / sp;
   const T t0 = std::sin(ph - pt) / sp;
   CQuat<T> q(
-    t0*q0.q[0] + t1*q1.q[0],
-    t0*q0.q[1] + t1*q1.q[1],
-    t0*q0.q[2] + t1*q1.q[2],
-    t0*q0.q[3] + t1*q1.q[3]);
+    t0*q0.w + t1*q1.w,
+    t0*q0.x + t1*q1.x,
+    t0*q0.y + t1*q1.y,
+    t0*q0.z + t1*q1.z);
   return q;
 }
 #ifndef DFM2_HEADER_ONLY
