@@ -241,7 +241,7 @@ Solve_MinRigging(
   //  std::cout << "convergence" << reshist.size() << std::endl;
   for(unsigned int ib=0;ib<aBone.size();++ib){
      CVec3d vec_rot(u.data()+ib*3);
-      CQuatd dq; Quat_CartesianAngle(dq.q, (-vec_rot).p);
+      CQuatd dq; Quat_CartesianAngle(dq.p, (-vec_rot).p);
      CQuatd q0 = dq* CQuatd(aBone[ib].quatRelativeRot);
     q0.CopyTo(aBone[ib].quatRelativeRot);
   }

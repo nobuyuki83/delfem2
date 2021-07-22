@@ -362,7 +362,7 @@ DFM2_INLINE CVec3<REAL> operator*(
 {
   CVec3<REAL> p;
   QuatVec(p.p,
-          q.q, v.p);
+          q.p, v.p);
   return p;
 }
 #ifndef DFM2_HEADER_ONLY
@@ -377,7 +377,7 @@ template CVec3d operator* (const CQuatd& q, const CVec3d& v);
 DFM2_INLINE delfem2::CQuatd delfem2::Quat_CartesianAngle(const CVec3d& p)
 {
   CQuatd q;
-  Quat_CartesianAngle(q.q, p.p);
+  Quat_CartesianAngle(q.p, p.p);
   return q;
 }
 
@@ -442,7 +442,7 @@ DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_SVD(
   CMat3d dRi; GetRotPolarDecomp(dRi.mat, A, 40);
   CMat3d R1 = dRi*R0i;
   CQuatd q1;
-  R1.GetQuat_RotMatrix(q1.q);
+  R1.GetQuat_RotMatrix(q1.p);
   q1.CopyTo(aQuat1.data()+ip*4);
 }
 
