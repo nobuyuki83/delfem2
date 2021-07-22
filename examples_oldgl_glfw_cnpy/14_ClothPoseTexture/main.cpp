@@ -210,7 +210,7 @@ int main()
     if( r > 1 ){ r = 1; }
     for(unsigned int ib=0; ib < body_smpl.aBone.size(); ++ib){
       dfm2::CQuatd q = dfm2::SphericalLinearInterp( dfm2::CQuatd::Identity(), aQuatTarget[ib], r);
-      q.SetNormalized();
+      q.normalize();
       q.CopyTo(body_smpl.aBone[ib].quatRelativeRot);
     }
     body_smpl.UpdatePose(iframe % 100 == 0);
