@@ -34,14 +34,14 @@ DFM2_INLINE void delfem2::opengl::Draw_RigBone(
     int ielem_selected,
     const std::vector<CRigBone>& aBone,
     double rad_bone_sphere,
-    double rad_rot_hndlr)
-{
+    double rad_rot_hndlr) {
   { // draw point
-    if(is_selected){ ::glColor3d(0,1,1); }
-    else{            ::glColor3d(1,0,0); }
+    if (is_selected) { ::glColor3d(0, 1, 1); }
+    else { ::glColor3d(1, 0, 0); }
     const CVec3d pos = aBone[ibone].Pos();
-    delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x,pos.y,pos.z);
+    delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x, pos.y, pos.z);
   }
+  /*
   if(is_selected){
     opengl::DrawHandlerRotation_Mat4(aBone[ibone].affmat3Global, rad_rot_hndlr, ielem_selected);
     int ibone_parent = aBone[ibone].ibone_parent;
@@ -51,6 +51,7 @@ DFM2_INLINE void delfem2::opengl::Draw_RigBone(
     else{
     }
   }
+   */
 }
 
 DFM2_INLINE void delfem2::opengl::DrawBone_Line(
@@ -93,6 +94,7 @@ DFM2_INLINE void delfem2::opengl::DrawBone_Octahedron(
   namespace dfm2 = delfem2;
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
+  /*
   for(unsigned int iskel=0;iskel<aBone.size();++iskel){
     const bool is_selected = (iskel==ibone_selected);
     Draw_RigBone(
@@ -100,6 +102,7 @@ DFM2_INLINE void delfem2::opengl::DrawBone_Octahedron(
         is_selected,ielem_selected,aBone,
         rad_bone_sphere,rad_rot_hndlr);
   }
+   */
   for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     const CRigBone& bone = aBone[ibone];
     const int ibone_p = aBone[ibone].ibone_parent;

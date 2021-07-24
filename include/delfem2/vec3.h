@@ -286,9 +286,9 @@ template <typename T>
 CVec3<T> Mat4Vec(const T M[16], const CVec3<T>& v);
   
 template <typename T>
-DFM2_INLINE CVec3<T> QuatVec
- (const T quat[4],
-  const CVec3<T>& v0);
+DFM2_INLINE CVec3<T> QuatVec(
+    const T quat[4],
+    const CVec3<T>& v0);
   
 template <typename REAL>
 CVec3<REAL> QuatConjVec(
