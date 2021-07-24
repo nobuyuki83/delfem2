@@ -165,10 +165,15 @@ public:
   T squaredNorm() const{
     return p[0]*p[0]+p[1]*p[1];
   }
+
+  //! @brief Euclidian norm (named similalty to Eigen)
+  T norm() const{
+    return std::sqrt(p[0]*p[0]+p[1]*p[1]);
+  }
   
 	//! @brief in place normalization with Euclidian norm (named similarly to Eigen)
 	void normalize(){
-		const double mag = Length();
+		const T mag = Length();
 		p[0] /= mag;
 		p[1] /= mag;
 	}
@@ -184,6 +189,10 @@ public:
   inline void setZero(){
     p[0] = T(0);
     p[1] = T(0);
+  }
+
+  T dot(const CVec2<T>& rhs) const {
+    return x*rhs.x+y*rhs.y;
   }
 
 	template <typename S>

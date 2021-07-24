@@ -211,16 +211,21 @@ public:
   template <typename T1>
   CQuat<T1> cast() const {
     // initailzation is in the order of (w,x,y,z)
-    return CQuat<T1>(static_cast<T1>(p[3]),
-                     static_cast<T1>(p[0]),
-                     static_cast<T1>(p[1]),
-                     static_cast<T1>(p[2]));
+    return CQuat<T1>(static_cast<T1>(w),
+                     static_cast<T1>(x),
+                     static_cast<T1>(y),
+                     static_cast<T1>(z));
   }
   CQuat<T> conjugate() const {
-    return CQuat<T>(+p[3], -p[0], -p[1], -p[2]); // initialization is in the order of (w,x,y,z)
+    return CQuat<T>(+w, -x, -y, -z); // initialization is in the order of (w,x,y,z)
+  }
+
+  T norm() const {
+    return std::sqrt(x*x+y*y+z*z+w*w);
   }
   
   void normalize();
+
   void SetSmallerRotation();
   
   static CQuat<T> Identity() {
