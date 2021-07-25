@@ -5,21 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cstdlib>
+#include <vector>
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/caddtri_v3.h"
-#include <GLFW/glfw3.h>
-//
-#include <cstdlib>
-#include <vector>
-#include <set>
 
 namespace dfm2 = delfem2;
 
@@ -29,9 +27,9 @@ std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
 std::vector<dfm2::CVec2d> aVec2;
 std::vector<unsigned int> aLine;
-std::vector<double> aXYZ; // deformed vertex positions
+std::vector<double> aXYZ;  // deformed vertex positions
 std::vector<double> aXYZt;
-std::vector<double> aUVW; // deformed vertex velocity
+std::vector<double> aUVW;  // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
 //const double mass_point = 0.01;
 const double dt = 0.01;
@@ -40,16 +38,15 @@ bool is_animation = false;
 
 // -------------------------------------
 
-void StepTime()
-{
+void StepTime() {
   dfm2::PBD_Pre3D(aXYZt,
                   dt, gravity, aXYZ, aUVW, aBCFlag);
   dfm2::PBD_TriStrain(aXYZt.data(),
-                aXYZt.size()/3, aETri, aVec2);
+                      aXYZt.size() / 3, aETri, aVec2);
   dfm2::PBD_Bend(aXYZt.data(),
-           aXYZt.size()/3, aETri, aVec2, 1.0);
+                 aXYZt.size() / 3, aETri, aVec2, 1.0);
   dfm2::PBD_Seam(aXYZt.data(),
-                 aXYZt.size()/3, aLine.data(), aLine.size()/2);
+                 aXYZt.size() / 3, aLine.data(), aLine.size() / 2);
   dfm2::PBD_Post(aXYZ, aUVW,
                  dt, aXYZt, aBCFlag);
 
@@ -57,8 +54,7 @@ void StepTime()
 
 // -------------------------------------
 
-void myGlutDisplay()
-{
+void myGlutDisplay() {
   ::glPointSize(5);
   ::glLineWidth(1);
   {
@@ -72,82 +68,80 @@ void myGlutDisplay()
      */
 //    DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   }
-  
+
   ::glDisable(GL_LIGHTING);
-  ::glColor3d(0,0,0);
+  ::glColor3d(0, 0, 0);
   delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
 }
 
-int main(int argc,char* argv[])
-{
+int main(int argc, char *argv[]) {
   {
-    std::vector< std::vector<double> > aaXY;
+    std::vector<std::vector<double> > aaXY;
     aaXY.resize(1);
     double xys[12] = {
-      -0.5,-0.5,
-      +0.5,-0.5,
-      +0.5,+0.5,
-      +0.1,+0.6,
-      -0.1,+0.6,
-      -0.5,+0.5,
+        -0.5, -0.5,
+        +0.5, -0.5,
+        +0.5, +0.5,
+        +0.1, +0.6,
+        -0.1, +0.6,
+        -0.5, +0.5,
     };
-    aaXY[0].assign(xys,xys+12);
-    GenMesh(aPo2D,aETri,aVec2,
+    aaXY[0].assign(xys, xys + 12);
+    GenMesh(aPo2D, aETri, aVec2,
             aaXY, 0.05, 0.05);
   }
   // -------------
   const int np = aPo2D.size();
-  aXYZ.resize(np*3);
-  for(int ip=0;ip<np;++ip){
-    aXYZ[ip*3+0] = aVec2[ip].x;
-    aXYZ[ip*3+1] = aVec2[ip].y;
-    aXYZ[ip*3+2] = 0.0;
+  aXYZ.resize(np * 3);
+  for (int ip = 0; ip < np; ++ip) {
+    aXYZ[ip * 3 + 0] = aVec2[ip].x;
+    aXYZ[ip * 3 + 1] = aVec2[ip].y;
+    aXYZ[ip * 3 + 2] = 0.0;
   }
   aXYZt = aXYZ;
-  aUVW.resize(np*3,0.0);
-  aBCFlag.resize(np,0);
-  for(int ip=0;ip<np;++ip){
-    if( aXYZ[ip*3+1]  > +0.59 ){
+  aUVW.resize(np * 3, 0.0);
+  aBCFlag.resize(np, 0);
+  for (int ip = 0; ip < np; ++ip) {
+    if (aXYZ[ip * 3 + 1] > +0.59) {
       aBCFlag[ip] = 1;
     }
   }
   aLine.clear();
   { // make aLine
-    std::map<int,int> mapY2Ip;
-    for(int ip=0;ip<np;++ip){
-      if( aXYZ[ip*3+0]  > +0.49 ){
-        double y0 = aXYZ[ip*3+1];
-        int iy = (int)(y0/0.0132);
+    std::map<int, int> mapY2Ip;
+    for (int ip = 0; ip < np; ++ip) {
+      if (aXYZ[ip * 3 + 0] > +0.49) {
+        double y0 = aXYZ[ip * 3 + 1];
+        int iy = (int) (y0 / 0.0132);
         mapY2Ip[iy] = ip;
       }
     }
-    for(int ip=0;ip<np;++ip){
-      if( aXYZ[ip*3+0]  < -0.49 ){
-        double y1 = aXYZ[ip*3+1];
-        int iy = (int)(y1/0.0132);
-        assert( mapY2Ip.find(iy) != mapY2Ip.end() );
+    for (int ip = 0; ip < np; ++ip) {
+      if (aXYZ[ip * 3 + 0] < -0.49) {
+        double y1 = aXYZ[ip * 3 + 1];
+        int iy = (int) (y1 / 0.0132);
+        assert(mapY2Ip.find(iy) != mapY2Ip.end());
         int ip0 = mapY2Ip[iy];
         aLine.push_back(ip);
         aLine.push_back(ip0);
       }
     }
   }
-  
+
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   viewer.camera.view_height = 1.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
-  while (!glfwWindowShouldClose(viewer.window))
-  {
+  while (!glfwWindowShouldClose(viewer.window)) {
     StepTime();
     viewer.DrawBegin_oldGL();
     myGlutDisplay();
     viewer.SwapBuffers();
     glfwPollEvents();
   }
-  
+
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

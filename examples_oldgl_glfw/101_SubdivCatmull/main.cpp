@@ -25,63 +25,61 @@
 namespace dfm2 = delfem2;
 
 #if defined(_MSC_VER)
-  #pragma warning( disable : 4100 )
+#pragma warning( disable : 4100 )
 #endif
 
 // --------------------------------------------------
 
-int main(int argc,char* argv[])
-{
+int main(int argc, char *argv[]) {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   viewer.camera.view_height = 2.0;
   delfem2::opengl::setSomeLighting();
 
-  for(unsigned itr=0;;++itr){
-    std::vector< std::vector<unsigned int> > aaQuad;
-    std::vector< std::vector<double> > aaXYZ;
+  for (unsigned itr = 0;; ++itr) {
+    std::vector<std::vector<unsigned int> > aaQuad;
+    std::vector<std::vector<double> > aaXYZ;
     unsigned int nlevel_subdiv;
     aaQuad.resize(1);
     aaXYZ.resize(1);
-    if( itr % 2 == 0 ){
-      const double bbmin[3] = {-1,-1,-1};
-      const double bbmax[3] = {+1,+1,+1};
+    if (itr % 2 == 0) {
+      const double bbmin[3] = {-1, -1, -1};
+      const double bbmax[3] = {+1, +1, +1};
       delfem2::MeshQuad3_CubeVox(
-          aaXYZ[0],aaQuad[0],
-          bbmin,bbmax);
+          aaXYZ[0], aaQuad[0],
+          bbmin, bbmax);
       nlevel_subdiv = 5;
-    }
-    else{
+    } else {
       dfm2::Read_Obj_MeshQuad3(
-          aaXYZ[0],aaQuad[0],
+          aaXYZ[0], aaQuad[0],
 //      std::string(PATH_INPUT_DIR)+"/basemesh_female.obj");
-          std::string(PATH_INPUT_DIR)+"/basemesh_hand.obj");
+          std::string(PATH_INPUT_DIR) + "/basemesh_hand.obj");
       nlevel_subdiv = 3;
     }
-    aaXYZ.resize(nlevel_subdiv+1);
-    aaQuad.resize(nlevel_subdiv+1);
-    for(unsigned int il=0;il<nlevel_subdiv;++il){
-      const std::vector<double>& aXYZ0 = aaXYZ[il];
-      const std::vector<unsigned int>& aQuad0 = aaQuad[il];
-      std::vector<unsigned int>& aQuad1 = aaQuad[il+1];
+    aaXYZ.resize(nlevel_subdiv + 1);
+    aaQuad.resize(nlevel_subdiv + 1);
+    for (unsigned int il = 0; il < nlevel_subdiv; ++il) {
+      const std::vector<double> &aXYZ0 = aaXYZ[il];
+      const std::vector<unsigned int> &aQuad0 = aaQuad[il];
+      std::vector<unsigned int> &aQuad1 = aaQuad[il + 1];
       std::vector<unsigned int> aEdgeFace0;
       std::vector<unsigned int> psupIndQuad0, psupQuad0;
       dfm2::SubdivTopo_MeshQuad(
           aQuad1,
-          psupIndQuad0,psupQuad0, aEdgeFace0,
-          aQuad0.data(), aQuad0.size()/4,
-          aXYZ0.size()/3);
-      std::vector<double>& aXYZ1 = aaXYZ[il+1];
+          psupIndQuad0, psupQuad0, aEdgeFace0,
+          aQuad0.data(), aQuad0.size() / 4,
+          aXYZ0.size() / 3);
+      std::vector<double> &aXYZ1 = aaXYZ[il + 1];
       delfem2::SubdivisionPoints_QuadCatmullClark(
           aXYZ1,
-          aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
-          aQuad0.data(), aQuad0.size()/4,
-          aXYZ0.data(), aXYZ0.size()/3);
+          aQuad1, aEdgeFace0, psupIndQuad0, psupQuad0,
+          aQuad0.data(), aQuad0.size() / 4,
+          aXYZ0.data(), aXYZ0.size() / 3);
     }
     // -------
-    for(unsigned int isub=0;isub<=nlevel_subdiv;++isub) {
-      for(unsigned int iframe=0;iframe<30;++iframe) {
+    for (unsigned int isub = 0; isub <= nlevel_subdiv; ++isub) {
+      for (unsigned int iframe = 0; iframe < 30; ++iframe) {
         viewer.DrawBegin_oldGL();
         ::glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
         ::glEnable(GL_LIGHTING);
@@ -91,11 +89,11 @@ int main(int argc,char* argv[])
         delfem2::opengl::DrawMeshQuad3D_Edge(aaXYZ[isub], aaQuad[isub]);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ) break;
+        if (glfwWindowShouldClose(viewer.window)) break;
       }
-      if( glfwWindowShouldClose(viewer.window) ) break;
+      if (glfwWindowShouldClose(viewer.window)) break;
     }
-    if( glfwWindowShouldClose(viewer.window) ) break;
+    if (glfwWindowShouldClose(viewer.window)) break;
   }
   // ----------------------
   glfwDestroyWindow(viewer.window);

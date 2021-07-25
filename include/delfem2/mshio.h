@@ -113,10 +113,10 @@ DFM2_INLINE void Write_Obj_ElemJArray(
  * @param aFlgTri
  */
 DFM2_INLINE void Write_Obj_TriFlag(
-    const std::string& pathf,
-    std::vector<double>& aXYZ,
-    std::vector<unsigned int>& aTri,
-    std::vector<unsigned int>& aFlgTri);
+    const std::string &pathf,
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri,
+    std::vector<unsigned int> &aFlgTri);
 
 DFM2_INLINE void Write_Obj(
     const std::string &str,
@@ -149,7 +149,7 @@ DFM2_INLINE void Read_Obj3(
     std::vector<unsigned int> &aTri);
 
 class CTriGroup {
-public:
+ public:
   std::string name_group;
   std::string name_mtl;
   int imtl;
@@ -235,10 +235,10 @@ DFM2_INLINE void Read_MeshTri3D_Nas(
     std::vector<unsigned int> &aTri,
     const char *path);
 
-}
+} // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/mshio.cpp"
+  #include "delfem2/mshio.cpp"
 #endif
 
-#endif /* meshio_hpp */
+#endif // DFM2_MESHIO_H

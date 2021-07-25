@@ -6,8 +6,8 @@
  */
 
 
-#ifndef MSHTOPOIO_H
-#define MSHTOPOIO_H
+#ifndef DFM2_MSHTOPOIO_H
+#define DFM2_MSHTOPOIO_H
 
 #include <string>
 #include <vector>

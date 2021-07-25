@@ -5,228 +5,226 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/mshtopoio.h"
 
 #include <string>
 #include <vector>
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "delfem2/mshio.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshprimitive.h"
-#include "delfem2/mshtopoio.h"
-//
 #include "delfem2/dtri3_v3dtri.h"
-//
-
-namespace dfm2 = delfem2;
 
 // ----------------------------------------------
 
 // probably std::stroi is safer to use but it is only for C++11
-static int myStoi(const std::string& str){
-  char* e;
-  long d = std::strtol(str.c_str(),&e,0);
-  return (int)d;
+static int myStoi(const std::string &str) {
+  char *e;
+  long d = std::strtol(str.c_str(), &e, 0);
+  return (int) d;
 }
 
-static double myStof(const std::string& str){
-  char* e;
-  float fval = std::strtof(str.c_str(),&e);
+static double myStof(const std::string &str) {
+  char *e;
+  float fval = std::strtof(str.c_str(), &e);
   return fval;
 }
 
 // --------------------------------------------------
 
-void MeshTri3D_GeodesicPolyhedron
-(std::vector<double>& aXYZ1,
- std::vector<unsigned int>& aTri1)
-{
+void MeshTri3D_GeodesicPolyhedron(
+    std::vector<double> &aXYZ1,
+    std::vector<unsigned int> &aTri1) {
+  namespace dfm2 = delfem2;
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri0;
   dfm2::MeshTri3D_Icosahedron(aXYZ0, aTri0);
   // -------
-  const unsigned int np0 = aXYZ0.size()/3;
+  const unsigned int np0 = aXYZ0.size() / 3;
   std::vector<unsigned int> elsup_ind, elsup;
-  delfem2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
-                                 aTri0.data(), aTri0.size()/3, 3, np0);
+  delfem2::JArray_ElSuP_MeshElem(
+      elsup_ind, elsup,
+      aTri0.data(), aTri0.size() / 3, 3, np0);
   // -------
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-      aTri0.data(),
-      elsup_ind, elsup,
-      3, np0);
+                                                    aTri0.data(),
+                                                    elsup_ind, elsup,
+                                                    3, np0);
   //  std::cout << "psup" << std::endl;
   //  Print_IndexedArray(psup_ind, psup);
   // ---------
   std::vector<unsigned int> edge_ind, edge;
   dfm2::JArrayEdgeUnidir_PointSurPoint(edge_ind, edge,
-                                       psup_ind,psup);
+                                       psup_ind, psup);
   //  std::cout << "edge" << std::endl;
   //  Print_IndexedArray(edge_ind, edge);
   // ------------
-  double r0 = sqrt((5+sqrt(5))*0.5);
+  double r0 = sqrt((5 + sqrt(5)) * 0.5);
   aXYZ1 = aXYZ0;
-  for(unsigned int ip=0;ip<np0;++ip){
-    for(unsigned int iedge=edge_ind[ip];iedge<edge_ind[ip+1];++iedge){
-      const int ip0 = edge[iedge];
-      const double x1 = (aXYZ1[ip*3+0] + aXYZ1[ip0*3+0])*0.5;
-      const double y1 = (aXYZ1[ip*3+1] + aXYZ1[ip0*3+1])*0.5;
-      const double z1 = (aXYZ1[ip*3+2] + aXYZ1[ip0*3+2])*0.5;
-      double mag = r0/sqrt(x1*x1+y1*y1+z1*z1);
-      aXYZ1.push_back(x1*mag);
-      aXYZ1.push_back(y1*mag);
-      aXYZ1.push_back(z1*mag);
+  for (unsigned int ip = 0; ip < np0; ++ip) {
+    for (unsigned int iedge = edge_ind[ip]; iedge < edge_ind[ip + 1]; ++iedge) {
+      const unsigned int ip0 = edge[iedge];
+      const double x1 = (aXYZ1[ip * 3 + 0] + aXYZ1[ip0 * 3 + 0]) * 0.5;
+      const double y1 = (aXYZ1[ip * 3 + 1] + aXYZ1[ip0 * 3 + 1]) * 0.5;
+      const double z1 = (aXYZ1[ip * 3 + 2] + aXYZ1[ip0 * 3 + 2]) * 0.5;
+      double mag = r0 / sqrt(x1 * x1 + y1 * y1 + z1 * z1);
+      aXYZ1.push_back(x1 * mag);
+      aXYZ1.push_back(y1 * mag);
+      aXYZ1.push_back(z1 * mag);
     }
   }
   aTri1.clear();
-  aTri1.reserve(aTri0.size()*3);
-  for(unsigned int itri=0;itri<aTri0.size()/3;++itri){
-    const int ip0 = aTri0[itri*3+0];
-    const int ip1 = aTri0[itri*3+1];
-    const int ip2 = aTri0[itri*3+2];
-    int iedge01,iedge12,iedge20;
+  aTri1.reserve(aTri0.size() * 3);
+  for (unsigned int itri = 0; itri < aTri0.size() / 3; ++itri) {
+    const unsigned int ip0 = aTri0[itri * 3 + 0];
+    const unsigned int ip1 = aTri0[itri * 3 + 1];
+    const unsigned int ip2 = aTri0[itri * 3 + 2];
+    int iedge01, iedge12, iedge20;
     {
-      if( ip0 < ip1 ){ iedge01 = dfm2::findEdge(ip0,ip1, edge_ind,edge); }
-      else {           iedge01 = dfm2::findEdge(ip1,ip0, edge_ind,edge); }
-      if( ip1 < ip2 ){ iedge12 = dfm2::findEdge(ip1,ip2, edge_ind,edge); }
-      else {           iedge12 = dfm2::findEdge(ip2,ip1, edge_ind,edge); }
-      if( ip2 < ip0 ){ iedge20 = dfm2::findEdge(ip2,ip0, edge_ind,edge); }
-      else {           iedge20 = dfm2::findEdge(ip0,ip2, edge_ind,edge); }
+      if (ip0 < ip1) { iedge01 = dfm2::findEdge(ip0, ip1, edge_ind, edge); }
+      else { iedge01 = dfm2::findEdge(ip1, ip0, edge_ind, edge); }
+      if (ip1 < ip2) { iedge12 = dfm2::findEdge(ip1, ip2, edge_ind, edge); }
+      else { iedge12 = dfm2::findEdge(ip2, ip1, edge_ind, edge); }
+      if (ip2 < ip0) { iedge20 = dfm2::findEdge(ip2, ip0, edge_ind, edge); }
+      else { iedge20 = dfm2::findEdge(ip0, ip2, edge_ind, edge); }
     }
-    aTri1.push_back(ip0); aTri1.push_back(iedge01+np0); aTri1.push_back(iedge20+np0);
-    aTri1.push_back(ip1); aTri1.push_back(iedge12+np0); aTri1.push_back(iedge01+np0);
-    aTri1.push_back(ip2); aTri1.push_back(iedge20+np0); aTri1.push_back(iedge12+np0);
-    aTri1.push_back(iedge01+np0); aTri1.push_back(iedge12+np0); aTri1.push_back(iedge20+np0);
+    aTri1.push_back(ip0);
+    aTri1.push_back(iedge01 + np0);
+    aTri1.push_back(iedge20 + np0);
+    aTri1.push_back(ip1);
+    aTri1.push_back(iedge12 + np0);
+    aTri1.push_back(iedge01 + np0);
+    aTri1.push_back(ip2);
+    aTri1.push_back(iedge20 + np0);
+    aTri1.push_back(iedge12 + np0);
+    aTri1.push_back(iedge01 + np0);
+    aTri1.push_back(iedge12 + np0);
+    aTri1.push_back(iedge20 + np0);
   }
 }
 
 // ----------------------
 
-void CMeshMultiElem::ReadObj(const std::string& path_obj)
-{
+void CMeshMultiElem::ReadObj(const std::string &path_obj) {
   std::string fname_mtl;
   Load_Obj(path_obj,
            fname_mtl, aXYZ, aNorm, aObjGroupTri);
-  std::string path_dir = std::string(path_obj.begin(),path_obj.begin()+path_obj.rfind("/"));
-  Load_Mtl(path_dir+"/"+fname_mtl,
+  std::string path_dir = std::string(path_obj.begin(), path_obj.begin() + path_obj.rfind("/"));
+  Load_Mtl(path_dir + "/" + fname_mtl,
            aMaterial);
 //  std::cout << aObjGroupTri.size() << " " << aMaterial.size() << std::endl;
   { //
-    std::map< std::string, int > mapMtlName2Ind;
-    for(int imtl=0;imtl<(int)aMaterial.size();++imtl){
-      mapMtlName2Ind.insert( std::make_pair(aMaterial[imtl].name_mtl, imtl) );
+    std::map<std::string, int> mapMtlName2Ind;
+    for (int imtl = 0; imtl < (int) aMaterial.size(); ++imtl) {
+      mapMtlName2Ind.insert(std::make_pair(aMaterial[imtl].name_mtl, imtl));
     }
-    for(int iogt=0;iogt<(int)aObjGroupTri.size();++iogt){
-      std::string name_mtl = aObjGroupTri[iogt].name_mtl;
+    for (auto &iogt : aObjGroupTri) {
+      std::string name_mtl = iogt.name_mtl;
       auto itr = mapMtlName2Ind.find(name_mtl);
-      if( name_mtl.empty() || itr == mapMtlName2Ind.end() ){
-        aObjGroupTri[iogt].imtl = -1;
+      if (name_mtl.empty() || itr == mapMtlName2Ind.end()) {
+        iogt.imtl = -1;
         continue;
       }
-      aObjGroupTri[iogt].imtl = itr->second;
+      iogt.imtl = itr->second;
     }
   }
 }
 
-std::vector<double> CMeshMultiElem::AABB3_MinMax() const
-{
+std::vector<double> CMeshMultiElem::AABB3_MinMax() const {
   double c[3], w[3];
-  delfem2::CenterWidth_Points3(c,w,
+  delfem2::CenterWidth_Points3(c, w,
                                aXYZ);
   std::vector<double> aabb(6);
-  aabb[0] = c[0]-0.5*w[0];
-  aabb[1] = c[0]+0.5*w[0];
-  aabb[2] = c[1]-0.5*w[1];
-  aabb[3] = c[1]+0.5*w[1];
-  aabb[4] = c[2]-0.5*w[2];
-  aabb[5] = c[2]+0.5*w[2];
+  aabb[0] = c[0] - 0.5 * w[0];
+  aabb[1] = c[0] + 0.5 * w[0];
+  aabb[2] = c[1] - 0.5 * w[1];
+  aabb[3] = c[1] + 0.5 * w[1];
+  aabb[4] = c[2] - 0.5 * w[2];
+  aabb[5] = c[2] + 0.5 * w[2];
   return aabb;
 }
 
-void CMeshMultiElem::ScaleXYZ(double s)
-{
+void CMeshMultiElem::ScaleXYZ(double s) {
   delfem2::Scale_PointsX(aXYZ,
                          s);
 }
 
-void CMeshMultiElem::TranslateXYZ(double x, double y, double z)
-{
+void CMeshMultiElem::TranslateXYZ(double x, double y, double z) {
   delfem2::Translate_Points3(aXYZ,
-                             x,y,z);
+                             x, y, z);
 }
 
 void Load_Mtl
-(const std::string& fname,
- std::vector<CMaterial>& aMtl)
-{
+    (const std::string &fname,
+     std::vector<CMaterial> &aMtl) {
   std::ifstream fin;
   fin.open(fname.c_str());
-  if (fin.fail()){
-    std::cout<<"File Read Fail"<<std::endl;
+  if (fin.fail()) {
+    std::cout << "File Read Fail" << std::endl;
     return;
   }
   aMtl.clear();
   const int BUFF_SIZE = 256;
   char buff[BUFF_SIZE];
-  while (fin.getline(buff, BUFF_SIZE)){
-    if (buff[0]=='#'){ continue; }
-    if (buff[0]=='\n'){ continue; }
+  while (fin.getline(buff, BUFF_SIZE)) {
+    if (buff[0] == '#') { continue; }
+    if (buff[0] == '\n') { continue; }
     std::stringstream ss(buff);
     std::string str0, str1, str2, str3, str4;
     ss >> str0;
-    if( str0 == "newmtl" ){
-      aMtl.resize(aMtl.size()+1);
-      const int imtl0 = aMtl.size()-1;
+    if (str0 == "newmtl") {
+      aMtl.resize(aMtl.size() + 1);
+      const int imtl0 = aMtl.size() - 1;
       ss >> str1;
       aMtl[imtl0].name_mtl = str1;
     }
-    if( str0 == "Kd" ){
-      const int imtl0 = aMtl.size()-1;
+    if (str0 == "Kd") {
+      const int imtl0 = aMtl.size() - 1;
       ss >> str1 >> str2 >> str3;
       aMtl[imtl0].Kd[0] = myStof(str1);
       aMtl[imtl0].Kd[1] = myStof(str2);
       aMtl[imtl0].Kd[2] = myStof(str3);
       aMtl[imtl0].Kd[3] = 1.0;
     }
-    if( str0 == "Ka" ){
-      const int imtl0 = aMtl.size()-1;
+    if (str0 == "Ka") {
+      const int imtl0 = aMtl.size() - 1;
       ss >> str1 >> str2 >> str3;
       aMtl[imtl0].Ka[0] = myStof(str1);
       aMtl[imtl0].Ka[1] = myStof(str2);
       aMtl[imtl0].Ka[2] = myStof(str3);
       aMtl[imtl0].Ka[3] = 1.0;
     }
-    if( str0 == "Ks" ){
-      const int imtl0 = aMtl.size()-1;
+    if (str0 == "Ks") {
+      const int imtl0 = aMtl.size() - 1;
       ss >> str1 >> str2 >> str3;
       aMtl[imtl0].Ks[0] = myStof(str1);
       aMtl[imtl0].Ks[1] = myStof(str2);
       aMtl[imtl0].Ks[2] = myStof(str3);
       aMtl[imtl0].Ks[3] = 1.0;
     }
-    if( str0 == "Ke" ){
-      const int imtl0 = aMtl.size()-1;
+    if (str0 == "Ke") {
+      const int imtl0 = aMtl.size() - 1;
       ss >> str1 >> str2 >> str3;
       aMtl[imtl0].Ke[0] = myStof(str1);
       aMtl[imtl0].Ke[1] = myStof(str2);
       aMtl[imtl0].Ke[2] = myStof(str3);
       aMtl[imtl0].Ke[3] = myStof(str3);
     }
-    if( str0 == "Ns" ){
-      const int imtl0 = aMtl.size()-1;
+    if (str0 == "Ns") {
+      const int imtl0 = aMtl.size() - 1;
       ss >> str1;
       aMtl[imtl0].Ns = myStof(str1);
     }
-    if( str0 == "illum" ){
-      const int imtl0 = aMtl.size()-1;
+    if (str0 == "illum") {
+      const int imtl0 = aMtl.size() - 1;
       ss >> str1;
       aMtl[imtl0].illum = myStoi(str1);
     }
-    if( str0 == "map_Kd" ){
-      const int imtl0 = aMtl.size()-1;
+    if (str0 == "map_Kd") {
+      const int imtl0 = aMtl.size() - 1;
       ss >> str1;
       aMtl[imtl0].map_Kd = str1;
     }

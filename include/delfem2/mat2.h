@@ -51,20 +51,20 @@ DFM2_INLINE void RotationalComponentOfMatrix2(
 
 // ----------------------
 
-template <typename T>
+template<typename T>
 class CMat2; // this pre-definition is needed for following functions
 
-template <typename T>
-CMat2<T> operator* (
+template<typename T>
+CMat2<T> operator*(
     T d,
-    const CMat2<T>& rhs);
+    const CMat2<T> &rhs);
 
 /**
  * @brief 2 dimensional vector class
  */
 template<typename T>
 class CMat2 {
-public:
+ public:
 
   CMat2() : p{0, 0, 0, 0} {}
   CMat2(const CMat2 &rhs) {
@@ -79,7 +79,7 @@ public:
     this->p[2] = yx;
     this->p[3] = yy;
   }
-  CMat2(T val_dia) : p{val_dia,0,0,val_dia} {}
+  CMat2(T val_dia) : p{val_dia, 0, 0, val_dia} {}
 
   // above: constructor / destructor
   // -------------------------------
@@ -148,12 +148,12 @@ public:
 
   inline T operator()(int i, int j) const {
     assert(i < 2 && j < 2);
-    return p[i*2+j];
+    return p[i * 2 + j];
   }
 
-  inline T & operator()(int i, int j) {
+  inline T &operator()(int i, int j) {
     assert(i < 2 && j < 2);
-    return p[i*2+j];
+    return p[i * 2 + j];
   }
 
   // above: operator
@@ -172,18 +172,18 @@ public:
   //! @brief transpose matrix
   //! @details naming inspired by Eigen
   CMat2 transpose() const {
-    return CMat2(p[0],p[2],p[1],p[3]);
+    return CMat2(p[0], p[2], p[1], p[3]);
   }
-  
+
   void transposeInPlace() {
     const T t1 = p[1];
     p[1] = p[2];
     p[2] = t1;
   }
-  
+
   //! @details naming inspired by Eigen
   T determinant() const {
-    return p[0]*p[3]-p[1]*p[2];
+    return p[0] * p[3] - p[1] * p[2];
   }
 
   template<typename S>
@@ -192,20 +192,20 @@ public:
         static_cast<S>(p[0]),
         static_cast<S>(p[1]),
         static_cast<S>(p[2]),
-        static_cast<S>(p[3]) );
+        static_cast<S>(p[3]));
   };
 
   void multiply_vec2(T vo[2], const T vi[2]) const {
     MatVec2(
         vo,
-        p,vi);
-  }
-  
-  static CMat2<T> outer_product(const T v0[2], const T v1[2]){
-    return CMat2<T>(v0[0]*v1[0], v0[0]*v1[1], v0[1]*v1[0], v0[1]*v1[1]);
+        p, vi);
   }
 
-public:
+  static CMat2<T> outer_product(const T v0[2], const T v1[2]) {
+    return CMat2<T>(v0[0] * v1[0], v0[0] * v1[1], v0[1] * v1[0], v0[1] * v1[1]);
+  }
+
+ public:
   T p[4];
 };
 
@@ -215,20 +215,20 @@ using CMat2i = CMat2<int>;
 
 // --------------------
 
-template <typename T>
+template<typename T>
 void polar_decomposition(
     CMat2<T> &R,
     CMat2<T> &S,
-    const CMat2<T>& m);
+    const CMat2<T> &m);
 
-template <typename T>
+template<typename T>
 void svd(CMat2<T> &U,
          CMat2<T> &sig,
          CMat2<T> &V,
-         const CMat2<T>& m);
+         const CMat2<T> &m);
 
 } // delfem2
-  
+
 #ifdef DFM2_HEADER_ONLY
 #  include "delfem2/mat2.cpp"
 #endif

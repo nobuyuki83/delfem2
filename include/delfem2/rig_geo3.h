@@ -248,9 +248,7 @@ DFM2_INLINE void SetPose_BioVisionHierarchy(
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-
-#  include "delfem2/rig_geo3.cpp"
-
+  #include "delfem2/rig_geo3.cpp"
 #endif
 
 #endif // #define DFM2_RIG_V3Q_H

@@ -5,69 +5,66 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cmath>
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/jagarray.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
-//
-#include <cmath>
 
 namespace dfm2 = delfem2;
 
 // -------------------------------------------------
 
 void stepTime(
-    std::vector<double>& aXY1,
-    std::vector<double>& aUV1,
-    std::vector<double>& aTmp,
+    std::vector<double> &aXY1,
+    std::vector<double> &aUV1,
+    std::vector<double> &aTmp,
     double dt,
     int nitr,
-    const std::vector<unsigned int>& clstr_ind,
-    const std::vector<unsigned int>& clstr,
-    const std::vector<int>& aBC,
-    const std::vector<unsigned int>& aQuad,
-    const std::vector<double>& aXY0)
-{
-  const int ndof = aXY0.size();
-  for (int idof=0; idof<ndof; idof++){
-    aTmp[idof] = aXY1[idof]+aUV1[idof]*dt;
+    const std::vector<unsigned int> &clstr_ind,
+    const std::vector<unsigned int> &clstr,
+    const std::vector<int> &aBC,
+    const std::vector<unsigned int> &aQuad,
+    const std::vector<double> &aXY0) {
+  const size_t ndof = aXY0.size();
+  for (int idof = 0; idof < ndof; idof++) {
+    aTmp[idof] = aXY1[idof] + aUV1[idof] * dt;
   }
-  for(size_t ip=0;ip<aXY0.size()/2;++ip){
-    if( aBC[ip] == 0 ){ continue; }
-    aTmp[ip*2+0] = aXY1[ip*2+0];
-    aTmp[ip*2+1] = aXY1[ip*2+1];
+  for (size_t ip = 0; ip < aXY0.size() / 2; ++ip) {
+    if (aBC[ip] == 0) { continue; }
+    aTmp[ip * 2 + 0] = aXY1[ip * 2 + 0];
+    aTmp[ip * 2 + 1] = aXY1[ip * 2 + 1];
   }
   // deform
-  for (int itr=0; itr<nitr; itr++){
+  for (int itr = 0; itr < nitr; itr++) {
     dfm2::PBD_ConstProj_Rigid2D(
         aTmp.data(),
         0.5,
         clstr_ind.data(), clstr_ind.size(),
         clstr.data(), clstr.size(),
-         aXY0.data(), aXY0.size());
+        aXY0.data(), aXY0.size());
   }
-  for(size_t ip=0;ip<aXY0.size()/2;++ip){
-    if( aBC[ip] == 0 ){ continue; }
-    aTmp[ip*2+0] = aXY1[ip*2+0];
-    aTmp[ip*2+1] = aXY1[ip*2+1];
+  for (size_t ip = 0; ip < aXY0.size() / 2; ++ip) {
+    if (aBC[ip] == 0) { continue; }
+    aTmp[ip * 2 + 0] = aXY1[ip * 2 + 0];
+    aTmp[ip * 2 + 1] = aXY1[ip * 2 + 1];
   }
-  for (int idof=0; idof<ndof; ++idof){
-    aUV1[idof] = (aTmp[idof]-aXY1[idof])*(1.0/dt);
+  for (int idof = 0; idof < ndof; ++idof) {
+    aUV1[idof] = (aTmp[idof] - aXY1[idof]) * (1.0 / dt);
   }
-  for (int idof=0; idof<ndof; idof++){
+  for (int idof = 0; idof < ndof; idof++) {
     aXY1[idof] = aTmp[idof];
   }
 }
 
-int main(int argc,char* argv[])
-{
+int main(int argc, char *argv[]) {
   // --------------------------
   std::vector<double> aXY0;
   std::vector<double> aXY1;
@@ -79,8 +76,8 @@ int main(int argc,char* argv[])
   const int nX = 8;
   const int nY = 8;
   delfem2::MeshQuad2D_Grid(aXY0, aQuad, nX, nY);
-  aBC.assign(aXY0.size()/2,0);
-  for(int ix=0;ix<nX+1;++ix){ aBC[ix] = 1; }
+  aBC.assign(aXY0.size() / 2, 0);
+  for (int ix = 0; ix < nX + 1; ++ix) { aBC[ix] = 1; }
   aXY1 = aXY0;
   aXYt = aXY0;
   aUV1.resize(aXY0.size());
@@ -106,21 +103,20 @@ int main(int argc,char* argv[])
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 
-  const double dt = 1.0/60.0; // frame-rate is fixed to 60FPS.
+  const double dt = 1.0 / 60.0; // frame-rate is fixed to 60FPS.
   double time_last_update = 0.0;
-  while (!glfwWindowShouldClose(viewer.window))
-  {
+  while (!glfwWindowShouldClose(viewer.window)) {
     // control of the frame rate
     const double time_now = glfwGetTime();
-    if(time_now - time_last_update < dt ){
+    if (time_now - time_last_update < dt) {
       glfwPollEvents();
       continue;
     }
     time_last_update = time_now;
     {
-      for(int ix=0;ix<nX+1;++ix){
-        aXY1[ix*2+0] = ix + 2*sin(time_now*10);
-        aXY1[ix*2+1] = 0;
+      for (int ix = 0; ix < nX + 1; ++ix) {
+        aXY1[ix * 2 + 0] = ix + 2 * sin(time_now * 10);
+        aXY1[ix * 2 + 1] = 0;
       }
       stepTime(aXY1, aUV1, aXYt,
                dt, 1,
@@ -131,12 +127,12 @@ int main(int argc,char* argv[])
     //
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawMeshQuad2D_Edge(
-        aXY1.data(), aXY1.size()/2,
-        aQuad.data(), aQuad.size()/4);
+        aXY1.data(), aXY1.size() / 2,
+        aQuad.data(), aQuad.size() / 4);
     viewer.SwapBuffers();
     glfwPollEvents();
   }
-  
+
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
