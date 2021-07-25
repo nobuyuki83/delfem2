@@ -13,6 +13,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+
 #include "delfem2/dfm2_inline.h"
 
 #if defined(_MSC_VER)
@@ -327,27 +328,34 @@ CVec3<T> Cross(const CVec3<T> &arg1, const CVec3<T> &arg2);
 // rule about naming, the method starts "Set" change it self (not const)
 
 template<typename T>
-CVec3<T> mult_GlAffineMatrix(const float *m,
-                             const CVec3<T> &p);
+CVec3<T> mult_GlAffineMatrix(
+    const float *m,
+    const CVec3<T> &p);
 
 template<typename T>
-CVec3<T> solve_GlAffineMatrix(const float *m,
-                              const CVec3<T> &p);
+CVec3<T> solve_GlAffineMatrix(
+    const float *m,
+    const CVec3<T> &p);
 
 template<typename T>
-CVec3<T> solve_GlAffineMatrixDirection(const float *m,
-                                       const CVec3<T> &v);
+CVec3<T> solve_GlAffineMatrixDirection(
+    const float *m,
+    const CVec3<T> &v);
 
 template<typename T>
-CVec3<T> Mat3Vec(const T M[9], const CVec3<T> &v);
+CVec3<T> Mat3Vec(
+    const T M[9],
+    const CVec3<T> &v);
 
 template<typename T>
-CVec3<T> Mat4Vec(const T M[16], const CVec3<T> &v);
+CVec3<T> Mat4Vec(
+    const T M[16],
+    const CVec3<T> &v);
 
 template<typename T>
-DFM2_INLINE CVec3<T> QuatVec
-    (const T quat[4],
-     const CVec3<T> &v0);
+DFM2_INLINE CVec3<T> QuatVec(
+    const T quat[4],
+    const CVec3<T> &v0);
 
 template<typename REAL>
 CVec3<REAL> QuatConjVec(
@@ -454,10 +462,11 @@ double ShortestEdgeLength(
     const CVec3<T> &ipo3);
 
 template<typename T>
-void Normal(CVec3<T> &vnorm,
-            const CVec3<T> &v1,
-            const CVec3<T> &v2,
-            const CVec3<T> &v3);
+void Normal(
+    CVec3<T> &vnorm,
+    const CVec3<T> &v1,
+    const CVec3<T> &v2,
+    const CVec3<T> &v3);
 
 template<typename T>
 CVec3<T> Normal(
