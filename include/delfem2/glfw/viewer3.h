@@ -65,8 +65,8 @@ public:
 
 };
 
-} // opengl
-} // delfem2
+} // namespace opengl
+} // namespace delfem2
 
 #if defined(_MSC_VER)
   #pragma warning( pop )

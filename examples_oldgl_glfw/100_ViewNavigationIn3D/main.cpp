@@ -7,7 +7,7 @@
 
 /**
  * @brief demo for view navigation in 3D
- * @details this demo is for showing CViewer_GLFW funtinoalities
+ * @details this demo is for showing CViewer_GLFW functionalities
  */
 
 #define GL_SILENCE_DEPRECATION

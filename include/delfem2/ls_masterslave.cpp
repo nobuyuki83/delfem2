@@ -5,10 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/ls_masterslave.h"
+
 #include <cassert>
 #include <vector>
 #include <climits>
-#include "delfem2/ls_masterslave.h"
 
 DFM2_INLINE void
 delfem2::setRHS_MasterSlave(

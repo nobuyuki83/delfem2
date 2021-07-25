@@ -16,7 +16,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
-#include <limits> // using NaN Check
+#include <limits>  // using NaN Check
 #include "delfem2/dfm2_inline.h"
 
 #define NEARLY_ZERO 1.e-16
@@ -324,7 +324,7 @@ CMat4<T> operator + (const CMat4<T>& lhs, const CMat4<T>& rhs);
 template <typename REAL>
 class CMat4 {
 public:
-  CMat4 ()= default;;
+  CMat4 ()= default;
   explicit CMat4 (const float* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
   explicit CMat4 (const double* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
 public:
