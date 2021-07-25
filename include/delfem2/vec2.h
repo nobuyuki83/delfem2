@@ -176,6 +176,11 @@ class CVec2 {
     p[1] /= mag;
   }
 
+  //! @brief Euclidian norm (named similalty to Eigen)
+  T norm() const{
+    return std::sqrt(p[0]*p[0]+p[1]*p[1]);
+  }
+  
   //! @brief normalizeation (named similarly to Eigen)
   CVec2 normalized() const {
     CVec2 r(*this);
@@ -189,7 +194,11 @@ class CVec2 {
     p[1] = T(0);
   }
 
-  template<typename S>
+  T dot(const CVec2<T>& rhs) const {
+    return x*rhs.x+y*rhs.y;
+  }
+
+  template <typename S>
   CVec2<S> cast() const {
     return CVec2<S>(
         static_cast<S>(p[0]),
