@@ -14,13 +14,14 @@
 #ifndef DFM2_V23M34Q_H
 #define DFM2_V23M34Q_H
 
-#include "vec2.h"
-#include "vec3.h"
-#include "mat3.h"
-#include "mat4.h"
-#include "quat.h"
-#include "delfem2/dfm2_inline.h"
 #include <cstdio>
+
+#include "delfem2/vec2.h"
+#include "delfem2/vec3.h"
+#include "delfem2/mat3.h"
+#include "delfem2/mat4.h"
+#include "delfem2/quat.h"
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 

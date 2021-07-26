@@ -118,7 +118,7 @@ static void glfw_callback_cursor_position(GLFWwindow *window, double xpos, doubl
     nav.mouse_x = mov_end_x;
     nav.mouse_y = mov_end_y;
   }
-  if (pViewer3->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT ) { // drag for view control
+  if (pViewer3->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT ) {  // drag for view control
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     if (nav.imodifier == GLFW_MOD_ALT ) {
       pViewer3->camera.Rot_Camera(nav.dx, nav.dy);
@@ -156,26 +156,23 @@ static void glfw_callback_scroll(GLFWwindow *window, double xoffset, double yoff
 
 void delfem2::glfw::CViewer3::InitGL()
 {
-//  delfem2::glfw::viewer3::pViewer3 = this;
-    // glfw window creation
-    // --------------------
-  this->window = glfwCreateWindow(static_cast<int>(width),
-                                  static_cast<int>(height),
-                                  "LearnOpenGL",
-                                  nullptr,
-                                  nullptr);
-  if (this->window == nullptr)
-  {
+  namespace lcl = delfem2::glfw::viewer3;
+  this->window = glfwCreateWindow(
+      static_cast<int>(width),
+      static_cast<int>(height),
+      window_title.c_str(),
+      nullptr,
+      nullptr);
+  if (this->window == nullptr) {
     glfwTerminate();
   }
-  
   glfwMakeContextCurrent(this->window);
   glfwSetWindowUserPointer(this->window, this);
-  glfwSetFramebufferSizeCallback(this->window, delfem2::glfw::viewer3::glfw_callback_resize);
-  glfwSetKeyCallback(            this->window, delfem2::glfw::viewer3::glfw_callback_key);
-  glfwSetMouseButtonCallback(    this->window, delfem2::glfw::viewer3::glfw_callback_mouse_button);
-  glfwSetCursorPosCallback(      this->window, delfem2::glfw::viewer3::glfw_callback_cursor_position);
-  glfwSetScrollCallback(         this->window, delfem2::glfw::viewer3::glfw_callback_scroll);
+  glfwSetFramebufferSizeCallback(this->window, lcl::glfw_callback_resize);
+  glfwSetKeyCallback(this->window, lcl::glfw_callback_key);
+  glfwSetMouseButtonCallback(this->window, lcl::glfw_callback_mouse_button);
+  glfwSetCursorPosCallback(this->window, lcl::glfw_callback_cursor_position);
+  glfwSetScrollCallback(this->window, lcl::glfw_callback_scroll);
 }
 
 
