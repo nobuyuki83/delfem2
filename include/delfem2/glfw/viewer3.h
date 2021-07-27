@@ -62,7 +62,7 @@ public:
   double bgcolor[4] = {1, 1, 1, 1};
   unsigned int width = 640;
   unsigned int height = 480;
-
+  std::string window_title = "LearnOpenGL";
 };
 
 } // namespace opengl

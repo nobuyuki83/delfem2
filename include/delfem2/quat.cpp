@@ -229,6 +229,22 @@ template CQuat<float> operator+(
 // -----------------------
 
 template<typename T>
+CQuat<T> operator-(const CQuat<T> &lhs, const CQuat<T> &rhs) {
+  return CQuat<T>(lhs.w - rhs.w,
+                  lhs.x - rhs.x,
+                  lhs.y - rhs.y,
+                  lhs.z - rhs.z);
+}
+#ifndef DFM2_HEADER_ONLY
+template CQuat<double> operator-(
+    const CQuat<double> &lhs, const CQuat<double> &rhs);
+template CQuat<float> operator-(
+    const CQuat<float> &lhs, const CQuat<float> &rhs);
+#endif
+
+// -----------------------
+
+template<typename T>
 CQuat<T> operator*(const CQuat<T> &lhs, const CQuat<T> &rhs) {
   CQuat<T> q;
   QuatQuat(q.p, lhs.p, rhs.p);

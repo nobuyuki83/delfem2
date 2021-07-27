@@ -132,19 +132,19 @@ class CVec3 {
   }
 
   template<typename S>
-  CVec3(const S *v) : p{v[0], v[1], v[2]} {}
+  explicit CVec3(const S *v) : p{v[0], v[1], v[2]} {}
 
   template<typename S>
-  CVec3(const std::vector<S> &v)  : p(v[0], v[1], v[2]) {}
+  explicit CVec3(const std::vector<S> &v)  : p(v[0], v[1], v[2]) {}
 
-  virtual ~CVec3() {}
+  virtual ~CVec3() = default;
 
   // above: constructor / destructor
   // -------------------------------
   // below: operator
 
-  inline const CVec3 operator-() const { return ((T) (-1)) * (*this); }
-  inline const CVec3 operator+() const { return *this; }
+  inline CVec3 operator-() const { return ((T) (-1)) * (*this); }
+  inline CVec3 operator+() const { return *this; }
   inline CVec3 operator+() { return *this; }
   inline CVec3 operator-() { return CVec3(-p[0], -p[1], -p[2]); }
   inline CVec3 &operator=(const CVec3 &b) {
@@ -167,14 +167,24 @@ class CVec3 {
     z -= b.z;
     return *this;
   }
-  inline CVec3 operator+(const CVec3 &b) const { return CVec3(x + b.x, y + b.y, z + b.z); }
-  inline CVec3 operator-(const CVec3 &b) const { return CVec3(x - b.x, y - b.y, z - b.z); }
+  inline CVec3 operator+(const CVec3 &b) const {
+    return CVec3(x + b.x, y + b.y, z + b.z);
+  }
+
+  inline CVec3 operator-(const CVec3 &b) const {
+    return CVec3(x - b.x, y - b.y, z - b.z);
+  }
+
   inline CVec3 operator^(const CVec3 &b) const {
     return CVec3(y * b.z - z * b.y,
                  z * b.x - x * b.z,
                  x * b.y - y * b.x);
   }
-  inline CVec3 operator*(T b) const { return CVec3(x * b, y * b, z * b); }
+
+  inline CVec3 operator*(T b) const {
+    return CVec3(x * b, y * b, z * b);
+  }
+
   inline CVec3 &operator*=(T d) {
     x *= d;
     y *= d;
@@ -224,10 +234,14 @@ class CVec3 {
   void normalize();
 
   //! @details named after Eigen library
-  inline T norm() const { return std::sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]); }
+  inline T norm() const {
+    return std::sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
+  }
 
   //! @details named after Eigen library
-  inline T squaredNorm() const { return p[0] * p[0] + p[1] * p[1] + p[2] * p[2]; }
+  inline T squaredNorm() const {
+    return p[0] * p[0] + p[1] * p[1] + p[2] * p[2];
+  }
 
   //! @details named after Eigen library
   void setZero();
@@ -388,13 +402,8 @@ CVec3<T> screenUnProjectionDirection(
     const float *mPj);
 
 template<typename T>
-CVec3<T> screenDepthDirection(
-    const CVec3<T> &v,
-    const float *mMV,
-    const float *mPj);
-
-template<typename T>
-double ScalarTripleProduct(const CVec3<T> &a, const CVec3<T> &b, const CVec3<T> &c);
+double ScalarTripleProduct(
+    const CVec3<T> &a, const CVec3<T> &b, const CVec3<T> &c);
 
 template<typename T>
 bool operator==(const CVec3<T> &lhs, const CVec3<T> &rhs);
@@ -403,7 +412,8 @@ template<typename T>
 bool operator!=(const CVec3<T> &lhs, const CVec3<T> &rhs);
 
 template<typename T>
-void GetVertical2Vector(const CVec3<T> &vec_n, CVec3<T> &vec_x, CVec3<T> &vec_y);
+void GetVertical2Vector(
+    const CVec3<T> &vec_n, CVec3<T> &vec_x, CVec3<T> &vec_y);
 
 // ---------------------------------------------
 
