@@ -123,7 +123,11 @@ void MatMat4(
 {
   for(int i=0;i<4;i++){
     for(int j=0;j<4;j++){
-	  const T1 c = A[i * 4 + 0] * B[0 * 4 + j] + A[i * 4 + 1] * B[1 * 4 + j] + A[i * 4 + 2] * B[2 * 4 + j] + A[i * 4 + 3] * B[3 * 4 + j];
+	  const T1 c =
+	      A[i * 4 + 0] * B[0 * 4 + j] +
+	      A[i * 4 + 1] * B[1 * 4 + j] +
+	      A[i * 4 + 2] * B[2 * 4 + j] +
+	      A[i * 4 + 3] * B[3 * 4 + j];
 	  C[i * 4 + j] = static_cast<T0>(c);
     }
   }

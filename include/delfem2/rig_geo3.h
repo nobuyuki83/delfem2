@@ -9,13 +9,14 @@
 #ifndef DFM2_RIG_GEO3_H
 #define DFM2_RIG_GEO3_H
 
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <iostream>
 #include <vector>
 #include <string>
 #include <cassert>
+
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
