@@ -528,7 +528,8 @@ TEST(objfunc_v23, WdWddW_Rod)
     double ddW_ddt[2][2];
     double W = WdWddW_Rod(dW_dP,dW_dt,
                           ddW_ddP, ddW_dtdP,ddW_ddt,
-                          stiff_bendtwist, P, S, off, true);
+                          stiff_bendtwist, P, S,
+                          dfm2::CVec3d(off), true);
     // -----------------------
     const dfm2::CVec3d dP[3] = {
         dfm2::CVec3d::Random(dist_01,randomEng)*eps,
@@ -553,7 +554,8 @@ TEST(objfunc_v23, WdWddW_Rod)
       double ddw_ddt[2][2];
       w = WdWddW_Rod(dw_dP, dw_dt,
                      ddw_ddP, ddw_dtdP, ddw_ddt,
-                     stiff_bendtwist, p, s, off, true);
+                     stiff_bendtwist, p, s,
+                     dfm2::CVec3d(off), true);
     }
     {
       const double val0 = (w-W)/eps;
