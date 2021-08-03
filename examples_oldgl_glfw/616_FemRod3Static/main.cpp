@@ -10,6 +10,7 @@
 
 #include "delfem2/lsmats.h"
 #include "delfem2/lsvecx.h"
+#include "delfem2/vecxitrsol.h"
 #include "delfem2/femrod.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/glfw/viewer3.h"
