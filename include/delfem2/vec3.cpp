@@ -445,9 +445,10 @@ namespace delfem2 {
 //! scale
 template<typename T0, typename T1>
 CVec3<T0> operator*(T1 d, const CVec3<T0> &rhs) {
-  CVec3<T0> temp = rhs;
-  temp *= d;
-  return temp;
+  return CVec3<T0>(
+      static_cast<T0>(rhs.x*d),
+      static_cast<T0>(rhs.y*d),
+      static_cast<T0>(rhs.z*d) );
 }
 #ifndef DFM2_HEADER_ONLY
 template CVec3f operator* (float d, const CVec3f& rhs);
@@ -497,47 +498,9 @@ template std::istream &operator>>(std::istream &input, CVec3d& v);
 template std::istream &operator>>(std::istream &input, CVec3f& v);
 #endif
 
+} // namespace delfem2
+
 // ----------------------
-
-template<typename T>
-std::ostream &operator<<(std::ostream &output, const std::vector<CVec3 < T>>
-& aV) {
-output<<aV.
-size()
-<<
-std::endl;
-for (
-int iv = 0;
-iv<(int)
-aV.
-size();
-++iv) {
-output<<"  "<<aV[iv]<<
-std::endl;
-}
-return
-output;
-}
-
-template<typename T>
-std::istream &operator>>(std::istream &input, std::vector<CVec3 < T>>
-& aV){
-int nV;
-input>>
-nV;
-aV.
-resize(nV);
-for (
-int iv = 0;
-iv<nV;
-iv++){
-input>>aV[iv];
-}
-return
-input;
-}
-
-} // end namespace delfem2
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -1132,13 +1095,51 @@ delfem2::CVec3<T> delfem2::RandGaussVector() {
 // --------------------------------------------------
 // TODO: following should be move to mesh class?
 
+namespace delfem2 {
+
+template<typename T>
+std::ostream &operator<<(std::ostream &output, const std::vector<CVec3 < T>>
+& aV) {
+output<<aV.
+size()
+<<
+std::endl;
+for (
+int iv = 0;
+iv<(int)
+aV.
+size();
+++iv) {
+output<<"  "<<aV[iv]<<
+std::endl;
+}
+return
+output;
+}
+
+template<typename T>
+std::istream &operator>>(std::istream &input, std::vector<CVec3 < T>>
+& aV){
+int nV;
+input>>
+nV;
+aV.
+resize(nV);
+for (
+int iv = 0;
+iv<nV;
+iv++){
+input>>aV[iv];
+}
+return
+input;
+}
+
+} // end namespace delfem2
+
 template<typename T>
 double delfem2::Area_Tri(
     const int iv1, const int iv2, const int iv3,
-    const std::vector<CVec3 < T>>
-& aPoint )
-{
-return
-Area_Tri(aPoint[iv1], aPoint[iv2], aPoint[iv3]
-);
+    const std::vector<CVec3<T>> &aPoint ) {
+  return Area_Tri(aPoint[iv1], aPoint[iv2], aPoint[iv3]);
 }

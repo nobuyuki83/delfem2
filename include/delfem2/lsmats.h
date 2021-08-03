@@ -86,6 +86,7 @@ public:
   }
 
   /**
+   * TODO: return void instead of bool
    * @detail the name is the same as the Eigen library
    * @return
    */

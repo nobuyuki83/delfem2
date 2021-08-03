@@ -151,6 +151,7 @@ template void delfem2::Inverse_Mat3(double Ainv[9]);
 
 // -----------------------------------
 
+// see https://en.wikipedia.org/wiki/Skew-symmetric_matrix
 template<typename REAL>
 void delfem2::Mat3_Spin(
     REAL *mat,
@@ -872,12 +873,20 @@ template CMat3<float> operator*(const CMat3<float> &m, float d);
 template CMat3<double> operator*(const CMat3<double> &m, double d);
 #endif
 
+// --------------------
+
 template<typename T>
 CMat3<T> operator/(const CMat3<T> &m, T d) {
   CMat3<T> temp = m;
   temp /= d;
   return temp;
 }
+#ifndef DFM2_HEADER_ONLY
+template CMat3<float> operator/(const CMat3<float> &m, float d);
+template CMat3<double> operator/(const CMat3<double> &m, double d);
+#endif
+
+// ----------------------
 
 template<typename T>
 CMat3<T> operator+(const CMat3<T> &lhs, const CMat3<T> &rhs) {

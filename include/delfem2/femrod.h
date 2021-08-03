@@ -16,7 +16,7 @@
 namespace delfem2 {
 
 DFM2_INLINE void WdWddW_Rod2(
-    double& W,
+    double &W,
     double dW[3][2],
     double ddW[3][3][2][2],
     const double ap[3][2],
@@ -25,15 +25,21 @@ DFM2_INLINE void WdWddW_Rod2(
     double stiff_stretch12,
     double stiff1_bend);
 
+
+DFM2_INLINE double WdWddW_Rod3BendStraight(
+    delfem2::CVec3d dW_dP[3],
+    delfem2::CMat3d ddW_ddP[3][3],
+    const delfem2::CVec3d vec_pos[3]);
+
 /**
  * @brief energy W and its derivative dW and second derivative ddW
  * where W = a^T R(dn) b(theta)
  */
 DFM2_INLINE void RodFrameTrans(
     CVec3d frm[3],
-    const CVec3d& S0,
-    const CVec3d& V01,
-    const CVec3d& du,
+    const CVec3d &S0,
+    const CVec3d &V01,
+    const CVec3d &du,
     double dtheta);
 
 /**
@@ -53,13 +59,13 @@ DFM2_INLINE void DiffFrameRod(
  * @brief second derivative (ddW) of W, where W = Q^T Frm[iaxis]
  */
 DFM2_INLINE void DifDifFrameRod(
-    CMat3d& ddW_ddv,
-    CVec3d& ddW_dvdt,
-    double& ddW_dtt,
+    CMat3d &ddW_ddv,
+    CVec3d &ddW_dvdt,
+    double &ddW_dtt,
     //
     unsigned int iaxis,
     double l01,
-    const CVec3d& Q,
+    const CVec3d &Q,
     const CVec3d Frm[3]);
 
 DFM2_INLINE double WdWddW_DotFrame(
@@ -92,7 +98,7 @@ DFM2_INLINE double WdWddW_Rod(
     const double stiff_bendtwist[3],
     const CVec3d P[3],
     const CVec3d S[2],
-    const CVec3d& darboux0,
+    const CVec3d &darboux0,
     bool is_exact);
 
 /**
@@ -115,38 +121,38 @@ DFM2_INLINE double WdWddW_SquareLengthLineseg3D(
 // ------------------------
 
 DFM2_INLINE void Solve_DispRotSeparate(
-    std::vector<CVec3d>& aP,
-    std::vector<CVec3d>& aS,
-    CMatrixSparse<double>& mats,
+    std::vector<CVec3d> &aP,
+    std::vector<CVec3d> &aS,
+    CMatrixSparse<double> &mats,
     const double stiff_stretch,
     const double stiff_bendtwist[3],
-    const std::vector<CVec3d>& aP0,
-    const std::vector<CVec3d>& aDarboux0,
-    const std::vector<unsigned int>& aElemSeg,
-    const std::vector<unsigned int>& aElemRod,
-    const std::vector<int>& aBCFlag);
+    const std::vector<CVec3d> &aP0,
+    const std::vector<CVec3d> &aDarboux0,
+    const std::vector<unsigned int> &aElemSeg,
+    const std::vector<unsigned int> &aElemRod,
+    const std::vector<int> &aBCFlag);
 
 
 // --------------
 // below: rod hair
 
 DFM2_INLINE void ParallelTransport_RodHair(
-    std::vector<CVec3d>& aP0,
-    std::vector<CVec3d>& aS0,
-    const std::vector<unsigned int>& aIP_HairRoot);
+    std::vector<CVec3d> &aP0,
+    std::vector<CVec3d> &aS0,
+    const std::vector<unsigned int> &aIP_HairRoot);
 
 DFM2_INLINE void MakeBCFlag_RodHair(
-    std::vector<int>& aBCFlag,
-    const std::vector<unsigned int>& aIP_HairRoot);
+    std::vector<int> &aBCFlag,
+    const std::vector<unsigned int> &aIP_HairRoot);
 
 DFM2_INLINE void MakeSparseMatrix_RodHair(
-    CMatrixSparse<double>& mats,
-    const std::vector<unsigned int>& aIP_HairRoot,
+    CMatrixSparse<double> &mats,
+    const std::vector<unsigned int> &aIP_HairRoot,
     unsigned int ndof_par_node);
 
 DFM2_INLINE void MakeDirectorOrthogonal_RodHair(
-    std::vector<CVec3d>& aS,
-    const std::vector<CVec3d>& aP);
+    std::vector<CVec3d> &aS,
+    const std::vector<CVec3d> &aP);
 
 /**
  * Merge linear system for hair
@@ -162,22 +168,22 @@ DFM2_INLINE void MakeDirectorOrthogonal_RodHair(
  * @return
  */
 DFM2_INLINE double MergeLinSys_Hair(
-    std::vector<double>& vec_r,
-    CMatrixSparse<double>& mats,
+    std::vector<double> &vec_r,
+    CMatrixSparse<double> &mats,
     const double stiff_stretch,
     const double stiff_bendtwist[3],
-    const std::vector<unsigned int>& aIP_HairRoot,
-    const std::vector<CVec3d>& aP,
-    const std::vector<CVec3d>& aS,
-    const std::vector<CVec3d>& aP0,
-    const std::vector<CVec3d>& aS0);
+    const std::vector<unsigned int> &aIP_HairRoot,
+    const std::vector<CVec3d> &aP,
+    const std::vector<CVec3d> &aS,
+    const std::vector<CVec3d> &aP0,
+    const std::vector<CVec3d> &aS0);
 
 DFM2_INLINE void UpdateSolutionHair(
-    std::vector<CVec3d>& aP,
-    std::vector<CVec3d>& aS,
-    const std::vector<double>& vec_x,
-    const std::vector<unsigned int>& aIP_HairRoot,
-    const std::vector<int>& aBCFlag);
+    std::vector<CVec3d> &aP,
+    std::vector<CVec3d> &aS,
+    const std::vector<double> &vec_x,
+    const std::vector<unsigned int> &aIP_HairRoot,
+    const std::vector<int> &aBCFlag);
 
 /**
  * @brief static minimization of the deformation energy
@@ -191,54 +197,50 @@ DFM2_INLINE void UpdateSolutionHair(
  * @param aIP_HairRoot (in) indeces of the root points
  */
 DFM2_INLINE void Solve_RodHair(
-    std::vector<CVec3d>& aP,
-    std::vector<CVec3d>& aS,
-    CMatrixSparse<double>& mats,
+    std::vector<CVec3d> &aP,
+    std::vector<CVec3d> &aS,
+    CMatrixSparse<double> &mats,
     const double stiff_stretch,
     const double stiff_bendtwist[3],
     double mdtt,
-    const std::vector<CVec3d>& aP0,
-    const std::vector<CVec3d>& aS0,
-    const std::vector<int>& aBCFlag,
-    const std::vector<unsigned int>& aIP_HairRoot);
+    const std::vector<CVec3d> &aP0,
+    const std::vector<CVec3d> &aS0,
+    const std::vector<int> &aBCFlag,
+    const std::vector<unsigned int> &aIP_HairRoot);
 
-
-class CContactHair{
-public:
-  unsigned int ip0,ip1;
+class CContactHair {
+ public:
+  unsigned int ip0, ip1;
   double s;
-  unsigned int iq0,iq1;
+  unsigned int iq0, iq1;
   double t;
   CVec3d norm;
-public:
-  CVec3d Direction(const std::vector<CVec3d>& aP) const {
-    return (1-s)*aP[ip0] + s*aP[ip1] - (1-t)*aP[iq0] - t*aP[iq1];
+ public:
+  CVec3d Direction(const std::vector<CVec3d> &aP) const {
+    return (1 - s) * aP[ip0] + s * aP[ip1] - (1 - t) * aP[iq0] - t * aP[iq1];
   }
 };
 
-
 DFM2_INLINE void Solve_RodHairContact(
-    std::vector<CVec3d>& aP,
-    std::vector<CVec3d>& aS,
-    CMatrixSparse<double>& mats,
+    std::vector<CVec3d> &aP,
+    std::vector<CVec3d> &aS,
+    CMatrixSparse<double> &mats,
     const double stiff_stretch,
     const double stiff_bendtwist[3],
     double mdtt,
-    const std::vector<CVec3d>& aPt0,
-    const std::vector<CVec3d>& aP0,
-    const std::vector<CVec3d>& aS0,
-    const std::vector<int>& aBCFlag,
-    const std::vector<unsigned int>& aIP_HairRoot,
+    const std::vector<CVec3d> &aPt0,
+    const std::vector<CVec3d> &aP0,
+    const std::vector<CVec3d> &aS0,
+    const std::vector<int> &aBCFlag,
+    const std::vector<unsigned int> &aIP_HairRoot,
     const double clearance,
     const double stiff_contact,
-    const std::vector<CContactHair>& aContact);
-
-
+    const std::vector<CContactHair> &aContact);
 
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/femrod.cpp"
+#include "delfem2/femrod.cpp"
 #endif
 
-#endif /* femrod_h */
+#endif

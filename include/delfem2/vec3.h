@@ -249,6 +249,18 @@ class CVec3 {
   //! @details named after Eigen library
   T dot(const CVec3 &rhs) const { return x * rhs.x + y * rhs.y + z * rhs.z; }
 
+  /**
+   * cross product
+   * @param[in] b
+   * @return (this) crossproduct b
+   * @details named after Eigen library
+   */
+  CVec3 cross(const CVec3 &b) const {
+    return CVec3(y * b.z - z * b.y,
+                 z * b.x - x * b.z,
+                 x * b.y - y * b.x);
+  }
+
   CVec3 mult(const CVec3 &b) const { return CVec3(x * b.x, y * b.y, z * b.z); }
 
   template<typename S>
