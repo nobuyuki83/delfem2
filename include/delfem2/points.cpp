@@ -287,7 +287,7 @@ void delfem2::CenterWidth_Points3(
   T x_min = aXYZ[0], x_max = aXYZ[0];
   T y_min = aXYZ[1], y_max = aXYZ[1];
   T z_min = aXYZ[2], z_max = aXYZ[2];
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     updateMinMaxXYZ(x_min, x_max, y_min, y_max, z_min, z_max,
                     aXYZ[ip * 3 + 0], aXYZ[ip * 3 + 1], aXYZ[ip * 3 + 2]);
   }
@@ -347,7 +347,7 @@ void delfem2::GetCenterWidthLocal(
   double y_max = y_min;
   double z_min = points::Dot3(p0, lez);
   double z_max = z_min;
-  for (int ino = 0; ino < nno; ++ino) {
+  for (unsigned int ino = 0; ino < nno; ++ino) {
     const double pi[3] = {
         aXYZ[ino * 3 + 0],
         aXYZ[ino * 3 + 1],

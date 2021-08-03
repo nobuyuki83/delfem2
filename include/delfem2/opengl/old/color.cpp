@@ -386,7 +386,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1(
     const double *aValSrf,
     const std::vector<std::pair<double, CColor> > &colorMap) {
   ::glBegin(GL_TRIANGLES);
-  for (int itri = 0; itri < nTri; ++itri) {
+  for (unsigned int itri = 0; itri < nTri; ++itri) {
     color_glold::DrawSingleTri3D_Scalar_Vtx(
         aXYZ, aTri + itri * 3, aValSrf, colorMap);
   }
