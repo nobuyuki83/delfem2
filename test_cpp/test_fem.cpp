@@ -1149,3 +1149,37 @@ TEST(fem, femrod2)
     }
   }
 }
+
+TEST(fem,WdWddW_SquareLengthLineseg3D) {
+  namespace dfm2 = delfem2;
+  std::random_device rd;
+  std::mt19937 reng(rd());
+  std::uniform_real_distribution<double> dist01(0.0, 1.0);
+  dfm2::CVec3d vec_pos0[3] = {
+      dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng)),
+      dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng)),
+      dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng))};
+  dfm2::CVec3d dw_dp0[3];
+  dfm2::CMat3d ddw_ddp0[3][3];
+  double w0 = dfm2::WdWddW_Rod3BendStraight(dw_dp0, ddw_ddp0, vec_pos0);
+  const double eps = 1.0e-5;
+  for (int ino = 0; ino < 3; ++ino) {
+    for (int idim = 0; idim < 3; ++idim) {
+      dfm2::CVec3d vec_pos1[3] = {vec_pos0[0], vec_pos0[1], vec_pos0[2]};
+      vec_pos1[ino](idim) += eps;
+      dfm2::CVec3d dw_dp1[3];
+      dfm2::CMat3d ddw_ddp1[3][3];
+      double w1 = dfm2::WdWddW_Rod3BendStraight(dw_dp1, ddw_ddp1, vec_pos1);
+//      std::cout << ino << " " << idim << " ## " << (w1 - w0) / eps << " " << dw_dp0[ino](idim) << std::endl;
+      EXPECT_NEAR((w1 - w0) / eps, dw_dp0[ino](idim), 1.0e-3);
+      for (int jno = 0; jno < 3; ++jno) {
+        for (int jdim = 0; jdim < 3; ++jdim) {
+          double d0 = (dw_dp1[jno](jdim) - dw_dp0[jno](jdim)) / eps;
+          double d1 = ddw_ddp0[ino][jno].Get(idim, jdim);
+          EXPECT_NEAR(d0,d1, 1.0e-3);
+//          std::cout << "   " << jno << " " << jdim << " ## " << d0 << " " << d1 << std::endl;
+        }
+      }
+    }
+  }
+}

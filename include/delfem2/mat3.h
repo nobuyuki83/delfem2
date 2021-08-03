@@ -432,7 +432,12 @@ public:
     Mat3_Spin(m.mat, v);
     return m;
   }
-
+  static CMat3 OuterProduct(const REAL* v0, const REAL* v1){
+    return CMat3<REAL>(
+        v0[0]*v1[0], v0[0]*v1[1], v0[0]*v1[2],
+        v0[1]*v1[0], v0[1]*v1[1], v0[1]*v1[2],
+        v0[2]*v1[0], v0[2]*v1[1], v0[2]*v1[2] );
+  }
   // quaternion order of (x,y,z,w)
   static CMat3 Quat(const REAL* q){
     const REAL x2 = q[0] * q[0] * 2;
