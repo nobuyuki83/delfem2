@@ -23,18 +23,18 @@
 #include <vector>
 
 namespace delfem2 {
-  
+
 // ---------------------------------------------
 // function related to jagged array
 
 DFM2_INLINE void JArray_Sort(
-    const std::vector<unsigned int>& index,
-    std::vector<unsigned int>& array);
+    const std::vector<unsigned int> &index,
+    std::vector<unsigned int> &array);
 
 DFM2_INLINE void JArray_Sort(
-    const unsigned int* index,
+    const unsigned int *index,
     unsigned int size,
-    unsigned int* array);
+    unsigned int *array);
 
 DFM2_INLINE void JArray_AddDiagonal(
     std::vector<unsigned int> &psup_ind1,
@@ -45,15 +45,15 @@ DFM2_INLINE void JArray_AddDiagonal(
     int npsup0);
 
 DFM2_INLINE void JArray_Print(
-    const std::vector<int>& index,
-    const std::vector<int>& array);
+    const std::vector<int> &index,
+    const std::vector<int> &array);
 
 /**
  * @details compute 2-ring neighborhood from 1-ring neighborhood
  */
 DFM2_INLINE void JArray_Extend(
-    std::vector<unsigned int>& psup_ind1,
-    std::vector<unsigned int>& psup1,
+    std::vector<unsigned int> &psup_ind1,
+    std::vector<unsigned int> &psup1,
     const unsigned int *psup_ind0,
     size_t npsup_ind0,
     const unsigned int *psup0);
@@ -65,11 +65,10 @@ DFM2_INLINE void JArrayEdgeUnidir_PointSurPoint(
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup);
 
-
 } // end namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
 #  include "delfem2/jagarray.cpp"
 #endif
- 
+
 #endif /* meshtopo_hpp */
