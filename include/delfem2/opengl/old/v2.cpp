@@ -6,6 +6,7 @@
  */
 
 #include "delfem2/opengl/old/v2.h"
+
 #include "delfem2/vec2.h"
 
 #if defined(_WIN32) // windows
@@ -23,7 +24,9 @@
 
 //----------------------------------------------------
 
-void delfem2::opengl::myGlVertex2(int i, const std::vector<double> &vec) {
+void delfem2::opengl::myGlVertex2(
+    int i,
+    const std::vector<double> &vec) {
   ::glVertex3d(vec[i * 2], vec[i * 2 + 1], +0.0);
 }
 
@@ -56,8 +59,8 @@ void delfem2::opengl::drawPolyLine(
   ::glEnd();
 }
 
-void delfem2::opengl::drawPolyLine2D
-    (const std::vector<CVec2d> &aP) {
+void delfem2::opengl::drawPolyLine2D(
+    const std::vector<CVec2d> &aP) {
   ::glBegin(GL_LINES);
   for (unsigned int ip = 0; ip < aP.size() - 1; ip++) {
     unsigned int jp = ip + 1;
@@ -79,7 +82,7 @@ void delfem2::opengl::Draw_MeshTri(
     const std::vector<unsigned int> &aTri) {
   const size_t nTri = aTri.size() / 3;
   ::glBegin(GL_TRIANGLES);
-  for (int itri = 0; itri < nTri; itri++) {
+  for (unsigned int itri = 0; itri < nTri; itri++) {
     const unsigned int i0 = aTri[itri * 3 + 0];
     const unsigned int i1 = aTri[itri * 3 + 1];
     const unsigned int i2 = aTri[itri * 3 + 2];
@@ -93,14 +96,14 @@ void delfem2::opengl::Draw_MeshTri(
   ::glEnd();
 }
 
-void delfem2::opengl::Draw_MeshTri_Edge
-    (const std::vector<CVec2d> &aP,
-     const std::vector<unsigned int> &aTri) {
+void delfem2::opengl::Draw_MeshTri_Edge(
+    const std::vector<CVec2d> &aP,
+    const std::vector<unsigned int> &aTri) {
   //  const unsigned int nxys = (int)aXY.size()/2;
   ::glColor3d(0, 0, 0);
   ::glBegin(GL_LINES);
   const size_t nTri = aTri.size() / 3;
-  for (int itri = 0; itri < nTri; itri++) {
+  for (unsigned int itri = 0; itri < nTri; itri++) {
     const unsigned int i0 = aTri[itri * 3 + 0];
     const unsigned int i1 = aTri[itri * 3 + 1];
     const unsigned int i2 = aTri[itri * 3 + 2];

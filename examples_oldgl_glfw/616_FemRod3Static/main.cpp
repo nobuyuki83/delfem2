@@ -100,7 +100,7 @@ void OptimizeRod(
   {
     const std::size_t n = vec_r.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto aConvHist = Solve_CG(
+    auto aConvHist = dfm2::Solve_CG(
         dfm2::CVecXd(vec_r),
         dfm2::CVecXd(vec_x),
         dfm2::CVecXd(tmp0),
