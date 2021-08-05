@@ -8,11 +8,12 @@
 #ifndef DFM2_LSMATS_H
 #define DFM2_LSMATS_H
 
-#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <cassert>
 #include <complex>
 #include <climits>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 

@@ -5,6 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
+#include <vector>
+#include <complex>
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/vecxitrsol.h"
@@ -12,18 +20,11 @@
 #include "delfem2/cad2_dtri2.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
-#include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <vector>
-#include <complex>
+
 
 namespace dfm2 = delfem2;
 
