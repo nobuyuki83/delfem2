@@ -155,27 +155,27 @@ void MatVec_MatSparseCRS_Blk44(
       y[i0 + 0] +=
           alpha * (
               vcrs[k0 + 0] * x[j0 + 0] +
-              vcrs[k0 + 1] * x[j0 + 1] +
-              vcrs[k0 + 2] * x[j0 + 2] +
-              vcrs[k0 + 3] * x[j0 + 3]);
+                  vcrs[k0 + 1] * x[j0 + 1] +
+                  vcrs[k0 + 2] * x[j0 + 2] +
+                  vcrs[k0 + 3] * x[j0 + 3]);
       y[i0 + 1] +=
           alpha * (
               vcrs[k0 + 4] * x[j0 + 0] +
-              vcrs[k0 + 5] * x[j0 + 1] +
-              vcrs[k0 + 6] * x[j0 + 2] +
-              vcrs[k0 + 7] * x[j0 + 3]);
+                  vcrs[k0 + 5] * x[j0 + 1] +
+                  vcrs[k0 + 6] * x[j0 + 2] +
+                  vcrs[k0 + 7] * x[j0 + 3]);
       y[i0 + 2] +=
           alpha * (
               vcrs[k0 + 8] * x[j0 + 0] +
-              vcrs[k0 + 9] * x[j0 + 1] +
-              vcrs[k0 + 10] * x[j0 + 2] +
-              vcrs[k0 + 11] * x[j0 + 3]);
+                  vcrs[k0 + 9] * x[j0 + 1] +
+                  vcrs[k0 + 10] * x[j0 + 2] +
+                  vcrs[k0 + 11] * x[j0 + 3]);
       y[i0 + 3] +=
           alpha * (
               vcrs[k0 + 12] * x[j0 + 0] +
-              vcrs[k0 + 13] * x[j0 + 1] +
-              vcrs[k0 + 14] * x[j0 + 2] +
-              vcrs[k0 + 15] * x[j0 + 3]);
+                  vcrs[k0 + 13] * x[j0 + 1] +
+                  vcrs[k0 + 14] * x[j0 + 2] +
+                  vcrs[k0 + 15] * x[j0 + 3]);
     }
     {
       const unsigned int i0 = iblk * 4;
@@ -183,27 +183,27 @@ void MatVec_MatSparseCRS_Blk44(
       y[i0 + 0] +=
           alpha * (
               vdia[k0 + 0] * x[i0 + 0] +
-              vdia[k0 + 1] * x[i0 + 1] +
-              vdia[k0 + 2] * x[i0 + 2] +
-              vdia[k0 + 3] * x[i0 + 3]);
+                  vdia[k0 + 1] * x[i0 + 1] +
+                  vdia[k0 + 2] * x[i0 + 2] +
+                  vdia[k0 + 3] * x[i0 + 3]);
       y[i0 + 1] +=
           alpha * (
               vdia[k0 + 4] * x[i0 + 0] +
-              vdia[k0 + 5] * x[i0 + 1] +
-              vdia[k0 + 6] * x[i0 + 2] +
-              vdia[k0 + 7] * x[i0 + 3]);
+                  vdia[k0 + 5] * x[i0 + 1] +
+                  vdia[k0 + 6] * x[i0 + 2] +
+                  vdia[k0 + 7] * x[i0 + 3]);
       y[i0 + 2] +=
           alpha * (
               vdia[k0 + 8] * x[i0 + 0] +
-              vdia[k0 + 9] * x[i0 + 1] +
-              vdia[k0 + 10] * x[i0 + 2] +
-              vdia[k0 + 11] * x[i0 + 3]);
+                  vdia[k0 + 9] * x[i0 + 1] +
+                  vdia[k0 + 10] * x[i0 + 2] +
+                  vdia[k0 + 11] * x[i0 + 3]);
       y[i0 + 3] +=
           alpha * (
               vdia[k0 + 12] * x[i0 + 0] +
-              vdia[k0 + 13] * x[i0 + 1] +
-              vdia[k0 + 14] * x[i0 + 2] +
-              vdia[k0 + 15] * x[i0 + 3]);
+                  vdia[k0 + 13] * x[i0 + 1] +
+                  vdia[k0 + 14] * x[i0 + 2] +
+                  vdia[k0 + 15] * x[i0 + 3]);
     }
   }
 }
@@ -540,7 +540,7 @@ DFM2_INLINE void delfem2::SetMasterSlave(
   for (unsigned int ino = 0; ino < nblk; ino++) {
     for (unsigned int icrs = mat.colInd[ino]; icrs < mat.colInd[ino + 1]; ++icrs) {
       unsigned int jno0 = mat.rowPtr[icrs];
-      assert(jno0 >= 0 && jno0 < (int) nblk);
+      assert(jno0 < nblk);
       row2crs[jno0] = icrs;
     }
     for (unsigned int jlen1 = 0; jlen1 < len; jlen1++) {
