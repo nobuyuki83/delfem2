@@ -5,52 +5,52 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_ILU_MATS_H
-#define DFM2_ILU_MATS_H
+#ifndef DFM2_LSILU_MATS_H
+#define DFM2_LSILU_MATS_H
 
 #include "delfem2/lsmats.h"
-#include "delfem2/dfm2_inline.h"
+
 #include <iostream>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
 /**
  * @brief ILU decomposision preconditioner class
  */
-template <typename T>
-class CPreconditionerILU
-{
-public:
-  CPreconditionerILU() noexcept
-  {}
-  CPreconditionerILU(const CPreconditionerILU&); // copy
-  ~CPreconditionerILU(){ m_diaInd.clear(); }
-  void Clear(){
+template<typename T>
+class CPreconditionerILU {
+ public:
+  CPreconditionerILU() noexcept {}
+  CPreconditionerILU(const CPreconditionerILU &); // copy
+  ~CPreconditionerILU() { m_diaInd.clear(); }
+  void Clear() {
     colInd.clear();
     rowPtr.clear();
     valCrs.clear();
     valDia.clear();
     m_diaInd.clear();
   }
-  void SetPattern0(const CMatrixSparse<T>& m);
-  void Initialize_ILUk(const CMatrixSparse<T>& m, int fill_level);
+  void SetPattern0(const CMatrixSparse<T> &m);
+  void Initialize_ILUk(const CMatrixSparse<T> &m, int fill_level);
 
-  void CopyValue(const CMatrixSparse<T>& m);
-  void SolvePrecond(T* vec) const{
-		this->ForwardSubstitution(vec);
-		this->BackwardSubstitution(vec);
+  void CopyValue(const CMatrixSparse<T> &m);
+  void SolvePrecond(T *vec) const {
+    this->ForwardSubstitution(vec);
+    this->BackwardSubstitution(vec);
   }
   bool Decompose();
   //
-  void ForwardSubstitution(  T* vec ) const;
-  void BackwardSubstitution( T* vec ) const;
-  
+  void ForwardSubstitution(T *vec) const;
+  void BackwardSubstitution(T *vec) const;
+
   // treat 1x1 block space matrix as N*N block sparse matrix where the block matrix is diagonal
-  void ForwardSubstitutionDegenerate(  T* vec, unsigned int N) const;
-  
+  void ForwardSubstitutionDegenerate(T *vec, unsigned int N) const;
+
   // treat 1x1 block space matrix as N*N block sparse matrix where the block matrix is diagonal
-  void BackwardSubstitutionDegenerate( T* vec, unsigned int N ) const;
-public:
+  void BackwardSubstitutionDegenerate(T *vec, unsigned int N) const;
+ public:
   unsigned int nblk;
   unsigned int ndim;
   std::vector<unsigned int> colInd;
@@ -59,8 +59,8 @@ public:
   std::vector<T> valCrs;
   std::vector<T> valDia;
 };
-   
-} // end namespace delfem2
+
+} // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
 #  include "delfem2/lsilu_mats.cpp"

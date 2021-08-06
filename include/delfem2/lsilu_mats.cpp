@@ -5,13 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/lsilu_mats.h"
-
 #include <cstdlib>
 #include <cassert>
 #include <vector>
 #include <complex>
 #include <algorithm>
+
+#include "delfem2/lsilu_mats.h"
 
 // ----------------------------------------------------
 
@@ -139,7 +139,7 @@ delfem2::CPreconditionerILU<T>::CPreconditionerILU(
     const CPreconditionerILU<T> &p) {
 //  std::cout << "CPreconditionerILU -- construct copy" << std::endl;
   this->mat = p.mat; // deep copy
-  const unsigned int nblk = this->mat.nblk_col;
+  assert(nblk == this->mat.nblk_col);
   this->m_diaInd.resize(nblk);
   for (int iblk = 0; iblk < nblk; ++iblk) {
     this->m_diaInd[iblk] = p.m_diaInd[iblk];
@@ -684,13 +684,13 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     const unsigned int *rowptr = rowPtr.data();
     const T *vcrs = valCrs.data();
     // -------------------------------
-    for (int iblk = nblk - 1; iblk >= 0; iblk--) {
-      assert(iblk < (int) nblk);
+    for (unsigned int iblk = nblk - 1; iblk != UINT_MAX; --iblk) {
+      assert(iblk < nblk);
       T lvec_i = vec[iblk];
       for (auto ijcrs = m_diaInd[iblk]; ijcrs < colind[iblk + 1]; ijcrs++) {
         assert(ijcrs < rowPtr.size());
         const unsigned int jblk0 = rowptr[ijcrs];
-        assert((int) jblk0 > iblk && jblk0 < nblk);
+        assert(jblk0 > iblk && jblk0 < nblk);
         lvec_i -= vcrs[ijcrs] * vec[jblk0];
       }
       vec[iblk] = lvec_i;
@@ -701,8 +701,8 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     const T *vcrs = valCrs.data();
     // ----------------------------
     T pTmpVec[2];
-    for (int iblk = nblk - 1; iblk >= 0; iblk--) {  // going backward
-      assert(iblk < (int) nblk);
+    for (unsigned int iblk = nblk - 1; iblk != UINT_MAX; --iblk) {  // going backward
+      assert(iblk < nblk);
       pTmpVec[0] = vec[iblk * 2 + 0];
       pTmpVec[1] = vec[iblk * 2 + 1];
       const unsigned int icrs0 = m_diaInd[iblk];
@@ -710,7 +710,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
       for (unsigned int ijcrs = icrs0; ijcrs < icrs1; ijcrs++) {
         assert(ijcrs < rowPtr.size());
         const unsigned int jblk0 = rowptr[ijcrs];
-        assert((int) jblk0 > iblk && jblk0 < nblk);
+        assert(jblk0 > iblk && jblk0 < nblk);
         const T *vij = &vcrs[ijcrs * 4];
         const T valj0 = vec[jblk0 * 2 + 0];
         const T valj1 = vec[jblk0 * 2 + 1];
@@ -726,8 +726,8 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     const T *vcrs = valCrs.data();
     // --------------------
     T pTmpVec[3];
-    for (int iblk = nblk - 1; iblk >= 0; iblk--) {
-      assert(iblk < (int) nblk);
+    for (unsigned int iblk = nblk - 1; iblk != UINT_MAX; --iblk) {
+      assert(iblk < nblk);
       pTmpVec[0] = vec[iblk * 3 + 0];
       pTmpVec[1] = vec[iblk * 3 + 1];
       pTmpVec[2] = vec[iblk * 3 + 2];
@@ -755,8 +755,8 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     const T *vcrs = valCrs.data();
     // -----------------------------
     T pTmpVec[4];
-    for (int iblk = nblk - 1; iblk >= 0; iblk--) {
-      assert(iblk < (int) nblk);
+    for (unsigned int iblk = nblk - 1; iblk != UINT_MAX; --iblk) {
+      assert(iblk < nblk);
       pTmpVec[0] = vec[iblk * 4 + 0];
       pTmpVec[1] = vec[iblk * 4 + 1];
       pTmpVec[2] = vec[iblk * 4 + 2];
@@ -766,7 +766,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
       for (unsigned int ijcrs = icrs0; ijcrs < icrs1; ijcrs++) {
         assert(ijcrs < rowPtr.size());
         const unsigned int jblk0 = rowptr[ijcrs];
-        assert((int) jblk0 > iblk && jblk0 < nblk);
+        assert(jblk0 > iblk && jblk0 < nblk);
         const T *vij = &vcrs[ijcrs * 16];
         const T valj0 = vec[jblk0 * 4 + 0];
         const T valj1 = vec[jblk0 * 4 + 1];
@@ -785,15 +785,15 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
   } else {
     const int blksize = ndim * ndim;
     std::vector<T> pTmpVec(ndim);
-    for (int iblk = nblk - 1; iblk >= 0; iblk--) {
-      assert(iblk < (int) nblk);
+    for (unsigned int iblk = nblk - 1; iblk != UINT_MAX; --iblk) {
+      assert(iblk < nblk);
       for (unsigned int idof = 0; idof < ndim; idof++) {
         pTmpVec[idof] = vec[iblk * ndim + idof];
       }
       for (auto ijcrs = m_diaInd[iblk]; ijcrs < colInd[iblk + 1]; ijcrs++) {
         assert(ijcrs < rowPtr.size());
         const unsigned int jblk0 = rowPtr[ijcrs];
-        assert((int) jblk0 > iblk && jblk0 < nblk);
+        assert(jblk0 > iblk && jblk0 < nblk);
         const T *vij = &valCrs[ijcrs * blksize];
         for (unsigned int idof = 0; idof < ndim; idof++) {
           for (unsigned int jdof = 0; jdof < ndim; jdof++) {

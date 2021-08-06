@@ -17,8 +17,8 @@
 #include "delfem2/dtri.h"
 #include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/pbd_geo3.h"
-#include "delfem2/mshmisc.h" // Rotate, NormalMeshTri3D
-#include "delfem2/points.h" // Rotate, NormalMeshTri3D
+#include "delfem2/mshmisc.h"  // Rotate, NormalMeshTri3D
+#include "delfem2/points.h"  // Rotate, NormalMeshTri3D
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/mshprimitive.h"
@@ -51,8 +51,6 @@ const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, 0.0};
 const double contact_clearance = 0.0001;
 
-bool is_animation = false;
-
 // -------------------------
 
 void StepTime() {
@@ -83,7 +81,7 @@ void StepTime() {
 
 // ------------------
 
-void myGlutDisplay(void) {
+void myGlutDisplay() {
   ::glClearColor(1.0, 1.0, 1.0, 1.0);
   //  ::glClearColor(0.0, .0, 0.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -110,14 +108,9 @@ void myGlutDisplay(void) {
   delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
 
   ::glColor3d(1, 0, 0);
-  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size() / 3,
-                                      aTri_Contact.data(), aTri_Contact.size() / 3);
-}
-
-void myGlutIdle() {
-  if (is_animation) {
-    StepTime();
-  }
+  delfem2::opengl::DrawMeshTri3D_Edge(
+      aXYZ_Contact.data(), aXYZ_Contact.size() / 3,
+      aTri_Contact.data(), aTri_Contact.size() / 3);
 }
 
 class CRigidTrans_2DTo3D {
@@ -145,7 +138,7 @@ int main(int argc, char *argv[]) {
   aETri = dmesh.aETri;
   aVec2 = dmesh.aVec2;
 
-  const int np = aPo2D.size();
+  const unsigned int np = aPo2D.size();
   aUVW.resize(np * 3, 0.0);
   aBCFlag.resize(np, 0);
   aXYZ.resize(np * 3);
@@ -155,8 +148,7 @@ int main(int argc, char *argv[]) {
     rt23.org3 = dfm2::CVec3d(0.0, 0.0, 0.5);
     rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1, 1), cad);
-    for (unsigned int iip = 0; iip < aIP.size(); ++iip) {
-      const int ip = aIP[iip];
+    for (int ip : aIP) {
       dfm2::CVec3d p0(aVec2[ip].x - rt23.org2.x, aVec2[ip].y - rt23.org2.y, 0.0);
       dfm2::CVec3d p1 = rt23.org3 + dfm2::MatVec(rt23.R, p0);
       aXYZ[ip * 3 + 0] = p1.x;
@@ -169,8 +161,7 @@ int main(int argc, char *argv[]) {
       rt23.org3 = dfm2::CVec3d(0.0, 0.0, -0.5);
       rt23.R.SetIdentity();
       std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1, 0), cad);
-      for (unsigned int iip = 0; iip < aIP.size(); ++iip) {
-        const int ip = aIP[iip];
+      for (int ip : aIP) {
         dfm2::CVec3d p0(aVec2[ip].x - rt23.org2.x, aVec2[ip].y - rt23.org2.y, 0.0);
         dfm2::CVec3d p1 = rt23.org3 + dfm2::MatVec(rt23.R, p0);
         aXYZ[ip * 3 + 0] = p1.x;
@@ -185,8 +176,8 @@ int main(int argc, char *argv[]) {
       const unsigned int npe = aIP0.size();
       assert(aIP1.size() == npe);
       for (unsigned int iip = 0; iip < npe; ++iip) {
-        int ip0 = aIP0[iip];
-        int ip1 = aIP1[npe - iip - 1];
+        const unsigned int ip0 = aIP0[iip];
+        const unsigned int ip1 = aIP1[npe - iip - 1];
         aLine.push_back(ip0);
         aLine.push_back(ip1);
       }
@@ -197,8 +188,8 @@ int main(int argc, char *argv[]) {
       const unsigned int npe = aIP0.size();
       assert(aIP1.size() == npe);
       for (unsigned int iip = 0; iip < npe; ++iip) {
-        int ip0 = aIP0[iip];
-        int ip1 = aIP1[npe - iip - 1];
+        const unsigned int ip0 = aIP0[iip];
+        const unsigned int ip1 = aIP1[npe - iip - 1];
         aLine.push_back(ip0);
         aLine.push_back(ip1);
       }
