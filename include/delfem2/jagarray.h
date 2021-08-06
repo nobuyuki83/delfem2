@@ -18,9 +18,10 @@
 #ifndef DFM2_JAGARRAY_H
 #define DFM2_JAGARRAY_H
 
-#include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 

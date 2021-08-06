@@ -77,13 +77,12 @@ DFM2_INLINE void delfem2::JArray_Sort(
   for (int ipoin = 0; ipoin < size; ipoin++) {
     const unsigned int is = index[ipoin];
     const unsigned int ie = index[ipoin + 1];
-    if (is == ie) continue;
+    if (is == ie) continue;  // no element in the row
     assert(is < ie);
-    int itmp;
-    for (int i = is; i < ie - 1; i++) {
-      for (int j = ie - 1; j > i; j--) {
+    for (unsigned int i = is; i < ie - 1; i++) {
+      for (unsigned int j = ie - 1; j != i; j--) {
         if (array[j] < array[j - 1]) {
-          itmp = array[j];
+          const unsigned int itmp = array[j];
           array[j] = array[j - 1];
           array[j - 1] = itmp;
         }
