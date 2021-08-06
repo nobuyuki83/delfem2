@@ -64,7 +64,7 @@ int main(int argc,char* argv[])
     delfem2::opengl::Draw_CCad2D(cad);
     {
       ::glTranslated(0,0,-0.9);
-      for(int ie=0;ie<cad.topo.aEdge.size();++ie){
+      for(unsigned int ie=0;ie<cad.topo.aEdge.size();++ie){
         unsigned int iv0 = cad.topo.aEdge[ie].iv0;
         unsigned int iv1 = cad.topo.aEdge[ie].iv1;
         dfm2::CVec2d p = (cad.aVtx[iv0].pos+cad.aVtx[iv1].pos)*0.5;
