@@ -5,17 +5,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cstdlib>
+#include <vector>
 #define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/noise.h"
-#include <GLFW/glfw3.h>
-#include <cstdlib>
-#include <vector>
 
 #if defined(_MSC_VER)
-  #pragma warning( disable : 4100 )
+#pragma warning( disable : 4100 )
 #endif
 
 namespace dfm2 = delfem2;
@@ -34,8 +35,8 @@ int main(int argc, char *argv[]) {
       static int iframe = 0;
       if (iframe == 0) {
         dfm2::ComputePerlin(aV,
-            nSize, nSize,
-            4, 4, 0.9);
+                            nSize, nSize,
+                            4, 4, 0.9);
       }
       iframe = (iframe + 1) % 30;
     }

@@ -5,9 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/pbd_geo3.h"
+
 #include "delfem2/mat2.h"
 #include "delfem2/geo3_v23m34q.h"
-#include "delfem2/pbd_geo3.h"
 
 // =======================================
 
@@ -104,12 +105,15 @@ DFM2_INLINE void delfem2::PBD_Update_Const3(
   }
 }
 
-DFM2_INLINE void delfem2::PBD_ConstProj_Rigid3D
-    (double *aXYZt,
-     double stiffness,
-     const int *clstr_ind, int nclstr_ind,
-     const int *clstr, int nclstr0,
-     const double *aXYZ0, int nXYZ0) {
+DFM2_INLINE void delfem2::PBD_ConstProj_Rigid3D(
+    double *aXYZt,
+    double stiffness,
+    const int *clstr_ind,
+    int nclstr_ind,
+    const int *clstr,
+    int nclstr0,
+    const double *aXYZ0,
+    int nXYZ0) {
   const int nclstr = nclstr_ind - 1;
   for (int iclstr = 0; iclstr < nclstr; ++iclstr) {
     CVec3d pc(0, 0, 0), qc(0, 0, 0);
@@ -156,9 +160,12 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid3D
 DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D(
     double *aXYt,
     double stiffness,
-    const unsigned int *clstr_ind, unsigned int nclstr_ind,
-    const unsigned int *clstr, unsigned int nclstr0,
-    const double *aXY0, unsigned int nXY0) {
+    const unsigned int *clstr_ind,
+    unsigned int nclstr_ind,
+    const unsigned int *clstr,
+    unsigned int nclstr0,
+    const double *aXY0,
+    unsigned int nXY0) {
   const unsigned int nclstr = nclstr_ind - 1;
   for (unsigned int iclstr = 0; iclstr < nclstr; ++iclstr) {
     CVec2d pc(0, 0), qc(0, 0);
@@ -197,11 +204,18 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D(
   }
 }
 
+/**
+ *
+ * @param C
+ * @param dCdp
+ * @param[in] P undeformed triangle vertex positions
+ * @param[in] p deformed triangle vertex positions
+ */
 DFM2_INLINE void delfem2::PBD_CdC_TriStrain2D3D(
     double C[3],
     double dCdp[3][9],
-    const double P[3][2], // (in) undeformed triangle vertex positions
-    const double p[3][3] // (in) deformed triangle vertex positions
+    const double P[3][2],
+    const double p[3][3]
 ) {
   const CVec3d Gd0(P[1][0] - P[0][0], P[1][1] - P[0][1], 0.0);
   const CVec3d Gd1(P[2][0] - P[0][0], P[2][1] - P[0][1], 0.0);
@@ -280,16 +294,23 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTri2D3D(
   v01.CopyToScale(dCdp[2] + 3 * 1, -1.0);
 }
 
-DFM2_INLINE void delfem2::PBD_ConstraintProjection_EnergyStVK
-    (double &C, // (out) energy
-     double dCdp[9], // (out) 1st derivative of energy
-        ////
-     const double P[3][2], // (in) undeformed triangle vertex positions
-     const double p[3][3], // (in) deformed triangle vertex positions
-     const double lambda, // (in) Lame's 1st parameter
-     const double myu)     // (in) Lame's 2nd parameter
+/**
+ *
+ * @param[out] C energy
+ * @param[out] dCdp 1st derivative of energy
+ * @param[in] P undeformed triangle vertex positions
+ * @param[in] p deformed triangle vertex positions
+ * @param[in] lambda Lame's 1st parameter
+ * @param[in] myu Lame's 2nd parameter
+ */
+DFM2_INLINE void delfem2::PBD_ConstraintProjection_EnergyStVK(
+    double &C,
+    double dCdp[9],
+    const double P[3][2],
+    const double p[3][3],
+    const double lambda,
+    const double myu)
 {
-
   const CVec3d Gd0(P[1][0] - P[0][0], P[1][1] - P[0][1], 0.0);
   const CVec3d Gd1(P[2][0] - P[0][0], P[2][1] - P[0][1], 0.0);
   CVec3d Gd2 = Cross(Gd0, Gd1);
@@ -370,12 +391,19 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_EnergyStVK
   }
 }
 
-DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTet
-    (double C[6],
-     double dCdp[6][12],
-     const double P[4][3], // (in) undeformed triangle vertex positions
-     const double p[4][3] // (in) deformed triangle vertex positions
-    ) {
+/**
+ *
+ * @param C
+ * @param dCdp
+ * @param[in] P undeformed triangle vertex positions
+ * @param[in] p deformed triangle vertex positions
+ * @param L01
+ */
+DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTet(
+    double C[6],
+    double dCdp[6][12],
+    const double P[4][3],
+    const double p[4][3]) {
   const double L01 = Distance3(P[0], P[1]);
   const double L02 = Distance3(P[0], P[2]);
   const double L03 = Distance3(P[0], P[3]);
@@ -400,14 +428,14 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTet
   C[3] = l12 - L12;
   C[4] = l13 - L13;
   C[5] = l23 - L23;
-  //
+  // ----
   v01 /= l01;
   v02 /= l02;
   v03 /= l03;
   v12 /= l12;
   v13 /= l13;
   v23 /= l23;
-  ////
+  // ----
   for (int i = 0; i < 6 * 3 * 4; ++i) { (&dCdp[0][0])[i] = 0.0; }
   v01.CopyTo(dCdp[0] + 0 * 3);
   v01.CopyToScale(dCdp[0] + 1 * 3, -1.0);
@@ -499,7 +527,8 @@ DFM2_INLINE void delfem2::PBD_Seam(
 
 template<typename T>
 DFM2_INLINE void delfem2::GetConstConstDiff_Bend(
-    double &C, CVec3<T> dC[4],
+    double &C,
+    CVec3<T> dC[4],
     const CVec3<T> &p0,
     const CVec3<T> &p1,
     const CVec3<T> &p2,
@@ -509,7 +538,7 @@ DFM2_INLINE void delfem2::GetConstConstDiff_Bend(
   const CVec3<T> v12 = p2 - p1;
   const CVec3<T> v13 = p3 - p1;
   const CVec3<T> v23 = p3 - p2;
-  ////
+  // ---
   const CVec3<T> A = v02 ^ v03;
   const CVec3<T> B = v13 ^ v12;
   const double lA = A.norm();

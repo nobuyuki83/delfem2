@@ -24,7 +24,7 @@ namespace dfm2 = delfem2;
 
 void DrawPolyline(const std::vector<double> &aXY) {
   ::glBegin(GL_LINE_STRIP);
-  for (int ixy = 0; ixy < aXY.size() / 2; ++ixy) {
+  for (unsigned int ixy = 0; ixy < aXY.size() / 2; ++ixy) {
     ::glVertex2dv(aXY.data() + ixy * 2);
   }
   ::glEnd();

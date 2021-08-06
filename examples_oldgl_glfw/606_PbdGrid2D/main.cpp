@@ -34,7 +34,7 @@ void stepTime(
     const std::vector<unsigned int> &aQuad,
     const std::vector<double> &aXY0) {
   const size_t ndof = aXY0.size();
-  for (int idof = 0; idof < ndof; idof++) {
+  for (unsigned int idof = 0; idof < ndof; idof++) {
     aTmp[idof] = aXY1[idof] + aUV1[idof] * dt;
   }
   for (size_t ip = 0; ip < aXY0.size() / 2; ++ip) {
@@ -56,10 +56,10 @@ void stepTime(
     aTmp[ip * 2 + 0] = aXY1[ip * 2 + 0];
     aTmp[ip * 2 + 1] = aXY1[ip * 2 + 1];
   }
-  for (int idof = 0; idof < ndof; ++idof) {
+  for (unsigned int idof = 0; idof < ndof; ++idof) {
     aUV1[idof] = (aTmp[idof] - aXY1[idof]) * (1.0 / dt);
   }
-  for (int idof = 0; idof < ndof; idof++) {
+  for (unsigned int idof = 0; idof < ndof; idof++) {
     aXY1[idof] = aTmp[idof];
   }
 }
