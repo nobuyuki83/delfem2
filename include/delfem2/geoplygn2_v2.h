@@ -13,6 +13,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+
 #include "delfem2/vec2.h"
 #include "delfem2/dfm2_inline.h"
 
@@ -122,7 +123,7 @@ bool CheckInputBoundaryForTriangulation (
     
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/geoplygn2_v2.cpp"
 #endif
 

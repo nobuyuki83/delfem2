@@ -5,10 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/gizmo_geo3.h"
+
 #include <cstdio>
+
 #include "delfem2/vec3.h"
 #include "delfem2/geoproximity3_v3.h"
-#include "delfem2/gizmo_geo3.h"
+
 
 DFM2_INLINE bool delfem2::isPickCircle(
     const CVec3d &axis,
@@ -81,15 +84,15 @@ DFM2_INLINE int delfem2::PickHandlerRotation_PosQuat(
   if (dz < dx && dz < dy && dz < 0.9 * dm) { return 2; }
   return -1;
 }
-#ifndef DFM2_HEADER_ONLY
-template int delfem2::PickHandlerRotation_PosQuat
-(const CVec3f& src, const CVec3f& dir,
- const CVec3f& pos, const float quat[4], float rad,
- float tol);
-template int delfem2::PickHandlerRotation_PosQuat
- (const CVec3d& src, const CVec3d& dir,
-  const CVec3d& pos, const double quat[4], double rad,
-  double tol);
+#ifdef DFM2_STATIC_LIBRARY
+template int delfem2::PickHandlerRotation_PosQuat(
+    const CVec3f& src, const CVec3f& dir,
+    const CVec3f& pos, const float quat[4], float rad,
+    float tol);
+template int delfem2::PickHandlerRotation_PosQuat(
+    const CVec3d& src, const CVec3d& dir,
+    const CVec3d& pos, const double quat[4], double rad,
+    double tol);
 #endif
 
 // -------------------------------------------------
@@ -278,7 +281,7 @@ void delfem2::CGizmo_Rotation<REAL>::Pick(
                                              CVec3<REAL>(dir),
                                              pos, quat, size, tol);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CGizmo_Rotation<float>::Pick
  (bool is_down,
   const float src[3],
@@ -322,7 +325,7 @@ void delfem2::CGizmo_Rotation<REAL>::Drag(
     Copy_Quat(quat, qtmp);
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CGizmo_Rotation<float>::Drag
 (const float src0[3],
  const float src1[3],
@@ -380,7 +383,7 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   }
   ielem_picked = -1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CGizmo_Transl<float>::Pick
 (bool is_down,
  const float src[3],
@@ -416,7 +419,7 @@ void delfem2::CGizmo_Transl<REAL>::Drag(
     pos += (Da1 - Da0) / D0;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CGizmo_Transl<float>::Drag(const float src0[3],
                                                   const float src1[3],
                                                   const float dir[3]);

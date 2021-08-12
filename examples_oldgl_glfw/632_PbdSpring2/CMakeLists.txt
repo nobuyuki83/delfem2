@@ -26,8 +26,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 
 # dfm2
 IF (DFM2_HEADER_ONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)
 else ()
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   if (MSVC)
     set(DFM2_LIBRARY
         ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)

@@ -38,8 +38,8 @@ void Solve(
   const double stiff_bend = 0.01;
   unsigned int np = aXY.size() / 2;
   assert(np >= 3);
-  assert(mats.ncolblk == np && mats.nrowblk == np);
-  assert(mats.ncoldim == 2 && mats.nrowdim == 2);
+  assert(mats.ncolblk_ == np && mats.nrowblk_ == np);
+  assert(mats.ncoldim_ == 2 && mats.nrowdim_ == 2);
   unsigned int nhinge = np - 2;
   std::vector<unsigned int> merge_buffer;
   mats.setZero();

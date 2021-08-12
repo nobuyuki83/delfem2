@@ -5,11 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/lsmats.h"
+
 #include <cassert>
 #include <vector>
 #include <climits>
 #include <complex>
-#include "delfem2/lsmats.h"
 
 namespace delfem2 {
 namespace mats {
@@ -221,60 +222,60 @@ void delfem2::CMatrixSparse<T>::MatVec(
     T alpha,
     const T *x,
     T beta) const {
-  const unsigned int ndofcol = nrowdim * nrowblk;
+  const unsigned int ndofcol = nrowdim_ * nrowblk_;
   for (unsigned int i = 0; i < ndofcol; ++i) { y[i] *= beta; }
   // --------
-  if (nrowdim == 1 && ncoldim == 1) {
+  if (nrowdim_ == 1 && ncoldim_ == 1) {
     mats::MatVec_MatSparseCRS_Blk11(
         y,
-        alpha, nrowblk, valCrs.data(), valDia.data(),
-        colInd.data(), rowPtr.data(), x);
-  } else if (nrowdim == 2 && ncoldim == 2) {
+        alpha, nrowblk_, val_crs_.data(), val_dia_.data(),
+        col_ind_.data(), row_ptr_.data(), x);
+  } else if (nrowdim_ == 2 && ncoldim_ == 2) {
     mats::MatVec_MatSparseCRS_Blk22(
         y,
-        alpha, nrowblk, valCrs.data(), valDia.data(),
-        colInd.data(), rowPtr.data(), x);
-  } else if (nrowdim == 3 && ncoldim == 3) {
+        alpha, nrowblk_, val_crs_.data(), val_dia_.data(),
+        col_ind_.data(), row_ptr_.data(), x);
+  } else if (nrowdim_ == 3 && ncoldim_ == 3) {
     mats::MatVec_MatSparseCRS_Blk33(
         y,
-        alpha, nrowblk, valCrs.data(), valDia.data(),
-        colInd.data(), rowPtr.data(), x);
-  } else if (nrowdim == 4 && ncoldim == 4) {
+        alpha, nrowblk_, val_crs_.data(), val_dia_.data(),
+        col_ind_.data(), row_ptr_.data(), x);
+  } else if (nrowdim_ == 4 && ncoldim_ == 4) {
     mats::MatVec_MatSparseCRS_Blk44(
         y,
-        alpha, nrowblk, valCrs.data(), valDia.data(),
-        colInd.data(), rowPtr.data(), x);
+        alpha, nrowblk_, val_crs_.data(), val_dia_.data(),
+        col_ind_.data(), row_ptr_.data(), x);
   } else {
-    const unsigned int blksize = nrowdim * ncoldim;
-    const T *vcrs = valCrs.data();
-    const T *vdia = valDia.data();
-    const unsigned int *colind = colInd.data();
-    const unsigned int *rowptr = rowPtr.data();
+    const unsigned int blksize = nrowdim_ * ncoldim_;
+    const T *vcrs = val_crs_.data();
+    const T *vdia = val_dia_.data();
+    const unsigned int *colind = col_ind_.data();
+    const unsigned int *rowptr = row_ptr_.data();
     //
-    for (unsigned int iblk = 0; iblk < nrowblk; iblk++) {
+    for (unsigned int iblk = 0; iblk < nrowblk_; iblk++) {
       const unsigned int colind0 = colind[iblk];
       const unsigned int colind1 = colind[iblk + 1];
       for (unsigned int icrs = colind0; icrs < colind1; icrs++) {
-        assert(icrs < rowPtr.size());
+        assert(icrs < row_ptr_.size());
         const unsigned int jblk0 = rowptr[icrs];
-        assert(jblk0 < ncolblk);
-        for (unsigned int idof = 0; idof < nrowdim; idof++) {
-          for (unsigned int jdof = 0; jdof < ncoldim; jdof++) {
-            y[iblk * nrowdim + idof] +=
-                alpha * vcrs[icrs * blksize + idof * ncoldim + jdof] * x[jblk0 * ncoldim + jdof];
+        assert(jblk0 < ncolblk_);
+        for (unsigned int idof = 0; idof < nrowdim_; idof++) {
+          for (unsigned int jdof = 0; jdof < ncoldim_; jdof++) {
+            y[iblk * nrowdim_ + idof] +=
+                alpha * vcrs[icrs * blksize + idof * ncoldim_ + jdof] * x[jblk0 * ncoldim_ + jdof];
           }
         }
       }
-      for (unsigned int idof = 0; idof < nrowdim; idof++) {
-        for (unsigned int jdof = 0; jdof < ncoldim; jdof++) {
-          y[iblk * nrowdim + idof] +=
-              alpha * vdia[iblk * blksize + idof * ncoldim + jdof] * x[iblk * ncoldim + jdof];
+      for (unsigned int idof = 0; idof < nrowdim_; idof++) {
+        for (unsigned int jdof = 0; jdof < ncoldim_; jdof++) {
+          y[iblk * nrowdim_ + idof] +=
+              alpha * vdia[iblk * blksize + idof * ncoldim_ + jdof] * x[iblk * ncoldim_ + jdof];
         }
       }
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMatrixSparse<float>::MatVec(
     float *y, float alpha, const float *x, float beta) const;
 template void delfem2::CMatrixSparse<double>::MatVec(
@@ -299,22 +300,22 @@ void delfem2::CMatrixSparse<T>::MatVecDegenerate(
     T alpha,
     const T *x,
     T beta) const {
-  assert(nrowdim == 1 && ncoldim == 1);
-  const unsigned int ndofcol = len * nrowblk;
+  assert(nrowdim_ == 1 && ncoldim_ == 1);
+  const unsigned int ndofcol = len * nrowblk_;
   for (unsigned int i = 0; i < ndofcol; ++i) { y[i] *= beta; }
 
-  const T *vcrs = valCrs.data();
-  const T *vdia = valDia.data();
-  const unsigned int *colind = colInd.data();
-  const unsigned int *rowptr = rowPtr.data();
+  const T *vcrs = val_crs_.data();
+  const T *vdia = val_dia_.data();
+  const unsigned int *colind = col_ind_.data();
+  const unsigned int *rowptr = row_ptr_.data();
 
-  for (unsigned int iblk = 0; iblk < nrowblk; iblk++) {
+  for (unsigned int iblk = 0; iblk < nrowblk_; iblk++) {
     const unsigned int colind0 = colind[iblk];
     const unsigned int colind1 = colind[iblk + 1];
     for (unsigned int icrs = colind0; icrs < colind1; icrs++) {
-      assert(icrs < rowPtr.size());
+      assert(icrs < row_ptr_.size());
       const unsigned int jblk0 = rowptr[icrs];
-      assert(jblk0 < ncolblk);
+      assert(jblk0 < ncolblk_);
       const T mval0 = alpha * vcrs[icrs];
       for (unsigned int ilen = 0; ilen < len; ilen++) {
         y[iblk * len + ilen] += mval0 * x[jblk0 * len + ilen];
@@ -328,7 +329,7 @@ void delfem2::CMatrixSparse<T>::MatVecDegenerate(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMatrixSparse<float>::MatVecDegenerate(float *y,
                                                               unsigned int len,
                                                               float alpha,
@@ -351,39 +352,39 @@ void delfem2::CMatrixSparse<T>::MatTVec(
     T alpha,
     const T *x,
     T beta) const {
-  const unsigned int ndofrow = ncoldim * ncolblk;
+  const unsigned int ndofrow = ncoldim_ * ncolblk_;
   for (unsigned int i = 0; i < ndofrow; ++i) { y[i] *= beta; }
-  const unsigned int blksize = nrowdim * ncoldim;
+  const unsigned int blksize = nrowdim_ * ncoldim_;
   {
-    const T *vcrs = valCrs.data();
-    const T *vdia = valDia.data();
-    const unsigned int *colind = colInd.data();
-    const unsigned int *rowptr = rowPtr.data();
+    const T *vcrs = val_crs_.data();
+    const T *vdia = val_dia_.data();
+    const unsigned int *colind = col_ind_.data();
+    const unsigned int *rowptr = row_ptr_.data();
     //
-    for (unsigned int iblk = 0; iblk < nrowblk; iblk++) {
+    for (unsigned int iblk = 0; iblk < nrowblk_; iblk++) {
       const unsigned int colind0 = colind[iblk];
       const unsigned int colind1 = colind[iblk + 1];
       for (unsigned int icrs = colind0; icrs < colind1; icrs++) {
-        assert(icrs < rowPtr.size());
+        assert(icrs < row_ptr_.size());
         const unsigned int jblk0 = rowptr[icrs];
-        assert(jblk0 < ncolblk);
-        for (unsigned int idof = 0; idof < nrowdim; idof++) {
-          for (unsigned int jdof = 0; jdof < ncoldim; jdof++) {
-            y[jblk0 * ncoldim + jdof] +=
-                alpha * vcrs[icrs * blksize + idof * ncoldim + jdof] * x[iblk * nrowdim + idof];
+        assert(jblk0 < ncolblk_);
+        for (unsigned int idof = 0; idof < nrowdim_; idof++) {
+          for (unsigned int jdof = 0; jdof < ncoldim_; jdof++) {
+            y[jblk0 * ncoldim_ + jdof] +=
+                alpha * vcrs[icrs * blksize + idof * ncoldim_ + jdof] * x[iblk * nrowdim_ + idof];
           }
         }
       }
-      for (unsigned int jdof = 0; jdof < ncoldim; jdof++) {
-        for (unsigned int idof = 0; idof < nrowdim; idof++) {
-          y[iblk * ncoldim + jdof] +=
-              alpha * vdia[iblk * blksize + idof * ncoldim + jdof] * x[iblk * nrowdim + idof];
+      for (unsigned int jdof = 0; jdof < ncoldim_; jdof++) {
+        for (unsigned int idof = 0; idof < nrowdim_; idof++) {
+          y[iblk * ncoldim_ + jdof] +=
+              alpha * vdia[iblk * blksize + idof * ncoldim_ + jdof] * x[iblk * nrowdim_ + idof];
         }
       }
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMatrixSparse<float>::MatTVec(
     float *y, float alpha, const float *x, float beta) const;
 template void delfem2::CMatrixSparse<double>::MatTVec(
@@ -399,22 +400,22 @@ template<typename T>
 void delfem2::CMatrixSparse<T>::SetFixedBC_Dia(
     const int *bc_flag,
     T val_dia) {
-  assert(!this->valDia.empty());
-  assert(this->ncolblk == this->nrowblk);
-  assert(this->ncoldim == this->nrowdim);
-  const int blksize = nrowdim * ncoldim;
-  for (unsigned int iblk = 0; iblk < nrowblk; iblk++) {  // set diagonal
-    for (unsigned int ilen = 0; ilen < nrowdim; ilen++) {
-      if (bc_flag[iblk * nrowdim + ilen] == 0) continue;
-      for (unsigned int jlen = 0; jlen < ncoldim; jlen++) {
-        valDia[iblk * blksize + ilen * nrowdim + jlen] = 0.0;
-        valDia[iblk * blksize + jlen * nrowdim + ilen] = 0.0;
+  assert(!this->val_dia_.empty());
+  assert(this->ncolblk_ == this->nrowblk_);
+  assert(this->ncoldim_ == this->nrowdim_);
+  const int blksize = nrowdim_ * ncoldim_;
+  for (unsigned int iblk = 0; iblk < nrowblk_; iblk++) {  // set diagonal
+    for (unsigned int ilen = 0; ilen < nrowdim_; ilen++) {
+      if (bc_flag[iblk * nrowdim_ + ilen] == 0) continue;
+      for (unsigned int jlen = 0; jlen < ncoldim_; jlen++) {
+        val_dia_[iblk * blksize + ilen * nrowdim_ + jlen] = 0.0;
+        val_dia_[iblk * blksize + jlen * nrowdim_ + ilen] = 0.0;
       }
-      valDia[iblk * blksize + ilen * nrowdim + ilen] = val_dia;
+      val_dia_[iblk * blksize + ilen * nrowdim_ + ilen] = val_dia;
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMatrixSparse<float>::SetFixedBC_Dia(
     const int *bc_flag, float val_dia);
 template void delfem2::CMatrixSparse<double>::SetFixedBC_Dia(
@@ -423,25 +424,27 @@ template void delfem2::CMatrixSparse<std::complex<double>>::SetFixedBC_Dia(
     const int *bc_flag, std::complex<double> val_dia);
 #endif
 
+// --------------------------
+
 template<typename T>
 void delfem2::CMatrixSparse<T>::SetFixedBC_Row(
     const int *bc_flag) {
-  assert(!this->valDia.empty());
-  assert(this->ncolblk == this->nrowblk);
-  assert(this->ncoldim == this->nrowdim);
-  const int blksize = nrowdim * ncoldim;
-  for (unsigned int iblk = 0; iblk < nrowblk; iblk++) {  // set row
-    for (unsigned int icrs = colInd[iblk]; icrs < colInd[iblk + 1]; icrs++) {
-      for (unsigned int ilen = 0; ilen < nrowdim; ilen++) {
-        if (bc_flag[iblk * nrowdim + ilen] == 0) continue;
-        for (unsigned int jlen = 0; jlen < ncoldim; jlen++) {
-          valCrs[icrs * blksize + ilen * nrowdim + jlen] = 0.0;
+  assert(!this->val_dia_.empty());
+  assert(this->ncolblk_ == this->nrowblk_);
+  assert(this->ncoldim_ == this->nrowdim_);
+  const int blksize = nrowdim_ * ncoldim_;
+  for (unsigned int iblk = 0; iblk < nrowblk_; iblk++) {  // set row
+    for (unsigned int icrs = col_ind_[iblk]; icrs < col_ind_[iblk + 1]; icrs++) {
+      for (unsigned int ilen = 0; ilen < nrowdim_; ilen++) {
+        if (bc_flag[iblk * nrowdim_ + ilen] == 0) continue;
+        for (unsigned int jlen = 0; jlen < ncoldim_; jlen++) {
+          val_crs_[icrs * blksize + ilen * nrowdim_ + jlen] = 0.0;
         }
       }
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMatrixSparse<float>::SetFixedBC_Row(
     const int *bc_flag);
 template void delfem2::CMatrixSparse<double>::SetFixedBC_Row(
@@ -450,24 +453,26 @@ template void delfem2::CMatrixSparse<std::complex<double>>::SetFixedBC_Row(
     const int *bc_flag);
 #endif
 
+// ---------------------------
+
 template<typename T>
 void delfem2::CMatrixSparse<T>::SetFixedBC_Col(
     const int *bc_flag) {
-  assert(!this->valDia.empty());
-  assert(this->ncolblk == this->nrowblk);
-  assert(this->ncoldim == this->nrowdim);
-  const int blksize = nrowdim * ncoldim;
-  for (unsigned int icrs = 0; icrs < rowPtr.size(); icrs++) {  // set column
-    const int jblk1 = rowPtr[icrs];
-    for (unsigned int jlen = 0; jlen < ncoldim; jlen++) {
-      if (bc_flag[jblk1 * ncoldim + jlen] == 0) continue;
-      for (unsigned int ilen = 0; ilen < nrowdim; ilen++) {
-        valCrs[icrs * blksize + ilen * nrowdim + jlen] = 0.0;
+  assert(!this->val_dia_.empty());
+  assert(this->ncolblk_ == this->nrowblk_);
+  assert(this->ncoldim_ == this->nrowdim_);
+  const int blksize = nrowdim_ * ncoldim_;
+  for (unsigned int icrs = 0; icrs < row_ptr_.size(); icrs++) {  // set column
+    const int jblk1 = row_ptr_[icrs];
+    for (unsigned int jlen = 0; jlen < ncoldim_; jlen++) {
+      if (bc_flag[jblk1 * ncoldim_ + jlen] == 0) continue;
+      for (unsigned int ilen = 0; ilen < nrowdim_; ilen++) {
+        val_crs_[icrs * blksize + ilen * nrowdim_ + jlen] = 0.0;
       }
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMatrixSparse<float>::SetFixedBC_Col(const int *bc_flag);
 template void delfem2::CMatrixSparse<double>::SetFixedBC_Col(const int *bc_flag);
 template void delfem2::CMatrixSparse<std::complex<double>>::SetFixedBC_Col(const int *bc_flag);
@@ -475,180 +480,25 @@ template void delfem2::CMatrixSparse<std::complex<double>>::SetFixedBC_Col(const
 
 // -----------------------------------------------------------------
 
-DFM2_INLINE void delfem2::SetMasterSlave(
-    delfem2::CMatrixSparse<double> &mat,
-    const unsigned int *aMSFlag) {
-  assert(!mat.valDia.empty());
-  assert(mat.ncolblk == mat.nrowblk);
-  assert(mat.ncoldim == mat.nrowdim);
-  const unsigned int len = mat.nrowdim;
-  const unsigned int nblk = mat.nrowblk;
-  const unsigned int blksize = len * len;
-  const unsigned int ndof = nblk * len;
-  /////
-  std::vector<int> row2crs(nblk, -1);
-  for (unsigned int idof1 = 0; idof1 < ndof; ++idof1) {  // add row
-    int idof0 = aMSFlag[idof1];
-    if (idof0 == -1) continue;
-    unsigned int ino0 = idof0 / len;
-    unsigned int ilen0 = idof0 - ino0 * len;
-    assert(ilen0 < len);
-    assert(ino0 < nblk && ilen0 < len);
-    unsigned int ino1 = idof1 / len;
-    unsigned int ilen1 = idof1 - ino1 * len;
-    assert(ino1 < nblk && ilen1 < len);
-    assert(ilen0 == ilen1);
-    for (unsigned int icrs0 = mat.colInd[ino0]; icrs0 < mat.colInd[ino0 + 1]; ++icrs0) {
-      unsigned int jno0 = mat.rowPtr[icrs0];
-      assert(jno0 < nblk);
-      row2crs[jno0] = icrs0;
-    }
-    for (unsigned int icrs1 = mat.colInd[ino1]; icrs1 < mat.colInd[ino1 + 1]; ++icrs1) {
-      unsigned int jno1 = mat.rowPtr[icrs1];
-      assert(jno1 < nblk);
-      assert(jno1 != ino1);
-      if (jno1 != ino0) { // add non-diagonal 1 to non-diagonal 0
-        const int icrs0 = row2crs[jno1];
-        assert(icrs0 >= 0 && icrs0 < (int) mat.rowPtr.size());
-        for (unsigned int jdim = 0; jdim < len; ++jdim) {
-          mat.valCrs[icrs0 * blksize + ilen0 * len + jdim] +=
-              mat.valCrs[icrs1 * blksize + ilen1 * len + jdim];
-        }
-      } else { // add non-diagonal 1 to diagonal 0
-        for (unsigned int jdim = 0; jdim < len; ++jdim) {
-          mat.valDia[ino0 * blksize + ilen0 * len + jdim] +=
-              mat.valCrs[icrs1 * blksize + ilen1 * len + jdim];
-        }
-      }
-    }
-    { // add diagonal 1 to non-diagonal 0
-      const int icrs0 = row2crs[ino1];
-      assert(icrs0 >= 0 && icrs0 < (int) mat.rowPtr.size());
-      for (unsigned int jdim = 0; jdim < len; ++jdim) {
-        mat.valCrs[icrs0 * blksize + ilen0 * len + jdim]
-            += mat.valDia[ino1 * blksize + ilen1 * len + jdim];
-      }
-    }
-    for (unsigned int icrs0 = mat.colInd[ino0]; icrs0 < mat.colInd[ino0 + 1]; ++icrs0) {
-      unsigned int jno0 = mat.rowPtr[icrs0];
-      assert(jno0 < nblk);
-      row2crs[jno0] = -1;
-    }
-  }
-  // ---------------------------------------------
-  row2crs.assign(nblk, -1);
-  for (unsigned int ino = 0; ino < nblk; ino++) {
-    for (unsigned int icrs = mat.colInd[ino]; icrs < mat.colInd[ino + 1]; ++icrs) {
-      unsigned int jno0 = mat.rowPtr[icrs];
-      assert(jno0 < nblk);
-      row2crs[jno0] = icrs;
-    }
-    for (unsigned int jlen1 = 0; jlen1 < len; jlen1++) {
-      int jdof0 = aMSFlag[ino * len + jlen1];
-      if (jdof0 == -1) continue;
-      int jno0 = (int) (jdof0 / len);
-      assert(jdof0 - jno0 * len == jlen1);
-      const int icrs0 = row2crs[jno0];
-      assert(icrs0 >= 0 && icrs0 < (int) mat.rowPtr.size());
-      for (unsigned int ilen = 0; ilen < len; ilen++) {
-        mat.valCrs[icrs0 * blksize + ilen * len + jlen1] +=
-            mat.valDia[ino * blksize + ilen * len + jlen1];
-      }
-    }
-    for (unsigned int icrs1 = mat.colInd[ino]; icrs1 < mat.colInd[ino + 1]; icrs1++) {
-      const unsigned int jno1 = mat.rowPtr[icrs1];
-      assert(jno1 < nblk);
-      for (unsigned int jlen1 = 0; jlen1 < len; jlen1++) {
-        if (aMSFlag[jno1 * len + jlen1] == UINT_MAX) continue;
-        auto jdof0 = (unsigned int) aMSFlag[jno1 * len + jlen1];
-        unsigned int jno0 = jdof0 / len;
-        assert(jno0 < nblk);
-        assert(jdof0 - jno0 * len == jlen1);
-        if (ino == jno0) {
-          for (unsigned int ilen = 0; ilen < len; ilen++) {
-            mat.valDia[jno0 * blksize + ilen * len + jlen1] +=
-                mat.valCrs[icrs1 * blksize + ilen * len + jlen1];
-          }
-        } else {
-          const int icrs0 = row2crs[jno0];
-          assert(icrs0 >= 0 && icrs0 < (int) mat.rowPtr.size());
-          for (unsigned int ilen = 0; ilen < len; ilen++) {
-            mat.valCrs[icrs0 * blksize + ilen * len + jlen1] +=
-                mat.valCrs[icrs1 * blksize + ilen * len + jlen1];
-          }
-        }
-      }
-    }
-    for (unsigned int icrs = mat.colInd[ino]; icrs < mat.colInd[ino + 1]; ++icrs) {
-      unsigned int jno0 = mat.rowPtr[icrs];
-      assert(jno0 < nblk);
-      row2crs[jno0] = -1;
-    }
-  }
-  // --------------------------------------
-  for (unsigned int iblk = 0; iblk < nblk; iblk++) {
-    for (unsigned int ilen = 0; ilen < len; ilen++) {
-      if (aMSFlag[iblk * len + ilen] == UINT_MAX) continue;
-      for (unsigned int jlen = 0; jlen < len; jlen++) {
-        mat.valDia[iblk * blksize + ilen * len + jlen] = 0.0;
-        mat.valDia[iblk * blksize + jlen * len + ilen] = 0.0;
-      }
-      mat.valDia[iblk * blksize + ilen * len + ilen] = 1.0;
-    }
-  }
-  // ---------------------------------------------
-  for (unsigned int iblk = 0; iblk < nblk; iblk++) {
-    for (unsigned int icrs = mat.colInd[iblk]; icrs < mat.colInd[iblk + 1]; icrs++) {
-      for (unsigned int idim = 0; idim < len; idim++) {
-        if (aMSFlag[iblk * len + idim] == UINT_MAX) continue;
-        auto idof0 = (unsigned int) aMSFlag[iblk * len + idim];
-        unsigned int jblk = mat.rowPtr[icrs];
-        for (unsigned int jdim = 0; jdim < len; jdim++) {
-          unsigned int idof1 = jblk * len + jdim;
-          if (idof0 != idof1) { mat.valCrs[icrs * blksize + idim * len + jdim] = +0.0; }
-          else { mat.valCrs[icrs * blksize + idim * len + jdim] = -1.0; }
-          mat.valCrs[icrs * blksize + idim * len + jdim] = +0.0;
-        }
-      }
-    }
-  }
-  // ---------------------------------------------
-  for (unsigned int iblk = 0; iblk < nblk; iblk++) {
-    for (unsigned int icrs = mat.colInd[iblk]; icrs < mat.colInd[iblk + 1]; icrs++) {
-      const unsigned int jblk1 = mat.rowPtr[icrs];
-      for (unsigned int jdim = 0; jdim < len; jdim++) {
-        if (aMSFlag[jblk1 * len + jdim] == UINT_MAX) continue;
-        auto idof0 = (unsigned int) aMSFlag[jblk1 * len + jdim];
-        for (unsigned int idim = 0; idim < len; idim++) {
-          unsigned int idof1 = iblk * len + idim;
-          if (idof0 != idof1) { mat.valCrs[icrs * blksize + idim * len + jdim] = +0.0; }
-          else { mat.valCrs[icrs * blksize + idim * len + jdim] = -1.0; }
-          mat.valCrs[icrs * blksize + idim * len + jdim] = +0.0;
-        }
-      }
-    }
-  }
-}
-
 DFM2_INLINE void delfem2::MatSparse_ScaleBlk_LeftRight(
     delfem2::CMatrixSparse<double> &mat,
     const double *scale) {
-  assert(mat.ncolblk == mat.nrowblk);
-  assert(mat.ncoldim == mat.nrowdim);
-  const unsigned int nblk = mat.nrowblk;
-  const unsigned int len = mat.nrowdim;
+  assert(mat.ncolblk_ == mat.nrowblk_);
+  assert(mat.ncoldim_ == mat.nrowdim_);
+  const unsigned int nblk = mat.nrowblk_;
+  const unsigned int len = mat.nrowdim_;
   const unsigned int blksize = len * len;
   for (unsigned int ino = 0; ino < nblk; ++ino) {
-    for (unsigned int icrs0 = mat.colInd[ino]; icrs0 < mat.colInd[ino + 1]; ++icrs0) {
-      const unsigned int jno = mat.rowPtr[icrs0];
+    for (unsigned int icrs0 = mat.col_ind_[ino]; icrs0 < mat.col_ind_[ino + 1]; ++icrs0) {
+      const unsigned int jno = mat.row_ptr_[icrs0];
       const double s0 = scale[ino] * scale[jno];
-      for (unsigned int i = 0; i < blksize; ++i) { mat.valCrs[icrs0 * blksize + i] *= s0; }
+      for (unsigned int i = 0; i < blksize; ++i) { mat.val_crs_[icrs0 * blksize + i] *= s0; }
     }
   }
-  if (!mat.valDia.empty()) {
+  if (!mat.val_dia_.empty()) {
     for (unsigned int ino = 0; ino < nblk; ++ino) {
       double s0 = scale[ino] * scale[ino];
-      for (unsigned int i = 0; i < blksize; ++i) { mat.valDia[ino * blksize + i] *= s0; }
+      for (unsigned int i = 0; i < blksize; ++i) { mat.val_dia_[ino * blksize + i] *= s0; }
     }
   }
 }
@@ -656,27 +506,27 @@ DFM2_INLINE void delfem2::MatSparse_ScaleBlk_LeftRight(
 DFM2_INLINE void delfem2::MatSparse_ScaleBlkLen_LeftRight(
     delfem2::CMatrixSparse<double> &mat,
     const double *scale) {
-  assert(mat.ncolblk == mat.nrowblk);
-  assert(mat.ncoldim == mat.nrowdim);
-  const unsigned int nblk = mat.nrowblk;
-  const unsigned int len = mat.nrowdim;
+  assert(mat.ncolblk_ == mat.nrowblk_);
+  assert(mat.ncoldim_ == mat.nrowdim_);
+  const unsigned int nblk = mat.nrowblk_;
+  const unsigned int len = mat.nrowdim_;
   const unsigned int blksize = len * len;
   for (unsigned int ino = 0; ino < nblk; ++ino) {
-    for (unsigned int icrs0 = mat.colInd[ino]; icrs0 < mat.colInd[ino + 1]; ++icrs0) {
-      const unsigned int jno = mat.rowPtr[icrs0];
+    for (unsigned int icrs0 = mat.col_ind_[ino]; icrs0 < mat.col_ind_[ino + 1]; ++icrs0) {
+      const unsigned int jno = mat.row_ptr_[icrs0];
       for (unsigned int ilen = 0; ilen < len; ++ilen) {
         for (unsigned int jlen = 0; jlen < len; ++jlen) {
-          mat.valCrs[icrs0 * blksize + ilen * len + jlen] *=
+          mat.val_crs_[icrs0 * blksize + ilen * len + jlen] *=
               scale[ino * len + ilen] * scale[jno * len + jlen];
         }
       }
     }
   }
-  if (!mat.valDia.empty()) {
+  if (!mat.val_dia_.empty()) {
     for (unsigned int ino = 0; ino < nblk; ++ino) {
       for (unsigned int ilen = 0; ilen < len; ++ilen) {
         for (unsigned int jlen = 0; jlen < len; ++jlen) {
-          mat.valDia[ino * blksize + ilen * len + jlen] *=
+          mat.val_dia_[ino * blksize + ilen * len + jlen] *=
               scale[ino * len + ilen] * scale[ino * len + jlen];
         }
       }
@@ -686,29 +536,29 @@ DFM2_INLINE void delfem2::MatSparse_ScaleBlkLen_LeftRight(
 
 DFM2_INLINE double delfem2::CheckSymmetry(
     const delfem2::CMatrixSparse<double> &mat) {
-  assert(mat.ncolblk == mat.nrowblk);
-  assert(mat.ncoldim == mat.nrowdim);
-  const unsigned int blksize = mat.nrowdim * mat.ncoldim;
-  const unsigned int nlen = mat.nrowdim;
+  assert(mat.ncolblk_ == mat.nrowblk_);
+  assert(mat.ncoldim_ == mat.nrowdim_);
+  const unsigned int blksize = mat.nrowdim_ * mat.ncoldim_;
+  const unsigned int nlen = mat.nrowdim_;
   //
   double sum = 0;
-  for (unsigned int ino = 0; ino < mat.nrowblk; ++ino) {
-    for (unsigned int icrs0 = mat.colInd[ino]; icrs0 < mat.colInd[ino + 1]; ++icrs0) {
-      unsigned int jno = mat.rowPtr[icrs0];
-      unsigned int icrs1 = mat.colInd[jno];
-      for (; icrs1 < mat.colInd[jno + 1]; ++icrs1) {
-        if (mat.rowPtr[icrs1] == ino) { break; }
+  for (unsigned int ino = 0; ino < mat.nrowblk_; ++ino) {
+    for (unsigned int icrs0 = mat.col_ind_[ino]; icrs0 < mat.col_ind_[ino + 1]; ++icrs0) {
+      unsigned int jno = mat.row_ptr_[icrs0];
+      unsigned int icrs1 = mat.col_ind_[jno];
+      for (; icrs1 < mat.col_ind_[jno + 1]; ++icrs1) {
+        if (mat.row_ptr_[icrs1] == ino) { break; }
       }
-      if (icrs1 == mat.colInd[jno + 1]) {  // no counterpart
+      if (icrs1 == mat.col_ind_[jno + 1]) {  // no counterpart
         sum += mats::MatNorm(
-            mat.valCrs.data() + blksize * icrs0, mat.nrowdim, mat.ncoldim);
+            mat.val_crs_.data() + blksize * icrs0, mat.nrowdim_, mat.ncoldim_);
       } else {
         sum += mats::MatNorm_Assym(
-            mat.valCrs.data() + blksize * icrs0, mat.nrowdim, mat.ncoldim,
-            mat.valCrs.data() + blksize * icrs1);
+            mat.val_crs_.data() + blksize * icrs0, mat.nrowdim_, mat.ncoldim_,
+            mat.val_crs_.data() + blksize * icrs1);
       }
     }
-    sum += mats::MatNorm_Assym(mat.valDia.data() + blksize * ino, nlen);
+    sum += mats::MatNorm_Assym(mat.val_dia_.data() + blksize * ino, nlen);
   }
   return sum;
 }

@@ -8,11 +8,12 @@
 #ifndef DFM2_GLFW_VIEWER3_H
 #define DFM2_GLFW_VIEWER3_H
 
+#include <cstdio>
+#include <iostream>
+
 #include "delfem2/cam3_m4q.h" // for CNav3D_GLFW
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/glfw/mouseinput.h"
-#include <cstdio>
-#include <iostream>
 
 #if defined(_MSC_VER)
   #pragma warning( push )
@@ -72,7 +73,7 @@ public:
   #pragma warning( pop )
 #endif
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/glfw/viewer3.cpp"
 #endif
 

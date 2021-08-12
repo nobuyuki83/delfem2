@@ -42,7 +42,7 @@ DFM2_INLINE void Draw_CCad2D(
 }
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/opengl/old/cad2dtriv2.cpp"
 #endif
 

@@ -35,7 +35,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindEigen3.cmake) # call scr
 message(STATUS "eigen3 locatoin: ${EIGEN3_INCLUDE_DIR}")
 
 # dfm2
-add_definitions(-DDFM2_HEADER_ONLY=ON)      
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 ##################################

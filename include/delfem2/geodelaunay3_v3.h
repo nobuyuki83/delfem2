@@ -13,6 +13,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+
 #include "delfem2/vec3.h"
 #include "delfem2/dfm2_inline.h"
 
@@ -57,7 +58,7 @@ double Circumradius(
 
 } // end namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/geodelaunay3_v3.cpp"
 #endif
 

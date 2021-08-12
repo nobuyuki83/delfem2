@@ -8,8 +8,9 @@
 #ifndef DFM2_CUBEGRID_H
 #define DFM2_CUBEGRID_H
 
-#include "delfem2/dfm2_inline.h"
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -76,7 +77,7 @@ void AABB_CubeGrid(
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/gridcube.cpp"
 #endif
 

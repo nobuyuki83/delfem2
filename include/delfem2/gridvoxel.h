@@ -9,6 +9,7 @@
 #define DFM2_GRIDVOXEL_H
 
 #include <vector>
+
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/mat4.h"
 #include "delfem2/vec3.h"
@@ -144,7 +145,7 @@ void Add(int ivx, int ivy, int ivz){
   
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/gridvoxel.cpp"
 #endif
 

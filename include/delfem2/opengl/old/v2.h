@@ -46,7 +46,7 @@ DFM2_INLINE void myGlVertex2(
 } // end namespace opengl
 } // end namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #include "delfem2/opengl/old/v2.cpp"
 #endif
 

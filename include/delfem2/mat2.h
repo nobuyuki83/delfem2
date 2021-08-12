@@ -13,6 +13,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+
 #include "delfem2/dfm2_inline.h"
 
 // -----------------------------------------------------
@@ -229,7 +230,7 @@ void svd(CMat2<T> &U,
 
 } // delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/mat2.cpp"
 #endif
 

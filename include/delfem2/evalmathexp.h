@@ -9,10 +9,11 @@
 #ifndef DFM2_EVALMATHEXP_H
 #define DFM2_EVALMATHEXP_H
 
-#include "delfem2/dfm2_inline.h"
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -68,7 +69,7 @@ private:
   
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/evalmathexp.cpp"
 #endif
 

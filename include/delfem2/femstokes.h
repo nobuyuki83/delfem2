@@ -8,11 +8,12 @@
 #ifndef DFM2_FEMSTOKES_H
 #define DFM2_FEMSTOKES_H
 
-#include "delfem2/dfm2_inline.h"
-#include "delfem2/femutil.h"
 #include <vector>
 
-#ifndef DFM2_HEADER_ONLY
+#include "delfem2/dfm2_inline.h"
+#include "delfem2/femutil.h"
+
+#ifdef DFM2_STATIC_LIBRARY
 // Merge use explicitly use the template so for static library we need to include the template itself.
   #include "delfem2/lsmats.h"
 #endif
@@ -268,7 +269,7 @@ void MergeLinSys_Stokes3D_Dynamic(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/femstokes.cpp"
 #endif
   

@@ -13,13 +13,14 @@
 #ifndef DFM2_BVH_H
 #define DFM2_BVH_H
 
-#include "delfem2/dfm2_inline.h"
 #include <stack>
 #include <vector>
 #include <set>
 #include <cassert>
 #include <climits>
 #include <iostream>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -459,7 +460,7 @@ void delfem2::BVH_IndPoint_NearestPoint(
 
 
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/srchbvh.cpp"
 #endif
 

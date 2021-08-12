@@ -581,7 +581,7 @@ inline CVec3<T> Normal_Tri3(
 #pragma warning( pop )
 #endif
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #include "delfem2/vec3.cpp"
 #endif
 

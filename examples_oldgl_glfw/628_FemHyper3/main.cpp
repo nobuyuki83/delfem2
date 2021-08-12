@@ -106,9 +106,9 @@ void Simulation(
     delfem2::Merge<8, 8, 3, 3, double>(smat, aIP, aIP, ddW, tmp_buffer);
   }
   for (unsigned int ip = 0; ip < np; ++ip) {
-    smat.valDia[ip * 9 + 0] += mass / (dt * dt);
-    smat.valDia[ip * 9 + 4] += mass / (dt * dt);
-    smat.valDia[ip * 9 + 8] += mass / (dt * dt);
+    smat.val_dia_[ip * 9 + 0] += mass / (dt * dt);
+    smat.val_dia_[ip * 9 + 4] += mass / (dt * dt);
+    smat.val_dia_[ip * 9 + 8] += mass / (dt * dt);
   }
   for (unsigned int ip = 0; ip < np; ++ip) {
     vecb[ip * 3 + 0] += mass * gravity[0];

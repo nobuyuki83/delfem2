@@ -8,6 +8,7 @@
 #include <cmath>
 #include <algorithm>
 #include <climits> // UNINT_MAX
+
 #include "delfem2/srchbvh.h"
 
 // ------------------------------------
@@ -290,7 +291,7 @@ DFM2_INLINE std::uint32_t delfem2::MortonCode(REAL x, REAL y, REAL z)
   std::uint32_t ixyz = ix * 4 + iy * 2 + iz;
   return ixyz;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template std::uint32_t delfem2::MortonCode(float x, float y, float z);
 template std::uint32_t delfem2::MortonCode(double x, double y, double z);
 #endif
@@ -419,7 +420,7 @@ DFM2_INLINE void delfem2::SortedMortenCode_Points3(
       //        std::cout << std::bitset<32>(aNodeBVH[ino].imtc) << "  " << clz(aNodeBVH[ino].imtc) << "   " << ino << std::endl;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::SortedMortenCode_Points3(
     std::vector<unsigned int>& aSortedId,
     std::vector<std::uint32_t>& aSortedMc,

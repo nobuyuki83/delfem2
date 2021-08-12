@@ -6,6 +6,7 @@
  */
 
 #include <cstdlib>
+
 #include "delfem2/vec2.h"
 
 DFM2_INLINE bool delfem2::IsCrossLines(
@@ -32,7 +33,7 @@ T delfem2::Area_Tri2(
   T v0 = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
   return v0 / 2;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Area_Tri2(const float v1[2], const float v2[2], const float v3[2]);
 template double delfem2::Area_Tri2(const double v1[2], const double v2[2], const double v3[2]);
 #endif
@@ -43,7 +44,7 @@ template<typename T>
 T delfem2::Dot2(const T w[2], const T v[2]) {
   return w[0] * v[0] + w[1] * v[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Dot2(const float v1[2], const float v2[2]);
 template double delfem2::Dot2(const double v1[2], const double v2[2]);
 #endif
@@ -94,7 +95,7 @@ template<typename T>
 T delfem2::SquareLength2(const T v[2]) {
   return v[0] * v[0] + v[1] * v[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::SquareLength2(const float v[2]);
 template double delfem2::SquareLength2(const double v[2]);
 #endif
@@ -105,7 +106,7 @@ template<typename T>
 T delfem2::SquareDistance2(const T v1[2], const T v2[2]) {
   return (v1[0] - v2[0]) * (v1[0] - v2[0]) + (v1[1] - v2[1]) * (v1[1] - v2[1]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::SquareDistance2(const float v1[2], const float v2[2]);
 template double delfem2::SquareDistance2(const double v1[2], const double v2[2]);
 #endif
@@ -142,7 +143,7 @@ void delfem2::Normalize2(T w[2]) {
   w[0] *= invl;
   w[1] *= invl;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Normalize2(float w[2]);
 template void delfem2::Normalize2(double w[2]);
 #endif
@@ -170,7 +171,7 @@ template<typename T1, typename T0>
 DFM2_INLINE delfem2::CVec2<T1> operator*(T0 c, const CVec2<T1> &v0) {
   return CVec2<T1>(v0.p[0] * c, v0.p[1] * c);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CVec2d operator*(double, const CVec2d&);
 template CVec2d operator*(float, const CVec2d&);
 template CVec2d operator*(int, const CVec2d&);
@@ -183,7 +184,7 @@ template<typename T, typename T1>
 delfem2::CVec2<T> operator*(const CVec2<T> &v0, T1 c) {
   return CVec2<T>(v0.p[0] * c, v0.p[1] * c);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CVec2d operator*(const CVec2d& v0, double c);
 template CVec2d operator*(const CVec2d& v0, float c);
 template CVec2d operator*(const CVec2d& v0, int c);
@@ -196,7 +197,7 @@ template<typename T>
 T operator*(const CVec2<T> &lhs, const CVec2<T> &rhs) {
   return lhs.p[0] * rhs.p[0] + lhs.p[1] * rhs.p[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double operator * (const CVec2d& lhs, const CVec2d& rhs);
 template float  operator * (const CVec2f& lhs, const CVec2f& rhs);
 #endif
@@ -207,7 +208,7 @@ template<typename T>
 T operator^(const CVec2<T> &lhs, const CVec2<T> &rhs) {
   return lhs.p[0] * rhs.p[1] - lhs.p[1] * rhs.p[0];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double operator ^ (const CVec2d& lhs, const CVec2d& rhs);
 template float  operator ^ (const CVec2f& lhs, const CVec2f& rhs);
 #endif
@@ -221,7 +222,7 @@ CVec2<T> operator/(const CVec2<T> &vec, double d) {
   temp /= d;
   return temp;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CVec2d operator / (const CVec2d& vec, double d);
 #endif
 
@@ -254,7 +255,7 @@ delfem2::CVec2<T> delfem2::Mat2Vec(
     const CVec2<T> &v) {
   return CVec2<T>(A[0] * v.x + A[1] * v.y, A[2] * v.x + A[3] * v.y);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec2d delfem2::Mat2Vec(const double A[4], const CVec2d& v);
 #endif
 
@@ -268,7 +269,7 @@ double delfem2::Area_Tri
      const CVec2<T> &v3) {
   return 0.5 * ((v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v3.p[0] - v1.p[0]) * (v2.p[1] - v1.p[1]));
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Area_Tri(const CVec2d& v1, const CVec2d& v2, const CVec2d& v3);
 #endif
 
@@ -276,7 +277,7 @@ template<typename T>
 double delfem2::Cross(const CVec2<T> &v1, const CVec2<T> &v2) {
   return v1.p[0] * v2.p[1] - v2.p[0] * v1.p[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Cross(const CVec2d& v1, const CVec2d& v2);
 #endif
 
@@ -284,7 +285,7 @@ template<typename T>
 double delfem2::SquareLength(const CVec2<T> &point) {
   return point.p[0] * point.p[0] + point.p[1] * point.p[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::SquareLength(const CVec2d& point);
 #endif
 
@@ -294,7 +295,7 @@ template<typename T>
 double delfem2::Length(const CVec2<T> &point) {
   return Length2(point.p);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Length(const CVec2d& point);
 #endif
 
@@ -307,7 +308,7 @@ double delfem2::Distance
      const CVec2<T> &ipo1) {
   return Distance2(ipo0.p, ipo1.p);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Distance(const CVec2d& ipo0, const CVec2d& ipo1);
 #endif
 
@@ -334,7 +335,7 @@ template<typename T>
 double delfem2::Dot(const CVec2<T> &ipo0, const CVec2<T> &ipo1) {
   return Dot2(ipo0.p, ipo1.p);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Dot(const CVec2d& ipo0, const CVec2d& ipo1);
 #endif
 
@@ -364,7 +365,7 @@ delfem2::CVec2<T> delfem2::GetNearest_LineSeg_Point(
   if (t > 1) { return po_e; }
   return po_s + t * (po_e - po_s);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec2d delfem2::GetNearest_LineSeg_Point(
     const CVec2d& po_c, const CVec2d& po_s, const CVec2d& po_e);
 #endif
@@ -378,7 +379,7 @@ double delfem2::GetDist_LineSeg_Point
   CVec2<T> p = GetNearest_LineSeg_Point(po_c, po_s, po_e);
   return Distance(p, po_c);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::GetDist_LineSeg_Point(
     const CVec2d& po_c, const CVec2d& po_s, const CVec2d& po_e);
 #endif
@@ -512,7 +513,7 @@ int delfem2::DetDelaunay
     else { return 1; }    // on the circumcircle
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template int delfem2::DetDelaunay(const CVec2d& p0, const CVec2d& p1, const CVec2d& p2, const CVec2d& p3);
 #endif
 
@@ -523,7 +524,7 @@ delfem2::CVec2<T> delfem2::pointCurve_BezierCubic
   double tp = 1.0 - t;
   return t * t * t * p4 + 3 * t * t * tp * p3 + 3 * t * tp * tp * p2 + tp * tp * tp * p1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec2d delfem2::pointCurve_BezierCubic(double t,
                                                    const CVec2d& p1,
                                                    const CVec2d& p2,
@@ -538,7 +539,7 @@ delfem2::CVec2<T> delfem2::pointCurve_BezierQuadratic
   double tp = 1.0 - t;
   return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec2d delfem2::pointCurve_BezierQuadratic(double t,
                                                        const CVec2d& p1,
                                                        const CVec2d& p2,
@@ -573,7 +574,7 @@ void delfem2::Polyline_CubicBezierCurve(
   }
   aP[ns * n] = aCP[ns * 3];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Polyline_CubicBezierCurve(std::vector<CVec2d>& aP, const int n, const std::vector<CVec2d>& aCP);
 #endif
 
@@ -618,7 +619,7 @@ void delfem2::Polyline_BezierQuadratic(
         p1, p2, p3 );
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Polyline_BezierQuadratic(
     std::vector<CVec2d>& aP,
     const unsigned int n,
@@ -639,7 +640,7 @@ void delfem2::Translate(
     ip.p[1] += dy;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Translate(std::vector<CVec2d>& aP, double dx, double dy);
 #endif
 
@@ -693,7 +694,7 @@ std::vector< delfem2::CVec2<T> > delfem2::Polyline_Resample_Polyline(
 //  stroke.push_back( stroke0.back() );
   return stroke;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template std::vector<delfem2::CVec2d> delfem2::Polyline_Resample_Polyline(
     const std::vector<CVec2d>& stroke0, double l);
 #endif

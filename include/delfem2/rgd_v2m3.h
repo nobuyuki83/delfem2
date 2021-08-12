@@ -78,7 +78,7 @@ void Steptime_Rgd2(
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/rgd_v2m3.cpp"
 #endif
 

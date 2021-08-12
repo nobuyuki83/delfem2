@@ -11,11 +11,12 @@
 #ifndef DFM2_SRCHUNI_V3_H
 #define DFM2_SRCHUNI_V3_H
 
-#include "delfem2/vec3.h"
-#include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <climits>
 #include <map>
+
+#include "delfem2/vec3.h"
+#include "delfem2/dfm2_inline.h"
 
 
 // -----------------------------------
@@ -249,7 +250,7 @@ double DistanceToTri(
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/srchuni_v3.cpp"
 #endif
   

@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
-
 ######################################################
 
 enable_language(CXX)
@@ -27,7 +25,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 find_package(OpenGL REQUIRED)
 
 # dfm2
-add_definitions(-DDFM2_HEADER_ONLY=ON)            
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 # zlib

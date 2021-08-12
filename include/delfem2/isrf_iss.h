@@ -8,8 +8,9 @@
 #ifndef DFM2_ISRF_ISS_H
 #define DFM2_ISRF_ISS_H
 
-#include "delfem2/dfm2_inline.h"
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -67,7 +68,7 @@ void makeBackgroundLattice
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/isrf_iss.cpp"
 #endif
 

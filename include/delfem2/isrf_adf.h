@@ -8,8 +8,10 @@
 
 #ifndef DFM2_ISRF_ADF_H
 #define DFM2_ISRF_ADF_H
-#include "delfem2/dfm2_inline.h"
+
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -76,7 +78,7 @@ public:
   
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/isrf_adf.cpp"
 #endif
 

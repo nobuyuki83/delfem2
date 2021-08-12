@@ -8,9 +8,10 @@
 #ifndef DFM2_LP_H
 #define DFM2_LP_H
 
-#include "delfem2/dfm2_inline.h"
 #include <math.h>
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -70,7 +71,7 @@ public:
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/lp.cpp"
 #endif
 

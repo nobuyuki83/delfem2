@@ -8,11 +8,13 @@
 #ifndef DFM2_FEMHELMHOLTZ_H
 #define DFM2_FEMHELMHOLTZ_H
 
-#include "delfem2/dfm2_inline.h"
-#include "delfem2/femutil.h"
 #include <vector>
 #include <complex>
 #include <cassert>
+
+
+#include "delfem2/dfm2_inline.h"
+#include "delfem2/femutil.h"
 
 namespace delfem2 {
 
@@ -103,7 +105,7 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/femhelmholtz.cpp"
 #endif
   

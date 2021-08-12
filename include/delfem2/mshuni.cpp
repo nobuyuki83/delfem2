@@ -5,17 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/mshuni.h"
+
 #include <vector>
 #include <cassert>
 #include <stack>
 #include <set>
 #include <climits>
 
-#include "delfem2/mshuni.h"
-
 #if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4100 )
+#  pragma warning( push )
+#  pragma warning( disable : 4100 )
 #endif
 
 // ---------------------------------------------

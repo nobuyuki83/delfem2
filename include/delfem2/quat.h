@@ -252,7 +252,7 @@ using CQuatf = CQuat<float>;
 #pragma warning( pop )
 #endif
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #include "delfem2/quat.cpp"
 #endif
 

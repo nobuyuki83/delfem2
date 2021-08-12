@@ -5,9 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/old/v3q.h"
-#include "delfem2/vec3.h"
-#include "delfem2/quat.h"
 #include <cassert>
 
 #if defined(_WIN32) // windows
@@ -21,6 +18,10 @@
 #else
   #include <GL/gl.h>
 #endif
+
+#include "delfem2/opengl/old/v3q.h"
+#include "delfem2/vec3.h"
+#include "delfem2/quat.h"
 
 #ifndef M_PI
   #define M_PI 3.141592653589793238462643383279502
@@ -254,7 +255,7 @@ DFM2_INLINE void delfem2::opengl::DrawArrow(
     ::glEnd();
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::DrawArrow(
     const CVec3d& p0,
     const CVec3d& d,
@@ -296,7 +297,7 @@ DFM2_INLINE void delfem2::opengl::DrawArrowOcta_FaceNrm(
   }
   ::glEnd();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::DrawArrowOcta_FaceNrm(
     const CVec3d &p0,
     const CVec3d &d,
@@ -339,7 +340,7 @@ DFM2_INLINE void delfem2::opengl::DrawArrowOcta_Edge(
   }
   ::glEnd();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::DrawArrowOcta_Edge(
     const delfem2::CVec3d &p0,
     const delfem2::CVec3d &d,
@@ -428,7 +429,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleWire(
   }
   ::glEnd();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::DrawCircleWire(const CVec3f& axis,
                                               const CVec3f& org,
                                               float r);

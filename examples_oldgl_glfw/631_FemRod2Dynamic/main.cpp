@@ -44,8 +44,8 @@ void Solve(
     dfm2::CMatrixSparse<double> &mats) {
   unsigned int np = aXY.size() / 2;
   assert(np >= 3);
-  assert(mats.ncolblk == np && mats.nrowblk == np);
-  assert(mats.ncoldim == 2 && mats.nrowdim == 2);
+  assert(mats.ncolblk_ == np && mats.nrowblk_ == np);
+  assert(mats.ncoldim_ == 2 && mats.nrowdim_ == 2);
   for (unsigned int ip = 0; ip < np; ++ip) {
     axy[ip * 2 + 0] += dt * auv[ip * 2 + 0];
     axy[ip * 2 + 1] += dt * auv[ip * 2 + 1];
@@ -76,8 +76,8 @@ void Solve(
     dfm2::Merge<3, 3, 2, 2>(mats, aIP, aIP, ddWe, merge_buffer);
   }
   for (unsigned int ip = 0; ip < np; ++ip) {
-    mats.valDia[ip * 4 + 0] += mass_point / (dt * dt);
-    mats.valDia[ip * 4 + 3] += mass_point / (dt * dt);
+    mats.val_dia_[ip * 4 + 0] += mass_point / (dt * dt);
+    mats.val_dia_[ip * 4 + 3] += mass_point / (dt * dt);
   }
   for (unsigned int ip = 0; ip < np; ++ip) {
     vec_r[ip * 2 + 0] += mass_point * gravity[0];

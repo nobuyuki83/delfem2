@@ -21,7 +21,7 @@ DFM2_INLINE void DrawQuad_ScalarQ1
  double v0, double v1, double v2, double v3,
  const std::vector<std::pair<double, delfem2::CColor> >& colorMap);
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/opengl/colorv3_glold.cpp"
 #endif
 

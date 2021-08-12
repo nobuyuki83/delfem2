@@ -9,11 +9,12 @@
 #ifndef DFM2_SLICE_H
 #define DFM2_SLICE_H
 
-#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <set>
 #include <stack>
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
   
@@ -185,7 +186,7 @@ void MakeReebGraph
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 # include "delfem2/slice.cpp"
 #endif
 

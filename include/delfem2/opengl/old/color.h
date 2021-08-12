@@ -144,7 +144,7 @@ DFM2_INLINE void DrawMeshTet3D_Cut(
 } // namespace opengl
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #include "delfem2/opengl/old/color.cpp"
 #endif
 

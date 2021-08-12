@@ -6,6 +6,7 @@
  */
 
 #include "delfem2/opengl/old/mshuni.h"
+
 #include <cassert>
 #include <cmath>
 #include <vector>
@@ -487,7 +488,7 @@ delfem2::opengl::DrawPoints3_Points(
   }
   ::glEnd();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::DrawPoints3_Points(const std::vector<float> &aXYZ);
 template void delfem2::opengl::DrawPoints3_Points(const std::vector<double> &aXYZ);
 #endif

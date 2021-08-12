@@ -101,7 +101,7 @@ DFM2_INLINE void SubdivisionPoints_Hex(
 
 } // end namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/mshsubdiv.cpp"
 #endif
  

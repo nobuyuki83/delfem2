@@ -5,10 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <map>
+
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/geoproximity3_v3.h"
 #include "delfem2/vec3.h"
-#include <map>
 
 namespace delfem2 {
 namespace srchuni {
@@ -49,7 +50,7 @@ delfem2::CVec3<T> delfem2::CPtElm3<T>::getPos_Tet
   const CVec3<T> p3(aXYZ_[ip3 * 3 + 0], aXYZ_[ip3 * 3 + 1], aXYZ_[ip3 * 3 + 2]);
   return r0 * p0 + r1 * p1 + r2 * p2 + (1.0 - r0 - r1 - r2) * p3;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::CPtElm3<double>::getPos_Tet
     (const std::vector<double> &aXYZ,
      const std::vector<int> &aTet) const;
@@ -83,7 +84,7 @@ void delfem2::CPtElm3<T>::setPos_Tet(
   this->r1 = v1 / vt;
   this->r2 = v2 / vt;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CPtElm3<double>::setPos_Tet
     (int, const CVec3d &,
      const std::vector<double> &,
@@ -105,7 +106,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_Tri(
   const CVec3<T> p2(aXYZ_[i2 * 3 + 0], aXYZ_[i2 * 3 + 1], aXYZ_[i2 * 3 + 2]);
   return r0 * p0 + r1 * p1 + (1.0 - r0 - r1) * p2;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Tri(
     const std::vector<double> &,
     const std::vector<unsigned int> &) const;
@@ -128,7 +129,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_Tri(
   const CVec3<T> p2(aXYZ_[i2 * 3 + 0], aXYZ_[i2 * 3 + 1], aXYZ_[i2 * 3 + 2]);
   return r0 * p0 + r1 * p1 + (1.0 - r0 - r1) * p2;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Tri(
     const double *,
     unsigned int,
@@ -153,7 +154,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri
   const CVec3<T> n2(aNorm[i2 * 3 + 0], aNorm[i2 * 3 + 1], aNorm[i2 * 3 + 2]);
   return (r0 * n0 + r1 * n1 + (1.0 - r0 - r1) * n2).normalized();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::CPtElm2<double>::UNorm_Tri(
     const std::vector<double> &,
     const std::vector<unsigned int> &,
@@ -178,7 +179,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
   const CVec3<T> n2(aNorm[i2 * 3 + 0], aNorm[i2 * 3 + 1], aNorm[i2 * 3 + 2]);
   return (r0 * n0 + r1 * n1 + (1.0 - r0 - r1) * n2).normalized();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::CPtElm2<double>::UNorm_Tri(
     const double *aXYZ,
     unsigned int nXYZ,
@@ -214,7 +215,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_TetFace(
   p.p[2] = r0 * aXYZ[iq0 * 3 + 2] + r1 * aXYZ[iq1 * 3 + 2] + r2 * aXYZ[iq2 * 3 + 2];
   return p;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_TetFace(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aTet,
@@ -238,7 +239,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_Grid(
   if (this->itri % 2 == 0) { return p00 * r0 + p10 * r1 + p11 * (1 - r0 - r1); }
   return p00 * r0 + p11 * r1 + p01 * (1 - r0 - r1);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Grid(
     unsigned int nx, unsigned int ny,
     double el, std::vector<float> &aH) const;
@@ -258,7 +259,7 @@ bool delfem2::CPtElm2<T>::Check(
   if (r2 < -eps || r2 > 1 + eps) { return false; }
   return true;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::CPtElm2<double>::Check(
     const std::vector<double> &aXYZ,
     const std::vector<unsigned int> &aTri,
@@ -431,7 +432,7 @@ delfem2::IntersectionLine_MeshTri3(
   }
   return aPES;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template
 std::vector<delfem2::CPtElm2<double>> delfem2::IntersectionLine_MeshTri3(
     const CVec3<double> &org,
@@ -463,7 +464,7 @@ void delfem2::IntersectionRay_MeshTri3(
     mapDepthPES.insert(std::make_pair(depth, pes));
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template
 void delfem2::IntersectionRay_MeshTri3(
     std::map<double, CPtElm2<double>> &mapDepthPES,
@@ -507,7 +508,7 @@ void delfem2::IntersectionRay_MeshTri3DPart(
     mapDepthPES.insert(std::make_pair(depth, CPtElm2<T>(itri, r0, r1)));
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template
 void delfem2::IntersectionRay_MeshTri3DPart(
     std::map<double, CPtElm2<double>> &,
@@ -674,7 +675,7 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTri3D(
   assert(pes.itri != UINT_MAX);
   return pes;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CPtElm2<double> delfem2::Nearest_Point_MeshTri3D(
     const CVec3d &,
     const std::vector<double> &,
@@ -710,7 +711,7 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTri3DPart(
   }
   return pes;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CPtElm2<double> delfem2::Nearest_Point_MeshTri3DPart(
     const CVec3d &,
     const std::vector<double> &,
@@ -860,7 +861,7 @@ double delfem2::SDFNormal_NearestPoint
     return -dist;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::SDFNormal_NearestPoint
     (CVec3d &n0,
      const CVec3d &p0,
@@ -893,7 +894,7 @@ double delfem2::SDFNormal_NearestPoint
     return -dist;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::SDFNormal_NearestPoint
     (CVec3d &n0,
      const CVec3d &p0,
@@ -926,7 +927,7 @@ double delfem2::DistanceToTri
   pes.r1 = r1;
   return p_min.norm();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::DistanceToTri
     (CPtElm2<double> &pes,
      const CVec3<double> &p,
@@ -960,7 +961,7 @@ double delfem2::DistanceToTri(
   pes.r1 = r1;
   return p_min.norm();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::DistanceToTri(
     CPtElm2<double> &pes,
     const CVec3<double> &p,

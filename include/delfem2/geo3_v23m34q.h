@@ -196,7 +196,7 @@ DFM2_INLINE bool Distortion_MappingTriangleFrom2To3Dim(
 } //
 
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/geo3_v23m34q.cpp"
 #endif
 

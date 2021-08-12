@@ -9,11 +9,12 @@
 #ifndef DFM2_FILENPY_STR_H
 #define DFM2_FILENPY_STR_H
 
-#include "delfem2/dfm2_inline.h"
 #include <fstream>
 #include <map>
 #include <vector>
 #include <string>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -35,7 +36,7 @@ DFM2_INLINE bool LoadNumpy_1DimF(
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/filenpy_str.cpp"
 #endif
 

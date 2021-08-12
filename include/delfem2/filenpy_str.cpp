@@ -5,14 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/filenpy_str.h"
+
 #include <map>
 #include <vector>
 #include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
+
 #include "delfem2/str.h"
-#include "delfem2/filenpy_str.h"
 
 namespace delfem2{
 namespace funcs{
@@ -139,7 +141,7 @@ DFM2_INLINE bool delfem2::LoadNumpy_2Dim(
   fin.read( (char*)&aData[0], sizeof(REAL)*size );
   return !fin.fail();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::LoadNumpy_2Dim(
     int&, int&, std::vector<float>& aData, const std::string& path);
 template bool delfem2::LoadNumpy_2Dim(

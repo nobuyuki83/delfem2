@@ -12,11 +12,13 @@
 #ifndef DFM2_LS_MASTERSLAVE_H
 #define DFM2_LS_MASTERSLAVE_H
 
-#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <cassert>
 #include <complex>
 #include <iostream>
+
+#include "delfem2/dfm2_inline.h"
+#include "delfem2/lsmats.h"
 
 namespace delfem2 {
 
@@ -24,9 +26,6 @@ DFM2_INLINE void setRHS_MasterSlave(
     double *vec_b,
     unsigned int nDoF,
     const unsigned int *aMSFlag);
-
-// ---------------------------------------------
-// function related to jagged array
 
 DFM2_INLINE void JArray_AddMasterSlavePattern(
     std::vector<unsigned int> &index,
@@ -37,9 +36,13 @@ DFM2_INLINE void JArray_AddMasterSlavePattern(
     int npsup_ind0,
     const unsigned int *psup0);
 
+DFM2_INLINE void SetMasterSlave(
+    delfem2::CMatrixSparse<double> &mat,
+    const unsigned int *aMSFlag);
+
 } // delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/ls_masterslave.cpp"
 #endif
   

@@ -265,7 +265,7 @@ public:
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/cad2_dtri2.cpp"
 #endif
 

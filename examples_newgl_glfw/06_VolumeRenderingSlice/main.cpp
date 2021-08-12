@@ -1,18 +1,20 @@
 
-#if defined(_MSC_VER)
-  #include <windows.h>
-#endif
-#include <glad/glad.h>
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/funcs.h"
-#include "delfem2/noise.h"
-#include <GLFW/glfw3.h>
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <string>
+
+#if defined(_MSC_VER)
+#  include <windows.h>
+#endif
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/funcs.h"
+#include "delfem2/noise.h"
 
 namespace dfm2 = delfem2;
  

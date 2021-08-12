@@ -8,11 +8,9 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "-O2 /W4 \
-    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800  \
-    /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456")
+  set(CMAKE_CXX_FLAGS "/W4")
 else ()
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+  set(CMAKE_CXX_FLAGS "-Wall -g")
 endif ()
 
 #################################
@@ -28,8 +26,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 
 # dfm2
 IF (DFM2_HEADER_ONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)
 else ()
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   if (MSVC)
     set(DFM2_LIBRARY
         ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)

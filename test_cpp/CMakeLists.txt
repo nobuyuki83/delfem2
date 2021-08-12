@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(DFM2_HEADER_ONLY "compile delfem2 as a header only library" ON)
+option(DFM2_STATIC_LIBRARY "compile delfem2 as a static library" OFF)
 
 ################################
 
@@ -15,18 +15,16 @@ endif()
 
 ################################
 
-if(DFM2_HEADER_ONLY)
-  project(test_hdronly)
-ELSE()
+if(DFM2_STATIC_LIBRARY)
   project(test_static)
+ELSE()
+  project(test_hdronly)
 ENDIF()
 set(MY_BINARY_NAME runUnitTests)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../test_inputs")
 
 set(DELFEM2_INCLUDE_DIR "../include")
-set(DELFEM2_INC         "../include/delfem2")
-set(3RD_PARTY           "../3rd_party")
 
 # google test
 set(GTEST_ROOT ${PROJECT_SOURCE_DIR}/../3rd_party/libgtest)
@@ -40,13 +38,14 @@ enable_testing()
 include_directories(
   ${GTEST_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}
+  ../3rd_party
 )
 
 # Add test cpp file
-
-IF(NOT DFM2_HEADER_ONLY)
+IF(DFM2_STATIC_LIBRARY)
   message("compile as STATIC libary: ${PROJECT_NAME} DFM2_HEADER_ONLY=${DFM2_HEADER_ONLY}")
+  add_definitions(-DDFM2_STATIC_LIBRARY)
+  set(DELFEM2_INC         "../include/delfem2")
   set(SRC_DFM2
       ${DELFEM2_INC}/vec2.h                 ${DELFEM2_INC}/vec2.cpp
       ${DELFEM2_INC}/vec3.h                 ${DELFEM2_INC}/vec3.cpp
@@ -114,13 +113,13 @@ IF(NOT DFM2_HEADER_ONLY)
       ${DELFEM2_INC}/gridcube.h             ${DELFEM2_INC}/gridcube.cpp
       )
 ELSE()
-  add_definitions(-DDFM2_HEADER_ONLY=ON)
   message("compile delfem2 as HEADER-ONLY library: ${PROJECT_NAME} ${DFM2_HEADER_ONLY}")
 ENDIF()
 
 add_executable(${MY_BINARY_NAME}
-  ${DELFEM2_INC}/tinygltf/io_gltf.h      ${DELFEM2_INC}/tinygltf/io_gltf.cpp
   ${SRC_DFM2}
+  ../include/delfem2/tinygltf/io_gltf.h
+  ../include/delfem2/tinygltf/io_gltf.cpp
   test_bvh.cpp
   test_lp.cpp
   test_gltf.cpp

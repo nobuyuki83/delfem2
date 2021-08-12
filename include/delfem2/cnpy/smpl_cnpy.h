@@ -8,10 +8,11 @@
 #ifndef DFM2_SMPL_CNPY_H
 #define DFM2_SMPL_CNPY_H
 
-#include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>
 #include <string>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2{
 namespace cnpy{
@@ -57,7 +58,7 @@ DFM2_INLINE void LoadSmpl_BoneBlendshape(
 }
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/cnpy/smpl_cnpy.cpp"
 #endif
 

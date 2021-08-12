@@ -1180,7 +1180,7 @@ TEST(fem, WdWddW_Rod3BendStraight) {
         for (int jdim = 0; jdim < 3; ++jdim) {
           double d0 = (dw_dp1[jno](jdim) - dw_dp0[jno](jdim)) / eps;
           double d1 = ddw_ddp0[ino][jno].Get(idim, jdim);
-          EXPECT_NEAR(d0, d1, 1.0e-3*(1.+fabs(d1)));
+          EXPECT_NEAR(d0, d1, 1.5e-3*(1.+fabs(d1)));
 //          std::cout << "   " << jno << " " << jdim << " ## " << d0 << " " << d1 << std::endl;
         }
       }

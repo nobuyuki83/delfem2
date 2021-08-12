@@ -8,11 +8,11 @@
 #ifndef DFM2_GLFW_VIEWER2_H
 #define DFM2_GLFW_VIEWER2_H
 
-#include "delfem2/dfm2_inline.h"
-#include "delfem2/glfw/mouseinput.h"
-//
 #include <cstdio>
 #include <iostream>
+
+#include "delfem2/dfm2_inline.h"
+#include "delfem2/glfw/mouseinput.h"
 
 // ------------------------------------------------------
 
@@ -64,7 +64,7 @@ public:
 } // opengl
 } // delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/glfw/viewer2.cpp"
 #endif
 

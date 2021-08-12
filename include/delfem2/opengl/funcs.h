@@ -51,7 +51,7 @@ constexpr int convertToGlType<double>(){ return GL_DOUBLE; }
 }
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/opengl/funcs.cpp"
 #endif
 

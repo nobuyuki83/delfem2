@@ -8,9 +8,10 @@
 #ifndef DFM2_FEMNAVIERSTOKES_H
 #define DFM2_FEMNAVIERSTOKES_H
 
+#include <vector>
+
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
-#include <vector>
 
 namespace delfem2 {
 
@@ -199,7 +200,7 @@ void MergeLinSys_NavierStokes3D_Dynamic(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/femnavierstokes.cpp"
 #endif
   

@@ -68,7 +68,7 @@ DFM2_INLINE void JArrayEdgeUnidir_PointSurPoint(
 
 } // end namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/jagarray.cpp"
 #endif
 

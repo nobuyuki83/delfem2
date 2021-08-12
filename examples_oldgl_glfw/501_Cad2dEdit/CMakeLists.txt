@@ -8,9 +8,9 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF (MSVC)
-  set(CMAKE_CXX_FLAGS "/W4 -O2")
+  set(CMAKE_CXX_FLAGS "/W4")
 ELSE ()
-  set(CMAKE_CXX_FLAGS "-Wall  -g")
+  set(CMAKE_CXX_FLAGS "-Wall -g")
 ENDIF ()
 
 ####################################
@@ -28,8 +28,8 @@ find_package(OpenGL REQUIRED)
 
 # dfm2
 IF (DFM2_HEADER_ONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)
 else ()
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   if (MSVC)
     set(DFM2_LIBRARY
         ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)
