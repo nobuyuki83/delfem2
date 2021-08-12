@@ -12,9 +12,13 @@
 #include <complex>
 #include <cassert>
 
-
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
+
+#ifdef DFM2_STATIC_LIBRARY
+// Merge use explicitly use the template so for static library we need to include the template itself.
+#  include "delfem2/lsmats.h"
+#endif
 
 namespace delfem2 {
 
@@ -103,7 +107,7 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
 }
 
 
-} // namespace delfem2
+} // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/femhelmholtz.cpp"

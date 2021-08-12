@@ -11,12 +11,6 @@
 #include <cassert>
 #include <complex>
 
-#ifdef DFM2_STATIC_LIBRARY
-// Merge use explicitly use the template so for static library we need to include the template itself.
-#  include "delfem2/lsmats.h"
-#endif
-
-
 DFM2_INLINE void delfem2::EMat_Helmholtz_Tri2D(
     std::complex<double> eres[3],
     std::complex<double> emat[3][3],
