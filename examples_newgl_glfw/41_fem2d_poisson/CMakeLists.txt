@@ -6,11 +6,11 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-IF(MSVC)
+IF (MSVC)
   set(CMAKE_CXX_FLAGS "/W4")
-ELSE()
+ELSE ()
   set(CMAKE_CXX_FLAGS "-Wall -g")
-ENDIF()
+ENDIF ()
 
 ####################################
 
@@ -21,17 +21,17 @@ get_filename_component(GLAD_INCLUDE_DIR
     ${PROJECT_SOURCE_DIR}/../../3rd_party/glad4/include ABSOLUTE)
 
 # dfm2
-if(DFM2_HEADER_ONLY)
-else()
+if (DFM2_HEADER_ONLY)
+else ()
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  if(MSVC)
+  if (MSVC)
     set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
-  else()
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
+  else ()
     set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
-  endif()
-endif()
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a)
+  endif ()
+endif ()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 # glfw
@@ -44,21 +44,20 @@ find_package(OpenGL REQUIRED)
 #############################################
 
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLAD_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+    ${GLAD_INCLUDE_DIR}
+    ${GLFW_INCLUDE_DIR}
+    ${DELFEM2_INCLUDE_DIR}
 )
 
-set(3RD_PARTY           "../../3rd_party")
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/glad4/include/glad/glad.h   
-  ${3RD_PARTY}/glad4/src/glad.c
-  main.cpp
-)
+    ../../3rd_party/glad4/include/glad/glad.h
+    ../../3rd_party/glad4/src/glad.c
+    main.cpp
+    )
 
 target_link_libraries(${PROJECT_NAME}
-  ${DFM2_LIBRARY}
-  ${OPENGL_LIBRARY}
-  ${GLFW_LIBRARIES}
-)
+    ${DFM2_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARIES}
+    )
