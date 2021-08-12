@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include <vector>
+
 #include "delfem2/isrf_sdf.h"
 #include "delfem2/dfm2_inline.h"
 
@@ -23,7 +24,7 @@ namespace delfem2 {
 
 // -----------------------
 // 3D primitives
-  
+
 /**
  * @brief a function to make a triangle mesh of sphere. The y axis is the pole.
  * @param radius  radius of  a sphere
@@ -31,8 +32,8 @@ namespace delfem2 {
  * @param nlat numbef of subdivision around the cross section of XZ plane (latitude)
  */
 DFM2_INLINE void MeshTri3D_Sphere(
-    std::vector<double>& aXYZ,
-    std::vector<unsigned int>& aTri,
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri,
     double radius,
     int nlong, int nlat);
 
@@ -40,7 +41,7 @@ DFM2_INLINE void MeshTri3D_Sphere(
  * @details y axis is the axis of cylinder
  */
 DFM2_INLINE void MeshTri3D_CylinderOpen(
-    std::vector<double>& aXYZ,
+    std::vector<double> &aXYZ,
     std::vector<unsigned int> &aTri,
     double r, double l,
     int nr, int nl);
@@ -52,33 +53,32 @@ DFM2_INLINE void MeshTri3D_CylinderOpen(
  * @param nr number of division for circumference
  * @param nl number of division in axis direction
  */
-template <typename T>
+template<typename T>
 DFM2_INLINE void MeshTri3D_CylinderClosed(
-    std::vector<T>& aXYZ,
-    std::vector<unsigned int>& aTri,
+    std::vector<T> &aXYZ,
+    std::vector<unsigned int> &aTri,
     T r,
     T l,
     unsigned int nr,
     unsigned int nl);
 
-template <typename T>
+template<typename T>
 DFM2_INLINE void MeshTri3D_Cube(
-    std::vector<T>& aXYZ,
-    std::vector<unsigned int>& aTri,
+    std::vector<T> &aXYZ,
+    std::vector<unsigned int> &aTri,
     unsigned int n);
 
-
 DFM2_INLINE void MeshTri3D_Disk(
-    std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
+    std::vector<double> &aXYZ, std::vector<unsigned int> &aTri,
     double r, int nr, int nth);
 
 DFM2_INLINE void MeshTri3D_Icosahedron(
-    std::vector<double>& aXYZ,
-    std::vector<unsigned int>& aTri);
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri);
 
 // -----------------------
 // below: cube
-  
+
 /**
  * @brief triangle mesh of torus.
  * @tparam REAL defined for "flaot" and "double" when DFM_HEADER_ONY is not defined.
@@ -87,47 +87,47 @@ DFM2_INLINE void MeshTri3D_Icosahedron(
  * @param ndiv_latitude (in) number of division in latitude
  * @param ndiv_meridian (in) number of division in meridian
  */
-template <typename REAL>
+template<typename REAL>
 DFM2_INLINE void MeshTri3_Torus(
-    std::vector<REAL>& aXYZ,
-    std::vector<unsigned int>& aTri,
+    std::vector<REAL> &aXYZ,
+    std::vector<unsigned int> &aTri,
     REAL len_latitutde,
     REAL len_meridian,
     unsigned int ndiv_latittude,
     unsigned int ndiv_meridian);
-                              
+
 DFM2_INLINE void SetTopoQuad_CubeVox(
-    std::vector<unsigned int>& aQuad);
-    
+    std::vector<unsigned int> &aQuad);
+
 /**
  * @brief making a quad mesh of a cube. The order of the vertex is same as voxel element
  * @tparam REAL in the static compile, the REAL is defined for "float" and "double"
  */
 template<typename REAL>
 DFM2_INLINE void MeshQuad3_CubeVox(
-    std::vector<REAL>& aXYZ,
-    std::vector<unsigned int>& aQuad,
+    std::vector<REAL> &aXYZ,
+    std::vector<unsigned int> &aQuad,
     const REAL bbmin[3],
     const REAL bbmax[3]);
-  
+
 // above: cube
 // -----------
 // below: capsule
 
-template <typename T>
+template<typename T>
 void MeshTri3_Capsule(
-    std::vector<T>& aXYZ,
-    std::vector<unsigned int>& aTri,
+    std::vector<T> &aXYZ,
+    std::vector<unsigned int> &aTri,
     T r,
     T l,
     unsigned int nc,
     unsigned int nr,
     unsigned int nl);
 
-template <typename T>
+template<typename T>
 DFM2_INLINE void MeshHex3_Grid(
-    std::vector<T>& aXYZ,
-    std::vector<unsigned int>& aHex,
+    std::vector<T> &aXYZ,
+    std::vector<unsigned int> &aHex,
     unsigned int nx,
     unsigned int ny,
     unsigned int nz,
@@ -136,130 +136,147 @@ DFM2_INLINE void MeshHex3_Grid(
 // above: 3D primitives
 // --------------------------------------------------------------------------------------------------------------
 // below: 2D primitives
-  
+
 DFM2_INLINE void MeshQuad2D_Grid(
-    std::vector<double>& aXYZ,
-    std::vector<unsigned int>& aQuad,
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aQuad,
     unsigned int nx,
     unsigned int ny);
 
 // =================================================================================
 // primivive classes from here
 
-template <typename REAL>
-class CPlane: public CSDF3
-{
-public:
-	CPlane(const double norm[3], const double orgn[3]);
-	double Projection(double n[3],
+template<typename REAL>
+class CPlane : public CSDF3 {
+ public:
+  CPlane(const double norm[3], const double orgn[3]);
+  double Projection(double n[3],
                     double px, double py, double pz) const; // normal
-public:
-	double normal_[3] = {0,0,1};
-  double origin_[3] = {0,0,0};
+ public:
+  double normal_[3] = {0, 0, 1};
+  double origin_[3] = {0, 0, 0};
 };
 
 // ----------
 
-template <typename REAL>
-class CSphere: public CSDF3
-{
-public:
-  CSphere(){}
-	CSphere(double rad, const std::vector<double>& c, bool is_out);
-	// return penetration depth (inside is positive)
-	virtual double Projection(double n[3],
+template<typename REAL>
+class CSphere : public CSDF3 {
+ public:
+  CSphere() {}
+  CSphere(double rad, const std::vector<double> &c, bool is_out);
+  // return penetration depth (inside is positive)
+  virtual double Projection(double n[3],
                             double px, double py, double pz) const; // normal outward
-	unsigned int FindInOut(double px, double py, double pz) const;
+  unsigned int FindInOut(double px, double py, double pz) const;
   bool IntersectionPoint(double p[3],
                          const double org[3], const double dir[3]) const;
-public:
-  std::vector<double> cent_ = {0,0, 0.0, 0.0};
-	double radius_ = 1.0;
-	bool is_out_ = true;	// true:normal points outward
+ public:
+  std::vector<double> cent_ = {0, 0, 0.0, 0.0};
+  double radius_ = 1.0;
+  bool is_out_ = true;    // true:normal points outward
 };
 
 // ------------
 
-template <typename REAL>
-class CCylinder: public CSDF3
-{
-public:
-  CCylinder(){};
-	CCylinder(double r, const double cnt[3], const double dir[3], bool is_out);
-	// return penetration depth (inside is positive)
+template<typename REAL>
+class CCylinder : public CSDF3 {
+ public:
+  CCylinder() {};
+  CCylinder(double r, const double cnt[3], const double dir[3], bool is_out);
+  // return penetration depth (inside is positive)
   double Projection(double n[3],
                     double px, double py, double pz) const; // normal outward
-	unsigned int FindInOut(double px, double py, double pz) const;
-  bool IntersectionPoint  (double p[3],
-                           const double org[3], const double dir[3]) const;
-  ////
-  void SetCenter(const double cnt[3]){ cent_[0]=cnt[0]; cent_[1]=cnt[1]; cent_[2]=cnt[2]; }
-  void SetDirection(const double dir[3]){ dir_[0] = dir[0]; dir_[1] = dir[1]; dir_[2] = dir[2]; }
-  void SetRadius(double r){ radius_ = r; }
-public:
-	double cent_[3] {0.0, 0.0, 0.0};
+  unsigned int FindInOut(double px, double py, double pz) const;
+  bool IntersectionPoint(double p[3],
+                         const double org[3], const double dir[3]) const;
+  // ------
+  void SetCenter(const double cnt[3]) {
+    cent_[0] = cnt[0];
+    cent_[1] = cnt[1];
+    cent_[2] = cnt[2];
+  }
+  void SetDirection(const double dir[3]) {
+    dir_[0] = dir[0];
+    dir_[1] = dir[1];
+    dir_[2] = dir[2];
+  }
+  void SetRadius(double r) { radius_ = r; }
+ public:
+  double cent_[3]{0.0, 0.0, 0.0};
   double dir_[3] = {1.0, 0.0, 0.0};
-	double radius_ = 1.0;
-	bool is_out_ = true;	// true:normal points outward
+  double radius_ = 1.0;
+  bool is_out_ = true;    // true:normal points outward
 };
 
-template <typename REAL>
-class CTorus: public CSDF3
-{
-public:
-	CTorus(){}
-	// return penetration depth (inside is positive)
-	virtual double Projection(double n[3],
-                            double px, double py, double pz) const; // normal outward
-	unsigned int FindInOut(double px, double py, double pz) const;
-public:
-	double cent_[3] = {0.0, 0.0, 0.0};
-	double radius_ = 0.5;
-	double radius_tube_ = 0.2;
-};
-
-template <typename REAL>
-class CBox: public CSDF3
-{
-public:
+template<typename REAL>
+class CTorus : public CSDF3 {
+ public:
+  CTorus() {}
+  // return penetration depth (inside is positive)
   virtual double Projection(double n[3],
-                            double x, double y, double z) const
-  {
-    double len0, x0,y0,z0;
+                            double px, double py, double pz) const; // normal outward
+  unsigned int FindInOut(double px, double py, double pz) const;
+ public:
+  double cent_[3] = {0.0, 0.0, 0.0};
+  double radius_ = 0.5;
+  double radius_tube_ = 0.2;
+};
+
+template<typename REAL>
+class CBox : public CSDF3 {
+ public:
+  virtual double Projection(double n[3],
+                            double x, double y, double z) const {
+    double len0, x0, y0, z0;
     {
-      x0 = (x<0) ? -hwx : +hwx;
-      y0 = (fabs(y)<hwy) ? y : ((y<0)?-hwy:+hwy);
-      z0 = (fabs(z)<hwz) ? z : ((z<0)?-hwz:+hwz);
-      len0 = sqrt((x-x0)*(x-x0)+(y-y0)*(y-y0)+(z-z0)*(z-z0));
+      x0 = (x < 0) ? -hwx : +hwx;
+      y0 = (fabs(y) < hwy) ? y : ((y < 0) ? -hwy : +hwy);
+      z0 = (fabs(z) < hwz) ? z : ((z < 0) ? -hwz : +hwz);
+      len0 = sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0) + (z - z0) * (z - z0));
     }
-    double len1, x1,y1,z1;
+    double len1, x1, y1, z1;
     {
-      x1 = (fabs(x)<hwx) ? x : ((x<0)?-hwx:+hwx);
-      y1 = (y<0) ? -hwy : +hwy;
-      z1 = (fabs(z)<hwz) ? z : ((z<0)?-hwz:+hwz);
-      len1 = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1)+(z-z1)*(z-z1));
+      x1 = (fabs(x) < hwx) ? x : ((x < 0) ? -hwx : +hwx);
+      y1 = (y < 0) ? -hwy : +hwy;
+      z1 = (fabs(z) < hwz) ? z : ((z < 0) ? -hwz : +hwz);
+      len1 = sqrt((x - x1) * (x - x1) + (y - y1) * (y - y1) + (z - z1) * (z - z1));
     }
-    double len2, x2,y2,z2;
+    double len2, x2, y2, z2;
     {
-      x2 = (fabs(x)<hwx) ? x : ((x<0)?-hwx:+hwx);
-      y2 = (fabs(y)<hwy) ? y : ((y<0)?-hwy:+hwy);
-      z2 = (z<0) ? -hwz : +hwz;
-      len2 = sqrt((x-x2)*(x-x2)+(y-y2)*(y-y2)+(z-z2)*(z-z2));
+      x2 = (fabs(x) < hwx) ? x : ((x < 0) ? -hwx : +hwx);
+      y2 = (fabs(y) < hwy) ? y : ((y < 0) ? -hwy : +hwy);
+      z2 = (z < 0) ? -hwz : +hwz;
+      len2 = sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2) + (z - z2) * (z - z2));
     }
-    double len3, x3,y3,z3;
-    if( len0<len1 ){ len3=len0; x3=x0; y3=y0; z3=z0; }
-    else{            len3=len1; x3=x1; y3=y1; z3=z1; }
-    if( len3>len2 ){ len3=len2; x3=x2; y3=y2; z3=z2; }
+    double len3, x3, y3, z3;
+    if (len0 < len1) {
+      len3 = len0;
+      x3 = x0;
+      y3 = y0;
+      z3 = z0;
+    }
+    else {
+      len3 = len1;
+      x3 = x1;
+      y3 = y1;
+      z3 = z1;
+    }
+    if (len3 > len2) {
+      len3 = len2;
+      x3 = x2;
+      y3 = y2;
+      z3 = z2;
+    }
     {
-      n[0] = x-x3;
-      n[1] = y-y3;
-      n[2] = z-z3;
-      double tmp = 1.0/sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2]);
+      n[0] = x - x3;
+      n[1] = y - y3;
+      n[2] = z - z3;
+      double tmp = 1.0 / sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
       n[0] *= tmp;
       n[1] *= tmp;
       n[2] *= tmp;
     }
-    if( fabs(x)>hwx || fabs(y)>hwy || fabs(z)>hwz ){ // outside
+    if (fabs(x) > hwx || fabs(y) > hwy || fabs(z) > hwz) { // outside
       len3 = -len3;
       n[0] *= -1;
       n[1] *= -1;
@@ -270,7 +287,7 @@ public:
   bool IntersectionPoint(double p[3],
                          const double org[3], const double dir[3]) const { return true; }
 
-public:
+ public:
   double hwx = 1; // half x width
   double hwy = 1; // half y width
   double hwz = 1; // half z width
@@ -379,9 +396,8 @@ public:
 } // end of delfem2
 
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/mshprimitive.cpp"
 #endif
-
 
 #endif

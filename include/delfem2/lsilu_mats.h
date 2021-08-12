@@ -61,8 +61,8 @@ class CPreconditionerILU {
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
-#include "delfem2/lsilu_mats.cpp"
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/lsilu_mats.cpp"
 #endif
 
 #endif 

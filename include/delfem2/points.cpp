@@ -9,6 +9,7 @@
 #include <cmath>
 #include <vector>
 #include <random>
+
 #include "delfem2/points.h"
 
 #ifndef M_PI
@@ -197,7 +198,7 @@ void delfem2::updateMinMaxXYZ(
   z_min = (z_min < z) ? z_min : z;
   z_max = (z_max > z) ? z_max : z;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::updateMinMaxXYZ(
     float &x_min, float &x_max,
     float &y_min, float &y_max,
@@ -227,7 +228,7 @@ void delfem2::BoundingBox3_Points3(
                     aXYZ[ixyz * 3 + 0], aXYZ[ixyz * 3 + 1], aXYZ[ixyz * 3 + 2]);
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::BoundingBox3_Points3(
     double min3[3], double max3[3],
     const double *aXYZ, const unsigned int nXYZ);
@@ -259,7 +260,7 @@ void delfem2::CenterWidth_Point3(
   CenterWidth_MinMaxXYZ(cx, cy, cz, wx, wy, wz,
                         x_min, x_max, y_min, y_max, z_min, z_max);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CenterWidth_Point3(
     float &cx, float &cy, float &cz,
     float &wx, float &wy, float &wz,
@@ -294,7 +295,7 @@ void delfem2::CenterWidth_Points3(
   CenterWidth_MinMaxXYZ(cx, cy, cz, wx, wy, wz,
                         x_min, x_max, y_min, y_max, z_min, z_max);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CenterWidth_Points3(
     float &cx, float &cy, float &cz,
     float &wx, float &wy, float &wz,
@@ -316,7 +317,7 @@ void delfem2::CenterWidth_Points3(
                                w[0], w[1], w[2],
                                aXYZ);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CenterWidth_Points3(
     float c[3],
     float w[3],
@@ -371,7 +372,7 @@ void delfem2::Scale_PointsX(
   const std::size_t n = aXYZ.size();
   for (unsigned int i = 0; i < n; ++i) { aXYZ[i] *= s; }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Scale_PointsX(std::vector<float> &, float);
 template void delfem2::Scale_PointsX(std::vector<double> &, double);
 #endif
@@ -387,7 +388,7 @@ void delfem2::Scale_Points(
   const unsigned int n = np * ndim;
   for (unsigned int i = 0; i < n; i++) { aVec[i] *= s; }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Scale_Points(
     float *, unsigned int, unsigned int, float);
 template void delfem2::Scale_Points(
@@ -408,7 +409,7 @@ void delfem2::Translate_Points(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Translate_Points(
     float *, size_t, unsigned int, const float *);
 template void delfem2::Translate_Points(
@@ -425,7 +426,7 @@ void delfem2::Translate_Points2(
   const T trns[2] = {tx, ty};
   Translate_Points(aXY.data(), aXY.size() / 2, 2, trns);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Translate_Points2(std::vector<float> &, float, float);
 template void delfem2::Translate_Points2(std::vector<double> &, double, double);
 #endif
@@ -441,7 +442,7 @@ void delfem2::Translate_Points3(
   const T trns[3] = {tx, ty, tz};
   Translate_Points(aXYZ.data(), aXYZ.size() / 3, 3, trns);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Translate_Points3(
     std::vector<float> &, float, float, float);
 template void delfem2::Translate_Points3(
@@ -465,7 +466,7 @@ void delfem2::Rotate_Points3(
     points::MatVec3(pXYZ + ixyz * 3, mat, p);
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Rotate_Points3(
     std::vector<float> &, float, float, float);
 template void delfem2::Rotate_Points3(
@@ -501,7 +502,7 @@ DFM2_INLINE void delfem2::Normalize_Points3(
       aXYZ,
       s / wmax);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Normalize_Points3(std::vector<float> &, float);
 template void delfem2::Normalize_Points3(std::vector<double> &, double);
 #endif
@@ -535,7 +536,7 @@ DFM2_INLINE void delfem2::NormalizeVector_Points(
     assert(0);
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::NormalizeVector_Points(
     float *, unsigned int, unsigned int);
 template void delfem2::NormalizeVector_Points(
@@ -575,7 +576,7 @@ void delfem2::CG_Point3(
   cg[1] /= nXYZ;
   cg[2] /= nXYZ;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CG_Point3(float *, const std::vector<float> &);
 template void delfem2::CG_Point3(double *, const std::vector<double> &);
 #endif
@@ -600,7 +601,7 @@ void delfem2::Points_RandomUniform(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Points_RandomUniform(
     float *,
     unsigned int,

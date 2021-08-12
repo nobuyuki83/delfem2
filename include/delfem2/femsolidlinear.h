@@ -15,10 +15,11 @@
 #ifndef DFM2_FEMSOLIDLINEAR_H
 #define DFM2_FEMSOLIDLINEAR_H
 
-#include "delfem2/dfm2_inline.h"
-#include "delfem2/femutil.h"
 #include <vector>
 #include <cassert>
+
+#include "delfem2/dfm2_inline.h"
+#include "delfem2/femutil.h"
 
 namespace delfem2 {
 
@@ -526,7 +527,7 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/femsolidlinear.cpp"
 #endif
   

@@ -336,7 +336,7 @@ DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed(
    }
    */
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed(
     std::vector<float> &aXYZ,
     std::vector<unsigned int> &aTri,
@@ -540,7 +540,7 @@ DFM2_INLINE void delfem2::MeshTri3D_Cube(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MeshTri3D_Cube(
     std::vector<float> &aXYZ,
     std::vector<unsigned int> &aTri,
@@ -629,7 +629,7 @@ void delfem2::MeshQuad3_CubeVox(
   aXYZ.push_back(bbmax[2]);
   SetTopoQuad_CubeVox(aQuad);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MeshQuad3_CubeVox(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aQuad,
@@ -943,7 +943,7 @@ void delfem2::MeshTri3_Capsule(
     aXYZ[(np - 1) * 3 + 2] = 0;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MeshTri3_Capsule(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aTri,
@@ -992,7 +992,7 @@ DFM2_INLINE void delfem2::MeshTri3_Torus(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MeshTri3_Torus(
     std::vector<float> &aXYZ,
     std::vector<unsigned int> &aTri,
@@ -1043,7 +1043,7 @@ DFM2_INLINE void delfem2::MeshHex3_Grid(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MeshHex3_Grid(
     std::vector<float> &aXYZ,
     std::vector<unsigned int> &aHex,

@@ -739,8 +739,8 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate(
     const std::vector<unsigned int>& aElemRod,
     const std::vector<int>& aBCFlag)
 {
-  assert( mats.nrowdim == 3 );
-  assert( mats.ncoldim == 3 );
+  assert( mats.nrowdim_ == 3 );
+  assert( mats.ncoldim_ == 3 );
   const size_t nNode = aBCFlag.size()/3;
   assert(aP.size()+aS.size()==nNode);
   mats.setZero();
@@ -1159,7 +1159,7 @@ DFM2_INLINE void delfem2::Solve_RodHair(
     const std::vector<int>& aBCFlag,
     const std::vector<unsigned int>& aIP_HairRoot)
 {
-  assert( mats.nrowdim == 4 && mats.ncoldim == 4 );
+  assert( mats.nrowdim_ == 4 && mats.ncoldim_ == 4 );
   const size_t np = aP.size();
   assert( aP0.size() == np );
   assert( aS0.size() == np );
@@ -1173,9 +1173,9 @@ DFM2_INLINE void delfem2::Solve_RodHair(
       stiff_stretch,stiff_bendtwist,
       aIP_HairRoot,aP,aS,aP0,aS0);
   for(unsigned int ip=0;ip<aP.size();++ip){
-    mats.valDia[ip*16+0*4+0] += mdtt;
-    mats.valDia[ip*16+1*4+1] += mdtt;
-    mats.valDia[ip*16+2*4+2] += mdtt;
+    mats.val_dia_[ip*16+0*4+0] += mdtt;
+    mats.val_dia_[ip*16+1*4+1] += mdtt;
+    mats.val_dia_[ip*16+2*4+2] += mdtt;
   }
   std::cout << "energy:" << W << std::endl;
   //    std::cout << "sym: " << CheckSymmetry(mats) << std::endl;
@@ -1259,8 +1259,8 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     const double stiff_contact,
     const std::vector<CContactHair>& aContact)
 {
-  assert( mats.nrowdim == 4 );
-  assert( mats.ncoldim == 4 );
+  assert( mats.nrowdim_ == 4 );
+  assert( mats.ncoldim_ == 4 );
   const size_t np = aP.size();
   assert( aP0.size() == np );
   assert( aS0.size() == np );
@@ -1274,9 +1274,9 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
       stiff_stretch,stiff_bendtwist,
       aIP_HairRoot,aP,aS,aP0,aS0);
   for(unsigned int ip=0;ip<aP.size();++ip){
-    mats.valDia[ip*16+0*4+0] += mdtt;
-    mats.valDia[ip*16+1*4+1] += mdtt;
-    mats.valDia[ip*16+2*4+2] += mdtt;
+    mats.val_dia_[ip*16+0*4+0] += mdtt;
+    mats.val_dia_[ip*16+1*4+1] += mdtt;
+    mats.val_dia_[ip*16+2*4+2] += mdtt;
   }
   for(unsigned int ip=0;ip<aP.size();++ip){ // this term has effect only in the second nonliear iteration
     const CVec3d dp = aPt0[ip]-aP[ip];

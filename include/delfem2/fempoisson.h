@@ -16,9 +16,10 @@
 #ifndef DFM2_FEMPOISSON_H
 #define DFM2_FEMPOISSON_H
 
+#include <vector>
+
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
-#include <vector>
 
 namespace delfem2 {
 
@@ -241,7 +242,7 @@ void MergeLinSys_Diffusion_MeshTet3D(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/fempoisson.cpp"
 #endif
   

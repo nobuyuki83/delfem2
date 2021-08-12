@@ -22,8 +22,8 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # dfm2
 if(DFM2_HEADER_ONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)
 else()
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   if(MSVC)
     set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)

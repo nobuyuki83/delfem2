@@ -92,7 +92,7 @@ public:
 }
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/opengl/new/mshcolor.cpp"
 #endif
 

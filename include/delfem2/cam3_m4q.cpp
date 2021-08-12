@@ -11,7 +11,7 @@
 #include <iostream>
 
 #ifndef M_PI
-#define M_PI 3.14159265359
+#  define M_PI 3.14159265359
 #endif
 
 // =================================================
@@ -109,7 +109,7 @@ template<typename REAL>
 void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Scale(double s) {
   scale *= s;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Scale(double s);
 #endif
 
@@ -134,7 +134,7 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Rot_Camera(REAL dx, REAL dy) {
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Rot_Camera(double dx, double dy);
 #endif
 
@@ -148,7 +148,7 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Pan_Camera(REAL dx, REAL dy) {
   trans[2] += s * 0.0;
 
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Pan_Camera(double dx, double dy);
 #endif
 

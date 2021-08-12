@@ -308,7 +308,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
     ::glEnd();
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
     const std::vector<float> &aXYZ,
     const std::vector<unsigned int> &aTri,

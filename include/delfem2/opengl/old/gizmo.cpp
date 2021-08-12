@@ -1,19 +1,20 @@
 
 #include "delfem2/opengl/old/gizmo.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/v3q.h"
 
 #if defined(_WIN32)  // windows
-#define NOMINMAX   // to remove min,max macro
-#include <windows.h>
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)  // Mac
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
+#  define GL_SILENCE_DEPRECATION
+#  include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
+#  include <GL/gl.h>
 #endif
+
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v3q.h"
 
 template<typename REAL>
 void delfem2::opengl::Draw(
@@ -24,7 +25,7 @@ void delfem2::opengl::Draw(
       gizmo_rot.size,
       gizmo_rot.ielem_picked);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::Draw(
     const CGizmo_Rotation<float> &gizmo_rot);
 template void delfem2::opengl::Draw(
@@ -41,7 +42,7 @@ void delfem2::opengl::Draw(
       gizmo_trnsl.pos,
       gizmo_trnsl.ielem_picked);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::Draw(
     const CGizmo_Transl<float> &gizmo_trnsl);
 template void delfem2::opengl::Draw(
@@ -79,7 +80,7 @@ void delfem2::opengl::Draw(
     ::glEnable(GL_DEPTH_TEST);
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::Draw(
     const CGizmo_Affine<float> &ga);
 template void delfem2::opengl::Draw(
@@ -109,7 +110,7 @@ DFM2_INLINE void delfem2::opengl::DrawAxisHandler(
 
   if (is_lighting) { ::glEnable(GL_LIGHTING); }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::DrawAxisHandler(
     float s,
     const CVec3f &p,
@@ -145,7 +146,7 @@ DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_PosQuat(
     opengl::DrawCircleWire(az, pos, size);
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_PosQuat(
     const CVec3d &pos,
     const double quat[4],

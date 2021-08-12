@@ -158,7 +158,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransProjectionOrtho(
   mP[3 * 4 + 2] = static_cast<REAL>(-(zmax + zmin) / (zmax - zmin));
   mP[3 * 4 + 3] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_AffineTransProjectionOrtho(
     double mP[16],
     double xmin, double xmax, // -x, +x
@@ -201,7 +201,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
   mP[3 * 4 + 2] = +(zmin * zmax * 2) / (zmax - zmin);
   mP[3 * 4 + 3] = 0.0;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     float mP[16],
     float fovyInRad,
@@ -283,7 +283,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
       Mr,
       -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
     double *Mr,
     double eyex, double eyey, double eyez,
@@ -328,7 +328,7 @@ DFM2_INLINE void delfem2::MatVec4(
   v[2] = A[2 * 4 + 0] * x[0] + A[2 * 4 + 1] * x[1] + A[2 * 4 + 2] * x[2] + A[2 * 4 + 3] * x[3];
   v[3] = A[3 * 4 + 0] * x[0] + A[3 * 4 + 1] * x[1] + A[3 * 4 + 2] * x[2] + A[3 * 4 + 3] * x[3];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatVec4(
     float v[4], const float A[16], const float x[4]);
 template void delfem2::MatVec4(
@@ -345,7 +345,7 @@ DFM2_INLINE void delfem2::VecMat4(
   v[2] = A[0 * 4 + 2] * x[0] + A[1 * 4 + 2] * x[1] + A[2 * 4 + 2] * x[2] + A[3 * 4 + 2] * x[3];
   v[3] = A[0 * 4 + 3] * x[0] + A[1 * 4 + 3] * x[1] + A[2 * 4 + 3] * x[2] + A[3 * 4 + 3] * x[3];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::VecMat4(
     float v[4], const float x[4], const float A[16]);
 template void delfem2::VecMat4(
@@ -367,7 +367,7 @@ DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection(
   y0[1] = y1[1] / y1[3];
   y0[2] = y1[2] / y1[3];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Vec3_Mat4Vec3_AffineProjection(
     float y0[3], const float a[16], const float x0[3]);
 template void delfem2::Vec3_Mat4Vec3_AffineProjection(
@@ -386,7 +386,7 @@ DFM2_INLINE void delfem2::Vec3_Vec3Mat4_AffineProjection(
   y0[1] = y1[1] / y1[3];
   y0[2] = y1[2] / y1[3];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Vec3_Vec3Mat4_AffineProjection(
     float y0[3], const float x0[3], const float a[16]);
 template void delfem2::Vec3_Vec3Mat4_AffineProjection(
@@ -407,7 +407,7 @@ DFM2_INLINE void delfem2::Vec3_Mat4Vec3_Affine(
   y0[1] = y1[1];
   y0[2] = y1[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Vec3_Mat4Vec3_Affine(
     float y0[3], const float a[16], const float x0[3]);
 template void delfem2::Vec3_Mat4Vec3_Affine(
@@ -427,7 +427,7 @@ DFM2_INLINE void delfem2::Mat4_AffineScale
   A[2 * 4 + 2] = s;
   A[3 * 4 + 3] = 1.0;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_AffineScale(float A[16], float s);
 template void delfem2::Mat4_AffineScale(double A[16], double s);
 #endif
@@ -444,7 +444,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTranslation
   A[1 * 4 + 3] = dy;
   A[2 * 4 + 3] = dz;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_AffineTranslation(
     float A[16],
     float dx, float dy, float dz);
@@ -475,7 +475,7 @@ delfem2::Mat4_AffineTranslation(
   A[3 * 4 + 2] = 0;
   A[3 * 4 + 3] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_AffineTranslation(
     float A[16],
     const float v[3]);
@@ -509,7 +509,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransTranslate(
   r[14] = t[2];
   r[15] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_AffineTransTranslate(float r[], const float t[]);
 template void delfem2::Mat4_AffineTransTranslate(double r[], const double t[]);
 #endif
@@ -547,7 +547,7 @@ DFM2_INLINE void delfem2::Mat4_AffineRotationRodriguez(
   A[3 * 4 + 2] = 0;
   A[3 * 4 + 3] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_AffineRotationRodriguez(
     float A[16],
     float dx, float dy, float dz);
@@ -567,7 +567,7 @@ void delfem2::Mat4_Identity(
   A[2 * 4 + 2] = 1;
   A[3 * 4 + 3] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_Identity(float A[16]);
 template void delfem2::Mat4_Identity(double A[16]);
 #endif
@@ -588,7 +588,7 @@ void delfem2::Rotate_Mat4AffineRodriguez(
 
   for (int i = 0; i < 16; ++i) { A[i] = C[i]; }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Rotate_Mat4AffineRodriguez(
     float A[16], const float V[3]);
 template void delfem2::Rotate_Mat4AffineRodriguez(
@@ -651,7 +651,7 @@ void delfem2::Mat4_Rotation_Cartesian(
   mat[3 * 4 + 2] = 0;
   mat[3 * 4 + 3] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_Rotation_Cartesian(float mat[16], const float vec[3]);
 template void delfem2::Mat4_Rotation_Cartesian(double mat[16], const double vec[3]);
 #endif
@@ -666,7 +666,7 @@ void delfem2::Translate_Mat4Affine(
   A[1 * 4 + 3] += V[1];
   A[2 * 4 + 3] += V[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Translate_Mat4Affine(float A[16], const float V[3]);
 template void delfem2::Translate_Mat4Affine(double A[16], const double V[3]);
 #endif
@@ -721,7 +721,7 @@ DFM2_INLINE void delfem2::Mat4_Quat(
   r[14] = 0;
   r[15] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_Quat(float r[], const float q[]);
 template void delfem2::Mat4_Quat(double r[], const double q[]);
 #endif
@@ -759,7 +759,7 @@ DFM2_INLINE void delfem2::Mat4_QuatConj(
   r[14] = 0;
   r[15] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template DFM2_INLINE void delfem2::Mat4_QuatConj(float *r, const float *q);
 template DFM2_INLINE void delfem2::Mat4_QuatConj(double *r, const double *q);
 #endif
@@ -801,7 +801,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransQuat(
   r[14] = 0;
   r[15] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat4_AffineTransQuat(float r[], const float q[]);
 template void delfem2::Mat4_AffineTransQuat(double r[], const double q[]);
 #endif
@@ -842,7 +842,7 @@ DFM2_INLINE void delfem2::Inverse_Mat4(
     mat4::CalcInvMatPivot(minv, 4, tmp);
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Inverse_Mat4(float minv[], const float m[]);
 template void delfem2::Inverse_Mat4(double minv[], const double m[]);
 #endif
@@ -856,7 +856,7 @@ delfem2::CMat4<T> delfem2::CMat4<T>::MatMat(const CMat4<T> &mat0) const {
                      this->mat, mat0.mat);
   return m;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat4<float> delfem2::CMat4<float>::MatMat(
     const CMat4<float> &mat0) const;
 template delfem2::CMat4<double> delfem2::CMat4<double>::MatMat(
@@ -890,7 +890,7 @@ delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL *q) {
   m.mat[3 * 4 + 3] = 1;
   return m;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat4<float> delfem2::CMat4<float>::Quat(const float *q);
 template delfem2::CMat4<double> delfem2::CMat4<double>::Quat(const double *q);
 #endif
@@ -905,7 +905,7 @@ CMat4<T> operator*(const CMat4<T> &lhs, const CMat4<T> &rhs) {
   MatMat4(q.mat, lhs.mat, rhs.mat);
   return q;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat4d operator*(const CMat4d &lhs, const CMat4d &rhs);
 template CMat4f operator*(const CMat4f &lhs, const CMat4f &rhs);
 #endif
@@ -916,7 +916,7 @@ CMat4<T> operator-(const CMat4<T> &lhs, const CMat4<T> &rhs) {
   for (int i = 0; i < 16; ++i) { q.mat[i] = lhs.mat[i] - rhs.mat[i]; }
   return q;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat4d operator-(const CMat4d &lhs, const CMat4d &rhs);
 template CMat4f operator-(const CMat4f &lhs, const CMat4f &rhs);
 #endif
@@ -927,7 +927,7 @@ CMat4<T> operator+(const CMat4<T> &lhs, const CMat4<T> &rhs) {
   for (int i = 0; i < 16; ++i) { q.mat[i] = lhs.mat[i] + rhs.mat[i]; }
   return q;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat4d operator+(const CMat4d &lhs, const CMat4d &rhs);
 template CMat4f operator+(const CMat4f &lhs, const CMat4f &rhs);
 #endif
@@ -943,7 +943,7 @@ delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Inverse() const {
   Inverse_Mat4(m.mat, this->mat);
   return m;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat4d delfem2::CMat4d::Inverse() const;
 template delfem2::CMat4f delfem2::CMat4f::Inverse() const;
 #endif

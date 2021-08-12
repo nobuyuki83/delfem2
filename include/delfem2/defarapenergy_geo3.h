@@ -9,10 +9,11 @@
 #ifndef DFM2_DEFARAPENERGY_GEO3_H
 #define DFM2_DEFARAPENERGY_GEO3_H
 
+#include <vector>
+
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/mat3.h"
 #include "delfem2/vec3.h"
-#include <vector>
 
 namespace delfem2 {
   
@@ -39,7 +40,7 @@ DFM2_INLINE void ddW_ArapEnergy(
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/defarapenergy_geo3.cpp"
 #endif
 

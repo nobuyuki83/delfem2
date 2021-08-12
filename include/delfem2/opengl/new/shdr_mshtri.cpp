@@ -44,7 +44,7 @@ void delfem2::opengl::CShader_TriMesh::Initialize(
   vao.Add_EBO(aLine,GL_LINES);
   this->UpdateVertex(aXYZd, ndim, aTri);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_TriMesh::Initialize(
     std::vector<float>& aXYZd,
     unsigned int ndim,
@@ -77,7 +77,7 @@ void delfem2::opengl::CShader_TriMesh::UpdateVertex(
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)0); // gl24
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_TriMesh::UpdateVertex(
     std::vector<float>& aXYZd,
     unsigned int ndim,

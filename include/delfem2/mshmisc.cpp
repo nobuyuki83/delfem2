@@ -9,6 +9,7 @@
 #include <cmath>
 #include <vector>
 #include <cstddef> // size_t
+
 #include "delfem2/mshmisc.h"
 
 #ifndef M_PI
@@ -180,7 +181,7 @@ void updateMinMaxXYZ(
   z_min = (z_min < z) ? z_min : z;
   z_max = (z_max > z) ? z_max : z;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void updateMinMaxXYZ(
     float &x_min, float &x_max,
     float &y_min, float &y_max,
@@ -323,7 +324,7 @@ T delfem2::CentsMaxRad_MeshTri3(
   }
   return max_rad0;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::CentsMaxRad_MeshTri3(
     std::vector<float> &,
     const std::vector<float> &,
@@ -405,7 +406,7 @@ void delfem2::Normal_MeshTri3D(
     aNorm[ino * 3 + 2] *= invlen;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Normal_MeshTri3D(
     float *aNorm,
     const float *aXYZ,
@@ -468,7 +469,7 @@ void delfem2::Normal_MeshQuad3(
     aNorm[ino * 3 + 2] *= invlen;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Normal_MeshQuad3(
     std::vector<float> &,
     const std::vector<float> &,
@@ -535,7 +536,7 @@ void delfem2::CG_MeshTri3_Solid(
   cg[1] /= tw;
   cg[2] /= tw;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CG_MeshTri3_Solid(
     float cg[3],
     const std::vector<float> &aXYZ,
@@ -574,7 +575,7 @@ void delfem2::CG_MeshTri3_Shell(
   cg[1] /= tw;
   cg[2] /= tw;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CG_MeshTri3_Shell(
     float cg[3],
     const std::vector<float> &aXYZ,
@@ -617,7 +618,7 @@ T delfem2::CG_TriMsh3Flg_Shell(
   cg[2] /= tw;
   return tw;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::CG_TriMsh3Flg_Shell(
     float cg[3],
     const std::vector<float> &aXYZ,
@@ -677,7 +678,7 @@ void delfem2::CG_MeshTet3(
   cg[1] /= v_tot;
   cg[2] /= v_tot;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CG_MeshTet3(
     float &v_tot, float cg[3],
     const std::vector<float> &aXYZ,

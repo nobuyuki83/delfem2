@@ -5,8 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <random>
 #include "delfem2/mat3.h"
+
+#include <random>
 
 namespace delfem2 {
 namespace mat3 {
@@ -36,7 +37,7 @@ DFM2_INLINE void SetMatrix3_Quaternion
   r[7] = yz + xw;
   r[8] = 1 - x2 - y2;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void SetMatrix3_Quaternion(float r[], const float q[]);
 template void SetMatrix3_Quaternion(double r[], const double q[]);
 #endif
@@ -90,7 +91,7 @@ void delfem2::Transpose_Mat3(
   t[7] = a[5];
   t[8] = a[8];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Transpose_Mat3(float t[], const float a[]);
 template void delfem2::Transpose_Mat3(double t[], const double a[]);
 #endif
@@ -115,7 +116,7 @@ void delfem2::Inverse_Mat3(
   Ainv[7] = inv_det * (A[1] * A[6] - A[0] * A[7]);
   Ainv[8] = inv_det * (A[0] * A[4] - A[1] * A[3]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Inverse_Mat3(float Ainv[9], const float A[9]);
 template void delfem2::Inverse_Mat3(double Ainv[9], const double A[9]);
 #endif
@@ -144,7 +145,7 @@ void delfem2::Inverse_Mat3(
   A[7] = inv_det * (B[1] * B[6] - B[0] * B[7]);
   A[8] = inv_det * (B[0] * B[4] - B[1] * B[3]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Inverse_Mat3(float Ainv[9]);
 template void delfem2::Inverse_Mat3(double Ainv[9]);
 #endif
@@ -166,7 +167,7 @@ void delfem2::Mat3_Spin(
   mat[7] = +v[0];
   mat[8] = 0;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat3_Spin(float *mat, const float *v);
 template void delfem2::Mat3_Spin(double *mat, const double *v);
 #endif
@@ -188,7 +189,7 @@ void delfem2::Mat3_Spin_ScaleAdd(
   m[7] = beta * m[7] + v[0] * alpha;
   m[8] = beta * m[8];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat3_Spin_ScaleAdd(float *mat, const float *v, float alpha, float beta);
 template void delfem2::Mat3_Spin_ScaleAdd(double *mat, const double *v, double alpha, double beta);
 #endif
@@ -209,7 +210,7 @@ void delfem2::Mat3_Identity_ScaleAdd(
   mat[7] = beta * mat[7];
   mat[8] = beta * mat[8] + alpha;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat3_Identity_ScaleAdd(float *mat, float alpha, float beta);
 template void delfem2::Mat3_Identity_ScaleAdd(double *mat, double alpha, double beta);
 #endif
@@ -227,7 +228,7 @@ void delfem2::Mat3_Identity(REAL *mat,
   mat[7] = 0;
   mat[8] = alpha;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat3_Identity(float *mat, float alpha);
 template void delfem2::Mat3_Identity(double *mat, double alpha);
 #endif
@@ -285,7 +286,7 @@ void delfem2::Mat3_AffineTranslation(
   mat[7] = 0;
   mat[8] = 1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat3_AffineTranslation(float *, const float [2]);
 template void delfem2::Mat3_AffineTranslation(double *, const double [2]);
 #endif
@@ -302,7 +303,7 @@ void delfem2::MatVec3(
   y[1] = m[3] * x[0] + m[4] * x[1] + m[5] * x[2];
   y[2] = m[6] * x[0] + m[7] * x[1] + m[8] * x[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatVec3(float y[3], const float m[9], const float x[3]);
 template void delfem2::MatVec3(double y[3], const double m[9], const double x[3]);
 #endif
@@ -318,7 +319,7 @@ void delfem2::MatVec3_ScaleAdd(
   y[1] = beta * y[1] + alpha * (m[3] * x[0] + m[4] * x[1] + m[5] * x[2]);
   y[2] = beta * y[2] + alpha * (m[6] * x[0] + m[7] * x[1] + m[8] * x[2]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatVec3_ScaleAdd(
     float y[3],
     const float m[9], const float x[3], float alpha, float beta);
@@ -344,7 +345,7 @@ DFM2_INLINE void delfem2::MatTVec3(
   y[1] = m[1] * x[0] + m[4] * x[1] + m[7] * x[2];
   y[2] = m[2] * x[0] + m[5] * x[1] + m[8] * x[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatTVec3(float y[3], const float m[9], const float x[3]);
 template void delfem2::MatTVec3(double y[3], const double m[9], const double x[3]);
 #endif
@@ -358,7 +359,7 @@ void delfem2::MatTVec3_ScaleAdd(
   y[1] = beta * y[1] + alpha * (m[1] * x[0] + m[4] * x[1] + m[7] * x[2]);
   y[2] = beta * y[2] + alpha * (m[2] * x[0] + m[5] * x[1] + m[8] * x[2]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatTVec3_ScaleAdd
     (float y[3],
      const float m[9], const float x[3], float alpha, float beta);
@@ -378,7 +379,7 @@ DFM2_INLINE void delfem2::Vec2_Mat3Vec2_AffineProjection(
   y[0] /= w;
   y[1] /= w;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Vec2_Mat3Vec2_AffineProjection(float [2], const float [9], const float [2]);
 template void delfem2::Vec2_Mat3Vec2_AffineProjection(double [2], const double [9], const double [2]);
 #endif
@@ -394,7 +395,7 @@ DFM2_INLINE void delfem2::Vec2_Mat3Vec2_AffineDirection(
   y[0] = A[0] * x[0] + A[1] * x[1];
   y[1] = A[3] * x[0] + A[4] * x[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Vec2_Mat3Vec2_AffineDirection(float [2], const float [9], const float [2]);
 template void delfem2::Vec2_Mat3Vec2_AffineDirection(double [2], const double [9], const double [2]);
 #endif
@@ -426,7 +427,7 @@ DFM2_INLINE void delfem2::Mat3_Quat(
   r[7] = yz + xw;
   r[8] = 1 - x2 - y2;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat3_Quat(float r[], const float q[]);
 template void delfem2::Mat3_Quat(double r[], const double q[]);
 #endif
@@ -444,7 +445,7 @@ void delfem2::MatMat3(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatMat3(float *C, const float *A, const float *B);
 template void delfem2::MatMat3(double *C, const double *A, const double *B);
 #endif
@@ -462,7 +463,7 @@ void delfem2::MatMatT3(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatMatT3(float *C, const float *A, const float *B);
 template void delfem2::MatMatT3(double *C, const double *A, const double *B);
 #endif
@@ -479,7 +480,7 @@ void delfem2::MatTMat3(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatTMat3(float *C, const float *A, const float *B);
 template void delfem2::MatTMat3(double *C, const double *A, const double *B);
 #endif
@@ -498,7 +499,7 @@ void delfem2::MatTMat3_ScaleAdd(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatTMat3_ScaleAdd
     (float *C,
      const float *A, const float *B, float alpha, float beta);
@@ -514,7 +515,7 @@ T delfem2::Det_Mat3(const T U[9]) {
   return +U[0] * U[4] * U[8] + U[3] * U[7] * U[2] + U[6] * U[1] * U[5]
       - U[0] * U[7] * U[5] - U[6] * U[4] * U[2] - U[3] * U[1] * U[8];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Det_Mat3(const float U[9]);
 template double delfem2::Det_Mat3(const double U[9]);
 #endif
@@ -526,7 +527,7 @@ T delfem2::SquareNormFrobenius_SymMat3
     (const T sm[6]) {
   return sm[0] * sm[0] + sm[1] * sm[1] + sm[2] * sm[2] + 2 * (sm[3] * sm[3] + sm[4] * sm[4] + sm[5] * sm[5]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::SquareNormFrobenius_SymMat3(const float sm[6]);
 template double delfem2::SquareNormFrobenius_SymMat3(const double sm[6]);
 #endif
@@ -565,7 +566,7 @@ void delfem2::Mat3_Rotation_Cartesian(
   mat[2 * 3 + 1] = +n[0] * s0 + (1 - c0) * n[2] * n[1];
   mat[2 * 3 + 2] = c0 + (1 - c0) * n[2] * n[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Mat3_Rotation_Cartesian(float mat[9], const float vec[3]);
 template void delfem2::Mat3_Rotation_Cartesian(double mat[9], const double vec[3]);
 #endif
@@ -858,7 +859,7 @@ CMat3<T> operator*(double d, const CMat3<T> &rhs) {
   temp *= d;
   return temp;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat3<double> operator*(double d, const CMat3<double> &rhs);
 #endif
 
@@ -868,7 +869,7 @@ CMat3<T> operator*(const CMat3<T> &m, T d) {
   t *= d;
   return t;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat3<float> operator*(const CMat3<float> &m, float d);
 template CMat3<double> operator*(const CMat3<double> &m, double d);
 #endif
@@ -881,7 +882,7 @@ CMat3<T> operator/(const CMat3<T> &m, T d) {
   temp /= d;
   return temp;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat3<float> operator/(const CMat3<float> &m, float d);
 template CMat3<double> operator/(const CMat3<double> &m, double d);
 #endif
@@ -894,7 +895,7 @@ CMat3<T> operator+(const CMat3<T> &lhs, const CMat3<T> &rhs) {
   temp += rhs;
   return temp;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat3<float> operator+(const CMat3<float> &lhs, const CMat3<float> &rhs);
 template CMat3<double> operator+(const CMat3<double> &lhs, const CMat3<double> &rhs);
 #endif
@@ -905,7 +906,7 @@ template<typename T>
 CMat3<T> operator*(const CMat3<T> &lhs, const CMat3<T> &rhs) {
   return lhs.MatMat(rhs);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat3<float> operator*(const CMat3<float> &lhs, const CMat3<float> &rhs);
 template CMat3<double> operator*(const CMat3<double> &lhs, const CMat3<double> &rhs);
 #endif
@@ -918,7 +919,7 @@ CMat3<T> operator-(const CMat3<T> &lhs, const CMat3<T> &rhs) {
   temp -= rhs;
   return temp;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat3<double> operator-(const CMat3<double> &lhs, const CMat3<double> &rhs);
 #endif
 
@@ -947,7 +948,7 @@ std::istream &operator>>(std::istream &input, CMat3<T> &m) {
 
 template<typename T>
 delfem2::CMat3<T>::CMat3(): mat{0, 0, 0, 0, 0, 0, 0, 0, 0} {}
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat3<float>::CMat3();
 template delfem2::CMat3<double>::CMat3();
 #endif
@@ -956,7 +957,7 @@ template delfem2::CMat3<double>::CMat3();
 
 template<typename T>
 delfem2::CMat3<T>::CMat3(const T s): mat{s, 0, 0, 0, s, 0, 0, 0, s} {}
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat3<float>::CMat3(float);
 template delfem2::CMat3<double>::CMat3(double);
 #endif
@@ -969,7 +970,7 @@ delfem2::CMat3<T>::CMat3
      T v10, T v11, T v12,
      T v20, T v21, T v22):
     mat{v00, v01, v02, v10, v11, v12, v20, v21, v22} {}
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat3<float>::CMat3(float v00, float v01, float v02,
                                       float v10, float v11, float v12,
                                       float v20, float v21, float v22);
@@ -984,7 +985,7 @@ template delfem2::CMat3<double>::CMat3(double v00, double v01, double v02,
 template<typename T>
 delfem2::CMat3<T>::CMat3(T x, T y, T z):
     mat{x, 0, 0, 0, y, 0, 0, 0, z} {}
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat3<float>::CMat3(float, float, float);
 template delfem2::CMat3<double>::CMat3(double, double, double);
 #endif
@@ -994,7 +995,7 @@ template delfem2::CMat3<double>::CMat3(double, double, double);
 template<typename T>
 delfem2::CMat3<T>::CMat3(const T m[9]):
     mat{m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]} {}
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat3<double>::CMat3(const double m[9]);
 template delfem2::CMat3<float>::CMat3(const float m[9]);
 #endif
@@ -1003,7 +1004,7 @@ template<typename T>
 void delfem2::CMat3<T>::MatVec(const T vec0[], T vec1[]) const {
   ::delfem2::MatVec3(vec1, mat, vec0);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::MatVec(const float vec0[], float vec1[]) const;
 template void delfem2::CMat3<double>::MatVec(const double vec0[], double vec1[]) const;
 #endif
@@ -1014,7 +1015,7 @@ void delfem2::CMat3<T>::MatVecTrans(const T vec0[], T vec1[]) const {
   vec1[1] = mat[1] * vec0[0] + mat[4] * vec0[1] + mat[7] * vec0[2];
   vec1[2] = mat[2] * vec0[0] + mat[5] * vec0[1] + mat[8] * vec0[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3f::MatVecTrans(const float vec0[], float vec1[]) const;
 template void delfem2::CMat3d::MatVecTrans(const double vec0[], double vec1[]) const;
 #endif
@@ -1027,7 +1028,7 @@ delfem2::CMat3<T> delfem2::CMat3<T>::MatMat(const CMat3<T> &mat0) const {
       this->mat, mat0.mat);
   return m;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat3<double> delfem2::CMat3<double>::MatMat(const CMat3<double> &mat0) const;
 #endif
 
@@ -1053,7 +1054,7 @@ delfem2::CMat3<T> delfem2::CMat3<T>::Inverse() const {
   mi.SetInverse();
   return mi;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat3<double> delfem2::CMat3<double>::Inverse() const;
 #endif
 
@@ -1063,7 +1064,7 @@ template<typename T>
 void delfem2::CMat3<T>::SetInverse() {
   ::delfem2::Inverse_Mat3(mat);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<double>::SetInverse();
 template void delfem2::CMat3<float>::SetInverse();
 #endif
@@ -1080,7 +1081,7 @@ void delfem2::CMat3<T>::SetSymetric(const T sm[6]) {
   mat[7] = sm[3];
   mat[8] = sm[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::SetSymetric(const float sm[6]);
 template void delfem2::CMat3<double>::SetSymetric(const double sm[6]);
 #endif
@@ -1091,7 +1092,7 @@ template<typename T>
 void delfem2::CMat3<T>::setZero() {
   for (auto &v : mat) { v = 0.0; }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::setZero();
 template void delfem2::CMat3<double>::setZero();
 #endif
@@ -1142,7 +1143,7 @@ void delfem2::CMat3<REAL>::SetRotMatrix_Cartesian(const REAL vec[]) {
   mat[2 * 3 + 1] = +n[0] * s0 + (1 - c0) * n[2] * n[1];
   mat[2 * 3 + 2] = c0 + (1 - c0) * n[2] * n[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::SetRotMatrix_Cartesian(const float vec[]);
 template void delfem2::CMat3<double>::SetRotMatrix_Cartesian(const double vec[]);
 #endif
@@ -1154,7 +1155,7 @@ void delfem2::CMat3<T>::SetRotMatrix_Cartesian(T x, T y, T z) {
   const T vec[3] = {x, y, z};
   this->SetRotMatrix_Cartesian(vec);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::SetRotMatrix_Cartesian(float x, float y, float z);
 template void delfem2::CMat3<double>::SetRotMatrix_Cartesian(double x, double y, double z);
 #endif
@@ -1177,7 +1178,7 @@ void delfem2::CMat3<T>::SetRotMatrix_Rodrigues(const T vec[]) {
   mat[7] = +tmp1 * (+vec[0] + half * vec[2] * vec[1]);
   mat[8] = 1 + tmp1 * (+half * vec[2] * vec[2] - half * sqlen);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::SetRotMatrix_Rodrigues(const float vec[]);
 template void delfem2::CMat3<double>::SetRotMatrix_Rodrigues(const double vec[]);
 #endif
@@ -1200,7 +1201,7 @@ void delfem2::CMat3<T>::SetRotMatrix_CRV(const T crv[]) {
   mat[2 * 3 + 1] = tmp * (2 * crv[2] * crv[1] + 2 * c0 * crv[0]);
   mat[2 * 3 + 2] = tmp * ((c0 * c0 + 8 * c0 - 16) + 2 * crv[2] * crv[2]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::SetRotMatrix_CRV(const float crv[]);
 template void delfem2::CMat3<double>::SetRotMatrix_CRV(const double crv[]);
 #endif
@@ -1209,7 +1210,7 @@ template<typename T>
 void delfem2::CMat3<T>::SetRotMatrix_Quaternion(const T quat[]) {
   mat3::SetMatrix3_Quaternion(mat, quat);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::SetRotMatrix_Quaternion(const float quat[]);
 template void delfem2::CMat3<double>::SetRotMatrix_Quaternion(const double quat[]);
 #endif
@@ -1232,7 +1233,7 @@ void delfem2::CMat3<T>::SetRotMatrix_BryantAngle(T rx, T ry, T rz) {
   m = m.MatMat(mx);
   *this = m;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3f::SetRotMatrix_BryantAngle(float rx, float ry, float rz);
 template void delfem2::CMat3d::SetRotMatrix_BryantAngle(double rx, double ry, double rz);
 #endif
@@ -1273,7 +1274,7 @@ void delfem2::CMat3<T>::GetQuat_RotMatrix(
     quat[k] = smat[imax * 4 + k] * one4th / quat[imax];
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::GetQuat_RotMatrix(float quat[]) const;
 template void delfem2::CMat3<double>::GetQuat_RotMatrix(double quat[]) const;
 #endif
@@ -1292,7 +1293,7 @@ void delfem2::CMat3<T>::SetIdentity(T scale) {
   mat[7] = 0;
   mat[8] = scale;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<double>::SetIdentity(double scale);
 template void delfem2::CMat3<float>::SetIdentity(float scale);
 #endif

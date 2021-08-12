@@ -140,9 +140,9 @@ void StepTime_InternalDynamics(
     vec_b[i] = -vec_b[i] + mass_point*aUVW[i]/dt;
   }
   for(unsigned int ip=0;ip<np;ip++){
-    mat_A.valDia[ip*9+0*3+0] += mass_point / (dt*dt);
-    mat_A.valDia[ip*9+1*3+1] += mass_point / (dt*dt);
-    mat_A.valDia[ip*9+2*3+2] += mass_point / (dt*dt);
+    mat_A.val_dia_[ip*9+0*3+0] += mass_point / (dt*dt);
+    mat_A.val_dia_[ip*9+1*3+1] += mass_point / (dt*dt);
+    mat_A.val_dia_[ip*9+2*3+2] += mass_point / (dt*dt);
   }
   mat_A.SetFixedBC(aBCFlag.data());
   for(unsigned int ip=0;ip<np;ip++){
@@ -224,9 +224,9 @@ void StepTime_InternalDynamicsILU(
     vec_b[i] = -vec_b[i] + mass_point*aUVW[i]/dt;
   }
   for(unsigned int ip=0;ip<np;ip++){
-    mat_A.valDia[ip*9+0*3+0] += mass_point / (dt*dt);
-    mat_A.valDia[ip*9+1*3+1] += mass_point / (dt*dt);
-    mat_A.valDia[ip*9+2*3+2] += mass_point / (dt*dt);
+    mat_A.val_dia_[ip*9+0*3+0] += mass_point / (dt*dt);
+    mat_A.val_dia_[ip*9+1*3+1] += mass_point / (dt*dt);
+    mat_A.val_dia_[ip*9+2*3+2] += mass_point / (dt*dt);
   }
   mat_A.SetFixedBC(aBCFlag.data());
   for(unsigned int i=0;i<nDof;i++){

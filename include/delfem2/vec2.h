@@ -13,6 +13,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+
 #include "delfem2/dfm2_inline.h"
 
 #if defined(_MSC_VER)
@@ -427,7 +428,7 @@ void MakeMassMatrixTri(
 #pragma warning( pop )
 #endif
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/vec2.cpp"
 #endif
 

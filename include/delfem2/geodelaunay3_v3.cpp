@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <stack>
+
 #include "delfem2/geodelaunay3_v3.h"
 
 #ifndef M_PI
@@ -130,7 +131,7 @@ delfem2::CVec3<T> delfem2::CircumCenter(
   vec1.p[2] = base[0][2]*u[0]+base[1][2]*u[1]+base[2][2]*u[2] + ipo0.p[2];
   return vec1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::CircumCenter(const CVec3d& ipo0,
                                          const CVec3d& ipo1,
                                          const CVec3d& ipo2,
@@ -181,7 +182,7 @@ const CVec3<T>& p3)
   }
   return 0;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template int delfem2::DetDelaunay(const CVec3d& p0,
                                const CVec3d& p1,
                                const CVec3d& p2,

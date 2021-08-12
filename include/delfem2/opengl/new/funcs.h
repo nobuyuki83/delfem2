@@ -129,7 +129,7 @@ const std::string glsl33frag =
 }
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/opengl/new/funcs.cpp"
 #endif
 

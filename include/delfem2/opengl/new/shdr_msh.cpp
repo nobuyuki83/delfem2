@@ -37,7 +37,7 @@ void delfem2::opengl::CShader_Mesh::Initialize(
   vao.Add_EBO(aLine,gl_primitive_type);
   this->UpdateVertex(aXYZd, ndim, aLine);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_Mesh::Initialize(
     std::vector<float>& aXYZd,
     unsigned int ndim,
@@ -62,7 +62,7 @@ void delfem2::opengl::CShader_Mesh::UpdateVertex(
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)0); // gl24
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_Mesh::UpdateVertex(
     std::vector<float>& aXYZd,
     unsigned int ndim,

@@ -239,8 +239,8 @@ DFM2_INLINE void Solve_RodHairContact(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
-#include "delfem2/femrod.cpp"
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/femrod.cpp"
 #endif
 
 #endif

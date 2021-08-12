@@ -1,11 +1,12 @@
 #ifndef DFM2_BEM
 #define DFM2_BEM
 
+#include <complex>
+#include <vector>
+
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include <complex>
-#include <vector>
 
 namespace delfem2 {
 
@@ -217,7 +218,7 @@ CVec3d evaluateField_PotentialFlow
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/bem.cpp"
 #endif
 

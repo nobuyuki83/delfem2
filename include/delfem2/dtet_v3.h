@@ -8,15 +8,16 @@
 #ifndef DFM2_DTET_V3_H
 #define DFM2_DTET_V3_H
 
-#include "delfem2/dfm2_inline.h"
-#include "delfem2/geosolidelm_v3.h"
-#include "delfem2/geodelaunay3_v3.h"
-#include "delfem2/vec3.h"
 #include <math.h>
 #include <vector>
 #include <cassert>
 #include <map>
 #include <climits> // for UINT_MAX
+
+#include "delfem2/dfm2_inline.h"
+#include "delfem2/geosolidelm_v3.h"
+#include "delfem2/geodelaunay3_v3.h"
+#include "delfem2/vec3.h"
 
 namespace delfem2 {
 
@@ -1023,7 +1024,7 @@ inline double DetDelaunay3D
 } // namespace delfem2
 
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/dtet_v3.cpp"
 #endif
 

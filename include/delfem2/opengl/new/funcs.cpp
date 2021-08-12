@@ -111,7 +111,7 @@ DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::ADD_VBO(
   glBindBuffer(GL_ARRAY_BUFFER, aVBO[ivbo].VBO); // gl24
   glBufferData(GL_ARRAY_BUFFER, sizeof(REAL)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::ADD_VBO(
     unsigned int ivbo,
     const std::vector<float>& aXY0f);

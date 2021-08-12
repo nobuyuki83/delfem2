@@ -33,7 +33,7 @@ void delfem2::opengl::CShader_Points::Initialize(
   vao.Delete_EBOs();
   this->UpdateVertex(aXYZd);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_Points::Initialize(std::vector<float>& aXYZd);
 template void delfem2::opengl::CShader_Points::Initialize(std::vector<double>& aXYZd);
 #endif
@@ -48,7 +48,7 @@ void delfem2::opengl::CShader_Points::UpdateVertex(
   ::glVertexAttribPointer(0, 3, convertToGlType<REAL>(), GL_FALSE, 3*sizeof(REAL), (void*)nullptr); // add this for
   nPoint = aXYZd.size()/3;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_Points::UpdateVertex(std::vector<float>& aXYZd);
 template void delfem2::opengl::CShader_Points::UpdateVertex(std::vector<double>& aXYZd);
 #endif

@@ -18,24 +18,25 @@
 #ifndef DFM2_MSHUNI_H
 #define DFM2_MSHUNI_H
 
-#include "delfem2/mshelm.h"
-#include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>
 
+#include "delfem2/mshelm.h"
+#include "delfem2/dfm2_inline.h"
+
 namespace delfem2 {
-  
+
 // ---------------------------------------------------
 
 DFM2_INLINE unsigned FindAdjEdgeIndex(
     unsigned int itri,
     unsigned int ied,
     unsigned int jtri,
-    const unsigned int* aTri);
+    const unsigned int *aTri);
 
 DFM2_INLINE void convert2Tri_Quad(
-    std::vector<unsigned int>& aTri,
-    const std::vector<unsigned int>& aQuad);
+    std::vector<unsigned int> &aTri,
+    const std::vector<unsigned int> &aQuad);
 
 
 /**
@@ -46,13 +47,13 @@ DFM2_INLINE void convert2Tri_Quad(
  * @param[in] np number of points
  */
 DFM2_INLINE void ElemQuad_DihedralTri(
-    std::vector<unsigned int>& aQuad,
-    const unsigned int* aTri,
+    std::vector<unsigned int> &aQuad,
+    const unsigned int *aTri,
     unsigned int nTri,
     unsigned int np);
 
 DFM2_INLINE void FlipElement_Tri(
-    std::vector<unsigned int>& aTri);
+    std::vector<unsigned int> &aTri);
 
 
 /**
@@ -126,10 +127,10 @@ DFM2_INLINE void ElSuEl_MeshElem(
  * line (array of 2)
  */
 DFM2_INLINE void JArrayPointSurPoint_MeshOneRingNeighborhood(
-    std::vector<unsigned int>& psup_ind,
-    std::vector<unsigned int>& psup,
+    std::vector<unsigned int> &psup_ind,
+    std::vector<unsigned int> &psup,
     //
-    const unsigned int* pElem,
+    const unsigned int *pElem,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     unsigned int nnoel,
@@ -140,36 +141,36 @@ DFM2_INLINE void JArrayPointSurPoint_MeshOneRingNeighborhood(
  * @param nPoEl number of nodes in an element 
  */
 DFM2_INLINE void JArray_PSuP_MeshElem(
-    std::vector<unsigned int>& psup_ind,
-    std::vector<unsigned int>& psup,
+    std::vector<unsigned int> &psup_ind,
+    std::vector<unsigned int> &psup,
     //
-    const unsigned int* pElem,
+    const unsigned int *pElem,
     size_t nEl,
     unsigned int nPoEl,
     size_t nPo);
 
 DFM2_INLINE void makeOneRingNeighborhood_TriFan(
-    std::vector<int>& psup_ind,
-    std::vector<int>& psup,
+    std::vector<int> &psup_ind,
+    std::vector<int> &psup,
     //
-    const std::vector<int>& aTri,
-    const std::vector<int>& aTriSurRel,
-    const std::vector<int>& elsup_ind,
-    const std::vector<int>& elsup,
+    const std::vector<int> &aTri,
+    const std::vector<int> &aTriSurRel,
+    const std::vector<int> &elsup_ind,
+    const std::vector<int> &elsup,
     int np);
 
 DFM2_INLINE void JArrayEdge_MeshElem(
     std::vector<unsigned int> &edge_ind,
     std::vector<unsigned int> &edge,
     //
-    const unsigned int* aElm0,
+    const unsigned int *aElm0,
     delfem2::MESHELEM_TYPE elem_type,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     bool is_bidirectional);
-  
+
 DFM2_INLINE void MeshLine_JArrayEdge(
-    std::vector<unsigned int>& aLine,
+    std::vector<unsigned int> &aLine,
     //
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup);
@@ -184,9 +185,9 @@ DFM2_INLINE void MeshLine_JArrayEdge(
  * @param[in] nPo the number of the vertices
  */
 DFM2_INLINE void MeshLine_MeshElem(
-    std::vector<unsigned int>& aLine,
+    std::vector<unsigned int> &aLine,
     //
-    const unsigned int* aElm0,
+    const unsigned int *aElm0,
     unsigned int nElem,
     delfem2::MESHELEM_TYPE elem_type,
     unsigned int nPo);
@@ -194,23 +195,23 @@ DFM2_INLINE void MeshLine_MeshElem(
 // ------------------------------------
 
 DFM2_INLINE void MarkConnectedElements(
-    std::vector<unsigned int>& aFlgElem,
+    std::vector<unsigned int> &aFlgElem,
     unsigned int itri_ker,
     unsigned int igroup,
-    const std::vector<unsigned int>& aElSuEl);
+    const std::vector<unsigned int> &aElSuEl);
 
 DFM2_INLINE void MakeGroupElem(
-    int& ngroup,
-    std::vector<unsigned int>& aIndGroup,
-    const std::vector<unsigned int>& aElem,
-    const std::vector<unsigned int>& aElemSurRel,
+    int &ngroup,
+    std::vector<unsigned int> &aIndGroup,
+    const std::vector<unsigned int> &aElem,
+    const std::vector<unsigned int> &aElemSurRel,
     int nfael,
     int nnoel);
 
 } // end namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
-  #include "delfem2/mshuni.cpp"
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/mshuni.cpp"
 #endif
- 
+
 #endif /* meshtopo_hpp */

@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <stack>
+
 #include "delfem2/geoproximity3_v3.h"
 
 #ifndef M_PI
@@ -30,7 +31,7 @@ DFM2_INLINE REAL EvaluateCubic(
 {
   return k0 + k1*x + k2*x*x + k3*x*x*x;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float EvaluateCubic(float r2, float k0, float k1, float k2, float k3);
 template double EvaluateCubic(double r2, double k0, double k1, double k2, double k3);
 #endif
@@ -243,7 +244,7 @@ bool delfem2::IntersectRay_Tri3(
   const REAL r2 = v2/vt;
   return (r0 >= -eps && r1 >= -eps && r2 >= -eps);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::IntersectRay_Tri3(double& r0, double& r1,
     const CVec3d& org, const CVec3d& dir,
     const CVec3d& p0,  const CVec3d& p1, const CVec3d& p2,
@@ -269,7 +270,7 @@ delfem2::CVec3<T> delfem2::nearest_Line_Point(
   T t = -b/a;
   return s+t*d;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::nearest_Line_Point(
     const CVec3d& p, // point
     const CVec3d& s, // source
@@ -416,7 +417,7 @@ void delfem2::nearest_LineSeg_Line(
   a = pe;
   b = p2;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::nearest_LineSeg_Line
  (CVec3f& a, CVec3f& b,
  const CVec3f& ps, const CVec3f& pe,
@@ -504,7 +505,7 @@ void delfem2::nearest_Line_Line(
   Da = D*pa_+da*va;
   Db = D*pb_+db*vb;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::nearest_Line_Line
  (float& D, CVec3f& Da, CVec3f& Db,
   const CVec3f& pa_, const CVec3f& va,
@@ -541,7 +542,7 @@ void delfem2::nearest_Line_Line(
   Da = D*pa_+Dta*va;
   Db = D*pb_+Dtb*vb;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::nearest_Line_Line
  (float& D, CVec3f& Da, CVec3f& Db,
   float& Dta, float& Dtb,
@@ -623,7 +624,7 @@ delfem2::CVec3<T> delfem2::Nearest_Origin_Tri
   }
   return p_min;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::Nearest_Origin_Tri
   (double& r0, double& r1,
    const CVec3d& q0, const CVec3d& q1, const CVec3d& q2);
@@ -823,7 +824,7 @@ void delfem2::Nearest_Line_Circle
     u0 = (q0-src).dot(dir)/(dir.dot(dir));
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Nearest_Line_Circle(CVec3f& p0,
                                            CVec3f& q0,
                                            const CVec3f& src,
@@ -867,7 +868,7 @@ bool delfem2::intersection_Plane_Line(
   p0 = r0*q0 + r1*q1 + r2*q2;
   return r0 > eps && r1 > eps && r2 > eps;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::intersection_Plane_Line(CVec3d& p0, double& r0, double& r1, double& r2,
                                             double eps,
                                             const CVec3d& src, const CVec3d& dir,
@@ -885,7 +886,7 @@ delfem2::CVec3<T> delfem2::intersection_Plane_Line
   double t = ((o-s).dot(n))/(d.dot(n));
   return s + t*d;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::intersection_Plane_Line(const CVec3d& o, // one point on plane
                                                     const CVec3d& n, // plane normal
                                                     const CVec3d& s, // one point on line
@@ -1047,7 +1048,7 @@ double delfem2::DistanceFaceVertex
   CVec3<T> pw = w0*p0 + w1*p1 + w2*p2;
   return (pw-p3).norm();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::DistanceFaceVertex
   (const CVec3d& p0, const CVec3d& p1,
    const CVec3d& p2, const CVec3d& p3,
@@ -1098,7 +1099,7 @@ double delfem2::DistanceEdgeEdge
   CVec3<T> qc = q0 + ratio_q*vq;
   return (pc-qc).norm();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::DistanceEdgeEdge
   (const CVec3d& p0, const CVec3d& p1,
    const CVec3d& q0, const CVec3d& q1,
@@ -1136,7 +1137,7 @@ bool delfem2::IsContact_EE_Proximity
   const CVec3<T>& qm = (1-ratio_q)*q0 + ratio_q*q1;
   return (pm - qm).norm() <= delta;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::IsContact_EE_Proximity
   (int ino0,
    int ino1,
@@ -1284,7 +1285,7 @@ bool delfem2::IsContact_FV_CCD2
   if( w2 < 0 || w2 > 1 ) return false;
   return true;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::IsContact_FV_CCD2
   (int ino0,
    int ino1,
@@ -1372,7 +1373,7 @@ bool delfem2::isIntersectTriPair(
   P1 = P[1];
   return true;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::isIntersectTriPair(
     CVec3d& P0, CVec3d& P1,
     int itri, int jtri,
@@ -1430,7 +1431,7 @@ bool delfem2::isRayIntersectingTriangle
   
   return true;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::isRayIntersectingTriangle
   (const CVec3d &line0, const CVec3d &line1,
    const CVec3d &tri0, const CVec3d &tri1, const CVec3d &tri2,

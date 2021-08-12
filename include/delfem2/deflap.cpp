@@ -21,16 +21,16 @@ void SetLinSys_LaplaceGraph_MeshTri3
 (CMatrixSparse<double>& mat_A)
 {
   mat_A.setZero();
-  for(unsigned int ip=0;ip<mat_A.nrowblk;++ip){
-    const double dn = (double)(mat_A.colInd[ip+1] - mat_A.colInd[ip]);
-    for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
-      mat_A.valCrs[icrs*9+0*3+0] = -1.0;
-      mat_A.valCrs[icrs*9+1*3+1] = -1.0;
-      mat_A.valCrs[icrs*9+2*3+2] = -1.0;
+  for(unsigned int ip=0;ip<mat_A.nrowblk_;++ip){
+    const double dn = (double)(mat_A.col_ind_[ip+1] - mat_A.col_ind_[ip]);
+    for(unsigned int icrs=mat_A.col_ind_[ip];icrs<mat_A.col_ind_[ip+1];++icrs){
+      mat_A.val_crs_[icrs*9+0*3+0] = -1.0;
+      mat_A.val_crs_[icrs*9+1*3+1] = -1.0;
+      mat_A.val_crs_[icrs*9+2*3+2] = -1.0;
     }
-    mat_A.valDia[ip*9+0*3+0] = dn;
-    mat_A.valDia[ip*9+1*3+1] = dn;
-    mat_A.valDia[ip*9+2*3+2] = dn;
+    mat_A.val_dia_[ip*9+0*3+0] = dn;
+    mat_A.val_dia_[ip*9+1*3+1] = dn;
+    mat_A.val_dia_[ip*9+2*3+2] = dn;
   }
 }
 
@@ -99,7 +99,7 @@ void delfem2::CDef_LaplacianLinearGram::Init(
       psup_ind.data(), psup_ind.size(),
       psup.data(),     psup.size());
   defarap::SetLinSys_LaplaceGraph_MeshTri3(Mat);
-  const unsigned int np = Mat.nrowblk;
+  const unsigned int np = Mat.nrowblk_;
   aRes0.assign(np*3,0.0);
   Mat.MatVec(
       aRes0.data(),
@@ -111,22 +111,22 @@ void delfem2::CDef_LaplacianLinearGram::SetBoundaryConditionToPreconditioner()
   if( !is_preconditioner ){ return; }
   // ---------
   // make jacobi preconditioner
-  const unsigned int np = Mat.nrowblk;
+  const unsigned int np = Mat.nrowblk_;
   aDiaInv.assign(np*9,0.0);
   for(unsigned int ip=0;ip<np;++ip){
-    for(unsigned int icrs=Mat.colInd[ip];icrs<Mat.colInd[ip+1];++icrs){
-      unsigned int jp0 = Mat.rowPtr[icrs];
+    for(unsigned int icrs=Mat.col_ind_[ip];icrs<Mat.col_ind_[ip+1];++icrs){
+      unsigned int jp0 = Mat.row_ptr_[icrs];
       MatTMat3_ScaleAdd(
           aDiaInv.data()+jp0*9,
-          Mat.valCrs.data()+icrs*9,
-          Mat.valCrs.data()+icrs*9,
+          Mat.val_crs_.data()+icrs*9,
+          Mat.val_crs_.data()+icrs*9,
           1.0, 1.0); // del. prev. value and set new vaue
     }
     {
       MatTMat3_ScaleAdd(
           aDiaInv.data()+ip*9,
-          Mat.valDia.data()+ip*9,
-          Mat.valDia.data()+ip*9,
+          Mat.val_dia_.data()+ip*9,
+          Mat.val_dia_.data()+ip*9,
           1.0, 1.0); // del. prev. value and set new vaue
     }
   }
@@ -295,26 +295,26 @@ void delfem2::CDef_LaplacianLinear::SetValueToPreconditioner()
 {
   if( !is_preconditioner ){ return; }
   //
-  const unsigned int np = Mat.nrowblk;
+  const unsigned int np = Mat.nrowblk_;
   assert( aBCFlag.size() == np*3 );
   for(unsigned int ip=0;ip<np;++ip){
     for(int idim=0;idim<3;++idim){
       if( aBCFlag[ip*3+idim] == 0 ){ continue; }
-      Mat.valDia[ip*9+idim*3+idim] += weight_bc;
+      Mat.val_dia_[ip*9+idim*3+idim] += weight_bc;
     }
   }
   for(unsigned int iip=0;iip<aIdpNrm.size();++iip){
     const unsigned int ip0 = aIdpNrm[iip].first;
     const double* n0 = aIdpNrm[iip].second.p;
-    Mat.valDia[ip0*9+0*3+0] += weight_nrm*n0[0]*n0[0];
-    Mat.valDia[ip0*9+0*3+1] += weight_nrm*n0[0]*n0[1];
-    Mat.valDia[ip0*9+0*3+2] += weight_nrm*n0[0]*n0[2];
-    Mat.valDia[ip0*9+1*3+0] += weight_nrm*n0[1]*n0[0];
-    Mat.valDia[ip0*9+1*3+1] += weight_nrm*n0[1]*n0[1];
-    Mat.valDia[ip0*9+1*3+2] += weight_nrm*n0[1]*n0[2];
-    Mat.valDia[ip0*9+2*3+0] += weight_nrm*n0[2]*n0[0];
-    Mat.valDia[ip0*9+2*3+1] += weight_nrm*n0[2]*n0[1];
-    Mat.valDia[ip0*9+2*3+2] += weight_nrm*n0[2]*n0[2];
+    Mat.val_dia_[ip0*9+0*3+0] += weight_nrm*n0[0]*n0[0];
+    Mat.val_dia_[ip0*9+0*3+1] += weight_nrm*n0[0]*n0[1];
+    Mat.val_dia_[ip0*9+0*3+2] += weight_nrm*n0[0]*n0[2];
+    Mat.val_dia_[ip0*9+1*3+0] += weight_nrm*n0[1]*n0[0];
+    Mat.val_dia_[ip0*9+1*3+1] += weight_nrm*n0[1]*n0[1];
+    Mat.val_dia_[ip0*9+1*3+2] += weight_nrm*n0[1]*n0[2];
+    Mat.val_dia_[ip0*9+2*3+0] += weight_nrm*n0[2]*n0[0];
+    Mat.val_dia_[ip0*9+2*3+1] += weight_nrm*n0[2]*n0[1];
+    Mat.val_dia_[ip0*9+2*3+2] += weight_nrm*n0[2]*n0[2];
   }
   // --------
   this->Prec.CopyValue(Mat);
@@ -332,20 +332,20 @@ void delfem2::CDef_LaplacianLinear::SetValueToPreconditioner()
   for(unsigned int iip=0;iip<aIdpNrm.size();++iip){
     const unsigned int ip0 = aIdpNrm[iip].first;
     const double* n0 = aIdpNrm[iip].second.p;
-    Mat.valDia[ip0*9+0*3+0] -= weight_nrm*n0[0]*n0[0];
-    Mat.valDia[ip0*9+0*3+1] -= weight_nrm*n0[0]*n0[1];
-    Mat.valDia[ip0*9+0*3+2] -= weight_nrm*n0[0]*n0[2];
-    Mat.valDia[ip0*9+1*3+0] -= weight_nrm*n0[1]*n0[0];
-    Mat.valDia[ip0*9+1*3+1] -= weight_nrm*n0[1]*n0[1];
-    Mat.valDia[ip0*9+1*3+2] -= weight_nrm*n0[1]*n0[2];
-    Mat.valDia[ip0*9+2*3+0] -= weight_nrm*n0[2]*n0[0];
-    Mat.valDia[ip0*9+2*3+1] -= weight_nrm*n0[2]*n0[1];
-    Mat.valDia[ip0*9+2*3+2] -= weight_nrm*n0[2]*n0[2];
+    Mat.val_dia_[ip0*9+0*3+0] -= weight_nrm*n0[0]*n0[0];
+    Mat.val_dia_[ip0*9+0*3+1] -= weight_nrm*n0[0]*n0[1];
+    Mat.val_dia_[ip0*9+0*3+2] -= weight_nrm*n0[0]*n0[2];
+    Mat.val_dia_[ip0*9+1*3+0] -= weight_nrm*n0[1]*n0[0];
+    Mat.val_dia_[ip0*9+1*3+1] -= weight_nrm*n0[1]*n0[1];
+    Mat.val_dia_[ip0*9+1*3+2] -= weight_nrm*n0[1]*n0[2];
+    Mat.val_dia_[ip0*9+2*3+0] -= weight_nrm*n0[2]*n0[0];
+    Mat.val_dia_[ip0*9+2*3+1] -= weight_nrm*n0[2]*n0[1];
+    Mat.val_dia_[ip0*9+2*3+2] -= weight_nrm*n0[2]*n0[2];
   }
   for(unsigned int ip=0;ip<np;++ip){
     for(int idim=0;idim<3;++idim){
       if( aBCFlag[ip*3+idim] == 0 ){ continue; }
-      Mat.valDia[ip*9+idim*3+idim] -= weight_bc;
+      Mat.val_dia_[ip*9+idim*3+idim] -= weight_bc;
     }
   }
 }
@@ -494,10 +494,10 @@ void delfem2::CDef_LaplacianLinearDegenerate::SetBoundaryConditionToPrecondition
   if( !is_preconditioner ){ return; }
   // ---------
   // make jacobi preconditioner
-  const unsigned int np = Mat.nrowblk;
+  const unsigned int np = Mat.nrowblk_;
   aDiaInv.assign(np*9,0.0);
   for(unsigned int ip=0;ip<np;++ip){
-    double v0 = Mat.valDia[ip];
+    double v0 = Mat.val_dia_[ip];
     aDiaInv[ip*9+0] = v0;
     aDiaInv[ip*9+4] = v0;
     aDiaInv[ip*9+8] = v0;

@@ -5,13 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/lsilu_mats.h"
+
 #include <cstdlib>
 #include <cassert>
 #include <vector>
 #include <complex>
 #include <algorithm>
-
-#include "delfem2/lsilu_mats.h"
 
 // ----------------------------------------------------
 
@@ -636,7 +636,7 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitution(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CPreconditionerILU<double>::ForwardSubstitution(
     double *vec) const;
 template void delfem2::CPreconditionerILU<std::complex<double>>::ForwardSubstitution(
@@ -807,7 +807,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void
     delfem2::CPreconditionerILU<double>::BackwardSubstitution(
     double *vec) const;
@@ -858,20 +858,20 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
     return;
   }
 
-  assert(m.nrowblk == m.ncolblk);
-  assert(m.nrowdim == m.ncoldim);
-  this->nblk = m.nrowblk;
-  this->ndim = m.nrowdim;
+  assert(m.nrowblk_ == m.ncolblk_);
+  assert(m.nrowdim_ == m.ncoldim_);
+  this->nblk = m.nrowblk_;
+  this->ndim = m.nrowdim_;
   this->colInd.resize(nblk + 1, 0);
   this->rowPtr.clear();
   this->valCrs.clear();
   this->valDia.resize(nblk * ndim * ndim);
 
   // sort the rowPtr
-  std::vector<unsigned int> tmpRowPtr = m.rowPtr;
+  std::vector<unsigned int> tmpRowPtr = m.row_ptr_;
   for (unsigned int iblk = 0; iblk < nblk; ++iblk) {
-    const unsigned int icrs0 = m.colInd[iblk];
-    const unsigned int icrs1 = m.colInd[iblk + 1];
+    const unsigned int icrs0 = m.col_ind_[iblk];
+    const unsigned int icrs1 = m.col_ind_[iblk + 1];
     std::sort(
         tmpRowPtr.data() + icrs0,
         tmpRowPtr.data() + icrs1);
@@ -880,16 +880,16 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
   std::vector<ilu::CRowLev> aRowLev;
   aRowLev.reserve(tmpRowPtr.size() * 4);
 
-  assert(!m.valDia.empty());
+  assert(!m.val_dia_.empty());
 
   m_diaInd.resize(nblk);
 
   for (unsigned int iblk = 0; iblk < nblk; ++iblk) {
     std::vector<ilu::CRowLevNext> listNonzero;
     {  // copy row pattern of input matrix into listNonzero
-      listNonzero.resize(m.colInd[iblk + 1] - m.colInd[iblk]);
+      listNonzero.resize(m.col_ind_[iblk + 1] - m.col_ind_[iblk]);
       int inz = 0;
-      for (auto ijcrs = m.colInd[iblk]; ijcrs < m.colInd[iblk + 1]; ijcrs++) {
+      for (auto ijcrs = m.col_ind_[iblk]; ijcrs < m.col_ind_[iblk + 1]; ijcrs++) {
         assert(ijcrs < tmpRowPtr.size());
         const unsigned int jblk0 = tmpRowPtr[ijcrs];
         assert(jblk0 < nblk);
@@ -995,11 +995,11 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk(
     const int blksize = ndim * ndim;
     valCrs.resize(ncrs * blksize);
     assert(!valDia.empty());
-    valDia = m.valDia;
+    valDia = m.val_dia_;
     //    std::cout<<"ncrs: "<<ncrs<<" "<<m.rowPtr.size()<<std::endl;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void
     delfem2::CPreconditionerILU<double>::Initialize_ILUk(
     const CMatrixSparse<double> &m, int lev_fill);
@@ -1011,10 +1011,10 @@ template void
 template<typename T>
 void delfem2::CPreconditionerILU<T>::CopyValue
     (const CMatrixSparse<T> &rhs) {
-  assert(rhs.nrowblk == nblk);
-  assert(rhs.ncolblk == nblk);
-  assert(rhs.nrowdim == ndim);
-  assert(rhs.ncoldim == ndim);
+  assert(rhs.nrowblk_ == nblk);
+  assert(rhs.ncolblk_ == nblk);
+  assert(rhs.nrowdim_ == ndim);
+  assert(rhs.ncoldim_ == ndim);
   const unsigned int blksize = ndim * ndim;
   std::vector<int> row2crs(nblk, -1);
   {
@@ -1028,13 +1028,13 @@ void delfem2::CPreconditionerILU<T>::CopyValue
       assert(jblk0 < nblk);
       row2crs[jblk0] = ijcrs;
     }
-    for (unsigned int ijcrs = rhs.colInd[iblk]; ijcrs < rhs.colInd[iblk + 1]; ijcrs++) {
-      assert(ijcrs < rhs.rowPtr.size());
-      const unsigned int jblk0 = rhs.rowPtr[ijcrs];
+    for (unsigned int ijcrs = rhs.col_ind_[iblk]; ijcrs < rhs.col_ind_[iblk + 1]; ijcrs++) {
+      assert(ijcrs < rhs.row_ptr_.size());
+      const unsigned int jblk0 = rhs.row_ptr_[ijcrs];
       assert(jblk0 < nblk);
       const int ijcrs0 = row2crs[jblk0];
       if (ijcrs0 == -1) continue;
-      const T *pval_in = &rhs.valCrs[ijcrs * blksize];
+      const T *pval_in = &rhs.val_crs_[ijcrs * blksize];
       T *pval_out = &valCrs[ijcrs0 * blksize];
       for (unsigned int i = 0; i < blksize; i++) { *(pval_out + i) = *(pval_in + i); }
     }
@@ -1045,22 +1045,24 @@ void delfem2::CPreconditionerILU<T>::CopyValue
       row2crs[jblk0] = -1;
     }
   }
-  for (unsigned int i = 0; i < nblk * blksize; i++) { valDia[i] = rhs.valDia[i]; }
+  for (unsigned int i = 0; i < nblk * blksize; i++) { valDia[i] = rhs.val_dia_[i]; }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CPreconditionerILU<double>::CopyValue(
     const CMatrixSparse<double> &rhs);
 template void delfem2::CPreconditionerILU<std::complex<double>>::CopyValue(
     const CMatrixSparse<std::complex<double>> &rhs);
 #endif
 
+// ----------------------------
+
 template<typename T>
 void delfem2::CPreconditionerILU<T>::SetPattern0(
     const CMatrixSparse<T> &m) {
-  this->nblk = m.nrowblk;
-  this->ndim = m.nrowdim;
-  this->colInd = m.colInd;
-  this->rowPtr = m.rowPtr;
+  this->nblk = m.nrowblk_;
+  this->ndim = m.nrowdim_;
+  this->colInd = m.col_ind_;
+  this->rowPtr = m.row_ptr_;
   this->valCrs.resize(this->rowPtr.size() * ndim * ndim);
   this->valDia.resize(this->nblk * ndim * ndim);
   // ---------------
@@ -1088,7 +1090,7 @@ void delfem2::CPreconditionerILU<T>::SetPattern0(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CPreconditionerILU<double>::SetPattern0(
     const CMatrixSparse<double> &m);
 template void delfem2::CPreconditionerILU<std::complex<double>>::SetPattern0(

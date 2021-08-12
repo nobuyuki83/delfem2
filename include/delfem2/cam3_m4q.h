@@ -17,13 +17,14 @@
 #ifndef DFM2_CAMERA_H
 #define DFM2_CAMERA_H
 
-#include "delfem2/quat.h"
-#include "delfem2/mat4.h"
-#include "delfem2/dfm2_inline.h"
 #include <ostream>
 #include <cmath>
 #include <cstdio> // memcpy
 #include <cstring>
+
+#include "delfem2/quat.h"
+#include "delfem2/mat4.h"
+#include "delfem2/dfm2_inline.h"
 
 // ---------------------------------------------------
 
@@ -130,7 +131,7 @@ std::istream &operator>>(std::istream &input, CCam3_OnAxisZplusLookOrigin<REAL>&
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/cam3_m4q.cpp"
 #endif
 

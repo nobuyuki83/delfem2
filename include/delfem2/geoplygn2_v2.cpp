@@ -6,6 +6,7 @@
  */
 
 #include <cstdlib>
+
 #include "delfem2/geoplygn2_v2.h"
 
 // ================================================
@@ -97,7 +98,7 @@ double delfem2::Length_Polygon(
   }
   return len;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Length_Polygon(const std::vector<CVec2d>& aP);
 #endif
 
@@ -229,7 +230,7 @@ void delfem2::CgArea_Polygon(
   cg.p[1] /= area;
   area *= 0.5;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CgArea_Polygon(
     CVec2d& cg,
     double& area,
@@ -258,7 +259,7 @@ T delfem2::RotationalMomentPolar_Polygon2(
   }
   return sum_I*static_cast<T>(1.0/6.0);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::RotationalMomentPolar_Polygon2(
     const std::vector<CVec2d>& aVec2,
     const CVec2d& pivot);
@@ -318,7 +319,7 @@ void delfem2::SecondMomentOfArea_Polygon(
   I1 = 0.5*(Ix+Iy)+0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
   I2 = 0.5*(Ix+Iy)-0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::SecondMomentOfArea_Polygon(
     CVec2d& cg,  double& area,
     CVec2d& pa1, double& I1,
@@ -359,7 +360,7 @@ void delfem2::JArray_FromVecVec_XY(
     loopIP0[ip] = ip;
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::JArray_FromVecVec_XY(
     std::vector<int>& aIndXYs, std::vector<int>& loopIP0, std::vector<CVec2d>& aXY,
     const std::vector< std::vector<double> >& aVecAry0);
@@ -433,7 +434,7 @@ void delfem2::ResamplingLoop(
   assert( loopIP1.size() == aVec2.size() );
   assert( loopIP1.size() == ivtx0 );
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::ResamplingLoop(
     std::vector<int>& loopIP1_ind, std::vector<int>& loopIP1,
     std::vector<CVec2d>& aVec2,
@@ -586,7 +587,7 @@ bool delfem2::CheckInputBoundaryForTriangulation(
   // end of input check section
   return true;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::CheckInputBoundaryForTriangulation(
     const std::vector<int>& loopIP_ind, const std::vector<CVec2d>& aXY);
 #endif
@@ -659,7 +660,7 @@ void delfem2::FixLoopOrientation(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::FixLoopOrientation(
     std::vector<int>& loopIP,
     const std::vector<int>& loopIP_ind, const std::vector<CVec2d>& aXY);

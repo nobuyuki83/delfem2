@@ -5,13 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_HEADER_ONLY
+#include "delfem2/femnavierstokes.h"
+
+#include <cmath>
+#include <cassert>
+
+#ifdef DFM2_STATIC_LIBRARY
 // Merge use explicitly use the template so for static library we need to include the template itself.
 #  include "delfem2/lsmats.h"
 #endif
-#include "delfem2/femnavierstokes.h"
-#include <cmath>
-#include <cassert>
+
 
 DFM2_INLINE void delfem2::MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1(
     double rho,

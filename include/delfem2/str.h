@@ -13,10 +13,11 @@
 #ifndef DFM2_STR_H
 #define DFM2_STR_H
 
-#include "delfem2/dfm2_inline.h"
 #include <map>
 #include <vector>
 #include <string>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -139,7 +140,7 @@ DFM2_INLINE bool isNumeric(int iascii);
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/str.cpp"
 #endif
 

@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <stack>
+
 #include "delfem2/vec3.h"
 
 #ifndef M_PI
@@ -29,7 +30,7 @@ DFM2_INLINE REAL EvaluateCubic(
 {
   return k0 + k1 * x + k2 * x * x + k3 * x * x * x;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float EvaluateCubic(float r2, float k0, float k1, float k2, float k3);
 template double EvaluateCubic(double r2, double k0, double k1, double k2, double k3);
 #endif
@@ -81,7 +82,7 @@ DFM2_INLINE void MyQuatVec(
   vo[1] = (xy + zw) * vi[0] + (1 - z2 - x2) * vi[1] + (yz - xw) * vi[2];
   vo[2] = (zx - yw) * vi[0] + (yz + xw) * vi[1] + (1 - x2 - y2) * vi[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void MyQuatVec(float vo[], const float q[], const float vi[]);
 template void MyQuatVec(double vo[], const double q[], const double vi[]);
 #endif
@@ -96,7 +97,7 @@ DFM2_INLINE void MyMat4Vec3(
   vo[1] = M[1 * 4 + 0] * vi[0] + M[1 * 4 + 1] * vi[1] + M[1 * 4 + 2] * vi[2];
   vo[2] = M[2 * 4 + 0] * vi[0] + M[2 * 4 + 1] * vi[1] + M[2 * 4 + 2] * vi[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void MyMat4Vec3(float vo[3],
     const float M[16], const float vi[3]);
 template void MyMat4Vec3(double vo[3],
@@ -125,7 +126,7 @@ DFM2_INLINE void MyQuatConjVec(
   vo[1] = (xy - zw) * vi[0] + (1 - z2 - x2) * vi[1] + (yz + xw) * vi[2];
   vo[2] = (zx + yw) * vi[0] + (yz - xw) * vi[1] + (1 - x2 - y2) * vi[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void MyQuatConjVec(float vo[3], const float q[4], const float vi[3]);
 template void MyQuatConjVec(double vo[3], const double q[4], const double vi[3]);
 #endif
@@ -207,7 +208,7 @@ template<typename T>
 DFM2_INLINE T delfem2::Dot3(const T a[3], const T b[3]) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Dot3(const float a[3], const float b[3]);
 template double delfem2::Dot3(const double a[3], const double b[3]);
 #endif
@@ -223,7 +224,7 @@ DFM2_INLINE void delfem2::Add3(
   vo[1] += vi[1];
   vo[2] += vi[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Add3(float vo[3], const float vi[3]);
 template void delfem2::Add3(double vo[3], const double vi[3]);
 #endif
@@ -241,7 +242,7 @@ void delfem2::Cross3(
   r[1] = v1[2] * v2[0] - v2[2] * v1[0];
   r[2] = v1[0] * v2[1] - v2[0] * v1[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Cross3(float r[3], const float v1[3], const float v2[3]);
 template void delfem2::Cross3(double r[3], const double v1[3], const double v2[3]);
 #endif
@@ -256,7 +257,7 @@ DFM2_INLINE void delfem2::Normalize3(T v[3]) {
   v[1] /= len;
   v[2] /= len;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Normalize3(float v[3]);
 template void delfem2::Normalize3(double v[3]);
 #endif
@@ -271,7 +272,7 @@ T delfem2::Area_Tri3(const T v1[3], const T v2[3], const T v3[3]) {
       (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1])};
   return Length3(n) / 2;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Area_Tri3(const float v1[3], const float v2[3], const float v3[3]);
 template double delfem2::Area_Tri3(const double v1[3], const double v2[3], const double v3[3]);
 #endif
@@ -282,7 +283,7 @@ template<typename T>
 DFM2_INLINE T delfem2::SquareDistance3(const T p0[3], const T p1[3]) {
   return (p1[0] - p0[0]) * (p1[0] - p0[0]) + (p1[1] - p0[1]) * (p1[1] - p0[1]) + (p1[2] - p0[2]) * (p1[2] - p0[2]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::SquareDistance3(const float p0[3], const float p1[3]);
 template double delfem2::SquareDistance3(const double p0[3], const double p1[3]);
 #endif
@@ -293,7 +294,7 @@ template<typename T>
 DFM2_INLINE T delfem2::SquareLength3(const T v[3]) {
   return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::SquareLength3(const float v[3]);
 template double delfem2::SquareLength3(const double v[3]);
 #endif
@@ -306,7 +307,7 @@ T delfem2::ScalarTripleProduct3(const T a[], const T b[], const T c[]) {
       + a[1] * (b[2] * c[0] - b[0] * c[2])
       + a[2] * (b[0] * c[1] - b[1] * c[0]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::ScalarTripleProduct3(const float a[], const float b[], const float c[]);
 template double delfem2::ScalarTripleProduct3(const double a[], const double b[], const double c[]);
 #endif
@@ -323,7 +324,7 @@ void delfem2::NormalTri3(
   n[1] = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
   n[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::NormalTri3(float n[3], const float v1[3], const float v2[3], const float v3[3]);
 template void delfem2::NormalTri3(double n[3], const double v1[3], const double v2[3], const double v3[3]);
 #endif
@@ -343,7 +344,7 @@ void delfem2::UnitNormalAreaTri3(
   n[1] *= invlen;
   n[2] *= invlen;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::UnitNormalAreaTri3(float n[3], float& a,
     const float v1[3], const float v2[3], const float v3[3]);
 template void delfem2::UnitNormalAreaTri3(double n[3], double& a,
@@ -378,7 +379,7 @@ template<typename T>
 T delfem2::Dot(const CVec3<T> &arg1, const CVec3<T> &arg2) {
   return Dot3(arg1.p, arg2.p);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Dot(const CVec3f& arg1, const CVec3f& arg2);
 template double delfem2::Dot(const CVec3d& arg1, const CVec3d& arg2);
 #endif
@@ -392,7 +393,7 @@ delfem2::CVec3<T> delfem2::Cross(const CVec3<T> &arg1, const CVec3<T> &arg2) {
   Cross3(temp.p, arg1.p, arg2.p);
   return temp;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3f delfem2::Cross(const CVec3f& arg1, const CVec3f& arg2);
 template delfem2::CVec3d delfem2::Cross(const CVec3d& arg1, const CVec3d& arg2);
 #endif
@@ -408,7 +409,7 @@ void delfem2::AverageTwo3(
   po[1] = (p0[1] + p1[1]) * half;
   po[2] = (p0[2] + p1[2]) * half;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::AverageTwo3(float po[3], const float p0[3], const float p1[3]);
 template void delfem2::AverageTwo3(double po[3], const double p0[3], const double p1[3]);
 #endif
@@ -427,7 +428,7 @@ void delfem2::AverageFour3(
   po[1] = (p0[1] + p1[1] + p2[1] + p3[1]) * quarter;
   po[2] = (p0[2] + p1[2] + p2[2] + p3[2]) * quarter;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::AverageFour3(float po[3],
     const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
 template void delfem2::AverageFour3(double po[3],
@@ -450,7 +451,7 @@ CVec3<T0> operator*(T1 d, const CVec3<T0> &rhs) {
       static_cast<T0>(rhs.y*d),
       static_cast<T0>(rhs.z*d) );
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CVec3f operator* (float d, const CVec3f& rhs);
 template CVec3d operator* (double d, const CVec3d& rhs);
 template CVec3d operator* (int d, const CVec3d& rhs);
@@ -465,7 +466,7 @@ CVec3<T> operator/(const CVec3<T> &vec, T d) {
   temp /= d;
   return temp;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CVec3f operator/ (const CVec3f& vec, float d);
 template CVec3d operator/ (const CVec3d& vec, double d);
 #endif
@@ -481,7 +482,7 @@ std::ostream &operator<<(std::ostream &output, const CVec3<T> &v) {
   output << v.p[0] << " " << v.p[1] << " " << v.p[2];
   return output;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template std::ostream &operator<<(std::ostream &output, const CVec3d& v);
 template std::ostream &operator<<(std::ostream &output, const CVec3f& v);
 #endif
@@ -493,7 +494,7 @@ std::istream &operator>>(std::istream &input, CVec3<T> &v) {
   input >> v.p[0] >> v.p[1] >> v.p[2];
   return input;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template std::istream &operator>>(std::istream &input, CVec3d& v);
 template std::istream &operator>>(std::istream &input, CVec3f& v);
 #endif
@@ -510,7 +511,7 @@ delfem2::CVec3<T> delfem2::Mat3Vec(const T mat[9], const CVec3<T> &v) {
   vec3::MyMatVec3(u.p, mat, v.p);
   return u;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3<float> delfem2::Mat3Vec(
     const float mat[9], const CVec3<float>& v);
 template delfem2::CVec3<double> delfem2::Mat3Vec(
@@ -525,7 +526,7 @@ delfem2::CVec3<T> delfem2::Mat4Vec(const T mat[16], const CVec3<T> &v) {
   vec3::MyMat4Vec3(u.p, mat, v.p);
   return u;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3f delfem2::Mat4Vec(const float mat[16], const CVec3f& v);
 template delfem2::CVec3d delfem2::Mat4Vec(const double mat[16], const CVec3d& v);
 #endif
@@ -540,7 +541,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::QuatVec(
   vec3::MyQuatVec(v1a, quat, v0.p);
   return CVec3<T>(v1a[0], v1a[1], v1a[2]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3f delfem2::QuatVec (const float quat[4], const CVec3f& v0);
 template delfem2::CVec3d delfem2::QuatVec (const double quat[4], const CVec3d& v0);
 #endif
@@ -556,7 +557,7 @@ delfem2::CVec3<REAL> delfem2::QuatConjVec
                       quat, v0.p);
   return CVec3<REAL>(v1a[0], v1a[1], v1a[2]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3f delfem2::QuatConjVec(const float quat[4], const CVec3f& v0);
 template delfem2::CVec3d delfem2::QuatConjVec(const double quat[4], const CVec3d& v0);
 #endif
@@ -603,7 +604,7 @@ void delfem2::CVec3<T>::normalize() {
   p[1] *= invmag;
   p[2] *= invmag;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CVec3<float>::normalize();
 template void delfem2::CVec3<double>::normalize();
 #endif
@@ -616,7 +617,7 @@ void delfem2::CVec3<T>::setZero() {
   p[1] = 0;
   p[2] = 0;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CVec3<float>::setZero();
 template void delfem2::CVec3<double>::setZero();
 template void delfem2::CVec3<int>::setZero();
@@ -632,7 +633,7 @@ void delfem2::CVec3<T>::SetRandom(DIST dist)
   p[1] = dist();
   p[2] = dist();
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CVec3<float>::SetRandom();
 template void delfem2::CVec3<double>::SetRandom();
 #endif
@@ -657,7 +658,7 @@ void delfem2::GetVertical2Vector
     vec_y = Cross(vec_n, vec_x);
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::GetVertical2Vector(const CVec3f& vec_n,
                                           CVec3f& vec_x,
                                           CVec3f& vec_y);
@@ -733,7 +734,7 @@ delfem2::CVec3<T> delfem2::screenProjection
   float w1 = mPj[11] * (float) v0.p[2] + mPj[15];
   return CVec3<T>(v1.p[0] / w1, v1.p[1] / w1, 0.0);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::screenProjection (
     const CVec3d& v,
     const float* mMV,
@@ -752,7 +753,7 @@ delfem2::CVec3<T> delfem2::screenUnProjection(
   CVec3<T> v2 = solve_GlAffineMatrix(mMV, v1);
   return v2;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::screenUnProjection(
     const CVec3d& v,
     const float* mMV, const float* mPj);
@@ -768,7 +769,7 @@ delfem2::CVec3<T> delfem2::screenUnProjectionDirection(
   v1.normalize();
   return v1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::screenUnProjectionDirection(
     const CVec3d& v,
     const float* mMV,
@@ -808,7 +809,7 @@ void delfem2::Cross(
   lhs.p[1] = v1.p[2] * v2.p[0] - v2.p[2] * v1.p[0];
   lhs.p[2] = v1.p[0] * v2.p[1] - v2.p[0] * v1.p[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Cross(CVec3d& lhs, const CVec3d& v1, const CVec3d& v2 );
 #endif
 
@@ -824,7 +825,7 @@ T delfem2::Area_Tri(
   const T z = (v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v3.p[0] - v1.p[0]) * (v2.p[1] - v1.p[1]);
   return 0.5 * std::sqrt(x * x + y * y + z * z);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Area_Tri(const CVec3<double>& v1, const CVec3<double>& v2, const CVec3<double>& v3);
 #endif
 
@@ -847,7 +848,7 @@ double delfem2::SquareDistance(
       + (ipo1.p[1] - ipo0.p[1]) * (ipo1.p[1] - ipo0.p[1])
       + (ipo1.p[2] - ipo0.p[2]) * (ipo1.p[2] - ipo0.p[2]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::SquareDistance(
     const CVec3d& ipo0,
     const CVec3d& ipo1);
@@ -875,7 +876,7 @@ double delfem2::Distance
      const CVec3<T> &p1) {
   return delfem2::Distance3(p0.p, p1.p);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Distance(const CVec3<double>& p0, const CVec3<double>& p1);
 #endif
 
@@ -891,7 +892,7 @@ void delfem2::Normal(
   vnorm.p[1] = (v2.p[2] - v1.p[2]) * (v3.p[0] - v1.p[0]) - (v2.p[0] - v1.p[0]) * (v3.p[2] - v1.p[2]);
   vnorm.p[2] = (v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v2.p[1] - v1.p[1]) * (v3.p[0] - v1.p[0]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Normal(CVec3d& vnorm, const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
 #endif
 
@@ -908,7 +909,7 @@ delfem2::CVec3<T> delfem2::Normal(
   vnorm.p[2] = (v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v2.p[1] - v1.p[1]) * (v3.p[0] - v1.p[0]);
   return vnorm;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::Normal(const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
 #endif
 
@@ -929,7 +930,7 @@ void delfem2::UnitNormal(
   vnorm.p[1] *= dtmp1;
   vnorm.p[2] *= dtmp1;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::UnitNormal(CVec3f& vnorm, const CVec3f& v1, const CVec3f& v2, const CVec3f& v3);
 template void delfem2::UnitNormal(CVec3d& vnorm, const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
 #endif
@@ -951,7 +952,7 @@ delfem2::CVec3<T> delfem2::UnitNormal(
   vnorm.p[2] *= dtmp1;
   return vnorm;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3f delfem2::UnitNormal
  (const CVec3f& v1,
   const CVec3f& v2,
@@ -1014,7 +1015,7 @@ void delfem2::MeanValueCoordinate(
   w[1] = (t1 - c0 * t2 - c2 * t0) / (d1 * sin(t2) * s0);
   w[2] = (t2 - c1 * t0 - c0 * t1) / (d2 * sin(t0) * s1);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MeanValueCoordinate(double w[3],
                                         const CVec3d& v0,
                                         const CVec3d& v1,

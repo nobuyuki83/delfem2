@@ -8,9 +8,10 @@
 #ifndef DFM2_FEMCLOTH_H
 #define DFM2_FEMCLOTH_H
 
+#include <vector>
+
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
-#include <vector>
 
 namespace delfem2 {
 
@@ -162,7 +163,7 @@ double MergeLinSys_Contact(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/femcloth.cpp"
 #endif
   

@@ -5,7 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <vector>
+#include <algorithm>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/shdr_mshtex.h"
@@ -18,9 +22,6 @@
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbvh.h"
 #include "delfem2/mat4.h"
-#include <GLFW/glfw3.h>
-#include <vector>
-#include <algorithm>
 
 namespace dfm2 = delfem2;
 

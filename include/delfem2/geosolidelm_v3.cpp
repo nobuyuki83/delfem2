@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <stack>
+
 #include "delfem2/geosolidelm_v3.h"
 
 #ifndef M_PI
@@ -30,7 +31,7 @@ DFM2_INLINE REAL EvaluateCubic(
 {
   return k0 + k1*x + k2*x*x + k3*x*x*x;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float EvaluateCubic(float r2, float k0, float k1, float k2, float k3);
 template double EvaluateCubic(double r2, double k0, double k1, double k2, double k3);
 #endif
@@ -79,7 +80,7 @@ DFM2_INLINE void MyQuatVec(
   vo[1] = (xy + zw    )*vi[0] + (1 - z2 - x2)*vi[1] + (yz - xw    )*vi[2];
   vo[2] = (zx - yw    )*vi[0] + (yz + xw    )*vi[1] + (1 - x2 - y2)*vi[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void MyQuatVec(float vo[], const float q[], const float vi[]);
 template void MyQuatVec(double vo[], const double q[], const double vi[]);
 #endif
@@ -95,7 +96,7 @@ DFM2_INLINE void MyMat4Vec3
   vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
   vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void MyMat4Vec3(float vo[3],
     const float M[16], const float vi[3]);
 template void MyMat4Vec3(double vo[3],
@@ -127,7 +128,7 @@ DFM2_INLINE void MyQuatConjVec(
 //  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
 //  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void MyQuatConjVec(float vo[3], const float q[4], const float vi[3]);
 template void MyQuatConjVec(double vo[3], const double q[4], const double vi[3]);
 #endif
@@ -182,7 +183,7 @@ T delfem2::Volume_Tet3(
    +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
    ) * static_cast<T>(1.0/6.0);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Volume_Tet3(const float v1[3],
                                     const float v2[3],
                                     const float v3[3],
@@ -209,7 +210,7 @@ double delfem2::Height(
   Normalize3(n);
   return (v4.p[0]-v1.p[0])*n[0]+(v4.p[1]-v1.p[1])*n[1]+(v4.p[2]-v1.p[2])*n[2];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Height(const CVec3f& v1,
                                 const CVec3f& v2,
                                 const CVec3f& v3,
@@ -375,7 +376,7 @@ T delfem2::Volume_Tet(
   return v*0.16666666666666666666666666666667;
    */
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Volume_Tet(const CVec3d& v0, const CVec3d& v1, const CVec3d& v2, const CVec3d& v3 );
 template float delfem2::Volume_Tet(const CVec3f& v0, const CVec3f& v1, const CVec3f& v2, const CVec3f& v3 );
 #endif
@@ -393,7 +394,7 @@ T delfem2::Volume_OrgTet(
       + v1.p[2]*(v2.p[0]*v3.p[1]-v3.p[0]*v2.p[1]);
   return v * static_cast<T>(1.0 / 6.0); 
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Volume_OrgTet(
     const CVec3d& v1,
     const CVec3d& v2,
@@ -458,7 +459,7 @@ double delfem2::SolidAngleTri(
   v *= 2;
   return v;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::SolidAngleTri(const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
 #endif
 
@@ -547,7 +548,7 @@ double delfem2::Volume_Tet(
 {
   return Volume_Tet(aPoint[iv1],aPoint[iv2],aPoint[iv3],aPoint[iv4]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Volume_Tet(
     int iv1,
     int iv2,

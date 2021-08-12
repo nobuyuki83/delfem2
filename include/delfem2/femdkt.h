@@ -8,9 +8,10 @@
 #ifndef DFM2_FEMDKT_H
 #define DFM2_FEMDKT_H
 
+#include <complex>
+
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
-#include <complex>
 
 namespace delfem2 {
 
@@ -35,7 +36,7 @@ DFM2_INLINE void MakeMat_PlateBendingDKT
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/femdkt.cpp"
 #endif
   

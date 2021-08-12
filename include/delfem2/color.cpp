@@ -41,7 +41,7 @@ DFM2_INLINE void delfem2::GetRGB_HSV(
     }
   }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::GetRGB_HSV(
     float &r, float &g, float &b,
     float h, float s, float v);

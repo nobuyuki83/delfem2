@@ -7,12 +7,9 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "-O2 /W4 \
-     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800  \
-     /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456")
+  set(CMAKE_CXX_FLAGS "/W4")
 else ()
-  set(CMAKE_CXX_FLAGS "-g \
-    -Wall ")
+  set(CMAKE_CXX_FLAGS "-Wall -g")
 endif ()
 
 #######################
@@ -33,9 +30,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 find_package(OpenGL REQUIRED)
 
 # dfm2
-if (DFM2_HEADER_ONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)
+IF (DFM2_HEADER_ONLY)
 else ()
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   if (MSVC)
     set(DFM2_LIBRARY
         ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)

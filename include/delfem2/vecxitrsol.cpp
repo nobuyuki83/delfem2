@@ -5,12 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/vecxitrsol.h"
+
 #include <cassert>
 #include <cmath>
 #include <vector>
 #include <complex>
 #include <climits>
-#include "delfem2/vecxitrsol.h"
 
 // ----------------------------------------------------------------------
 
@@ -25,7 +26,7 @@ delfem2::Dot(
   for (unsigned int i = 0; i < n; i++) { r += r_vec[i] * u_vec[i]; }
   return r;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Dot(
     const std::vector<float> &r_vec, const std::vector<float> &u_vec);
 template double delfem2::Dot(
@@ -65,7 +66,7 @@ DFM2_INLINE T delfem2::DotX(
   for (unsigned int i = 0; i < n; i++) { r += va[i] * vb[i]; }
   return r;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::DotX(const float *va, const float *vb, size_t n);
 template double delfem2::DotX(const double *va, const double *vb, size_t n);
 #endif
@@ -103,7 +104,7 @@ T delfem2::Distance(
   for (unsigned i = 0; i < n; i++) { r += (va[i] - vb[i]) * (va[i] - vb[i]); }
   return r;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template float delfem2::Distance(
     const std::vector<float> &va, const std::vector<float> &vb);
 template double delfem2::Distance(
@@ -126,7 +127,7 @@ void AXPY(
   assert(y.size() == n);
   for (unsigned int i = 0; i < n; i++) { y[i] += a * x[i]; }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void AXPY(
     float a,
     const std::vector<float> &x,
@@ -156,7 +157,7 @@ void AXPY(
     unsigned int n) {
   for (unsigned int i = 0; i < n; i++) { y[i] += a * x[i]; }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void AXPY(float a, const float *x, float *y, unsigned int n);
 template void AXPY(double a, const double *x, double *y, unsigned int n);
 template void AXPY(
@@ -178,7 +179,7 @@ void delfem2::ScaleX(
     unsigned int n) {
   for (unsigned int i = 0; i < n; ++i) { p0[i] *= s; }
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::ScaleX(float *p0, float s, unsigned int n);
 template void delfem2::ScaleX(double *p0, double s, unsigned int n);
 #endif

@@ -8,11 +8,11 @@
 #ifndef DFM2_DTRIV3_H
 #define DFM2_DTRIV3_H
 
-#include "delfem2/dfm2_inline.h"
 #include <map>
 #include <algorithm>
 #include <stack>
 
+#include "delfem2/dfm2_inline.h"
 #include "delfem2/vec3.h"
 #include "delfem2/dtri.h"
 
@@ -124,7 +124,7 @@ public:
   
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/dtri3_v3dtri.cpp"
 #endif
 

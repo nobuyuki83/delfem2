@@ -8,9 +8,10 @@
 #ifndef DFM2_IMGIO_H
 #define DFM2_IMGIO_H
 
-#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <string>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -56,7 +57,7 @@ DFM2_INLINE void ImageInterpolation_Bilinear(
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/imgio.cpp"
 #endif
 

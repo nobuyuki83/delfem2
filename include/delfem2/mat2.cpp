@@ -41,7 +41,7 @@ void delfem2::MatVec2(
   w[0] = A[0] * v[0] + A[1] * v[1];
   w[1] = A[2] * v[0] + A[3] * v[1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatVec2(float w[2], const float A[4], const float v[2]);
 template void delfem2::MatVec2(double w[2], const double A[4], const double v[2]);
 #endif
@@ -55,7 +55,7 @@ void delfem2::MatMat2(T AB[4], const T A[4], const T B[4]) {
   AB[1 * 2 + 0] = A[1 * 2 + 0] * B[0 * 2 + 0] + A[1 * 2 + 1] * B[1 * 2 + 0];
   AB[1 * 2 + 1] = A[1 * 2 + 0] * B[0 * 2 + 1] + A[1 * 2 + 1] * B[1 * 2 + 1];
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MatMat2(float AB[4], const float A[4], const float B[4]);
 template void delfem2::MatMat2(double AB[4], const double A[4], const double B[4]);
 #endif
@@ -177,7 +177,7 @@ CMat2<T> operator+(const CMat2<T> &lhs, const CMat2<T> &rhs) {
   for (int i = 0; i < 4; ++i) { q.p[i] = lhs.p[i] + rhs.p[i]; }
   return q;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat2d operator + (const CMat2d& lhs, const CMat2d& rhs);
 template CMat2f operator + (const CMat2f& lhs, const CMat2f& rhs);
 #endif
@@ -198,7 +198,7 @@ CMat2<T> operator-(
       lhs.p[2] - rhs.p[2],
       lhs.p[3] - rhs.p[3]);
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat2d operator - (const CMat2d& lhs, const CMat2d& rhs);
 template CMat2f operator - (const CMat2f& lhs, const CMat2f& rhs);
 #endif
@@ -217,7 +217,7 @@ CMat2<T> operator*(
   MatMat2(m.p, lhs.p, rhs.p);
   return m;
 }
-#ifndef DFM2_HEADER_ONLY
+#ifdef DFM2_STATIC_LIBRARY
 template CMat2d operator * (const CMat2d& lhs, const CMat2d& rhs);
 template CMat2f operator * (const CMat2f& lhs, const CMat2f& rhs);
 #endif

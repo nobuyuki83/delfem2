@@ -23,7 +23,7 @@ void Draw_CubeGrid(bool is_picked, int iface_picked,
 }
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/opengl/old/gridcube.cpp"
 #endif
 

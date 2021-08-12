@@ -237,7 +237,7 @@ DFM2_INLINE void Read_MeshTri3D_Nas(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/mshio.cpp"
 #endif
 

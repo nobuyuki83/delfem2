@@ -46,7 +46,7 @@ void PBD_Bend(
 
 } // namespace delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/pbd_geo3dtri23.cpp"
 #endif
 

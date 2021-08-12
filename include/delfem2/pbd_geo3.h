@@ -142,7 +142,7 @@ DFM2_INLINE void GetConstConstDiff_Bend(
     const CVec3<T> &p3);
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/pbd_geo3.cpp"
 #endif
 

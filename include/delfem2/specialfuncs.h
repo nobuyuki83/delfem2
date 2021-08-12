@@ -7,11 +7,13 @@
 
 #ifndef DFM2_SPECIALFUNCS_H
 #define DFM2_SPECIALFUNCS_H
-#include "delfem2/dfm2_inline.h"
+
 #include <cassert>
 #include <complex>
 #include <iostream>
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -124,7 +126,7 @@ inline void makeArrayAssociatedLegendre
 
 }
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/specialfuncs.cpp"
 #endif
 

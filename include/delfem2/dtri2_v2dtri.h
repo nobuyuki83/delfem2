@@ -12,10 +12,11 @@
 #ifndef DFM2_DTRI2_V2DTRI_H
 #define DFM2_DTRI2_V2DTRI_H
 
-#include "delfem2/dfm2_inline.h"
 #include <map>
 #include <algorithm>
 #include <stack>
+
+#include "delfem2/dfm2_inline.h"
 #include "delfem2/vec2.h"
 #include "delfem2/dtri.h"
 #include "delfem2/geoplygn2_v2.h"
@@ -356,7 +357,7 @@ public:
 } // namespace delfem2
 
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/dtri2_v2dtri.cpp"
 #endif
 

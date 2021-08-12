@@ -12,11 +12,12 @@
 #ifndef DFM2_VECXITRSOL_H
 #define DFM2_VECXITRSOL_H
 
-#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <cassert>
 #include <complex>
 #include <iostream>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -196,10 +197,10 @@ std::vector<REAL> Solve_BiCGStab(
     unsigned int max_niter,
     const MAT& mat)
 {
-  assert(!mat.valDia.empty());
-  assert(mat.nrowblk == mat.ncolblk);
-  assert(mat.nrowdim == mat.ncoldim);
-  const unsigned int ndof = mat.nrowblk * mat.nrowdim;
+  assert(!mat.val_dia_.empty());
+  assert(mat.nrowblk_ == mat.ncolblk_);
+  assert(mat.nrowdim_ == mat.ncoldim_);
+  const unsigned int ndof = mat.nrowblk_ * mat.nrowdim_;
   assert(r_vec.size() == ndof);
   
   std::vector<double> aConv;
@@ -350,10 +351,10 @@ std::vector<double> Solve_PBiCGStab(
  const MAT& mat,
  const PREC& ilu)
 {
-  assert( !mat.valDia.empty() );
-  assert( mat.nrowblk == mat.ncolblk );
-  assert( mat.nrowdim == mat.ncoldim );
-  const unsigned int ndof = mat.nrowblk*mat.nrowdim;
+  assert( !mat.val_dia_.empty() );
+  assert( mat.nrowblk_ == mat.ncolblk_ );
+  assert( mat.nrowdim_ == mat.ncoldim_ );
+  const unsigned int ndof = mat.nrowblk_*mat.nrowdim_;
   std::vector<double> aResHistry;
   
   // {u} = 0
@@ -592,10 +593,10 @@ std::vector<double> Solve_PCOCG(
 {
   using COMPLEX = std::complex<REAL>;
 
-  assert( !mat.valDia.empty() );
-  assert( mat.nrowblk == mat.ncolblk );
-  assert( mat.nrowdim == mat.ncoldim );
-  const unsigned int ndof = mat.nrowblk*mat.nrowdim;
+  assert( !mat.val_dia_.empty() );
+  assert( mat.nrowblk_ == mat.ncolblk_ );
+  assert( mat.nrowdim_ == mat.ncoldim_ );
+  const unsigned int ndof = mat.nrowblk_*mat.nrowdim_;
   std::vector<double> aResHistry;
   
   for(unsigned int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
@@ -644,7 +645,7 @@ std::vector<double> Solve_PCOCG(
 
 } // delfem2
 
-#ifdef DFM2_HEADER_ONLY
+#ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/vecxitrsol.cpp"
 #endif
   
