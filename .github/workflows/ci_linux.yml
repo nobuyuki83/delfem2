@@ -45,7 +45,7 @@ jobs:
         echo "## build delfem2 test static"
 
         cd test_cpp
-        mkdir buildMakeHdronly && cd buildMakeHdronly
+        mkdir buildMakeStatic && cd buildMakeStatic
         cmake .. -DUSE_STATIC_LIB=ON
         cmake --build .
         ./runUnitTests
@@ -55,7 +55,7 @@ jobs:
         echo "## build delfem2 test hdronly and run" 
         
         cd test_cpp
-        mkdir buildMakeStatic && cd buildMakeStatic
+        mkdir buildMakeHdronly && cd buildMakeHdronly
         cmake .. -DUSE_STATIC_LIB=OFF
         cmake --build .
         ./runUnitTests
