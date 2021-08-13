@@ -19,34 +19,33 @@
 namespace delfem2 {
 namespace opengl {
 
-class CShader_Mesh{
-public:
+class CShader_Mesh {
+ public:
   void Compile();
 
-  template <typename REAL>
+  template<typename REAL>
   void Initialize(
-      std::vector<REAL>& aXYZd,
+      std::vector<REAL> &aXYZd,
       unsigned int ndim,
-      std::vector<unsigned int>& aLine,
+      std::vector<unsigned int> &aLine,
       int gl_primitive_type);
 
-  template <typename REAL>
+  template<typename REAL>
   void UpdateVertex(
-      std::vector<REAL>& aXYZd,
+      std::vector<REAL> &aXYZd,
       unsigned int ndim,
-      std::vector<unsigned int>& aLine);
+      std::vector<unsigned int> &aLine);
 
   void Draw(float mP[16], float mMV[16]) const;
 
-public:
+ public:
   CGL4_VAO_Mesh vao; // gl4
-  float color[3] = {0,0,0};
+  float color[3] = {0, 0, 0};
   int shaderProgram;
   int Loc_MatrixProjection;
   int Loc_MatrixModelView;
   int Loc_Color;
 };
-
 
 }
 }

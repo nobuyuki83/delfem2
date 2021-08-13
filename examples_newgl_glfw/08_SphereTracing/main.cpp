@@ -97,7 +97,10 @@ int main(int argc,char* argv[])
       float mMV[16], mP[16], mMVP[16], mMVPinv[16];
       viewer.camera.Mat4_MVP_OpenGL(
           mMV,mP,
-          (float) viewport[2] / (float) viewport[3]);
+          static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]) );
+      std::cout << "hgoe" << std::endl;
+      delfem2::Print_Mat4(mMV);
+      delfem2::Print_Mat4(mP);
       delfem2::MatMat4(mMVP,mMV,mP);
       delfem2::Inverse_Mat4(mMVPinv,mMVP);
       glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);

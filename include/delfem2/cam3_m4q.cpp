@@ -26,22 +26,25 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransProjection(
       0, scale, 0, 0,
       0, 0, scale, 0,
       0, 0, 0, 1};
-  REAL depth = (0.5f * view_height) / tan(fovy * 0.5f * (2.f * M_PI) / 360.f);
+  REAL fovyInRad = fovy * (2. * M_PI) / 360.f;
+  REAL depth = view_height / tan(fovyInRad * 0.5f);
   REAL mP0[16];
   if (is_pars) {
     Mat4_AffineTransProjectionFrustum(
         mP0,
-        fovy * (2. * M_PI) / 360.0,
+        fovyInRad,
         static_cast<REAL>(asp),
-        -depth * 2., -depth * 0.01);
+        -depth * 2.,
+        -depth * 0.01);
   } else {
-    Mat4_AffineTransProjectionOrtho(mP0,
-                                    -view_height * asp,
-                                    +view_height * asp,
-                                    -view_height,
-                                    +view_height,
-                                    -2 * depth,
-                                    0);
+    Mat4_AffineTransProjectionOrtho(
+        mP0,
+        -view_height * asp,
+        +view_height * asp,
+        -view_height,
+        +view_height,
+        -2 * depth,
+        0);
   }
   REAL mT0[16];
   {
