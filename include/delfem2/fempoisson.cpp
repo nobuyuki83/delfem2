@@ -7,11 +7,6 @@
 
 #include "delfem2/fempoisson.h"
 
-#ifdef DFM2_STATIC_LIBRARY
-// Merge use explicitly use the template so for static library we need to include the template itself.
-#  include "delfem2/lsmats.h"
-#endif
-
 // --------------------------------------------------------
 // below tri
 
