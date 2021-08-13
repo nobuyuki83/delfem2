@@ -46,7 +46,7 @@ jobs:
 
         cd test_cpp
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DDFM2_HEADER_ONLY=OFF
+        cmake .. -DUSE_STATIC_LIB=ON
         cmake --build .
         ./runUnitTests
         cd ../../
@@ -56,7 +56,7 @@ jobs:
         
         cd test_cpp
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake .. -DDFM2_HEADER_ONLY=ON
+        cmake .. -DUSE_STATIC_LIB=OFF
         cmake --build .
         ./runUnitTests
         cd ../../    
@@ -99,13 +99,13 @@ jobs:
 
         cd examples_oldgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DDFM2_HEADER_ONLY=ON
+        cmake .. -DUSE_STATIC_LIB=OFF
         cmake --build .
         cd ../..
 
         cd examples_oldgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake .. -DDFM2_HEADER_ONLY=OFF
+        cmake .. -DUSE_STATIC_LIB=ON
         cmake --build .
         cd ../..
 
@@ -116,7 +116,7 @@ jobs:
 
         cd examples_oldgl_glfw_glad
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DDFM2_HEADER_ONLY=ON
+        cmake .. 
         cmake --build .
         cd ../..
 
@@ -127,13 +127,13 @@ jobs:
 
         cd examples_newgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake .. -DDFM2_HEADER_ONLY=ON
+        cmake .. -DUSE_STATIC_LIB=OFF
         cmake --build .
         cd ../..
 
         cd examples_newgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
-        cmake .. -DDFM2_HEADER_ONLY=OFF
+        cmake .. -DUSE_STATIC_LIB=ON
         cmake --build .
         cd ../..
 

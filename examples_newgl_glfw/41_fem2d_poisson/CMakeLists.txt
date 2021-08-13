@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
+option(USE_STATIC_LIB "compile delfem2 as a static library?" OFF)
 
 ####################################
 
@@ -21,8 +21,7 @@ get_filename_component(GLAD_INCLUDE_DIR
     ${PROJECT_SOURCE_DIR}/../../3rd_party/glad4/include ABSOLUTE)
 
 # dfm2
-if (DFM2_HEADER_ONLY)
-else ()
+IF (USE_STATIC_LIB)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   if (MSVC)
     set(DFM2_LIBRARY

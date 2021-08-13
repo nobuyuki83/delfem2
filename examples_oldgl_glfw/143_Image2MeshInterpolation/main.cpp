@@ -5,16 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/imgio.h"
 #include <cstdlib>
 #include <vector>
-//
 #define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/imgio.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
