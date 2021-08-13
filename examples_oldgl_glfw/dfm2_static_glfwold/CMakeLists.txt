@@ -25,7 +25,6 @@ get_filename_component(GLAD_INCLUDE_DIR
 # opengl
 find_package(OpenGL REQUIRED)
 
-
 add_definitions(-DDFM2_STATIC_LIBRARY=ON)
 set(DELFEM2_INCLUDE_DIR "../../include")
 

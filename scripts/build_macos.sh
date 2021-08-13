@@ -39,26 +39,26 @@ echo "################################"
 cd examples_oldgl_glfw
 mkdir buildXcodeHdronly 
 cd buildXcodeHdronly
-cmake .. -G Xcode -DDFM2_HEADER_ONLY=ON
+cmake .. -G Xcode -DUSE_STATIC_LIB=OFF
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildXcodeStatic 
 cd buildXcodeStatic
-cmake .. -G Xcode -DDFM2_HEADER_ONLY=OFF
+cmake .. -G Xcode -DUSE_STATIC_LIB=ON
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake .. -DDFM2_HEADER_ONLY=ON
+cmake .. -DUSE_STATIC_LIB=OFF
 cmake --build .
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildMakeStatic 
 cd buildMakeStatic
-cmake .. -DDFM2_HEADER_ONLY=OFF
+cmake .. -DUSE_STATIC_LIB=ON
 cmake --build .
 cd ../../
 
@@ -87,14 +87,14 @@ echo "################################"
 cd examples_newgl_glfw
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake .. -G Xcode -DUSE_HEADERONLY=ON
+cmake .. -G Xcode -DUSE_STATIC_LIB=OFF
 cmake --build .
 cd ../../
 
 cd examples_newgl_glfw
 mkdir buildXcodeStatic
 cd buildXcodeStatic
-cmake .. -G Xcode -DUSE_HEADERONLY=OFF
+cmake .. -G Xcode -DUSE_STATIC_LIB=ON
 cmake --build .
 cd ../../
 
@@ -260,26 +260,26 @@ echo "###############################"
 cd test_cpp
 mkdir buildXcodeStatic
 cd buildXcodeStatic
-cmake .. -G Xcode -DDFM2_HEADER_ONLY=OFF
+cmake .. -G Xcode -DUSE_STATIC_LIB=ON
 cd ../../
 
 cd test_cpp
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
-cmake .. -G Xcode -DDFM2_HEADER_ONLY=ON
+cmake .. -G Xcode -DUSE_STATIC_LIB=OFF
 cd ../../
 
 cd test_cpp
 mkdir buildMakeHdronly
 cd buildMakeHdronly
-cmake .. -DDFM2_HEADER_ONLY=ON
+cmake .. -DUSE_STATIC_LIB=OFF
 cmake --build .
 cd ../../
 
 cd test_cpp
 mkdir buildMakeStatic
 cd buildMakeStatic
-cmake .. -DDFM2_HEADER_ONLY=OFF
+cmake .. -DUSE_STATIC_LIB=ON
 cmake --build .
 ./runUnitTests
 cd ../../
@@ -289,9 +289,9 @@ echo "test eigen"
 echo "###############################"
 
 cd test_eigen
-mkdir buildMakeStatic
-cd buildMakeStatic
-cmake .. -DDFM2_HEADER_ONLY=ON -DCMAKE_BUILD_TYPE=Release
+mkdir buildMake
+cd buildMake
+cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release
 ./runUnitTests
 cd ../../

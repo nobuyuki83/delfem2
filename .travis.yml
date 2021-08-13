@@ -47,7 +47,7 @@ script: |
   echo "# build test"
   cd test_cpp
   mkdir buildMakeHdronly && cd buildMakeHdronly
-  cmake -DUSE_HEADERONLY=OFF ..
+  cmake -DUSE_STATIC_LIB=OFF ..
   make
   make test 
   ./runUnitTests
@@ -55,7 +55,7 @@ script: |
 
   cd test_cpp
   mkdir buildMakeStatic && cd buildMakeStatic
-  cmake -DUSE_HEADERONLY=ON ..
+  cmake -DUSE_STATIC_LIB=ON ..
   make
   make test 
   ./runUnitTests
@@ -73,13 +73,13 @@ script: |
 
   cd examples_oldgl_glfw
   mkdir buildMakeHdronly && cd buildMakeHdronly
-  cmake -DUSE_HEADERONLY=ON ..
+  cmake -DUSE_STATIC_LIB=OFF ..
   make
   cd ../..
 
   cd examples_oldgl_glfw
   mkdir buildMakeStatic && cd buildMakeStatic
-  cmake -DUSE_HEADERONLY=OFF ..
+  cmake -DUSE_STATIC_LIB=ON ..
   make
   cd ../..
 
@@ -96,13 +96,13 @@ script: |
   echo "# build C++ newGL glfw examples"
   cd examples_newgl_glfw
   mkdir buildMakeHdronly && cd buildMakeHdronly
-  cmake -DUSE_HEADERONLY=ON ..
+  cmake -DUSE_STATIC_LIB=OFF ..
   make
   cd ../..
 
   cd examples_newgl_glfw
   mkdir buildMakeStatic && cd buildMakeStatic
-  cmake -DUSE_HEADERONLY=OFF ..
+  cmake -DUSE_STATIC_LIB=ON ..
   make
   cd ../..
 
@@ -110,7 +110,7 @@ script: |
   echo "# build glfw_thread examples"
   cd examples_oldgl_glfw_thread
   mkdir buildMakeHdronly && cd buildMakeHdronly
-  cmake -DUSE_HEADERONLY=ON ..
+  cmake ..
   make
   cd ../../  
 
@@ -120,7 +120,7 @@ script: |
   git submodule update --init -- 3rd_party/tinygltf
   cd examples_oldgl_glfw_tinygltf
   mkdir buildMakeHdronly && cd buildMakeHdronly
-  cmake -DUSE_HEADERONLY=ON ..
+  cmake ..
   make
   cd ../../
 
@@ -129,7 +129,7 @@ script: |
   git submodule update --init -- 3rd_party/imgui
   cd examples_newgl_glfw_imgui
   mkdir buildMakeHdronly && cd buildMakeHdronly
-  cmake -DUSE_HEADERONLY=ON ..
+  cmake ..
   make
   cd ../../
 

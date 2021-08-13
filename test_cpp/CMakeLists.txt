@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(DFM2_STATIC_LIBRARY "compile delfem2 as a static library" OFF)
+option(USE_STATIC_LIB "compile delfem2 as a static library" OFF)
 
 ################################
 
@@ -15,7 +15,7 @@ endif()
 
 ################################
 
-if(DFM2_STATIC_LIBRARY)
+if(USE_STATIC_LIB)
   project(test_static)
 ELSE()
   project(test_hdronly)
@@ -42,8 +42,8 @@ include_directories(
 )
 
 # Add test cpp file
-IF(DFM2_STATIC_LIBRARY)
-  message("compile as STATIC libary: ${PROJECT_NAME} DFM2_HEADER_ONLY=${DFM2_HEADER_ONLY}")
+IF(USE_STATIC_LIB)
+  message("compile as STATIC libary: ${PROJECT_NAME} USE_STATIC_LIB=${USE_STATIC_LIB}")
   add_definitions(-DDFM2_STATIC_LIBRARY)
   set(DELFEM2_INC         "../include/delfem2")
   set(SRC_DFM2
@@ -113,7 +113,7 @@ IF(DFM2_STATIC_LIBRARY)
       ${DELFEM2_INC}/gridcube.h             ${DELFEM2_INC}/gridcube.cpp
       )
 ELSE()
-  message("compile delfem2 as HEADER-ONLY library: ${PROJECT_NAME} ${DFM2_HEADER_ONLY}")
+  message("compile delfem2 as HEADER-ONLY library: ${PROJECT_NAME} ${USE_STATIC_LIB}}")
 ENDIF()
 
 add_executable(${MY_BINARY_NAME}

@@ -1,17 +1,15 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
+option(USE_STATIC_LIB "compile delfem2 with static library?" OFF)
 
 #########################
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "/W4  -O2 \
-  /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4456 \
-  /wd4800  /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505")
+  set(CMAKE_CXX_FLAGS "/W4")
 else ()
-  set(CMAKE_CXX_FLAGS "-Wall  -g")
+  set(CMAKE_CXX_FLAGS "-Wall -g")
 endif ()
 
 #########################
@@ -25,8 +23,7 @@ SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 
 # dfm2
-IF (DFM2_HEADER_ONLY)
-else ()
+IF (USE_STATIC_LIB)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   if (MSVC)
     set(DFM2_LIBRARY

@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
+option(USE_STATIC_LIB "compile delfem2 with static library?" OFF)
 
-IF(NOT DFM2_HEADER_ONLY)
+IF(DFM2_STATIC_LIBRARY)
 	message("$$$$$$$$$$$$$$$$$$$$$")
-	message("generate project as STATIC library: DFM2_HEADER_ONLY=${USE_HEADERONLY}")
+	message("generate project as STATIC library: DFM2_STATIC_LIBRARY=${USE_STATIC_LIB}")
 	project(examples_oldgl_glfw_static)
     add_subdirectory(dfm2_static_glfwold)
 ELSE()
 	message("$$$$$$$$$$$$$$$$$$$$$")
-	message("generate project as HEADER-ONLY library:  DFM2_HEADER_ONLY=${USE_HEADERONLY}")
+	message("generate project as HEADER-ONLY library:  DFM2_STATIC_LIBRARY=${USE_STATIC_LIB}")
 	project(examples_oldgl_glfw_hdronly)
 ENDIF()
 

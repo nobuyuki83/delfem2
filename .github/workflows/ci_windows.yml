@@ -48,7 +48,7 @@ jobs:
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
         cmake .. -A x64 `
-          -DDFM2_HEADER_ONLY=ON
+          -DUSE_STATIC_LIB=OFF
         cmake --build . --config Release
         ./Release/runUnitTests.exe 
         cd ../../
@@ -60,7 +60,7 @@ jobs:
         mkdir buildVS64Static
         cd buildVS64Static
         cmake .. -A x64 `
-          -DDFM2_HEADER_ONLY=OFF
+          -DDFM2_USE_STATIC_LIB=ON
         cd ../../
 
     - name: build glfw
@@ -108,8 +108,8 @@ jobs:
         git submodule update --init -- 3rd_party/tinygltf
 
         cd examples_oldgl_glfw_tinygltf
-        mkdir buildVS64Static
-        cd buildVS64Static
+        mkdir buildVS64
+        cd buildVS64
         cmake .. -A x64
         cmake --build .
         cd ../../
@@ -120,8 +120,8 @@ jobs:
         echo "## build demo glfw,thread"
 
         cd examples_oldgl_glfw_thread
-        mkdir buildVS64Static
-        cd buildVS64Static
+        mkdir buildVS64
+        cd buildVS64
         cmake .. -A x64
         cmake --build .
         cd ../../   
@@ -154,8 +154,8 @@ jobs:
         git submodule update --init -- 3rd_party/cnpy
 
         cd examples_oldgl_glfw_cnpy
-        mkdir buildVS64Hdronly
-        cd buildVS64Hdronly
+        mkdir buildVS64
+        cd buildVS64
         cmake .. -A x64 `
           -DZLIB_LIBRARY="$zlib_library" `
           -DZLIB_INCLUDE_DIR="$zlib_include_dir"
@@ -222,8 +222,8 @@ jobs:
         echo "openexr_root: $openexr_root"
 
         cd examples_alembic
-        mkdir buildVS64Static
-        cd buildVS64Static
+        mkdir buildVS64
+        cd buildVS64
         cmake -A x64 .. -DILMBASE_ROOT="$openexr_root"
         cmake --build . --config Release
         cd ../..
@@ -247,10 +247,11 @@ jobs:
         echo "## build test_eigen hdronly and run"
 
         cd test_eigen
-        mkdir buildVS64Hdronly
-        cd buildVS64Hdronly
+        mkdir buildVS64
+        cd buildVS64
         cmake .. -A x64 `
-          -DDFM2_HEADER_ONLY=ON -DCMAKE_BUILD_TYPE=Release
+          -DUSE_STATIC_LIB=OFF `
+          -DCMAKE_BUILD_TYPE=Release
         cmake --build . --config Release
         ./Release/runUnitTests.exe 
         cd ../../

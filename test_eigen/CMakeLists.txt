@@ -9,9 +9,7 @@ if(MSVC)
   # GTest is static compiled by default
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")  
-  set(CMAKE_CXX_FLAGS "/W4 -O2 \
-    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
-    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456")
+  set(CMAKE_CXX_FLAGS "/W4")
 endif()
 
 ################################
@@ -43,8 +41,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/FindEigen3.cmake)
 message(STATUS "eigen3 locatoin: ${EIGEN3_INCLUDE_DIR}")
 
 # delfem2
-add_definitions(-DDFM2_HEADER_ONLY=ON)
-message("compile delfem2 as HEADER-ONLY library: ${PROJECT_NAME} ${DFM2_HEADER_ONLY}")
 set(DELFEM2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/../include")
 
 #############################
