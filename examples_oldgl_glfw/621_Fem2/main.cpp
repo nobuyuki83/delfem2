@@ -107,7 +107,7 @@ void MakeCurveSpline(
     std::vector<double> &aVecCurve,
     unsigned int ndiv = 5) {
   aVecCurve.resize(0);
-  const unsigned int nCV = aCV.size() / 2;
+  const size_t nCV = aCV.size() / 2;
   for (unsigned int icv = 0; icv < nCV; icv++) {
     const unsigned int icv0 = (icv + 0) % nCV;
     const unsigned int icv1 = (icv + 1) % nCV;
@@ -206,7 +206,7 @@ void InitializeProblem_Scalar(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const size_t np = aXY1.size() / 2;
   aBCFlag.assign(np, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
     const double px = aXY1[ip * 2 + 0];
@@ -235,8 +235,8 @@ void SolveProblem_Poisson(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = aXY1.size() / 2;
-  const unsigned int nDoF = np;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np;
   // -----------------------
   const double alpha = 1.0;
   const double source = 1.0;
@@ -282,8 +282,8 @@ void SolveProblem_Diffusion(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = aXY1.size() / 2;
-  const unsigned int nDoF = np;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np;
   // ------------------
   const double alpha = 1.0;
   const double rho = 1.0;
@@ -295,8 +295,8 @@ void SolveProblem_Diffusion(
       mat_A, vec_b.data(),
       alpha, rho, source,
       dt_timestep, gamma_newmark,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -349,7 +349,7 @@ void ProblemScalar(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const size_t np = aXY1.size() / 2;
   dfm2::CMatrixSparse<double> mat_A;
   dfm2::CPreconditionerILU<double> ilu_A;
   std::vector<int> aBCFlag;
@@ -443,8 +443,10 @@ void SolveProblem_LinearSolid_Static(
   dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
       mat_A, vec_b.data(),
       myu, lambda, rho, g_x, g_y,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(), 
+	  static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(),
+	  static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -543,8 +545,10 @@ void ProblemSolid(
   for (unsigned int iframe = 0; iframe < 50; ++iframe) {
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
-        aXY1.data(), aXY1.size() / 2,
-        aTri1.data(), aTri1.size() / 3,
+        aXY1.data(), 
+		static_cast<unsigned int>(aXY1.size() / 2),
+        aTri1.data(), 
+		static_cast<unsigned int>(aTri1.size() / 3),
         aVal.data(), 2);
     viewer.SwapBuffers();
     glfwPollEvents();
@@ -641,8 +645,8 @@ void InitializeProblem_Fluid2(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 3;
   // set boundary condition
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -684,8 +688,8 @@ void SolveProblem_Stokes_Static(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = aXY1.size() / 2;
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 3;
   // ---------------------
   double myu = 1.0;
   double g_x = 0.0;
@@ -696,8 +700,10 @@ void SolveProblem_Stokes_Static(
   dfm2::MergeLinSys_StokesStatic2D(
       mat_A, vec_b.data(),
       myu, g_x, g_y,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(), 
+	  static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), 
+	  static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -731,8 +737,8 @@ void SolveProblem_Stokes_Dynamic(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = aXY1.size() / 2;
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 3;
   // --------------------
   double myu = 1.0;
   double rho = 10;
@@ -794,8 +800,8 @@ void SolveProblem_NavierStokes_Dynamic(
       mat_A, vec_b.data(),
       myu, rho, g_x, g_y,
       dt_timestep, gamma_newmark,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -828,8 +834,10 @@ void DrawVelocityField(
       aTri1.data(), aTri1.size() / 3,
       aVal.data() + 2, 3, colorMap);
   ::glColor3d(0, 0, 0);
-  delfem2::opengl::DrawPoints2D_Vectors(aXY1.data(), aXY1.size() / 2,
-                                        aVal.data(), 3, 0, 0.1);
+  delfem2::opengl::DrawPoints2D_Vectors(
+	  aXY1.data(), 
+	  static_cast<unsigned int>(aXY1.size() / 2),
+	  aVal.data(), 3, 0, 0.1);
   ::glPointSize(2);
   ::glColor3d(0, 0, 0);
   delfem2::opengl::DrawPoints2d_Points(aXY1);
@@ -842,7 +850,7 @@ void ProblemFluidCavity(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const size_t np = aXY1.size() / 2;
   dfm2::CMatrixSparse<double> mat_A;
   dfm2::CPreconditionerILU<double> ilu_A;
   std::vector<int> aBCFlag;
@@ -904,7 +912,7 @@ void ProblemFluidTunnel(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const size_t np = aXY1.size() / 2;
   dfm2::CMatrixSparse<double> mat_A;
   dfm2::CPreconditionerILU<double> ilu_A;
   std::vector<int> aBCFlag;

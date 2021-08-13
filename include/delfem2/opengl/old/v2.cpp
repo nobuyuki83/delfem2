@@ -45,7 +45,7 @@ void delfem2::opengl::myGlVertex(const CVec2d &v) {
 void delfem2::opengl::drawPolyLine(
     const std::vector<CVec2d> &aP) {
   ::glBegin(GL_LINES);
-  for (size_t ip = 0; ip < aP.size() - 1; ip++) {
+  for (unsigned int ip = 0; ip < aP.size() - 1; ip++) {
     unsigned int jp = ip + 1;
     opengl::myGlVertex(ip, aP);
     opengl::myGlVertex(jp, aP);
@@ -53,7 +53,7 @@ void delfem2::opengl::drawPolyLine(
   ::glEnd();
   //
   ::glBegin(GL_POINTS);
-  for (size_t ip = 0; ip < aP.size(); ip++) {
+  for (unsigned int ip = 0; ip < aP.size(); ip++) {
     opengl::myGlVertex(ip, aP);
   }
   ::glEnd();

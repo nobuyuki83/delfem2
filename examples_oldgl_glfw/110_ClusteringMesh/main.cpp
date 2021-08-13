@@ -5,24 +5,28 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/dijkstra.h"
-#include "delfem2/points.h"
-#include "delfem2/mshio.h"
-#include "delfem2/mshuni.h"
-#include "delfem2/color.h"
 #include <vector>
 #include <string>
 #include <cstdlib>
 #include <random>
 #include <set>
-//
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/dijkstra.h"
+#include "delfem2/points.h"
+#include "delfem2/mshio.h"
+#include "delfem2/mshuni.h"
+#include "delfem2/color.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -71,7 +75,9 @@ int main(int argc,char* argv[])
       aColor.emplace_back(2,c);
     }
     std::vector<unsigned int> aFlgElm;
-    dfm2::MeshClustering(aFlgElm,ncluster,aTriSuTri,aTri.size()/3);
+    dfm2::MeshClustering(
+		aFlgElm,ncluster,aTriSuTri,
+		static_cast<unsigned int>(aTri.size()/3));
     //
     for(unsigned int iframe=0;iframe<30;++iframe) {
       viewer.DrawBegin_oldGL();

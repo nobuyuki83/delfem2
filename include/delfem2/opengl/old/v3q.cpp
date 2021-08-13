@@ -9,7 +9,7 @@
 
 #if defined(_WIN32) // windows
   #define NOMINMAX   // to remove min,max macro
-  #include <windows.h>
+  #include <windows.h>  // this should come before opengl headers
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // mac

@@ -41,14 +41,22 @@ bool is_animation = false;
 void StepTime() {
   dfm2::PBD_Pre3D(aXYZt,
                   dt, gravity, aXYZ, aUVW, aBCFlag);
-  dfm2::PBD_TriStrain(aXYZt.data(),
-                      aXYZt.size() / 3, aETri, aVec2);
-  dfm2::PBD_Bend(aXYZt.data(),
-                 aXYZt.size() / 3, aETri, aVec2, 1.0);
-  dfm2::PBD_Seam(aXYZt.data(),
-                 aXYZt.size() / 3, aLine.data(), aLine.size() / 2);
-  dfm2::PBD_Post(aXYZ, aUVW,
-                 dt, aXYZt, aBCFlag);
+  dfm2::PBD_TriStrain(
+	  aXYZt.data(),
+	  static_cast<unsigned int>(aXYZt.size() / 3), 
+	  aETri, aVec2);
+  dfm2::PBD_Bend(
+	  aXYZt.data(),
+	  static_cast<unsigned int>(aXYZt.size() / 3), 
+	  aETri, aVec2, 1.0);
+  dfm2::PBD_Seam(
+	  aXYZt.data(),                
+	  static_cast<unsigned int>(aXYZt.size() / 3), 
+	  aLine.data(), 
+	  static_cast<unsigned int>(aLine.size() / 2));
+  dfm2::PBD_Post(
+	  aXYZ, aUVW,
+	  dt, aXYZt, aBCFlag);
 
 }
 
@@ -91,9 +99,9 @@ int main(int argc, char *argv[]) {
             aaXY, 0.05, 0.05);
   }
   // -------------
-  const int np = aPo2D.size();
+  const size_t np = aPo2D.size();
   aXYZ.resize(np * 3);
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     aXYZ[ip * 3 + 0] = aVec2[ip].x;
     aXYZ[ip * 3 + 1] = aVec2[ip].y;
     aXYZ[ip * 3 + 2] = 0.0;

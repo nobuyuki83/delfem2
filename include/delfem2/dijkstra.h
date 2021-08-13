@@ -65,7 +65,7 @@ void DijkstraElem_MeshElemTopo(
   aOrder.assign(nelem,UINT_MAX);
   aDist.assign(nelem, UINT_MAX);
   aDist[ielm_ker] = 0;
-  const unsigned int nedge = aElSuEl.size() / nelem;
+  const size_t nedge = aElSuEl.size() / nelem;
   std::priority_queue<dijkstra::CNode<unsigned int>> que;
   que.push(dijkstra::CNode<unsigned int>(ielm_ker, 0));
   unsigned int icnt = 0;
@@ -124,8 +124,8 @@ void DijkstraElem_MeshElemGeo3(
   aOrder.assign(nelem,UINT_MAX);
   aDist.assign(nelem, -1.0);
   aDist[ielm_ker] = 0.0;
-  const unsigned int nedge = aElSuEl.size() / nelem;
-  const unsigned int nnoel = aTri.size() / nelem;
+  const size_t nedge = aElSuEl.size() / nelem;
+  const size_t nnoel = aTri.size() / nelem;
   std::priority_queue<dijkstra::CNode<double>> que;
   que.push(dijkstra::CNode<double>(ielm_ker, 0.));
   unsigned int icnt = 0;
@@ -206,8 +206,8 @@ void Dijkstra_FillFromBoundary(
     const std::vector<unsigned int> &aFlgTri,
     const std::vector<unsigned int> &aTriSuTri)
 {
-  const unsigned int ntri = aFlgTri.size();
-  const unsigned int nedge = aTriSuTri.size() / ntri;
+  const size_t ntri = aFlgTri.size();
+  const size_t nedge = aTriSuTri.size() / ntri;
   aDist.assign(ntri, UINT_MAX);
   std::priority_queue<dijkstra::CNode<unsigned int>> que;
   for (unsigned int it = 0; it < ntri; ++it)
@@ -270,7 +270,7 @@ void DijkstraPoint_MeshTri3D(
     const std::vector<unsigned int>& psup_ind,
     const std::vector<unsigned int>& psup)
 {
-  const unsigned int np = aXYZ.size()/3;
+  const size_t np = aXYZ.size()/3;
   aOrder.assign(np,UINT_MAX);
   aDist.assign(np,-1.);
   std::priority_queue<dijkstra::CNode<double>> que;

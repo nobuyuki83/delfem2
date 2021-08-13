@@ -586,7 +586,7 @@ void delfem2::CADF3::CNode::MakeChildTree
   ichilds_[0] = -1;	// no-child
   return;
 MAKE_CHILDS:
-  const unsigned int nchild0 = aNo.size();
+  const unsigned int nchild0 = static_cast<unsigned int>(aNo.size());
   aNo.resize(aNo.size()+8);
   {	// left-bottom
     ichilds_[0] = nchild0;
@@ -801,7 +801,7 @@ void delfem2::CADF3::CNode::GenerateIsoSurface
   if (adf::edgeTable[cubeindex] & 2048) adf::VertexInterp(vertlist[11], cent_,hw_, 3,7, dists_[3],dists_[7]);
   
   for( unsigned int i=0;adf::triTable[cubeindex][i]!=-1;i+=3 ){
-    const unsigned int ind0 = aTri.size();
+    const unsigned int ind0 = static_cast<unsigned int>(aTri.size());
     aTri.resize(ind0+9);
     aTri[ind0+0] = vertlist[adf::triTable[cubeindex][i  ]][0];
     aTri[ind0+1] = vertlist[adf::triTable[cubeindex][i  ]][1];

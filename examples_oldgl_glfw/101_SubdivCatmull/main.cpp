@@ -9,8 +9,14 @@
  * @brief simple demo of subdivision surface
  */
 
-
+#include <cstdlib>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
 #define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -19,8 +25,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshsubdiv.h"
 #include "delfem2/mshprimitive.h"
-#include <GLFW/glfw3.h>
-#include <cstdlib>
+
 
 namespace dfm2 = delfem2;
 

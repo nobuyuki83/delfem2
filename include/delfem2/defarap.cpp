@@ -27,8 +27,8 @@ DFM2_INLINE void dWddW_ArapEnergy(
     const std::vector<double>& aXYZ1,
     const std::vector<double>& aQuat1)
 {
-  const unsigned int nIP = aIP.size();
-  const unsigned int nNg = nIP-1; // number of neighbor
+  const size_t nIP = aIP.size();
+  const size_t nNg = nIP-1; // number of neighbor
   unsigned int ip = aIP[nNg];
   const CVec3d Pi(aXYZ0.data()+ip*3);
   const CMat3d LMi(Minv);
@@ -81,14 +81,14 @@ delfem2::CDef_ArapEdgeLinearDisponly::CDef_ArapEdgeLinearDisponly (
   weight_bc(weight_bc0),
   aBCFlag(std::move(aBCFlag0))
 {
-  const unsigned int np = aXYZ0.size()/3;
+  const size_t np = aXYZ0.size()/3;
   JArray_PSuP_MeshElem(
       psup_ind, psup,
       aTri.data(), aTri.size()/3, 3,
       aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
   // ------
-  const unsigned int ne = psup.size();
+  const size_t ne = psup.size();
   // -----
   aMatEdge.resize(ne*9*2);
   assert(psup_ind.size()==np+1);
@@ -107,7 +107,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::JacobiTVecTmp(
     double*y ,
     double alpha, double beta) const
 {
-  const unsigned int np = aBCFlag.size()/3;
+  const size_t np = aBCFlag.size()/3;
   for(unsigned int i=0;i<np*3;++i){ y[i] *= beta; }
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
@@ -129,8 +129,8 @@ void delfem2::CDef_ArapEdgeLinearDisponly::MakeLinearSystem(
     const double* aXYZ0,
     const double* aXYZ1) const
 {
-  const unsigned int np = aBCFlag.size()/3;
-  const unsigned int ne = psup.size();
+  const size_t np = aBCFlag.size()/3;
+  const size_t ne = psup.size();
   vec_tmp.assign(ne*3,0);
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
@@ -159,7 +159,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::MatVec(
     const double* vec,
     double beta) const
 {
-  const unsigned int np = aBCFlag.size()/3;
+  const size_t np = aBCFlag.size()/3;
   std::fill(vec_tmp.begin(),vec_tmp.end(), 0.0);
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
@@ -187,7 +187,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::Deform(
     std::vector<double>& aXYZ1,
     const std::vector<double>& aXYZ0)
 {
-  const unsigned int np = aBCFlag.size()/3;
+  const size_t np = aBCFlag.size()/3;
   std::vector<double> aRhs(np*3,0.0);
   this->MakeLinearSystem(aRhs.data(),
                         aXYZ0.data(), aXYZ1.data());
@@ -215,13 +215,13 @@ void delfem2::CDef_ArapEdge::Init(
   this->weight_bc = weight_bc0;
   this->is_preconditioner = is_preconditioner0;
   this->aBCFlag = aBCFlag0;
-  const unsigned int np = aXYZ0.size()/3;
+  const size_t np = aXYZ0.size()/3;
   JArray_PSuP_MeshElem(psup_ind, psup,
                        aTri.data(), aTri.size()/3, 3,
                        (int)aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
   // ---------
-  const unsigned int ne = psup.size();
+  const size_t ne = psup.size();
   // -----
   aMatEdge.resize(ne*27);
   assert(psup_ind.size()==np+1);
@@ -241,7 +241,8 @@ void delfem2::CDef_ArapEdge::JacobiTVecTmp(
     double alpha,
     double beta) const
 {
-  const unsigned int np = psup_ind.size()-1;
+  assert(psup_ind.size() > 0);
+  const size_t np = psup_ind.size()-1;
   for(unsigned int i=0;i<np*6;++i){ y[i] *= beta; }
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
@@ -268,7 +269,7 @@ void delfem2::CDef_ArapEdge::MatVec(
     const double* vec,
     double beta) const
 {
-  const unsigned int np = psup_ind.size()-1;
+  const size_t np = psup_ind.size()-1;
   std::fill(vec_tmp.begin(),vec_tmp.end(), 0.0);
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
@@ -303,8 +304,8 @@ void delfem2::CDef_ArapEdge::MakeLinearSystem(
     const double* aXYZ1,
     const double* aQuat)
 {
-  const unsigned int np = psup_ind.size()-1;
-  const unsigned int ne = psup.size();
+  const size_t np = psup_ind.size()-1;
+  const size_t ne = psup.size();
   vec_tmp.assign(ne*3,0);
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
@@ -335,7 +336,8 @@ void delfem2::CDef_ArapEdge::MakeLinearSystem(
 
 void delfem2::CDef_ArapEdge::MakePreconditionerJacobi()
 {
-  const unsigned int np = psup_ind.size()-1;
+  assert(psup_ind.size()>0);
+  const size_t np = psup_ind.size()-1;
   aDiaInv.assign(np*2*9, 0.0);
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup) {
@@ -367,7 +369,8 @@ void delfem2::CDef_ArapEdge::MakePreconditionerJacobi()
 
 void delfem2::CDef_ArapEdge::SolvePrecond(double* v) const
 {
-  const unsigned int np = psup_ind.size()-1;
+  assert(psup_ind.size() > 0);
+  const size_t np = psup_ind.size()-1;
   for(unsigned int ip=0;ip<np*2;++ip){
     double tmp[3];
     MatVec3(tmp, aDiaInv.data()+ip*9, v+ip*3);
@@ -383,7 +386,7 @@ void delfem2::CDef_ArapEdge::Deform(
     std::vector<double>& aQuat,
     const std::vector<double>& aXYZ0)
 {
-  const unsigned int np = psup_ind.size()-1;
+  const size_t np = psup_ind.size()-1;
   std::vector<double> aRhs(np*6,0.0);
   this->MakeLinearSystem(
       aRhs.data(),
@@ -425,7 +428,7 @@ void delfem2::CDef_Arap::Init(
     bool is_preconditioner_)
 {
   this->is_preconditioner = is_preconditioner_;
-  const unsigned int np = aXYZ0.size()/3;
+  const size_t np = aXYZ0.size()/3;
   JArray_PSuP_MeshElem(
       psup_ind, psup,
       aTri.data(), aTri.size()/3, 3,
@@ -437,7 +440,8 @@ void delfem2::CDef_Arap::Init(
         psup_ind1, psup1,
         psup_ind.data(), psup_ind.size(), psup.data());
     JArray_Sort(psup_ind1, psup1);
-    Mat.Initialize(np, 3, true);
+    Mat.Initialize(
+		static_cast<unsigned int>(np), 3, true);
     assert( psup_ind1.size() == np+1 );
     Mat.SetPattern(psup_ind1.data(), psup_ind1.size(),
                    psup1.data(), psup1.size());
@@ -469,7 +473,7 @@ void delfem2::CDef_Arap::Deform(
     const std::vector<double>& aXYZ0,
     const std::vector<int>& aBCFlag)
 {
-  const unsigned int np = aXYZ0.size()/3;
+  const size_t np = aXYZ0.size()/3;
   Mat.setZero();
   this->aRes1.assign(np*3, 0.0);
   std::vector<unsigned int> tmp_buffer;

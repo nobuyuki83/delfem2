@@ -5,21 +5,25 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <vector>
+#include <string>
+#include <cstdlib>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshsubdiv.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mshprimitive.h"
-#include <vector>
-#include <string>
-#include <cstdlib>
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -70,9 +74,9 @@ void InitializeProblem() {
         aaQuad[isubdiv+1], psup_ind, psup, aEdgeFace0,
         aaQuad[isubdiv].data(), aaQuad[isubdiv].size()/4,
         aXYZ_Quad.size()/3);
-    const unsigned int nv0 = aXYZ_Quad.size()/3;
-    const unsigned int ne0 = aEdgeFace0.size()/4;
-    const unsigned int nq0 = aaQuad[isubdiv].size()/4;
+    const size_t nv0 = aXYZ_Quad.size()/3;
+    const size_t ne0 = aEdgeFace0.size()/4;
+    const size_t nq0 = aaQuad[isubdiv].size()/4;
     aXYZ_Quad.resize((nv0+ne0+nq0)*3);
     aNorm_Quad.resize((nv0+ne0+nq0)*3);
     { // enter dangerous zone

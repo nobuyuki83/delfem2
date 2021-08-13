@@ -5,17 +5,23 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <vector>
+#include <cstdlib>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
 #define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/geoconvhull3.h"
 #include "delfem2/vec3.h"
-#include <GLFW/glfw3.h>
-#include <vector>
-#include <cstdlib>
+
 
 #if defined(_MSC_VER)
-#pragma warning( disable : 4100 )
+#  pragma warning( disable : 4100 )
 #endif
 
 namespace dfm2 = delfem2;

@@ -21,7 +21,7 @@ echo "path_gtest_root: %path_gtest_root%"
 cd test_cpp
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake .. -A x64 -DDFM2_HEADER_ONLY=ON  -DGTEST_ROOT="%path_gtest_root%"
+cmake .. -A x64 -DUSE_STATIC_LIB=OFF  -DGTEST_ROOT="%path_gtest_root%"
 cmake --build . --config Release
 "Release/runUnitTests.exe"
 cd ../../
@@ -29,7 +29,7 @@ cd ../../
 cd test_cpp
 mkdir buildVS64Static
 cd buildVS64Static
-cmake .. -A x64 -DDFM2_HEADER_ONLY=OFF -DGTEST_ROOT="%path_gtest_root%"
+cmake .. -A x64 -DUSE_STATIC_LIB=ON -DGTEST_ROOT="%path_gtest_root%"
 cmake --build . --config Release
 cd ../../
 
@@ -52,14 +52,14 @@ echo "path_glfw_root: %path_glfw_root%"
 cd examples_oldgl_glfw
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake .. -A x64 -DUSE_HEADERONLY=ON
+cmake .. -A x64 -DUSE_STATIC_LIB=OFF
 cmake --build . --config Release
 cd ../../
 
 cd examples_oldgl_glfw
 mkdir buildVS64Static
 cd buildVS64Static
-cmake .. -A x64 -DUSE_HEADERONLY=OFF
+cmake .. -A x64 -DUSE_STATIC_LIB=ON
 cmake --build . --config Release
 cd ../../
 
@@ -72,14 +72,14 @@ echo "path_glfw_root: %path_glfw_root%"
 cd examples_newgl_glfw
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake .. -A x64 -DUSE_HEADERONLY=ON
+cmake .. -A x64 -DUSE_STATIC_LIB=OFF
 cmake --build . --config Release
 cd ../../
 
 cd examples_newgl_glfw
 mkdir buildVS64Static
 cd buildVS64Static
-cmake .. -A x64 -DUSE_HEADERONLY=OFF
+cmake .. -A x64 -DUSE_STATIC_LIB=ON
 cmake --build . --config Release
 cd ../../
 
@@ -106,7 +106,6 @@ cd examples_oldgl_glfw_cnpy
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
 cmake .. -A x64 ^
-  -DUSE_HEADERONLY=ON ^
   -DZLIB_LIBRARY="%path_zlib_lib%" ^
   -DZLIB_INCLUDE_DIR="%path_zlib_inc%" ^
   -DGLFW_ROOT=%path_glfw_root%
