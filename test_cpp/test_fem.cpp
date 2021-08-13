@@ -392,9 +392,9 @@ TEST(objfunc_v23, WdWddW_DotFrame) {
                                P, S, off);
     // -----------------------
     const dfm2::CVec3d dP[3] = {
-        dfm2::CVec3d::Random(dist_01, randomEng) * eps,
-        dfm2::CVec3d::Random(dist_01, randomEng) * eps,
-        dfm2::CVec3d::Random(dist_01, randomEng) * eps};
+        dfm2::CVec3d::Random(dist_01, randomEng).normalized() * eps,
+        dfm2::CVec3d::Random(dist_01, randomEng).normalized() * eps,
+        dfm2::CVec3d::Random(dist_01, randomEng).normalized() * eps};
     const double dT[2] = {
         dist_m1p1(randomEng) * eps,
         dist_m1p1(randomEng) * eps};
@@ -1157,31 +1157,39 @@ TEST(fem, WdWddW_Rod3BendStraight) {
   std::random_device rd;
   std::mt19937 reng(rd());
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
-  dfm2::CVec3d vec_pos0[3] = {
-      dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng)),
-      dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng)),
-      dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng))};
-  dfm2::CVec3d dw_dp0[3];
-  dfm2::CMat3d ddw_ddp0[3][3];
-  double w0 = dfm2::WdWddW_Rod3BendStraight(dw_dp0, ddw_ddp0, vec_pos0);
-  const double eps = 1.0e-5;
-  for (int ino = 0; ino < 3; ++ino) {
-    for (int idim = 0; idim < 3; ++idim) {
-      dfm2::CVec3d vec_pos1[3] = {vec_pos0[0], vec_pos0[1], vec_pos0[2]};
-      vec_pos1[ino](idim) += eps;
-      dfm2::CVec3d dw_dp1[3];
-      dfm2::CMat3d ddw_ddp1[3][3];
-      double w1 = dfm2::WdWddW_Rod3BendStraight(dw_dp1, ddw_ddp1, vec_pos1);
+  const double eps = 1.0e-6;
+  for (int nitr = 0; nitr < 100; ++nitr) {
+    dfm2::CVec3d vec_pos0[3] = {
+        dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng)),
+        dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng)),
+        dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng))};
+    if ((vec_pos0[1] - vec_pos0[0]).norm() < 0.1) { continue; }
+    if ((vec_pos0[2] - vec_pos0[1]).norm() < 0.1) { continue; }
+    if ((vec_pos0[1] - vec_pos0[0]).normalized().dot(
+        (vec_pos0[2] - vec_pos0[1]).normalized()) < -0.5) {
+      continue;
+    }
+    dfm2::CVec3d dw_dp0[3];
+    dfm2::CMat3d ddw_ddp0[3][3];
+    double w0 = dfm2::WdWddW_Rod3BendStraight(dw_dp0, ddw_ddp0, vec_pos0);
+    for (int ino = 0; ino < 3; ++ino) {
+      for (int idim = 0; idim < 3; ++idim) {
+        dfm2::CVec3d vec_pos1[3] = {vec_pos0[0], vec_pos0[1], vec_pos0[2]};
+        vec_pos1[ino](idim) += eps;
+        dfm2::CVec3d dw_dp1[3];
+        dfm2::CMat3d ddw_ddp1[3][3];
+        double w1 = dfm2::WdWddW_Rod3BendStraight(dw_dp1, ddw_ddp1, vec_pos1);
 //      std::cout << ino << " " << idim << " ## " << (w1 - w0) / eps << " " << dw_dp0[ino](idim) << std::endl;
-      double f0 = (w1 - w0) / eps;
-      double f1 = dw_dp0[ino](idim);
-      EXPECT_NEAR(f0, f1, 1.0e-3*(1.+fabs(f1)));
-      for (int jno = 0; jno < 3; ++jno) {
-        for (int jdim = 0; jdim < 3; ++jdim) {
-          double d0 = (dw_dp1[jno](jdim) - dw_dp0[jno](jdim)) / eps;
-          double d1 = ddw_ddp0[ino][jno].Get(idim, jdim);
-          EXPECT_NEAR(d0, d1, 1.5e-3*(1.+fabs(d1)));
+        double f0 = (w1 - w0) / eps;
+        double f1 = dw_dp0[ino](idim);
+        EXPECT_NEAR(f0, f1, 1.0e-3 * (1. + fabs(f1)));
+        for (int jno = 0; jno < 3; ++jno) {
+          for (int jdim = 0; jdim < 3; ++jdim) {
+            double d0 = (dw_dp1[jno](jdim) - dw_dp0[jno](jdim)) / eps;
+            double d1 = ddw_ddp0[ino][jno].Get(idim, jdim);
+            EXPECT_NEAR(d0, d1, 2.e-3 * (1. + fabs(d1)));
 //          std::cout << "   " << jno << " " << jdim << " ## " << d0 << " " << d1 << std::endl;
+          }
         }
       }
     }
