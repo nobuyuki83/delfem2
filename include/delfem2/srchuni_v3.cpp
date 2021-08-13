@@ -141,10 +141,10 @@ template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Tri(
 
 
 template<typename T>
-delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri
-    (const std::vector<double> &aXYZ,
-     const std::vector<unsigned int> &aTri,
-     const std::vector<double> &aNorm) const {
+delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
+	const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &aNorm) const {
   assert(itri < aTri.size() / 3);
   const int i0 = aTri[itri * 3 + 0];
   const int i1 = aTri[itri * 3 + 1];

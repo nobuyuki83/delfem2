@@ -42,7 +42,7 @@ public:
       std::vector<unsigned int> &psup_) :
       aXYZ(aXYZ_), aNorm(aNorm_), aTri(aTri_), aTex(aTex_),
       psup_ind(psup_ind_), psup(psup_) {
-    const unsigned int np = aXYZ.size() / 3;
+    const size_t np = aXYZ.size() / 3;
     aAxisX.resize(np, CVec3d(0, 0, 0));
     aTex.resize(np * 2);
     aW.assign(np, 0.0);
@@ -109,7 +109,7 @@ public:
       const std::vector<unsigned int>& aTriSuTri_) :
       aTex(aTex_), aXYZ(aXYZ_), aTri(aTri_), aTriSuTri(aTriSuTri_)
   {
-    const unsigned int ntri = aTri.size() / 3;
+    const size_t ntri = aTri.size() / 3;
     assert(it_ker<ntri);
     aAxisX.resize(ntri, CVec3d(0, 0, 0));
     aTex.resize(ntri * 2);

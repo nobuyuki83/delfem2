@@ -5,8 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
 #include <cmath>
-
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -41,7 +44,7 @@ void SetPositionAtFixedBoundary(
     dfm2::Translate_Mat4Affine(A,
                                trans1);
   }
-  const unsigned int np = aRhs.size() / 3;
+  const size_t np = aRhs.size() / 3;
   for (unsigned int ip = 0; ip < np; ++ip) {
     if (aBCFlag[ip * 3 + 0] == 0) { continue; }
     if (aBCFlag[ip * 3 + 0] == 1) {
@@ -99,7 +102,7 @@ int main(int argc, char *argv[]) {
         aXYZ0, aTri,
         0.2, 1.6,
         32, 32);
-    const unsigned int np = aXYZ0.size() / 3;
+    const size_t np = aXYZ0.size() / 3;
     aBCFlag.assign(np * 3, 0);
     for (unsigned int ip = 0; ip < np; ++ip) {
       double y0 = aXYZ0[ip * 3 + 1];

@@ -10,11 +10,17 @@
  * @details this demo is for showing CViewer_GLFW functionalities
  */
 
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
+#include <cstdlib>
 #define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include <cstdlib>
-#include <GLFW/glfw3.h>
+
 
 int main()
 {

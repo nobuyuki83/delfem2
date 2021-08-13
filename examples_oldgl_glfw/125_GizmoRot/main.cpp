@@ -5,18 +5,22 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/points.h"
 #include "delfem2/mat4.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/gizmo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -31,11 +35,11 @@ int main(int argc,char* argv[])
           std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
           aXYZ,aTri);
       delfem2::Normalize_Points3(aXYZ);
-      gizmo_rot.size = 0.7;
+      gizmo_rot.size = 0.7f;
     }
     //
     void mouse_press(const float src[3], const float dir[3]) override{
-      gizmo_rot.Pick(true, src, dir, 0.1);
+      gizmo_rot.Pick(true, src, dir, 0.1f);
     }
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       gizmo_rot.Drag(src0, src1, dir);

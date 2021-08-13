@@ -126,7 +126,7 @@ void MergeLinSys_NavierStokes2D(
     const double* aDtVal) // ax,ay,apress
 {
   const unsigned int np = nXY;
-  std::vector<unsigned int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];

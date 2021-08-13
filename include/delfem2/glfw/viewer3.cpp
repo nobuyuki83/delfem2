@@ -11,19 +11,19 @@
 #include <GLFW/glfw3.h>
 
 #if defined(_WIN32) // windows
-#define NOMINMAX   // to remove min,max macro
-#include <windows.h>
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <OpenGL/gl.h>
+#  include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
+#  include <GL/gl.h>
 #endif
 
 #if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4100 )
+#  pragma warning( push )
+#  pragma warning( disable : 4100 )
 #endif
 
 #include "delfem2/glfw/viewer3.h"

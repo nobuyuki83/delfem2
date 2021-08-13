@@ -97,7 +97,7 @@ public:
     return bb;
   }
   int insertPointElem(int itri0, double r0, double r1){
-    const int ipo0 = aEPo.size();
+    const size_t ipo0 = aEPo.size();
     CVec3d v3;
     {
       int i0 = aETri[itri0].v[0];
@@ -113,8 +113,8 @@ public:
   void DelaunayAroundPoint(int ipo){
     delfem2::DelaunayAroundPoint(ipo, aEPo, aETri, aVec3);
   }
-  int nTri() const { return aETri.size(); }
-  int nPoint() const { return aEPo.size(); }
+  size_t nTri() const { return aETri.size(); }
+  size_t nPoint() const { return aEPo.size(); }
   void DeleteTriEdge(int itri, int iedge){ CollapseEdge_MeshDTri(itri, iedge, aEPo, aETri); }
 public:
   std::vector<CDynPntSur> aEPo;

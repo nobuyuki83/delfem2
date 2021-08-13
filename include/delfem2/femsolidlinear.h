@@ -168,7 +168,7 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
     const double* aVal)
 {
   const unsigned int np = nXY;
-  std::vector<unsigned int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for(unsigned int iel=0; iel<nTri; ++iel){
     const unsigned int aIP[3] = {aTri1[iel*3+0], aTri1[iel*3+1], aTri1[iel*3+2]};
     double coords[3][2]; FetchData<3,2>(coords,aIP, aXY1);

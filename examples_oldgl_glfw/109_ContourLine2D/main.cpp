@@ -5,20 +5,24 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <vector>
+#include <cstdlib>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/points.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/slice.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/color.h"
-#include <vector>
-#include <cstdlib>
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
-#include <GLFW/glfw3.h>
 
 // -------------------------
 

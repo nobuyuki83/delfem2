@@ -276,7 +276,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
     const std::vector<unsigned int> &aFlgElm,
     const std::vector<std::pair<int, CColor> > &aColor) {
   namespace lcl = delfem2::opengl::color_glold;
-  const unsigned int nTri = aTri.size() / 3;
+  const size_t nTri = aTri.size() / 3;
   for (unsigned int itri = 0; itri < nTri; ++itri) {
     const unsigned int ig0 = aFlgElm[itri];
     if ( ig0 >= aColor.size()) continue;
@@ -361,7 +361,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP0(
     int nstride,
     int noffset,
     const std::vector<std::pair<double, CColor> > &colorMap) {
-  const unsigned int ntri = aTri.size() / 3;
+  const size_t ntri = aTri.size() / 3;
   ::glColor3d(1, 1, 1);
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri = 0; itri < ntri; ++itri) {
@@ -401,10 +401,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1(
     const std::vector<std::pair<double, CColor> > &colorMap) {
   const size_t nTri = aTri.size() / 3;
   const size_t nXYZ = aXYZ.size() / 3;
-  DrawMeshTri3D_ScalarP1(aXYZ.data(), nXYZ,
-                         aTri.data(), nTri,
-                         aValSrf,
-                         colorMap);
+  DrawMeshTri3D_ScalarP1(
+	  aXYZ.data(), static_cast<unsigned int>(nXYZ),
+	  aTri.data(), static_cast<unsigned int>(nTri),
+	  aValSrf,                        
+	  colorMap);
 }
 
 // vetex value

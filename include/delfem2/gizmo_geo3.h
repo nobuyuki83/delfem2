@@ -105,7 +105,7 @@ template <typename REAL>
 class CGizmo_Rotation{
 public:
   CGizmo_Rotation(){
-    size = 1.1;
+    size = 1.1f;
     quat[0] = 0.0;
     quat[1] = 0.0;
     quat[2] = 0.0;
@@ -126,7 +126,7 @@ template <typename REAL>
 class CGizmo_Transl{
 public:
   CGizmo_Transl(){
-    size = 1.1;
+    size = 1.1f;
     ielem_picked = -1;
     pos = CVec3<REAL>(0,0,0);
   }

@@ -177,7 +177,7 @@ void MergeLinSys_Diffusion_MeshTri2D(
     const double* aVal,
     const double* aVelo)
 {
-  std::vector<unsigned int> tmp_buffer(nXY, -1);
+  std::vector<unsigned int> tmp_buffer(nXY, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
