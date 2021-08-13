@@ -6,13 +6,13 @@
  */
 
 #ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
-  #include <GLFW/glfw3.h>
+#include <emscripten/emscripten.h>
+#define GLFW_INCLUDE_ES3
+#include <GLFW/glfw3.h>
 #elif defined(USE_GLEW)
-  #include <GL/glew.h>
+#include <GL/glew.h>
 #else
-  #include <glad/glad.h>
+#include <glad/glad.h>
 #endif
 //
 #include "delfem2/opengl/funcs.h" // compile shader
@@ -20,21 +20,19 @@
 #include "delfem2/opengl/new/shdr_msh.h"
 #include "delfem2/mshmisc.h"
 
-
 namespace dfm2 = delfem2;
 
 // ------------------------------------------
 
-template <typename REAL>
+template<typename REAL>
 void delfem2::opengl::CShader_Mesh::Initialize(
-    std::vector<REAL>& aXYZd,
+    std::vector<REAL> &aXYZd,
     unsigned int ndim,
-    std::vector<unsigned int>& aLine,
-    int gl_primitive_type)
-{
-  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+    std::vector<unsigned int> &aLine,
+    int gl_primitive_type) {
+  if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
   vao.Delete_EBOs();
-  vao.Add_EBO(aLine,gl_primitive_type);
+  vao.Add_EBO(aLine, gl_primitive_type);
   this->UpdateVertex(aXYZd, ndim, aLine);
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -50,17 +48,16 @@ template void delfem2::opengl::CShader_Mesh::Initialize(
     int gl_primitive_type);
 #endif
 
-template <typename REAL>
+template<typename REAL>
 void delfem2::opengl::CShader_Mesh::UpdateVertex(
-    std::vector<REAL>& aXYZd,
+    std::vector<REAL> &aXYZd,
     unsigned int ndim,
-    std::vector<unsigned int>& aLine)
-{
+    std::vector<unsigned int> &aLine) {
   glBindVertexArray(vao.VAO); // opengl4
 
-  vao.ADD_VBO(0,aXYZd);
+  vao.ADD_VBO(0, aXYZd);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)0); // gl24
+  glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim * sizeof(REAL), (void *) 0); // gl24
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_Mesh::UpdateVertex(
@@ -73,8 +70,7 @@ template void delfem2::opengl::CShader_Mesh::UpdateVertex(
     std::vector<unsigned int>& aLine);
 #endif
 
-void delfem2::opengl::CShader_Mesh::Compile()
-{
+void delfem2::opengl::CShader_Mesh::Compile() {
   const std::string glsl33vert_projection =
       "uniform mat4 matrixProjection;\n"
       "uniform mat4 matrixModelView;\n"
@@ -105,27 +101,25 @@ void delfem2::opengl::CShader_Mesh::Compile()
                                       std::string("precision highp float;\n")+
                                       glsl33frag).c_str());
 #else
-  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
-                                                    glsl33vert_projection).c_str(),
-                                                   (std::string("#version 330 core\n")+
-                                                    glsl33frag).c_str());
+  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n") +
+                                                       glsl33vert_projection).c_str(),
+                                                   (std::string("#version 330 core\n") +
+                                                       glsl33frag).c_str());
 #endif
 
-  if( !glIsProgram(shaderProgram) ){
+  if (!glIsProgram(shaderProgram)) {
     std::cout << "shader doesnot exist" << std::endl;
   }
   glUseProgram(shaderProgram);
-  Loc_MatrixProjection = glGetUniformLocation(shaderProgram,  "matrixProjection");
-  Loc_MatrixModelView  = glGetUniformLocation(shaderProgram,  "matrixModelView");
-  Loc_Color            = glGetUniformLocation(shaderProgram,  "color");
+  Loc_MatrixProjection = glGetUniformLocation(shaderProgram, "matrixProjection");
+  Loc_MatrixModelView = glGetUniformLocation(shaderProgram, "matrixModelView");
+  Loc_Color = glGetUniformLocation(shaderProgram, "color");
 }
 
-
-void delfem2::opengl::CShader_Mesh::Draw(float mP[16], float mMV[16]) const
-{
+void delfem2::opengl::CShader_Mesh::Draw(float mP[16], float mMV[16]) const {
   glUseProgram(shaderProgram);
   glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
   glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
-  glUniform3f(Loc_Color, color[0],color[1],color[2]);
+  glUniform3f(Loc_Color, color[0], color[1], color[2]);
   vao.Draw(0); // draw line
 }

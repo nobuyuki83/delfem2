@@ -16,20 +16,20 @@
 #include "delfem2/glfw/mouseinput.h"
 
 #if defined(_MSC_VER)
-  #pragma warning( push )
-  #pragma warning( disable : 4100 )
+#  pragma warning( push )
+#  pragma warning( disable : 4100 )
 #endif
 
 // ------------------------------------------------------
 
 struct GLFWwindow;
 
-namespace delfem2{
+namespace delfem2 {
 
 namespace glfw {
 
 class CViewer3 {
-public:
+ public:
   void DrawBegin_oldGL() const;
 
   void SwapBuffers() const;
@@ -54,9 +54,9 @@ public:
 
   virtual void key_release(int key, int mods) {}
 
-  virtual void mouse_wheel(double yoffset){}
+  virtual void mouse_wheel(double yoffset) {}
 
-public:
+ public:
   GLFWwindow *window = nullptr;
   CMouseInput nav;
   delfem2::CCam3_OnAxisZplusLookOrigin<double> camera;
@@ -70,11 +70,11 @@ public:
 } // namespace delfem2
 
 #if defined(_MSC_VER)
-  #pragma warning( pop )
+#  pragma warning( pop )
 #endif
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/glfw/viewer3.cpp"
+#  include "delfem2/glfw/viewer3.cpp"
 #endif
 
 #endif /* viewer3_hpp */

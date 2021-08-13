@@ -178,7 +178,7 @@ DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     REAL aspectRatio,
     REAL zmin,
     REAL zmax) {
-  const REAL yratio = 1 / (std::tan(fovyInRad * 2) / 2); // how z change w.r.t. the y change
+  const REAL yratio = 1 / std::tan(fovyInRad / 2); // how z change w.r.t. the y change
   const REAL xratio = yratio / aspectRatio;
   // column 0
   mP[0 * 4 + 0] = xratio;

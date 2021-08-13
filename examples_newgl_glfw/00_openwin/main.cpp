@@ -52,7 +52,9 @@ int main(int argc, char **argv) {
     return 0;
   }
   printf("glfwInit() success\n");
-  GLFWwindow* window = glfwCreateWindow(512, 512, "GLFW test", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(
+      512, 512,
+      "GLFW test", nullptr, nullptr);
   
   if (!window){
     printf("glfwCreateWindow() failed\n");

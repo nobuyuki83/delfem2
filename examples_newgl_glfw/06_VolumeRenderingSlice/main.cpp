@@ -114,8 +114,8 @@ GLuint MakeTex_Volume(GLint nW, GLint nH, GLint nD)
   return idTexVol;
 }
 
-std::string LoadFile
- (const std::string& fname)
+std::string LoadFile(
+    const std::string& fname)
 {
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
