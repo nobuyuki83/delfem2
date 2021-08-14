@@ -1,10 +1,10 @@
-#include <Eigen/Core>
-
-
 #ifndef DFM2_OPENGLEIGEN_FUNCS_H
 #define DFM2_OPENGLEIGEN_FUNCS_H
 
+#include <Eigen/Core>
+
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/opengl/old/mshuni.h"
 
 namespace delfem2 {
 namespace opengleigen {
@@ -59,6 +59,14 @@ void DrawMeshTri3_Edge(
     myGlVertex3(aXYZ[i1]);
   }
   ::glEnd();
+}
+
+void DrawMeshTri3_Edge_EigenMats(
+    const Eigen::Matrix<double, -1, 3, Eigen::RowMajor>& V,
+    const Eigen::Matrix<unsigned int, -1, 3, Eigen::RowMajor>& F){
+  ::delfem2::opengl::DrawMeshTri3D_Edge(
+      V.data(), V.rows(),
+      F.data(), F.rows());
 }
 
 

@@ -34,7 +34,7 @@ set(DELFEM2_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../include")
 FILE(GLOB EIGEN3_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/eigen*)
 # specify candidate for eigen location
 SET(EIGEN3_ROOT
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/Eigen_Lib/include # installed eigen is higher priority
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libeigen/include # installed eigen is higher priority
     ${EIGEN3_ROOT} )
 # call script to find eigen3
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindEigen3.cmake)
