@@ -5,7 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <glad/glad.h>
+#include <cmath>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // should be before glfw3.h
+#endif
+#include <glad/glad.h> // glad need to be defiend in the begenning
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -18,7 +26,6 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/file.h"
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 

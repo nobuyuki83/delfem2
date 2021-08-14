@@ -5,49 +5,52 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include <cmath>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // should be before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/points.h"
-#include <cmath>
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/gizmo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
 // -------------------------------------------
 
-int main(int argc,char* argv[])
-{
+int main(int argc, char *argv[]) {
   class CMyViewer : public delfem2::glfw::CViewer3 {
-  public:
-    CMyViewer(){
-      delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-                        aXYZ,aTri);
+   public:
+    CMyViewer() {
+      delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_1k.ply",
+                        aXYZ, aTri);
       delfem2::Normalize_Points3(aXYZ);
     }
     //
-    void mouse_press(const float src[3], const float dir[3]) override{
+    void mouse_press(const float src[3], const float dir[3]) override {
       ga.Pick(src, dir);
     }
-    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
       ga.Drag(src0, src1, dir);
     }
-    void key_release(int key, int mods) override{
+    void key_release(int key, int mods) override {
     }
-    void key_press(int key, int mods) override{
-      delfem2::glfw::CViewer3::key_press(key,mods);
-      if( key == GLFW_KEY_R ){ ga.igizmo_mode = 1; }
-      if( key == GLFW_KEY_G ){ ga.igizmo_mode = 0; }
+    void key_press(int key, int mods) override {
+      delfem2::glfw::CViewer3::key_press(key, mods);
+      if (key == GLFW_KEY_R) { ga.igizmo_mode = 1; }
+      if (key == GLFW_KEY_G) { ga.igizmo_mode = 0; }
     }
     //
-    void Draw(){
+    void Draw() {
       DrawBegin_oldGL();
       delfem2::opengl::DrawAxis(1);
       {
@@ -58,11 +61,11 @@ int main(int argc,char* argv[])
         delfem2::opengl::MyGlMultMat(m1);
         // ------
         ::glEnable(GL_LIGHTING);
-        ::glColor3d(0,0,0);
-        delfem2::opengl::DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3,
-                                            aTri.data(), aTri.size()/3);
+        ::glColor3d(0, 0, 0);
+        delfem2::opengl::DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size() / 3,
+                                            aTri.data(), aTri.size() / 3);
         delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(),
-                                                aTri.data(), aTri.size()/3);
+                                                aTri.data(), aTri.size() / 3);
         // -------
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
@@ -70,7 +73,7 @@ int main(int argc,char* argv[])
       delfem2::opengl::Draw(ga);
       SwapBuffers();
     }
-  public:
+   public:
     delfem2::CGizmo_Affine<float> ga;
     std::vector<double> aXYZ;
     std::vector<unsigned int> aTri;
@@ -82,7 +85,7 @@ int main(int argc,char* argv[])
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   // --------------------
-  while( !glfwWindowShouldClose(viewer.window) ){
+  while (!glfwWindowShouldClose(viewer.window)) {
     viewer.Draw();
     glfwPollEvents();
   }

@@ -11,7 +11,7 @@
 
 std::tuple<
     Eigen::Matrix<double, -1, 3, Eigen::RowMajor>,
-Eigen::Matrix<unsigned int, -1, 3, Eigen::RowMajor> >
+    Eigen::Matrix<unsigned int, -1, 3, Eigen::RowMajor> >
 ReadTriangleMeshObj(
     const std::string &fpath) {
   std::vector<double> vec_xyz;
@@ -20,12 +20,12 @@ ReadTriangleMeshObj(
       fpath,
       vec_xyz, vec_tri);
   const auto V =
-  Eigen::Map<Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(
-      vec_xyz.data(),
+      Eigen::Map<Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(
+          vec_xyz.data(),
           static_cast<unsigned int>(vec_xyz.size() / 3), 3);
   const auto F =
-  Eigen::Map<Eigen::Matrix<unsigned int, -1, -1, Eigen::RowMajor>>(
-      vec_tri.data(),
+      Eigen::Map<Eigen::Matrix<unsigned int, -1, -1, Eigen::RowMajor>>(
+          vec_tri.data(),
           static_cast<unsigned int>(vec_tri.size() / 3), 3);
   return std::make_tuple(V, F);
 }
