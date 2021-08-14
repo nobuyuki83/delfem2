@@ -9,20 +9,23 @@
  * @brief demo for visualizing eigenmodes
  */
 
+#include <Eigen/Eigenvalues>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // should put before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/eigen/ls_dense.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/points.h"
 #include "delfem2/femsolidlinear.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
-//
-#include <Eigen/Eigenvalues>
 
 namespace dfm2 = delfem2;
 
