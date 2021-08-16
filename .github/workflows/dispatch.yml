@@ -18,5 +18,5 @@ jobs:
         --header 'Authorization: Bearer ${GITHUB_TOKEN}' \
         --header 'Content-Type: application/json' \
         --data-raw '{
-          "event_type": "repository-a-updated"
+          "event_type": "updated-delfem2"
         }'
