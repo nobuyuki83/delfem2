@@ -12,7 +12,7 @@ jobs:
     steps:
     - name: Create GitHub dispatch event
       env: 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN0 }}
       run: |
         curl --request POST 'https://api.github.com/repos/nobuyuki83/delfem2-python-bindings/dispatches' \
         --header 'Authorization: Bearer ${GITHUB_TOKEN}' \
