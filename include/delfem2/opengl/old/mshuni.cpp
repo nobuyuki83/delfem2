@@ -13,20 +13,20 @@
 #include <climits>
 
 #if defined(_WIN32) // windows
-#define NOMINMAX   // to remove min,max macro
-#include <windows.h>
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
+#  define GL_SILENCE_DEPRECATION
+#  include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
+#  include <GL/gl.h>
 #endif
 
 #if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4100 )
+#  pragma warning( push )
+#  pragma warning( disable : 4100 )  // 'identifier' : unreferenced formal parameter
 #endif
 
 // -----------------------------------------------------------
@@ -37,22 +37,22 @@ namespace old {
 namespace mshuni {
 
 template<int nDim, typename T>
-void myGlVtxPtr(const T *p);
+DFM2_INLINE void myGlVtxPtr(const T *p);
 
 template<>
-void myGlVtxPtr<3>(const double *p) { ::glVertex3dv(p); }
+DFM2_INLINE void myGlVtxPtr<3>(const double *p) { ::glVertex3dv(p); }
 
 template<>
-void myGlVtxPtr<3>(const float *p) { ::glVertex3fv(p); }
+DFM2_INLINE void myGlVtxPtr<3>(const float *p) { ::glVertex3fv(p); }
 
 template<>
-void myGlVtxPtr<2>(const double *p) { ::glVertex2dv(p); }
+DFM2_INLINE void myGlVtxPtr<2>(const double *p) { ::glVertex2dv(p); }
 
 template<>
-void myGlVtxPtr<2>(const float *p) { ::glVertex2fv(p); }
+DFM2_INLINE void myGlVtxPtr<2>(const float *p) { ::glVertex2fv(p); }
 
 template<int nno, int ndim>
-void FetchDeformedPosition(
+DFM2_INLINE void FetchDeformedPosition(
     double aR[nno][ndim],
     const unsigned int *aIP,
     const double *aXYZ,
@@ -187,10 +187,10 @@ DFM2_INLINE void DrawSingleTri3D_FaceNorm
   ::glVertex3dv(p2);
 }
 
-DFM2_INLINE void DrawSingleQuad3D_FaceNorm
-    (const double *aXYZ,
-     const unsigned int *aIndXYZ,
-     const double *pUV) {
+DFM2_INLINE void DrawSingleQuad3D_FaceNorm(
+    const double *aXYZ,
+    const unsigned int *aIndXYZ,
+    const double *pUV) {
   const unsigned int i0 = aIndXYZ[0];  //assert( i0 >= 0 && i0 < (int)aXYZ.size()/3 );
   const unsigned int i1 = aIndXYZ[1];  //assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
   const unsigned int i2 = aIndXYZ[2];  //assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
@@ -240,15 +240,15 @@ DFM2_INLINE void Draw_SurfaceMeshEdge(
   ::glVertexPointer(3, GL_DOUBLE, 0, paXYZ);
   ::glBegin(GL_LINES);
   for (unsigned int itri = 0; itri < nTri; itri++) {
-    const unsigned int i1 = paTri[itri * 3 + 0];
-    const unsigned int i2 = paTri[itri * 3 + 1];
-    const unsigned int i3 = paTri[itri * 3 + 2];
-    glArrayElement(i1);
-    glArrayElement(i2);
-    glArrayElement(i2);
-    glArrayElement(i3);
-    glArrayElement(i3);
-    glArrayElement(i1);
+    const int i1 = static_cast<int>(paTri[itri * 3 + 0]);
+    const int i2 = static_cast<int>(paTri[itri * 3 + 1]);
+    const int i3 = static_cast<int>(paTri[itri * 3 + 2]);
+    ::glArrayElement(i1);
+    ::glArrayElement(i2);
+    ::glArrayElement(i2);
+    ::glArrayElement(i3);
+    ::glArrayElement(i3);
+    ::glArrayElement(i1);
   }
   ::glEnd();
   ::glDisableClientState(GL_VERTEX_ARRAY);
@@ -261,7 +261,11 @@ DFM2_INLINE void Draw_SurfaceMeshFace(
     const unsigned int *paTri) {
   ::glEnableClientState(GL_VERTEX_ARRAY);
   ::glVertexPointer(3, GL_DOUBLE, 0, paXYZ);
-  ::glDrawElements(GL_TRIANGLES, nTri * 3, GL_UNSIGNED_INT, paTri);
+  ::glDrawElements(
+      GL_TRIANGLES,
+      static_cast<int>(nTri * 3),
+      GL_UNSIGNED_INT,
+      paTri);
   ::glDisableClientState(GL_VERTEX_ARRAY);
   /*
     /////
@@ -304,7 +308,7 @@ DFM2_INLINE void drawLoop2d(
     myGlVertex2d(jvec, vec);
   }
   ::glEnd();
-  ////
+  //
   ::glBegin(GL_POINTS);
   for (unsigned int ivec = 0; ivec < nvec; ivec++) {
     myGlVertex2d(ivec, vec);
@@ -354,7 +358,7 @@ DFM2_INLINE void DrawMeshTriMap3D_Edge(
 DFM2_INLINE void ShadowMatrix(
     float m[16],
     const float plane[4],
-    float lpos[3]) {
+    const float lpos[3]) {
   float dot = plane[0] * lpos[0] + plane[1] * lpos[1] + plane[2] * lpos[2] + plane[3];
   for (int j = 0; j < 4; ++j) {
     for (int i = 0; i < 4; ++i) {
@@ -376,11 +380,11 @@ DFM2_INLINE void DrawMeshTri3DPart_FaceNorm(
   ::glEnd();
 }
 
-DFM2_INLINE void DrawMeshTri3D_FaceNorm_Flg
-    (const std::vector<double> &aXYZ,
-     const std::vector<unsigned int> &aTri,
-     int iflg,
-     const std::vector<int> &aFlgTri) {
+DFM2_INLINE void DrawMeshTri3D_FaceNorm_Flg(
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri,
+    int iflg,
+    const std::vector<int> &aFlgTri) {
   const int nTri = (int) aTri.size() / 3;
   //  const int nXYZ = (int)aXYZ.size()/3;
   ::glBegin(GL_TRIANGLES);
@@ -392,9 +396,9 @@ DFM2_INLINE void DrawMeshTri3D_FaceNorm_Flg
   ::glEnd();
 }
 
-DFM2_INLINE void DrawMeshTri3D_FaceEdge
-    (const std::vector<double> &aXYZ,
-     const std::vector<int> &aTri) {
+DFM2_INLINE void DrawMeshTri3D_FaceEdge(
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTri) {
   const std::size_t nTri = aTri.size() / 3;
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri = 0; itri < nTri; itri++) {
@@ -492,6 +496,8 @@ delfem2::opengl::DrawPoints3_Points(
 template void delfem2::opengl::DrawPoints3_Points(const std::vector<float> &aXYZ);
 template void delfem2::opengl::DrawPoints3_Points(const std::vector<double> &aXYZ);
 #endif
+
+// -----------------------------
 
 DFM2_INLINE void
 delfem2::opengl::DrawPoints3d_NormVtx(
@@ -691,17 +697,17 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNormEdge(
   ::glBegin(GL_LINES);
   ::glColor3d(0, 0, 0);
   for (unsigned int itri = 0; itri < nTri; ++itri) {
-    const int i1 = aTri[itri * 3 + 0];
-    const int i2 = aTri[itri * 3 + 1];
-    const int i3 = aTri[itri * 3 + 2];
-    if (i1 == -1) {
-      assert(i2 == -1);
-      assert(i3 == -1);
+    const unsigned int i1 = aTri[itri * 3 + 0];
+    const unsigned int i2 = aTri[itri * 3 + 1];
+    const unsigned int i3 = aTri[itri * 3 + 2];
+    if (i1 == UINT_MAX) {
+      assert(i2 == UINT_MAX);
+      assert(i3 == UINT_MAX);
       continue;
     }
-    assert(i1 >= 0 && i1 < (int) aXYZ.size() / 3);
-    assert(i2 >= 0 && i2 < (int) aXYZ.size() / 3);
-    assert(i3 >= 0 && i3 < (int) aXYZ.size() / 3);
+    assert(i1 < aXYZ.size() / 3);
+    assert(i2 < aXYZ.size() / 3);
+    assert(i3 < aXYZ.size() / 3);
     const double p1[3] = {aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]};
     const double p2[3] = {aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]};
     const double p3[3] = {aXYZ[i3 * 3 + 0], aXYZ[i3 * 3 + 1], aXYZ[i3 * 3 + 2]};
@@ -828,9 +834,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Face(
   const std::size_t ntri = aTri.size() / 3;
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri = 0; itri < ntri; itri++) {
-    const int i0 = aTri[itri * 3 + 0];
-    const int i1 = aTri[itri * 3 + 1];
-    const int i2 = aTri[itri * 3 + 2];
+    const unsigned int i0 = aTri[itri * 3 + 0];
+    const unsigned int i1 = aTri[itri * 3 + 1];
+    const unsigned int i2 = aTri[itri * 3 + 2];
     const double p0[2] = {aXY[i0 * 2 + 0], aXY[i0 * 2 + 1]};
     const double p1[2] = {aXY[i1 * 2 + 0], aXY[i1 * 2 + 1]};
     const double p2[2] = {aXY[i2 * 2 + 0], aXY[i2 * 2 + 1]};
@@ -1117,17 +1123,17 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3DSurface_FaceNorm
   for (unsigned int itf = 0; itf < aTetFace.size() / 2; ++itf) {
     unsigned int itet = aTetFace[itf * 2 + 0];
     unsigned int iface = aTetFace[itf * 2 + 1];
-    const int i1 = aTet[itet * 4 + noelTetFace[iface][0]];
-    const int i2 = aTet[itet * 4 + noelTetFace[iface][1]];
-    const int i3 = aTet[itet * 4 + noelTetFace[iface][2]];
-    if (i1 == -1) {
-      assert(i2 == -1);
-      assert(i3 == -1);
+    const unsigned int i1 = aTet[itet * 4 + noelTetFace[iface][0]];
+    const unsigned int i2 = aTet[itet * 4 + noelTetFace[iface][1]];
+    const unsigned int i3 = aTet[itet * 4 + noelTetFace[iface][2]];
+    if (i1 == UINT_MAX) {
+      assert(i2 == UINT_MAX);
+      assert(i3 == UINT_MAX);
       continue;
     }
-    assert(i1 >= 0 && i1 < (int) aXYZ.size() / 3);
-    assert(i2 >= 0 && i2 < (int) aXYZ.size() / 3);
-    assert(i3 >= 0 && i3 < (int) aXYZ.size() / 3);
+    assert(i1 < aXYZ.size() / 3);
+    assert(i2 < aXYZ.size() / 3);
+    assert(i3 < aXYZ.size() / 3);
     double p1[3] = {aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]};
     double p2[3] = {aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]};
     double p3[3] = {aXYZ[i3 * 3 + 0], aXYZ[i3 * 3 + 1], aXYZ[i3 * 3 + 2]};
@@ -1156,8 +1162,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3DSurface_Edge
   ::glBegin(GL_LINES);
   ::glColor3d(0, 0, 0);
   for (unsigned int itf = 0; itf < aTetFace.size() / 2; ++itf) {
-    int itet = aTetFace[itf * 2 + 0];
-    int iface = aTetFace[itf * 2 + 1];
+    const unsigned int itet = aTetFace[itf * 2 + 0];
+    const unsigned int iface = aTetFace[itf * 2 + 1];
     const unsigned int i1 = aTet[itet * 4 + noelTetFace[iface][0]];
     const unsigned int i2 = aTet[itet * 4 + noelTetFace[iface][1]];
     const unsigned int i3 = aTet[itet * 4 + noelTetFace[iface][2]];
@@ -1481,8 +1487,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm(
   assert(!aElemInd.empty());
   const std::size_t nelem = aElemInd.size() - 1;
   for (unsigned int ielem = 0; ielem < nelem; ++ielem) {
-    const int ielemind0 = aElemInd[ielem];
-    const int ielemind1 = aElemInd[ielem + 1];
+    const unsigned int ielemind0 = aElemInd[ielem];
+    const unsigned int ielemind1 = aElemInd[ielem + 1];
     if (ielemind1 - ielemind0 == 3) {
       ::glBegin(GL_TRIANGLES);
       lcl::DrawSingleTri3D_FaceNorm(aXYZ.data(), aElem.data() + ielemind0, 0);
@@ -1504,8 +1510,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm(
   assert(!aElemInd.empty());
   const std::size_t nelem = aElemInd.size() - 1;
   for (unsigned int ielem = 0; ielem < nelem; ++ielem) {
-    const int ielemind0 = aElemInd[ielem];
-    const int ielemind1 = aElemInd[ielem + 1];
+    const unsigned int ielemind0 = aElemInd[ielem];
+    const unsigned int ielemind1 = aElemInd[ielem + 1];
     if (ielemind1 - ielemind0 == 3) {
       ::glBegin(GL_TRIANGLES);
       lcl::DrawSingleTri3D_FaceNorm(aXYZ.data(),
@@ -1531,9 +1537,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl(
   namespace lcl = ::delfem2::opengl::old::mshuni;
   const bool isUV = (aUV.size() == aElem.size() * 2);
   for (int ielem : aIndElemPart) {
-    const int ielemind0 = aElemInd[ielem];
-    const int ielemind1 = aElemInd[ielem + 1];
-    const double *pUV = isUV ? aUV.data() + ielemind0 * 2 : 0;
+    const unsigned int ielemind0 = aElemInd[ielem];
+    const unsigned int ielemind1 = aElemInd[ielem + 1];
+    const double *pUV = isUV ? aUV.data() + ielemind0 * 2 : nullptr;
     if (ielemind1 - ielemind0 == 3) {
       ::glBegin(GL_TRIANGLES);
       lcl::DrawSingleTri3D_FaceNorm(aXYZ.data(),
@@ -1552,5 +1558,5 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl(
 }
 
 #if defined(_MSC_VER)
-#pragma warning(pop)
+#  pragma warning(pop)
 #endif
