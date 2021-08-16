@@ -1,0 +1,20 @@
+# This is a basic workflow to help you get started with Actions
+name: CI_Dispatch
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create GitHub dispatch event
+      run: |
+        curl --request POST 'https://api.github.com/repos/nobuyuki83/delfem2-python-bindings/dispatches' \
+        --header 'Authorization: Bearer ${{secrets.MY_GITHUB_ACCESS_TOKEN}}' \
+        --header 'Content-Type: application/json' \
+        --data-raw '{
+          "event_type": "repository-a-updated"
+        }'
