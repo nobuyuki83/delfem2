@@ -3,7 +3,7 @@ name: CI_Dispatch
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
