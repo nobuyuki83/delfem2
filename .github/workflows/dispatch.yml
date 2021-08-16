@@ -13,7 +13,7 @@ jobs:
     - name: Create GitHub dispatch event
       run: |
         curl --request POST 'https://api.github.com/repos/nobuyuki83/delfem2-python-bindings/dispatches' \
-        --header 'Authorization: Bearer ${{secrets.MY_GITHUB_ACCESS_TOKEN}}' \
+        --header 'Authorization: Bearer ${{secrets.repo_workflow}}' \
         --header 'Content-Type: application/json' \
         --data-raw '{
           "event_type": "repository-a-updated"
