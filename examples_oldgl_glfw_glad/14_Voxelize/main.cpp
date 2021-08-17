@@ -9,6 +9,7 @@
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // should be before glfw3.h
 #endif
+#define GL_SILENCE_DEPRECATION
 #include <glad/glad.h>  // this should be in front of all the GL-related header files
 #include <GLFW/glfw3.h>
 
@@ -27,8 +28,8 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-void Draw_CGrid3
-    (const dfm2::CGrid3<int> &grid) {
+void Draw_CGrid3(
+    const dfm2::CGrid3<int> &grid) {
   { // set-up transformation
     const dfm2::CMat4d &am = grid.am;
     dfm2::CMat4d amt = am.Transpose();
@@ -131,7 +132,6 @@ int main(int argc, char *argv[]) {
       ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1, aTri);
       smplr.End();
-      smplr.CopyToCPU_Depth();
     }
     CarveVoxelByDepth(grid.aVal,
                       sampler_box);

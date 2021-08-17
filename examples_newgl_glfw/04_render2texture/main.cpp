@@ -5,26 +5,25 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <iostream>
+#include <cmath>
 #ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
 #else
-  #include <glad/glad.h>
+#  include <glad/glad.h>
 #endif
+#if defined(_MSC_VER)
+#  include <windows.h>
+#endif
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/opengl/new/shdr_mshtri.h"
 #include "delfem2/noise.h"
 #include "delfem2/mshprimitive.h"
-
-#if defined(_MSC_VER)
-  #include <windows.h>
-#endif
-
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <cmath>
 
 namespace dfm2 = delfem2;
 
@@ -37,30 +36,30 @@ unsigned int idTexDepth = 0;
 
 // ---------------------------
 
-void draw(GLFWwindow* window)
-{
+void draw(GLFWwindow *window) {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
 //  ::glDepthFunc(GL_LESS);
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL);
+  ::glPolygonOffset(1.1f, 4.0f);
 
   glEnable(GL_TEXTURE_2D);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float)nw/nh;
-  
+  int nw, nh;
+  glfwGetFramebufferSize(window, &nw, &nh);
+  const float asp = (float) nw / (float)nh;
+
   {
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexColor);
     float mP[16], mMV[16];
     viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
-    mMV[3*4+0] -= 0.5;
+    mMV[3 * 4 + 0] -= 0.5;
     shdr_mshtex.Draw(mP, mMV);
   }
 
@@ -69,22 +68,20 @@ void draw(GLFWwindow* window)
     glBindTexture(GL_TEXTURE_2D, idTexDepth);
     float mP[16], mMV[16];
     viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
-    mMV[3*4+0] += 0.5;
+    mMV[3 * 4 + 0] += 0.5;
     shdr_mshtex.Draw(mP, mMV);
   }
-  
+
   viewer.SwapBuffers();
   glfwPollEvents();
 }
 
-int main()
-{
+int main() {
   dfm2::glfw::InitGLNew();
   viewer.InitGL();
-  
+
 #ifndef EMSCRIPTEN
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
+  if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
@@ -95,7 +92,7 @@ int main()
     std::vector<unsigned int> aTri;
     dfm2::MeshTri3_Torus(aXYZ, aTri, 0.5, 0.5, 10, 12);
     shdr0.Compile();
-    shdr0.Initialize(aXYZ,3,aTri);
+    shdr0.Initialize(aXYZ, 3, aTri);
   }
 
   shdr_mshtex.Compile();
@@ -107,8 +104,8 @@ int main()
         -0.5, +0.5,
     };
     std::vector<unsigned int> aTri = {
-        0,1,2,
-        0,2,3,
+        0, 1, 2,
+        0, 2, 3,
     };
     std::vector<float> aTex2d = {
         0.0, 0.0,
@@ -116,9 +113,9 @@ int main()
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr_mshtex.setCoords(aPos3d,2);
+    shdr_mshtex.setCoords(aPos3d, 2);
     shdr_mshtex.setTexCoords(aTex2d);
-    shdr_mshtex.setElement( aTri, GL_TRIANGLES);
+    shdr_mshtex.setElement(aTri, GL_TRIANGLES);
   }
 
   const unsigned int targetTextureWidth = 256;
@@ -132,8 +129,8 @@ int main()
     ::glBindTexture(GL_TEXTURE_2D, idTexColor);
     // define size and format of level 0
     ::glTexImage2D(GL_TEXTURE_2D, 0,
-        GL_RGBA, targetTextureWidth, targetTextureHeight, 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                   GL_RGBA, targetTextureWidth, targetTextureHeight, 0,
+                   GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     // set the filtering so we don't need mips
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -147,21 +144,21 @@ int main()
     dfm2::ComputePerlin(aV,
                         nSize, nSize,
                         4, 4, 0.8);
-    assert( aV.size() == nSize*nSize );
-    std::vector<unsigned char> image(nSize*nSize*3);
-    for(unsigned int i=0;i<aV.size();i++){
-      int ival = int( aV[i]*50 + 128 );
-      if( ival < 0 ){ ival = 0; }
-      if( ival >= 256 ){ ival = 255; }
-      image[i*3+0] = ival;
-      image[i*3+1] = ival;
-      image[i*3+2] = ival;
+    assert(aV.size() == nSize * nSize);
+    std::vector<unsigned char> image(nSize * nSize * 3);
+    for (unsigned int i = 0; i < aV.size(); i++) {
+      int ival = int(aV[i] * 50 + 128);
+      if (ival < 0) { ival = 0; }
+      if (ival >= 256) { ival = 255; }
+      image[i * 3 + 0] = ival;
+      image[i * 3 + 1] = ival;
+      image[i * 3 + 2] = ival;
     }
     // -------
-    glBindTexture(GL_TEXTURE_2D , idTexColor);
-    glTexImage2D(GL_TEXTURE_2D , 0 ,
-        GL_RGB , targetTextureWidth, targetTextureHeight, 0,
-        GL_RGB , GL_UNSIGNED_BYTE , image.data() );
+    glBindTexture(GL_TEXTURE_2D, idTexColor);
+    glTexImage2D(GL_TEXTURE_2D, 0,
+                 GL_RGB, targetTextureWidth, targetTextureHeight, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, image.data());
   }
 
   { // depth texture
@@ -172,8 +169,8 @@ int main()
     ::glBindTexture(GL_TEXTURE_2D, idTexDepth);
     // define size and format of level 0
     ::glTexImage2D(GL_TEXTURE_2D, 0,
-        GL_DEPTH_COMPONENT32F, targetTextureWidth, targetTextureHeight, 0,
-        GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+                   GL_DEPTH_COMPONENT32F, targetTextureWidth, targetTextureHeight, 0,
+                   GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     // set the filtering so we don't need mips
 //    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 //    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -186,18 +183,18 @@ int main()
   {
     // Create and bind the framebuffer
     unsigned int fb;
-    ::glGenFramebuffers(1,&fb);
+    ::glGenFramebuffers(1, &fb);
     ::glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
     // attach the texture as the first color attachment
     ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-        idTexColor, 0);
+                             idTexColor, 0);
     ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
-        idTexDepth, 0);
+                             idTexDepth, 0);
 
     // Always check that our framebuffer is ok
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER) ;
-    if(status != GL_FRAMEBUFFER_COMPLETE){
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
       std::cout << "error!: " << status << std::endl;
       std::cout << GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT << std::endl;
       std::cout << GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT << std::endl;
@@ -211,25 +208,25 @@ int main()
     }
 
     int viewport[4];
-    ::glGetIntegerv(GL_VIEWPORT,viewport);
+    ::glGetIntegerv(GL_VIEWPORT, viewport);
     ::glClearColor(0.8, 1.0, 1.0, 1.0);
     ::glClear(GL_DEPTH_BUFFER_BIT);
-    ::glViewport(0,0,targetTextureWidth,targetTextureHeight);
+    ::glViewport(0, 0, targetTextureWidth, targetTextureHeight);
 //    ::glClearColor(0.8, 0.8, 0.8, 1.0);
 //    ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    float mP[16] = {1,0,0,0,
-                    0,1,0,0,
-                    0,0,1,0,
-                    0,0,0,1};
-    float mMV[16] = {1,0,0,0,
-                     0,1,0,0,
-                     0,0,1,0,
-                     0,0,0,1};
+    float mP[16] = {1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1};
+    float mMV[16] = {1, 0, 0, 0,
+                     0, 1, 0, 0,
+                     0, 0, 1, 0,
+                     0, 0, 0, 1};
     //::glDisable(GL_CULL_FACE);
     ::glEnable(GL_DEPTH_TEST);
-    shdr0.Draw(mP,mMV);
+    shdr0.Draw(mP, mMV);
     ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    ::glViewport(0,0,viewport[2],viewport[3]);
+    ::glViewport(0, 0, viewport[2], viewport[3]);
   }
 
   /*
@@ -253,7 +250,7 @@ int main()
 #else
   while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
 #endif
-  
+
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

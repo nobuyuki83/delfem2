@@ -1,17 +1,13 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
-
-######################################################
-
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-IF(MSVC)
+IF (MSVC)
   set(CMAKE_CXX_FLAGS "/W4")
-ELSE()
+ELSE ()
   set(CMAKE_CXX_FLAGS "-Wall -g")
-ENDIF()
+ENDIF ()
 
 ####################################
 
@@ -30,18 +26,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 # opengl
 find_package(OpenGL REQUIRED)
 
-# dfm2
-IF(DFM2_HEADER_ONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)            
-else() 
-  if(MSVC)
-    set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib )
-  else()
-    set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
-  endif()
-ENDIF()
+# delfem2
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 ####################################
@@ -53,16 +38,16 @@ include_directories(
     ${DELFEM2_INCLUDE_DIR}
 )
 
-set(3RD_PARTY           "../../3rd_party")
+set(3RD_PARTY "../../3rd_party")
 add_executable(${PROJECT_NAME}
-    ${3RD_PARTY}/glad3/include/glad/glad.h    
+    ${3RD_PARTY}/glad3/include/glad/glad.h
     ${3RD_PARTY}/glad3/src/glad.c
     main.cpp
-)
+    )
 
 target_link_libraries(${PROJECT_NAME}
-  ${DFM2_LIBRARY}
-  ${OPENGL_LIBRARY}
-  ${GLFW_LIBRARIES}
-)
+    ${DFM2_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARIES}
+    )
 

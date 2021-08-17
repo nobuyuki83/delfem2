@@ -71,7 +71,7 @@ template void MyCross3(double r[3], const double v1[3], const double v2[3]);
 }  // namespace opengl
 }  // namespace delfem2
 
-void delfem2::Mat4_OrthongoalProjection_AffineTrans(
+DFM2_INLINE void delfem2::Mat4_OrthongoalProjection_AffineTrans(
     double mMV[16],
     double mP[16],
     const double origin[3],
@@ -133,7 +133,9 @@ void delfem2::Mat4_OrthongoalProjection_AffineTrans(
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::Start() {
   ::glGetIntegerv(GL_VIEWPORT, view); // current viewport
-  ::glViewport(0, 0, nResX, nResY);
+  ::glViewport(0, 0,
+               static_cast<int>(nResX),
+               static_cast<int>(nResY));
   ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
   ::glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -141,6 +143,9 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::Start() {
 DFM2_INLINE void delfem2::opengl::CRender2Tex::End() {
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
   ::glViewport(view[0], view[1], view[2], view[3]);
+  this->CopyToCPU_Depth();
+  this->CopyToCPU_RGBA8UI();
+  this->CopyToCPU_RGBA32F();
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_Depth() {
@@ -203,11 +208,11 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL() {
     // define size and format of level 0
     if (is_rgba_8ui) {
       ::glTexImage2D(GL_TEXTURE_2D, 0,
-                     GL_RGBA, nResX, nResY, 0,
+                     GL_RGBA, static_cast<int>(nResX), static_cast<int>(nResY), 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     } else {
       ::glTexImage2D(GL_TEXTURE_2D, 0,
-                     GL_RGBA, nResX, nResY, 0,
+                     GL_RGBA, static_cast<int>(nResX), static_cast<int>(nResY), 0,
                      GL_RGBA, GL_FLOAT, nullptr);
     }
     // set the filtering so we don't need mips
@@ -224,7 +229,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL() {
     ::glBindTexture(GL_TEXTURE_2D, id_tex_depth);
     // define size and format of level 0
     ::glTexImage2D(GL_TEXTURE_2D, 0,
-                   GL_DEPTH_COMPONENT32F, nResX, nResY, 0,
+                   GL_DEPTH_COMPONENT32F, static_cast<int>(nResX), static_cast<int>(nResY), 0,
                    GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     // set the filtering so we don't need mips
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -237,10 +242,12 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL() {
     ::glGenFramebuffers(1, &id_framebuffer);
     ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
     // attach the texture as the first color attachment
-    ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                             id_tex_color, 0);
-    ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
-                             id_tex_depth, 0);
+    ::glFramebufferTexture2D(
+        GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+        id_tex_color, 0);
+    ::glFramebufferTexture2D(
+        GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+        id_tex_depth, 0);
     // Always check that our framebuffer is ok
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
@@ -261,12 +268,12 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL() {
     ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
     // define size and format of level 0
     ::glTexImage2D(GL_TEXTURE_2D, 0,
-                   GL_RGBA, nResX, nResY, 0,
+                   GL_RGBA, static_cast<int>(nResX), static_cast<int>(nResY), 0,
                    GL_RGBA, GL_UNSIGNED_BYTE, aRGBA_8ui.data());
   }
 }
 
-void delfem2::opengl::CRender2Tex::BoundingBox3(
+DFM2_INLINE void delfem2::opengl::CRender2Tex::BoundingBox3(
     double *pmin,
     double *pmax) const {
   /*
@@ -305,7 +312,7 @@ void delfem2::opengl::CRender2Tex::BoundingBox3(
    */
 }
 
-bool delfem2::opengl::GetProjectedPoint(
+DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
     CVec3d &p0,
     CVec3d &n0,
     const CVec3d &ps,

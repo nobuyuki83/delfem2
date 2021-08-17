@@ -190,8 +190,6 @@ void LaplacianLinear(
       ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
       dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
       smplr.End();
-      smplr.CopyToCPU_Depth();
-      smplr.CopyToCPU_RGBA8UI();
     }
 
     // deformation
@@ -237,8 +235,6 @@ void LaplacianDegenerate(
       ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
       dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
       smplr.End();
-      smplr.CopyToCPU_Depth();
-      smplr.CopyToCPU_RGBA8UI();
     }
 
     // deformation

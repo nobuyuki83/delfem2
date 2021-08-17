@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-#######################
-
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
@@ -27,8 +25,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 # opengl
 find_package(OpenGL REQUIRED)
 
-# dfm2
-add_definitions(-DDFM2_HEADER_ONLY=ON)
+# delfem2
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 ############################################
