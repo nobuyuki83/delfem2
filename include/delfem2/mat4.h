@@ -17,6 +17,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>  // using NaN Check
+
 #include "delfem2/dfm2_inline.h"
 
 #define NEARLY_ZERO 1.e-16
@@ -427,7 +428,7 @@ using CMat4f = CMat4<float>;
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/mat4.cpp"
+#  include "delfem2/mat4.cpp"
 #endif
 
 #endif

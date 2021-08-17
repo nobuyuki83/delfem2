@@ -5,15 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#if defined(_WIN32) // windows
+#  include <windows.h>
+#endif
 #include "glad/glad.h" // gl3.0+
 #if defined(__APPLE__) && defined(__MACH__) // Mac
-  #define GL_SILENCE_DEPRECATION
-  #include <OpenGL/gl.h>
-#elif defined(_WIN32) // windows
-  #include <windows.h>
-  #include <GL/gl.h>
+#  define GL_SILENCE_DEPRECATION
+#  include <OpenGL/gl.h>
 #else
-  #include <GL/gl.h>
+#  include <GL/gl.h>
 #endif
 
 #include "delfem2/opengl/old/funcs.h"
@@ -22,7 +22,7 @@
 
 // ------------------
 
-DFM2_INLINE void delfem2::opengl::SetView(const CRender2Tex& r2t){
+DFM2_INLINE void delfem2::opengl::SetView(const CRender2Tex &r2t) {
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
   ::glMultMatrixd(r2t.mMV);
@@ -35,27 +35,33 @@ DFM2_INLINE void delfem2::opengl::SetView(const CRender2Tex& r2t){
 
 // --------------------------------------------
 
-void delfem2::opengl::CDrawerOldGL_Render2Tex::SetPointColor(double r, double g, double b){
+void delfem2::opengl::CDrawerOldGL_Render2Tex::SetPointColor(double r, double g, double b) {
   colorPoint[0] = r;
   colorPoint[1] = g;
   colorPoint[2] = b;
 }
 
-void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Texture(const CRender2Tex& r2t) const {
-  double mMVP[16]; MatMat4(mMVP, r2t.mMV,r2t.mP);
-  double mMVPinv[16]; Inverse_Mat4(mMVPinv, mMVP);
+void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Texture(const CRender2Tex &r2t) {
+  double mMVP[16];
+  MatMat4(mMVP, r2t.mMV, r2t.mP);
+  double mMVPinv[16];
+  Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
   ::glMultMatrixd(mMVPinv);
   //
   ::glEnable(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
-  ::glColor3d(1,1,1);
+  ::glColor3d(1, 1, 1);
   ::glBegin(GL_QUADS);
-  ::glTexCoord2d(0.0, 0.0); ::glVertex3d(-1,-1,-1);
-  ::glTexCoord2d(1.0, 0.0); ::glVertex3d(+1,-1,-1);
-  ::glTexCoord2d(1.0, 1.0); ::glVertex3d(+1,+1,-1);
-  ::glTexCoord2d(0.0, 1.0); ::glVertex3d(-1,+1,-1);
+  ::glTexCoord2d(0.0, 0.0);
+  ::glVertex3d(-1, -1, -1);
+  ::glTexCoord2d(1.0, 0.0);
+  ::glVertex3d(+1, -1, -1);
+  ::glTexCoord2d(1.0, 1.0);
+  ::glVertex3d(+1, +1, -1);
+  ::glTexCoord2d(0.0, 1.0);
+  ::glVertex3d(-1, +1, -1);
   ::glEnd();
   ::glBindTexture(GL_TEXTURE_2D, 0);
   ::glDisable(GL_TEXTURE_2D);
@@ -63,10 +69,10 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Texture(const CRender2Tex& r
   ::glPopMatrix();
 }
 
-void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw(const CRender2Tex& r2t) const {
+void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw(const CRender2Tex &r2t) const {
 
   ::glPointSize(this->pointSize);
-  if(isDrawDepth) {
+  if (isDrawDepth) {
     this->Draw_Point(r2t);
   }
   // -----------
@@ -74,32 +80,34 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw(const CRender2Tex& r2t) cons
   this->Draw_Axis(r2t);
   // ----------
   ::glLineWidth(1);
-  ::glColor3d(0,0,0);
-  this->Draw_BoundingBox(r2t);
+  ::glColor3d(0, 0, 0);
+  delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_BoundingBox(r2t);
   // -----------
-  if( r2t.id_tex_color > 0 && this->isDrawTex ){
+  if (r2t.id_tex_color > 0 && this->isDrawTex) {
     ::glBindTexture(GL_TEXTURE_2D, r2t.id_tex_color);
     this->Draw_Texture(r2t);
   }
 
 }
 
-void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Axis(const CRender2Tex& r2t) const
-{
-  double mMVP[16]; MatMat4(mMVP, r2t.mMV,r2t.mP);
-  double mMVPinv[16]; Inverse_Mat4(mMVPinv, mMVP);
+void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Axis(const CRender2Tex &r2t) const {
+  double mMVP[16];
+  MatMat4(mMVP, r2t.mMV, r2t.mP);
+  double mMVPinv[16];
+  Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
   ::glMultMatrixd(mMVPinv);
-  ::glTranslated(-1.01,-1.01,-1.01);
+  ::glTranslated(-1.01, -1.01, -1.01);
   delfem2::opengl::DrawAxis(draw_len_axis);
   ::glPopMatrix();
 }
 
-void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_BoundingBox(const CRender2Tex& r2t) const
-{
-  double mMVP[16]; MatMat4(mMVP, r2t.mMV,r2t.mP);
-  double mMVPinv[16]; Inverse_Mat4(mMVPinv, mMVP);
+void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_BoundingBox(const CRender2Tex &r2t) {
+  double mMVP[16];
+  MatMat4(mMVP, r2t.mMV, r2t.mP);
+  double mMVPinv[16];
+  Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
   ::glMultMatrixd(mMVPinv);
@@ -112,32 +120,33 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_BoundingBox(const CRender2Te
   ::glPopMatrix();
 }
 
-void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Point(const CRender2Tex& r2t) const
-{
-  double mMVP[16]; MatMat4(mMVP, r2t.mMV,r2t.mP);
-  double mMVPinv[16]; Inverse_Mat4(mMVPinv, mMVP);
+void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Point(const CRender2Tex &r2t) const {
   const unsigned int nResX = r2t.nResX;
   const unsigned int nResY = r2t.nResY;
-  //
-  ::glMatrixMode(GL_MODELVIEW);
-  ::glPushMatrix();
-  ::glMultMatrixd(mMVPinv);
-  // --
-  ::glDisable(GL_LIGHTING);
-  if( r2t.aZ.size() != nResX*nResY ){
+  if (r2t.aZ.size() != nResX * nResY) {
     glPopMatrix();
     return;
   }
-  if( colorPoint.size() == 3 ){ ::glColor3dv(colorPoint.data()); }
-  if( colorPoint.size() == 4 ){ ::glColor4dv(colorPoint.data()); }
+  //
+  double mMVP[16];
+  MatMat4(mMVP, r2t.mMV, r2t.mP);
+  double mMVPinv[16];
+  Inverse_Mat4(mMVPinv, mMVP);
+  ::glMatrixMode(GL_MODELVIEW);
+  ::glPushMatrix();
+  ::glMultMatrixd(mMVPinv);
+  ::glDisable(GL_LIGHTING);
+
+  if (colorPoint.size() == 3) { ::glColor3dv(colorPoint.data()); }
+  if (colorPoint.size() == 4) { ::glColor4dv(colorPoint.data()); }
   ::glBegin(GL_POINTS);
-  for(unsigned int iy=0;iy<nResY;++iy){
-    for(unsigned int ix=0;ix<nResX;++ix){
-      const double x0 = -1+2.0/nResX*ix;
-      const double y0 = -1+2.0/nResY*iy;
-      const double z0 = -1+2.0*r2t.aZ[iy*nResX+ix];
-      if( z0 > 0.9 && isDrawOnlyHitPoints ){ continue; } // ray is shooted from -1 to +1
-      ::glVertex3d(x0,y0,z0);
+  for (unsigned int iy = 0; iy < nResY; ++iy) {
+    for (unsigned int ix = 0; ix < nResX; ++ix) {
+      const double x0 = -1 + 2.0 / nResX * ix;
+      const double y0 = -1 + 2.0 / nResY * iy;
+      const double z0 = -1 + 2.0 * r2t.aZ[iy * nResX + ix];
+      if (z0 > 0.9 && isDrawOnlyHitPoints) { continue; } // ray is shooted from -1 to +1
+      ::glVertex3d(x0, y0, z0);
     }
   }
   ::glEnd();
@@ -202,8 +211,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
         nresX_, nresZ_, elen_, elen_ * nresY_);
   }
   {
-    aSampler.resize(aSampler.size()+1);
-    auto& smplr = aSampler[aSampler.size()-1];
+    aSampler.resize(aSampler.size() + 1);
+    auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresY_, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
         smplr.mMV, smplr.mP,
@@ -213,8 +222,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
         nresX_, nresY_, elen_, elen_ * nresZ_);
   }
   {
-    aSampler.resize(aSampler.size()+1);
-    auto& smplr = aSampler[aSampler.size()-1];
+    aSampler.resize(aSampler.size() + 1);
+    auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresY_, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
         smplr.mMV, smplr.mP,
@@ -232,7 +241,7 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
   aDrawSampler[3].SetPointColor(0.5, 1.0, 0.5);
   aDrawSampler[4].SetPointColor(0.0, 0.0, 1.0);
   aDrawSampler[5].SetPointColor(0.5, 0.5, 1.0);
-  for(auto& smplr : aDrawSampler){
+  for (auto &smplr : aDrawSampler) {
     smplr.draw_len_axis = 0.2;
     smplr.isDrawTex = false;
     smplr.isDrawOnlyHitPoints = true;
@@ -240,86 +249,84 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
 
 }
 
-
 void delfem2::opengl::CarveVoxelByDepth(
-    std::vector<int>& aVal,
-    const CRender2Tex_DrawOldGL_BOX& sampler_box)
-{
+    std::vector<int> &aVal,
+    const CRender2Tex_DrawOldGL_BOX &sampler_box) {
   const unsigned int nx = sampler_box.nDivX();
   const unsigned int ny = sampler_box.nDivY();
   const unsigned int nz = sampler_box.nDivZ();
   // ------
-  aVal.assign(nz*ny*nx,1);
-  for(unsigned int iy=0;iy<ny;++iy){
-    for(unsigned int iz=0;iz<nz;++iz){
-      double d0 = sampler_box.aSampler[0].aZ[iz*ny+iy];
-      const unsigned int nd = d0*nx;
-      for(unsigned int id=0;id<nd;id++){
-        const unsigned int ix0 = nx-id-1;
+  aVal.assign(nz * ny * nx, 1);
+  for (unsigned int iy = 0; iy < ny; ++iy) {
+    for (unsigned int iz = 0; iz < nz; ++iz) {
+      double d0 = sampler_box.aSampler[0].aZ[iz * ny + iy];
+      const unsigned int nd = d0 * nx;
+      for (unsigned int id = 0; id < nd; id++) {
+        const unsigned int ix0 = nx - id - 1;
         const unsigned int iy0 = iy;
         const unsigned int iz0 = iz;
-        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+        aVal[iz0 * ny * nx + iy0 * nx + ix0] = 0;
       }
     }
   }
-  for(unsigned int iy=0;iy<ny;++iy){
-    for(unsigned int iz=0;iz<nz;++iz){
-      double d0 = sampler_box.aSampler[1].aZ[iz*ny+iy];
-      const unsigned int nd = d0*nx;
-      for(unsigned int id=0;id<nd;id++){
+  for (unsigned int iy = 0; iy < ny; ++iy) {
+    for (unsigned int iz = 0; iz < nz; ++iz) {
+      double d0 = sampler_box.aSampler[1].aZ[iz * ny + iy];
+      const unsigned int nd = d0 * nx;
+      for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = id;
         const unsigned int iy0 = iy;
-        const unsigned int iz0 = nz-1-iz;
-        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+        const unsigned int iz0 = nz - 1 - iz;
+        aVal[iz0 * ny * nx + iy0 * nx + ix0] = 0;
       }
     }
   }
 
-  for(unsigned int ix=0;ix<nx;++ix){
-    for(unsigned int iz=0;iz<nz;++iz){
-      double d0 = sampler_box.aSampler[2].aZ[iz*nx+ix];
-      const unsigned int nd = d0*ny;
-      for(unsigned int id=0;id<nd;id++){
+  for (unsigned int ix = 0; ix < nx; ++ix) {
+    for (unsigned int iz = 0; iz < nz; ++iz) {
+      double d0 = sampler_box.aSampler[2].aZ[iz * nx + ix];
+      const unsigned int nd = d0 * ny;
+      for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
-        const unsigned int iy0 = ny-1-id;
-        const unsigned int iz0 = nz-1-iz;
-        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+        const unsigned int iy0 = ny - 1 - id;
+        const unsigned int iz0 = nz - 1 - iz;
+        aVal[iz0 * ny * nx + iy0 * nx + ix0] = 0;
       }
     }
   }
-  for(unsigned int ix=0;ix<nx;++ix){
-    for(unsigned int iz=0;iz<nz;++iz){
-      double d0 = sampler_box.aSampler[3].aZ[iz*nx+ix];
-      const unsigned int nd = d0*ny;
-      for(unsigned int id=0;id<nd;id++){
+  for (unsigned int ix = 0; ix < nx; ++ix) {
+    for (unsigned int iz = 0; iz < nz; ++iz) {
+      double d0 = sampler_box.aSampler[3].aZ[iz * nx + ix];
+      const unsigned int nd = d0 * ny;
+      for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = id;
         const unsigned int iz0 = iz;
-        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+        aVal[iz0 * ny * nx + iy0 * nx + ix0] = 0;
       }
     }
   }
-  for(unsigned int ix=0;ix<nx;++ix){
-    for(unsigned int iy=0;iy<ny;++iy){
-      double d0 = sampler_box.aSampler[4].aZ[iy*nx+ix];
-      const unsigned int nd = d0*nz;
-      for(unsigned int id=0;id<nd;id++){
+  for (unsigned int ix = 0; ix < nx; ++ix) {
+    for (unsigned int iy = 0; iy < ny; ++iy) {
+      double d0 = sampler_box.aSampler[4].aZ[iy * nx + ix];
+      const unsigned int nd = d0 * nz;
+      for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = iy;
-        const unsigned int iz0 = nz-1-id;
-        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+        const unsigned int iz0 = nz - 1 - id;
+        aVal[iz0 * ny * nx + iy0 * nx + ix0] = 0;
       }
     }
   }
-  for(unsigned int ix=0;ix<nx;++ix){
-    for(unsigned int iy=0;iy<ny;++iy){
-      double d0 = sampler_box.aSampler[5].aZ[iy*nx+ix];
-      const unsigned int nd = d0*nz;
-      for(unsigned int id=0;id<nd;id++){
+  for (unsigned int ix = 0; ix < nx; ++ix) {
+    for (unsigned int iy = 0; iy < ny; ++iy) {
+      double d0 = sampler_box.aSampler[5].aZ[iy * nx + ix];
+      const unsigned int nd = d0 * nz;
+      for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
-        const unsigned int iy0 = ny-1-iy;
+        const unsigned int iy0 = ny - 1 - iy;
         const unsigned int iz0 = id;
-        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+        aVal[iz0 * ny * nx + iy0 * nx + ix0] = 0;
       }
     }
   }

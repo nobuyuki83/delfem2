@@ -19,7 +19,7 @@
 
 namespace delfem2 {
 
-void Mat4_OrthongoalProjection_AffineTrans(
+DFM2_INLINE void Mat4_OrthongoalProjection_AffineTrans(
     double mMV[16],
     double mP[16],
     const double origin[3],
@@ -32,6 +32,10 @@ void Mat4_OrthongoalProjection_AffineTrans(
 
 namespace opengl {
 
+/**
+ * Class to prepare framebuffer object (FBO) for "render-to-texture" purpose
+ * The rendered image and depth are saved in the CPU memory at the end.
+ */
 class CRender2Tex {
  public:
   CRender2Tex() :
@@ -67,18 +71,22 @@ class CRender2Tex {
   }
   /**
   * @brief update the bounding box by adding points
-  * @param pmin (in/out) lower coner
-  * @param pmax (in/out) upper corner
+  * @param[in,out] pmin lower coner
+  * @param[in,out] pmax upper corner
   * @details if( pmin[0] > pmax[0] ) this bounding box is empty
   */
-  void BoundingBox3(double *pmin, double *pmax) const;
+  DFM2_INLINE void BoundingBox3(double *pmin, double *pmax) const;
 
   void SetTextureProperty(unsigned int nw, unsigned int nh, bool is_rgba_8ui_) {
     this->nResX = nw;
     this->nResY = nh;
     this->is_rgba_8ui = is_rgba_8ui_;
   }
-  void SetValue_CpuImage_8ui(const unsigned char *image, unsigned int nw, unsigned int nh, unsigned int nch) {
+  void SetValue_CpuImage_8ui(
+      const unsigned char *image,
+      unsigned int nw,
+      unsigned int nh,
+      unsigned int nch) {
     aRGBA_8ui.resize(nw * nh * 4, 255);
     for (unsigned int ih = 0; ih < nh; ++ih) {
       for (unsigned int iw = 0; iw < nw; ++iw) {
@@ -90,6 +98,15 @@ class CRender2Tex {
   }
   void Start();
   void End();
+  template <typename REAL>
+  std::vector<REAL> GetMatrixModelViewAsStlVector() const {
+    return std::vector<REAL>(mMV, mMV+16);
+  }
+  template <typename REAL>
+  std::vector<REAL> GetMatrixProjectionAsStlVector() const {
+    return std::vector<REAL>(mP, mP+16);
+  }
+ private:
   void CopyToCPU_Depth();
   void CopyToCPU_RGBA8UI();
   void CopyToCPU_RGBA32F();
@@ -116,7 +133,7 @@ class CRender2Tex {
  * @brief project input point to the depth surface
  * @param[in] ps the point to project
  */
-bool GetProjectedPoint(
+DFM2_INLINE bool GetProjectedPoint(
     CVec3d &p0,
     CVec3d &n0,
     const CVec3d &ps,

@@ -5,12 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <iostream>
+#include <cmath>
 #ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
 #else
-  #include <glad/glad.h>
+#  include <glad/glad.h>
 #endif
+#if defined(_MSC_VER)
+#  include <windows.h>
+#endif
+#include <GLFW/glfw3.h>
+
 #include "delfem2/mshprimitive.h"
 #include "delfem2/vec3.h"
 #include "delfem2/opengl/new/shdr_points.h"
@@ -18,14 +25,6 @@
 #include "delfem2/opengl/new/r2tgln.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include <iostream>
-#include <cmath>
-
-#if defined(_MSC_VER)
-  #include <windows.h>
-#endif
-
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -35,36 +34,35 @@ dfm2::opengl::CShader_TriMesh shdr_trimsh;
 dfm2::opengl::CShader_Points shdr_points;
 dfm2::opengl::CRender2Tex_DrawNewGL draw_r2t;
 
-void draw(GLFWwindow* window)
-{
+void draw(GLFWwindow *window) {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL);
+  ::glPolygonOffset(1.1f, 4.0f);
 
-  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float)nw/float(nh);
+  int nw, nh;
+  glfwGetFramebufferSize(window, &nw, &nh);
+  const float asp = (float) nw / float(nh);
   float mP[16], mMV[16];
   viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-  shdr_points.Draw(mP,mMV);
+  shdr_points.Draw(mP, mMV);
   shdr_trimsh.Draw(mP, mMV);
-  draw_r2t.Draw(r2t,mP,mMV);
+  draw_r2t.Draw(r2t, mP, mMV);
   viewer.SwapBuffers();
   glfwPollEvents();
 }
 
-int main()
-{
+int main() {
   {
     int nres = 200;
     double elen = 0.01;
     r2t.SetTextureProperty(nres, nres, true);
     dfm2::Mat4_OrthongoalProjection_AffineTrans(
         r2t.mMV, r2t.mP,
-        dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).p,
-        dfm2::CVec3d(0,0,-1).p,
-        dfm2::CVec3d(1,0,0).p,
+        dfm2::CVec3d(-nres * elen * 0.5, nres * elen * 0.5, -2).p,
+        dfm2::CVec3d(0, 0, -1).p,
+        dfm2::CVec3d(1, 0, 0).p,
         nres, nres, elen, 4.0);
     draw_r2t.draw_len_axis = 1.0;
   }
@@ -73,8 +71,7 @@ int main()
   viewer.InitGL();
 
 #ifndef EMSCRIPTEN
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
+  if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
@@ -88,32 +85,33 @@ int main()
     std::vector<unsigned int> aTri;
     dfm2::MeshTri3_Torus(aXYZ, aTri, 0.8, 0.1, 8, 8);
     shdr_trimsh.Compile();
-    shdr_trimsh.Initialize(aXYZ,3, aTri);
+    shdr_trimsh.Initialize(aXYZ, 3, aTri);
   }
   r2t.Start();
-  ::glClearColor(1.0, 1.0, 1.0, 1.0 );
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glClearColor(1.0, 1.0, 1.0, 1.0);
+  ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glDisable(GL_BLEND);
   ::glEnable(GL_DEPTH_TEST);
   {
-    float mMVf[16]; dfm2::Copy_Mat4(mMVf, r2t.mMV);
-    float mPf[16]; dfm2::Copy_Mat4(mPf, r2t.mP);
+    float mMVf[16];
+    dfm2::Copy_Mat4(mMVf, r2t.mMV);
+    float mPf[16];
+    dfm2::Copy_Mat4(mPf, r2t.mP);
     shdr_trimsh.Draw(mPf, mMVf);
   }
   r2t.End();
-  r2t.CopyToCPU_Depth();
   draw_r2t.SetDepth(r2t);
   //
   viewer.camera.view_height = 2.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.camera.Rot_Camera(+0.8, -0.2);
-  
+
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
   while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
 #endif
-  
+
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

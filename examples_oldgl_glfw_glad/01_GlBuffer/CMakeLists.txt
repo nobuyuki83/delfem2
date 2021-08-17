@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
-
-#########################
-
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
@@ -28,18 +24,7 @@ get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 # opengl
 find_package(OpenGL REQUIRED)
 
-# dfm2
-IF (DFM2_HEADER_ONLY)
-else ()
-  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  if (MSVC)
-    set(DFM2_LIBRARY
-        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)
-  else ()
-    set(DFM2_LIBRARY
-        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a)
-  endif ()
-ENDIF ()
+# delfem2
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 ######################

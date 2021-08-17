@@ -79,7 +79,7 @@ jobs:
     - name: build examples (oldgl,glfw)
       run: |
         echo "#############################"
-        echo "## build demo oldgl,glfw,glad"
+        echo "## build demo oldgl,glfw"
 
         cd examples_oldgl_glfw
         mkdir buildVS64Static
@@ -88,10 +88,10 @@ jobs:
         cmake --build .
         cd ../../
 
-    - name: build examples (glfw,glad)
+    - name: build examples (oldgl,glfw,glad)
       run: |
-        echo "#######################"
-        echo "## build demo glfw,glad"
+        echo "#############################"
+        echo "## build demo oldgl,glfw,glad"
 
         cd examples_oldgl_glfw_glad
         mkdir buildVS64Static
@@ -100,10 +100,10 @@ jobs:
         cmake --build .
         cd ../../
 
-    - name: build examples (glfw,tinygltf)
+    - name: build examples (oldgl,glfw,tinygltf)
       run: |
-        echo "###########################"
-        echo "## build demo glfw,tinygltf"
+        echo "#################################"
+        echo "## build demo oldgl,glfw,tinygltf"
 
         git submodule update --init -- 3rd_party/tinygltf
 

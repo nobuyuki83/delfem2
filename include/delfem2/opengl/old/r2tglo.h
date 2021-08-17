@@ -34,17 +34,17 @@ class CDrawerOldGL_Render2Tex {
   void Draw(const CRender2Tex &r2t) const;
   void Draw_Axis(const CRender2Tex &r2t) const;
   void Draw_Point(const CRender2Tex &r2t) const;
-  void Draw_BoundingBox(const CRender2Tex &r2t) const;
+  static void Draw_BoundingBox(const CRender2Tex &r2t);
   /**
    * @details before calling this function, bound texture by "glBindTexture" by yourself.
    */
-  void Draw_Texture(const CRender2Tex &r2t) const;
+  static void Draw_Texture(const CRender2Tex &r2t);
   // ------------
   void SetPointColor(double r, double g, double b);
  public:
   // -------------------
   double draw_len_axis = 1.0;
-  unsigned int pointSize = 3;
+  float pointSize = 3.f;
   bool isDrawTex = true;
   bool isDrawDepth = true;
   bool isDrawOnlyHitPoints = false;
