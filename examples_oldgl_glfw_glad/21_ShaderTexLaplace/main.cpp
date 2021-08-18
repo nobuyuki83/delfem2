@@ -5,20 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <iostream>
+#include <cmath>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/opengl/tex.h"
-#include <iostream>
-#include <fstream>
-#include <cmath>
 #include "delfem2/mshprimitive.h"
-#include <GLFW/glfw3.h>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
 
 namespace dfm2 = delfem2;
 
@@ -112,7 +112,7 @@ int main(int argc,char* argv[])
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
-        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
         glUseProgram(id_shader_program);
         tex.Draw_oldGL();
         glfwSwapBuffers(viewer.window);
@@ -128,7 +128,7 @@ int main(int argc,char* argv[])
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
-        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
         glUseProgram(id_shader_program);
         tex.Draw_oldGL();
         glfwSwapBuffers(viewer.window);
@@ -144,7 +144,7 @@ int main(int argc,char* argv[])
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
-        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
         glUseProgram(id_shader_program);
         tex.Draw_oldGL();
         glfwSwapBuffers(viewer.window);
@@ -160,7 +160,7 @@ int main(int argc,char* argv[])
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
-        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
         glUseProgram(id_shader_program);
         tex.Draw_oldGL();
         glfwSwapBuffers(viewer.window);

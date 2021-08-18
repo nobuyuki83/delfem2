@@ -62,10 +62,12 @@ int main(int argc, char *argv[]) {
         // ------
         ::glEnable(GL_LIGHTING);
         ::glColor3d(0, 0, 0);
-        delfem2::opengl::DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size() / 3,
-                                            aTri.data(), aTri.size() / 3);
-        delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(),
-                                                aTri.data(), aTri.size() / 3);
+        delfem2::opengl::DrawMeshTri3D_Edge(
+            aXYZ.data(), aXYZ.size() / 3,
+            aTri.data(), aTri.size() / 3);
+        delfem2::opengl::DrawMeshTri3D_FaceNorm(
+            aXYZ.data(),
+            aTri.data(), aTri.size() / 3);
         // -------
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
