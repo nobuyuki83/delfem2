@@ -70,7 +70,7 @@ void Draw(
 
   // draw cloth face
   ::glEnable(GL_TEXTURE_2D);
-  ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+  ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
 
   ::glEnable(GL_LIGHTING);
   dfm2::opengl::myGlColorDiffuse( dfm2::CColor::White() );

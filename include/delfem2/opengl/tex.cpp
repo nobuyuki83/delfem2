@@ -146,9 +146,9 @@ void DrawRectangle_FullCanvas_oldGL()
 
 void delfem2::opengl::CTexRGB::InitGL()
 {
-  if( id_tex == 0 ){ ::glGenTextures(1, &id_tex); }
+  if( id_tex_ == 0 ){ ::glGenTextures(1, &id_tex_); }
   // std::cout << "initialize gl ctexrgb" << id_tex << std::endl;
-  glBindTexture(GL_TEXTURE_2D, id_tex);
+  glBindTexture(GL_TEXTURE_2D, id_tex_);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -156,9 +156,9 @@ void delfem2::opengl::CTexRGB::InitGL()
 //  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 //  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-  assert(  aRGB.size() == w*h*3 );
+  assert(  aRGB.size() == width_*height_*3 );
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-               w, h, 0, GL_RGB, GL_UNSIGNED_BYTE,
+               width_, height_, 0, GL_RGB, GL_UNSIGNED_BYTE,
                aRGB.data() );
   glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -172,11 +172,11 @@ void delfem2::opengl::CTexRGB::InitGL()
 
 void delfem2::opengl::CTexRGB_Rect2D::Draw_oldGL() const
 {
-  if( id_tex == 0 ){ return; }
+  if( id_tex_ == 0 ){ return; }
 #ifdef GL_LIGHTING
   ::glEnable(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
-  ::glBindTexture(GL_TEXTURE_2D, id_tex);
+  ::glBindTexture(GL_TEXTURE_2D, id_tex_);
   ::glColor3d(1,1,1);
   ::glBegin(GL_QUADS);
   ::glTexCoord2d(0.0, 0.0); ::glVertex3d(min_x,min_y,z);

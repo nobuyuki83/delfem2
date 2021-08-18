@@ -39,16 +39,16 @@ unsigned int LoadTexture(
 // ----------------------------------
 
 class CTexRGB {
-public:
+ public:
   std::vector<unsigned char> aRGB;
-  unsigned int id_tex;
-  unsigned int h, w;
+  unsigned int id_tex_;
+  unsigned int height_, width_;
 
-public:
+ public:
   CTexRGB() {
-    id_tex = 0;
-    this->w = 0;
-    this->h = 0;
+    id_tex_ = 0;
+    this->width_ = 0;
+    this->height_ = 0;
     aRGB.clear();
   }
 
@@ -59,25 +59,24 @@ public:
     this->Initialize(w,h, pD, typeData);
   }
    */
-  
+
   virtual void Initialize(
-      unsigned int w_,
-      unsigned int h_,
+      unsigned int w0,
+      unsigned int h0,
       const unsigned char *pD,
-      const std::string &typeData)
-  {
-    this->h = h_;
-    this->w = w_;
-    this->aRGB.assign(pD, pD + h * w * 3);
+      const std::string &typeData) {
+    this->height_ = h0;
+    this->width_ = w0;
+    this->aRGB.assign(pD, pD + height_ * width_ * 3);
     if (typeData == "bgr") {
-      for (unsigned int i = 0; i < h * w; ++i) { // rgb -> bgr
+      for (unsigned int i = 0; i < height_ * width_; ++i) { // rgb -> bgr
         unsigned char b0 = aRGB[i * 3 + 0];
         unsigned char r0 = aRGB[i * 3 + 2];
         aRGB[i * 3 + 0] = r0;
         aRGB[i * 3 + 2] = b0;
       }
     }
-    id_tex = 0;
+    id_tex_ = 0;
   }
 
   virtual void InitGL();
@@ -86,45 +85,37 @@ public:
 // ----------------------------------
 
 class CTexRGB_Rect2D :
-public CTexRGB
-{
-public:
+    public CTexRGB {
+ public:
   CTexRGB_Rect2D() : CTexRGB() {}
   virtual ~CTexRGB_Rect2D() = default;
 
   void Draw_oldGL() const;
-  
+
   void Initialize(unsigned int w, unsigned int h,
                   const unsigned char *pD,
-                  const std::string &typeData) override
-  {
+                  const std::string &typeData) override {
     CTexRGB::Initialize(w, h, pD, typeData);
     this->min_x = 0.0;
     this->max_x = (double) w;
     this->min_y = 0.0;
     this->max_y = (double) h;
   }
-  
-  std::vector<double> MinMaxXYZ() const {
-    std::vector<double> m(6, 0.0);
-    m[0] = this->min_x;
-    m[1] = this->max_x;
-    m[2] = this->min_y;
-    m[3] = this->max_y;
-    m[4] = z;
-    m[5] = z;
-    return m;
+
+  std::vector<double> MinMaxAABB() const {
+    return {this->min_x, this->min_y, z,
+            this->max_x, this->max_y, z};
   }
-  
+
   void SetMinMaxXY(const std::vector<double> &mmxy) {
     if (mmxy.size() < 4) { return; }
     this->min_x = mmxy[0];
     this->max_x = mmxy[1];
     this->min_y = mmxy[2];
     this->max_y = mmxy[3];
-    z = (mmxy[4] + mmxy[5])*0.5;
+    z = (mmxy[4] + mmxy[5]) * 0.5;
   }
-public:
+ public:
   // this is a coordinate for OpenGL image plane (after ModelView and Projection)
   double min_x = -1, max_x = +1;
   double min_y = -1, max_y = +1;
@@ -134,14 +125,14 @@ public:
 // ----------------------------------
 
 class CTextureInfo {
-public:
+ public:
   std::string full_path;
-  int width, height, bpp; // byte par pixel
-  int id_tex_gl;
+  int width = 0, height = 0, bpp = 0; // byte par pixel
+  int id_tex_gl = 0;
 };
 
 class CTexManager {
-public:
+ public:
   void Clear();
 
   void AddTexture(const unsigned char *pixels,
@@ -178,7 +169,7 @@ public:
 
   void BindTexturePath(const std::string &path) const;
 
-public:
+ public:
   std::vector<CTextureInfo> aTexInfo;
 };
 
@@ -186,7 +177,7 @@ public:
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/opengl/tex.cpp"
+#include "delfem2/opengl/tex.cpp"
 #endif
 
 #endif
