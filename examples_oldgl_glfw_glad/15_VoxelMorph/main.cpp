@@ -32,7 +32,7 @@ void Draw_CGrid3
     (const dfm2::CGrid3<int> &grid) {
   { // set-up transformation
     const dfm2::CMat4d &am = grid.am;
-    dfm2::CMat4d amt = am.Transpose();
+    dfm2::CMat4d amt = am.transpose();
     ::glMatrixMode(GL_MODELVIEW);
     ::glPushMatrix();
     ::glMultMatrixd(amt.mat);

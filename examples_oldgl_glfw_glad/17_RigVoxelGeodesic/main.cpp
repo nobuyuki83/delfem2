@@ -38,7 +38,7 @@ void Draw_CGrid3(
     double thresh) {
   { // set-up transformation
     const dfm2::CMat4d &am = grid.am;
-    dfm2::CMat4d amt = am.Transpose();
+    dfm2::CMat4d amt = am.transpose();
     ::glMatrixMode(GL_MODELVIEW);
     ::glPushMatrix();
     ::glMultMatrixd(amt.mat);
