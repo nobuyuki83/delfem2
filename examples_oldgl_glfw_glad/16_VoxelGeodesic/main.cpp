@@ -39,7 +39,7 @@ void Draw_CGrid3(
     double thresh) {
   { // set-up transformation
     const dfm2::CMat4d &am = grid.am;
-    dfm2::CMat4d amt = am.Transpose();
+    dfm2::CMat4d amt = am.transpose();
     ::glMatrixMode(GL_MODELVIEW);
     ::glPushMatrix();
     ::glMultMatrixd(amt.mat);
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
         Draw_CGrid3(grid, aDist, colorMap, iframe * 0.1);
         { // set-up transformation
           const dfm2::CMat4d &am = grid.am;
-          dfm2::CMat4d amt = am.Transpose();
+          dfm2::CMat4d amt = am.transpose();
           ::glMatrixMode(GL_MODELVIEW);
           ::glPushMatrix();
           ::glMultMatrixd(amt.mat);
