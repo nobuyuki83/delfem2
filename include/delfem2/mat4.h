@@ -329,10 +329,29 @@ CMat4<T> operator + (const CMat4<T>& lhs, const CMat4<T>& rhs);
 template <typename REAL>
 class CMat4 {
 public:
-  CMat4 ()= default;
-  explicit CMat4 (const float* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
-  explicit CMat4 (const double* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
+  CMat4 () : mat{1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1} {}
+
+  template <typename S>
+  CMat4 (const S* pm){
+    for(int i=0;i<16;++i){ mat[i] = static_cast<S>(pm[i]); }
+  }
+
+  CMat4(REAL x0, REAL x1, REAL x2, REAL x3,
+        REAL x4, REAL x5, REAL x6, REAL x7,
+        REAL x8, REAL x9, REAL xa, REAL xb,
+        REAL xc, REAL xd, REAL xe, REAL xf)
+        : mat{x0,x1,x2,x3, x4,x5,x6,x7, x8,x9,xa,xb, xc,xd,xe,xf} {
+  }
 public:
+    inline REAL operator()(int i, int j) const {
+    assert(i < 4 && j < 4);
+    return mat[i * 4 + j];
+  }
+
+  inline REAL &operator()(int i, int j) {
+    assert(i < 4 && j < 4);
+    return mat[i * 4 + j];
+  }
   // ------------------------
   // below: "set" functions
   void Set_AffineTranslate(REAL x, REAL y, REAL z){
@@ -343,7 +362,10 @@ public:
     Mat4_Quat(mat,
               q);
   }
-  void SetZero() {
+  /**
+   * @details named same as Eigen
+   */
+  void setZero() {
     for(auto& v : mat){ v = 0; }
   }
   void SetIdentity() {
@@ -354,18 +376,18 @@ public:
     mat[3*4+3] = 1;
   }
   void SetScale(REAL x, REAL y, REAL z){
-    this->SetZero();
+    this->setZero();
     mat[0*4+0] = x;
     mat[1*4+1] = y;
     mat[2*4+2] = z;
     mat[3*4+3] = 1;
   }
   // -----------------------
-  CMat4<double> Double() const {
-    return CMat4<double>(mat);
-  }
   CMat4<REAL> MatMat(const CMat4<REAL>& mat0) const;
-  CMat4<REAL> Transpose() const{
+  /**
+ * @details named same as Eigen
+ */
+  CMat4<REAL> transpose() const{
     CMat4<REAL> m1;
     for(int i=0;i<4;++i){
       for(int j=0;j<4;++j){
@@ -375,6 +397,27 @@ public:
     return m1;
   }
   CMat4<REAL> Inverse() const;
+
+  template<typename S>
+  CMat4<S> cast() const {
+    return CMat4<S>(
+        static_cast<S>(mat[0]),
+        static_cast<S>(mat[1]),
+        static_cast<S>(mat[2]),
+        static_cast<S>(mat[3]),
+        static_cast<S>(mat[4]),
+        static_cast<S>(mat[5]),
+        static_cast<S>(mat[6]),
+        static_cast<S>(mat[7]),
+        static_cast<S>(mat[8]),
+        static_cast<S>(mat[9]),
+        static_cast<S>(mat[10]),
+        static_cast<S>(mat[11]),
+        static_cast<S>(mat[12]),
+        static_cast<S>(mat[13]),
+        static_cast<S>(mat[14]),
+        static_cast<S>(mat[15]));
+  };
   // ----------------------
   // below: static function
   static CMat4<REAL> Identity(){
@@ -384,7 +427,7 @@ public:
   }
   static CMat4<REAL> Scale(REAL s){
     CMat4<REAL> m;
-    m.SetZero();
+    m.setZero();
     m.mat[0*4+0] = s;
     m.mat[1*4+1] = s;
     m.mat[2*4+2] = s;
@@ -393,7 +436,7 @@ public:
   }
   static CMat4<REAL> Spin(const REAL* v){
     CMat4<REAL> m;
-    m.SetZero();
+    m.setZero();
     m.mat[0*4+0] =  0;     m.mat[0*4+1] = -v[2];   m.mat[0*4+2] = +v[1];
     m.mat[1*4+0] = +v[2];  m.mat[1*4+1] = 0;       m.mat[1*4+2] = -v[0];
     m.mat[2*4+0] = -v[1];  m.mat[2*4+1] = +v[0];   m.mat[2*4+2] = 0;
@@ -411,7 +454,7 @@ public:
   }
   static CMat4<REAL> Mat3(const REAL* v){
     CMat4<REAL> m;
-    m.SetZero();
+    m.setZero();
     m.mat[0*4+0] = v[0*3+0];  m.mat[0*4+1] = v[0*3+1];  m.mat[0*4+2] = v[0*3+2];
     m.mat[1*4+0] = v[1*3+0];  m.mat[1*4+1] = v[1*3+1];  m.mat[1*4+2] = v[1*3+2];
     m.mat[2*4+0] = v[2*3+0];  m.mat[2*4+1] = v[2*3+1];  m.mat[2*4+2] = v[2*3+2];

@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     //
     void Draw() {
       { // set boundary condition
-        const dfm2::CMat4<double> aff1 = giz1.Affine().Double();
+        const dfm2::CMat4<double> aff1 = giz1.Affine().cast<double>();
         for (unsigned int ip = 0; ip < aXYZ0.size() / 3; ++ip) {
           if (aBCFlag[ip * 3 + 0] == 0) { continue; }
           if (aBCFlag[ip * 3 + 0] == 1) {
