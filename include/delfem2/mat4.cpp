@@ -171,6 +171,8 @@ template void delfem2::Mat4_AffineTransProjectionOrtho(
     double zmin, double zmax);  // -z, +z
 #endif
 
+// -----------------------
+
 template<typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     REAL mP[16],
@@ -877,7 +879,7 @@ delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL *q) {
   const REAL xw = q[0] * q[3] * 2;
   const REAL yw = q[1] * q[3] * 2;
   const REAL zw = q[2] * q[3] * 2;
-  m.SetZero();
+  m.setZero();
   m.mat[0 * 4 + 0] = 1 - y2 - z2;
   m.mat[0 * 4 + 1] = xy - zw;
   m.mat[0 * 4 + 2] = zx + yw;

@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
         ::glMatrixMode(GL_MODELVIEW);
         ::glPushMatrix();
         const auto m0 = ga.Affine();
-        const auto m1 = m0.Transpose();
+        const auto m1 = m0.transpose();
         delfem2::opengl::MyGlMultMat(m1);
         // ------
         ::glEnable(GL_LIGHTING);
