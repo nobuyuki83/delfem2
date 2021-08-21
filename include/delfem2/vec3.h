@@ -223,6 +223,7 @@ class CVec3 {
   // ------
 
   //! @details named after Eigen library
+  // [[nodiscard]]
   CVec3 normalized() const {
     CVec3 r = (*this);
     r.normalize();
