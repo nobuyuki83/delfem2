@@ -332,7 +332,7 @@ public:
   CMat4 () : mat{1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1} {}
 
   template <typename S>
-  CMat4 (const S* pm){
+  explicit CMat4 (const S* pm){
     for(int i=0;i<16;++i){ mat[i] = static_cast<S>(pm[i]); }
   }
 
@@ -342,7 +342,9 @@ public:
         REAL xc, REAL xd, REAL xe, REAL xf)
         : mat{x0,x1,x2,x3, x4,x5,x6,x7, x8,x9,xa,xb, xc,xd,xe,xf} {
   }
-public:
+  REAL *data() { return mat; }
+  const REAL *data() const { return mat; }
+ public:
     inline REAL operator()(int i, int j) const {
     assert(i < 4 && j < 4);
     return mat[i * 4 + j];
