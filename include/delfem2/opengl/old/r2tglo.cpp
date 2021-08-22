@@ -25,10 +25,10 @@
 DFM2_INLINE void delfem2::opengl::SetView(const CRender2Tex &r2t) {
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
-  ::glMultMatrixd(r2t.mMV);
+  ::glMultMatrixd(r2t.mat_modelview_colmajor);
   ::glMatrixMode(GL_PROJECTION);
   ::glLoadIdentity();
-  ::glMultMatrixd(r2t.mP);
+  ::glMultMatrixd(r2t.mat_projection_colmajor);
   ::glMatrixMode(GL_MODELVIEW);
 }
 
@@ -43,7 +43,10 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::SetPointColor(double r, double g,
 
 void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Texture(const CRender2Tex &r2t) {
   double mMVP[16];
-  MatMat4(mMVP, r2t.mMV, r2t.mP);
+  MatMat4(
+      mMVP,
+      r2t.mat_modelview_colmajor,
+      r2t.mat_projection_colmajor);
   double mMVPinv[16];
   Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
@@ -92,7 +95,10 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw(const CRender2Tex &r2t) cons
 
 void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Axis(const CRender2Tex &r2t) const {
   double mMVP[16];
-  MatMat4(mMVP, r2t.mMV, r2t.mP);
+  MatMat4(
+      mMVP,
+      r2t.mat_modelview_colmajor,
+      r2t.mat_projection_colmajor);
   double mMVPinv[16];
   Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
@@ -105,7 +111,10 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Axis(const CRender2Tex &r2t)
 
 void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_BoundingBox(const CRender2Tex &r2t) {
   double mMVP[16];
-  MatMat4(mMVP, r2t.mMV, r2t.mP);
+  MatMat4(
+      mMVP,
+      r2t.mat_modelview_colmajor,
+      r2t.mat_projection_colmajor);
   double mMVPinv[16];
   Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
@@ -121,15 +130,18 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_BoundingBox(const CRender2Te
 }
 
 void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Point(const CRender2Tex &r2t) const {
-  const unsigned int nResX = r2t.nResX;
-  const unsigned int nResY = r2t.nResY;
+  const unsigned int nResX = r2t.width;
+  const unsigned int nResY = r2t.height;
   if (r2t.aZ.size() != nResX * nResY) {
     glPopMatrix();
     return;
   }
   //
   double mMVP[16];
-  MatMat4(mMVP, r2t.mMV, r2t.mP);
+  MatMat4(
+      mMVP,
+      r2t.mat_modelview_colmajor,
+      r2t.mat_projection_colmajor);
   double mMVPinv[16];
   Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
@@ -170,7 +182,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresY_, nresZ_, true); // +x
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mMV, smplr.mP,
+        smplr.mat_modelview_colmajor,
+        smplr.mat_projection_colmajor,
         CVec3d(+0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
         CVec3d(+1, 0, 0).p,
         CVec3d(0, +1, 0).p,
@@ -181,7 +194,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresY_, nresZ_, true); // -x
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mMV, smplr.mP,
+        smplr.mat_modelview_colmajor,
+        smplr.mat_projection_colmajor,
         CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
         CVec3d(-1, 0, 0).p,
         CVec3d(0, +1, 0).p,
@@ -193,7 +207,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresZ_, true); // +y
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mMV, smplr.mP,
+        smplr.mat_modelview_colmajor,
+        smplr.mat_projection_colmajor,
         CVec3d(-0.5 * elen_ * nresX_, +0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
         CVec3d(0, +1, 0).p,
         CVec3d(1, +0, 0).p,
@@ -204,7 +219,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresZ_, true); // -y
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mMV, smplr.mP,
+        smplr.mat_modelview_colmajor,
+        smplr.mat_projection_colmajor,
         CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
         CVec3d(0, -1, 0).p,
         CVec3d(1, +0, 0).p,
@@ -215,7 +231,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresY_, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mMV, smplr.mP,
+        smplr.mat_modelview_colmajor,
+        smplr.mat_projection_colmajor,
         CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
         CVec3d(0, 0, +1).p,
         CVec3d(1, 0, 0).p,
@@ -226,7 +243,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresY_, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mMV, smplr.mP,
+        smplr.mat_modelview_colmajor,
+        smplr.mat_projection_colmajor,
         CVec3d(-0.5 * elen_ * nresX_, +0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
         CVec3d(0, 0, -1).p,
         CVec3d(1, 0, 0).p,
@@ -260,7 +278,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int iy = 0; iy < ny; ++iy) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
       double d0 = sampler_box.aSampler[0].aZ[iz * ny + iy];
-      const unsigned int nd = d0 * nx;
+      const unsigned int nd = static_cast<int>(d0) * nx;
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = nx - id - 1;
         const unsigned int iy0 = iy;
@@ -272,7 +290,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int iy = 0; iy < ny; ++iy) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
       double d0 = sampler_box.aSampler[1].aZ[iz * ny + iy];
-      const unsigned int nd = d0 * nx;
+      const unsigned int nd = static_cast<int>(d0) * nx;
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = id;
         const unsigned int iy0 = iy;
@@ -285,7 +303,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
       double d0 = sampler_box.aSampler[2].aZ[iz * nx + ix];
-      const unsigned int nd = d0 * ny;
+      const unsigned int nd = static_cast<int>(d0) * ny;
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = ny - 1 - id;
@@ -297,7 +315,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
       double d0 = sampler_box.aSampler[3].aZ[iz * nx + ix];
-      const unsigned int nd = d0 * ny;
+      const unsigned int nd = static_cast<int>(d0) * ny;
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = id;
@@ -309,7 +327,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iy = 0; iy < ny; ++iy) {
       double d0 = sampler_box.aSampler[4].aZ[iy * nx + ix];
-      const unsigned int nd = d0 * nz;
+      const unsigned int nd = static_cast<int>(d0) * nz;
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = iy;
@@ -321,7 +339,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iy = 0; iy < ny; ++iy) {
       double d0 = sampler_box.aSampler[5].aZ[iy * nx + ix];
-      const unsigned int nd = d0 * nz;
+      const unsigned int nd = static_cast<int>(d0) * nz;
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = ny - 1 - iy;

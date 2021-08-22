@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
       */
 
   ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-      smpl.mMV, smpl.mP,
+      smpl.mat_modelview_colmajor, smpl.mat_projection_colmajor,
       dfm2::CVec3d(+0.5 * elen * nres, -0.5 * elen * nres, -0.5 * elen * nres).p,
       dfm2::CVec3d(+1, 0, 0).p,
       dfm2::CVec3d(0, +1, 0).p,

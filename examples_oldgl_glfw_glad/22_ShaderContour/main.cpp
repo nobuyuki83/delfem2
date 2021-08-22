@@ -63,7 +63,7 @@ int main(int argc,char* argv[])
   sampler.SetTextureProperty(nres, nres, true);
   {
     dfm2::Mat4_OrthongoalProjection_AffineTrans(
-        sampler.mMV, sampler.mP,
+        sampler.mat_modelview_colmajor, sampler.mat_projection_colmajor,
         dfm2::CVec3d(-elen * 0.5 * nres, -elen * 0.5 * nres, +elen * nres * 0.5).p,
         dfm2::CVec3d(0, 0, +1).p,
         dfm2::CVec3d(1, 0, 0).p,
@@ -136,7 +136,7 @@ int main(int argc,char* argv[])
     // ---------
     ::glTexImage2D(GL_TEXTURE_2D,
         0, GL_RGBA,
-        sampler.nResX, sampler.nResY,
+        sampler.width, sampler.height,
         0, GL_RGBA,
         GL_UNSIGNED_BYTE, sampler.aRGBA_8ui.data());
   }
@@ -167,11 +167,11 @@ int main(int argc,char* argv[])
     }
     {
       GLint texLoc0 = glGetUniformLocation(id_shader_edge, "nTexWidth");
-      glUniform1i(texLoc0, sampler.nResX); // GL_TEXTURE0
+      glUniform1i(texLoc0, static_cast<int>(sampler.width)); // GL_TEXTURE0
     }
     {
       GLint texLoc0 = glGetUniformLocation(id_shader_edge, "nTexHeight");
-      glUniform1i(texLoc0, sampler.nResY); // GL_TEXTURE0
+      glUniform1i(texLoc0, static_cast<int>(sampler.height)); // GL_TEXTURE0
     }
     glUseProgram(0);
   }

@@ -65,24 +65,24 @@ class CRender2Tex_DrawOldGL_BOX {
                   double elen);
 
   unsigned int nDivX() const {
-    const unsigned int n0 = aSampler[2].nResX;
-    assert(aSampler[3].nResX == n0);
-    assert(aSampler[4].nResX == n0);
-    assert(aSampler[5].nResX == n0);
+    const unsigned int n0 = aSampler[2].width;
+    assert(aSampler[3].width == n0);
+    assert(aSampler[4].width == n0);
+    assert(aSampler[5].width == n0);
     return n0;
   }
   unsigned int nDivY() const {
-    const unsigned int n0 = aSampler[0].nResX;
-    assert(aSampler[1].nResX == n0);
-    assert(aSampler[4].nResY == n0);
-    assert(aSampler[5].nResY == n0);
+    const unsigned int n0 = aSampler[0].width;
+    assert(aSampler[1].width == n0);
+    assert(aSampler[4].height == n0);
+    assert(aSampler[5].height == n0);
     return n0;
   }
   unsigned int nDivZ() const {
-    const unsigned int n0 = aSampler[0].nResY;
-    assert(aSampler[1].nResY == n0);
-    assert(aSampler[2].nResY == n0);
-    assert(aSampler[3].nResY == n0);
+    const unsigned int n0 = aSampler[0].height;
+    assert(aSampler[1].height == n0);
+    assert(aSampler[2].height == n0);
+    assert(aSampler[3].height == n0);
     return n0;
   }
   double edgeLen() const {

@@ -59,7 +59,7 @@ int main() {
     double elen = 0.01;
     r2t.SetTextureProperty(nres, nres, true);
     dfm2::Mat4_OrthongoalProjection_AffineTrans(
-        r2t.mMV, r2t.mP,
+        r2t.mat_modelview_colmajor, r2t.mat_projection_colmajor,
         dfm2::CVec3d(-nres * elen * 0.5, nres * elen * 0.5, -2).p,
         dfm2::CVec3d(0, 0, -1).p,
         dfm2::CVec3d(1, 0, 0).p,
@@ -94,9 +94,9 @@ int main() {
   ::glEnable(GL_DEPTH_TEST);
   {
     float mMVf[16];
-    dfm2::Copy_Mat4(mMVf, r2t.mMV);
+    dfm2::Copy_Mat4(mMVf, r2t.mat_modelview_colmajor);
     float mPf[16];
-    dfm2::Copy_Mat4(mPf, r2t.mP);
+    dfm2::Copy_Mat4(mPf, r2t.mat_projection_colmajor);
     shdr_trimsh.Draw(mPf, mMVf);
   }
   r2t.End();

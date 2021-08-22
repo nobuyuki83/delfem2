@@ -105,7 +105,7 @@ void Project(
       if( !res ){ continue; }
 //      std::cout << ip << " " << p0 << " " << n0 << std::endl;
       dfm2::CVec3d z0(0,0,1);
-      double mMVP[16]; dfm2::MatMat4(mMVP, smplr.mMV, smplr.mP);
+      double mMVP[16]; dfm2::MatMat4(mMVP, smplr.mat_modelview_colmajor, smplr.mat_projection_colmajor);
       double mMVinv[16]; dfm2::Inverse_Mat4(mMVinv, mMVP);
       dfm2::CVec3d z1; dfm2::Vec3_Vec3Mat4_AffineProjection(z1.p,z0.p,mMVinv);
       double ct = n0.dot(z1.normalized());
