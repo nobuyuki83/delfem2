@@ -39,10 +39,10 @@ namespace opengl {
 class CRender2Tex {
  public:
   CRender2Tex() :
-      mMV{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-      mP{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1} {
-    nResX = 128;
-    nResY = 128;
+      mat_modelview_colmajor{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+      mat_projection_colmajor{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1} {
+    width = 128;
+    height = 128;
     is_rgba_8ui = true;
     id_tex_color = 0;
     id_tex_depth = 0;
@@ -50,18 +50,12 @@ class CRender2Tex {
   }
   // --------------------------
   void InitGL();
-  static std::vector<double> AABBVec3() {
-    std::vector<double> mm(6);
-    mm[0] = +1;
-    mm[1] = -1;
-    return mm;
-  }
   void SetZeroToDepth() { for (float &i : aZ) { i = 0.0; }}
   void GetMVPG(double mMVPG[16]) const {
     double mMVP[16];
-    MatMat4(mMVP, mMV, mP);
-    const double tmp0 = nResX * 0.5;
-    const double tmp1 = nResY * 0.5;
+    MatMat4(mMVP, mat_modelview_colmajor, mat_projection_colmajor);
+    const double tmp0 = width * 0.5;
+    const double tmp1 = height * 0.5;
     double mG[16] = {
         tmp0, 0, 0, 0,
         0, tmp1, 0, 0,
@@ -78,8 +72,8 @@ class CRender2Tex {
   DFM2_INLINE void BoundingBox3(double *pmin, double *pmax) const;
 
   void SetTextureProperty(unsigned int nw, unsigned int nh, bool is_rgba_8ui_) {
-    this->nResX = nw;
-    this->nResY = nh;
+    this->width = nw;
+    this->height = nh;
     this->is_rgba_8ui = is_rgba_8ui_;
   }
   void SetValue_CpuImage_8ui(
@@ -98,21 +92,31 @@ class CRender2Tex {
   }
   void Start();
   void End();
-  template <typename REAL>
-  std::vector<REAL> GetMatrixModelViewAsStlVector() const {
-    return std::vector<REAL>(mMV, mMV+16);
+  template<typename REAL>
+  std::vector<REAL> GetAffineMatrixModelViewAsColMajorStlVector() const {
+    return std::vector<REAL>(mat_modelview_colmajor, mat_modelview_colmajor + 16);
   }
-  template <typename REAL>
-  std::vector<REAL> GetMatrixProjectionAsStlVector() const {
-    return std::vector<REAL>(mP, mP+16);
+  template<typename REAL>
+  std::vector<REAL> GetAffineMatrixProjectionAsColMajorStlVector() const {
+    return std::vector<REAL>(mat_projection_colmajor, mat_projection_colmajor + 16);
+  }
+  template<typename REAL>
+  void SetAffineMatrixModelViewAsColMajorStlVector(const std::vector<REAL>& a) {
+    assert(a.size()==16);
+    for(int i=0;i<16;++i){ mat_modelview_colmajor[i] = a[i]; }
+  }
+  template<typename REAL>
+  void SetAffineMatrixProjectionAsColMajorStlVector(const std::vector<REAL>& a) {
+    assert(a.size()==16);
+    for(int i=0;i<16;++i){ mat_projection_colmajor[i] = a[i]; }
   }
  private:
   void CopyToCPU_Depth();
   void CopyToCPU_RGBA8UI();
   void CopyToCPU_RGBA32F();
  public:
-  unsigned int nResX;
-  unsigned int nResY;
+  unsigned int width;
+  unsigned int height;
   // ------------------
   unsigned int id_tex_color;
   unsigned int id_tex_depth;
@@ -123,8 +127,8 @@ class CRender2Tex {
   std::vector<unsigned char> aRGBA_8ui;
   std::vector<float> aRGBA_32f;
   //
-  double mMV[16]; // affine matrix
-  double mP[16]; // affine matrix
+  double mat_modelview_colmajor[16];  // affine matrix
+  double mat_projection_colmajor[16];  // affine matrix
 //protected:
   int view[4]{}; // viewport information
 };
@@ -146,4 +150,4 @@ DFM2_INLINE bool GetProjectedPoint(
 #  include "delfem2/opengl/r2t.cpp"
 #endif
 
-#endif /* depth_hpp */
+#endif

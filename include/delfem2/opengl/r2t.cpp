@@ -6,7 +6,6 @@
  */
 
 #include <iostream>
-#include <cstdlib>
 
 #ifdef _WIN32
 #  include <windows.h>  // should be included before glfw3.h
@@ -30,7 +29,7 @@
 
 namespace delfem2 {
 namespace opengl {
-namespace render2tex_gl {
+namespace r2t {
 
 DFM2_INLINE double DotX(const double *p0, const double *p1, int ndof) {
   double v = 0;
@@ -67,7 +66,7 @@ template void MyCross3(float r[3], const float v1[3], const float v2[3]);
 template void MyCross3(double r[3], const double v1[3], const double v2[3]);
 #endif
 
-}  // namespace render2tex_gl
+}  // namespace r2t
 }  // namespace opengl
 }  // namespace delfem2
 
@@ -81,7 +80,7 @@ DFM2_INLINE void delfem2::Mat4_OrthongoalProjection_AffineTrans(
     unsigned int nResY,
     double lengrid,
     double z_range) {
-  namespace lcl = delfem2::opengl::render2tex_gl;
+  namespace lcl = delfem2::opengl::r2t;
   { // global to local
     double ay[3];
     lcl::MyCross3(ay, az, ax);
@@ -134,10 +133,10 @@ DFM2_INLINE void delfem2::Mat4_OrthongoalProjection_AffineTrans(
 DFM2_INLINE void delfem2::opengl::CRender2Tex::Start() {
   ::glGetIntegerv(GL_VIEWPORT, view); // current viewport
   ::glViewport(0, 0,
-               static_cast<int>(nResX),
-               static_cast<int>(nResY));
+               static_cast<int>(width),
+               static_cast<int>(height));
   ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
-  ::glBindTexture(GL_TEXTURE_2D, 0);
+  ::glBindTexture(GL_TEXTURE_2D, 0);  // unbind texture
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::End() {
@@ -156,7 +155,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_Depth() {
   return;
 #endif
   //
-  aZ.resize(nResX * nResY);
+  aZ.resize(width * height);
   ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
   ::glBindTexture(GL_TEXTURE_2D, id_tex_depth);
   ::glGetTexImage(GL_TEXTURE_2D, 0,
@@ -171,7 +170,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_RGBA8UI() {
   std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
   return;
 #endif
-  aRGBA_8ui.resize(nResX * nResY * 4);
+  aRGBA_8ui.resize(width * height * 4);
   ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
   ::glGetTexImage(GL_TEXTURE_2D, 0,
                   GL_RGBA, GL_UNSIGNED_BYTE,
@@ -181,13 +180,14 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_RGBA8UI() {
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_RGBA32F() {
+
 #ifdef EMSCRIPTEN
   std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
   return;
 #endif
-  aRGBA_32f.resize(nResX * nResY * 4);
-  std::vector<float> aF_RGBA(nResX *nResY
-  *4);
+
+  aRGBA_32f.resize(width * height * 4);
+  std::vector<float> aF_RGBA(width * height * 4);
   ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
   ::glGetTexImage(GL_TEXTURE_2D, 0,
                   GL_RGBA, GL_FLOAT,
@@ -208,11 +208,11 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL() {
     // define size and format of level 0
     if (is_rgba_8ui) {
       ::glTexImage2D(GL_TEXTURE_2D, 0,
-                     GL_RGBA, static_cast<int>(nResX), static_cast<int>(nResY), 0,
+                     GL_RGBA, static_cast<int>(width), static_cast<int>(height), 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     } else {
       ::glTexImage2D(GL_TEXTURE_2D, 0,
-                     GL_RGBA, static_cast<int>(nResX), static_cast<int>(nResY), 0,
+                     GL_RGBA, static_cast<int>(width), static_cast<int>(height), 0,
                      GL_RGBA, GL_FLOAT, nullptr);
     }
     // set the filtering so we don't need mips
@@ -229,7 +229,9 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL() {
     ::glBindTexture(GL_TEXTURE_2D, id_tex_depth);
     // define size and format of level 0
     ::glTexImage2D(GL_TEXTURE_2D, 0,
-                   GL_DEPTH_COMPONENT32F, static_cast<int>(nResX), static_cast<int>(nResY), 0,
+                   GL_DEPTH_COMPONENT32F,
+                   static_cast<int>(width),
+                   static_cast<int>(height), 0,
                    GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     // set the filtering so we don't need mips
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -264,11 +266,11 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL() {
     ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
-  if (aRGBA_8ui.size() == nResX * nResY * 4) {
+  if (aRGBA_8ui.size() == width * height * 4) {
     ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
     // define size and format of level 0
     ::glTexImage2D(GL_TEXTURE_2D, 0,
-                   GL_RGBA, static_cast<int>(nResX), static_cast<int>(nResY), 0,
+                   GL_RGBA, static_cast<int>(width), static_cast<int>(height), 0,
                    GL_RGBA, GL_UNSIGNED_BYTE, aRGBA_8ui.data());
   }
 }
@@ -323,8 +325,8 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
   Inverse_Mat4(mMVPGinv, mMVPG);
   double pg[3];
   Vec3_Vec3Mat4_AffineProjection(pg, ps.p, mMVPG);
-  const unsigned int nx = smplr.nResX;
-  const unsigned int ny = smplr.nResY;
+  const unsigned int nx = smplr.width;
+  const unsigned int ny = smplr.height;
   const int ix0 = (int) floor(pg[0]);
   const int iy0 = (int) floor(pg[1]);
   const int ix1 = ix0 + 1;

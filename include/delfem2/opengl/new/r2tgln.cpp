@@ -31,10 +31,10 @@
 DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::SetDepth(
     const delfem2::opengl::CRender2Tex& r2t)
 {
-  if( r2t.aZ.size() != r2t.nResX*r2t.nResY ){ return; }
+  if( r2t.aZ.size() != r2t.width*r2t.height ){ return; }
   //
-  unsigned int nx = r2t.nResX;
-  unsigned int ny = r2t.nResY;
+  unsigned int nx = r2t.width;
+  unsigned int ny = r2t.height;
   std::vector<double> aXYZ(nx*ny*3);
   for(unsigned int iy=0;iy<ny;++iy){
     for(unsigned int ix=0;ix<nx;++ix){
@@ -116,7 +116,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::Draw(
     float mP0[16],
     float mMV0[16]) const
 {
-  double mMVP[16]; delfem2::MatMat4(mMVP,r2t.mMV,r2t.mP);
+  double mMVP[16]; delfem2::MatMat4(mMVP,r2t.mat_modelview_colmajor,r2t.mat_projection_colmajor);
   double mMVPinv[16]; delfem2::Inverse_Mat4(mMVPinv,mMVP);
   float mMVP1[16]; delfem2::MatMat4(mMVP1,mMVPinv,mMV0);
   shdr0.Draw(mP0,mMVP1);
