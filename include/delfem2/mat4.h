@@ -239,10 +239,11 @@ DFM2_INLINE void VecMat4(
 /**
  * @details this is not affine transfromation. Translation part is ignored
  */
+template <typename T>
 DFM2_INLINE void Mat4Vec3(
-     double vo[3],
-     const double M[16],
-     const double vi[3]);
+     T vo[3],
+     const T M[16],
+     const T vi[3]);
 
 DFM2_INLINE void Vec3Mat4(
     double vo[3],
