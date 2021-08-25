@@ -26,93 +26,89 @@ void Add_AABB(int aabb[8], int ivx, int ivy, int ivz);
 
 // -----------------------------------------------
 
-void MeshQuad3D_VoxelGrid
- (std::vector<double>& aXYZ,
-  std::vector<unsigned int>& aQuad,
-  unsigned int ndivx,
-  unsigned int ndivy,
-  unsigned int ndivz,
-  const std::vector<int>& aIsVox);
+void MeshQuad3D_VoxelGrid(
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aQuad,
+    unsigned int ndivx,
+    unsigned int ndivy,
+    unsigned int ndivz,
+    const std::vector<int> &aIsVox);
 
-void MeshHex3D_VoxelGrid
- (std::vector<double>& aXYZ,
-  std::vector<int>& aQuad,
-  unsigned int ndivx,
-  unsigned int ndivy,
-  unsigned int ndivz,
-  const std::vector<int>& aIsVox);
+void MeshHex3D_VoxelGrid(
+    std::vector<double> &aXYZ,
+    std::vector<int> &aQuad,
+    unsigned int ndivx,
+    unsigned int ndivy,
+    unsigned int ndivz,
+    const std::vector<int> &aIsVox);
 
-void MeshTet3D_VoxelGrid
- (std::vector<double>& aXYZ,
-  std::vector<int>& aTet,
-  unsigned int ndivx,
-  unsigned int ndivy,
-  unsigned int ndivz,
-  const std::vector<int>& aIsVox);
+void MeshTet3D_VoxelGrid(
+    std::vector<double> &aXYZ,
+    std::vector<int> &aTet,
+    unsigned int ndivx,
+    unsigned int ndivy,
+    unsigned int ndivz,
+    const std::vector<int> &aIsVox);
 
-
-template <typename VAL>
-class CGrid3
-{
-public:
-  CGrid3(){
+template<typename VAL>
+class CGrid3 {
+ public:
+  CGrid3() {
     ndivx = ndivy = ndivz = 0;
     aVal.clear();
   }
   void Initialize(const unsigned int ndivx_,
                   const unsigned int ndivy_,
                   const unsigned int ndivz_,
-                  const VAL v){
+                  const VAL v) {
     ndivx = ndivx_;
     ndivy = ndivy_;
     ndivz = ndivz_;
-    const unsigned int nvoxel = ndivx*ndivy*ndivz;
-    aVal.assign(nvoxel,v);
+    const unsigned int nvoxel = ndivx * ndivy * ndivz;
+    aVal.assign(nvoxel, v);
   }
-  bool IsInclude(unsigned int ivx, unsigned int ivy, unsigned int ivz){
-    if( ivx>=ndivx ){ return false; }
-    if( ivy>=ndivy ){ return false; }
-    if( ivz>=ndivz ){ return false; }
+  bool IsInclude(unsigned int ivx, unsigned int ivy, unsigned int ivz) {
+    if (ivx >= ndivx) { return false; }
+    if (ivy >= ndivy) { return false; }
+    if (ivz >= ndivz) { return false; }
     return true;
   }
-  void Set(int ivx, int ivy, int ivz, int isVox){
-    if( !this->IsInclude(ivx,ivy,ivz) ){ return; }
-    const int ivoxel = ivx*(ndivy*ndivz)+ivy*ndivz+ivz;
+  void Set(int ivx, int ivy, int ivz, int isVox) {
+    if (!this->IsInclude(ivx, ivy, ivz)) { return; }
+    const int ivoxel = ivx * (ndivy * ndivz) + ivy * ndivz + ivz;
     aVal[ivoxel] = isVox;
   }
-public:
+ public:
   unsigned int ndivx, ndivy, ndivz;
   std::vector<VAL> aVal;
   CMat4d am; // affine matrix
 };
 
+void Grid3Voxel_Dilation(CGrid3<int> &grid);
 
-void Grid3Voxel_Dilation(CGrid3<int>& grid);
-
-void Grid3Voxel_Erosion(CGrid3<int>& grid);
+void Grid3Voxel_Erosion(CGrid3<int> &grid);
 
 /**
  * @brief comute voxel geodesic distance from one seed voxel
  * @param aDist (out) geodesic distance at the center of the voxle
  * @param el (in) edge length of the voxel
  */
-void VoxelGeodesic
- (std::vector<double>& aDist,
-  const std::vector< std::pair<unsigned int, double> >& aIdvoxDist,
-  const double el,
-  const CGrid3<int>& grid);
-
+void VoxelGeodesic(
+    std::vector<double> &aDist,
+    const std::vector<std::pair<unsigned int, double> > &aIdvoxDist,
+    const double el,
+    const CGrid3<int> &grid);
 
 /**
  * @details this is the implementation of the following paper
  * Amanatides, John, and Andrew Woo. "A fast voxel traversal algorithm for ray tracing." In Eurographics, vol. 87, no. 3, pp. 3-10. 1987.
  * TODO: zero division might occur when (ps - pe ) is aligned to axis.
  */
-void Intersection_VoxelGrid_LinSeg
- (std::vector<unsigned int>& aIndVox,
-  const CGrid3<int>& grid,
-  const CVec3d& ps,
-  const CVec3d& pe);
+void Intersection_VoxelGrid_LinSeg(
+    std::vector<unsigned int> &aIndVox,
+    const CGrid3<int> &grid,
+    const CVec3d &ps,
+    const CVec3d &pe);
 
 
 /*
@@ -142,7 +138,7 @@ void Add(int ivx, int ivy, int ivz){
   }
 }
  */
-  
+
 }
 
 #ifndef DFM2_STATIC_LIBRARY
