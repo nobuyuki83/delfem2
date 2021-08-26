@@ -302,7 +302,7 @@ template DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
 // ------------------------
 // below: mat vec
 
-template <typename T>
+template<typename T>
 DFM2_INLINE void delfem2::Mat4Vec3(
     T vo[3],
     const T M[16],
