@@ -11,33 +11,45 @@ template<typename T0, typename T1>
 DFM2_INLINE void delfem2::GetRGB_HSV(
     T0 &r, T0 &g, T0 &b,
     T1 h, T1 s, T1 v) {
-  r = v;
-  g = v;
-  b = v;
+  r = static_cast<T0>(v);
+  g = static_cast<T0>(v);
+  b = static_cast<T0>(v);
   if (s > 0.0f) {
     h *= 6.0f;
     const int i = (int) h;
-    const float f = h - (float) i;
+    const T0 f = static_cast<T0>(h) - static_cast<T0>(i);
     switch (i) {
       default:
-      case 0:g *= 1 - s * (1 - f);
+      case 0: {
+        g *= 1 - s * (1 - f);
         b *= 1 - s;
         break;
-      case 1:r *= 1 - s * f;
+      }
+      case 1: {
+        r *= 1 - s * f;
         b *= 1 - s;
         break;
-      case 2:r *= 1 - s;
+      }
+      case 2: {
+        r *= 1 - s;
         b *= 1 - s * (1 - f);
         break;
-      case 3:r *= 1 - s;
+      }
+      case 3: {
+        r *= 1 - s;
         g *= 1 - s * f;
         break;
-      case 4:r *= 1 - s * (1 - f);
+      }
+      case 4: {
+        r *= 1 - s * (1 - f);
         g *= 1 - s;
         break;
-      case 5:g *= 1 - s;
+      }
+      case 5: {
+        g *= 1 - s;
         b *= 1 - s * f;
         break;
+      }
     }
   }
 }

@@ -56,11 +56,11 @@ jobs:
         echo "############################"
         echo "## build test static" 
 
-        cd test_cpp        
+        cd test_cpp 
         mkdir buildVS64Static
         cd buildVS64Static
         cmake .. -A x64 `
-          -DDFM2_USE_STATIC_LIB=ON
+          -DDFM2_STATIC_LIB=ON
         cd ../../
 
     - name: build glfw
@@ -82,10 +82,10 @@ jobs:
         echo "## build demo oldgl,glfw"
 
         cd examples_oldgl_glfw
-        mkdir buildVS64Static
-        cd buildVS64Static
+        mkdir buildVS64
+        cd buildVS64
         cmake .. -A x64
-        cmake --build .
+        cmake --build . --config Release
         cd ../../
 
     - name: build examples (oldgl,glfw,glad)
@@ -94,10 +94,10 @@ jobs:
         echo "## build demo oldgl,glfw,glad"
 
         cd examples_oldgl_glfw_glad
-        mkdir buildVS64Static
-        cd buildVS64Static
+        mkdir buildVS64
+        cd buildVS64
         cmake .. -A x64
-        cmake --build .
+        cmake --build . --config Release
         cd ../../
 
     - name: build examples (oldgl,glfw,tinygltf)
@@ -111,7 +111,7 @@ jobs:
         mkdir buildVS64
         cd buildVS64
         cmake .. -A x64
-        cmake --build .
+        cmake --build . --config Release
         cd ../../
 
     - name: build examples (thread)
@@ -123,7 +123,7 @@ jobs:
         mkdir buildVS64
         cd buildVS64
         cmake .. -A x64
-        cmake --build .
+        cmake --build . --config Release
         cd ../../   
 
     - name: build zlib
