@@ -2,16 +2,13 @@ cmake_minimum_required(VERSION 2.8.12)
 
 #####################################
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(NOT EMSCRIPTEN)
   IF(MSVC)
-    set(CMAKE_CXX_FLAGS " -O2 -std=c++11 /W4 \
-    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 \
-    /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 \
-    /wd4505 /wd4456 /wd4055")
+    set(CMAKE_CXX_FLAGS "/W4")
   ELSE()
-    set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+    set(CMAKE_CXX_FLAGS "-Wall -g")
   ENDIF()
 ENDIF()
 
