@@ -4,7 +4,7 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header only library" ON)
 
 ################################
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 if(MSVC)
   # GTest is static compiled by default
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")

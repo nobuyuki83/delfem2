@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 option(USE_STATIC_LIB "compile delfem2 with static library?" OFF)
 
 ######################################################
 
-set(CMAKE_CXX_STANDARD 11)
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF (MSVC)
   set(CMAKE_CXX_FLAGS "/W4")

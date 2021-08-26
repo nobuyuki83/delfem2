@@ -31,10 +31,7 @@
 
 // -----------------------------------------------------------
 
-namespace delfem2 {
-namespace opengl {
-namespace old {
-namespace mshuni {
+namespace delfem2::opengl::old::mshuni {
 
 template<int nDim, typename T>
 DFM2_INLINE void myGlVtxPtr(const T *p);
@@ -427,10 +424,7 @@ DFM2_INLINE void DrawMeshTri3D_FaceEdge(
   ::glEnd();
 }
 
-}
-}
-}
-}
+}  // namespace delfem2::opengl::old::mshuni
 
 // ==================================================================
 // Points

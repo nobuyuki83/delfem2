@@ -4,7 +4,7 @@ option(USE_STATIC_LIB "compile delfem2 as a static library" OFF)
 
 ################################
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 if(MSVC)
   # GTest is static compiled by default
   # GTest requires multi-threading

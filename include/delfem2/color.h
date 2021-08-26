@@ -186,12 +186,12 @@ public:
 
 // ---------------------------------------------------------------
 
-DFM2_INLINE void Write_Ply_Tri2DMesh_HeightColor
- (const std::string& fname,
-  const std::vector<int>& aTri1,
-  const std::vector<double>& aXY1,
-  const std::vector<double>& aVal,
-  std::vector< std::pair<double,CColor> >& colorMap);
+DFM2_INLINE void Write_Ply_Tri2DMesh_HeightColor(
+    const std::string& fname,
+    const std::vector<int>& aTri1,
+    const std::vector<double>& aXY1,
+    const std::vector<double>& aVal,
+    std::vector< std::pair<double,CColor> >& colorMap);
   
 } // namespace delfem2
 
