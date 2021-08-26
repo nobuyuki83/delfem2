@@ -16,13 +16,16 @@
 
 namespace delfem2 {
 
-int Adj_Grid(int ivox_picked, int iface_picked,
-             int ndivx, int ndivy, int ndivz);
+int Adj_Grid(
+    int igridvox, int iface,
+    int ndivx, int ndivy, int ndivz);
 
-bool IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz);
-void Add_AABB(int aabb[8], int ivx, int ivy, int ivz);
+bool IsInclude_AABB(
+    const int aabb[8], int igvx, int igvy, int igvz);
 
-// ------------------------------
+void Add_AABB(
+    int aabb[8],
+    int ivx, int ivy, int ivz);
 
 // -----------------------------------------------
 
@@ -57,13 +60,13 @@ class CGrid3 {
     ndivx = ndivy = ndivz = 0;
     aVal.clear();
   }
-  void Initialize(const unsigned int ndivx_,
-                  const unsigned int ndivy_,
-                  const unsigned int ndivz_,
+  void Initialize(const unsigned int ndivx0,
+                  const unsigned int ndivy0,
+                  const unsigned int ndivz0,
                   const VAL v) {
-    ndivx = ndivx_;
-    ndivy = ndivy_;
-    ndivz = ndivz_;
+    ndivx = ndivx0;
+    ndivy = ndivy0;
+    ndivz = ndivz0;
     const unsigned int nvoxel = ndivx * ndivy * ndivz;
     aVal.assign(nvoxel, v);
   }
@@ -96,7 +99,7 @@ void Grid3Voxel_Erosion(CGrid3<int> &grid);
 void VoxelGeodesic(
     std::vector<double> &aDist,
     const std::vector<std::pair<unsigned int, double> > &aIdvoxDist,
-    const double el,
+    double el,
     const CGrid3<int> &grid);
 
 /**

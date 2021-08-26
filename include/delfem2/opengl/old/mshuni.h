@@ -25,8 +25,7 @@
 #  define M_PI 3.14159265358979323846264338327950288
 #endif
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 // ========================================
 // Draw Point
@@ -328,8 +327,7 @@ DFM2_INLINE void DrawMeshElemPart3D_FaceNorm_TexPoEl(
     const std::vector<int> &aIndElem,
     const std::vector<double> &aUV);
 
-} // namespace opengl
-} // namespace delfem2
+} // namespace delfem2::opengl
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/opengl/old/mshuni.cpp"

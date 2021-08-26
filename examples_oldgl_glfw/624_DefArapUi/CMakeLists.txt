@@ -4,12 +4,12 @@ option(USE_STATIC_LIB "compile delfem2 with static library?" OFF)
 
 #########################
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "/W4")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 else ()
-  set(CMAKE_CXX_FLAGS "-Wall  -g")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall  -g")
 endif ()
 
 #########################
