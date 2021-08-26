@@ -4,7 +4,8 @@ option(USE_STATIC_LIB "compile delfem2 with static library?" OFF)
 
 ####################################
 
-set(CMAKE_CXX_STANDARD 14)
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF (MSVC)
   set(CMAKE_CXX_FLAGS "/W4")
