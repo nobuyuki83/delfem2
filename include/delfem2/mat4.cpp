@@ -171,6 +171,8 @@ template void delfem2::Mat4_AffineTransProjectionOrtho(
     double zmin, double zmax);  // -z, +z
 #endif
 
+// -----------------------
+
 template<typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     REAL mP[16],
@@ -300,14 +302,19 @@ template DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
 // ------------------------
 // below: mat vec
 
+template<typename T>
 DFM2_INLINE void delfem2::Mat4Vec3(
-    double vo[3],
-    const double M[16],
-    const double vi[3]) {
+    T vo[3],
+    const T M[16],
+    const T vi[3]) {
   vo[0] = M[0 * 4 + 0] * vi[0] + M[0 * 4 + 1] * vi[1] + M[0 * 4 + 2] * vi[2];
   vo[1] = M[1 * 4 + 0] * vi[0] + M[1 * 4 + 1] * vi[1] + M[1 * 4 + 2] * vi[2];
   vo[2] = M[2 * 4 + 0] * vi[0] + M[2 * 4 + 1] * vi[1] + M[2 * 4 + 2] * vi[2];
 }
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::Mat4Vec3(float vo[3], const float M[16], const float vi[3]);
+template void delfem2::Mat4Vec3(double vo[3], const double M[16], const double vi[3]);
+#endif
 
 DFM2_INLINE void delfem2::Vec3Mat4(
     double vo[3],
@@ -877,7 +884,7 @@ delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL *q) {
   const REAL xw = q[0] * q[3] * 2;
   const REAL yw = q[1] * q[3] * 2;
   const REAL zw = q[2] * q[3] * 2;
-  m.SetZero();
+  m.setZero();
   m.mat[0 * 4 + 0] = 1 - y2 - z2;
   m.mat[0 * 4 + 1] = xy - zw;
   m.mat[0 * 4 + 2] = zx + yw;

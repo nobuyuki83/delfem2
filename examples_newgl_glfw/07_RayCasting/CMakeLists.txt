@@ -5,7 +5,7 @@ option(USE_STATIC_LIB "compile delfem2 as a static library?" OFF)
 ######################################################
 
 enable_language(CXX)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF (MSVC)
   set(CMAKE_CXX_FLAGS "/W4")
@@ -33,14 +33,14 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
 # dfm2
 IF (USE_STATIC_LIB)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  if(MSVC)
+  if (MSVC)
     set(DFM2_LIBRARY
         ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
-  else()
+  else ()
     set(DFM2_LIBRARY
-        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
-  endif()
-endif()
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a)
+  endif ()
+endif ()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 #################################################
@@ -58,7 +58,6 @@ add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCE_DIR}/../../3rd_party/glad4/src/glad.c
     main.cpp
     )
-
 
 target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}

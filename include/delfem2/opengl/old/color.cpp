@@ -11,30 +11,28 @@
 #include <utility>  // for std::pair
 
 #if defined(_WIN32)  // windows
-#define NOMINMAX   // to remove min,max macro
-#include <windows.h>
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
+#  define GL_SILENCE_DEPRECATION
+#  include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
+#  include <GL/gl.h>
 #endif
 
 #include "delfem2/color.h"
 
 #if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4100 )
+#  pragma warning( push )
+#  pragma warning( disable : 4100 )
 #endif
 
 // header ends here
 // -------------------------------------------------
 
-namespace delfem2 {
-namespace opengl {
-namespace color_glold {
+namespace delfem2::opengl::color_glold {
 
 template<typename REAL>
 DFM2_INLINE void UnitNormalAreaTri3D(
@@ -157,14 +155,12 @@ DFM2_INLINE bool IsAbovePlane(
     const double n[3]) {
   const double dot =
       (p[0] - org[0]) * n[0] +
-      (p[1] - org[1]) * n[1] +
-      (p[2] - org[2]) * n[2];
+          (p[1] - org[1]) * n[1] +
+          (p[2] - org[2]) * n[2];
   return dot > 0;
 }
 
-}
-}
-}
+} // namespace delfem2::opengl::color_glold
 
 // -----------------------------------------------------------------
 
@@ -279,7 +275,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
   const size_t nTri = aTri.size() / 3;
   for (unsigned int itri = 0; itri < nTri; ++itri) {
     const unsigned int ig0 = aFlgElm[itri];
-    if ( ig0 >= aColor.size()) continue;
+    if (ig0 >= aColor.size()) continue;
     const int imode = aColor[ig0].first;
     if (imode == 0) continue;
     else if (imode == 1) { ::glEnable(GL_LIGHTING); }
@@ -402,10 +398,10 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1(
   const size_t nTri = aTri.size() / 3;
   const size_t nXYZ = aXYZ.size() / 3;
   DrawMeshTri3D_ScalarP1(
-	  aXYZ.data(), static_cast<unsigned int>(nXYZ),
-	  aTri.data(), static_cast<unsigned int>(nTri),
-	  aValSrf,                        
-	  colorMap);
+      aXYZ.data(), static_cast<unsigned int>(nXYZ),
+      aTri.data(), static_cast<unsigned int>(nTri),
+      aValSrf,
+      colorMap);
 }
 
 // vetex value
@@ -444,7 +440,7 @@ DFM2_INLINE void delfem2::opengl::drawMeshTri3D_ScalarP0(
     const std::vector<unsigned int> &aTri,
     const std::vector<double> &aValSrf,
     const std::vector<std::pair<double, CColor> > &colorMap) {
-  const unsigned int nTri = static_cast<unsigned int>(aTri.size() / 3);
+  const size_t nTri = aTri.size() / 3;
   if (aValSrf.size() != nTri) { return; }
   // ---
   ::glBegin(GL_TRIANGLES);

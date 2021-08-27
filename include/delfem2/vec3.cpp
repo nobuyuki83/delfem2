@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/vec3.h"
+
 #include <cmath>
 #include <stack>
-
-#include "delfem2/vec3.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -17,8 +17,7 @@
 // =====================================
 // below: unexposed 
 
-namespace delfem2 {
-namespace vec3 {
+namespace delfem2::vec3 {
 
 DFM2_INLINE bool MyIsnan(double x) { return x != x; }
 
@@ -162,7 +161,6 @@ DFM2_INLINE void MyMatVec3
 }
 
 }
-}
 
 // ===========================================================
 
@@ -173,7 +171,9 @@ DFM2_INLINE double Distance3
     (const double p0[3],
      const double p1[3]) {
   return sqrt(
-      (p1[0] - p0[0]) * (p1[0] - p0[0]) + (p1[1] - p0[1]) * (p1[1] - p0[1]) + (p1[2] - p0[2]) * (p1[2] - p0[2]));
+      (p1[0] - p0[0]) * (p1[0] - p0[0]) +
+      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+      (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
 template<>
@@ -181,7 +181,9 @@ DFM2_INLINE float Distance3
     (const float p0[3],
      const float p1[3]) {
   return sqrtf(
-      (p1[0] - p0[0]) * (p1[0] - p0[0]) + (p1[1] - p0[1]) * (p1[1] - p0[1]) + (p1[2] - p0[2]) * (p1[2] - p0[2]));
+      (p1[0] - p0[0]) * (p1[0] - p0[0]) +
+      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+      (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
 }
@@ -281,7 +283,10 @@ template double delfem2::Area_Tri3(const double v1[3], const double v2[3], const
 
 template<typename T>
 DFM2_INLINE T delfem2::SquareDistance3(const T p0[3], const T p1[3]) {
-  return (p1[0] - p0[0]) * (p1[0] - p0[0]) + (p1[1] - p0[1]) * (p1[1] - p0[1]) + (p1[2] - p0[2]) * (p1[2] - p0[2]);
+  return
+  (p1[0] - p0[0]) * (p1[0] - p0[0]) +
+  (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+  (p1[2] - p0[2]) * (p1[2] - p0[2]);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template float delfem2::SquareDistance3(const float p0[3], const float p1[3]);
@@ -447,9 +452,9 @@ namespace delfem2 {
 template<typename T0, typename T1>
 CVec3<T0> operator*(T1 d, const CVec3<T0> &rhs) {
   return CVec3<T0>(
-      static_cast<T0>(rhs.x*d),
-      static_cast<T0>(rhs.y*d),
-      static_cast<T0>(rhs.z*d) );
+      static_cast<T0>(rhs.x * d),
+      static_cast<T0>(rhs.y * d),
+      static_cast<T0>(rhs.z * d));
 }
 #ifdef DFM2_STATIC_LIBRARY
 template CVec3f operator* (float d, const CVec3f& rhs);
@@ -829,6 +834,8 @@ T delfem2::Area_Tri(
 template double delfem2::Area_Tri(const CVec3<double>& v1, const CVec3<double>& v2, const CVec3<double>& v3);
 #endif
 
+// ---------------------------
+
 template<typename T>
 T delfem2::SquareTriArea(
     const CVec3<T> &v1,
@@ -839,6 +846,8 @@ T delfem2::SquareTriArea(
   const T dtmp_z = (v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v2.p[1] - v1.p[1]) * (v3.p[0] - v1.p[0]);
   return (dtmp_x * dtmp_x + dtmp_y * dtmp_y + dtmp_z * dtmp_z) * 0.25;
 }
+
+// ---------------------
 
 template<typename T>
 double delfem2::SquareDistance(
@@ -857,11 +866,15 @@ template double delfem2::SquareDistance(
     const CVec3f& ipo1);
 #endif
 
+// ---------------------
+
 template<typename T>
 double delfem2::SquareLength(
     const CVec3<T> &point) {
   return point.p[0] * point.p[0] + point.p[1] * point.p[1] + point.p[2] * point.p[2];
 }
+
+// ---------------------
 
 //! length of vector
 template<typename T>
@@ -871,9 +884,9 @@ double delfem2::Length(const CVec3<T> &point) {
 
 //! distance between two points
 template<typename T>
-double delfem2::Distance
-    (const CVec3<T> &p0,
-     const CVec3<T> &p1) {
+double delfem2::Distance(
+    const CVec3<T> &p0,
+    const CVec3<T> &p1) {
   return delfem2::Distance3(p0.p, p1.p);
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -1099,7 +1112,9 @@ delfem2::CVec3<T> delfem2::RandGaussVector() {
 namespace delfem2 {
 
 template<typename T>
-std::ostream &operator<<(std::ostream &output, const std::vector<CVec3 < T>>
+std::ostream &operator<<(
+    std::ostream &output,
+    const std::vector<CVec3 < T>>
 & aV) {
 output<<aV.
 size()
@@ -1140,7 +1155,12 @@ input;
 
 template<typename T>
 double delfem2::Area_Tri(
-    const int iv1, const int iv2, const int iv3,
-    const std::vector<CVec3<T>> &aPoint ) {
-  return Area_Tri(aPoint[iv1], aPoint[iv2], aPoint[iv3]);
+    const int iv1,
+    const int iv2,
+    const int iv3,
+    const std::vector<CVec3 < T>>
+&aPoint ) {
+return
+Area_Tri(aPoint[iv1], aPoint[iv2], aPoint[iv3]
+);
 }

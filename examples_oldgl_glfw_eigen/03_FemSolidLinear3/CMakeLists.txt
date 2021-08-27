@@ -4,12 +4,13 @@ option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
 
 ######################################################
 
-set(CMAKE_CXX_STANDARD 14)
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "/W4")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 else ()
-  set(CMAKE_CXX_FLAGS "-Wall -g")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
 endif ()
 
 ############################################
@@ -34,7 +35,7 @@ set(DELFEM2_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../include")
 FILE(GLOB EIGEN3_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/eigen*)
 # specify candidate for eigen location
 SET(EIGEN3_ROOT
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/Eigen_Lib/include # installed eigen is higher priority
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libeigen/include # installed eigen is higher priority
     ${EIGEN3_ROOT} )
 # call script to find eigen3
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindEigen3.cmake)

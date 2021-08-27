@@ -117,9 +117,9 @@ int main(int argc,char* argv[])
 
   dfm2::opengl::CTexRGB_Rect2D tex;
   {
-    tex.w = 256;
-    tex.h = 256;
-    tex.aRGB.resize(tex.w*tex.h*3);
+    tex.width_ = 256;
+    tex.height_ = 256;
+    tex.aRGB.resize(tex.width_*tex.height_*3);
   }
 
   dfm2::glfw::CViewer3 viewer;
@@ -157,10 +157,10 @@ int main(int argc,char* argv[])
       }
       std::vector< delfem2::CPtElm2d > aPointElemSurf;
       Intersection_ImageRay_TriMesh3(aPointElemSurf,
-           tex.h,tex.w, mMVP,
+           tex.height_,tex.width_, mMVP,
            aNodeBVH,aAABB,aXYZ,aTri);
       ShadingImageRayLambertian(tex.aRGB,
-          tex.h, tex.w, mMVP,
+          tex.height_, tex.width_, mMVP,
           aPointElemSurf, aXYZ, aTri);
       tex.InitGL();
       //

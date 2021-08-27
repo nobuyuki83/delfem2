@@ -5,17 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <random>
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridvoxel.h"
-#include <random>
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v3q.h"
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -27,7 +27,7 @@ void Draw_CGrid3(
 {
   { // set-up transformation
     const dfm2::CMat4d& am = grid.am;
-    dfm2::CMat4d amt = am.Transpose();
+    dfm2::CMat4d amt = am.transpose();
     ::glMatrixMode(GL_MODELVIEW);
     ::glPushMatrix();
     ::glMultMatrixd(amt.mat);
@@ -74,11 +74,10 @@ void Draw_CGrid3(
 //    ::glDisable(GL_DEPTH_TEST);
     const unsigned int nx = grid.ndivx;
     const unsigned int ny = grid.ndivy;
-    for(unsigned int iivox=0;iivox<aIdVox.size();++iivox){
-      unsigned int ivox0 = aIdVox[iivox];
-      const int iz0 = ivox0/(ny*nx);
-      const int iy0 = (ivox0-iz0*ny*nx)/nx;
-      const int ix0 = ivox0-iz0*ny*nx-iy0*nx;
+    for(unsigned int ivox0 : aIdVox){
+      const unsigned int iz0 = ivox0/(ny*nx);
+      const unsigned int iy0 = (ivox0-iz0*ny*nx)/nx;
+      const unsigned int ix0 = ivox0-iz0*ny*nx-iy0*nx;
       const double pmin[3] = {(double)ix0,(double)iy0,(double)iz0};
       const double pmax[3] = {(double)ix0+1.,(double)iy0+1.,(double)iz0+1.};
       ::glColor3d(1,0,0);

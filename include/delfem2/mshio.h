@@ -12,10 +12,11 @@
 #ifndef DFM2_MSHIO_H
 #define DFM2_MSHIO_H
 
-#include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>
 #include <string>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -238,7 +239,7 @@ DFM2_INLINE void Read_MeshTri3D_Nas(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/mshio.cpp"
+#  include "delfem2/mshio.cpp"
 #endif
 
 #endif // DFM2_MESHIO_H
