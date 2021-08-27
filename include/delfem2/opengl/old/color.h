@@ -14,11 +14,11 @@
 #define DFM2_COLOR_GLOLD_H
 
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <cassert>
 
@@ -145,7 +145,7 @@ DFM2_INLINE void DrawMeshTet3D_Cut(
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#include "delfem2/opengl/old/color.cpp"
+#  include "delfem2/opengl/old/color.cpp"
 #endif
 
 #endif

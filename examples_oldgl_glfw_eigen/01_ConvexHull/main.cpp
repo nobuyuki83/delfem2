@@ -5,18 +5,21 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/geoconvhull3.h"
-//
-#define GL_SILENCE_DEPRECATION
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengleigen/funcs.h"
-#include <GLFW/glfw3.h>
-//
 #include <chrono>
 #include <vector>
 #include <cstdlib>
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // should put before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/geoconvhull3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengleigen/funcs.h"
 
 namespace dfm2 = delfem2;
 // ---------------------------------------

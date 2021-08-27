@@ -5,7 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cmath>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // should be before glfw3.h
+#endif
 #include <glad/glad.h>
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -15,8 +23,6 @@
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/points.h"
-#include <GLFW/glfw3.h>
-#include <cmath>
 
 namespace dfm2 = delfem2;
 
@@ -43,7 +49,7 @@ int main(int argc,char* argv[])
     //
     sampler.SetTextureProperty(nresX, nresZ, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        sampler.mMV, sampler.mP,
+        sampler.mat_modelview_colmajor, sampler.mat_projection_colmajor,
         origin.p, ez.p, ex.p,
         nresX, nresZ, elen, elen * nresY);
     draw_sampler.SetPointColor(0.0, 1.0, 0.0);
@@ -77,8 +83,6 @@ int main(int argc,char* argv[])
     ::glEnable(GL_LIGHTING);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     sampler.End();
-    sampler.CopyToCPU_Depth();
-    sampler.CopyToCPU_RGBA8UI();
   }
 
   for(int iframe=0;;iframe++){
@@ -95,10 +99,10 @@ int main(int argc,char* argv[])
       std::vector<dfm2::CPtElm2<double>> aPES;
       dfm2::IntersectionLine_Hightfield(aPES,
           p0.p, p1.normalized().p,
-          sampler.nResX, sampler.nResY,
+          sampler.width, sampler.height,
           sampler.aZ);
       for(const auto & pes : aPES){
-        dfm2::CVec3d lpos = pes.Pos_Grid(sampler.nResX, sampler.nResY, 1.0, sampler.aZ);
+        dfm2::CVec3d lpos = pes.Pos_Grid(sampler.width, sampler.height, 1.0, sampler.aZ);
         dfm2::CVec3d q2; dfm2::Vec3_Vec3Mat4_AffineProjection(q2.p, lpos.p, mMVPGinv.mat);
         aXYZ1.push_back(q2.x);
         aXYZ1.push_back(q2.y);

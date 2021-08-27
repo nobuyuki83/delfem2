@@ -17,8 +17,8 @@
 #include "delfem2/dfm2_inline.h"
 
 #if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4201 )
+#  pragma warning( push )
+#  pragma warning( disable : 4201 )
 #endif
 
 #define NEARLY_ZERO 1.e-16
@@ -223,6 +223,7 @@ class CVec3 {
   // ------
 
   //! @details named after Eigen library
+  // [[nodiscard]]
   CVec3 normalized() const {
     CVec3 r = (*this);
     r.normalize();
@@ -273,7 +274,7 @@ class CVec3 {
   T *data() { return p; }
   const T *data() const { return p; }
 
-  std::vector<double> stlvec() const {
+  [[nodiscard]] std::vector<double> stlvec() const {
     std::vector<double> d = {p[0], p[1], p[2]};
     return d;
   }
@@ -309,7 +310,7 @@ class CVec3 {
   void Print() const {
     std::cout << p[0] << " " << p[1] << " " << p[2] << std::endl;
   }
-  bool isNaN() const {
+  [[nodiscard]] bool isNaN() const {
     double s = p[0] + p[1] + p[2];
     return !(s > s - 1.0);
   }
@@ -452,8 +453,8 @@ double Length(
 
 template<typename T>
 double Distance(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1);
+    const CVec3<T> &p0,
+    const CVec3<T> &p1);
 
 template<typename T>
 double SqareLongestEdgeLength(
@@ -541,10 +542,10 @@ double Volume_Tet(
 
 template<typename T>
 double Area_Tri(
-    const int iv1,
-    const int iv2,
-    const int iv3,
-    const std::vector<CVec3<T> > &node);
+    int iv1,
+    int iv2,
+    int iv3,
+    const std::vector<CVec3<T> > &aPoint);
 
 template<typename T>
 CVec3<T> CG_Tri3(
@@ -578,11 +579,11 @@ inline CVec3<T> Normal_Tri3(
 } // namespace delfem2
 
 #if defined(_MSC_VER)
-#pragma warning( pop )
+#  pragma warning( pop )
 #endif
 
 #ifndef DFM2_STATIC_LIBRARY
-#include "delfem2/vec3.cpp"
+#  include "delfem2/vec3.cpp"
 #endif
 
 #endif // DFM2_VEC3_H

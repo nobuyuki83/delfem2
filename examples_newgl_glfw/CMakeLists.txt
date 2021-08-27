@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+option(USE_STATIC_LIB "compile delfem2 as a static library" OFF)
 
-if(USE_HEADERONLY)
+if(USE_STATIC_LIB)
   message("$$$$$$$$$$$$$$$$$$$$$")
-  message("generate project as HEADER-ONLY library:  USE_HEADERONLY=${USE_HEADERONLY}")
-  project(examples_glfnew_hdronly)
-ELSE()
-  message("$$$$$$$$$$$$$$$$$$$$$")
-  message("generate project as STATIC library: USE_HEADERONLY=${USE_HEADERONLY}")
+  message("generate project as STATIC library: USE_STATIC_LIB=${USE_STATIC_LIB}")
   project(examples_glfwnew_static)
   add_subdirectory(dfm2_static_glfwnew)
+ELSE()
+  message("$$$$$$$$$$$$$$$$$$$$$")
+  message("generate project as HEADER-ONLY library:  USE_STATIC_LIB=${USE_STATIC_LIB}")
+  project(examples_glfnew_hdronly)
 ENDIF()
 
 add_subdirectory(00_openwin)

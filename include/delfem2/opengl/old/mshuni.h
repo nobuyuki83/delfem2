@@ -22,11 +22,10 @@
 
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846264338327950288
+#  define M_PI 3.14159265358979323846264338327950288
 #endif
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 // ========================================
 // Draw Point
@@ -50,7 +49,7 @@ DFM2_INLINE void DrawPoints2d_Psup(
 
 DFM2_INLINE void DrawPoints2d_4RotSym(
     const double *aXY,
-    const unsigned int nXY,
+    unsigned int nXY,
     const double *aDir,
     double vlen);
 
@@ -271,9 +270,9 @@ DFM2_INLINE void DrawMeshTet3DSurface_Edge(
 
 DFM2_INLINE void DrawMeshTet3D_FaceNormDisp(
     const double *aXYZ,
-    const unsigned int nXYZ,
+    unsigned int nXYZ,
     const unsigned int *aTet,
-    const unsigned int nTet,
+    unsigned int nTet,
     const double *aDisp);
 
 // -------------
@@ -281,15 +280,15 @@ DFM2_INLINE void DrawMeshTet3D_FaceNormDisp(
 
 DFM2_INLINE void DrawMeshHex3D_Edge(
     const double *aXYZ,
-    const unsigned int nXYZ,
+    unsigned int nXYZ,
     const unsigned int *aHex,
-    const unsigned int nHex);
+    unsigned int nHex);
 
 DFM2_INLINE void DrawMeshHex3D_EdgeDisp(
     const double *aXYZ,
-    const unsigned int nXYZ,
+    unsigned int nXYZ,
     const unsigned int *aHex,
-    const unsigned int nHex,
+    unsigned int nHex,
     const double *aDisp);
 
 DFM2_INLINE void DrawMeshHex3D_FaceNorm(
@@ -328,8 +327,7 @@ DFM2_INLINE void DrawMeshElemPart3D_FaceNorm_TexPoEl(
     const std::vector<int> &aIndElem,
     const std::vector<double> &aUV);
 
-} // namespace opengl
-} // namespace delfem2
+} // namespace delfem2::opengl
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/opengl/old/mshuni.cpp"

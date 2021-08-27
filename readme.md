@@ -3,9 +3,9 @@
 
 <a href="http://doge.mit-license.org"><img src="http://img.shields.io/:license-mit-blue.svg"></a> 
 
-| Linux (Travis-CI) | Windows (GitHub Action) |
+| Linux  | Windows  |
 |----|----|
-| [![travis_status](https://travis-ci.org/nobuyuki83/delfem2.svg?branch=master)](https://travis-ci.org/nobuyuki83/delfem2) | ![](https://github.com/nobuyuki83/delfem2/workflows/CI_Windows/badge.svg) |
+| [![CI_Linux](https://github.com/nobuyuki83/delfem2/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/nobuyuki83/delfem2/actions/workflows/ci_linux.yml) | ![](https://github.com/nobuyuki83/delfem2/workflows/CI_Windows/badge.svg) |
 
 
 
