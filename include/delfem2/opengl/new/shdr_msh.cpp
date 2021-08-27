@@ -6,21 +6,19 @@
  */
 
 #ifdef EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#define GLFW_INCLUDE_ES3
-#include <GLFW/glfw3.h>
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
+#  include <GLFW/glfw3.h>
 #elif defined(USE_GLEW)
-#include <GL/glew.h>
+#  include <GL/glew.h>
 #else
-#include <glad/glad.h>
+#  include <glad/glad.h>
 #endif
-//
+
 #include "delfem2/opengl/funcs.h" // compile shader
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/opengl/new/shdr_msh.h"
 #include "delfem2/mshmisc.h"
-
-namespace dfm2 = delfem2;
 
 // ------------------------------------------
 
@@ -95,16 +93,18 @@ void delfem2::opengl::CShader_Mesh::Compile() {
       "}\n\0";
 
 #ifdef EMSCRIPTEN
-  shaderProgram = GL24_CompileShader((std::string("#version 300 es\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 300 es\n")+
-                                      std::string("precision highp float;\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = GL24_CompileShader(
+      (std::string("#version 300 es\n")+
+      glsl33vert_projection).c_str(),
+      (std::string("#version 300 es\n")+
+      std::string("precision highp float;\n")+
+      glsl33frag).c_str());
 #else
-  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n") +
-                                                       glsl33vert_projection).c_str(),
-                                                   (std::string("#version 330 core\n") +
-                                                       glsl33frag).c_str());
+  shaderProgram = delfem2::opengl::GL24_CompileShader(
+      (std::string("#version 330 core\n") +
+      glsl33vert_projection).c_str(),
+      (std::string("#version 330 core\n") +
+      glsl33frag).c_str());
 #endif
 
   if (!glIsProgram(shaderProgram)) {

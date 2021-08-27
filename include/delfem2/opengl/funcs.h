@@ -14,9 +14,10 @@
 #ifndef DFM2_OPENGL_FUNCS_H
 #define DFM2_OPENGL_FUNCS_H
 
-#include "delfem2/dfm2_inline.h"
 #include <string>
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -52,8 +53,8 @@ constexpr int convertToGlType<double>(){ return GL_DOUBLE; }
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/opengl/funcs.cpp"
+#  include "delfem2/opengl/funcs.cpp"
 #endif
 
 
-#endif /* GL24_FUNCS_H */
+#endif

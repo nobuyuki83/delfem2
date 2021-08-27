@@ -8,11 +8,12 @@
 #ifndef DFM2_OPENGL_NEW_SHDR_MSH_H
 #define DFM2_OPENGL_NEW_SHDR_MSH_H
 
+#include <stdio.h>
+#include <vector>
+
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/color.h"
 #include "delfem2/dfm2_inline.h"
-#include <stdio.h>
-#include <vector>
 
 // -------------------------------------
 
