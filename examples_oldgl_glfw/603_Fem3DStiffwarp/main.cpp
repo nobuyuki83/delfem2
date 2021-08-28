@@ -9,6 +9,10 @@
 #include <vector>
 #include <cstdlib>
 #include <cmath>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -73,9 +77,9 @@ void RotationAtMeshPoints(
     const std::vector<double> &aDisp,
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup) {
-  const unsigned int np = aXYZ.size() / 3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
   aR.resize(np * 9);
-  for (std::size_t ip = 0; ip < aXYZ.size() / 3; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     dfm2::CVec3d Pi(aXYZ[ip * 3 + 0], aXYZ[ip * 3 + 1], aXYZ[ip * 3 + 2]);
     dfm2::CVec3d pi(aXYZ[ip * 3 + 0] + aDisp[ip * 3 + 0],
                     aXYZ[ip * 3 + 1] + aDisp[ip * 3 + 1],
@@ -127,7 +131,7 @@ void InitializeProblem_ShellEigenPB() {
       aTet.data(), aTet.size() / 4, 4,
       (int) aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
-  mat_A.Initialize(np, 3, true);
+  mat_A.Initialize(static_cast<unsigned int>(np), 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(), psup.size());
   ilu_A.SetPattern0(mat_A);
@@ -143,8 +147,8 @@ void Solve_Linear() {
       myu, lambda,
       rho, gravity,
       dt,
-      aXYZ.data(), aXYZ.size() / 3,
-      aTet.data(), aTet.size() / 4,
+      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
+      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
       aDisp.data(),
       aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
@@ -152,7 +156,7 @@ void Solve_Linear() {
   //
   ilu_A.CopyValue(mat_A);
   ilu_A.Decompose();
-  const size_t nDoF = aXYZ.size();
+  const unsigned int nDoF = static_cast<unsigned int>(aXYZ.size());
   std::vector<double> dv(nDoF, 0.0);
   std::vector<double> aConv = Solve_PBiCGStab(
       vec_b.data(), dv.data(),
@@ -177,8 +181,8 @@ void Solve_StiffnessWarping() {
       myu, lambda,
       rho, gravity,
       dt,
-      aXYZ.data(), aXYZ.size() / 3,
-      aTet.data(), aTet.size() / 4,
+      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
+      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
       aDisp.data(),
       aVelo.data(),
       aR);
@@ -187,10 +191,11 @@ void Solve_StiffnessWarping() {
   // -------------------
   ilu_A.CopyValue(mat_A);
   ilu_A.Decompose();
-  const size_t nDoF = aXYZ.size();
+  const unsigned int nDoF = static_cast<unsigned int>(aXYZ.size());
   std::vector<double> dv(nDoF, 0.0);
-  std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
-                                              1.0e-4, 1000, mat_A, ilu_A);
+  std::vector<double> aConv = Solve_PBiCGStab(
+	  vec_b.data(), dv.data(),
+	  1.0e-4, 1000, mat_A, ilu_A);
   dfm2::XPlusAYBZ(aDisp, nDoF, aBCFlag,
                   dt, dv,
                   dt, aVelo);
@@ -213,10 +218,11 @@ void myGlutDisplay() {
 
   { // defomred edge
     ::glColor3d(0, 0, 0);
-    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(),
-                                            aTet.data(), aTet.size() / 4,
-                                            aDisp.data(),
-                                            1.0);
+    delfem2::opengl::DrawMeshTet3D_EdgeDisp(
+		aXYZ.data(),
+		aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
+		aDisp.data(),
+		1.0);
   }
 
   ::glDisable(GL_LIGHTING);
@@ -250,13 +256,15 @@ void myGlutDisplay() {
     }
     delfem2::opengl::DrawMeshTet3D_FaceNorm(
         aXYZ.data(),
-        aTet.data(), aTet.size() / 4);
+        aTet.data(), static_cast<unsigned int>(aTet.size() / 4));
 
   }
 
 }
 
-int main(int argc, char *argv[]) {
+int main(
+	[[maybe_unused]] int argc, 
+	[[maybe_unused]] char *argv[]) {
   {
     std::vector<std::vector<double> > aaXY;
     {

@@ -163,7 +163,9 @@ public:
 class CInputTriangulation_Uniform : public CInputTriangulation {
 public:
   explicit CInputTriangulation_Uniform(double elen): elen(elen){}
-  double edgeLengthRatio(double px, double py) const override {
+  double edgeLengthRatio(
+	  [[maybe_unused]] double px, 
+	  [[maybe_unused]] double py) const override {
     return 1.0;
   }
 public:

@@ -119,7 +119,7 @@ namespace femutil {
 void HexVox(
     double &detjac,
     double dndx[][3],
-    double an[],
+    [[maybe_unused]] double an[],
     const double coords[][3],
     double dndr[8][3]) {
   double dxdr[3][3] = {

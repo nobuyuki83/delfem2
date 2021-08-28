@@ -5,16 +5,21 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/dtri2_v2dtri.h"
-//
-#define GL_SILENCE_DEPRECATION
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/cad2dtriv2.h"
-#include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <cmath>
 #include <vector>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/cad2dtriv2.h"
+
 
 namespace dfm2 = delfem2;
 
@@ -22,7 +27,7 @@ namespace dfm2 = delfem2;
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
 {
-  const unsigned int nCV = aCV.size()/2;
+  const size_t nCV = aCV.size()/2;
   double area = 0;
   cg[0] = 0;
   cg[1] = 0;
@@ -87,7 +92,7 @@ void MakeRandomCV(unsigned int nCV, std::vector<double>& aCV)
 void MakeCurveSpline(const std::vector<double>& aCV, std::vector<double>& aVecCurve)
 {
   aVecCurve.resize(0);
-  const unsigned int nCV = aCV.size()/2;
+  const size_t nCV = aCV.size()/2;
   unsigned int ndiv = 5;
   for(unsigned int icv=0;icv<nCV;icv++){
     unsigned int icv0=(icv+0)%nCV;
@@ -113,15 +118,15 @@ void myGlVertex2D(const std::vector<double>& vec, unsigned int i)
 }
 
 
-void drawCurve
-(const std::vector<double>& vec,
- const std::vector<double>& aVecCurve0)
+void drawCurve(
+	const std::vector<double>& vec,
+	const std::vector<double>& aVecCurve0)
 {
   if( aVecCurve0.size() < 2 ){ return; }
   ::glBegin(GL_LINES);
-  const unsigned int nvec = vec.size()/2;
+  const size_t nvec = vec.size()/2;
   for(unsigned int ivec=0;ivec<nvec;ivec++){
-    unsigned int jvec = ivec+1; if( jvec >= nvec ){ jvec -= nvec; }
+    unsigned int jvec = (ivec+1)%nvec; 
     myGlVertex2D(vec,ivec);
     myGlVertex2D(vec,jvec);
   }
@@ -134,12 +139,12 @@ void drawCurve
   ::glEnd();
 }
 
-void drawMesh
-(std::vector<int>& aTri,
- std::vector<double>& aXY)
+void drawMesh(
+	std::vector<int>& aTri,
+	std::vector<double>& aXY)
 {
-  const unsigned int ntri = aTri.size()/3;
-  const unsigned int nxys = aXY.size()/2;
+  const size_t ntri = aTri.size()/3;
+  const size_t nxys = aXY.size()/2;
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
   //  double mag = 20;
@@ -251,7 +256,9 @@ void myGlutDisplay()
 }
 
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
