@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/geo3_v23m34q.h"
+
 #include <cmath>
 
 #include "delfem2/vec2.h"
@@ -12,8 +14,7 @@
 #include "delfem2/mat3.h"
 #include "delfem2/mat4.h"
 #include "delfem2/quat.h"
-//
-#include "delfem2/geo3_v23m34q.h"
+
 
 // ----------------------------------------
 

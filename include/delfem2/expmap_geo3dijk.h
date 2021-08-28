@@ -12,12 +12,13 @@
 #ifndef DFM2_EXPMAP_H
 #define DFM2_EXPMAP_H
 
-#include "delfem2/dfm2_inline.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/dijkstra.h"
 #include <queue>
 #include <climits>
 #include <random>
+
+#include "delfem2/dfm2_inline.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/dijkstra.h"
 
 namespace delfem2 {
 
