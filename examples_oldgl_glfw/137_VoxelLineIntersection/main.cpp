@@ -6,6 +6,10 @@
  */
 
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // should be before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -101,7 +105,9 @@ void Draw_CGrid3(
 
 
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
@@ -124,7 +130,8 @@ int main(int argc,char* argv[])
   }
   std::random_device rd;
   std::mt19937 reng(rd());
-  std::uniform_int_distribution<unsigned int> dist(0,grid.aVal.size()-1);
+  std::uniform_int_distribution<unsigned int> dist(
+	  0,static_cast<int>(grid.aVal.size()-1));
   
   // -------
   int iframe = 0;

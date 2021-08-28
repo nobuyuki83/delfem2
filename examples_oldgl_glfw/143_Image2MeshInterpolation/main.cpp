@@ -7,6 +7,10 @@
 
 #include <cstdlib>
 #include <vector>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -80,7 +84,9 @@ void MeshTri2D_Square(
 
 // --------------------------------------
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   std::vector<double> aXY;
   std::vector<unsigned int> aTri;
@@ -101,7 +107,7 @@ int main(int argc,char* argv[])
     std::cout << width << " " << height << " " << channels << std::endl;
     dfm2::ImageInterpolation_Bilinear(aColor,
         width,height,img,
-        aXY.data(),aXY.size()/2);
+        aXY.data(),static_cast<unsigned int>(aXY.size()/2));
     delete[] img;
   }
   std::cout << aXY.size()/2 << " " << 220*220 << std::endl;
@@ -120,9 +126,10 @@ int main(int argc,char* argv[])
     dfm2::opengl::DrawMeshTri2D_Edge(aTri,aXY);
 //    ::glColor3d(1,1,1);
 //    dfm2::opengl::DrawMeshTri2D_Face(aTri,aXY);
-    dfm2::opengl::DrawMeshTri2D_FaceColor(aTri.data(),aTri.size()/3,
-                                          aXY.data(),aXY.size()/2,
-                                          aColor.data());
+    dfm2::opengl::DrawMeshTri2D_FaceColor(
+		aTri.data(), static_cast<unsigned int>(aTri.size()/3),
+		aXY.data(), static_cast<unsigned int>(aXY.size()/2),                                         
+		aColor.data());
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

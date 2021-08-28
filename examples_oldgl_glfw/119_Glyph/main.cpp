@@ -5,12 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/mshprimitive.h"
 #include <iostream>
 #include <cmath>
-//
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
+
+#include "delfem2/mshprimitive.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -20,7 +24,9 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   delfem2::openglstb::CGlyph glyph(std::string(PATH_INPUT_DIR)+"/myFont.png");
   glyph.ParseGlyphInfo(std::string(PATH_INPUT_DIR)+"/myFont.fnt");

@@ -126,7 +126,8 @@ public:
     }
   }
 
-  virtual bool IsIncludeElem(unsigned int ie){ return true; }
+  virtual bool IsIncludeElem(
+	  [[maybe_unused]] unsigned int ie){ return true; }
 
   /**
    *
@@ -246,7 +247,8 @@ void FlatteringPattern(
     public:
       unsigned int ie0 = UINT_MAX;
     public:
-      void AddElem(unsigned int iel, std::vector<unsigned> &aOrder) { ie0 = iel; }
+      void AddElem(unsigned int iel, 
+		  [[maybe_unused]] std::vector<unsigned> &aOrder) { ie0 = iel; }
     } proc;
     std::vector<unsigned int> aOrder, aDist;
     Dijkstra_FillFromBoundary(
@@ -266,7 +268,8 @@ void FlatteringPattern(
     DijkstraElem_MeshElemGeo3(
         aDist, aOrder, expmap,
         ielm_ker,
-        aTri, aTri.size() / 3,
+        aTri, 
+		static_cast<unsigned int>(aTri.size() / 3),
         aXYZ,
         aTriSuTri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];
