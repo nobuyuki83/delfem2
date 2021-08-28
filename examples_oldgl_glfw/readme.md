@@ -42,6 +42,10 @@ cmake --build .
 ### [103_Noise2d](103_Noise2)
 <img src="103_Noise2/thumbnail.png" width=200px>
 
+### [104_CageDef3Mvc](104_CageDef3Mvc)
+
+<img src="104_CageDef3Mvc/thumbnail.png" width=200px>
+
 ### [105_MeshSlice](105_MeshSlices)
 <img src="105_MeshSlices/thumbnail.png" width=200px>
 

@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#define GL_SILENCE_DEPRECATION
-#include <GLFW/glfw3.h>
 #include <cmath>
 #include <iostream>
 #include <vector>
 #include <random>
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
 
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
@@ -779,7 +779,9 @@ void ProblemFluidTunnel(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();

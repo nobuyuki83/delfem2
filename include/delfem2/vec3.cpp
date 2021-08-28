@@ -172,8 +172,8 @@ DFM2_INLINE double Distance3
      const double p1[3]) {
   return sqrt(
       (p1[0] - p0[0]) * (p1[0] - p0[0]) +
-      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
-      (p1[2] - p0[2]) * (p1[2] - p0[2]));
+          (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+          (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
 template<>
@@ -182,8 +182,8 @@ DFM2_INLINE float Distance3
      const float p1[3]) {
   return sqrtf(
       (p1[0] - p0[0]) * (p1[0] - p0[0]) +
-      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
-      (p1[2] - p0[2]) * (p1[2] - p0[2]));
+          (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+          (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
 }
@@ -284,9 +284,9 @@ template double delfem2::Area_Tri3(const double v1[3], const double v2[3], const
 template<typename T>
 DFM2_INLINE T delfem2::SquareDistance3(const T p0[3], const T p1[3]) {
   return
-  (p1[0] - p0[0]) * (p1[0] - p0[0]) +
-  (p1[1] - p0[1]) * (p1[1] - p0[1]) +
-  (p1[2] - p0[2]) * (p1[2] - p0[2]);
+      (p1[0] - p0[0]) * (p1[0] - p0[0]) +
+          (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+          (p1[2] - p0[2]) * (p1[2] - p0[2]);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template float delfem2::SquareDistance3(const float p0[3], const float p1[3]);
@@ -1029,10 +1029,11 @@ void delfem2::MeanValueCoordinate(
   w[2] = (t2 - c1 * t0 - c0 * t1) / (d2 * sin(t0) * s1);
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::MeanValueCoordinate(double w[3],
-                                        const CVec3d& v0,
-                                        const CVec3d& v1,
-                                        const CVec3d& v2);
+template void delfem2::MeanValueCoordinate(
+    double w[3],
+    const CVec3d& v0,
+    const CVec3d& v1,
+    const CVec3d& v2);
 #endif
 
 // ------------------------------------------------

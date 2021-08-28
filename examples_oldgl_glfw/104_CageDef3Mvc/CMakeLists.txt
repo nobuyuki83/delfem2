@@ -15,7 +15,7 @@ endif ()
 
 #########################
 
-project(104_CoordDef3Mvc)
+project(104_CageDef3Mvc)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

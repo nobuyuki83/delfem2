@@ -5,6 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <random>
+#include <vector>
+#include <cstdlib>
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/mshprimitive.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
@@ -14,17 +20,12 @@
 #include "delfem2/femsolidlinear.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/femutil.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
-//
-#include <random>
-#include <vector>
-#include <cstdlib>
+
+
 
 namespace dfm2 = delfem2;
 
@@ -123,7 +124,9 @@ void Simulation(
       nDoF, aBCFlag,1.0, vecx);
 }
 
-int main(int argc,char* argv[])
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char* argv[])
 {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aHex;

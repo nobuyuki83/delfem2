@@ -37,7 +37,9 @@ void Draw(
   ::glEnd();
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   dfm2::glfw::InitGLOld();
   dfm2::glfw::CViewer3 viewer;
   viewer.InitGL();
