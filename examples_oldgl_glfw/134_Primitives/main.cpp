@@ -29,7 +29,9 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------
 
-int main(int argc, char *argv[]) {
+int main(
+	[[maybe_unused]] int argc, 
+	[[maybe_unused]] char *argv[]) {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aElm;
   // ----------------
@@ -57,7 +59,8 @@ int main(int argc, char *argv[]) {
     }
     // --------------
     dfm2::MeshQuad2D_Grid(aXYZ, aElm, 16, 8);
-    dfm2::Scale_Points(aXYZ.data(), aXYZ.size() / 3, 3, 0.1);
+    dfm2::Scale_Points(aXYZ.data(), 
+		static_cast<unsigned int>(aXYZ.size() / 3), 3, 0.1);
     for (int iframe = 0; iframe < 30; ++iframe) {
       viewer.DrawBegin_oldGL();
       ::glColor3d(0, 0, 0);
@@ -119,7 +122,7 @@ int main(int argc, char *argv[]) {
     // ----
     dfm2::MeshTri3D_Icosahedron(aXYZ, aElm);
     dfm2::Scale_Points(aXYZ.data(),
-                       aXYZ.size() / 3, 3, 0.5);
+		static_cast<unsigned int>(aXYZ.size() / 3), 3, 0.5);
     for (int iframe = 0; iframe < 30; ++iframe) {
       viewer.DrawBegin_oldGL();
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);

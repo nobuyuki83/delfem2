@@ -71,9 +71,9 @@ class CMatrixSparse {
 
   void SetPattern(
       const unsigned int *colind,
-      size_t ncolind,
+      [[maybe_unused]] size_t ncolind,
       const unsigned int *rowptr,
-      size_t nrowptr) {
+      [[maybe_unused]] size_t nrowptr) {
     assert(row_ptr_.empty());
     assert(ncolind == nrowblk_ + 1);
     for (unsigned int iblk = 0; iblk < nrowblk_ + 1; iblk++) { col_ind_[iblk] = colind[iblk]; }

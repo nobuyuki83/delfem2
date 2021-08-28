@@ -5,6 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+ //
+#include <vector>
+#include <algorithm>
+#include <cstddef> // std::size_t
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // should be before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshuni.h"
@@ -13,18 +24,11 @@
 #include "delfem2/srchbvh.h"
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/dijkstra.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
-#include <GLFW/glfw3.h>
-//
-#include <vector>
-#include <algorithm>
-#include <cstddef> // std::size_t
 
 namespace dfm2 = delfem2;
 
@@ -46,7 +50,7 @@ public:
       double min_xyz[3], max_xyz[3];
       delfem2::BoundingBox3_Points3(
           min_xyz,max_xyz,
-          aCent.data(), aCent.size()/3);
+          aCent.data(), static_cast<unsigned int>(aCent.size()/3));
       std::vector<unsigned int> aSortedId;
       std::vector<std::uint32_t> aSortedMc;
       dfm2::SortedMortenCode_Points3(
@@ -66,7 +70,7 @@ public:
       { // assertion
         dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
         dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-        dfm2::Check_BVH(aNodeBVH,aCent.size()/3);
+        dfm2::Check_BVH(aNodeBVH,static_cast<unsigned int>(aCent.size()/3));
       }
     }
     { // make triangle surrounding graph
@@ -89,14 +93,16 @@ public:
     dfm2::DijkstraElem_MeshElemTopo(
         aDist,aOrder,
         itri,aTriSuTri,
-        aTri.size()/3);
+        static_cast<unsigned int>(aTri.size()/3));
     for(std::size_t ie=0;ie<aTri.size()/3;++ie){
       if( aDist[ie] > 10 ) continue;
       aFlagElem[ie] = 1;
     }
   }
 
-  void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
+  void mouse_drag(
+	  [[maybe_unused]] const float src0[3], 
+	  const float src1[3], const float dir[3]) override {
     unsigned int itri = this->PickTri(src1, dir);
     if( itri == UINT_MAX ){ return; }
     unsigned int idist = aDist[itri];
@@ -136,7 +142,9 @@ public:
   std::vector<unsigned int> aDist;
 };
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   std::vector<double> aXYZ; // 3d points
   std::vector<unsigned int> aTri;

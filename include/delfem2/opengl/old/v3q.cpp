@@ -246,9 +246,9 @@ DFM2_INLINE void delfem2::opengl::DrawArrow(
   z.normalize();
   CV3 x, y;
   GetVertical2Vector(z, x, y);
-  REAL dt = 3.1415 * 2.0 / ndivt;
-  REAL r0 = d.norm() * 0.05;
-  REAL r1 = d.norm() * 0.10;
+  REAL dt = static_cast<REAL>(3.1415 * 2.0) / ndivt;
+  REAL r0 = d.norm() * static_cast<REAL>(0.05);
+  REAL r1 = d.norm() * static_cast<REAL>(0.10);
   //  double l = d.Length();
   { // cylinder
     ::glBegin(GL_QUADS);
@@ -450,7 +450,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleWire(
     const CVec3<REAL> &axis,
     const CVec3<REAL> &org,
     REAL r) {
-  const REAL pi = 3.1415926535;
+  const REAL pi = static_cast<REAL>(3.1415926535);
   int n = 32;
   REAL dt0 = 2 * pi / n;
   CVec3<REAL> vh, vw;

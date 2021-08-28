@@ -69,7 +69,8 @@ bool delfem2::LoadImage_PPMBinary
 
 // https://en.wikipedia.org/wiki/Netpbm_format
 int delfem2::LoadImage_PPMAscii(
-    unsigned int& width, unsigned int& height,
+    unsigned int& width, 
+	unsigned int& height,
     std::vector<unsigned char>& image,
     const std::string& fname)
 {
@@ -82,9 +83,11 @@ int delfem2::LoadImage_PPMAscii(
     const unsigned int buffSize = 256;
     char buff[buffSize];
     char* cres = nullptr;
-    cres = fgets(buff,buffSize,fp); if( cres == nullptr ){ return 2; }
+    cres = fgets(buff,buffSize,fp); 
+	if( cres == nullptr ){ return 2; }
     if( buff[0] != 'P' || buff[1] != '3'){ return 2; }
-    cres = fgets(buff,buffSize,fp); if( cres == nullptr ){ return 2; }
+    cres = fgets(buff,buffSize,fp); 
+	if( cres == nullptr ){ return 2; }
     sscanf(buff,"%d%d",&width,&height);
     cres = fgets(buff,buffSize,fp);  // read 255
     if( cres == nullptr ){ return -1; }
@@ -107,7 +110,7 @@ int delfem2::LoadImage_PPMAscii(
       unsigned int val = atoi(pCur);
       unsigned int ih = icnt/(width*3);
       unsigned int iw = icnt-ih*width*3;
-      image[(height-ih-1)*width*3+iw] = val;
+      image[(height-ih-1)*width*3+iw] = static_cast<unsigned char>(val);
       icnt++;
       if( pNxt[0] == '\n' || pNxt[0] == '\0') break;
       pCur = pNxt;
@@ -203,8 +206,8 @@ void delfem2::ImageInterpolation_Bilinear(
   for(unsigned int ip=0;ip<nXY;++ip){
     double x = aXY[ip*2+0]*(width-1);
     double y = (1.0-aXY[ip*2+1])*(height-1);
-    int ix0 = floor(x);
-    int iy0 = floor(y);
+    int ix0 = static_cast<int>(floor(x));
+    int iy0 = static_cast<int>(floor(y));
     int ix1 = ix0+1; if( ix1 == width ){ ix1 = width-1; }
     int iy1 = iy0+1; if( iy1 == height ){ iy1 = height-1; }
     assert( ix0 >= 0 && ix0 < width );

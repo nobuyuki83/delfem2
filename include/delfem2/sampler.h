@@ -30,7 +30,7 @@ void Step_Lloyd2(
     const double min_aabb[2],
     const double max_aabb[2]) {
   assert(aD.size() == ndiv * ndiv);
-  const unsigned int np = aXY.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY.size() / 2);
   std::vector<unsigned int> aV; // Volonoi, index of point, distance for every pixels
   aV.resize(ndiv * ndiv);
   for (unsigned int ih = 0; ih < ndiv; ++ih) {

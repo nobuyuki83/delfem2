@@ -150,9 +150,9 @@ DFM2_INLINE bool FindEdgePoint_AcrossEdge(
 // exposed functions
 
 DFM2_INLINE void delfem2::CheckTri(
-    const std::vector<CDynPntSur> &aPo3D,
-    const std::vector<CDynTri> &aDTri,
-    const std::vector<CVec2d> &aXYZ) {
+    [[maybe_unused]] const std::vector<CDynPntSur> &aPo3D,
+    [[maybe_unused]] const std::vector<CDynTri> &aDTri,
+    [[maybe_unused]] const std::vector<CVec2d> &aXYZ) {
 #if !defined(NDEBUG)
   for (const auto &tri : aDTri) {
     const unsigned int i0 = tri.v[0];
@@ -959,7 +959,7 @@ DFM2_INLINE void delfem2::RefinementPlan_EdgeLongerThan_InsideCircle(
     double px,
     double py,
     double rad,
-    const std::vector<CDynPntSur> &aPo2D,
+    [[maybe_unused]] const std::vector<CDynPntSur> &aPo2D,
     const std::vector<CVec2d> &aVec2,
     const std::vector<CDynTri> &aETri) {
   std::set<CCmdRefineMesh::CCmdEdge> setCmd;
