@@ -9,6 +9,7 @@
 #include <string>
 #include <cstdlib>
 #include <set>
+
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
