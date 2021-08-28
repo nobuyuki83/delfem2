@@ -35,9 +35,7 @@ namespace dfm2 = delfem2;
 void Draw(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& aTri,
-    const std::vector<double>& aTexP,
-    const std::vector<unsigned int>& elsup_ind,
-    const std::vector<unsigned int>& elsup)
+    const std::vector<double>& aTexP)
 {
   ::glEnable(GL_TEXTURE_2D);
   ::glEnable(GL_LIGHTING);
@@ -66,8 +64,6 @@ void Draw2(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& aTri,
     const std::vector<double>& aTexP,
-    const std::vector<unsigned int>& elsup_ind,
-    const std::vector<unsigned int>& elsup,
     const dfm2::CVec3d lc[4])
 {
   ::glEnable(GL_TEXTURE_2D);
@@ -106,7 +102,9 @@ void Draw2(
   ::glEnd();
 }
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
@@ -143,7 +141,7 @@ int main(int argc,char* argv[])
     dfm2::DijkstraElem_MeshElemGeo3(
         aDist, aOrder, expmap,
         ielm_ker,
-        aTri, aTri.size() / 3,
+        aTri, static_cast<unsigned int>(aTri.size() / 3),
         aXYZ,
         aTriSuTri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];
@@ -231,8 +229,8 @@ int main(int argc,char* argv[])
         ::glVertex3dv(aXYZ.data()+i2*3);
         ::glEnd();
       }
-      Draw(aXYZ,aTri,aTexP,elsup_ind,elsup);
-      Draw2(aXYZ,aTri,aTexP,elsup_ind,elsup,coordLocal);
+      Draw(aXYZ,aTri,aTexP);
+      Draw2(aXYZ,aTri,aTexP,coordLocal);
 //      delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(aXYZ, aTri, aFlgElm, aColor);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();

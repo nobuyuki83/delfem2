@@ -8,6 +8,10 @@
 #include <random>
 #include <vector>
 #include <cstdlib>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -35,7 +39,7 @@ void InitializeMatrix(
     delfem2::CPreconditionerILU<double> &ilu,
     const std::vector<unsigned int> &aHex,
     const std::vector<double> &aXYZ) {
-  const unsigned int np = aXYZ.size() / 3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_PSuP_MeshElem(
       psup_ind, psup,
@@ -65,7 +69,7 @@ void Simulation(
     double c2,
     double stiff_comp,
     const double gravity[3]) {
-  const unsigned int np = aXYZ0.size() / 3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
   const unsigned int nDoF = np * 3;
   for (unsigned int ip = 0; ip < np; ++ip) {
     aDisp[ip * 3 + 0] += dt * aVelo[ip * 3 + 0];
@@ -143,7 +147,9 @@ void Simulation(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main(
+	[[maybe_unused]] int argc, 
+	[[maybe_unused]] char *argv[]) {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aHex;
   dfm2::MeshHex3_Grid(
@@ -158,7 +164,7 @@ int main(int argc, char *argv[]) {
       aHex, aXYZ0);
 
   std::vector<double> aDisp(aXYZ0.size(), 0.0);
-  std::vector<int> aBCFlag(aXYZ0.size(), 0.0); // 0: free, 1: fix BC
+  std::vector<int> aBCFlag(aXYZ0.size(), 0); // 0: free, 1: fix BC
   {
     std::mt19937 rnddev(std::random_device{}());
     std::uniform_real_distribution<double> dist_m1p1(-1, 1);
@@ -197,8 +203,8 @@ int main(int argc, char *argv[]) {
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0, 0, 0);
     delfem2::opengl::DrawMeshHex3D_EdgeDisp(
-        aXYZ0.data(), aXYZ0.size() / 3,
-        aHex.data(), aHex.size() / 8,
+        aXYZ0.data(), static_cast<unsigned int>(aXYZ0.size() / 3),
+        aHex.data(), static_cast<unsigned int>(aHex.size() / 8),
         aDisp.data());
     //
     ::glEnable(GL_LIGHTING);

@@ -121,7 +121,7 @@ DFM2_INLINE void delfem2::JArray_AddDiagonal(
     const unsigned int *psup_ind0,
     int npsup_ind0,
     const unsigned int *psup0,
-    int npsup0) {
+    [[maybe_unused]] int npsup0) {
   const int np = npsup_ind0 - 1;
   std::vector<int> tmp(np, -1);
   psup_ind1.assign(np + 1, 0);

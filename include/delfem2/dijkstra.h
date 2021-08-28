@@ -125,14 +125,15 @@ void DijkstraElem_MeshElemGeo3(
   aDist.assign(nelem, -1.0);
   aDist[ielm_ker] = 0.0;
   const size_t nedge = aElSuEl.size() / nelem;
-  const size_t nnoel = aTri.size() / nelem;
+  const unsigned int nnoel = static_cast<unsigned int>(aTri.size() / nelem);
   std::priority_queue<dijkstra::CNode<double>> que;
   que.push(dijkstra::CNode<double>(ielm_ker, 0.));
   unsigned int icnt = 0;
   while (!que.empty()) {
     const unsigned int ielm0 = que.top().ind;
     const double idist0 = que.top().dist;
-    double p0[3]; Center_Elem3(p0, ielm0,aTri,nnoel,aXYZ);
+    double p0[3]; 
+	Center_Elem3(p0, ielm0, aTri,nnoel,aXYZ);
     que.pop();
     if( aOrder[ielm0] != UINT_MAX ){ continue; } // already fixed so this is not the shortest path
     aOrder[ielm0] = icnt; // found shortest path
@@ -143,7 +144,8 @@ void DijkstraElem_MeshElemGeo3(
       if (ielm1 == UINT_MAX) { continue; }
       if( aOrder[ielm1] != UINT_MAX ){ continue; } // aready fixed
       if( !proc.IsIncludeElem(ielm1) ){ continue; } // ielm is outside
-      double p1[3]; Center_Elem3(p1, ielm1,aTri,nnoel,aXYZ);
+      double p1[3]; 
+	  Center_Elem3(p1, ielm1, aTri,nnoel,aXYZ);
       const double idist1 = idist0+dijkstra::Distance3(p0,p1);
       if ( aDist[ielm1] < -0.1 || idist1 < aDist[ielm1] ) {
         aDist[ielm1] = idist1; // Found the shortest path so far

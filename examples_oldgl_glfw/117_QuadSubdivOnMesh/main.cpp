@@ -104,7 +104,7 @@ void InitializeProblem() {
         dfm2::Normalize3(aNorm_Quad.data()+(nv0+ne0+iq)*3);
       }
     }
-    for(unsigned int ip=nv0;ip<nv0+ne0+nq0;++ip){
+    for(auto ip=nv0;ip<nv0+ne0+nq0;++ip){
       const dfm2::CVec3d p0( aXYZ_Quad[ip*3+0], aXYZ_Quad[ip*3+1], aXYZ_Quad[ip*3+2] );
       const dfm2::CVec3d n0( aNorm_Quad[ip*3+0], aNorm_Quad[ip*3+1], aNorm_Quad[ip*3+2] );
       std::vector<dfm2::CPtElm2<double>> aPES = IntersectionLine_MeshTri3(
@@ -130,7 +130,7 @@ void InitializeProblem() {
       std::vector<double> aNorm1;
       dfm2::Normal_MeshQuad3(aNorm1,
                              aXYZ_Quad, aaQuad[isubdiv+1]);
-      for(unsigned int ip=nv0;ip<nv0+ne0+nq0;++ip){
+      for(auto ip=nv0;ip<nv0+ne0+nq0;++ip){
         aNorm_Quad[ip*3+0] = aNorm1[ip*3+0];
         aNorm_Quad[ip*3+1] = aNorm1[ip*3+1];
         aNorm_Quad[ip*3+2] = aNorm1[ip*3+2];
@@ -173,10 +173,10 @@ void myGlutDisplay()
   ::glEnable(GL_DEPTH_TEST);
 }
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
-  // ----------------
-
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();

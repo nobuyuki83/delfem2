@@ -5,24 +5,28 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/dtri3_v3dtri.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
-#include "delfem2/mshio.h"
-//
-#define GL_SILENCE_DEPRECATION
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/v3q.h"
-#include <GLFW/glfw3.h>
-//
 #include <vector>
 #include <string>
 #include <cassert>
 #include <cstdlib>
 #include <climits>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/dtri3_v3dtri.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
+#include "delfem2/mshio.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/v3q.h"
+
 
 
 namespace dfm2 = delfem2;
@@ -227,17 +231,19 @@ void RemoveOnePoint
     const double* Q2 = aSymMat4.data()+iv2*10;
     double Q12[10];
     for(unsigned int i=0;i<10;++i){ Q12[i] = Q1[i] + Q2[i]; }
-    double pos[3];
-    double err = MinimizeQuad(pos, Q12);
+    double pos0[3];
+    double err = MinimizeQuad(pos0, Q12);
     auto v12 = std::make_pair(iv1,iv2);
-    CollapseSchedule cs(iv1,iv2,pos);
+    CollapseSchedule cs(iv1,iv2,pos0);
     cost2edge.insert(std::make_pair(err,cs));
     edge2cost.insert(std::make_pair(v12,err));
   }
 }
 
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   std::vector<dfm2::CDynPntSur> aDP;
   std::vector<dfm2::CDynTri> aDTri;
@@ -245,10 +251,11 @@ int main(int argc,char* argv[])
   {
     std::vector<double> aXYZ0;
     std::vector<unsigned int> aTri0;
-    delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
-                      aXYZ0,aTri0);
+    delfem2::Read_Ply(
+		std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
+		aXYZ0,aTri0);
     dfm2::Normalize_Points3(aXYZ0,2.0);
-    const unsigned int np = aXYZ0.size()/3;
+    const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
     aDP.resize(np);
     aVec3.resize(np);
     for(unsigned int ipo=0;ipo<aDP.size();ipo++){
@@ -256,8 +263,10 @@ int main(int argc,char* argv[])
       aVec3[ipo].p[1] = aXYZ0[ipo*3+1];
       aVec3[ipo].p[2] = aXYZ0[ipo*3+2];
     }
-    InitializeMesh(aDP, aDTri,
-                   aTri0.data(),aTri0.size()/3,aVec3.size());
+    InitializeMesh(
+		aDP, aDTri,
+		aTri0.data(),static_cast<unsigned int>(aTri0.size()/3),
+		static_cast<unsigned int>(aVec3.size()));
 #if !defined(NDEBUG)
     AssertDTri(aDTri);
     AssertMeshDTri(aDP, aDTri);

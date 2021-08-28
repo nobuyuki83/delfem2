@@ -5,18 +5,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/sampler.h"
-//
-#define GL_SILENCE_DEPRECATION
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
 #include <vector>
 #include <cstdlib>
 #include <set>
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/sampler.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
@@ -71,7 +75,9 @@ void Draw(
   glfwPollEvents();
 }
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   std::vector<double> aXY;
   const unsigned int ndiv = 128;
@@ -102,7 +108,8 @@ int main(int argc,char* argv[])
           double y0 = dist_x(rdeng);
           auto ix0 = (unsigned int) floor((x0 - min_xy[0]) / (max_xy[0] - min_xy[0]) * ndiv);
           auto iy0 = (unsigned int) floor((y0 - min_xy[1]) / (max_xy[1] - min_xy[1]) * ndiv);
-          iy0 = ndiv - iy0;
+          iy0 = ndiv - 1 - iy0;
+		  assert(iy0*ndiv+ix0<aDensity.size());
           double dist01 = 1.0 / aDensity[iy0 * ndiv + ix0];
           bool flg_fail = false;
           for (unsigned int ip = 0; ip < aXY.size() / 2; ++ip) {

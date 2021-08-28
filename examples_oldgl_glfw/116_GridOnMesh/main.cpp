@@ -5,23 +5,28 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+
+#include <vector>
+#include <string>
+#include <cstdlib>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
-#include <vector>
-#include <string>
-#include <cstdlib>
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
-#include <GLFW/glfw3.h>
 
 #ifndef M_PI
 #  define M_PI 3.141592
@@ -197,10 +202,10 @@ void myGlutDisplay()
   ::glEnable(GL_DEPTH_TEST);
 }
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
-  // ----------------
-
   dfm2::glfw::CViewer3 viewer;
   viewer.InitGL();
   viewer.camera.view_height = 1.0;

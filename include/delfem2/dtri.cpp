@@ -501,7 +501,7 @@ DFM2_INLINE void delfem2::FindEdge_LookAllTriangles(
 }
 
 DFM2_INLINE void delfem2::AssertDTri(
-    const std::vector<CDynTri> &aTri) {
+    [[maybe_unused]] const std::vector<CDynTri> &aTri) {
 #if !defined(NDEBUG)
   const size_t ntri = aTri.size();
   for (unsigned int itri = 0; itri < ntri; itri++) {
@@ -532,8 +532,8 @@ DFM2_INLINE void delfem2::AssertDTri(
 }
 
 DFM2_INLINE void delfem2::AssertMeshDTri(
-    const std::vector<CDynPntSur> &aPo3D,
-    const std::vector<CDynTri> &aSTri) {
+    [[maybe_unused]] const std::vector<CDynPntSur> &aPo3D,
+    [[maybe_unused]] const std::vector<CDynTri> &aSTri) {
 #if !defined(NDEBUG)
   const size_t npo = aPo3D.size();
   const size_t ntri = aSTri.size();
