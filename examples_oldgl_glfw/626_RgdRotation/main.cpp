@@ -137,7 +137,9 @@ void myGlutDisplay(
   ::glPopMatrix();
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
   dfm2::MeshTri3_Torus(aXYZ, aTri, 1.0, 0.2, 32, 8);

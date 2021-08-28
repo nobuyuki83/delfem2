@@ -22,10 +22,10 @@ DFM2_INLINE bool LoadImage_PPMBinary(
 
 /**
  *
- * @param width
- * @param height
- * @param image binary image data. top left corner is the origin. width first
- * @param fname file path
+ * @param[out] width
+ * @param[out] height
+ * @param[out] image binary image data. top left corner is the origin. width first
+ * @param[in] fname file path
  * @return 0: success, 1: cannot open 2: format different
  */
 DFM2_INLINE int LoadImage_PPMAscii(

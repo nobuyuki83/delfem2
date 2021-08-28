@@ -108,7 +108,9 @@ void Solve(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   const unsigned int N = 11;
   const double dt = 1.0 / 60.0;
   const double stiff_stretch = 10.0;

@@ -68,53 +68,50 @@ bool delfem2::LoadImage_PPMBinary
 }
 
 // https://en.wikipedia.org/wiki/Netpbm_format
+// TODO: cannot process comment out sybol yet '#'
 int delfem2::LoadImage_PPMAscii(
     unsigned int& width, 
 	unsigned int& height,
     std::vector<unsigned char>& image,
-    const std::string& fname)
+    const std::string& fpath)
 {
-  FILE* fp = fopen(fname.c_str(),"r");
-  if( fp == nullptr ){ return 1; }
+  std::ifstream fin;
+  fin.open(fpath.c_str(), std::ios::in);
+  if( fin.fail() ){ return 1; }
 
   image.clear();
   width = height = 0;
+  int vmax;
   {
     const unsigned int buffSize = 256;
     char buff[buffSize];
-    char* cres = nullptr;
-    cres = fgets(buff,buffSize,fp); 
-	if( cres == nullptr ){ return 2; }
+    // get format
+    if( !fin.getline(buff, buffSize) ){ return 2; }
     if( buff[0] != 'P' || buff[1] != '3'){ return 2; }
-    cres = fgets(buff,buffSize,fp); 
-	if( cres == nullptr ){ return 2; }
-    sscanf(buff,"%d%d",&width,&height);
-    cres = fgets(buff,buffSize,fp);  // read 255
-    if( cres == nullptr ){ return -1; }
+    // get size
+    if( !fin.getline(buff, buffSize) ){ return 2; }
+    {
+      std::stringstream ss(buff);
+      ss >> width >> height;
+    }
+    if( !fin.getline(buff, buffSize) ){ return 2; }
+    {
+      std::stringstream ss(buff);
+      ss >> vmax;
+    }
   }
   image.resize(width*height*3);
-  const auto buffSize = (unsigned int)(4*3*width*1.2);  // ÇøÇÂÇ¡Ç∆ó]ï™ñ⁄Ç…Ç∆Ç¡ÇƒÇ®Ç≠
-  std::vector<char> buff(buffSize);
+  const auto buffSize = (unsigned int)(4*3*width*1.2);
+  std::vector<char> buff(buffSize, 0);
   unsigned int icnt = 0;
   while (icnt<width*height*3) {
-    char* cres = fgets(buff.data(),buffSize,fp);
-    if( cres == nullptr ){ return -1; }
-    char* pCur = buff.data();
-    char* pNxt = nullptr;
-    for(;;){
-      //      if(      pCur[0] == ' ' ){ assert(0); }
-      if(      pCur[1] == ' ' || pCur[1] == '\n' ){ pCur[1]='\0'; pNxt=pCur+2; }
-      else if( pCur[2] == ' ' || pCur[2] == '\n' ){ pCur[2]='\0'; pNxt=pCur+3; }
-      else if( pCur[3] == ' ' || pCur[3] == '\n' ){ pCur[3]='\0'; pNxt=pCur+4; }
-      //      else{ assert(0); }
-      unsigned int val = atoi(pCur);
-      unsigned int ih = icnt/(width*3);
-      unsigned int iw = icnt-ih*width*3;
-      image[(height-ih-1)*width*3+iw] = static_cast<unsigned char>(val);
-      icnt++;
-      if( pNxt[0] == '\n' || pNxt[0] == '\0') break;
-      pCur = pNxt;
-    }
+    int ival;
+    fin >> ival;
+    unsigned int ih = icnt/(width*3);
+    unsigned int iw = (icnt-ih*width*3)/3;
+    unsigned int ich = icnt - ih*width*3 - iw*3;
+    image[(height-ih-1)*width*3+iw*3+ich] = ival;
+    icnt++;
   }
   return 0;
 }

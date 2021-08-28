@@ -85,7 +85,9 @@ void Solve(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   const unsigned int N = 11;
   std::vector<double> aXY;  // vertices of polyline in the initial config
   for (unsigned int i = 0; i < N; ++i) {
