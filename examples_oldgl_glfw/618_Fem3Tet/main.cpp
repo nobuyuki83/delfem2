@@ -9,6 +9,10 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -722,11 +726,11 @@ class CInSphere : public dfm2::CInput_IsosurfaceStuffing {
       int &ilevel_vol,
       int &ilevel_srf,
       int &nlayer,
-      double &sdf,
+      double &sdf0,
       double px,
       double py,
       double pz) const {
-    sdf = this->SignedDistance(px, py, pz);
+    sdf0 = this->SignedDistance(px, py, pz);
     ilevel_vol = -1;
     ilevel_srf = 2;
     nlayer = 3;
@@ -804,12 +808,6 @@ void SetMesh(
 }
 
 // ---------------------------------------------
-
-static void myGlVertex3d
-    (unsigned int ixyz,
-     const std::vector<double> &aXYZ1) {
-  ::glVertex3d(aXYZ1[ixyz * 3 + 0], aXYZ1[ixyz * 3 + 1], aXYZ1[ixyz * 3 + 2]);
-}
 
 //static void myGlVertex3d(const CVec3& v){
 //  ::glVertex3d(v.x, v.y, v.z);

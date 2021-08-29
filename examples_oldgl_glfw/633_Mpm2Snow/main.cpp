@@ -8,6 +8,10 @@
 #include <cstdio>
 #include <random>
 #include <algorithm>  // std::max
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -214,7 +218,8 @@ void AddParticlesCircle(
 // ---------------------------
 // OpenGL dependency from here
 
-static void error_callback(int error, const char *description) {
+static void error_callback(
+    [[maybe_unused]] int error, const char *description) {
   fputs(description, stderr);
 }
 

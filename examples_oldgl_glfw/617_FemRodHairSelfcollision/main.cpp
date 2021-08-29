@@ -5,17 +5,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/femrod.h"
 #include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/srchbv3sphere.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/funcs.h"
-#include <GLFW/glfw3.h>
+
 
 namespace dfm2 = delfem2;
 
@@ -204,7 +209,9 @@ void FindRodHairContactCCD(
   } // ir
 }
 
-int main(int argc,char* argv[])
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char* argv[])
 {
   class CViewerDemo : public dfm2::glfw::CViewer3 {
     void  key_press(int key, int mods) override {

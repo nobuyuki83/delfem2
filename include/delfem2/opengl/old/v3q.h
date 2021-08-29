@@ -5,13 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_V3Q_GLOLD_H
-#define DFM2_V3Q_GLOLD_H
+#ifndef DFM2_OPENGL_OLD_V3Q_H
+#define DFM2_OPENGL_OLD_V3Q_H
+
+#include <vector>
+
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat4.h"
 #include "delfem2/quat.h"
-#include <vector>
 
 namespace delfem2 {
 namespace opengl {

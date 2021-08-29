@@ -10,18 +10,22 @@
  * @file implementation based on "Müller et al., Particle-based fluid simulation for interactive applications. SCA 2003"
  */
 
-#include "delfem2/vec3.h"
-#include "delfem2/srchgrid.h"
-//
-#define GL_SILENCE_DEPRECATION
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include <GLFW/glfw3.h>
-//
 #include <cmath>
 #include <iostream>
 #include <vector>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/vec3.h"
+#include "delfem2/srchgrid.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+
 
 #ifndef M_PI
   #define M_PI 3.1415926535

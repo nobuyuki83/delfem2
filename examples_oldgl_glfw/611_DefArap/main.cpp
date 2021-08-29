@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cmath>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>
 #endif
-#include <cmath>
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 

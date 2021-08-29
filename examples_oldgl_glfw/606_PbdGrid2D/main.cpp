@@ -6,6 +6,10 @@
  */
 
 #include <cmath>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -64,7 +68,9 @@ void stepTime(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   // --------------------------
   std::vector<double> aXY0;
   std::vector<double> aXY1;
