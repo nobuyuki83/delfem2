@@ -9,6 +9,10 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -206,7 +210,7 @@ void InitializeProblem_Scalar(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const size_t np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   aBCFlag.assign(np, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
     const double px = aXY1[ip * 2 + 0];
@@ -235,8 +239,8 @@ void SolveProblem_Poisson(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const size_t np = aXY1.size() / 2;
-  const size_t nDoF = np;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const unsigned int nDoF = np;
   // -----------------------
   const double alpha = 1.0;
   const double source = 1.0;
@@ -246,8 +250,8 @@ void SolveProblem_Poisson(
   dfm2::MergeLinSys_Poission_MeshTri2D(
       mat_A, vec_b.data(),
       alpha, source,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -266,7 +270,10 @@ void SolveProblem_Poisson(
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
     Solve_CG(
-        dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_b),
+		dfm2::CVecXd(vec_x), 
+		dfm2::CVecXd(tmp0), 
+		dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A);
   }
   // ----------------
@@ -282,8 +289,8 @@ void SolveProblem_Diffusion(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const size_t np = aXY1.size() / 2;
-  const size_t nDoF = np;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const unsigned int nDoF = np;
   // ------------------
   const double alpha = 1.0;
   const double rho = 1.0;
@@ -311,7 +318,10 @@ void SolveProblem_Diffusion(
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
     Solve_PCG(
-        dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_b),
+		dfm2::CVecXd(vec_x), 
+		dfm2::CVecXd(tmp0), 
+		dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
@@ -331,10 +341,10 @@ void DrawScalar(
   ::glDisable(GL_LIGHTING);
   {
     std::vector<std::pair<double, delfem2::CColor> > colorMap;
-    ColorMap_BlueGrayRed(colorMap, 0, +0.1);
+    ColorMap_BlueGrayRed(colorMap, 0, +0.1f);
     delfem2::opengl::DrawMeshTri2D_ScalarP1(
-        aXY1.data(), aXY1.size() / 2,
-        aTri1.data(), aTri1.size() / 3,
+        aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+        aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
         aVal.data(), 1, colorMap);
   }
   ::glColor3d(0, 0, 0);
@@ -398,7 +408,7 @@ void InitializeProblem_Solid(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 2;
   // ----------------
   aBCFlag.assign(nDoF, 0);
@@ -429,7 +439,7 @@ void SolveProblem_LinearSolid_Static(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 2;
   // ----------------------
   double myu = 10.0;
@@ -478,7 +488,7 @@ void SolveProblem_LinearSolid_Dynamic(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 2;
   // ------------------
   double myu = 10.0;
@@ -493,8 +503,8 @@ void SolveProblem_LinearSolid_Dynamic(
       mat_A, vec_b.data(),
       myu, lambda, rho, g_x, g_y,
       dt_timestep, gamma_newmark, beta_newmark,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data(), aVelo.data(), aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -530,7 +540,7 @@ void ProblemSolid(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   dfm2::CMatrixSparse<double> mat_A;
   dfm2::CPreconditionerILU<double> ilu_A;
   std::vector<int> aBCFlag;
@@ -568,8 +578,8 @@ void ProblemSolid(
         aXY1, aTri1, aBCFlag);
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
-        aXY1.data(), aXY1.size() / 2,
-        aTri1.data(), aTri1.size() / 3,
+        aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+        aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
         aVal.data(), 2);
     viewer.SwapBuffers();
     glfwPollEvents();
@@ -645,8 +655,8 @@ void InitializeProblem_Fluid2(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const size_t np = aXY1.size() / 2;
-  const size_t nDoF = np * 3;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const unsigned int nDoF = np * 3;
   // set boundary condition
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -688,8 +698,8 @@ void SolveProblem_Stokes_Static(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const size_t np = aXY1.size() / 2;
-  const size_t nDoF = np * 3;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const unsigned int nDoF = np * 3;
   // ---------------------
   double myu = 1.0;
   double g_x = 0.0;
@@ -737,8 +747,8 @@ void SolveProblem_Stokes_Dynamic(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const size_t np = aXY1.size() / 2;
-  const size_t nDoF = np * 3;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const unsigned int nDoF = np * 3;
   // --------------------
   double myu = 1.0;
   double rho = 10;
@@ -751,8 +761,8 @@ void SolveProblem_Stokes_Dynamic(
       mat_A, vec_b.data(),
       myu, rho, g_x, g_y,
       dt_timestep, gamma_newmark,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -786,7 +796,7 @@ void SolveProblem_NavierStokes_Dynamic(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 3;
   // ----------------------
   double myu = 0.01;
@@ -830,8 +840,8 @@ void DrawVelocityField(
   std::vector<std::pair<double, delfem2::CColor> > colorMap;
   delfem2::ColorMap_BlueGrayRed(colorMap, -30, +30);
   delfem2::opengl::DrawMeshTri2D_ScalarP1(
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data() + 2, 3, colorMap);
   ::glColor3d(0, 0, 0);
   delfem2::opengl::DrawPoints2D_Vectors(
@@ -971,7 +981,9 @@ void ProblemFluidTunnel(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main(
+	[[maybe_unused]] int argc, 
+	[[maybe_unused]] char *argv[]) {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();

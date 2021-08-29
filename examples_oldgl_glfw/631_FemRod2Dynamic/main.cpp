@@ -46,7 +46,7 @@ void Solve(
     double mass_point,
     const double gravity[2],
     dfm2::CMatrixSparse<double> &mats) {
-  unsigned int np = aXY.size() / 2;
+  unsigned int np = static_cast<unsigned int>(aXY.size() / 2);
   assert(np >= 3);
   assert(mats.ncolblk_ == np && mats.nrowblk_ == np);
   assert(mats.ncoldim_ == 2 && mats.nrowdim_ == 2);
@@ -138,9 +138,9 @@ int main(
   dfm2::glfw::InitGLOld();
   dfm2::glfw::CViewer2 viewer;
   {
-    viewer.view_height = 0.7;
-    viewer.trans[0] = -0.2;
-    viewer.trans[1] = +0.3;
+    viewer.view_height = 0.7f;
+    viewer.trans[0] = -0.2f;
+    viewer.trans[1] = +0.3f;
     viewer.title = "dynamic 2D rod demo";
   }
   viewer.InitGL();  // opengl start here

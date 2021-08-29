@@ -142,16 +142,16 @@ template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Tri(
 
 template<typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
-	const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<double> &aNorm) const {
+	[[maybe_unused]] const std::vector<double> &aXYZ0,
+    const std::vector<unsigned int> &aTri0,
+    const std::vector<double> &aNorm0) const {
   assert(itri < aTri.size() / 3);
-  const int i0 = aTri[itri * 3 + 0];
-  const int i1 = aTri[itri * 3 + 1];
-  const int i2 = aTri[itri * 3 + 2];
-  const CVec3<T> n0(aNorm[i0 * 3 + 0], aNorm[i0 * 3 + 1], aNorm[i0 * 3 + 2]);
-  const CVec3<T> n1(aNorm[i1 * 3 + 0], aNorm[i1 * 3 + 1], aNorm[i1 * 3 + 2]);
-  const CVec3<T> n2(aNorm[i2 * 3 + 0], aNorm[i2 * 3 + 1], aNorm[i2 * 3 + 2]);
+  const unsigned int i0 = aTri0[itri * 3 + 0];
+  const unsigned int i1 = aTri0[itri * 3 + 1];
+  const unsigned int i2 = aTri0[itri * 3 + 2];
+  const CVec3<T> n0(aNorm0[i0 * 3 + 0], aNorm0[i0 * 3 + 1], aNorm0[i0 * 3 + 2]);
+  const CVec3<T> n1(aNorm0[i1 * 3 + 0], aNorm0[i1 * 3 + 1], aNorm0[i1 * 3 + 2]);
+  const CVec3<T> n2(aNorm0[i2 * 3 + 0], aNorm0[i2 * 3 + 1], aNorm0[i2 * 3 + 2]);
   return (r0 * n0 + r1 * n1 + (1.0 - r0 - r1) * n2).normalized();
 }
 #ifdef DFM2_STATIC_LIBRARY

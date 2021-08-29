@@ -10,6 +10,10 @@
 #include <cstdlib>
 #include <climits>
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -28,7 +32,9 @@ namespace dfm2 = delfem2;
 
 // -----------------------------
 
-int main(int argc, char *argv[]) {
+int main(
+	[[maybe_unused]] int argc, 
+	[[maybe_unused]] char *argv[]) {
   class CClusterData {
    public:
     std::vector<double> aXYZ; // center position of the cluster
@@ -61,10 +67,11 @@ int main(int argc, char *argv[]) {
     { // make area
       CClusterData &pd0 = aPointData[0];
       pd0.aArea.resize(pd0.aXYZ.size() / 3);
-      dfm2::MassPoint_Tri3D(pd0.aArea.data(),
-                            1.0,
-                            pd0.aXYZ.data(), pd0.aXYZ.size() / 3,
-                            aTri0.data(), aTri0.size() / 3);
+      dfm2::MassPoint_Tri3D(
+		  pd0.aArea.data(),
+		  1.0,                           
+		  pd0.aXYZ.data(), static_cast<unsigned int>(pd0.aXYZ.size() / 3),
+		  aTri0.data(), static_cast<unsigned int>(aTri0.size() / 3));
     }
     { // make psup
       CClusterData &pd0 = aPointData[0];
@@ -74,7 +81,7 @@ int main(int argc, char *argv[]) {
     }
     {
       CClusterData &pd0 = aPointData[0];
-      unsigned int np0 = pd0.aXYZ.size() / 3;
+      unsigned int np0 = static_cast<unsigned int>(pd0.aXYZ.size() / 3);
       aPointData[0].map0c.resize(np0);
       for (unsigned int ip = 0; ip < np0; ++ip) {
         aPointData[0].map0c[ip] = ip;
@@ -90,10 +97,12 @@ int main(int argc, char *argv[]) {
     dfm2::BinaryClustering_Points3d(
         pd1.aXYZ, pd1.aArea, pd1.aNorm, map01,
         pd0.aXYZ, pd0.aArea, pd0.aNorm, pd0.psup_ind, pd0.psup);
-    dfm2::Clustering_Psup(pd1.psup_ind, pd1.psup,
-                          pd1.aXYZ.size() / 3,
-                          pd0.aXYZ.size() / 3, map01.data(), pd0.psup_ind.data(), pd0.psup.data());
-    unsigned int np0 = aPointData[0].aXYZ.size() / 3;
+    dfm2::Clustering_Psup(
+		pd1.psup_ind, pd1.psup,
+		static_cast<unsigned int>(pd1.aXYZ.size() / 3),
+		static_cast<unsigned int>(pd0.aXYZ.size() / 3), 
+		map01.data(), pd0.psup_ind.data(), pd0.psup.data());
+    unsigned int np0 = static_cast<unsigned int>(aPointData[0].aXYZ.size() / 3);
     pd1.map0c.resize(np0, UINT_MAX);
     for (unsigned int ip = 0; ip < np0; ++ip) {
       unsigned int ic0 = pd0.map0c[ip];
@@ -108,7 +117,7 @@ int main(int argc, char *argv[]) {
     std::random_device rd;
     std::mt19937 eng(rd());
     std::uniform_real_distribution<double> dist(0, 1.0);
-    const unsigned int np = pd.aXYZ.size() / 3;
+    const unsigned int np = static_cast<unsigned int>(pd.aXYZ.size() / 3);
     pd.aColor.resize(np * 3);
     for (unsigned int ip = 0; ip < np; ++ip) {
       float *pc = pd.aColor.data() + ip * 3;

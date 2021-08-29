@@ -139,7 +139,9 @@ double evaluateSH(double x, double y, double z)
   return a[ish];
 }
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();

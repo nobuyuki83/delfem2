@@ -7,6 +7,10 @@
 
 #include <cmath>
 #include <stack>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -27,7 +31,9 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------------
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   class CCadMesh2DVeiwer : public delfem2::glfw::CViewer3
   {
@@ -47,13 +53,13 @@ int main(int argc,char* argv[])
       
       const int nv = 4;
       std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
-      const unsigned int nXY = aXY.size()/2;
+      const unsigned int nXY = static_cast<unsigned int>(aXY.size()/2);
       aW.resize(nXY*nv);
       for(unsigned int ip=0;ip<nXY;++ip){
         dfm2::MeanValueCoordinate_Polygon2<dfm2::CVec2d>(
             aW.data()+nv*ip,
             aXY[ip*2+0], aXY[ip*2+1],
-            aXY_bound.data(), aXY_bound.size()/2);
+            aXY_bound.data(), static_cast<unsigned int>(aXY_bound.size()/2));
         double sum = 0.0;
         for(unsigned int ipb=0;ipb<aXY_bound.size()/2;++ipb){
           sum += aW[nv*ip+ipb];
@@ -61,14 +67,17 @@ int main(int argc,char* argv[])
         assert( fabs(sum-1)<1.0e-10 );
       }
     }
-    void mouse_press(const float src[3], const float dir[3]) override{
+    void mouse_press(
+		const float src[3], 
+		[[maybe_unused]] const float dir[3]) override{
       cad.Pick(src[0], src[1], this->camera.view_height);
     }
-    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
+    void mouse_drag(const float src0[3], const float src1[3], 
+		[[maybe_unused]] const float dir[3]) override{
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
       std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
-      unsigned int npb = aXY_bound.size()/2;
-      unsigned int np = aXY.size()/2;
+      unsigned int npb = static_cast<unsigned int>(aXY_bound.size()/2);
+      unsigned int np = static_cast<unsigned int>(aXY.size()/2);
       for(unsigned int ip=0;ip<np;++ip){
         aXY[ip*2+0] = 0.0;
         aXY[ip*2+1] = 0.0;

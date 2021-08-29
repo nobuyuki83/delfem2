@@ -43,16 +43,17 @@ DFM2_INLINE void IndexElement_OverlapLevels_MeshTri3D
   }
 }
 
-DFM2_INLINE bool TraverseBoundaryLoop
-(CSliceTriMesh& cs,
- std::vector<int>& aFlgSeg,
- int iseg_ker, int ih,
- const std::vector<int>& Tri2Seg,
- const std::vector<unsigned int>& aCST,
- double height,
- const std::vector<double>& aLevelVtx,
- const std::vector<unsigned int>& aTri,
- const std::vector<unsigned int>& aTriSuTri)
+DFM2_INLINE bool TraverseBoundaryLoop(
+	CSliceTriMesh& cs,
+	std::vector<int>& aFlgSeg,
+	int iseg_ker, 
+	[[maybe_unused]] int ih,
+	const std::vector<int>& Tri2Seg,
+	const std::vector<unsigned int>& aCST,
+	double height,
+	const std::vector<double>& aLevelVtx,
+	const std::vector<unsigned int>& aTri,
+	const std::vector<unsigned int>& aTriSuTri)
 {
   cs.aTriInfo.clear();
   unsigned int iseg_next = iseg_ker;
@@ -118,7 +119,7 @@ DFM2_INLINE bool TraverseBoundaryLoop
 void delfem2::CSegInfo::Initialize(
     int jtri0,
     const unsigned int* aTri,
-    size_t nTri,
+    [[maybe_unused]] size_t nTri,
     const double* aLevelVtx,
     double height)
 {

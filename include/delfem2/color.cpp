@@ -17,37 +17,37 @@ DFM2_INLINE void delfem2::GetRGB_HSV(
   if (s > 0.0f) {
     h *= 6.0f;
     const int i = (int) h;
-    const T0 f = static_cast<T0>(h) - static_cast<T0>(i);
+    const T1 f = h - static_cast<T1>(i);
     switch (i) {
       default:
       case 0: {
-        g *= 1 - s * (1 - f);
-        b *= 1 - s;
+        g *= static_cast<T0>(1 - s * (1 - f));
+        b *= static_cast<T0>(1 - s);
         break;
       }
       case 1: {
-        r *= 1 - s * f;
-        b *= 1 - s;
+        r *= static_cast<T0>(1 - s * f);
+        b *= static_cast<T0>(1 - s);
         break;
       }
       case 2: {
-        r *= 1 - s;
-        b *= 1 - s * (1 - f);
+        r *= static_cast<T0>(1 - s);
+        b *= static_cast<T0>(1 - s * (1 - f));
         break;
       }
       case 3: {
-        r *= 1 - s;
-        g *= 1 - s * f;
+        r *= static_cast<T0>(1 - s);
+        g *= static_cast<T0>(1 - s * f);
         break;
       }
       case 4: {
-        r *= 1 - s * (1 - f);
-        g *= 1 - s;
+        r *= static_cast<T0>(1 - s * (1 - f));
+        g *= static_cast<T0>(1 - s);
         break;
       }
       case 5: {
-        g *= 1 - s;
-        b *= 1 - s * f;
+        g *= static_cast<T0>(1 - s);
+        b *= static_cast<T0>(1 - s * f);
         break;
       }
     }

@@ -29,7 +29,9 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------
 
-int main(int argc, char *argv[]) {
+int main(
+	[[maybe_unused]] int argc, 
+	[[maybe_unused]] char *argv[]) {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aElm;
   // -----
@@ -52,10 +54,10 @@ int main(int argc, char *argv[]) {
   }
   std::vector<double> aW;
   {
-    const unsigned int np = aXYZ0.size() / 3;
-    const unsigned int nb = aBone.size();
+    const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
+    const unsigned int nb = static_cast<unsigned int>(aBone.size());
     aW.resize(np * nb);
-    for (unsigned int ip = 0; ip < aXYZ0.size() / 3; ++ip) {
+    for (unsigned int ip = 0; ip < np; ++ip) {
       const double *p0 = aXYZ0.data() + ip * 3;
       double w_tot = 0;
       for (unsigned int ib = 0; ib < nb; ++ib) {
