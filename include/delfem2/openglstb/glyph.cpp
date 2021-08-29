@@ -74,7 +74,7 @@ void delfem2::openglstb::CGlyph::ParseGlyphInfo(const std::string &fpath) {
     auto aVal = Split(line, ' ');
     std::cout << line << std::endl;
     SData data;
-    int id;
+	int id = 0;
     for (const std::string &s: aVal) {
       if (s.find("id=") == 0) { id = std::strtol(s.data() + 3, 0, 10); }
       if (s.find("x=") == 0) { data.x = std::strtol(s.data() + 2, 0, 10); }
@@ -83,7 +83,9 @@ void delfem2::openglstb::CGlyph::ParseGlyphInfo(const std::string &fpath) {
       if (s.find("height=") == 0) { data.height = std::strtol(s.data() + 7, 0, 10); }
       if (s.find("xadvance=") == 0) { data.xadvance = std::strtol(s.data() + 9, 0, 10); }
     }
-    mapData.insert(std::make_pair(id, data));
+    mapData.insert(std::make_pair(
+		static_cast<char>(id), 
+		data));
   }
 }
 

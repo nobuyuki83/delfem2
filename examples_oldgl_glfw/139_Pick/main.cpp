@@ -40,13 +40,14 @@ class MyView
       : aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0) {
     { // make BVH
       std::vector<double> aCent;
-      double rad = dfm2::CentsMaxRad_MeshTri3(
+      dfm2::CentsMaxRad_MeshTri3(
           aCent,
           aXYZ, aTri);
       double min_xyz[3], max_xyz[3];
       delfem2::BoundingBox3_Points3(
           min_xyz, max_xyz,
-          aCent.data(), aCent.size() / 3);
+          aCent.data(), 
+		  static_cast<unsigned int>(aCent.size() / 3));
       std::vector<unsigned int> aSortedId;
       std::vector<std::uint32_t> aSortedMc;
       dfm2::SortedMortenCode_Points3(
@@ -66,7 +67,8 @@ class MyView
       { // assertion
         dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
         dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-        dfm2::Check_BVH(aNodeBVH, aCent.size() / 3);
+        dfm2::Check_BVH(aNodeBVH, 
+			static_cast<unsigned int>(aCent.size() / 3));
       }
     }
     { // make triangle surrounding graph
@@ -100,7 +102,7 @@ class MyView
         dfm2::CVec3d(src), dfm2::CVec3d(dir),
         aTri, aXYZ, aIndElem,
         1.0e-3);
-    if (mapDepthPES.empty()) { return -1; }
+    if (mapDepthPES.empty()) { return UINT_MAX; }
     return mapDepthPES.begin()->second.itri;
   }
 
@@ -114,7 +116,9 @@ class MyView
   std::vector<unsigned int> aDist;
 };
 
-int main(int argc, char *argv[]) {
+int main(
+	[[maybe_unused]] int argc, 
+	[[maybe_unused]] char *argv[]) {
   std::vector<double> aXYZ; // 3d points
   std::vector<unsigned int> aTri;
 

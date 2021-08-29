@@ -42,10 +42,11 @@ void myGlutDisplay()
   std::vector< std::pair<double,delfem2::CColor> > colorMap;
   delfem2::ColorMap_BlueCyanGreenYellowRed(colorMap,
                                            -1, 1);
-  delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY.data(), aXY.size()/2,
-                                          aTri.data(), aTri.size()/3,
-                                          aVal.data(), 1,
-                                          colorMap);
+  delfem2::opengl::DrawMeshTri2D_ScalarP1(
+	  aXY.data(), static_cast<unsigned int>(aXY.size()/2),                                         
+	  aTri.data(), static_cast<unsigned int>(aTri.size()/3),
+	  aVal.data(), 1,
+	  colorMap);
   ::glLineWidth(5);
   ::glBegin(GL_LINES);
   ::glColor3d(0,0,0);
@@ -89,7 +90,9 @@ void Hoge()
   
 }
 
-int main(int argc,char* argv[])
+int main(
+	[[maybe_unused]] int argc,
+	[[maybe_unused]] char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
@@ -108,7 +111,7 @@ int main(int argc,char* argv[])
       aSeg.clear();
       delfem2::AddContour(aSeg,
           thres,
-          aTri.data(), aTri.size()/3,
+          aTri.data(), static_cast<unsigned int>(aTri.size()/3),
           aVal.data());
       iframe += 1;
     }

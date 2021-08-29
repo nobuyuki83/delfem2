@@ -86,7 +86,7 @@ void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3(
 
 void RemoveKernel(std::vector<double> &aTmp0,
                   const std::vector<double> &aModesKer) {
-  const unsigned int nDoF = aTmp0.size();
+  const unsigned int nDoF = static_cast<unsigned int>(aTmp0.size());
   const double *p0 = aModesKer.data() + nDoF * 0;
   const double *p1 = aModesKer.data() + nDoF * 1;
   const double *p2 = aModesKer.data() + nDoF * 2;
@@ -154,18 +154,20 @@ void MakeMesh() {
 }
 
 void InitializeProblem_ShellEigenPB() {
-  const size_t np = aXY0.size() / 2;
-  const size_t nDoF = np * 3;
+  const unsigned int np = static_cast<unsigned int>(aXY0.size() / 2);
+  const unsigned int nDoF = np * 3;
   aTmp0.assign(nDoF, 0.0);
   // --------------------------------------
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTri.data(), aTri.size() / 3, 3,
-                             (int) aXY0.size() / 2);
+  dfm2::JArray_PSuP_MeshElem(
+	  psup_ind, psup,
+	  aTri.data(), aTri.size() / 3, 3,
+	  (int) aXY0.size() / 2);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
-  mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
-                   psup.data(), psup.size());
+  mat_A.SetPattern(
+	  psup_ind.data(), psup_ind.size(),
+	  psup.data(), psup.size());
   ilu_A.SetPattern0(mat_A);
   // ------------------------------
   aMassLumpedSqrtInv.resize(nDoF);
@@ -174,8 +176,8 @@ void InitializeProblem_ShellEigenPB() {
       aMassLumpedSqrtInv.data(),
       aModesKer.data(),
       rho, thickness,
-      aXY0.data(), aXY0.size() / 2,
-      aTri.data(), aTri.size() / 3);
+      aXY0.data(), static_cast<unsigned int>(aXY0.size() / 2),
+      aTri.data(), static_cast<unsigned int>(aTri.size() / 3));
   // -------------------------------
   mat_A.setZero();
   aMode.assign(nDoF, 0.0);
@@ -215,8 +217,10 @@ void Solve() {
   {
     double lam0 = dfm2::DotX(aTmp0.data(), aMode.data(), aTmp0.size());
     double freq_sim = sqrt(1.0 / lam0 - offset_dia) / (2 * M_PI);
-    std::cout << "freq theo" << freq_theo << "   freq_sim:" << freq_sim << "   " << freq_theo / freq_sim << "     "
-              << aConv.size() << std::endl;
+	std::cout << "freq theo" << freq_theo;
+	std::cout << "   freq_sim:" << freq_sim << "   ";
+	std::cout << freq_theo / freq_sim << "     ";
+    std::cout << aConv.size() << std::endl;
   }
   aTmp0 = aMode;
   //

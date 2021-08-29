@@ -215,9 +215,10 @@ public:
 };
 
 
-DFM2_INLINE void mark_child(std::vector<int>& aFlg,
-                       unsigned int inode0,
-                       const std::vector<CNodeBVH2>& aNode)
+DFM2_INLINE void mark_child(
+	std::vector<int>& aFlg,
+	unsigned int inode0,                      
+	const std::vector<CNodeBVH2>& aNode)
 {
   assert( inode0 < aNode.size() );
   if( aNode[inode0].ichild[1] == UINT_MAX ){ // leaf
@@ -243,7 +244,8 @@ DFM2_INLINE void mark_child(std::vector<int>& aFlg,
  * @param x input
  * @details clz(0) needs to be 32 to run BVH
  */
-DFM2_INLINE unsigned int delfem2::nbits_leading_zero(uint32_t x){
+DFM2_INLINE unsigned int delfem2::nbits_leading_zero(
+	uint32_t x){
   // avoid using buit-in functions such as "__builtin_clz(x)",
   // becuase application to 0 is typically undefiend.
   int32_t y = x;
@@ -481,11 +483,11 @@ DFM2_INLINE void delfem2::BVHTopology_Morton(
 
 
 DFM2_INLINE void delfem2::Check_MortonCode_Sort(
-  const std::vector<unsigned int>& aSortedId,
-  const std::vector<std::uint32_t>& aSortedMc,
-  const std::vector<double>& aXYZ,
-  const double bbmin[3],
-  const double bbmax[3])
+  [[maybe_unused]] const std::vector<unsigned int>& aSortedId,
+  [[maybe_unused]] const std::vector<std::uint32_t>& aSortedMc,
+  [[maybe_unused]] const std::vector<double>& aXYZ,
+  [[maybe_unused]] const double bbmin[3],
+  [[maybe_unused]] const double bbmax[3])
 {
 #ifdef NDEBUG
   return;
@@ -517,7 +519,7 @@ DFM2_INLINE void delfem2::Check_MortonCode_Sort(
 }
 
 DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(
-    const std::vector<std::uint32_t>& aSortedMc)
+    [[maybe_unused]] const std::vector<std::uint32_t>& aSortedMc)
 {
 #ifdef NDEBUG
   return;
@@ -539,9 +541,9 @@ DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(
 #endif
 }
 
-DFM2_INLINE void delfem2::Check_BVH
-(const std::vector<CNodeBVH2>& aNodeBVH,
- unsigned int N)
+DFM2_INLINE void delfem2::Check_BVH(
+	const std::vector<CNodeBVH2>& aNodeBVH,
+	unsigned int N)
 {
   std::vector<int> aFlg(N,0);
   bvh::mark_child(aFlg, 0, aNodeBVH);

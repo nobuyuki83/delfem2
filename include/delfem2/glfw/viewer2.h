@@ -35,18 +35,28 @@ public:
   /**
    * @details for function override. Do nothing here
    */
-  virtual void mouse_press(const float src[2]) {}
+  virtual void mouse_press(
+	  [[maybe_unused]] const float src[2]) {}
 
   /**
    * @details for function override. Do nothing here
    */
-  virtual void mouse_drag(const float src0[2], const float src1[2]) {}
+  virtual void mouse_drag(
+	  [[maybe_unused]] const float src0[2], 
+	  [[maybe_unused]] const float src1[2]) {}
 
-  virtual void key_press(int key, int mods) {}
+  virtual void key_press(
+	  [[maybe_unused]] int key, 
+	  [[maybe_unused]] int mods) {}
 
-  virtual void key_release(int key, int mods) {}
+  virtual void key_release(
+	  [[maybe_unused]] int key, 
+	  [[maybe_unused]] int mods) {}
 
-  void Mat4_MVP_OpenGL(float mMV[16], float mP[16], float asp) const;
+  void Mat4_MVP_OpenGL(
+	  [[maybe_unused]] float mMV[16], 
+	  [[maybe_unused]] float mP[16], 
+	  [[maybe_unused]] float asp) const;
 
 public:
   GLFWwindow *window = nullptr;

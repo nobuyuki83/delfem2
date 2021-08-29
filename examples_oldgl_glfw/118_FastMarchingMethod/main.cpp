@@ -207,7 +207,9 @@ void display(
    glFlush();
 }
 
-int main(int argc, char *argv[])
+int main(
+	[[maybe_unused]] int argc, 
+	[[maybe_unused]] char *argv[])
 {
   double phi_fnc[COL_SIZE+1][ROW_SIZE+1];
   bool is_active[COL_SIZE+1][ROW_SIZE+1];

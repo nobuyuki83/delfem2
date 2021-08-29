@@ -110,7 +110,7 @@ int delfem2::LoadImage_PPMAscii(
     unsigned int ih = icnt/(width*3);
     unsigned int iw = (icnt-ih*width*3)/3;
     unsigned int ich = icnt - ih*width*3 - iw*3;
-    image[(height-ih-1)*width*3+iw*3+ich] = ival;
+    image[(height-ih-1)*width*3+iw*3+ich] = static_cast<unsigned char>(ival);
     icnt++;
   }
   return 0;
