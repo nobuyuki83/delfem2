@@ -145,7 +145,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
 	[[maybe_unused]] const std::vector<double> &aXYZ0,
     const std::vector<unsigned int> &aTri0,
     const std::vector<double> &aNorm0) const {
-  assert(itri < aTri.size() / 3);
+  assert(itri < aTri0.size() / 3);
   const unsigned int i0 = aTri0[itri * 3 + 0];
   const unsigned int i1 = aTri0[itri * 3 + 1];
   const unsigned int i2 = aTri0[itri * 3 + 2];
