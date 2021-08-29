@@ -44,12 +44,14 @@ template<typename T>
 DFM2_INLINE void Normalize3(T v[3]);
 
 template<typename REAL>
-void AverageTwo3(REAL po[3],
-                 const REAL p0[3], const REAL p1[3]);
+void AverageTwo3(
+    REAL po[3],
+    const REAL p0[3], const REAL p1[3]);
 
 template<typename REAL>
-void AverageFour3(REAL po[3],
-                  const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
+void AverageFour3(
+    REAL po[3],
+    const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
 
 /**
  * @func add values for 3-array (vo += vi)
@@ -76,7 +78,8 @@ template<typename T>
 T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
 
 template<typename T>
-T ScalarTripleProduct3(const T a[], const T b[], const T c[]);
+T ScalarTripleProduct3(
+    const T a[], const T b[], const T c[]);
 
 template<typename T>
 void NormalTri3(T n[3],
@@ -415,7 +418,7 @@ CVec3<T> screenUnProjectionDirection(
     const float *mPj);
 
 template<typename T>
-double ScalarTripleProduct(
+T ScalarTripleProduct(
     const CVec3<T> &a, const CVec3<T> &b, const CVec3<T> &c);
 
 template<typename T>
@@ -521,13 +524,6 @@ CVec3<T> RandUnitVector();
 
 template<typename T>
 CVec3<T> RandGaussVector();
-
-template<typename T>
-void MeanValueCoordinate(
-    double w[3],
-    const CVec3<T> &v0,
-    const CVec3<T> &v1,
-    const CVec3<T> &v2);
 
 // ----------------------------------------------------------
 // here starts std::vector<CVector3>

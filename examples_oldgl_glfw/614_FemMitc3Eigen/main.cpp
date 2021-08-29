@@ -8,6 +8,10 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -289,7 +293,9 @@ void myGlutKeyboard(unsigned char Key, int x, int y) {
   }
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
 
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();

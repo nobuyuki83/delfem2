@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -142,7 +146,9 @@ void Draw(const std::vector<dfm2::CVec3d> &vec_pos) {
   ::glEnd();
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   std::random_device rd;
   std::mt19937 reng(rd());
   std::uniform_real_distribution<double> dist01(0.0, 1.0);

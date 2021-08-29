@@ -571,14 +571,26 @@ template delfem2::CVec3d delfem2::QuatConjVec(const double quat[4], const CVec3d
 // ------------------------------------------------------------
 
 template<typename T>
-double delfem2::ScalarTripleProduct
-    (const CVec3<T> &a,
-     const CVec3<T> &b,
-     const CVec3<T> &c) {
+T delfem2::ScalarTripleProduct(
+    const CVec3<T> &a,
+    const CVec3<T> &b,
+    const CVec3<T> &c) {
 //  return a.x*(b.y*c.z - b.z*c.y) + a.y*(b.z*c.x - b.x*c.z) + a.z*(b.x*c.y - b.y*c.x);
-  return a.p[0] * (b.p[1] * c.p[2] - b.p[2] * c.p[1]) + a.p[1] * (b.p[2] * c.p[0] - b.p[0] * c.p[2])
-      + a.p[2] * (b.p[0] * c.p[1] - b.p[1] * c.p[0]);
+  return
+  a.x * (b.y * c.z - b.z * c.y) +
+  a.y * (b.z * c.x - b.x * c.z) +
+  a.z * (b.x * c.y - b.y * c.x);
 }
+#ifdef DFM2_STATIC_LIBRARY
+template double delfem2::ScalarTripleProduct(
+    const CVec3<double> &a,
+    const CVec3<double> &b,
+    const CVec3<double> &c);
+template float delfem2::ScalarTripleProduct(
+    const CVec3<float> &a,
+    const CVec3<float> &b,
+    const CVec3<float> &c);
+#endif
 
 // --------------------------
 
@@ -977,66 +989,6 @@ template delfem2::CVec3d delfem2::UnitNormal
 #endif
 
 // ---------------------------------------------------
-
-template<typename T>
-void delfem2::MeanValueCoordinate(
-    double w[3],
-    const CVec3<T> &v0,
-    const CVec3<T> &v1,
-    const CVec3<T> &v2) {
-  double eps = 1.0e-5;
-  double d0 = v0.norm();
-  double d1 = v1.norm();
-  double d2 = v2.norm();
-  const CVec3<T> u0 = v0 / d0;
-  const CVec3<T> u1 = v1 / d1;
-  const CVec3<T> u2 = v2 / d2;
-  double l0 = (u1 - u2).norm();
-  double l1 = (u2 - u0).norm();
-  double l2 = (u0 - u1).norm();
-  if (l0 < eps || l1 < eps || l2 < eps) {
-    w[0] = 0;
-    w[1] = 0;
-    w[2] = 0;
-    return;
-  }
-  double t0 = 2 * asin(l0 * 0.5);
-  double t1 = 2 * asin(l1 * 0.5);
-  double t2 = 2 * asin(l2 * 0.5);
-  double h = (t0 + t1 + t2) * 0.5;
-  double c0 = 2 * sin(h) * sin(h - t0) / (sin(t1) * sin(t2)) - 1;
-  double c1 = 2 * sin(h) * sin(h - t1) / (sin(t2) * sin(t0)) - 1;
-  double c2 = 2 * sin(h) * sin(h - t2) / (sin(t0) * sin(t1)) - 1;
-  double vol012 = ScalarTripleProduct(u0, u1, u2);
-  double sign = (vol012 > 0) ? 1 : -1;
-  double s0 = sign * sqrt(1.0 - c0 * c0);
-  double s1 = sign * sqrt(1.0 - c1 * c1);
-  double s2 = sign * sqrt(1.0 - c2 * c2);
-  if (vec3::MyIsnan(s0) || vec3::MyIsnan(s1) || vec3::MyIsnan(s2)) {
-    w[0] = 0;
-    w[1] = 0;
-    w[2] = 0;
-    return;
-  }
-  if (fabs(d0 * sin(t1) * s2) < eps || fabs(d1 * sin(t2) * s0) < eps || fabs(d2 * sin(t0) * s1) < eps) {
-    w[0] = 0;
-    w[1] = 0;
-    w[2] = 0;
-    return;
-  }
-  w[0] = (t0 - c2 * t1 - c1 * t2) / (d0 * sin(t1) * s2);
-  w[1] = (t1 - c0 * t2 - c2 * t0) / (d1 * sin(t2) * s0);
-  w[2] = (t2 - c1 * t0 - c0 * t1) / (d2 * sin(t0) * s1);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::MeanValueCoordinate(
-    double w[3],
-    const CVec3d& v0,
-    const CVec3d& v1,
-    const CVec3d& v2);
-#endif
-
-// ------------------------------------------------
 
 template<typename T>
 delfem2::CVec3<T> delfem2::RotateVector(

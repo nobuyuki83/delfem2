@@ -13,20 +13,20 @@
 #include <climits>
 
 #if defined(_WIN32) // windows
-#define NOMINMAX   // to remove min,max macro
-#include <windows.h>
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
+#  define GL_SILENCE_DEPRECATION
+#  include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
+#  include <GL/gl.h>
 #endif
 
 #if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4100 )
+#  pragma warning( push )
+#  pragma warning( disable : 4100 )
 #endif
 
 // -----------------------------------------------------------
@@ -1146,17 +1146,17 @@ delfem2::opengl::DrawBox2_Edge(
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
-    (double x_min, double x_max,
-     double y_min, double y_max,
-     double z_min, double z_max) {
+DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ(
+    double x_min, double x_max,
+    double y_min, double y_max,
+    double z_min, double z_max) {
   const double min3[3] = {x_min, y_min, z_min};
   const double max3[3] = {x_max, y_max, z_max};
   DrawBox3_Edge(min3, max3);
 }
 
-DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
-    (double aabbMinMaxXYZ[6]) {// show bounding box
+DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ(
+    double aabbMinMaxXYZ[6]) {// show bounding box
   DrawBox_MinMaxXYZ(aabbMinMaxXYZ[0], aabbMinMaxXYZ[1],
                     aabbMinMaxXYZ[2], aabbMinMaxXYZ[3],
                     aabbMinMaxXYZ[4], aabbMinMaxXYZ[5]);
@@ -1222,5 +1222,5 @@ DFM2_INLINE void delfem2::opengl::setGL_Camera2D() {
 }
 
 #if defined(_MSC_VER)
-#pragma warning( pop )
+#  pragma warning( pop )
 #endif

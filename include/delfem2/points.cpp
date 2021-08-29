@@ -40,7 +40,7 @@ DFM2_INLINE double TriArea2D(
     const double p0[], const double p1[], const double p2[]) {
   return 0.5 * (
       (p1[0] - p0[0]) * (p2[1] - p0[1]) -
-      (p2[0] - p0[0]) * (p1[1] - p0[1]));
+          (p2[0] - p0[0]) * (p1[1] - p0[1]));
 }
 
 DFM2_INLINE double TriArea3D(
@@ -80,8 +80,8 @@ DFM2_INLINE void MatVec3(
 DFM2_INLINE double Distance3(const double p0[3], const double p1[3]) {
   return sqrt(
       (p1[0] - p0[0]) * (p1[0] - p0[0]) +
-      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
-      (p1[2] - p0[2]) * (p1[2] - p0[2]));
+          (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+          (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
 //! @details we have "float" and "double" versions
@@ -89,8 +89,8 @@ DFM2_INLINE double Distance3(const double p0[3], const double p1[3]) {
 DFM2_INLINE float Distance3(const float p0[3], const float p1[3]) {
   return sqrtf(
       (p1[0] - p0[0]) * (p1[0] - p0[0]) +
-      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
-      (p1[2] - p0[2]) * (p1[2] - p0[2]));
+          (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+          (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
 DFM2_INLINE double Distance2D(const double p0[3], const double p1[3]) {
@@ -110,15 +110,16 @@ DFM2_INLINE REAL largest(REAL x0, REAL x1, REAL x2) {
 }
 
 template<typename T>
-DFM2_INLINE  T TetVolume3D
-    (const T v1[3],
-     const T v2[3],
-     const T v3[3],
-     const T v4[3]) {
+DFM2_INLINE T TetVolume3D(
+    const T v1[3],
+    const T v2[3],
+    const T v3[3],
+    const T v4[3]) {
   return
-      ((v2[0] - v1[0]) * ((v3[1] - v1[1]) * (v4[2] - v1[2]) - (v4[1] - v1[1]) * (v3[2] - v1[2]))
-          - (v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2]))
-          + (v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]))
+      (
+          (v2[0] - v1[0]) * ((v3[1] - v1[1]) * (v4[2] - v1[2]) - (v4[1] - v1[1]) * (v3[2] - v1[2])) -
+          (v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2])) +
+          (v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]))
       ) * 0.16666666666666666666666666666667;
 }
 
@@ -597,7 +598,7 @@ void delfem2::Points_RandomUniform(
   for (unsigned int ip = 0; ip < np; ++ip) {
     for (unsigned int idim = 0; idim < ndim; ++idim) {
       aCoords[ip * ndim + idim]
-      = (maxCoords[idim] - minCoords[idim]) * dist(rdeng) + minCoords[idim];
+          = (maxCoords[idim] - minCoords[idim]) * dist(rdeng) + minCoords[idim];
     }
   }
 }

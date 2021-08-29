@@ -6,6 +6,10 @@
  */
 
 #include <vector>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -180,7 +184,9 @@ void myGlutDisplay() {
 
 }
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   { // initialze data
     SetClothShape_Square(aXYZ0, aBCFlag, aTri, aQuad,
                          ndiv, cloth_size);

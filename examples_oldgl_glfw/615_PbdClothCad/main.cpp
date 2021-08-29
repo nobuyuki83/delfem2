@@ -8,6 +8,10 @@
 #include <cstdlib>
 #include <vector>
 #include <set>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -120,7 +124,9 @@ class CRigidTrans_2DTo3D {
   dfm2::CMat3d R;
 };
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   delfem2::CCad2D cad;
   {
     const double xys0[8] = {-0.0, -0.0, +1.0, -0.0, +1.0, +1.0, -0.0, +1.0,};

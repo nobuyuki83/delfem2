@@ -5,6 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cstdlib>
+#include <vector>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/cloth_internal.h"
@@ -12,15 +21,11 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/femcloth.h"
 #include "delfem2/jagarray.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include <GLFW/glfw3.h>
-#include <cstdlib>
-#include <vector>
+
 
 namespace dfm2 = delfem2;
 

@@ -567,7 +567,8 @@ template void delfem2::MeshTri3D_Cube(
 // f3: +y
 // f4: -z
 // f5: +z
-DFM2_INLINE void delfem2::SetTopoQuad_CubeVox(std::vector<unsigned int> &aQuad) {
+DFM2_INLINE void delfem2::SetTopoQuad_CubeVox(
+    std::vector<unsigned int> &aQuad) {
   aQuad.resize(6 * 4);
   aQuad[0 * 4 + 0] = 0;
   aQuad[0 * 4 + 1] = 4;
@@ -1106,9 +1107,9 @@ template delfem2::CSphere<double>::CSphere
 
 // return penetration depth (inside is positive)
 template<typename REAL>
-double delfem2::CSphere<REAL>::Projection
-    (double n[3],
-     double px, double py, double pz) const // normal outward
+double delfem2::CSphere<REAL>::Projection(
+    double n[3],
+    double px, double py, double pz) const // normal outward
 {
   double dir[3] = {px - cent_[0], py - cent_[1], pz - cent_[2]};
   const double len = sqrt(dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2]);
@@ -1131,7 +1132,8 @@ template double delfem2::CSphere<double>::Projection
 // -----------------------------------------
 
 template<typename REAL>
-unsigned int delfem2::CSphere<REAL>::FindInOut(double px, double py, double pz) const {
+unsigned int delfem2::CSphere<REAL>::FindInOut(
+    double px, double py, double pz) const {
   double n[3];
   double pd = this->Projection(n, px, py, pz);
   if (!is_out_) pd *= -1.0;
@@ -1160,8 +1162,8 @@ bool delfem2::CSphere<REAL>::IntersectionPoint
 // --------------------------------------------------
 
 template<typename REAL>
-delfem2::CCylinder<REAL>::CCylinder
-    (double r, const double cnt[3], const double dir[3], bool is_out) {
+delfem2::CCylinder<REAL>::CCylinder(
+    double r, const double cnt[3], const double dir[3], bool is_out) {
   cent_[0] = cnt[0];
   cent_[1] = cnt[1];
   cent_[2] = cnt[2];
@@ -1174,9 +1176,9 @@ delfem2::CCylinder<REAL>::CCylinder
 
 // return penetration depth (inside is positive)
 template<typename REAL>
-double delfem2::CCylinder<REAL>::Projection
-    (double n[3],
-     double px, double py, double pz) const // normal outward
+double delfem2::CCylinder<REAL>::Projection(
+    double n[3],
+    double px, double py, double pz) const // normal outward
 {
   double dd = dir_[0] * dir_[0] + dir_[1] * dir_[1] + dir_[2] * dir_[2];
   double pod = (px - cent_[0]) * dir_[0] + (py - cent_[1]) * dir_[1] + (pz - cent_[2]) * dir_[2];
@@ -1198,7 +1200,8 @@ double delfem2::CCylinder<REAL>::Projection
 }
 
 template<typename REAL>
-unsigned int delfem2::CCylinder<REAL>::FindInOut(double px, double py, double pz) const {
+unsigned int delfem2::CCylinder<REAL>::FindInOut(
+    double px, double py, double pz) const {
   double n[3];
   double pd = this->Projection(n,
                                px, py, pz);
@@ -1208,9 +1211,9 @@ unsigned int delfem2::CCylinder<REAL>::FindInOut(double px, double py, double pz
 }
 
 template<typename REAL>
-bool delfem2::CCylinder<REAL>::IntersectionPoint
-    (double p[3],
-     const double o[3], const double d[3]) const {
+bool delfem2::CCylinder<REAL>::IntersectionPoint(
+    double p[3],
+    const double o[3], const double d[3]) const {
   const double q[3] = {o[0] - cent_[0], o[1] - cent_[1], o[2] - cent_[2]};
   const double a = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
   const double b = q[0] * d[0] + q[1] * d[1] + q[2] * d[2];
@@ -1228,9 +1231,9 @@ bool delfem2::CCylinder<REAL>::IntersectionPoint
 
 // return penetration depth (inside is positive)
 template<typename REAL>
-double delfem2::CTorus<REAL>::Projection
-    (double n[3],
-     double px, double py, double pz) const // normal outward
+double delfem2::CTorus<REAL>::Projection(
+    double n[3],
+    double px, double py, double pz) const // normal outward
 {
   double dir[3] = {px - cent_[0], py - cent_[1], pz - cent_[2]};
   const double t = dir[2];
@@ -1258,14 +1261,15 @@ double delfem2::CTorus<REAL>::Projection
   //		std::cout << len << " " << len2 << std::endl;
   return radius_tube_ - len2;
 }
-template double delfem2::CTorus<double>::Projection
-    (double n[3],
-     double px, double py, double pz) const; // normal outward
+template double delfem2::CTorus<double>::Projection(
+    double n[3],
+    double px, double py, double pz) const; // normal outward
 
 // ------------------
 
 template<typename REAL>
-unsigned int delfem2::CTorus<REAL>::FindInOut(double px, double py, double pz) const {
+unsigned int delfem2::CTorus<REAL>::FindInOut(
+    double px, double py, double pz) const {
   double n[3];
   const double pd = this->Projection(n,
                                      px, py, pz);

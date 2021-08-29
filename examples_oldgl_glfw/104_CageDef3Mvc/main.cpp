@@ -12,6 +12,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
+#include "delfem2/cagedef.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/points.h"
@@ -23,6 +24,10 @@
 #include "delfem2/vec3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
+
+#ifndef M_PI
+#  define M_PI 3.141592
+#endif
 
 namespace dfm2 = delfem2;
 
@@ -71,7 +76,7 @@ int main(
       dfm2::CVec3d p1 = dfm2::CVec3d(aXYZ_cage.data() + ip1 * 3) - q0;
       dfm2::CVec3d p2 = dfm2::CVec3d(aXYZ_cage.data() + ip2 * 3) - q0;
       double w[3];
-      dfm2::MeanValueCoordinate(w, p0, p1, p2);
+      dfm2::MeanValueCoordinate<dfm2::CVec3d>(w, p0, p1, p2);
       matrix[iq * num_point_cage + ip0] += w[0];
       matrix[iq * num_point_cage + ip1] += w[1];
       matrix[iq * num_point_cage + ip2] += w[2];
@@ -89,7 +94,7 @@ int main(
   viewer.InitGL();
   viewer.camera.view_height = 1.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  delfem2::Quat_Bryant(viewer.camera.Quat_tball, -M_PI_4, 0., 0.);
+  delfem2::Quat_Bryant(viewer.camera.Quat_tball, -M_PI*0.25, 0., 0.);
   delfem2::opengl::setSomeLighting();
   const std::vector<double> aXYZ0_cage = aXYZ_cage;
   // --------------------

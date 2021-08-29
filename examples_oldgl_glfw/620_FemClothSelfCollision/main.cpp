@@ -1,4 +1,12 @@
 
+#include <iostream>
+#include <vector>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
 
 #include "delfem2/cloth_internal.h"
 #include "delfem2/cloth_selfcollision.h"
@@ -6,16 +14,9 @@
 #include "delfem2/srchbvh.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
-#include <GLFW/glfw3.h>
-//
-#include <iostream>
-#include <vector>
-
 
 namespace dfm2 = delfem2;
 
@@ -354,7 +355,9 @@ void myGlutDisplay()
 //  ::glutSwapBuffers();
 }
 
-int main(int argc,char* argv[])
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char* argv[])
 {
   { // initialze data
     double total_area;
