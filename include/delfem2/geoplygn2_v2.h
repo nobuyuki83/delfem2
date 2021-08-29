@@ -24,11 +24,6 @@ namespace delfem2 {
 DFM2_INLINE void makeSplineLoop(
     const std::vector<double>& aCV,
     std::vector<double>& aVecCurve);
-  
-DFM2_INLINE void MeanValueCoordinate2D(
-    double *aW,
-    double px, double py,
-    const double *aXY, unsigned int nXY);
 
 template <typename T>
 std::vector<CVec2<T> > Polygon_Resample_Polygon(
@@ -65,12 +60,6 @@ double Length_Polygon(
 template <typename T>
 double Area_Polygon(
     const std::vector<CVec2<T> >& aP);
-
-template <typename T>
-void MeanValueCoordinate(
-    std::vector<double>& aW,
-    CVec2<T>& p,
-    std::vector<CVec2<T> >& aVtx);
 
 template <typename T>
 void makeRandomLoop(

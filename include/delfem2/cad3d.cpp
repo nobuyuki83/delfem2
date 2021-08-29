@@ -5,7 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/cad3d.h"
 
+#include <deque>
+#include <set>
+
+#include "delfem2/cagedef.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshuni.h"
@@ -13,10 +18,7 @@
 #include "delfem2/geoproximity3_v3.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/cad3d.h"
 #include "delfem2/pgeo.h"
-#include <deque>
-#include <set>
 
 // =========================================
 
@@ -55,11 +57,11 @@ DFM2_INLINE void FaceCenterNormal(
   nf.normalize();
 }
 
-DFM2_INLINE void AddSphere_ZSym
-    (std::vector<CCad3D_Vertex>& aVertex,
-     std::vector<CCad3D_Edge>& aEdge,
-     std::vector<CCad3D_Face>& aFace,
-     double elen)
+DFM2_INLINE void AddSphere_ZSym(
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    double elen)
 {
   int icp0 = (int)aVertex.size();
   aVertex.emplace_back(CVec3d(-1, 0, 0) ); // icp0+0
@@ -141,11 +143,11 @@ DFM2_INLINE void AddSphere_ZSym
   MakeItSmooth(aVertex,aEdge,aFace);
 }
 
-DFM2_INLINE void AddTorus_XSym
-    (std::vector<CCad3D_Vertex>& aVertex,
-     std::vector<CCad3D_Edge>& aEdge,
-     std::vector<CCad3D_Face>& aFace,
-     double elen)
+DFM2_INLINE void AddTorus_XSym(
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    double elen)
 {
   int icp0 = (int)aVertex.size();
   aVertex.emplace_back(CVec3d(0,-1.0, 0.0) ); // icp0+0
@@ -240,11 +242,11 @@ DFM2_INLINE void AddTorus_XSym
 //  MakeItSmooth(aVertex,aEdge,aFace);
 }
 
-DFM2_INLINE void AddCube
-    (std::vector<CCad3D_Vertex>& aVertex,
-     std::vector<CCad3D_Edge>& aEdge,
-     std::vector<CCad3D_Face>& aFace,
-     double elen)
+DFM2_INLINE void AddCube(
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    double elen)
 {
   int iv0 = (int)aVertex.size();
   aVertex.emplace_back(CVec3d(-1, -1, -1)); // icp0+0
@@ -488,18 +490,20 @@ void delfem2::CCad3D_Face::Initialize(
     pinfo.itype = 2;
     pinfo.aW0.resize(aXY_B0.size()/2);
     pinfo.aW1.resize(aXY_B1.size()/2);
-    MeanValueCoordinate2D(pinfo.aW0.data(),
-                          x0,y0,aXY_B0.data(),(unsigned int)(aXY_B0.size()/2));
-    MeanValueCoordinate2D(pinfo.aW1.data(),
-                          x0,y0,aXY_B1.data(),(unsigned int)(aXY_B1.size()/2));
+    MeanValueCoordinate_Polygon2<CVec2d>(
+        pinfo.aW0.data(),
+        x0,y0,aXY_B0.data(),(unsigned int)(aXY_B0.size()/2));
+    MeanValueCoordinate_Polygon2<CVec2d>(
+        pinfo.aW1.data(),
+        x0,y0,aXY_B1.data(),(unsigned int)(aXY_B1.size()/2));
     aPInfo.push_back(pinfo);
   }
   MovePoints(aVertex,aEdge);
 }
 
-void delfem2::CCad3D_Face::MovePoints
-(const std::vector<CCad3D_Vertex>& aVertex,
- const std::vector<CCad3D_Edge>& aEdge)
+void delfem2::CCad3D_Face::MovePoints(
+    const std::vector<CCad3D_Vertex>& aVertex,
+    const std::vector<CCad3D_Edge>& aEdge)
 {
   aXYZ.resize(aPInfo.size()*3);
   for(unsigned int ip=0;ip<aPInfo.size();++ip){

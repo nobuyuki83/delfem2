@@ -5,21 +5,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/cad2_dtri2.h"
-//
+#include <cmath>
+#include <stack>
 #define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/cagedef.h"
+#include "delfem2/cad2_dtri2.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v2.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
-#include <GLFW/glfw3.h>
-#include <cmath>
-#include <stack>
 
 #ifndef M_PI
-  #define M_PI 3.141592653589793
+#  define M_PI 3.141592653589793
 #endif
 
 namespace dfm2 = delfem2;
@@ -49,9 +50,10 @@ int main(int argc,char* argv[])
       const unsigned int nXY = aXY.size()/2;
       aW.resize(nXY*nv);
       for(unsigned int ip=0;ip<nXY;++ip){
-        dfm2::MeanValueCoordinate2D(aW.data()+nv*ip,
-                                    aXY[ip*2+0], aXY[ip*2+1],
-                                    aXY_bound.data(), aXY_bound.size()/2);
+        dfm2::MeanValueCoordinate_Polygon2<dfm2::CVec2d>(
+            aW.data()+nv*ip,
+            aXY[ip*2+0], aXY[ip*2+1],
+            aXY_bound.data(), aXY_bound.size()/2);
         double sum = 0.0;
         for(unsigned int ipb=0;ipb<aXY_bound.size()/2;++ipb){
           sum += aW[nv*ip+ipb];

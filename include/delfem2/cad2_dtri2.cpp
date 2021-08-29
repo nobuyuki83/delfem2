@@ -7,21 +7,22 @@
 
 
 #include "delfem2/cad2_dtri2.h"
-#include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/str.h"
-#include "delfem2/file.h"
+
 #include <cstdio>
 #include <deque>
 #include <climits>
 
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/str.h"
+#include "delfem2/file.h"
 
 // ------------------------------------------
 
 namespace delfem2 {
 namespace cad2 {
 
-DFM2_INLINE delfem2::CBoundingBox2D BB_LoopEdgeCad2D
-    (const std::vector<CCad2D_EdgeGeo> &aEdge) {
+DFM2_INLINE delfem2::CBoundingBox2D BB_LoopEdgeCad2D(
+    const std::vector<CCad2D_EdgeGeo> &aEdge) {
   CBoundingBox2D bb;
   for (const auto &ie : aEdge) {
     CBoundingBox2D bb0 = ie.BB();
@@ -30,11 +31,11 @@ DFM2_INLINE delfem2::CBoundingBox2D BB_LoopEdgeCad2D
   return bb;
 }
 
-DFM2_INLINE void GetBound
-    (double bound_2d[4],
-     unsigned int ifc0,
-     const CCadTopo &topo,
-     const std::vector<CCad2D_EdgeGeo> &aEdgeGeo) {
+DFM2_INLINE void GetBound(
+    double bound_2d[4],
+    unsigned int ifc0,
+    const CCadTopo &topo,
+    const std::vector<CCad2D_EdgeGeo> &aEdgeGeo) {
   assert(ifc0 < topo.aFace.size());
   const int il0 = topo.aFace[ifc0].aIL[0];
   const std::vector<std::pair<int, bool> > &aIE = topo.aLoop[il0].aIE;
@@ -450,9 +451,10 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPolygonPoints
 
 // =========================================================
 
-DFM2_INLINE void delfem2::CCad2D::Pick
- (double x0, double y0,
-  double view_height)
+DFM2_INLINE void delfem2::CCad2D::Pick(
+    double x0,
+    double y0,
+    double view_height)
 {
   CVec2d pin(x0,y0);
   if( this->iedge_picked != -1 ){
@@ -576,7 +578,8 @@ DFM2_INLINE void delfem2::CCad2D::AddPolygon(
   Tessellation();
 }
 
-DFM2_INLINE void delfem2::CCad2D::AddFace(const std::vector<CCad2D_EdgeGeo>& aEdgeIn)
+DFM2_INLINE void delfem2::CCad2D::AddFace(
+    const std::vector<CCad2D_EdgeGeo>& aEdgeIn)
 {
   if( aEdgeIn.empty() ){ return; }
   const size_t np = aEdgeIn.size();
@@ -592,7 +595,8 @@ DFM2_INLINE void delfem2::CCad2D::AddFace(const std::vector<CCad2D_EdgeGeo>& aEd
   Tessellation();
 }
 
-DFM2_INLINE void delfem2::CCad2D::AddVtxFace(double x0, double y0, unsigned int ifc_add)
+DFM2_INLINE void delfem2::CCad2D::AddVtxFace(
+    double x0, double y0, unsigned int ifc_add)
 {
   if( ifc_add >= topo.aFace.size() ){ return; }
   topo.AddVtx_Face(ifc_add);
@@ -602,7 +606,8 @@ DFM2_INLINE void delfem2::CCad2D::AddVtxFace(double x0, double y0, unsigned int 
   Tessellation();
 }
 
-DFM2_INLINE void delfem2::CCad2D::AddVtxEdge(double x, double y, unsigned int ie_add)
+DFM2_INLINE void delfem2::CCad2D::AddVtxEdge(
+    double x, double y, unsigned int ie_add)
 {
   if( ie_add >= topo.aEdge.size() ){ return; }
   topo.AddVtx_Edge(ie_add);
@@ -709,7 +714,8 @@ DFM2_INLINE std::vector<int> delfem2::CCad2D::Ind_Vtx_Edge(int iedge) const
   return aRes;
 }
 
-DFM2_INLINE std::vector<std::pair<int,bool> > delfem2::CCad2D::Ind_Edge_Face(int iface) const
+DFM2_INLINE std::vector<std::pair<int,bool> >
+    delfem2::CCad2D::Ind_Edge_Face(int iface) const
 {
 //  std::vector<int> aIdE;
   std::vector<std::pair<int,bool> > aIdE;
@@ -724,8 +730,8 @@ DFM2_INLINE std::vector<std::pair<int,bool> > delfem2::CCad2D::Ind_Edge_Face(int
 // ----------------------------------------------
 
 
-DFM2_INLINE void delfem2::CCad2D_EdgeGeo::GenMeshNDiv
- (unsigned int ndiv)
+DFM2_INLINE void delfem2::CCad2D_EdgeGeo::GenMeshNDiv(
+    unsigned int ndiv)
 {
   assert( ndiv > 0 );
   aP.clear();
@@ -760,8 +766,8 @@ DFM2_INLINE void delfem2::CCad2D_EdgeGeo::GenMeshNDiv
 }
 
 
-DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthNDiv
- (unsigned int ndiv) const
+DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthNDiv(
+    unsigned int ndiv) const
 {
   if( type_edge == LINE ){
     return (this->p0 - this->p1).Length();
@@ -832,8 +838,8 @@ void CCad2D_EdgeGeo::GetInternalPoints_ElemLen
 }
  */
 
-DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance
- (double x, double y) const
+DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance(
+    double x, double y) const
 {
   const CVec2d q(x,y);
   if( type_edge == 0 ){
@@ -894,8 +900,8 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthMesh() const
 }
 
 
-DFM2_INLINE double delfem2::AreaLoop
-(const std::vector<CCad2D_EdgeGeo>& aEdge)
+DFM2_INLINE double delfem2::AreaLoop(
+    const std::vector<CCad2D_EdgeGeo>& aEdge)
 {
   double a0 = 0;
   CVec2d qo(0,0);
@@ -912,8 +918,8 @@ DFM2_INLINE double delfem2::AreaLoop
 }
 
 
-DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::InvertLoop
-(const std::vector<CCad2D_EdgeGeo>& aEdge)
+DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::InvertLoop(
+    const std::vector<CCad2D_EdgeGeo>& aEdge)
 {
   const size_t ne = aEdge.size();
   std::vector<CCad2D_EdgeGeo> aEdgeOut(ne);
@@ -934,7 +940,8 @@ DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::InvertLoop
 }
 
 
-DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::RemoveEdgeWithZeroLength(
+DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo>
+    delfem2::RemoveEdgeWithZeroLength(
 	const std::vector<CCad2D_EdgeGeo>& aEdge)
 {
   const size_t ne = aEdge.size();
@@ -1065,10 +1072,11 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing(
 }
 
 
-DFM2_INLINE std::vector<unsigned int> delfem2::CMesher_Cad2D::IndPoint_IndEdge
-(const unsigned int iedge,
- bool is_end_point,
- const CCad2D& cad2d)
+DFM2_INLINE std::vector<unsigned int>
+    delfem2::CMesher_Cad2D::IndPoint_IndEdge(
+    const unsigned int iedge,
+    bool is_end_point,
+    const CCad2D& cad2d)
 {
   std::vector<unsigned int> res;
   if( iedge >= cad2d.aEdge.size() ){ return res; }
@@ -1088,9 +1096,10 @@ DFM2_INLINE std::vector<unsigned int> delfem2::CMesher_Cad2D::IndPoint_IndEdge
   return res;
 }
 
-DFM2_INLINE std::vector<unsigned int> delfem2::CMesher_Cad2D::IndPoint_IndEdgeArray
-(const std::vector<int>& aIndEd,
- const CCad2D& cad2d)
+DFM2_INLINE std::vector<unsigned int>
+    delfem2::CMesher_Cad2D::IndPoint_IndEdgeArray(
+    const std::vector<int>& aIndEd,
+    const CCad2D& cad2d)
 {
   //    std::cout << nvtx << " " << nedge << " " << nface << std::endl;
   std::vector<int> aflg(nvtx+nedge+nface,0);
@@ -1115,9 +1124,9 @@ DFM2_INLINE std::vector<unsigned int> delfem2::CMesher_Cad2D::IndPoint_IndEdgeAr
 }
 
 
-DFM2_INLINE std::vector<int> delfem2::CMesher_Cad2D::IndPoint_IndFaceArray
-(const std::vector<int>& aIndFc,
- const CCad2D& cad2d)
+DFM2_INLINE std::vector<int> delfem2::CMesher_Cad2D::IndPoint_IndFaceArray(
+    const std::vector<int>& aIndFc,
+    const CCad2D& cad2d)
 {
   std::vector<int> aflg(nvtx+nedge+nface,0);
   {
@@ -1148,10 +1157,10 @@ DFM2_INLINE std::vector<int> delfem2::CMesher_Cad2D::IndPoint_IndFaceArray
 }
 
 
-DFM2_INLINE bool delfem2::WriteCAD_DXF
-(const std::string& file_name,
- const CCad2D& cad,
- double scale)
+DFM2_INLINE bool delfem2::WriteCAD_DXF(
+    const std::string& file_name,
+    const CCad2D& cad,
+    double scale)
 {
   FILE *fp;
   if( (fp = ::fopen(file_name.c_str(),"w"))== nullptr ){
@@ -1257,9 +1266,9 @@ DFM2_INLINE bool delfem2::WriteCAD_DXF
 }
 
 
-DFM2_INLINE void delfem2::ReadSVG_LoopEdgeCCad2D
-(std::vector< std::vector<CCad2D_EdgeGeo>> & aaEdge,
- const std::string& fname)
+DFM2_INLINE void delfem2::ReadSVG_LoopEdgeCCad2D(
+    std::vector< std::vector<CCad2D_EdgeGeo>> & aaEdge,
+    const std::string& fname)
 {
   aaEdge.clear();
   std::vector<char> aC;
@@ -1342,10 +1351,10 @@ DFM2_INLINE void delfem2::ReadSVG_LoopEdgeCCad2D
 }
 
 
-DFM2_INLINE void delfem2::ReadSVG_Cad2D
-(delfem2::CCad2D& cad,
-const std::string& fpath,
-double scale)
+DFM2_INLINE void delfem2::ReadSVG_Cad2D(
+    delfem2::CCad2D& cad,
+    const std::string& fpath,
+    double scale)
 {
   std::vector< std::vector<delfem2::CCad2D_EdgeGeo> > aaEdge;
   ReadSVG_LoopEdgeCCad2D(aaEdge,
@@ -1362,12 +1371,12 @@ double scale)
 }
 
 
-DFM2_INLINE void delfem2::Transform_LoopEdgeCad2D
-(std::vector<CCad2D_EdgeGeo>& aEdge,
- bool is_flip_holizontal,
- bool is_flip_vertical,
- double scale_x,
- double scale_y)
+DFM2_INLINE void delfem2::Transform_LoopEdgeCad2D(
+    std::vector<CCad2D_EdgeGeo>& aEdge,
+    bool is_flip_holizontal,
+    bool is_flip_vertical,
+    double scale_x,
+    double scale_y)
 {
   double A[4] = {scale_x,0,0,scale_y};
   if( is_flip_holizontal ){ A[0] *= -1; }
