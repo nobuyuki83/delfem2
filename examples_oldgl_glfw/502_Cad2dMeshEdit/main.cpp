@@ -53,7 +53,7 @@ int main(
       
       const int nv = 4;
       std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
-      const unsigned int nXY = static_cast<unsigned int>(aXY.size()/2);
+      const auto nXY = static_cast<unsigned int>(aXY.size()/2);
       aW.resize(nXY*nv);
       for(unsigned int ip=0;ip<nXY;++ip){
         dfm2::MeanValueCoordinate_Polygon2<dfm2::CVec2d>(
@@ -76,8 +76,8 @@ int main(
 		[[maybe_unused]] const float dir[3]) override{
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
       std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
-      unsigned int npb = static_cast<unsigned int>(aXY_bound.size()/2);
-      unsigned int np = static_cast<unsigned int>(aXY.size()/2);
+      auto npb = static_cast<unsigned int>(aXY_bound.size()/2);
+      auto np = static_cast<unsigned int>(aXY.size()/2);
       for(unsigned int ip=0;ip<np;++ip){
         aXY[ip*2+0] = 0.0;
         aXY[ip*2+1] = 0.0;
