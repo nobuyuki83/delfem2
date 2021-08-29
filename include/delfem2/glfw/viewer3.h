@@ -15,11 +15,6 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/glfw/mouseinput.h"
 
-#if defined(_MSC_VER)
-#  pragma warning( push )
-#  pragma warning( disable : 4100 )
-#endif
-
 // ------------------------------------------------------
 
 struct GLFWwindow;
@@ -41,20 +36,30 @@ class CViewer3 {
   /**
    * @details for function override. Do nothing here
    */
-  virtual void mouse_press(const float src[3], const float dir[3]) {}
+  virtual void mouse_press(
+      [[maybe_unused]] const float src[3],
+      [[maybe_unused]] const float dir[3]) {}
 
   virtual void mouse_release() {}
 
   /**
    * @details for function override. Do nothing here
    */
-  virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {}
+  virtual void mouse_drag(
+      [[maybe_unused]] const float src0[3],
+      [[maybe_unused]] const float src1[3],
+      [[maybe_unused]] const float dir[3]) {}
 
-  virtual void key_press(int key, int mods) {}
+  virtual void key_press(
+      [[maybe_unused]] int key,
+      [[maybe_unused]] int mods) {}
 
-  virtual void key_release(int key, int mods) {}
+  virtual void key_release(
+      [[maybe_unused]] int key,
+      [[maybe_unused]] int mods) {}
 
-  virtual void mouse_wheel(double yoffset) {}
+  virtual void mouse_wheel(
+      [[maybe_unused]] double yoffset) {}
 
  public:
   GLFWwindow *window = nullptr;
@@ -69,12 +74,9 @@ class CViewer3 {
 } // namespace opengl
 } // namespace delfem2
 
-#if defined(_MSC_VER)
-#  pragma warning( pop )
-#endif
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/glfw/viewer3.cpp"
 #endif
 
-#endif /* viewer3_hpp */
+#endif // DFM2_GLFW_VIEWER3_H

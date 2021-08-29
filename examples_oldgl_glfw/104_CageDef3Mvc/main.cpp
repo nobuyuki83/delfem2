@@ -76,7 +76,7 @@ int main(
       dfm2::CVec3d p1 = dfm2::CVec3d(aXYZ_cage.data() + ip1 * 3) - q0;
       dfm2::CVec3d p2 = dfm2::CVec3d(aXYZ_cage.data() + ip2 * 3) - q0;
       double w[3];
-      dfm2::MeanValueCoordinate<dfm2::CVec3d>(w, p0, p1, p2);
+      dfm2::MeanValueCoordinate_Triangle<dfm2::CVec3d>(w, p0, p1, p2);
       matrix[iq * num_point_cage + ip0] += w[0];
       matrix[iq * num_point_cage + ip1] += w[1];
       matrix[iq * num_point_cage + ip2] += w[2];

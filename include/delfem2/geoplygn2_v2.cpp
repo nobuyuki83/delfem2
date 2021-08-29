@@ -37,54 +37,6 @@ DFM2_INLINE void delfem2::makeSplineLoop(
 }
 
 
-DFM2_INLINE void delfem2::MeanValueCoordinate2D(
-    double *aW,
-    double px, double py,
-    const double *aXY,
-    unsigned int nv)
-{
-  for(unsigned int iv=0;iv<nv;++iv){ aW[iv] = 0.0; }
-  for(unsigned int iv=0;iv<nv;++iv){
-    CVec2d v0(aXY[iv*2+0]-px,aXY[iv*2+1]-py);
-    if( v0.Length() > 1.0e-10 ){ continue; }
-    aW[iv] = 1.0;
-    return;
-  }
-  for(unsigned int ie=0;ie<nv;++ie){
-    unsigned int iv0 = (ie+0)%nv;
-    unsigned int iv1 = (ie+1)%nv;
-    CVec2d v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
-    CVec2d v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
-    const double l0 = v0.Length();
-    const double l1 = v1.Length();
-    if( fabs((v0*v1)/(l0*l1)+1) > 1.0e-10 ){ continue; }
-    aW[iv0] = l1/(l0+l1);
-    aW[iv1] = l0/(l0+l1);
-    return;
-  }
-  double sum = 0;
-  for(unsigned int ie=0;ie<nv;++ie){
-    unsigned int iv0 = (ie+0)%nv;
-    unsigned int iv1 = (ie+1)%nv;
-    unsigned int iv2 = (ie+2)%nv;
-    CVec2d v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
-    CVec2d v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
-    CVec2d v2(aXY[iv2*2+0]-px,aXY[iv2*2+1]-py);
-    double c01 = (v0*v1)/(v0.Length()*v1.Length());
-    double s01 = (Cross(v0,v1)>0)?1:-1;
-    double c12 = (v1*v2)/(v1.Length()*v2.Length());
-    double s12 = (Cross(v1,v2)>0)?1:-1;
-    double t01 = s01*sqrt((1-c01)/(1+c01));
-    double t12 = s12*sqrt((1-c12)/(1+c12));
-    double w1 =  (t01+t12)/v1.Length();
-    aW[iv1] = w1;
-    sum += w1;
-  }
-  for(unsigned int iv=0;iv<nv;++iv){
-    aW[iv] /= sum;
-  }
-}
-
 template <typename T>
 double delfem2::Length_Polygon(
     const std::vector<CVec2<T>>& aP)
@@ -115,35 +67,6 @@ double delfem2::Area_Polygon(
     area_loop += Area_Tri(vtmp, aP[(ie+0)%ne], aP[(ie+1)%ne]);
   }
   return area_loop;
-}
-
-template <typename T>
-void delfem2::MeanValueCoordinate(
-    std::vector<double>& aW,
-    CVec2<T>& p,
-    std::vector<CVec2<T>>& aVtx)
-{
-  const int nv = (int)aVtx.size();
-  aW.assign(nv,0.0);
-  double sum = 0;
-  for(int ie=0;ie<nv;++ie){
-    int iv0 = (ie+0)%nv;
-    int iv1 = (ie+1)%nv;
-    int iv2 = (ie+2)%nv;
-    CVec2<T> v0 = aVtx[iv0]-p;
-    CVec2<T> v1 = aVtx[iv1]-p;
-    CVec2<T> v2 = aVtx[iv2]-p;
-    double c01 = (v0*v1)/(v0.Length()*v1.Length());
-    double c12 = (v1*v2)/(v1.Length()*v2.Length());
-    double t01 = sqrt((1-c01)/(1+c01));
-    double t12 = sqrt((1-c12)/(1+c12));
-    double w1 =  (t01+t12)/v1.Length();
-    aW[iv1] = w1;
-    sum += w1;
-  }
-  for(int iv=0;iv<nv;++iv){
-    aW[iv] /= sum;
-  }
 }
 
 

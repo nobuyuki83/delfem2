@@ -2,15 +2,12 @@
 #include <cstdio>
 #include <cstdlib>
 
-#if defined(_MSC_VER)
-  #pragma warning (push)
-  #pragma warning( disable : 4100 )
-#endif
-
 namespace delfem2{
 namespace glfw{
 
-static void callback_error(int error, const char *description) {
+static void callback_error(
+    [[maybe_unused]] int error,
+    const char *description) {
   fputs(description, stderr);
 }
 
@@ -61,7 +58,3 @@ void InitGLNew(){
 
 }
 }
-
-#if defined(_MSC_VER)
-  #pragma warning (pop)
-#endif
