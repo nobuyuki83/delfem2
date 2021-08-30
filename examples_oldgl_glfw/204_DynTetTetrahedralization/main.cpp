@@ -5,22 +5,21 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/vec3.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/mshio.h"
-#include "delfem2/mshuni.h"
-#include "delfem2/dtet_v3.h"
-// ------------
-#define GL_SILENCE_DEPRECATION
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include <GLFW/glfw3.h>
-//
 #include <cassert>
 #include <iostream>
 #include <vector>
-#include <ctime>
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
+#include "delfem2/vec3.h"
+#include "delfem2/dtet_v3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 
 namespace dfm2 = delfem2;
 
@@ -179,11 +178,11 @@ void myGlutDisplay(
     ///
     ::glBegin(GL_LINES);
     for (auto & it : aSTet){
-      int ip0 = it.v[0];
-      if( ip0 == -1 ) continue;
-      int ip1 = it.v[1];
-      int ip2 = it.v[2];
-      int ip3 = it.v[3];
+      unsigned int ip0 = it.v[0];
+      if( ip0 == UINT_MAX ) continue;
+      unsigned int ip1 = it.v[1];
+      unsigned int ip2 = it.v[2];
+      unsigned int ip3 = it.v[3];
       myGlVertex3d(aPo3D[ip0].p);
       myGlVertex3d(aPo3D[ip1].p);
       myGlVertex3d(aPo3D[ip0].p);
@@ -249,8 +248,8 @@ void AddRandomPoint(
   aPo3D[ip_ins].p = dfm2::CVec3d(x0,y0,z0);
   aPo3D[ip_ins].e = -1;
   aPo3D[ip_ins].poel = -1;
-  int itet_ins = -1;
-  for (std::size_t it = 0; it<aSTet.size(); ++it){
+  unsigned int itet_ins = UINT_MAX;
+  for (unsigned int it = 0; it<aSTet.size(); ++it){
     unsigned int j0 = aSTet[it].v[0];
     unsigned int j1 = aSTet[it].v[1];
     unsigned int j2 = aSTet[it].v[2];
@@ -263,7 +262,7 @@ void AddRandomPoint(
     //    double v4 = TetVolume(j0, j1, j2, j3, aPo3D);
     if (v0>0&&v1>0&&v2>0&&v3>0){ itet_ins = it; break; }
   }
-  if (itet_ins==-1){ return; }
+  if (itet_ins==UINT_MAX){ return; }
   AddPointTetDelaunay(ip_ins,itet_ins, aPo3D, aSTet,aCent, tmp_buffer);
 #ifndef NDEBUG
   CheckTet(aSTet, aPo3D);
@@ -271,7 +270,9 @@ void AddRandomPoint(
   std::cout << aPo3D.size() << std::endl;
 }
 
-int main(int argc, char* argv[])
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
   viewer.camera.view_height = 2.5;

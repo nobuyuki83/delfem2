@@ -17,6 +17,7 @@
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbvh.h"
 #include "delfem2/glfw/viewer3.h"
@@ -67,46 +68,24 @@ void myGlutDisplay(
   ::glEnd();
 }
 
-int main(int argc,char* argv[])
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char* argv[])
 {
-  std::vector<double> aXYZ; // 3d points
-  std::vector<unsigned int> aTri;
+  std::vector<double> vec_xyz; // 3d points
+  std::vector<unsigned int> vec_tri;
 
   { // load input mesh
-    delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
-                      aXYZ, aTri);
-    dfm2::Normalize_Points3(aXYZ, 2.0);
+    delfem2::Read_Ply(
+        std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
+        vec_xyz, vec_tri);
+    dfm2::Normalize_Points3(vec_xyz, 2.0);
   }
 
-  std::vector<dfm2::CNodeBVH2> aNodeBVH;
-  std::vector<dfm2::CBV3_Sphere<double>> aAABB;
-  {
-    std::vector<double> aCent;
-    double rad = dfm2::CentsMaxRad_MeshTri3(aCent,
-        aXYZ,aTri);
-    double min_xyz[3], max_xyz[3];
-    delfem2::BoundingBox3_Points3(min_xyz,max_xyz,
-        aCent.data(), aCent.size()/3);
-    std::vector<unsigned int> aSortedId;
-    std::vector<std::uint32_t> aSortedMc;
-    dfm2::SortedMortenCode_Points3(aSortedId,aSortedMc,
-                                   aCent,min_xyz,max_xyz);
-    dfm2::BVHTopology_Morton(aNodeBVH,
-                             aSortedId,aSortedMc);
-
-    dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3_Sphere<double>,double> lvm(
-        1.0e-10,
-        aXYZ.data(), aXYZ.size()/3,
-        aTri.data(), aTri.size()/3, 3);
-    dfm2::BVH_BuildBVHGeometry(aAABB,
-        0, aNodeBVH,
-        lvm);
-    { // assertion
-      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
-      dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-      dfm2::Check_BVH(aNodeBVH,aCent.size()/3);
-    }
-  }
+  std::vector<dfm2::CNodeBVH2> vec_node_bvh;
+  std::vector<dfm2::CBV3_Sphere<double>> vec_bv;
+  dfm2::ConstructBVHTriangleMeshMortonCode(
+      vec_node_bvh, vec_bv, vec_xyz, vec_tri);
   
   dfm2::glfw::CViewer3 viewer;
   viewer.camera.view_height = 1.5;
@@ -128,13 +107,14 @@ int main(int argc,char* argv[])
         0.5*sin(cur_time*6),
         0.5*sin(cur_time*7) };
     // -----------
-    std::vector<unsigned int> aIndElem;
-    dfm2::BVH_GetIndElem_Predicate(aIndElem,
+    std::vector<unsigned int> vec_tri_index;
+    dfm2::BVH_GetIndElem_Predicate(
+        vec_tri_index,
         dfm2::CIsBV_IntersectLine< dfm2::CBV3_Sphere<double>, double>(src0,dir0),
-        0, aNodeBVH, aAABB);
+        0, vec_node_bvh, vec_bv);
     // -----------
     viewer.DrawBegin_oldGL();
-    myGlutDisplay(aXYZ,aTri,aIndElem,src0,dir0);
+    myGlutDisplay(vec_xyz, vec_tri, vec_tri_index, src0, dir0);
     viewer.SwapBuffers();
     
     glfwPollEvents();

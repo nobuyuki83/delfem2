@@ -6,11 +6,13 @@
  */
 
 #include "delfem2/rig_geo3.h"
-#include "delfem2/geo3_v23m34q.h"
+
 #include <map>
 #include <cassert>
 #include <sstream>
 #include <fstream>
+
+#include "delfem2/geo3_v23m34q.h"
 
 #ifndef M_PI 
 #  define M_PI 3.1415926535

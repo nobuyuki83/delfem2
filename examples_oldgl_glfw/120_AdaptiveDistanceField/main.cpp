@@ -79,9 +79,9 @@ void Draw_Wire(const delfem2::CADF3::CNode& n)
   ::glEnd();
 }
 
-void DrawThisAndChild_Wire
- (const delfem2::CADF3::CNode& n,
-  const std::vector<delfem2::CADF3::CNode>& aNo)
+void DrawThisAndChild_Wire(
+    const delfem2::CADF3::CNode& n,
+    const std::vector<delfem2::CADF3::CNode>& aNo)
 {
     //      std::cout << "ichild " << ichilds_[0] << " " << ichilds_[1] << " " << ichilds_[2] << " " << ichilds_[3] << std::endl;
   if( n.ichilds_[0] == -1 ){
@@ -140,7 +140,7 @@ void SetProblem(int iprob)
     class CInSphere : public delfem2::CInput_ADF3
     {
     public:
-      double sdf(double x, double y, double z) const override {
+      [[nodiscard]] double sdf(double x, double y, double z) const override {
         double n[3];
         return obj.Projection(n,
                               x, y, z);
@@ -160,7 +160,7 @@ void SetProblem(int iprob)
     class CInTorus : public delfem2::CInput_ADF3
     {
     public:
-      double sdf(double x, double y, double z) const override {
+      [[nodiscard]] double sdf(double x, double y, double z) const override {
         double n[3];
         return obj.Projection(n,
                               x, y, z);
@@ -181,7 +181,7 @@ void SetProblem(int iprob)
     class CMesh : public delfem2::CInput_ADF3
     {
     public:
-      double sdf(double x, double y, double z) const override {
+      [[nodiscard]] double sdf(double x, double y, double z) const override {
         dfm2::CVec3d n0;
         double sdf0 = obj.SignedDistanceFunction(n0,
             dfm2::CVec3d(x,y,z),
@@ -197,12 +197,14 @@ void SetProblem(int iprob)
       std::cout << PATH_INPUT_DIR << std::endl;
       delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ, aTri);
       delfem2::Normalize_Points3(aXYZ,1.7);
-      mesh.obj.Init(aXYZ.data(), aXYZ.size()/3,
-                    aTri.data(), aTri.size()/3,
-                    0.0);
+      mesh.obj.Init(
+          aXYZ.data(), aXYZ.size()/3,
+          aTri.data(), aTri.size()/3,
+          0.0);
       mesh.aNorm.resize(aXYZ.size());
-      delfem2::Normal_MeshTri3D(mesh.aNorm.data(),
-                                aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
+      delfem2::Normal_MeshTri3D(
+          mesh.aNorm.data(),
+          aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
     }
     double bb[6] = { -1, 1, -1, 1, -1,1 };
     adf.SetUp(mesh, bb);
@@ -213,7 +215,9 @@ void SetProblem(int iprob)
 
 // ------------------------------------------------
 
-int main(int argc,char* argv[])
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char* argv[])
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
