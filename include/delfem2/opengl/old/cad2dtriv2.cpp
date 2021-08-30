@@ -5,9 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/old/v2.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
+
 #include <climits>
 
 #if defined(_WIN32) // windows
@@ -21,6 +20,9 @@
 #else
   #include <GL/gl.h>
 #endif
+
+#include "delfem2/opengl/old/v2.h"
+#include "delfem2/opengl/old/funcs.h"
 
 // -------------------------------------------------
 
@@ -49,9 +51,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm(
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge
-(const std::vector<CDynTri>& aSTri,
- const std::vector<CVec2d>& aVec2)
+DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge(
+    const std::vector<CDynTri>& aSTri,
+    const std::vector<CVec2d>& aVec2)
 {
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(1);
@@ -77,10 +79,10 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge
 
 // -------------------------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge
- (const CCad2D_EdgeGeo& edge,
-  bool is_selected,
-  int ipicked_elem)
+DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge(
+    const CCad2D_EdgeGeo& edge,
+    bool is_selected,
+    int ipicked_elem)
 {
   if( is_selected ){ ::glColor3d(1,1,0); }
   else{ ::glColor3d(0,0,0); }

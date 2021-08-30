@@ -5,12 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_CAD2DTRIV2_GLOLD_H
-#define DFM2_CAD2DTRIV2_GLOLD_H
+#ifndef DFM2_OPENGL_OLD_CAD2DTRIV2_H
+#define DFM2_OPENGL_OLD_CAD2DTRIV2_H
+
+#include <vector>
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/cad2_dtri2.h"
-#include <vector>
 
 // ---------------------------
 
@@ -43,7 +44,7 @@ DFM2_INLINE void Draw_CCad2D(
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/opengl/old/cad2dtriv2.cpp"
+#  include "delfem2/opengl/old/cad2dtriv2.cpp"
 #endif
 
-#endif /* DFM2_CADDTRI_V2_GLOLD */
+#endif

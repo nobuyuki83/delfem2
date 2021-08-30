@@ -22,7 +22,7 @@
 #include "delfem2/opengl/old/mshuni.h"
 
 #ifndef M_PI
-#define M_PI 3.141592
+#  define M_PI 3.141592
 #endif
 
 namespace dfm2 = delfem2;
@@ -30,8 +30,8 @@ namespace dfm2 = delfem2;
 // ---------------------------------------------------
 
 int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aElm;
   // -----
@@ -54,8 +54,8 @@ int main(
   }
   std::vector<double> aW;
   {
-    const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
-    const unsigned int nb = static_cast<unsigned int>(aBone.size());
+    const auto np = static_cast<unsigned int>(aXYZ0.size() / 3);
+    const auto nb = static_cast<unsigned int>(aBone.size());
     aW.resize(np * nb);
     for (unsigned int ip = 0; ip < np; ++ip) {
       const double *p0 = aXYZ0.data() + ip * 3;

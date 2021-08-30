@@ -27,49 +27,50 @@ namespace dfm2 = delfem2;
 // -------------------------------------------
 
 int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
-{
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   class CMyViewer : public delfem2::glfw::CViewer3 {
-  public:
-    CMyViewer(){
+   public:
+    CMyViewer() {
       delfem2::Read_Ply(
-          std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-          aXYZ,aTri);
+          std::string(PATH_INPUT_DIR) + "/bunny_1k.ply",
+          aXYZ, aTri);
       delfem2::Normalize_Points3(aXYZ);
       gizmo_rot.size = 0.7f;
     }
     //
-    void mouse_press(const float src[3], const float dir[3]) override{
+    void mouse_press(const float src[3], const float dir[3]) override {
       gizmo_rot.Pick(true, src, dir, 0.1f);
     }
-    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
       gizmo_rot.Drag(src0, src1, dir);
     }
     //
-    void Draw(){
+    void Draw() {
       DrawBegin_oldGL();
       {
-        float r[16]; dfm2::Mat4_Quat(r, gizmo_rot.quat);
-        float r0[16]; dfm2::Transpose_Mat4(r0, r);
+        float r[16];
+        dfm2::Mat4_Quat(r, gizmo_rot.quat);
+        float r0[16];
+        dfm2::Transpose_Mat4(r0, r);
         ::glMatrixMode(GL_MODELVIEW);
         ::glPushMatrix();
         ::glMultMatrixf(r0);
         ::glEnable(GL_LIGHTING);
-        ::glColor3d(0,0,0);
+        ::glColor3d(0, 0, 0);
         delfem2::opengl::DrawMeshTri3D_Edge(
-            aXYZ.data(), aXYZ.size()/3,
-            aTri.data(), aTri.size()/3);
+            aXYZ.data(), aXYZ.size() / 3,
+            aTri.data(), aTri.size() / 3);
         delfem2::opengl::DrawMeshTri3D_FaceNorm(
             aXYZ.data(),
-            aTri.data(), aTri.size()/3);
+            aTri.data(), aTri.size() / 3);
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
       }
       delfem2::opengl::Draw(gizmo_rot);
       SwapBuffers();
     }
-  public:
+   public:
     dfm2::CGizmo_Rotation<float> gizmo_rot;
     std::vector<double> aXYZ;
     std::vector<unsigned int> aTri;
@@ -81,12 +82,12 @@ int main(
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   // --------------------
-  while(true){
+  while (true) {
     viewer.Draw();
     glfwPollEvents();
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
   }
-EXIT:
+  EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

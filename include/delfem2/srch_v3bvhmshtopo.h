@@ -25,6 +25,51 @@
 
 namespace delfem2 {
 
+template <class BV>
+void ConstructBVHTriangleMeshMortonCode(
+    std::vector<delfem2::CNodeBVH2> &aNodeBVH,
+    std::vector<BV> &aAABB,
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri)
+{
+  namespace dfm2 = delfem2;
+  std::vector<double> vec_center_of_tri;
+  dfm2::CentsMaxRad_MeshTri3(
+      vec_center_of_tri,
+      aXYZ, aTri);
+  double min_xyz[3], max_xyz[3];
+  delfem2::BoundingBox3_Points3(
+      min_xyz, max_xyz,
+      vec_center_of_tri.data(),
+      static_cast<unsigned int>(vec_center_of_tri.size() / 3));
+  std::vector<unsigned int> aSortedId;
+  std::vector<std::uint32_t> aSortedMc;
+  dfm2::SortedMortenCode_Points3(
+      aSortedId, aSortedMc,
+      vec_center_of_tri, min_xyz, max_xyz);
+  dfm2::BVHTopology_Morton(
+      aNodeBVH,
+      aSortedId, aSortedMc);
+#ifndef NDEBUG
+  dfm2::Check_MortonCode_Sort(
+      aSortedId, aSortedMc, vec_center_of_tri,
+      min_xyz, max_xyz);
+  dfm2::Check_MortonCode_RangeSplit(
+      aSortedMc);
+#endif
+  dfm2::CLeafVolumeMaker_Mesh<BV, double> lvm(
+      1.0e-10,
+      aXYZ.data(), aXYZ.size() / 3,
+      aTri.data(), aTri.size() / 3, 3);
+  dfm2::BVH_BuildBVHGeometry(
+      aAABB,
+      0, aNodeBVH,
+      lvm);
+#ifndef NDEBUG
+  dfm2::Check_BVH(aNodeBVH, vec_center_of_tri.size() / 3);
+#endif
+}
+
 /**
  * @brief potential maximum distance of the nearest point
  */
@@ -401,9 +446,10 @@ void Intersection_ImageRay_TriMesh3(
       const CVec3d dir1 = CVec3d(qe) - src1;
       //
       aIndElem.resize(0);
-      BVH_GetIndElem_Predicate(aIndElem,
-                               CIsBV_IntersectLine<BV, double>(src1.p, dir1.p),
-                               0, aNodeBVH, aAABB);
+      BVH_GetIndElem_Predicate(
+          aIndElem,
+          CIsBV_IntersectLine<BV, double>(src1.p, dir1.p),
+          0, aNodeBVH, aAABB);
       if (aIndElem.empty()) { continue; } // no bv hit the ray
       std::map<double, CPtElm2<double>> mapDepthPES;
       IntersectionRay_MeshTri3DPart(

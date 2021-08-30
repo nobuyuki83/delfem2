@@ -60,11 +60,13 @@ public:
   int iflg;
 };
 
-void makeBackgroundLattice
- (std::vector<CPointLattice>& aPoint,
-  std::vector<unsigned int>& aTet,
-  const CInput_IsosurfaceStuffing& input,
-  double elen, int  ndiv, const double org[3]);
+void makeBackgroundLattice(
+    std::vector<CPointLattice>& aPoint,
+    std::vector<unsigned int>& aTet,
+    const CInput_IsosurfaceStuffing& input,
+    double elen,
+    int  ndiv,
+    const double org[3]);
 
 }
 

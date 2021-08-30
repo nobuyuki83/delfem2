@@ -20,7 +20,6 @@
 
 namespace delfem2 {
 
-
 DFM2_INLINE void Transpose_Mat(
     std::vector<double> &At,
     const std::vector<double> &A,
@@ -43,7 +42,6 @@ DFM2_INLINE void SparsifyMatrixRow(
     unsigned int nrow,
     unsigned int ncol,
     double thres);
-
 
 DFM2_INLINE void Points3_WeighttranspPosition(
     std::vector<double> &aPos0,
@@ -76,10 +74,9 @@ DFM2_INLINE void SetMat4AffineBone_FromJointRelativeRotation(
  *@details this class support rig in GlTF and BioVision BVH
  */
 class CRigBone {
-public:
+ public:
   CRigBone()
-  : invBindMat{}, transRelative{}, quatRelativeRot{}, affmat3Global{}
-  {
+      : invBindMat{}, transRelative{}, quatRelativeRot{}, affmat3Global{} {
     Mat4_Identity(invBindMat);
     Quat_Identity(quatRelativeRot);
     scale = 1;
@@ -97,7 +94,7 @@ public:
   }
 
   void DeformSkin(double pos2[3],
-      const double pos0[3]) const;
+                  const double pos0[3]) const;
 
   void SetRotationBryant(
       double rx, double ry, double rz);
@@ -105,7 +102,7 @@ public:
   void SetTranslation(
       double tx, double ty, double tz);
 
-public:
+ public:
   std::string name; // initialized and stay constant
 
   /** 
@@ -152,7 +149,7 @@ DFM2_INLINE void UpdateBoneRotTrans(
     std::vector<CRigBone> &aBone);
 
 DFM2_INLINE void SetCurrentBoneRotationAsDefault(
-    std::vector<CRigBone>& aBone);
+    std::vector<CRigBone> &aBone);
 
 DFM2_INLINE void PickBone(
     int &ibone_selected,
@@ -217,14 +214,14 @@ DFM2_INLINE void Rig_SkinReferncePositionsBoneWeighted(
 // ------------------------------------
 
 class CChannel_BioVisionHierarchy {
-public:
+ public:
   CChannel_BioVisionHierarchy(unsigned int ib, int ia, bool br) {
     this->ibone = ib;
     this->iaxis = ia;
     this->isrot = br;
   }
 
-public:
+ public:
   unsigned int ibone;
   int iaxis;
   bool isrot;
@@ -245,12 +242,11 @@ DFM2_INLINE void SetPose_BioVisionHierarchy(
     const std::vector<CChannel_BioVisionHierarchy> &aChannelInfo,
     const double *aVal);
 
-
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/rig_geo3.cpp"
+#  include "delfem2/rig_geo3.cpp"
 #endif
 
-#endif // #define DFM2_RIG_V3Q_H
+#endif
 
