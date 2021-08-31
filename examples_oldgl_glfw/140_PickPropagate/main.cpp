@@ -20,6 +20,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbvh.h"
 #include "delfem2/srchuni_v3.h"
@@ -42,37 +43,9 @@ public:
       const std::vector<unsigned int>& aTri0)
       : aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0)
   {
-    { // make BVH
-      std::vector<double> aCent;
-      double rad = dfm2::CentsMaxRad_MeshTri3(
-          aCent,
-          aXYZ,aTri);
-      double min_xyz[3], max_xyz[3];
-      delfem2::BoundingBox3_Points3(
-          min_xyz,max_xyz,
-          aCent.data(), static_cast<unsigned int>(aCent.size()/3));
-      std::vector<unsigned int> aSortedId;
-      std::vector<std::uint32_t> aSortedMc;
-      dfm2::SortedMortenCode_Points3(
-          aSortedId,aSortedMc,
-          aCent,min_xyz,max_xyz);
-      dfm2::BVHTopology_Morton(
-          aNodeBVH,
-          aSortedId,aSortedMc);
-      dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3_Sphere<double>,double> lvm(
-          1.0e-10,
-          aXYZ.data(), aXYZ.size()/3,
-          aTri.data(), aTri.size()/3, 3);
-      dfm2::BVH_BuildBVHGeometry(
-          aAABB,
-          0, aNodeBVH,
-          lvm);
-      { // assertion
-        dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
-        dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-        dfm2::Check_BVH(aNodeBVH,static_cast<unsigned int>(aCent.size()/3));
-      }
-    }
+    dfm2::ConstructBVHTriangleMeshMortonCode(
+        aNodeBVH, aAABB,
+        aXYZ, aTri);
     { // make triangle surrounding graph
       std::vector<unsigned int> elsup_ind, elsup;
       dfm2::JArray_ElSuP_MeshElem(

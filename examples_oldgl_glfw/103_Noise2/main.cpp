@@ -19,28 +19,27 @@
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/noise.h"
 
-#if defined(_MSC_VER)
-#pragma warning( disable : 4100 )
-#endif
-
 namespace dfm2 = delfem2;
 
 // ---------------------
 
-int main(int argc, char *argv[]) {
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
 
-  unsigned int nSize = 256;
-  std::vector<double> aV;
+  unsigned int image_size = 256;
+  std::vector<double> value_image;
   while (!glfwWindowShouldClose(viewer.window)) {
     {
       static int iframe = 0;
       if (iframe == 0) {
-        dfm2::ComputePerlin(aV,
-                            nSize, nSize,
-                            4, 4, 0.9);
+        dfm2::ComputePerlin(
+            value_image,
+            image_size, image_size,
+            4, 4, 0.9);
       }
       iframe = (iframe + 1) % 30;
     }
@@ -55,33 +54,33 @@ int main(int argc, char *argv[]) {
     ::glVertex2d(-0.5, +0.5);
     ::glEnd();
 
-    std::vector<std::pair<double, dfm2::CColor> > colorMap;
-    ColorMap_BlueCyanGreenYellowRed(colorMap, -0.5, +0.5);
+    std::vector<std::pair<double, dfm2::CColor> > color_map;
+    ColorMap_BlueCyanGreenYellowRed(color_map, -0.5, +0.5);
     //  makeHeatMap_BlueGrayRed(colorMap, -0.8, +0.8);
     ::glBegin(GL_QUADS);
-    const unsigned int nH = nSize;
-    const unsigned int nW = nSize;
-    for (unsigned int jh = 0; jh < nH - 1; ++jh) {
-      for (unsigned int jw = 0; jw < nW - 1; ++jw) {
-        const unsigned int i00 = (jh + 0) * nW + (jw + 0);
-        const unsigned int i10 = (jh + 0) * nW + (jw + 1);
-        const unsigned int i11 = (jh + 1) * nW + (jw + 1);
-        const unsigned int i01 = (jh + 1) * nW + (jw + 0);
-        double v00 = aV[i00];
-        double v10 = aV[i10];
-        double v11 = aV[i11];
-        double v01 = aV[i01];
-        double x0 = -0.5 + 1.0 / (nW - 1) * (jw + 0);
-        double x1 = -0.5 + 1.0 / (nW - 1) * (jw + 1);
-        double y0 = -0.5 + 1.0 / (nH - 1) * (jh + 0);
-        double y1 = -0.5 + 1.0 / (nH - 1) * (jh + 1);
-        dfm2::opengl::heatmap(v00, colorMap);
+    const unsigned int image_height = image_size;
+    const unsigned int image_width = image_size;
+    for (unsigned int jh = 0; jh < image_height - 1; ++jh) {
+      for (unsigned int jw = 0; jw < image_width - 1; ++jw) {
+        const unsigned int i00 = (jh + 0) * image_width + (jw + 0);
+        const unsigned int i10 = (jh + 0) * image_width + (jw + 1);
+        const unsigned int i11 = (jh + 1) * image_width + (jw + 1);
+        const unsigned int i01 = (jh + 1) * image_width + (jw + 0);
+        double v00 = value_image[i00];
+        double v10 = value_image[i10];
+        double v11 = value_image[i11];
+        double v01 = value_image[i01];
+        double x0 = -0.5 + 1.0 / (image_width - 1) * (jw + 0);
+        double x1 = -0.5 + 1.0 / (image_width - 1) * (jw + 1);
+        double y0 = -0.5 + 1.0 / (image_height - 1) * (jh + 0);
+        double y1 = -0.5 + 1.0 / (image_height - 1) * (jh + 1);
+        dfm2::opengl::heatmap(v00, color_map);
         ::glVertex2d(x0, y0);
-        dfm2::opengl::heatmap(v10, colorMap);
+        dfm2::opengl::heatmap(v10, color_map);
         ::glVertex2d(x1, y0);
-        dfm2::opengl::heatmap(v11, colorMap);
+        dfm2::opengl::heatmap(v11, color_map);
         ::glVertex2d(x1, y1);
-        dfm2::opengl::heatmap(v01, colorMap);
+        dfm2::opengl::heatmap(v01, color_map);
         ::glVertex2d(x0, y1);
       }
     }
