@@ -34,8 +34,9 @@ int main(
   class CMyViewer : public delfem2::glfw::CViewer3 {
   public:
     CMyViewer(){
-      delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-                        aXYZ,aTri);
+      delfem2::Read_Ply(
+          std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
+          aXYZ,aTri);
       delfem2::Normalize_Points3(aXYZ);
     }
     //
@@ -54,16 +55,19 @@ int main(
         delfem2::opengl::myGlTranslate(gizmo_trnsl.pos);
         ::glEnable(GL_LIGHTING);
         ::glColor3d(0,0,0);
-        delfem2::opengl::DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3,
-                                            aTri.data(), aTri.size()/3);
-        delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(),
-                                                aTri.data(), aTri.size()/3);
+        delfem2::opengl::DrawMeshTri3D_Edge(
+            aXYZ.data(), aXYZ.size()/3,
+            aTri.data(), aTri.size()/3);
+        delfem2::opengl::DrawMeshTri3D_FaceNorm(
+            aXYZ.data(),
+            aTri.data(), aTri.size()/3);
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
       }
-      dfm2::opengl::DrawAxisHandler(gizmo_trnsl.size,
-                                    gizmo_trnsl.pos,
-                                    gizmo_trnsl.ielem_picked);
+      dfm2::opengl::DrawAxisHandler(
+          gizmo_trnsl.size,
+          gizmo_trnsl.pos,
+          gizmo_trnsl.ielem_picked);
       SwapBuffers();
     }
   public:

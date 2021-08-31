@@ -171,7 +171,8 @@ double noise_perlin_3d_oct(
 
 void ComputePerlin(
     std::vector<double> &aV,
-    int nW, int nH,
+    unsigned int nW,
+    unsigned int nH,
     int nrep,
     int noct,
     double persistance) {
@@ -185,8 +186,8 @@ void ComputePerlin(
   std::vector<double> aGrad = {-1, -1, -1, +1, +1, -1, +1, +1};
 
   aV.resize(nH * nW);
-  for (int ih = 0; ih < nH; ++ih) {
-    for (int iw = 0; iw < nW; ++iw) {
+  for (unsigned int ih = 0; ih < nH; ++ih) {
+    for (unsigned int iw = 0; iw < nW; ++iw) {
       double x = (double) iw / (nW) * nrep;
       double y = (double) ih / (nH) * nrep;
       aV[ih * nW + iw] = noise_perlin_2d_oct(x, y,
@@ -198,4 +199,4 @@ void ComputePerlin(
   
 }
 
-#endif /* noise_h */
+#endif

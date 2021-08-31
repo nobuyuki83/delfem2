@@ -30,7 +30,9 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 
-int main(int argc,char* argv[])
+int main(
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char* argv[])
 {
   // shape definition
   std::vector<double> aXYZ0; // undeformed vertex positions
@@ -47,9 +49,12 @@ int main(int argc,char* argv[])
   // data for camera
   double cur_time = 0;
   {
-    delfem2::MeshTri3D_Sphere(aXYZ0, aTri, 1.0, 16, 16);
-    delfem2::Rotate_Points3(aXYZ0,
-                            0.2, 0.3, 0.4);
+    delfem2::MeshTri3D_Sphere(
+        aXYZ0, aTri,
+        1.0, 16, 16);
+    delfem2::Rotate_Points3(
+        aXYZ0,
+        0.2, 0.3, 0.4);
     aXYZ = aXYZ0;
     {
       const size_t ntri = aTri.size()/3;

@@ -29,8 +29,8 @@ template <class BV>
 void ConstructBVHTriangleMeshMortonCode(
     std::vector<delfem2::CNodeBVH2> &aNodeBVH,
     std::vector<BV> &aAABB,
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri)
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri)
 {
   namespace dfm2 = delfem2;
   std::vector<double> vec_center_of_tri;
