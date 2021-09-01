@@ -96,8 +96,8 @@ DFM2_INLINE void MeshTri3_Torus(
     unsigned int ndiv_latittude,
     unsigned int ndiv_meridian);
 
-DFM2_INLINE void SetTopoQuad_CubeVox(
-    std::vector<unsigned int> &aQuad);
+std::vector<unsigned int>
+DFM2_INLINE MeshQuadTopo_CubeVox();
 
 /**
  * @brief making a quad mesh of a cube. The order of the vertex is same as voxel element

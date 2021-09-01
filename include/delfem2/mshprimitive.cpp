@@ -11,141 +11,6 @@
 #include <cmath>
 #include <cassert>
 
-/*
-static void Cross3D(double r[3], const double v1[3], const double v2[3]){
-	r[0] = v1[1]*v2[2] - v2[1]*v1[2];
-	r[1] = v1[2]*v2[0] - v2[2]*v1[0];
-	r[2] = v1[0]*v2[1] - v2[0]*v1[1];
-}
- */
-
-/*
-static inline double Dot3D(const double p0[3], const double p1[3]){
-	return p0[0]*p1[0]+p0[1]*p1[1]+p0[2]*p1[2];
-}
- */
-
-/*
-static inline double Length3D(const double v[3]){
-	return sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
-}
- */
-
-/*
-static inline double SqLength3D(const double v[3]){
-	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
-}
- */
-
-/*
-static double Distance3D(const double p0[3], const double p1[3]){
-  return sqrt((p1[0]-p0[0])*(p1[0]-p0[0])+(p1[1]-p0[1])*(p1[1]-p0[1])+(p1[2]-p0[2])*(p1[2]-p0[2]));
-}
- */
-
-/*
-static inline void NormalTri3D(double n[3], const double v1[3], const double v2[3], const double v3[3]){
-	n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-	n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-	n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-}
- */
-/*
-static double TetVolume3D
-(const double v1[3],
- const double v2[3],
- const double v3[3],
- const double v4[3] )
-{
-	return	
-	(   ( v2[0] - v1[0] )*( ( v3[1] - v1[1] )*( v4[2] - v1[2] ) - ( v4[1] - v1[1] )*( v3[2] - v1[2] ) )		
-	 -	( v2[1] - v1[1] )*( ( v3[0] - v1[0] )*( v4[2] - v1[2] ) - ( v4[0] - v1[0] )*( v3[2] - v1[2] ) )		
-	 +	( v2[2] - v1[2] )*( ( v3[0] - v1[0] )*( v4[1] - v1[1] ) - ( v4[0] - v1[0] )*( v3[1] - v1[1] ) )
-	 ) * 0.16666666666666666666666666666667;		
-}
- */
-
-/*
-static double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
-	double x, y, z;
-	x = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-	y = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-	z = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-	return 0.5*sqrt( x*x + y*y + z*z );
-}
- */
-/*
-static void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
-	n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-	n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-	n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-	a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-	const double invlen = 0.5/a;
-	n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
-}
-
-// (v1*v2).v3
-inline double ScalarTripleProduct3D(const double v1[3], const double v2[3], const double v3[3]){
-	const double x = ( v1[1]*v2[2] - v2[1]*v1[2] )*v3[0];
-	const double y = ( v1[2]*v2[0] - v2[2]*v1[0] )*v3[1];
-	const double z = ( v1[0]*v2[1] - v2[0]*v1[1] )*v3[2];
-	return x+y+z;
-}
-*/
-/*
-static bool GetVertical2Vector3D(const double vec0[3], double vec1[3], double vec2[3])
-{
-  double vec_a[3] = { vec0[0], vec0[1], vec0[2] };
-  const double len = Length3D(vec0);
-  if( len < 1.0e-20 ){ 
-    assert(0);
-    return false; 
-  }
-  vec_a[0] *= 1.0/len;
-  vec_a[1] *= 1.0/len;
-	vec_a[2] *= 1.0/len;
-  double vec_t[3] = {0,1,0};
-  Cross3D(vec1,vec_t,vec_a);
-  if( Length3D(vec1) < 1.0e-10 ){
-    double vec_t[3] = {1,0,0};
-    Cross3D(vec1,vec_t,vec_a);  // z????
-    Cross3D(vec2,vec_a,vec1);  // x????
-  }
-  else{
-	  const double len = Length3D(vec1);
-    vec1[0] *= 1.0/len;
-    vec1[1] *= 1.0/len;
-		vec1[2] *= 1.0/len;
-    Cross3D(vec2,vec_a,vec1);
-  }
-  return true;
-}
- */
-/*
-static void GetNearest_LineSegPoint3D
-(double pn[3],
-const double p[3], // point
-const double s[3], // source
-const double e[3]) // end
-{
-  const double d[3] = { e[0]-s[0], e[1]-s[1], e[2]-s[2] };
-  double t = 0.5;
-  if (Dot3D(d, d)>1.0e-20){
-    const double ps[3] = { s[0]-p[0], s[1]-p[1], s[2]-p[2] };
-    double a = Dot3D(d, d);
-    double b = Dot3D(d, ps);
-    t = -b/a;
-    if (t<0) t = 0;
-    if (t>1) t = 1;
-  }
-  pn[0] = s[0]+t*d[0];
-  pn[1] = s[1]+t*d[1];
-  pn[2] = s[2]+t*d[2];
-  return;
-}
-*/
-
-
 DFM2_INLINE void delfem2::MeshQuad2D_Grid(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aQuad,
@@ -567,33 +432,14 @@ template void delfem2::MeshTri3D_Cube(
 // f3: +y
 // f4: -z
 // f5: +z
-DFM2_INLINE void delfem2::SetTopoQuad_CubeVox(
-    std::vector<unsigned int> &aQuad) {
-  aQuad.resize(6 * 4);
-  aQuad[0 * 4 + 0] = 0;
-  aQuad[0 * 4 + 1] = 4;
-  aQuad[0 * 4 + 2] = 6;
-  aQuad[0 * 4 + 3] = 2;
-  aQuad[1 * 4 + 0] = 1;
-  aQuad[1 * 4 + 1] = 3;
-  aQuad[1 * 4 + 2] = 7;
-  aQuad[1 * 4 + 3] = 5;
-  aQuad[2 * 4 + 0] = 0;
-  aQuad[2 * 4 + 1] = 1;
-  aQuad[2 * 4 + 2] = 5;
-  aQuad[2 * 4 + 3] = 4;
-  aQuad[3 * 4 + 0] = 2;
-  aQuad[3 * 4 + 1] = 6;
-  aQuad[3 * 4 + 2] = 7;
-  aQuad[3 * 4 + 3] = 3;
-  aQuad[4 * 4 + 0] = 0;
-  aQuad[4 * 4 + 1] = 2;
-  aQuad[4 * 4 + 2] = 3;
-  aQuad[4 * 4 + 3] = 1;
-  aQuad[5 * 4 + 0] = 4;
-  aQuad[5 * 4 + 1] = 5;
-  aQuad[5 * 4 + 2] = 7;
-  aQuad[5 * 4 + 3] = 6;
+std::vector<unsigned int>
+DFM2_INLINE delfem2::MeshQuadTopo_CubeVox() {
+  return {0, 4, 6, 2,
+          1, 3, 7, 5,
+          0, 1, 5, 4,
+          2, 6, 7, 3,
+          0, 2, 3, 1,
+          4, 5, 7, 6};
 }
 
 template<typename REAL>
@@ -602,33 +448,16 @@ void delfem2::MeshQuad3_CubeVox(
     std::vector<unsigned int> &aQuad,
     const REAL bbmin[3],
     const REAL bbmax[3]) {
-  aXYZ.resize(0);
-  aXYZ.reserve(8 * 3);
-  aXYZ.push_back(bbmin[0]);
-  aXYZ.push_back(bbmin[1]);
-  aXYZ.push_back(bbmin[2]);
-  aXYZ.push_back(bbmax[0]);
-  aXYZ.push_back(bbmin[1]);
-  aXYZ.push_back(bbmin[2]);
-  aXYZ.push_back(bbmin[0]);
-  aXYZ.push_back(bbmax[1]);
-  aXYZ.push_back(bbmin[2]);
-  aXYZ.push_back(bbmax[0]);
-  aXYZ.push_back(bbmax[1]);
-  aXYZ.push_back(bbmin[2]);
-  aXYZ.push_back(bbmin[0]);
-  aXYZ.push_back(bbmin[1]);
-  aXYZ.push_back(bbmax[2]);
-  aXYZ.push_back(bbmax[0]);
-  aXYZ.push_back(bbmin[1]);
-  aXYZ.push_back(bbmax[2]);
-  aXYZ.push_back(bbmin[0]);
-  aXYZ.push_back(bbmax[1]);
-  aXYZ.push_back(bbmax[2]);
-  aXYZ.push_back(bbmax[0]);
-  aXYZ.push_back(bbmax[1]);
-  aXYZ.push_back(bbmax[2]);
-  SetTopoQuad_CubeVox(aQuad);
+  aXYZ = std::vector<REAL>{
+      bbmin[0], bbmin[1], bbmin[2],
+      bbmax[0], bbmin[1], bbmin[2],
+      bbmin[0], bbmax[1], bbmin[2],
+      bbmax[0], bbmax[1], bbmin[2],
+      bbmin[0], bbmin[1], bbmax[2],
+      bbmax[0], bbmin[1], bbmax[2],
+      bbmin[0], bbmax[1], bbmax[2],
+      bbmax[0], bbmax[1], bbmax[2]};
+  aQuad = MeshQuadTopo_CubeVox();
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::MeshQuad3_CubeVox(
@@ -641,250 +470,47 @@ template void delfem2::MeshQuad3_CubeVox(
     const float bbmin[3], const float bbmax[3]);
 #endif
 
+// --------------------------------------
 
-/*
- void delfem2::MeshTri3D_Cube
- (std::vector<double>& aXYZ,
- std::vector<unsigned int>& aTri,
- int n)
- {
- aXYZ.clear();
- aTri.clear();
- if( n < 1 ){ return; }
- double r = 1.0/n;
- const int np = 4*n*(n+1)+(n-1)*(n-1)*2;
- aXYZ.reserve( np*3 );
- for(int iz=0;iz<n+1;++iz){ // height
- for(int ix=0;ix<n;++ix){
- aXYZ.push_back(-0.5+r*ix);
- aXYZ.push_back(-0.5);
- aXYZ.push_back(-0.5+r*iz);
- }
- for(int iy=0;iy<n;++iy){
- aXYZ.push_back(+0.5);
- aXYZ.push_back(-0.5+r*iy);
- aXYZ.push_back(-0.5+r*iz);
- }
- for(int ix=n;ix>0;--ix){
- aXYZ.push_back(-0.5+r*ix);
- aXYZ.push_back(+0.5);
- aXYZ.push_back(-0.5+r*iz);
- }
- for(int iy=n;iy>0;--iy){
- aXYZ.push_back(-0.5);
- aXYZ.push_back(-0.5+r*iy);
- aXYZ.push_back(-0.5+r*iz);
- }
- }
- for(int iy=1;iy<n;++iy){
- for(int ix=1;ix<n;++ix){
- aXYZ.push_back(-0.5+r*ix);
- aXYZ.push_back(-0.5+r*iy);
- aXYZ.push_back(-0.5);
- }
- }
- for(int iy=1;iy<n;++iy){
- for(int ix=1;ix<n;++ix){
- aXYZ.push_back(-0.5+r*ix);
- aXYZ.push_back(-0.5+r*iy);
- aXYZ.push_back(+0.5);
- }
- }
- /////
- int ntri = n*n*6*2;
- aTri.reserve(ntri*3);
- for(int iz=0;iz<n;++iz){
- for(int ixy=0;ixy<4*n;++ixy){
- int i0 = ixy          +4*n*iz;
- int i1 = (ixy+1)%(4*n)+4*n*iz;
- int i2 = (ixy+1)%(4*n)+4*n*(iz+1);
- int i3 = ixy          +4*n*(iz+1);
- aTri.push_back(i0);
- aTri.push_back(i1);
- aTri.push_back(i2);
- ///
- aTri.push_back(i2);
- aTri.push_back(i3);
- aTri.push_back(i0);
- }
- }
- // bottom
- for(int ix=0;ix<n;++ix){
- for(int iy=0;iy<n;++iy){
- int i0, i1, i2, i3;
- i0 = 4*n*(n+1) + (iy-1)*(n-1)+(ix-1);
- i1 = 4*n*(n+1) + (iy-1)*(n-1)+(ix+0);
- i2 = 4*n*(n+1) + (iy+0)*(n-1)+(ix+0);
- i3 = 4*n*(n+1) + (iy+0)*(n-1)+(ix-1);
- if( ix==0 ){
- i0 = (iy==0) ? 0 : 4*n-iy;
- i3 = 4*n-iy-1;
- }
- if( ix==n-1 ){
- i1 = n+iy;
- i2 = n+iy+1;
- }
- if( iy==0 ){
- i0 = ix;
- i1 = ix+1;
- }
- if( iy==n-1 ){
- i2 = 3*n-ix-1;
- i3 = 3*n-ix+0;
- }
- aTri.push_back(i1);
- aTri.push_back(i0);
- aTri.push_back(i2);
- ///
- aTri.push_back(i3);
- aTri.push_back(i2);
- aTri.push_back(i0);
- }
- }
- // top
- int nps  = 4*n*(n+1); // side vertex
- int nps0 = 4*n*n; // side vertex
- for(int ix=0;ix<n;++ix){
- for(int iy=0;iy<n;++iy){
- int i0, i1, i2, i3;
- i0 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix-1);
- i1 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix+0);
- i2 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix+0);
- i3 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix-1);
- if( ix==0 ){
- i0 = (iy==0) ? nps0 : nps0+4*n-iy;
- i3 = nps0+4*n-iy-1;
- }
- if( ix==n-1 ){
- i1 = nps0+n+iy;
- i2 = nps0+n+iy+1;
- }
- if( iy==0 ){
- i0 = nps0+ix;
- i1 = nps0+ix+1;
- }
- if( iy==n-1 ){
- i2 = nps0+3*n-ix-1;
- i3 = nps0+3*n-ix+0;
- }
- aTri.push_back(i0);
- aTri.push_back(i1);
- aTri.push_back(i2);
- ///
- aTri.push_back(i2);
- aTri.push_back(i3);
- aTri.push_back(i0);
- }
- }
- }
- */
-
-DFM2_INLINE void delfem2::MeshTri3D_Icosahedron
-    (std::vector<double> &aXYZ,
-     std::vector<unsigned int> &aTri) {
-  double p = (1 + sqrt(5)) * 0.5;
-  aXYZ.resize(12 * 3);
-  aXYZ[0 * 3 + 0] = 0;
-  aXYZ[0 * 3 + 1] = -1;
-  aXYZ[0 * 3 + 2] = -p;
-  aXYZ[1 * 3 + 0] = 0;
-  aXYZ[1 * 3 + 1] = -1;
-  aXYZ[1 * 3 + 2] = +p;
-  aXYZ[2 * 3 + 0] = 0;
-  aXYZ[2 * 3 + 1] = +1;
-  aXYZ[2 * 3 + 2] = -p;
-  aXYZ[3 * 3 + 0] = 0;
-  aXYZ[3 * 3 + 1] = +1;
-  aXYZ[3 * 3 + 2] = +p;
-  aXYZ[4 * 3 + 0] = -p;
-  aXYZ[4 * 3 + 1] = 0;
-  aXYZ[4 * 3 + 2] = -1;
-  aXYZ[5 * 3 + 0] = +p;
-  aXYZ[5 * 3 + 1] = 0;
-  aXYZ[5 * 3 + 2] = -1;
-  aXYZ[6 * 3 + 0] = -p;
-  aXYZ[6 * 3 + 1] = 0;
-  aXYZ[6 * 3 + 2] = +1;
-  aXYZ[7 * 3 + 0] = +p;
-  aXYZ[7 * 3 + 1] = 0;
-  aXYZ[7 * 3 + 2] = +1;
-  aXYZ[8 * 3 + 0] = -1;
-  aXYZ[8 * 3 + 1] = -p;
-  aXYZ[8 * 3 + 2] = 0;
-  aXYZ[9 * 3 + 0] = -1;
-  aXYZ[9 * 3 + 1] = +p;
-  aXYZ[9 * 3 + 2] = 0;
-  aXYZ[10 * 3 + 0] = +1;
-  aXYZ[10 * 3 + 1] = -p;
-  aXYZ[10 * 3 + 2] = 0;
-  aXYZ[11 * 3 + 0] = +1;
-  aXYZ[11 * 3 + 1] = +p;
-  aXYZ[11 * 3 + 2] = 0;
+DFM2_INLINE void delfem2::MeshTri3D_Icosahedron(
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri) {
+  const double p = (1 + std::sqrt(5.)) * 0.5;
+  aXYZ = std::vector<double>{
+      +0, -1, -p,
+      +0, -1, +p,
+      +0, +1, -p,
+      +0, +1, +p,
+      -p, +0, -1,
+      +p, +0, -1,
+      -p, +0, +1,
+      +p, +0, +1,
+      -1, -p, +0,
+      -1, +p, +0,
+      +1, -p, +0,
+      +1, +p, +0};
   //
-  aTri.resize(20 * 3);
-  aTri[0 * 3 + 0] = 7;
-  aTri[0 * 3 + 1] = 11;
-  aTri[0 * 3 + 2] = 3;
-  aTri[1 * 3 + 0] = 11;
-  aTri[1 * 3 + 1] = 9;
-  aTri[1 * 3 + 2] = 3;
-  aTri[2 * 3 + 0] = 9;
-  aTri[2 * 3 + 1] = 6;
-  aTri[2 * 3 + 2] = 3;
-  aTri[3 * 3 + 0] = 6;
-  aTri[3 * 3 + 1] = 1;
-  aTri[3 * 3 + 2] = 3;
-  aTri[4 * 3 + 0] = 1;
-  aTri[4 * 3 + 1] = 7;
-  aTri[4 * 3 + 2] = 3;
-  // ----
-  aTri[5 * 3 + 0] = 2;
-  aTri[5 * 3 + 1] = 5;
-  aTri[5 * 3 + 2] = 0;
-  aTri[6 * 3 + 0] = 4;
-  aTri[6 * 3 + 1] = 2;
-  aTri[6 * 3 + 2] = 0;
-  aTri[7 * 3 + 0] = 8;
-  aTri[7 * 3 + 1] = 4;
-  aTri[7 * 3 + 2] = 0;
-  aTri[8 * 3 + 0] = 10;
-  aTri[8 * 3 + 1] = 8;
-  aTri[8 * 3 + 2] = 0;
-  aTri[9 * 3 + 0] = 5;
-  aTri[9 * 3 + 1] = 10;
-  aTri[9 * 3 + 2] = 0;
-  // ----
-  aTri[10 * 3 + 0] = 11;
-  aTri[10 * 3 + 1] = 7;
-  aTri[10 * 3 + 2] = 5;
-  aTri[11 * 3 + 0] = 9;
-  aTri[11 * 3 + 1] = 11;
-  aTri[11 * 3 + 2] = 2;
-  aTri[12 * 3 + 0] = 6;
-  aTri[12 * 3 + 1] = 9;
-  aTri[12 * 3 + 2] = 4;
-  aTri[13 * 3 + 0] = 1;
-  aTri[13 * 3 + 1] = 6;
-  aTri[13 * 3 + 2] = 8;
-  aTri[14 * 3 + 0] = 7;
-  aTri[14 * 3 + 1] = 1;
-  aTri[14 * 3 + 2] = 10;
-  // ------
-  aTri[15 * 3 + 0] = 5;
-  aTri[15 * 3 + 1] = 2;
-  aTri[15 * 3 + 2] = 11;
-  aTri[16 * 3 + 0] = 2;
-  aTri[16 * 3 + 1] = 4;
-  aTri[16 * 3 + 2] = 9;
-  aTri[17 * 3 + 0] = 4;
-  aTri[17 * 3 + 1] = 8;
-  aTri[17 * 3 + 2] = 6;
-  aTri[18 * 3 + 0] = 8;
-  aTri[18 * 3 + 1] = 10;
-  aTri[18 * 3 + 2] = 1;
-  aTri[19 * 3 + 0] = 10;
-  aTri[19 * 3 + 1] = 5;
-  aTri[19 * 3 + 2] = 7;
+  aTri = std::vector<unsigned int>{
+      7, 11, 3,
+      11, 9, 3,
+      9, 6, 3,
+      6, 1, 3,
+      1, 7, 3,
+      2, 5, 0,
+      4, 2, 0,
+      8, 4, 0,
+      10, 8, 0,
+      5, 10, 0,
+      11, 7, 5,
+      9, 11, 2,
+      6, 9, 4,
+      1, 6, 8,
+      7, 1, 10,
+      5, 2, 11,
+      2, 4, 9,
+      4, 8, 6,
+      8, 10, 1,
+      10, 5, 7};
 }
 
 // ------------------------------------------------------
@@ -1067,7 +693,8 @@ template void delfem2::MeshHex3_Grid(
 // below: class
 
 template<typename REAL>
-delfem2::CPlane<REAL>::CPlane(const double n[3], const double o[3]) {
+delfem2::CPlane<REAL>::CPlane(
+    const double n[3], const double o[3]) {
   normal_[0] = n[0];
   normal_[1] = n[1];
   normal_[2] = n[2];
@@ -1078,9 +705,9 @@ delfem2::CPlane<REAL>::CPlane(const double n[3], const double o[3]) {
 }
 
 template<typename REAL>
-double delfem2::CPlane<REAL>::Projection
-    (double n[3],
-     double px, double py, double pz) const // normal
+double delfem2::CPlane<REAL>::Projection(
+    double n[3],
+    double px, double py, double pz) const // normal
 {
   n[0] = normal_[0];
   n[1] = normal_[1];
@@ -1091,8 +718,8 @@ double delfem2::CPlane<REAL>::Projection
 // -------------------------------------------------------
 
 template<typename REAL>
-delfem2::CSphere<REAL>::CSphere
-    (double r, const std::vector<double> &c, bool is_out) {
+delfem2::CSphere<REAL>::CSphere(
+    double r, const std::vector<double> &c, bool is_out) {
   cent_.resize(3);
   cent_[0] = c[0];
   cent_[1] = c[1];
@@ -1142,9 +769,10 @@ unsigned int delfem2::CSphere<REAL>::FindInOut(
 }
 
 template<typename REAL>
-bool delfem2::CSphere<REAL>::IntersectionPoint
-    (double p[3],
-     const double o[3], const double d[3]) const {
+bool delfem2::CSphere<REAL>::IntersectionPoint(
+    double p[3],
+    const double o[3],
+    const double d[3]) const {
   const double q[3] = {o[0] - cent_[0], o[1] - cent_[1], o[2] - cent_[2]};
   const double a = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
   const double b = q[0] * d[0] + q[1] * d[1] + q[2] * d[2];
@@ -1276,681 +904,4 @@ unsigned int delfem2::CTorus<REAL>::FindInOut(
   if (pd > 0) { return 0; }
   return 1;
 }
-
-// --------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-
-// ------------------------------------------------------------------------------------------------------
-
-/*
-double CSDF3_Combine::Projection
-(double px, double py, double pz,
- double n[3]) const // normal
-{
-  if( apCT.size() == 0 ) return -1;  
-  double max_dist;
-  max_dist = apCT[0]->Projection(px,py,pz, n);
-  for(unsigned int ipct=1;ipct<apCT.size();ipct++){
-    double dist0,n0[3];
-    dist0 = apCT[ipct]->Projection(px,py,pz, n0);
-    if( dist0 < max_dist ) continue;
-    max_dist = dist0;
-    n[0] = n0[0];
-    n[1] = n0[1];
-    n[2] = n0[2];
-  }  
-  return max_dist;
-}
- */
-
-/*
-void CSDF3_Combine::GetMesh
-(std::vector<unsigned int>& aTri,
- std::vector<double>& aXYZ,
- double elen) const
-{
-  aTri.size();
-  aXYZ.size();
-  for(unsigned int ipct=0;ipct<apCT.size();ipct++){  
-    std::vector<unsigned int> aTri0;
-    std::vector<double> aXYZ0;    
-    apCT[ipct]->GetMesh(aTri0,aXYZ0,elen);
-    const unsigned int i0 = aXYZ.size();
-    for(unsigned int itri0=0;itri0<aTri0.size();itri0++){
-      aTri.push_back(aTri0[itri0*3+0]+i0);
-      aTri.push_back(aTri0[itri0*3+1]+i0);
-      aTri.push_back(aTri0[itri0*3+2]+i0); 
-    }
-    for(unsigned int i=0;i<aXYZ0.size();i++){
-      aXYZ.push_back(aXYZ0[i]);
-    }
-  }
-}
- */
-
-/////
-
-
-/*
-double CSDF3_Transform::Projection
-(double px, double py, double pz,
- double n[3]) const // normal
-{
-	const double mat[3][3] = {
-		{ cos(psi)*cos(theta),	cos(psi)*sin(theta)*sin(phi)-sin(psi)*cos(phi), cos(psi)*sin(theta)*cos(phi)+sin(psi)*sin(phi) },
-		{ sin(psi)*cos(theta),	sin(psi)*sin(theta)*sin(phi)+cos(psi)*cos(phi), sin(psi)*sin(theta)*cos(phi)-cos(psi)*sin(phi) },
-		{ -sin(theta),			cos(theta)*sin(phi),							cos(theta)*cos(phi) } };
-	const double px0 = px-trans[0];
-	const double py0 = py-trans[1];
-	const double pz0 = pz-trans[2];	
-	const double px1 = mat[0][0]*px0 + mat[1][0]*py0 + mat[2][0]*pz0;
-	const double py1 = mat[0][1]*px0 + mat[1][1]*py0 + mat[2][1]*pz0;
-	const double pz1 = mat[0][2]*px0 + mat[1][2]*py0 + mat[2][2]*pz0;
-	double n0[3];
-	const double d = this->pCT->Projection(px1,py1,pz1, n0);
-	n[0] = mat[0][0]*n0[0] + mat[0][1]*n0[1] + mat[0][2]*n0[2];
-	n[1] = mat[1][0]*n0[0] + mat[1][1]*n0[1] + mat[1][2]*n0[2];
-	n[2] = mat[2][0]*n0[0] + mat[2][1]*n0[1] + mat[2][2]*n0[2];
-	return d;
-}
-*/
-
-/*
-void CSDF3_Transform::GetMesh
-(std::vector<unsigned int>& aTri,
- std::vector<double>& aXYZ,
- double elen) const
-{
-	const double mat[3][3] = {
-		{ cos(psi)*cos(theta),	cos(psi)*sin(theta)*sin(phi)-sin(psi)*cos(phi), cos(psi)*sin(theta)*cos(phi)+sin(psi)*sin(phi) },
-		{ sin(psi)*cos(theta),	sin(psi)*sin(theta)*sin(phi)+cos(psi)*cos(phi), sin(psi)*sin(theta)*cos(phi)-cos(psi)*sin(phi) },
-		{ -sin(theta),			cos(theta)*sin(phi),							cos(theta)*cos(phi) } };
-  this->pCT->GetMesh(aTri,aXYZ,elen);
-  const unsigned int nnode = aXYZ.size()/3;
-  for(unsigned int ino=0;ino<nnode;ino++){
-    double px0 = aXYZ[ino*3+0];                     
-    double py0 = aXYZ[ino*3+1];
-    double pz0 = aXYZ[ino*3+2]; 
-    const double px1 = mat[0][0]*px0 + mat[0][1]*py0 + mat[0][2]*pz0;
-    const double py1 = mat[1][0]*px0 + mat[1][1]*py0 + mat[1][2]*pz0;
-    const double pz1 = mat[2][0]*px0 + mat[2][1]*py0 + mat[2][2]*pz0;
-    const double px2 = px1+trans[0];
-    const double py2 = py1+trans[1];
-    const double pz2 = pz1+trans[2];	    
-    aXYZ[ino*3+0] = px2;
-    aXYZ[ino*3+1] = py2;
-    aXYZ[ino*3+2] = pz2;    
-  }
-}
-*/
-
-
-
-/*
-CSDF3_Mesh::CSDF3_Mesh(){
-  nnode_ = 0;	pXYZs_ = 0;
-  ntri_ = 0;	aTri_ = 0;
-  pBoxel_ = 0;
-  is_hole = false;
-}
-
-CSDF3_Mesh::~CSDF3_Mesh(){
-  if( pXYZs_  != 0 ){ delete pXYZs_; }
-  if( aTri_   != 0 ){ delete aTri_; }
-  if( pBoxel_ != 0 ){ delete pBoxel_; }
-}
-
-void CSDF3_Mesh::GetCenterWidth(double& cx, double& cy, double& cz,
-                                                 double& wx, double& wy, double& wz)
-{
-  double x_min = pXYZs_[0], x_max = pXYZs_[0];
-  double y_min = pXYZs_[1], y_max = pXYZs_[1];
-  double z_min = pXYZs_[2], z_max = pXYZs_[2];
-  for(unsigned int ino=1;ino<nnode_;ino++){
-    x_min = ( x_min < pXYZs_[ino*3+0] ) ? x_min : pXYZs_[ino*3+0];
-    x_max = ( x_max > pXYZs_[ino*3+0] ) ? x_max : pXYZs_[ino*3+0];
-    y_min = ( y_min < pXYZs_[ino*3+1] ) ? y_min : pXYZs_[ino*3+1];
-    y_max = ( y_max > pXYZs_[ino*3+1] ) ? y_max : pXYZs_[ino*3+1];
-    z_min = ( z_min < pXYZs_[ino*3+2] ) ? z_min : pXYZs_[ino*3+2];
-    z_max = ( z_max > pXYZs_[ino*3+2] ) ? z_max : pXYZs_[ino*3+2];
-  }
-  cx = (x_min+x_max)*0.5;
-  cy = (y_min+y_max)*0.5;
-  cz = (z_min+z_max)*0.5;
-  wx = x_max-x_min;
-  wy = y_max-y_min;
-  wz = z_max-z_min;
-}
-
-
- void CSignedDistanceField3D_Mesh::Load_Off(const std::string& fname)
- {
-	std::ifstream fin;
-	fin.open(fname.c_str());
-	if( fin.fail() ){
- std::cout << "Fail Read Fail" << std::endl;
- return;
-	}
-	std::string str;
-	fin >> str;
-	fin >> nnode_ >> ntri_ >> str;
-	std::cout << "Load Off Nnode: ntri :" << nnode_ << " " << ntri_ << std::endl;
-	pXYZs_ = new double [nnode_*3];
-	aTri_ = new unsigned int [ntri_*3];
-	for(unsigned int ino=0;ino<nnode_;ino++){
- double x,y,z;
- fin >> x >> y >> z;
- //		std::cout << ino << " " << x << " " << y << " " << z << std::endl;
- pXYZs_[ino*3+0] = x;
- pXYZs_[ino*3+1] = y;
- pXYZs_[ino*3+2] = z;
-	}
-	for(unsigned int itri=0;itri<ntri_;itri++){
- int itmp, i1, i2, i3;
- fin >> itmp >> i1 >> i2 >> i3;
- aTri_[itri*3+0] = i1;
- aTri_[itri*3+1] = i2;
- aTri_[itri*3+2] = i3;
- //		std::cout << itri << " " << itmp << " " << i1 << " " << i2 << " " << i3 << std::endl;
-	}
- }
- 
- void CSignedDistanceField3D_Mesh::Load_Gmv(const std::string& fname)
- {
-	std::cout << "File load " << fname << std::endl;
-	std::ifstream fin;
-	fin.open(fname.c_str());
-	if( fin.fail() ){
- std::cout << "Fail Read Fail" << std::endl;
- return;
-	}
-	std::string str;
-	fin >> str;
-	fin >> str;
-	fin >> str;
-	fin >> str;
-	fin >> str;
-	fin >> str;
-	fin >> str;
-	fin >> str;
-	fin >> str;
-	fin >> nnode_;
-	std::cout << "Nnode " << nnode_ << std::endl;
-	pXYZs_ = new double [nnode_*3];
- 
-	for(unsigned int ino=0;ino<nnode_;ino++){
- double x;
- fin >> x;
- pXYZs_[ino*3+0] = x;
-	}
-	for(unsigned int ino=0;ino<nnode_;ino++){
- double y;
- fin >> y;
- pXYZs_[ino*3+1] = y;
-	}
-	for(unsigned int ino=0;ino<nnode_;ino++){
- double z;
- fin >> z;
- pXYZs_[ino*3+2] = z;
-	}
-	
-	fin >> str;
-	fin >> ntri_;
-	std::cout << "Ntri " << ntri_ << std::endl;
-	aTri_ = new unsigned int [ntri_*3];
-	for(unsigned int itri=0;itri<ntri_;itri++){
- int itmp, i1, i2, i3;
- fin >> str >> itmp >> i1 >> i2 >> i3;
- aTri_[itri*3+0] = i1-1;
- aTri_[itri*3+1] = i2-1;
- aTri_[itri*3+2] = i3-1;
- //			std::cout << itri << " " << itmp << " " << i1 << " " << i2 << " " << i3 << std::endl;
-	}
- }
- 
- void CSignedDistanceField3D_Mesh::Load_Ply(const std::string& fname)
- {
-	std::cout << "File load " << fname << std::endl;
-	std::ifstream fin;
-	fin.open(fname.c_str());
-	if( fin.fail() ){
- std::cout << "Fail Read Fail" << std::endl;
- return;
-	}
- const unsigned int nbuff = 256;
- char buff[nbuff], buff1[nbuff], buff2[nbuff];
-	std::string str1,str2;
- fin.getline(buff,nbuff);  // ply
- fin.getline(buff,nbuff);  // format asi 1.0
- for(;;){
- fin.getline(buff,nbuff);
- if( strncmp(buff, "comment ", 8) != 0 ){ break; }
- }
- /////
- sscanf(buff,"%s %s %d",buff1,buff2,&nnode_);
-	std::cout << "Nnode " << nnode_ << std::endl;
- ////
- for(;;){
- fin.getline(buff,nbuff);
- if( strncmp(buff, "property ", 9) != 0 ){ break; }
- }
- sscanf(buff,"%s %s %d",buff1,buff2,&ntri_);
- std::cout << "NTri " << ntri_ << std::endl;
- /////
- fin.getline(buff,nbuff);  // property list int int vertex_indices
- fin.getline(buff,nbuff);  // end header
- ////
-	pXYZs_ = new double [nnode_*3];
-	for(unsigned int ino=0;ino<nnode_;ino++){
- double x,y,z;
- fin >> x >> y >> z;
- //		std::cout << ino << " " << x << " " << y << " " << z << std::endl;
- pXYZs_[ino*3+0] = x;
- pXYZs_[ino*3+1] = y;
- pXYZs_[ino*3+2] = z;
-	}
-	aTri_ = new unsigned int [ntri_*3];
-	for(unsigned int itri=0;itri<ntri_;itri++){
- int itmp, i1, i2, i3;
- fin >> itmp >> i1 >> i2 >> i3;
- aTri_[itri*3+0] = i1;
- aTri_[itri*3+1] = i2;
- aTri_[itri*3+2] = i3;
- //		std::cout << itri << " " << itmp << " " << i1 << " " << i2 << " " << i3 << std::endl;
-	}
- }
-
-void CSDF3_Mesh::SetMesh
-(const std::vector<unsigned int>& aTri,
- const std::vector<double>& aXYZ)
-{
-  ntri_ = (int)aTri.size()/3;
-  aTri_ = new unsigned int [ntri_*3];
-  for(unsigned int i=0;i<ntri_*3;i++){ this->aTri_[i] = aTri[i]; }
-  nnode_ = (int)aXYZ.size()/3;
-  pXYZs_ = new double [nnode_*3];
-  for(unsigned int i=0;i<nnode_*3;i++){ this->pXYZs_[i] = aXYZ[i]; }
-}
-
-
-// return penetration depth (inside is positive)
-double CSDF3_Mesh::Projection
-(double px, double py, double pz,
- double n[3]) const // normal outward
-{
-  unsigned int inout;
-  if( pBoxel_ != 0 ){
-    inout = this->FindInOut_Boxel(px,py,pz);
-  }
-  else {
-    inout = this->FindInOut(px,py,pz);
-  }
-  ////
-  double dist;
-  {
-    int itri;
-    double r0,r1;
-    dist = FindNearest(itri, r0, r1, px,py,pz);
-  }
-  if(      inout == 0 ){ return  dist; }
-  else if( inout == 1 ){ return -dist; }
-  return -dist;	// if not sure assume out
-}
-
-void CSDF3_Mesh::GetMesh
-(std::vector<unsigned int>& aTri,
- std::vector<double>& aXYZ,
- double elen) const
-{
-  aTri.resize(ntri_*3);
-  for(unsigned int i=0;i<ntri_*3;i++){ aTri[i] = this->aTri_[i]; }
-  aXYZ.resize(nnode_*3);
-  for(unsigned int i=0;i<nnode_*3;i++){ aXYZ[i] = this->pXYZs_[i]; }
-}
-
-
-// 0:in 1:out 2:not sure
-double CSDF3_Mesh::FindNearest
-(int& itri, double& r0, double& r1,
- double px, double py, double pz) const
-{
-  double dist = -1;
-  const double ps[3] = {px,py,pz};
-  if( pBoxel_ == 0 ){
-    for (unsigned int jtri = 0; jtri<ntri_; ++jtri){
-      const int i0 = aTri_[jtri*3+0];
-      const int i1 = aTri_[jtri*3+1];
-      const int i2 = aTri_[jtri*3+2];
-      double pn[3], s0, s1;
-      GetNearest_TrianglePoint3D(pn, s0, s1, ps, pXYZs_+i0*3, pXYZs_+i1*3, pXYZs_+i2*3);
-      const double d1 = Distance3D(pn, ps);
-      if (d1>=dist&&dist>0) continue;
-      dist = d1;
-      itri = jtri;
-      r0 = s0;
-      r1 = s1;
-    }
-  }
-  else{
-    pBoxel_->Find_NearestTriCand(ps,aIndTriCand);
-    for(unsigned int jjtri=0;jjtri<aIndTriCand.size();jjtri++){
-      const int jtri = aIndTriCand[jjtri];
-      const int i1 = aTri_[jtri*3+0];
-      const int i2 = aTri_[jtri*3+1];
-      const int i3 = aTri_[jtri*3+2];
-      double pn[3], s0, s1;
-      GetNearest_TrianglePoint3D(pn, s0, s1, ps, pXYZs_+i1*3, pXYZs_+i2*3, pXYZs_+i3*3);
-      const double d1 = Distance3D(pn, ps);
-      if (d1>=dist&&dist>0) continue;
-      dist = d1;
-      itri = jtri;
-      r0 = s0;
-      r1 = s1;
-    }
-  }
-//  std::cout << r0 << " " <<r1 << " " << dist << std::endl;
-  return dist;
-}
-
-// 0:in 1:out 2:not sure
-double CSignedDistanceField3D_Mesh::Distance_Mesh_Boxel
-(double px, double py, double pz,
- double n[3]) const
-{
-  assert( this->pBoxel_ != 0 );
-  double p0[3] = {px,py,pz};
-  double dist = pBoxel_->GetWidth()*3;
-  
-  pBoxel_->Find_NearestTriCand(p0,aIndTriCand);
-  //	std::cout << aIndTriCand.size() << std::endl;
-  
-  for(unsigned int iitri=0;iitri<aIndTriCand.size();iitri++){
-    unsigned int itri = aIndTriCand[iitri];
-    assert( itri < ntri_ );
-    const unsigned int i1 = aTri_[itri*3+0];
-    const unsigned int i2 = aTri_[itri*3+1];
-    const unsigned int i3 = aTri_[itri*3+2];
-    double pn[3];
-    GetNearest_TrianglePoint3D(pn, p0, pXYZs_+i1*3, pXYZs_+i2*3, pXYZs_+i3*3);
-    double d1 = Distance3D(pn, p0);
-    if (d1>=dist) continue;
-    dist = d1;
-    n[0] = pn[0]-p0[0];
-    n[1] = pn[1]-p0[1];
-    n[2] = pn[2]-p0[2];
-  }
-  {
-    const double invlen = 1.0/Length3D(n);
-    n[0] *= invlen;
-    n[1] *= invlen;
-    n[2] *= invlen;
-  }
-  return dist;
-}
-
-
-// 0:in 1:out 2:not sure
-unsigned int CSDF3_Mesh::FindInOut_IntersectionRay
-(double px, double py, double pz,
- const double dir[3]) const
-{
-  double p0[3] = {px,py,pz};
-  double p1[3] = {px+dir[0],py+dir[1],pz+dir[2]};
-  unsigned int icnt = 0;
-  for(unsigned int itri=0;itri<ntri_;itri++){
-    unsigned int i1 = aTri_[itri*3+0];
-    unsigned int i2 = aTri_[itri*3+1];
-    unsigned int i3 = aTri_[itri*3+2];
-    const double v0 = TetVolume3D(p0, pXYZs_+i1*3, pXYZs_+i2*3, pXYZs_+i3*3);
-    const double sign = ( v0 > 0 ) ? 1 : -1;
-    const double v1 = TetVolume3D(p0, pXYZs_+i2*3, pXYZs_+i3*3, p1)*sign;
-    const double v2 = TetVolume3D(p0, pXYZs_+i3*3, pXYZs_+i1*3, p1)*sign;
-    const double v3 = TetVolume3D(p0, pXYZs_+i1*3, pXYZs_+i2*3, p1)*sign;
-    if( fabs(v1+v2+v3) < 1.0e-10 ) return 2;	// p0 and p1 is on the triangle
-    double inv_v4 = 1.0/fabs(v1+v2+v3);
-    const double r1 = v1*inv_v4;
-    const double r2 = v2*inv_v4;
-    const double r3 = v3*inv_v4;
-    const double tol = 1.0e-2;
-    if( r1 < -tol || r2 < -tol || r3 < -tol ) continue;	// need tol  ( compare with fabs(v1+v2+v3)? )
-    if( r1 < tol || r2 < tol || r3 < tol ) return 2;	// on the edge
-    const double dir2[3] = {
-      pXYZs_[i1*3+0]*r1 + pXYZs_[i2*3+0]*r2 + pXYZs_[i3*3+0]*r3 - px,
-      pXYZs_[i1*3+1]*r1 + pXYZs_[i2*3+1]*r2 + pXYZs_[i3*3+1]*r3 - py,
-      pXYZs_[i1*3+2]*r1 + pXYZs_[i2*3+2]*r2 + pXYZs_[i3*3+2]*r3 - pz};
-    double dotdir = Dot3D(dir,dir2);
-    if( dotdir > 0 ) icnt++;
-  }
-  if( icnt % 2 == 0 ) return 1;
-  return 0;
-}
-
-
-// 0:in 1:out 2:not sure
-unsigned int CSDF3_Mesh::FindInOut_IntersectionRay_Boxel
-(double px, double py, double pz,
- const double dir[3]) const
-{
-  assert( pBoxel_ != 0 );
-  double p0[3] = {px,py,pz};
-  pBoxel_->Find_IntersecTriCand(p0,dir,aIndTriCand);
-  //	std::cout << aIndTriCand_.size() << std::endl;
-  double p1[3] = {px+dir[0],py+dir[1],pz+dir[2]};
-  unsigned int icnt = 0;
-  for(unsigned int iitri=0;iitri<aIndTriCand.size();iitri++){
-    unsigned int itri = aIndTriCand[iitri];
-    if( aFlgTriUsed[itri] == 1 ) continue;
-    aFlgTriUsed[itri] = 1;
-    unsigned int i1 = aTri_[itri*3+0];
-    unsigned int i2 = aTri_[itri*3+1];
-    unsigned int i3 = aTri_[itri*3+2];
-    const double v0 = TetVolume3D(p0, pXYZs_+i1*3, pXYZs_+i2*3, pXYZs_+i3*3);
-    const double sign = ( v0 > 0 ) ? 1 : -1;
-    const double v1 = TetVolume3D(p0, pXYZs_+i2*3, pXYZs_+i3*3, p1)*sign;
-    const double v2 = TetVolume3D(p0, pXYZs_+i3*3, pXYZs_+i1*3, p1)*sign;
-    const double v3 = TetVolume3D(p0, pXYZs_+i1*3, pXYZs_+i2*3, p1)*sign;
-    if( fabs(v1+v2+v3) < 1.0e-10 ) goto AMBIGUOUS;	// p0 and p1 is on the triangle
-    double inv_v4 = 1.0/fabs(v1+v2+v3);
-    const double r1 = v1*inv_v4;
-    const double r2 = v2*inv_v4;
-    const double r3 = v3*inv_v4;
-    const double tol = 1.0e-2;
-    if( r1 < -tol || r2 < -tol || r3 < -tol ) continue;	// need tol  ( compare with fabs(v1+v2+v3)? )
-    if( r1 < tol || r2 < tol || r3 < tol ) goto AMBIGUOUS;	// on the edge
-    double dir2[3] = {
-      pXYZs_[i1*3+0]*r1 + pXYZs_[i2*3+0]*r2 + pXYZs_[i3*3+0]*r3 - px,
-      pXYZs_[i1*3+1]*r1 + pXYZs_[i2*3+1]*r2 + pXYZs_[i3*3+1]*r3 - py,
-      pXYZs_[i1*3+2]*r1 + pXYZs_[i2*3+2]*r2 + pXYZs_[i3*3+2]*r3 - pz};
-    double dotdir = Dot3D(dir,dir2);
-    if( dotdir > 0 ) icnt++;
-  }
-  for(unsigned int iitri=0;iitri<aIndTriCand.size();iitri++){
-    unsigned int itri = aIndTriCand[iitri];
-    aFlgTriUsed[itri] = 0;
-  }
-  //	std::cout << "Cunt" << icnt << std::endl;
-  if( icnt % 2 == 0 ) return 1;
-  return 0;
-AMBIGUOUS:
-  for(unsigned int iitri=0;iitri<aIndTriCand.size();iitri++){
-    unsigned int itri = aIndTriCand[iitri];
-    aFlgTriUsed[itri] = 0;
-  }
-  return 2;
-}
-
-
-void CSDF3_Mesh::BuildBoxel()
-{
-  //	double c[3] = {0.0542,-0.04374532,0.06234};
-  double c[3] = {0,0,0};
-  double w[3] = {0,0,0};
-  this->GetCenterWidth(c[0],c[1],c[2], w[0],w[1],w[2]);
-  double width = w[0];
-  width = ( w[1] > width ) ? w[1] : width;
-  width = ( w[2] > width ) ? w[2] : width;
-  if( pBoxel_ != 0 ){ delete pBoxel_; }
-  pBoxel_ = new CSpatialHash_Grid3D(32,c,width*0.5*1.13454325);
-  for(unsigned int itri=0;itri<ntri_;itri++){
-    unsigned int i0 = aTri_[itri*3+0];
-    unsigned int i1 = aTri_[itri*3+1];
-    unsigned int i2 = aTri_[itri*3+2];
-    pBoxel_->AddTri(itri, pXYZs_+i0*3, pXYZs_+i1*3, pXYZs_+i2*3);
-  }
-  if( !is_hole ){ pBoxel_->BuildOutFlg(); }
-  aFlgTriUsed.clear();
-  aFlgTriUsed.resize(ntri_,0);
-  aIndTriCand.reserve(2048);
-}
-
-unsigned int CSDF3_Mesh::FindInOut(double px, double py, double pz) const
-{
-  unsigned int icnt_in  = 0;
-  unsigned int icnt_out = 0;
-  for(unsigned int i=0;i<10;i++){
-    		const double theta = i*6.28/10+0.1431432154;
-    		const double dir[3] = { sin(theta)*cos(theta*2), sin(theta)*sin(theta*2), cos(theta) };
-//    const double dir[3] = { 1, 0, 0 };
-    unsigned int ires = FindInOut_IntersectionRay(px,py,pz, dir);
-    if( ires != 2 && !is_hole ){ return ires; }
-    if( ires == 0 ) icnt_in++;
-    if( ires == 1 ) icnt_out++;
-  }
-  if( icnt_in > 5 )  return 0;
-  if( icnt_out > 5 ) return 1;
-  return 2;
-}
-
-unsigned int CSDF3_Mesh::FindInOut_Boxel
-(double px, double py, double pz) const
-{
-  assert( pBoxel_ != 0 );
-  double p[3] = { px, py, pz };
-  if( pBoxel_->IsOut(p) && !is_hole ){ return 1; }
-  unsigned int icnt_in  = 0;
-  unsigned int icnt_out = 0;
-  for(unsigned int i=0;i<10;i++){
-    const double theta = i*6.28/10+0.15432452356673;
-    const double dir[3] = { sin(theta)*cos(theta*2), sin(theta)*sin(theta*2), cos(theta) };
-    //		const double dir[3] = { -0.35, 0.1342, 0.3 };
-    unsigned int ires  = FindInOut_IntersectionRay_Boxel(px,py,pz, dir);
-    //		unsigned int ires1 = FindInOut_IntersectionRay(px,py,pz, dir);
-    if( ires != 2 && !is_hole ){ return ires; }
-    if( ires == 0 ) icnt_in++;
-    if( ires == 1 ) icnt_out++;
-  }
-  if( icnt_in > 5 )  return 0;
-  if( icnt_out > 5 ) return 1;
-  return 2;
-}
-
-void CSDF3_Mesh::Translate(double x, double y, double z)
-{
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] += x;
-    pXYZs_[ino*3+1] += y;
-    pXYZs_[ino*3+2] += z;
-  }
-}
-
-
-bool IsIntersecTri3D
-(double& r0, double &r1, double psec[3],
- const double ps[3], const double dir[3],
- const double q0[3], const double q1[3], const double q2[3])
-{
-  double pe[3] = {ps[0]+dir[0],ps[1]+dir[1],ps[2]+dir[2]};
-  const double v012 = TetVolume3D(ps, q0,q1,q2);
-  const double sign = ( v012 > 0 ) ? 1 : -1;
-  const double v0 = TetVolume3D(ps, q1, q2, pe)*sign;
-  const double v1 = TetVolume3D(ps, q2, q0, pe)*sign;
-  const double v2 = TetVolume3D(ps, q0, q1, pe)*sign;
-  double inv_v4 = 1.0/fabs(v0+v1+v2);
-  r0 = v0*inv_v4;
-  r1 = v1*inv_v4;
-  const double r2 = (1-r0-r1);
-  const double tol = 1.0e-2;
-  if( r0 < -tol || r1 < -tol || r2 < -tol ) return false;	// need tol  ( compare with fabs(v1+v2+v3)? )
-  psec[0] = q0[0]*r0 + q1[0]*r1 + q2[0]*r2;
-  psec[1] = q0[1]*r0 + q1[1]*r1 + q2[1]*r2;
-  psec[2] = q0[2]*r0 + q1[2]*r1 + q2[2]*r2;
-  double dir2[3] = { psec[0]-ps[0], psec[1]-ps[1], psec[2]-ps[2] };
-  double dotdir = Dot3D(dir,dir2);
-  if( dotdir < 0 ) return false;
-  return true;
-}
-
-bool CSDF3_Mesh::FindIntersectionTri
-(double psec[3], int& itri, double& r0, double& r1,
- const double org[3], const double dir[3]) const
-{
-  if( pBoxel_ != 0 ){
-    std::vector<unsigned int> aIndTriCand;
-    pBoxel_->Find_IntersecTriCand(org,dir, aIndTriCand);
-    if( aIndTriCand.empty() ) return false;
-    double min_dist = -1;
-    for(unsigned int ijtri=0;ijtri<aIndTriCand.size();ijtri++){
-      const int jtri = aIndTriCand[ijtri];
-      const int i0 = aTri_[jtri*3+0];
-      const int i1 = aTri_[jtri*3+1];
-      const int i2 = aTri_[jtri*3+2];
-      double s0, s1, qsec[3];
-      bool res = IsIntersecTri3D(s0, s1, qsec, org, dir, pXYZs_+i0*3, pXYZs_+i1*3, pXYZs_+i2*3);
-      if( !res ) continue;
-      double dist = Distance3D(org, qsec);
-      if( min_dist < 0 || dist < min_dist ){
-        min_dist = dist;
-        itri = jtri;
-        r0 = s0;
-        r1 = s1;
-        psec[0] = qsec[0];
-        psec[1] = qsec[1];
-        psec[2] = qsec[2];
-      }
-    }
-    if( min_dist >0 ) return true;
-  }
-  //////////////////////////////////////
-  else {
-    double min_dist = -1;
-    for(unsigned int jtri=0;jtri<ntri_;jtri++){
-      unsigned int i0 = aTri_[jtri*3+0];
-      unsigned int i1 = aTri_[jtri*3+1];
-      unsigned int i2 = aTri_[jtri*3+2];
-      double s0, s1, qsec[3];
-      bool res = IsIntersecTri3D(s0, s1, qsec, org, dir, pXYZs_+i0*3, pXYZs_+i1*3, pXYZs_+i2*3);
-      if( !res ) continue;
-      double dist = Distance3D(org, qsec);
-      if( min_dist < 0 || dist < min_dist ){
-        min_dist = dist;
-        itri = jtri;
-        r0 = s0;
-        r1 = s1;
-        psec[0] = qsec[0];
-        psec[1] = qsec[1];
-        psec[2] = qsec[2];
-      }
-    }
-    if( min_dist >0 ) return true;
-  }
-  
-  return false;
-}
-
-
-bool CSDF3_Mesh::IntersectionPoint
-(double p[3],
- const double org[3], const double dir[3]) const
-{
-  double r0, r1;
-  int itri;
-  bool res = this->FindIntersectionTri(p,itri,r0,r1,org,dir);
-  return res;
-}
-*/
-
-////////////////
-
 

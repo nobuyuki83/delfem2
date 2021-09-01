@@ -26,16 +26,11 @@
 #include "delfem2/mshsubdiv.h"
 #include "delfem2/mshprimitive.h"
 
-
 namespace dfm2 = delfem2;
-
-#if defined(_MSC_VER)
-#pragma warning( disable : 4100 )
-#endif
 
 // --------------------------------------------------
 
-int main(int argc, char *argv[]) {
+int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

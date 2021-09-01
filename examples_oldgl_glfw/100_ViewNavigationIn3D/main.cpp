@@ -21,7 +21,6 @@
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 
-
 int main()
 {
   delfem2::glfw::CViewer3 viewer;

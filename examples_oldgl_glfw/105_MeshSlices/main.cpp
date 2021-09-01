@@ -142,9 +142,7 @@ void Hoge(){
   }
 }
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
