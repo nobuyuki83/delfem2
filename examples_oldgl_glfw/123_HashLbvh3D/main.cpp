@@ -87,13 +87,17 @@ int main(
     }
     std::vector<unsigned int> aSortedId;
     std::vector<std::uint32_t> aSortedMc;
-    dfm2::SortedMortenCode_Points3(aSortedId, aSortedMc,
-                                   aXYZ, min_xyz, max_xyz);
-    dfm2::BVHTopology_Morton(aNodeBVH,
-                             aSortedId, aSortedMc);
-    dfm2::CLeafVolumeMaker_Point<dfm2::CBV3_Sphere<double>, double> lvm(aXYZ.data(), aXYZ.size() / 3);
-    dfm2::BVH_BuildBVHGeometry(aAABB,
-                               0, aNodeBVH, lvm);
+    dfm2::SortedMortenCode_Points3(
+        aSortedId, aSortedMc,
+        aXYZ, min_xyz, max_xyz);
+    dfm2::BVHTopology_Morton(
+        aNodeBVH,
+        aSortedId, aSortedMc);
+    dfm2::CLeafVolumeMaker_Point<dfm2::CBV3_Sphere<double>, double> lvm(
+        aXYZ.data(), aXYZ.size() / 3);
+    dfm2::BVH_BuildBVHGeometry(
+        aAABB,
+        0, aNodeBVH, lvm);
     {
       dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
       dfm2::Check_MortonCode_RangeSplit(aSortedMc);

@@ -21,8 +21,6 @@
 #include "delfem2/vec3.h"
 #include "delfem2/specialfuncs.h"
 
-
-
 namespace dfm2 = delfem2;
 
 // -----------------------------------
@@ -139,9 +137,7 @@ double evaluateSH(double x, double y, double z)
   return a[ish];
 }
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();

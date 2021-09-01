@@ -40,9 +40,7 @@ static void myGlVertex3d(
   ::glVertex3d(v.x, v.y, v.z);
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

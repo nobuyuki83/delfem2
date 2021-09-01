@@ -29,9 +29,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------
 
-int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+int main() {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aElm;
   // ----------------
