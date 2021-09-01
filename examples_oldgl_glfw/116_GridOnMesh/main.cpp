@@ -19,7 +19,7 @@
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
 #include "delfem2/glfw/viewer3.h"
@@ -56,30 +56,36 @@ std::vector<dfm2::CPtElm2<double>> aPES1;
 
 void InitializeProblem() {
   {
-    dfm2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
-                   aXYZ, aTri);
+    dfm2::Read_Ply(
+        std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
+        aXYZ, aTri);
     double cx, cy, cz, wx, wy, wz;
-    dfm2::CenterWidth_Points3(cx, cy, cz, wx, wy, wz,
-                              aXYZ);
-    dfm2::Translate_Points3(aXYZ,
-                            -cx, -cy, -cz);
+    dfm2::CenterWidth_Points3(
+        cx, cy, cz, wx, wy, wz,
+        aXYZ);
+    dfm2::Translate_Points3(
+        aXYZ,
+        -cx, -cy, -cz);
     double wm = wx;
     wm = (wx > wm) ? wx : wm;
     wm = (wy > wm) ? wy : wm;
     wm = (wz > wm) ? wz : wm;
     dfm2::Scale_PointsX(aXYZ,
                         1.5 / wm);
-    dfm2::Rotate_Points3(aXYZ,
-                         -M_PI * 0.5, 0.0, 0.0);
+    dfm2::Rotate_Points3(
+        aXYZ,
+        -M_PI * 0.5, 0.0, 0.0);
   }
   {
     std::vector<unsigned int> elsup_ind, elsup;
-    dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
-                                      aTri.data(), aTri.size() / 3, 3, aXYZ.size() / 3);
-    dfm2::ElSuEl_MeshElem(aElSuTri,
-                          aTri.data(), aTri.size() / 3, 3,
-                          elsup_ind, elsup,
-                          3, 2, dfm2::noelElemFace_Tri);
+    dfm2::JArray_ElSuP_MeshElem(
+        elsup_ind, elsup,
+        aTri.data(), aTri.size() / 3, 3, aXYZ.size() / 3);
+    dfm2::ElSuEl_MeshElem(
+        aElSuTri,
+        aTri.data(), aTri.size() / 3, 3,
+        elsup_ind, elsup,
+        3, 2, dfm2::noelElemFace_Tri);
     assert(aElSuTri.size() == aTri.size());
   }
 }

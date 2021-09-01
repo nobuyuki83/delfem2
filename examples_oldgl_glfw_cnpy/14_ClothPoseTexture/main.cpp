@@ -17,7 +17,7 @@
 #include "delfem2/rig_geo3.h"
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_ioobj.h"
 #include "delfem2/points.h"
 //
 #define GL_SILENCE_DEPRECATION

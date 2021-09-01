@@ -19,7 +19,7 @@
 
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/color.h"
 #include "delfem2/clusterpoints.h"

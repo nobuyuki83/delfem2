@@ -9,7 +9,8 @@
 
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_ioobj.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/points.h"
 #include "delfem2/slice.h"
 #include "delfem2/gridvoxel.h"

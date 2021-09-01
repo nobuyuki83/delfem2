@@ -22,7 +22,7 @@
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/funcs.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_ioobj.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/file.h"

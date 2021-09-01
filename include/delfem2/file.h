@@ -65,4 +65,4 @@ DFM2_INLINE std::string LoadFile(
 #  include "delfem2/file.cpp"
 #endif
 
-#endif /* FUNCS_H */
+#endif

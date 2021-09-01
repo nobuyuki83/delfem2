@@ -18,7 +18,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/mshio.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/mshuni.h"

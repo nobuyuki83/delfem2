@@ -21,22 +21,19 @@
 #include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/v3q.h"
-
-
 
 namespace dfm2 = delfem2;
 
 // -----------------------------
 
-void myGlutDisplay
- (const std::vector<dfm2::CDynPntSur>& aPo,
-  const std::vector<dfm2::CDynTri>& aTri,
-  const std::vector<dfm2::CVec3d>& aVec3)
+void myGlutDisplay(
+    const std::vector<dfm2::CDynPntSur>& aPo,
+    const std::vector<dfm2::CDynTri>& aTri,
+    const std::vector<dfm2::CVec3d>& aVec3)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
@@ -99,11 +96,11 @@ double MinimizeQuad(double* pos,
 }
 
 
-void QuadErrorMetric_MeshDTri3
- (std::vector<double>& aSymMat4,
-  std::vector<dfm2::CDynPntSur>& aDP,
-  std::vector<dfm2::CDynTri>& aDTri,
-  std::vector<dfm2::CVec3d>& aVec3)
+void QuadErrorMetric_MeshDTri3(
+    std::vector<double>& aSymMat4,
+    std::vector<dfm2::CDynPntSur>& aDP,
+    std::vector<dfm2::CDynTri>& aDTri,
+    std::vector<dfm2::CVec3d>& aVec3)
 {
   const unsigned int np = aDP.size();
   aSymMat4.assign(np*10, 0.0);
@@ -111,9 +108,9 @@ void QuadErrorMetric_MeshDTri3
     std::vector< std::pair<unsigned int,unsigned int> > aTriSurPo;
     dfm2::GetTriArrayAroundPoint(aTriSurPo,
                                  ip,aDP,aDTri);
-    for(unsigned iit=0;iit<aTriSurPo.size();++iit){
-      unsigned int it0 = aTriSurPo[iit].first;
-      unsigned int ino0 = aTriSurPo[iit].second;
+    for(auto & iit : aTriSurPo){
+      unsigned int it0 = iit.first;
+      unsigned int ino0 = iit.second;
       assert( aDTri[it0].v[ino0] == ip );
       const dfm2::CVec3d n0 = dfm2::UnitNormal_DTri3(it0, aDTri, aVec3);
       const double a0 = n0.x;
@@ -141,24 +138,21 @@ class CollapseSchedule {
 public:
   CollapseSchedule(unsigned int iv1,
                    unsigned int iv2,
-                   const double pos[3]): iv1(iv1), iv2(iv2)
-  {
-    p[0] = pos[0];
-    p[1] = pos[1];
-    p[2] = pos[2];
-  }
+                   const double pos[3])
+                   : iv1(iv1), iv2(iv2), p{pos[0], pos[1], pos[2]}
+  {}
 public:
   unsigned int iv1, iv2;
   double p[3];
 };
 
-void RemoveOnePoint
- (std::vector<dfm2::CDynPntSur>& aDP,
-  std::vector<dfm2::CDynTri>& aDTri,
-  std::vector<dfm2::CVec3d>& aVec3,
-  std::map<double, CollapseSchedule>& cost2edge,
-  std::map<std::pair<unsigned int, unsigned int>,double>& edge2cost,
-  std::vector<double> aSymMat4)
+void RemoveOnePoint(
+    std::vector<dfm2::CDynPntSur>& aDP,
+    std::vector<dfm2::CDynTri>& aDTri,
+    std::vector<dfm2::CVec3d>& aVec3,
+    std::map<double, CollapseSchedule>& cost2edge,
+    std::map<std::pair<unsigned int, unsigned int>,double>& edge2cost,
+    std::vector<double> aSymMat4)
 {
   unsigned int itri0;
   unsigned int ied0 = UINT_MAX;
@@ -215,8 +209,7 @@ void RemoveOnePoint
   std::vector<unsigned int> aIP;
   dfm2::FindPointAroundPoint(aIP,
                              ip_sty,aDP,aDTri);
-  for(unsigned int iip=0;iip<aIP.size();++iip){
-    unsigned int jp0 = aIP[iip];
+  for(unsigned int jp0 : aIP){
     unsigned int iv1, iv2;
     if( ip_sty < jp0 ){
       iv1 = ip_sty;
@@ -241,9 +234,7 @@ void RemoveOnePoint
 }
 
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   std::vector<dfm2::CDynPntSur> aDP;
   std::vector<dfm2::CDynTri> aDTri;
@@ -255,7 +246,7 @@ int main(
 		std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
 		aXYZ0,aTri0);
     dfm2::Normalize_Points3(aXYZ0,2.0);
-    const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
+    const auto np = static_cast<unsigned int>(aXYZ0.size()/3);
     aDP.resize(np);
     aVec3.resize(np);
     for(unsigned int ipo=0;ipo<aDP.size();ipo++){
@@ -279,10 +270,10 @@ int main(
   std::map<double, CollapseSchedule> cost2edge;
   std::map<std::pair<unsigned int, unsigned int>,double> edge2cost;
   {
-    for(unsigned int itri=0;itri<aDTri.size();++itri){
+    for(auto & itri : aDTri){
       for(unsigned int ied=0;ied<3;++ied){
-        unsigned int iv1 = aDTri[itri].v[(ied+1)%3];
-        unsigned int iv2 = aDTri[itri].v[(ied+2)%3];
+        unsigned int iv1 = itri.v[(ied+1)%3];
+        unsigned int iv2 = itri.v[(ied+2)%3];
         if( iv1 > iv2 ){ continue; }
         const double* Q1 = aSymMat4.data()+iv1*10;
         const double* Q2 = aSymMat4.data()+iv2*10;
