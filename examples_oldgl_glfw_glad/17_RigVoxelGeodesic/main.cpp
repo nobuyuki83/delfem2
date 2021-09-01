@@ -23,7 +23,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/geoproximity3_v3.h"
 #include "delfem2/rig_geo3.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridvoxel.h"
 #include "delfem2/points.h"

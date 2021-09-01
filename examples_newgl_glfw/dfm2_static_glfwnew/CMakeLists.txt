@@ -54,7 +54,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/points.h                    ${DELFEM2_INC}/points.cpp
     ${DELFEM2_INC}/mshuni.h                    ${DELFEM2_INC}/mshuni.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
-    ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
+    ${DELFEM2_INC}/msh_ioobj.h                 ${DELFEM2_INC}/msh_ioobj.cpp
+    ${DELFEM2_INC}/msh_iomisc.h                ${DELFEM2_INC}/msh_iomisc.cpp    
     ${DELFEM2_INC}/mshprimitive.h              ${DELFEM2_INC}/mshprimitive.cpp
     ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
 

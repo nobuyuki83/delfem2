@@ -17,7 +17,7 @@
 
 #include "delfem2/expmap_geo3dijk.h"
 #include "delfem2/points.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
 #include "delfem2/imgio.h"

@@ -20,7 +20,7 @@
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/isrf_iss.h"
 #include "delfem2/srchbv3sphere.h"

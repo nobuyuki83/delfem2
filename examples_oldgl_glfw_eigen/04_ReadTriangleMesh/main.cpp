@@ -17,7 +17,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/eigen/msh_io.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_ioobj.h"
 #include "delfem2/geoconvhull3.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"

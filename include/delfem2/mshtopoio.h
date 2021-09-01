@@ -13,7 +13,8 @@
 #include <vector>
 #include <fstream>
 
-#include "delfem2/mshio.h"
+#include "delfem2/msh_ioobj.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshsubdiv.h"
@@ -147,5 +148,9 @@ public:
 
 void Load_Mtl(const std::string& fname,
               std::vector<CMaterial>& aMtl);
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/mshtopoio.cpp"
+#endif
 
 #endif

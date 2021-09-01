@@ -5,8 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
+#include <iostream>
+#include <cmath>
+#include <fstream>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -14,13 +18,9 @@
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/vec3.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_ioobj.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <cmath>
-#include <fstream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
@@ -40,7 +40,7 @@ std::string LoadFile(
 
 // ------------------------------------------------------
 
-int main(int argc,char* argv[])
+int main()
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;

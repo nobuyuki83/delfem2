@@ -9,8 +9,8 @@
  * @brief functions for mesh export/import
  */
 
-#ifndef DFM2_MSHIO_H
-#define DFM2_MSHIO_H
+#ifndef DFM2_MSH_IOMISC_H
+#define DFM2_MSH_IOMISC_H
 
 #include <cstdio>
 #include <vector>
@@ -76,103 +76,6 @@ DFM2_INLINE void Read_Ply(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aTri);
 
-// ----------
-// Obj
-
-
-DFM2_INLINE void Write_Obj(
-    const std::string &str,
-    const double *aXYZ,
-    int nXYZ,
-    const unsigned int *aTri,
-    int nTri);
-
-DFM2_INLINE void Write_Obj_Quad(
-    const std::string &str,
-    const std::vector<double> &aXYZ,
-    const std::vector<int> &aQuad);
-
-/**
- * write obj file for the mesh the elemenet is a jagged array (tris and quads are mixed).
- * @param str
- * @param aXYZ
- * @param aElemInd
- * @param aElem
- */
-DFM2_INLINE void Write_Obj_ElemJArray(
-    const std::string &str, // mixed elem
-    const std::vector<double> &aXYZ,
-    const std::vector<int> &aElemInd,
-    const std::vector<int> &aElem);
-
-
-/**
- * to open the obj file with Blender, select the option "Split by Group".
- * @param pathf
- * @param aXYZ
- * @param aTri
- * @param aFlgTri
- */
-DFM2_INLINE void Write_Obj_TriFlag(
-    const std::string &pathf,
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri,
-    std::vector<unsigned int> &aFlgTri);
-
-DFM2_INLINE void Write_Obj(
-    const std::string &str,
-    const std::vector<std::pair<std::vector<double>, std::vector<unsigned int> > > &aMesh);
-
-DFM2_INLINE void Read_Obj(
-    const std::string &fname,
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri);
-
-/**
- * Read Obj file for quad-only mesh
- * @param fname
- * @param aXYZ
- * @param aQuad
- */
-DFM2_INLINE void Read_Obj_MeshQuad3(
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aQuad,
-    const std::string &fname);
-
-DFM2_INLINE void Read_Obj2(
-    const std::string &fname,
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri);
-
-DFM2_INLINE void Read_Obj3(
-    const std::string &fname,
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri);
-
-class CTriGroup {
- public:
-  std::string name_group;
-  std::string name_mtl;
-  int imtl;
-  std::vector<unsigned int> aTriVtx;
-  std::vector<unsigned int> aTriNrm;
-};
-
-/**
- * Load wavefront Obj file with triangle group
- * @param[in] fname
- * @param[out] fname_mtl
- * @param[out] aXYZ
- * @param[out] aNorm
- * @param[out] aTriGroup
- */
-DFM2_INLINE void Load_Obj(
-    const std::string &fname,
-    std::string &fname_mtl,
-    std::vector<double> &aXYZ,
-    std::vector<double> &aNorm,
-    std::vector<CTriGroup> &aTriGroup);
-
 // -----------
 // VTK
 
@@ -194,7 +97,7 @@ DFM2_INLINE void WriteVTK_Cells(
     std::ofstream &fout,
     int vtk_elem_type,
     const int *aElem,
-    const int nElem);
+    int nElem);
 
 DFM2_INLINE void WriteVTK_Cells(
     std::ofstream &fout,
@@ -239,7 +142,7 @@ DFM2_INLINE void Read_MeshTri3D_Nas(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/mshio.cpp"
+#  include "delfem2/msh_iomisc.cpp"
 #endif
 
 #endif // DFM2_MESHIO_H

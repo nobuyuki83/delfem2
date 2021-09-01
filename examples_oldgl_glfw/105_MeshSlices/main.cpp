@@ -22,7 +22,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/points.h"
-#include "delfem2/mshio.h"
+#include "delfem2/msh_iomisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
 #include "delfem2/slice.h"
@@ -88,8 +88,9 @@ void Hoge(){
            aXYZ,aTri);
   delfem2::Normalize_Points3(aXYZ);
   std::vector<unsigned int> aTriSuTri;
-  ElSuEl_MeshElem(aTriSuTri,
-                  aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ.size()/3);
+  ElSuEl_MeshElem(
+      aTriSuTri,
+      aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ.size()/3);
   
   
   std::vector<double> aHeight;

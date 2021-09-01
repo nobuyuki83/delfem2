@@ -19,8 +19,7 @@
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/mshio.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_ioobj.h"
 #include "delfem2/points.h"
 #include "delfem2/gridvoxel.h"
 
@@ -79,7 +78,7 @@ void Draw_CGrid3(
 
 // ------------------------------------------------------
 
-int main(int argc, char *argv[]) {
+int main() {
   std::vector<double> aXYZ1;
   std::vector<unsigned int> aTri;
 

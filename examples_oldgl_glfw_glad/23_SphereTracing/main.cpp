@@ -5,15 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
+#include <iostream>
+#include <cmath>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/funcs.h"
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <cmath>
 
 // ----------------------------------------------
 
