@@ -90,29 +90,30 @@ DFM2_INLINE void Read_Obj3(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aTri);
 
-class CTriGroup {
+class TriGroupWavefrontObj {
  public:
   std::string name_group;
   std::string name_mtl;
-  int imtl = -1;
-  std::vector<unsigned int> aTriVtx;
-  std::vector<unsigned int> aTriNrm;
+  int idx_material = -1;
+  std::vector<unsigned int> vec_idx_vtx;
+  std::vector<unsigned int> vec_idx_tex;
+  std::vector<unsigned int> vec_idx_nrm;
 };
 
 /**
  * Load wavefront Obj file with triangle group
  * @param[in] fname
  * @param[out] fname_mtl
- * @param[out] aXYZ
- * @param[out] aNorm
- * @param[out] aTriGroup
+ * @param[out] vec_xyz
+ * @param[out] vec_nrm
+ * @param[out] vec_tri_group
  */
 DFM2_INLINE void Load_Obj(
     const std::string &fname,
     std::string &fname_mtl,
-    std::vector<double> &aXYZ,
-    std::vector<double> &aNorm,
-    std::vector<CTriGroup> &aTriGroup);
+    std::vector<double> &vec_xyz,
+    std::vector<double> &vec_nrm,
+    std::vector<TriGroupWavefrontObj> &vec_tri_group);
 
 
 } // namespace delfem2

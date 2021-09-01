@@ -19,32 +19,6 @@
 
 namespace delfem2::msh_ioobj {
 
-DFM2_INLINE void UnitNormalAreaTri3D_(
-    double *n, double &a,
-    const double *v1, const double *v2, const double *v3) {
-  n[0] = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]);
-  n[1] = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
-  n[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
-  a = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) * 0.5;
-  const double invlen = 0.5 / a;
-  n[0] *= invlen;
-  n[1] *= invlen;
-  n[2] *= invlen;
-}
-
-// probably std::stroi is safer to use but it is only for C++11
-DFM2_INLINE int MyStoi_(const std::string &str) {
-  char *e;
-  long d = std::strtol(str.c_str(), &e, 0);
-  return (int) d;
-}
-
-DFM2_INLINE double MyStod_(const std::string &str) {
-  char *e;
-  double d = std::strtod(str.c_str(), &e);
-  return d;
-}
-
 DFM2_INLINE void ParseVtxObj_(
     int &ip,
     int &it,
@@ -55,7 +29,7 @@ DFM2_INLINE void ParseVtxObj_(
   in = -1;
   std::size_t n = strlen(str);
   int icnt = 0;
-  int aloc[3];
+  unsigned int aloc[3];
   for (unsigned int i = 0; i < n; ++i) {
     if (str[i] != '/') { continue; }
     str[i] = '\0';
@@ -63,25 +37,21 @@ DFM2_INLINE void ParseVtxObj_(
     icnt++;
   }
   ip = std::stoi(str);
-//  sscanf(str,"%d",&ip);
   ip--;
   if (icnt == 0) {
     return;
   }
   if (icnt == 1) {
     it = std::stoi(str + aloc[0] + 1);
-//    sscanf(str+aloc[0]+1,"%d",&it);
     it--;
     return;
   }
   if (icnt == 2) {
     if (aloc[1] - aloc[0] != 1) {
       it = std::stoi(str + aloc[0] + 1);
-//      sscanf(str+aloc[0]+1,"%d",&it);
       it--;
     }
     in = std::stoi(str + aloc[1] + 1);
-//    sscanf(str+aloc[1]+1,"%d",&in);
     in--;
     return;
   }
@@ -365,7 +335,7 @@ DFM2_INLINE void delfem2::Read_Obj3(
     }
     if (buff[0] == 'f') {
       int nv = 0;
-      char *aPtr[4] = {0, 0, 0, 0};
+      char *aPtr[4] = {nullptr, nullptr, nullptr, nullptr};
       for (int i = 0; i < BUFF_SIZE; ++i) {
         if (buff[i] == '\0') { break; }
         if (buff[i] == ' ') {
@@ -411,20 +381,20 @@ DFM2_INLINE void delfem2::Read_Obj3(
 DFM2_INLINE void delfem2::Load_Obj(
     const std::string &fname,
     std::string &fname_mtl,
-    std::vector<double> &aXYZ,
-    std::vector<double> &aNorm,
-    std::vector<CTriGroup> &aTriGroup) {
+    std::vector<double> &vec_xyz,
+    std::vector<double> &vec_nrm,
+    std::vector<TriGroupWavefrontObj> &vec_tri_group) {
   std::ifstream fin;
   fin.open(fname.c_str());
   if (fin.fail()) {
     std::cout << "File Read Fail: " << fname << std::endl;
     return;
   }
-  aXYZ.clear();
-  aTriGroup.clear();
-  aNorm.clear();
-  aXYZ.reserve(256 * 16);
-  aTriGroup.reserve(100);
+  vec_xyz.clear();
+  vec_tri_group.clear();
+  vec_nrm.clear();
+  vec_xyz.reserve(256 * 16);
+  vec_tri_group.reserve(100);
   const int BUFF_SIZE = 256;
   char buff[BUFF_SIZE];
   fname_mtl.clear();
@@ -442,49 +412,49 @@ DFM2_INLINE void delfem2::Load_Obj(
       double x, y, z;
       std::istringstream is(buff);
       is >> str >> x >> y >> z;
-//      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
       if (buff[1] == ' ') { // vertex
-        aXYZ.push_back(x);
-        aXYZ.push_back(y);
-        aXYZ.push_back(z);
+        vec_xyz.push_back(x);
+        vec_xyz.push_back(y);
+        vec_xyz.push_back(z);
       } else if (buff[1] == 'n') { // noraml
         double len = sqrt(x * x + y * y + z * z);
         x /= len;
         y /= len;
         z /= len;
-        aNorm.push_back(x);
-        aNorm.push_back(y);
-        aNorm.push_back(z);
+        vec_nrm.push_back(x);
+        vec_nrm.push_back(y);
+        vec_nrm.push_back(z);
       }
     }
     if (buff[0] == 'g') { // group
-      aTriGroup.resize(aTriGroup.size() + 1);
+      vec_tri_group.resize(vec_tri_group.size() + 1);
       std::stringstream ss(buff);
       std::string str0, str1;
       ss >> str0 >> str1;
-      const std::size_t iogt0 = aTriGroup.size() - 1;
-      aTriGroup[iogt0].name_group = str1;
+      const std::size_t iogt0 = vec_tri_group.size() - 1;
+      vec_tri_group[iogt0].name_group = str1;
       continue;
     }
     if (buff[0] == 'u') { // usemtl
       std::stringstream ss(buff);
       std::string str0, str1;
       ss >> str0 >> str1;
-      const std::size_t iogt0 = aTriGroup.size() - 1;
-      aTriGroup[iogt0].name_mtl = str1;
+      if( vec_tri_group.empty() ){
+        vec_tri_group.resize(1);
+      }
+      const std::size_t iogt0 = vec_tri_group.size() - 1;
+      vec_tri_group[iogt0].name_mtl = str1;
       continue;
     }
     if (buff[0] == 'f') {
-      if (aTriGroup.empty()) {
+      if (vec_tri_group.empty()) {
         std::cout << fname << std::endl;
       }
-      const std::size_t iogt0 = aTriGroup.size() - 1;
+      const std::size_t iogt0 = vec_tri_group.size() - 1;
       char str[256], str0[256], str1[256], str2[256];
       {
-//      sscanf(buff, "%s %s %s %s", str, str0, str1, str2);
         std::istringstream is(buff);
         is >> str >> str0 >> str1 >> str2;
-        //      std::cout << str0 << " " << str1 << " " << str2 << std::endl;
       }
       int ip0, it0, in0;
       msh_ioobj::ParseVtxObj_(ip0, it0, in0, str0);
@@ -492,14 +462,18 @@ DFM2_INLINE void delfem2::Load_Obj(
       msh_ioobj::ParseVtxObj_(ip1, it1, in1, str1);
       int ip2, it2, in2;
       msh_ioobj::ParseVtxObj_(ip2, it2, in2, str2);
-      aTriGroup[iogt0].aTriVtx.push_back(ip0);
-      aTriGroup[iogt0].aTriVtx.push_back(ip1);
-      aTriGroup[iogt0].aTriVtx.push_back(ip2);
-//     if( in0 != -1 && in1 != -1 && in2 != -1 ){
+      vec_tri_group[iogt0].vec_idx_vtx.push_back(ip0);
+      vec_tri_group[iogt0].vec_idx_vtx.push_back(ip1);
+      vec_tri_group[iogt0].vec_idx_vtx.push_back(ip2);
       {
-        aTriGroup[iogt0].aTriNrm.push_back(in0);
-        aTriGroup[iogt0].aTriNrm.push_back(in1);
-        aTriGroup[iogt0].aTriNrm.push_back(in2);
+        vec_tri_group[iogt0].vec_idx_tex.push_back(it0);
+        vec_tri_group[iogt0].vec_idx_tex.push_back(it1);
+        vec_tri_group[iogt0].vec_idx_tex.push_back(it2);
+      }
+      {
+        vec_tri_group[iogt0].vec_idx_nrm.push_back(in0);
+        vec_tri_group[iogt0].vec_idx_nrm.push_back(in1);
+        vec_tri_group[iogt0].vec_idx_nrm.push_back(in2);
       }
     }
   }
