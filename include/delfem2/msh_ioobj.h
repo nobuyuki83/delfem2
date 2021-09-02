@@ -64,6 +64,10 @@ DFM2_INLINE void Write_Obj(
     const std::string &str,
     const std::vector<std::pair<std::vector<double>, std::vector<unsigned int> > > &aMesh);
 
+// above: write obj
+// -------------------------
+// below: read obj
+
 DFM2_INLINE void Read_Obj(
     const std::string &fname,
     std::vector<double> &aXYZ,
@@ -90,6 +94,9 @@ DFM2_INLINE void Read_Obj3(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aTri);
 
+// --------------------------
+// below: obj with surface attributes
+
 class TriGroupWavefrontObj {
  public:
   std::string name_group;
@@ -108,7 +115,7 @@ class TriGroupWavefrontObj {
  * @param[out] vec_nrm
  * @param[out] vec_tri_group
  */
-DFM2_INLINE void Load_Obj(
+DFM2_INLINE void Read_WavefrontObjWithSurfaceAttributes(
     const std::string &fname,
     std::string &fname_mtl,
     std::vector<double> &vec_xyz,
@@ -116,7 +123,7 @@ DFM2_INLINE void Load_Obj(
     std::vector<double> &vec_nrm,
     std::vector<TriGroupWavefrontObj> &vec_tri_group);
 
-class CMaterial{
+class MaterialWavefrontObj{
 public:
   std::string name_mtl;
   float Kd[4];
@@ -128,10 +135,11 @@ public:
   std::string map_Kd;
 };
 
-void Load_Mtl(const std::string& fname,
-              std::vector<CMaterial>& aMtl);
+void Read_WavefrontMaterial(
+    const std::string& fname,
+    std::vector<MaterialWavefrontObj>& aMtl);
 
-class CMeshMultiElem{
+class Shape3_WavefrontObj{
 public:
   void ReadObj(const std::string& fname);
 //  void Draw() const;
@@ -143,7 +151,7 @@ public:
   std::vector<double> aTex;
   std::vector<double> aNorm;
   std::vector<delfem2::TriGroupWavefrontObj> aObjGroupTri;
-  std::vector<CMaterial> aMaterial;
+  std::vector<MaterialWavefrontObj> aMaterial;
 };
 
 
