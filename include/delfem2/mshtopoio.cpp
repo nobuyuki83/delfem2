@@ -112,7 +112,7 @@ void MeshTri3D_GeodesicPolyhedron(
 void CMeshMultiElem::ReadObj(const std::string &path_obj) {
   std::string fname_mtl;
   Load_Obj(path_obj,
-           fname_mtl, aXYZ, aNorm, aObjGroupTri);
+           fname_mtl, aXYZ, aTex, aNorm, aObjGroupTri);
   std::string path_dir = std::string(path_obj.begin(), path_obj.begin() + path_obj.rfind("/"));
   Load_Mtl(path_dir + "/" + fname_mtl,
            aMaterial);
@@ -126,10 +126,10 @@ void CMeshMultiElem::ReadObj(const std::string &path_obj) {
       std::string name_mtl = iogt.name_mtl;
       auto itr = mapMtlName2Ind.find(name_mtl);
       if (name_mtl.empty() || itr == mapMtlName2Ind.end()) {
-        iogt.imtl = -1;
+        iogt.idx_material = -1;
         continue;
       }
-      iogt.imtl = itr->second;
+      iogt.idx_material = itr->second;
     }
   }
 }

@@ -186,9 +186,9 @@ int main(int argc, char *argv[]) {
 
   delfem2::opengl::CTexRGB_Rect2D tex;
   {
-    tex.width_ = 256;
-    tex.height_ = 256;
-    tex.aRGB.resize(tex.width_*tex.height_*3);
+    tex.width = 256;
+    tex.height = 256;
+    tex.aRGB.resize(tex.width*tex.height*3);
   }
   delfem2::glfw::CViewer3 viewer;
   viewer.width = 400;
@@ -200,14 +200,14 @@ int main(int argc, char *argv[]) {
   viewer.InitGL();
   tex.InitGL();
 
-  const unsigned int nh = tex.height_;
-  const unsigned int nw = tex.width_;
+  const unsigned int nh = tex.height;
+  const unsigned int nw = tex.width;
   Ray cam(
       CVec3d(50, 52, 295.6),
       CVec3d(0, -0.042612, -1).normalized()); // cam pos, dir
   CVec3d cx = CVec3d(nw * .5135 / nh, 0, 0);
   CVec3d cy = (cx ^ cam.d).normalized() * .5135;
-  std::vector<float> afRGB(tex.height_*tex.width_*3, 0.f);
+  std::vector<float> afRGB(tex.height*tex.width*3, 0.f);
   unsigned int isample = 0.0;
   while (!glfwWindowShouldClose(viewer.window))
   {
@@ -231,12 +231,12 @@ int main(int argc, char *argv[]) {
       }
     }
     isample++;
-    for(unsigned int ih=0;ih<tex.height_;++ih){
-      for(unsigned int iw=0;iw<tex.width_;++iw) {
+    for(unsigned int ih=0;ih<tex.height;++ih){
+      for(unsigned int iw=0;iw<tex.width;++iw) {
         for(int ic=0;ic<3;++ic) {
-          float fc = afRGB[(ih * tex.width_ + iw) * 3 + ic]*0.25f/float(isample);
+          float fc = afRGB[(ih * tex.width + iw) * 3 + ic]*0.25f/float(isample);
           fc = (fc>1.f) ? 1.f:fc;
-          tex.aRGB[(ih * tex.width_ + iw) * 3 + ic] = 255*fc;
+          tex.aRGB[(ih * tex.width + iw) * 3 + ic] = 255*fc;
         }
       }
     }

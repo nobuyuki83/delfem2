@@ -116,9 +116,9 @@ int main(int argc,char* argv[])
 
   dfm2::opengl::CTexRGB_Rect2D tex;
   {
-    tex.width_ = 256;
-    tex.height_ = 256;
-    tex.aRGB.resize(tex.width_*tex.height_*3);
+    tex.width = 256;
+    tex.height = 256;
+    tex.aRGB.resize(tex.width*tex.height*3);
   }
 
   dfm2::opengl::CShader_MeshTex shdr;
@@ -175,10 +175,10 @@ int main(int argc,char* argv[])
     }
     std::vector< delfem2::CPtElm2d > aPointElemSurf;
     Intersection_ImageRay_TriMesh3(aPointElemSurf,
-         tex.height_,tex.width_, mMVP,
+         tex.height,tex.width, mMVP,
          aNodeBVH,aAABB,aXYZ,aTri);
     ShadingImageRayLambertian(tex.aRGB,
-        tex.height_, tex.width_, mMVP,
+        tex.height, tex.width, mMVP,
         aPointElemSurf, aXYZ, aTri);
     tex.InitGL();
     //
@@ -192,7 +192,7 @@ int main(int argc,char* argv[])
 
     glEnable(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
-    glBindTexture(GL_TEXTURE_2D , tex.id_tex_);
+    glBindTexture(GL_TEXTURE_2D , tex.id_tex);
     float mP[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
     float mMV[16]  = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
     shdr.Draw(mP, mMV);

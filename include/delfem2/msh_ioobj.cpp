@@ -382,6 +382,7 @@ DFM2_INLINE void delfem2::Load_Obj(
     const std::string &fname,
     std::string &fname_mtl,
     std::vector<double> &vec_xyz,
+    std::vector<double> &vec_tex,
     std::vector<double> &vec_nrm,
     std::vector<TriGroupWavefrontObj> &vec_tri_group) {
   std::ifstream fin;
@@ -393,6 +394,7 @@ DFM2_INLINE void delfem2::Load_Obj(
   vec_xyz.clear();
   vec_tri_group.clear();
   vec_nrm.clear();
+  vec_tex.clear();
   vec_xyz.reserve(256 * 16);
   vec_tri_group.reserve(100);
   const int BUFF_SIZE = 256;
@@ -411,12 +413,13 @@ DFM2_INLINE void delfem2::Load_Obj(
       char str[256];
       double x, y, z;
       std::istringstream is(buff);
-      is >> str >> x >> y >> z;
       if (buff[1] == ' ') { // vertex
+        is >> str >> x >> y >> z;
         vec_xyz.push_back(x);
         vec_xyz.push_back(y);
         vec_xyz.push_back(z);
       } else if (buff[1] == 'n') { // noraml
+        is >> str >> x >> y >> z;
         double len = sqrt(x * x + y * y + z * z);
         x /= len;
         y /= len;
@@ -424,6 +427,10 @@ DFM2_INLINE void delfem2::Load_Obj(
         vec_nrm.push_back(x);
         vec_nrm.push_back(y);
         vec_nrm.push_back(z);
+      } else if(buff[1] == 't'){ // tex
+        is >> str >> x >> y;
+        vec_tex.push_back(x);
+        vec_tex.push_back(y);
       }
     }
     if (buff[0] == 'g') { // group

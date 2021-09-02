@@ -117,7 +117,7 @@ int main(int argc,char* argv[])
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
-        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
         glUseProgram(id_shader_program);
         tex.Draw_oldGL();
         glfwSwapBuffers(viewer.window);
@@ -133,7 +133,7 @@ int main(int argc,char* argv[])
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
-        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
         glUseProgram(id_shader_program);
         tex.Draw_oldGL();
         glfwSwapBuffers(viewer.window);
@@ -149,7 +149,7 @@ int main(int argc,char* argv[])
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
-        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
         glUseProgram(id_shader_program);
         tex.Draw_oldGL();
         glfwSwapBuffers(viewer.window);
@@ -165,7 +165,7 @@ int main(int argc,char* argv[])
       setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
-        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex_);
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
         glUseProgram(id_shader_program);
         tex.Draw_oldGL();
         glfwSwapBuffers(viewer.window);
