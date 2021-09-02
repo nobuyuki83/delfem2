@@ -117,38 +117,7 @@ public:
   bool is_draw_edge;
 };
 
-class CMaterial{
-public:
-  std::string name_mtl;
-  float Kd[4];
-  float Ka[4];
-  float Ks[4];
-  float Ke[4];
-  float Ns;
-  int illum;
-  std::string map_Kd;
-public:
-  void GL() const;
-};
 
-class CMeshMultiElem{
-public:
-  void ReadObj(const std::string& fname);
-//  void Draw() const;
-  std::vector<double> AABB3_MinMax() const;
-  void ScaleXYZ(double s);
-  void TranslateXYZ(double x, double y, double z);
-public:
-  std::vector<double> aXYZ;
-  std::vector<double> aTex;
-  std::vector<double> aNorm;
-  std::vector<delfem2::TriGroupWavefrontObj> aObjGroupTri;
-  std::vector<CMaterial> aMaterial;
-};
-
-
-void Load_Mtl(const std::string& fname,
-              std::vector<CMaterial>& aMtl);
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/mshtopoio.cpp"

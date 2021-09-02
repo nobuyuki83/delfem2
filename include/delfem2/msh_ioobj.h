@@ -116,6 +116,37 @@ DFM2_INLINE void Load_Obj(
     std::vector<double> &vec_nrm,
     std::vector<TriGroupWavefrontObj> &vec_tri_group);
 
+class CMaterial{
+public:
+  std::string name_mtl;
+  float Kd[4];
+  float Ka[4];
+  float Ks[4];
+  float Ke[4];
+  float Ns;
+  int illum;
+  std::string map_Kd;
+};
+
+void Load_Mtl(const std::string& fname,
+              std::vector<CMaterial>& aMtl);
+
+class CMeshMultiElem{
+public:
+  void ReadObj(const std::string& fname);
+//  void Draw() const;
+  std::vector<double> AABB3_MinMax() const;
+  void ScaleXYZ(double s);
+  void TranslateXYZ(double x, double y, double z);
+public:
+  std::vector<double> aXYZ;
+  std::vector<double> aTex;
+  std::vector<double> aNorm;
+  std::vector<delfem2::TriGroupWavefrontObj> aObjGroupTri;
+  std::vector<CMaterial> aMaterial;
+};
+
+
 
 } // namespace delfem2
 
