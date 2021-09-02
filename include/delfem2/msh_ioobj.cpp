@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/msh_ioobj.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -14,8 +16,9 @@
 #include <string>
 #include <cstring>
 #include <climits>
+#include <map>
 
-#include "delfem2/msh_ioobj.h"
+#include "delfem2/points.h"
 
 namespace delfem2::msh_ioobj {
 
@@ -378,7 +381,7 @@ DFM2_INLINE void delfem2::Read_Obj3(
   }
 }
 
-DFM2_INLINE void delfem2::Load_Obj(
+DFM2_INLINE void delfem2::Read_WavefrontObjWithSurfaceAttributes(
     const std::string &fname,
     std::string &fname_mtl,
     std::vector<double> &vec_xyz,
@@ -486,9 +489,9 @@ DFM2_INLINE void delfem2::Load_Obj(
   }
 }
 
-void delfem2::Load_Mtl(
+void delfem2::Read_WavefrontMaterial(
     const std::string &fname,
-    std::vector<CMaterial> &aMtl) {
+    std::vector<MaterialWavefrontObj> &aMtl) {
   std::ifstream fin;
   fin.open(fname.c_str());
   if (fin.fail()) {
@@ -558,4 +561,59 @@ void delfem2::Load_Mtl(
       aMtl[imtl0].map_Kd = str1;
     }
   }
+}
+
+// ----------------------
+
+void delfem2::Shape3_WavefrontObj::ReadObj(
+                                      const std::string &path_obj) {
+  std::string fname_mtl;
+  Read_WavefrontObjWithSurfaceAttributes(
+           path_obj,
+           fname_mtl, aXYZ, aTex, aNorm, aObjGroupTri);
+  std::string path_dir = std::string(path_obj.begin(), path_obj.begin() + path_obj.rfind("/"));
+  Read_WavefrontMaterial(path_dir + "/" + fname_mtl,
+           aMaterial);
+  //  std::cout << aObjGroupTri.size() << " " << aMaterial.size() << std::endl;
+  { //
+    std::map<std::string, int> mapMtlName2Ind;
+    for (int imtl = 0; imtl < (int) aMaterial.size(); ++imtl) {
+      mapMtlName2Ind.insert(std::make_pair(aMaterial[imtl].name_mtl, imtl));
+    }
+    for (auto &iogt : aObjGroupTri) {
+      std::string name_mtl = iogt.name_mtl;
+      auto itr = mapMtlName2Ind.find(name_mtl);
+      if (name_mtl.empty() || itr == mapMtlName2Ind.end()) {
+        iogt.idx_material = -1;
+        continue;
+      }
+      iogt.idx_material = itr->second;
+    }
+  }
+}
+
+std::vector<double> delfem2::Shape3_WavefrontObj::AABB3_MinMax() const {
+  double c[3], w[3];
+  delfem2::CenterWidth_Points3(c, w,
+                               aXYZ);
+  std::vector<double> aabb(6);
+  aabb[0] = c[0] - 0.5 * w[0];
+  aabb[1] = c[0] + 0.5 * w[0];
+  aabb[2] = c[1] - 0.5 * w[1];
+  aabb[3] = c[1] + 0.5 * w[1];
+  aabb[4] = c[2] - 0.5 * w[2];
+  aabb[5] = c[2] + 0.5 * w[2];
+  return aabb;
+}
+
+void delfem2::Shape3_WavefrontObj::ScaleXYZ(
+                                       double s) {
+  delfem2::Scale_PointsX(aXYZ,
+                         s);
+}
+
+void delfem2::Shape3_WavefrontObj::TranslateXYZ(
+                                           double x, double y, double z) {
+  delfem2::Translate_Points3(aXYZ,
+                             x, y, z);
 }
