@@ -38,101 +38,16 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party
 )
 
-set(DELFEM2_INC         "../../include/delfem2")
+file(GLOB 
+    DFM2_CPP_FILES
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/*.cpp)
+file(GLOB 
+    DFM2_HDR_FILES
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/*.h)    
+set(DELFEM2_INC         "../../include/delfem2")    
 add_library(${PROJ_NAME} STATIC
-    ${DELFEM2_INC}/mat2.h                      ${DELFEM2_INC}/mat2.cpp
-    ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
-    ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
-    ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
-    ${DELFEM2_INC}/mat4.h                      ${DELFEM2_INC}/mat4.cpp
-    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-    ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
-    ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
-    ${DELFEM2_INC}/gizmo_geo3.h                ${DELFEM2_INC}/gizmo_geo3.cpp
-    ${DELFEM2_INC}/geoplygn2_v2.h              ${DELFEM2_INC}/geoplygn2_v2.cpp
-    ${DELFEM2_INC}/geoproximity3_v3.h          ${DELFEM2_INC}/geoproximity3_v3.cpp
-    ${DELFEM2_INC}/geodelaunay3_v3.h           ${DELFEM2_INC}/geodelaunay3_v3.cpp
-    ${DELFEM2_INC}/geosolidelm_v3.h            ${DELFEM2_INC}/geosolidelm_v3.cpp
-    ${DELFEM2_INC}/geoconvhull3.h 
-
-    ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
-    ${DELFEM2_INC}/jagarray.h                  ${DELFEM2_INC}/jagarray.cpp
-    
-    ${DELFEM2_INC}/mshuni.h                    ${DELFEM2_INC}/mshuni.cpp
-    ${DELFEM2_INC}/mshmix.h                    ${DELFEM2_INC}/mshmix.cpp
-    ${DELFEM2_INC}/mshsubdiv.h                 ${DELFEM2_INC}/mshsubdiv.cpp
-    ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
-    ${DELFEM2_INC}/points.h                    ${DELFEM2_INC}/points.cpp
-    ${DELFEM2_INC}/msh_ioobj.h                 ${DELFEM2_INC}/msh_ioobj.cpp
-    ${DELFEM2_INC}/msh_iomisc.h                ${DELFEM2_INC}/msh_iomisc.cpp
-    ${DELFEM2_INC}/mshprimitive.h              ${DELFEM2_INC}/mshprimitive.cpp
-    ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
-    ${DELFEM2_INC}/mshtopoio.h                 ${DELFEM2_INC}/mshtopoio.cpp
-
-    ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
-    ${DELFEM2_INC}/file.h                      ${DELFEM2_INC}/file.cpp
-    ${DELFEM2_INC}/filenpy_str.h               ${DELFEM2_INC}/filenpy_str.cpp
-    ${DELFEM2_INC}/str.h                       ${DELFEM2_INC}/str.cpp
-
-    ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
-
-    ${DELFEM2_INC}/femutil.h                   ${DELFEM2_INC}/femutil.cpp
-    ${DELFEM2_INC}/femhelmholtz.h              ${DELFEM2_INC}/femhelmholtz.cpp
-    ${DELFEM2_INC}/femmitc3.h                  ${DELFEM2_INC}/femmitc3.cpp
-    ${DELFEM2_INC}/femrod.h                    ${DELFEM2_INC}/femrod.cpp
-    ${DELFEM2_INC}/femcloth.h                  ${DELFEM2_INC}/femcloth.cpp
-    ${DELFEM2_INC}/fempoisson.h                ${DELFEM2_INC}/fempoisson.cpp
-    ${DELFEM2_INC}/femsolidlinear.h            ${DELFEM2_INC}/femsolidlinear.cpp
-    ${DELFEM2_INC}/femstokes.h                 ${DELFEM2_INC}/femstokes.cpp
-    ${DELFEM2_INC}/femnavierstokes.h           ${DELFEM2_INC}/femnavierstokes.cpp
-    ${DELFEM2_INC}/femmips_geo3.h              ${DELFEM2_INC}/femmips_geo3.cpp
-    ${DELFEM2_INC}/femsolidhyper.h             ${DELFEM2_INC}/femsolidhyper.cpp
-    ${DELFEM2_INC}/cloth_internal.h
-
-    ${DELFEM2_INC}/pbd_geo3.h                  ${DELFEM2_INC}/pbd_geo3.cpp
-    ${DELFEM2_INC}/pbd_geo3dtri23.h            ${DELFEM2_INC}/pbd_geo3dtri23.cpp
-
-    ${DELFEM2_INC}/rgd_v2m3.h                  ${DELFEM2_INC}/rgd_v2m3.cpp
-
-    ${DELFEM2_INC}/isrf_iss.h                  ${DELFEM2_INC}/isrf_iss.cpp
-    ${DELFEM2_INC}/isrf_adf.h                  ${DELFEM2_INC}/isrf_adf.cpp
-    ${DELFEM2_INC}/isrf_sdf.h
-
-    ${DELFEM2_INC}/bem.h                       ${DELFEM2_INC}/bem.cpp
-
-    ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
-    ${DELFEM2_INC}/srchbv3sphere.h
-    ${DELFEM2_INC}/srchbv3aabb.h
-    ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
-    ${DELFEM2_INC}/srchbi_v3bvh.h
-    ${DELFEM2_INC}/srch_v3bvhmshtopo.h
-
-    ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
-    ${DELFEM2_INC}/pgeo.h
-    ${DELFEM2_INC}/dtri2_v2dtri.h              ${DELFEM2_INC}/dtri2_v2dtri.cpp
-    ${DELFEM2_INC}/dtri3_v3dtri.h              ${DELFEM2_INC}/dtri3_v3dtri.cpp
-    ${DELFEM2_INC}/dtet_v3.h                   ${DELFEM2_INC}/dtet_v3.cpp
-    ${DELFEM2_INC}/cad2_dtri2.h                ${DELFEM2_INC}/cad2_dtri2.cpp
-    ${DELFEM2_INC}/cad3d.h                     ${DELFEM2_INC}/cad3d.cpp
-    
-    ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
-    ${DELFEM2_INC}/lsmats.h                    ${DELFEM2_INC}/lsmats.cpp
-    ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
-    ${DELFEM2_INC}/lsilu_mats.h                ${DELFEM2_INC}/lsilu_mats.cpp
-    ${DELFEM2_INC}/ls_masterslave.h            ${DELFEM2_INC}/ls_masterslave.cpp
-    ${DELFEM2_INC}/lsitrsol.h
-    ${DELFEM2_INC}/lsvecx.h
-
-    ${DELFEM2_INC}/deflap.h                    ${DELFEM2_INC}/deflap.cpp    
-    ${DELFEM2_INC}/defarap.h                   ${DELFEM2_INC}/defarap.cpp
-    ${DELFEM2_INC}/gridvoxel.h                 ${DELFEM2_INC}/gridvoxel.cpp
-    ${DELFEM2_INC}/gridcube.h                  ${DELFEM2_INC}/gridcube.cpp
-
-    ${DELFEM2_INC}/clusterpoints.h             ${DELFEM2_INC}/clusterpoints.cpp
-
-    ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
-    ${DELFEM2_INC}/rigopt.h
-    
+    ${DFM2_CPP_FILES}
+    ${DFM2_HDR_FILES}    
     ${DELFEM2_INC}/opengl/funcs.h           ${DELFEM2_INC}/opengl/funcs.cpp
     ${DELFEM2_INC}/opengl/tex.h             ${DELFEM2_INC}/opengl/tex.cpp
     ${DELFEM2_INC}/opengl/r2t.h             ${DELFEM2_INC}/opengl/r2t.cpp
