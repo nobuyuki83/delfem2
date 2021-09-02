@@ -485,3 +485,77 @@ DFM2_INLINE void delfem2::Load_Obj(
     }
   }
 }
+
+void delfem2::Load_Mtl(
+    const std::string &fname,
+    std::vector<CMaterial> &aMtl) {
+  std::ifstream fin;
+  fin.open(fname.c_str());
+  if (fin.fail()) {
+    std::cout << "File Read Fail" << std::endl;
+    return;
+  }
+  aMtl.clear();
+  const int BUFF_SIZE = 256;
+  char buff[BUFF_SIZE];
+  while (fin.getline(buff, BUFF_SIZE)) {
+    if (buff[0] == '#') { continue; }
+    if (buff[0] == '\n') { continue; }
+    std::stringstream ss(buff);
+    std::string str0, str1, str2, str3, str4;
+    ss >> str0;
+    if (str0 == "newmtl") {
+      aMtl.resize(aMtl.size() + 1);
+      const int imtl0 = aMtl.size() - 1;
+      ss >> str1;
+      aMtl[imtl0].name_mtl = str1;
+    }
+    if (str0 == "Kd") {
+      const int imtl0 = aMtl.size() - 1;
+      ss >> str1 >> str2 >> str3;
+      aMtl[imtl0].Kd[0] = std::stof(str1);
+      aMtl[imtl0].Kd[1] = std::stof(str2);
+      aMtl[imtl0].Kd[2] = std::stof(str3);
+      aMtl[imtl0].Kd[3] = 1.0;
+    }
+    if (str0 == "Ka") {
+      const int imtl0 = aMtl.size() - 1;
+      ss >> str1 >> str2 >> str3;
+      aMtl[imtl0].Ka[0] = std::stof(str1);
+      aMtl[imtl0].Ka[1] = std::stof(str2);
+      aMtl[imtl0].Ka[2] = std::stof(str3);
+      aMtl[imtl0].Ka[3] = 1.0;
+    }
+    if (str0 == "Ks") {
+      const int imtl0 = aMtl.size() - 1;
+      ss >> str1 >> str2 >> str3;
+      aMtl[imtl0].Ks[0] = std::stof(str1);
+      aMtl[imtl0].Ks[1] = std::stof(str2);
+      aMtl[imtl0].Ks[2] = std::stof(str3);
+      aMtl[imtl0].Ks[3] = 1.0;
+    }
+    if (str0 == "Ke") {
+      const int imtl0 = aMtl.size() - 1;
+      ss >> str1 >> str2 >> str3;
+      aMtl[imtl0].Ke[0] = std::stof(str1);
+      aMtl[imtl0].Ke[1] = std::stof(str2);
+      aMtl[imtl0].Ke[2] = std::stof(str3);
+      aMtl[imtl0].Ke[3] = std::stof(str3);
+    }
+    if (str0 == "Ns") {
+      const int imtl0 = aMtl.size() - 1;
+      ss >> str1;
+      aMtl[imtl0].Ns = std::stof(str1);
+    }
+    if (str0 == "illum") {
+      const int imtl0 = aMtl.size() - 1;
+      ss >> str1;
+      aMtl[imtl0].illum = std::stof(str1);
+    }
+    if (str0 == "map_Kd") {
+      const int imtl0 = aMtl.size() - 1;
+      ss >> str1;
+      aMtl[imtl0].map_Kd = str1;
+    }
+  }
+}
