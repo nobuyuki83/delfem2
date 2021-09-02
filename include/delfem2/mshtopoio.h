@@ -140,8 +140,9 @@ public:
   void TranslateXYZ(double x, double y, double z);
 public:
   std::vector<double> aXYZ;
+  std::vector<double> aTex;
   std::vector<double> aNorm;
-  std::vector<delfem2::CTriGroup> aObjGroupTri;
+  std::vector<delfem2::TriGroupWavefrontObj> aObjGroupTri;
   std::vector<CMaterial> aMaterial;
 };
 

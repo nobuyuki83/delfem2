@@ -41,14 +41,14 @@ unsigned int LoadTexture(
 class CTexRGB {
  public:
   std::vector<unsigned char> aRGB;
-  unsigned int id_tex_;
-  unsigned int height_, width_;
+  unsigned int id_tex;
+  unsigned int height, width;
 
  public:
   CTexRGB() {
-    id_tex_ = 0;
-    this->width_ = 0;
-    this->height_ = 0;
+    id_tex = 0;
+    this->width = 0;
+    this->height = 0;
     aRGB.clear();
   }
 
@@ -65,18 +65,18 @@ class CTexRGB {
       unsigned int h0,
       const unsigned char *pD,
       const std::string &typeData) {
-    this->height_ = h0;
-    this->width_ = w0;
-    this->aRGB.assign(pD, pD + height_ * width_ * 3);
+    this->height = h0;
+    this->width = w0;
+    this->aRGB.assign(pD, pD + height * width * 3);
     if (typeData == "bgr") {
-      for (unsigned int i = 0; i < height_ * width_; ++i) { // rgb -> bgr
+      for (unsigned int i = 0; i < height * width; ++i) { // rgb -> bgr
         unsigned char b0 = aRGB[i * 3 + 0];
         unsigned char r0 = aRGB[i * 3 + 2];
         aRGB[i * 3 + 0] = r0;
         aRGB[i * 3 + 2] = b0;
       }
     }
-    id_tex_ = 0;
+    id_tex = 0;
   }
 
   virtual void InitGL();

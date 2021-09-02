@@ -112,6 +112,7 @@ DFM2_INLINE void Load_Obj(
     const std::string &fname,
     std::string &fname_mtl,
     std::vector<double> &vec_xyz,
+    std::vector<double> &vec_tex,
     std::vector<double> &vec_nrm,
     std::vector<TriGroupWavefrontObj> &vec_tri_group);
 
