@@ -68,9 +68,7 @@ void stepTime(
   }
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   // --------------------------
   std::vector<double> aXY0;
   std::vector<double> aXY1;

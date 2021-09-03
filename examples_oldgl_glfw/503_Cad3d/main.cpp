@@ -267,9 +267,7 @@ void DrawVtxEdgeHandler
 
 // ------------------------------
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   class CCAD3DViewer : public delfem2::glfw::CViewer3 {
    public:
     CCAD3DViewer() {

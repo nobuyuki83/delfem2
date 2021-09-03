@@ -330,11 +330,15 @@ class CMat4 {
     for (int i = 0; i < 16; ++i) { mat[i] = static_cast<S>(pm[i]); }
   }
 
-  CMat4(REAL x0, REAL x1, REAL x2, REAL x3,
-        REAL x4, REAL x5, REAL x6, REAL x7,
-        REAL x8, REAL x9, REAL xa, REAL xb,
-        REAL xc, REAL xd, REAL xe, REAL xf)
-      : mat{x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, xa, xb, xc, xd, xe, xf} {
+  CMat4(REAL v00, REAL v01, REAL v02, REAL v03,
+        REAL v10, REAL v11, REAL v12, REAL v13,
+        REAL v20, REAL v21, REAL v22, REAL v23,
+        REAL v30, REAL v31, REAL v32, REAL v33)
+      : mat{
+        v00, v01, v02, v03,
+        v10, v11, v12, v13,
+        v20, v21, v22, v23,
+        v30, v31, v32, v33} {
   }
   REAL *data() { return mat; }
   const REAL *data() const { return mat; }

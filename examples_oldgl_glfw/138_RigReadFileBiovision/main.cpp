@@ -24,7 +24,7 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------------
 
-int main(int argc, char *argv[]) {
+int main() {
   std::vector<dfm2::CRigBone> aBone;
   std::vector<dfm2::CChannel_BioVisionHierarchy> aChannelRotTransBone;
   int nframe = 0;

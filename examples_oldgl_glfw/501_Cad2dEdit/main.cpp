@@ -25,9 +25,7 @@
 #endif
 // -------------------------------------
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   class CCAD2DViewer : public delfem2::glfw::CViewer3 {
    public:
     CCAD2DViewer() {

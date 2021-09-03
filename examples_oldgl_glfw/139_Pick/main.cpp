@@ -116,9 +116,7 @@ class MyView
   std::vector<unsigned int> aDist;
 };
 
-int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+int main() {
   std::vector<double> aXYZ; // 3d points
   std::vector<unsigned int> aTri;
 

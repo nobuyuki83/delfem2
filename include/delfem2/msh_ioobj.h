@@ -30,8 +30,8 @@ DFM2_INLINE void Write_Obj(
 
 DFM2_INLINE void Write_Obj_Quad(
     const std::string &str,
-    const std::vector<double> &aXYZ,
-    const std::vector<int> &aQuad);
+    const std::vector<double> &vec_xyz,
+    const std::vector<int> &vec_quad);
 
 /**
  * write obj file for the mesh the elemenet is a jagged array (tris and quads are mixed).
@@ -126,12 +126,12 @@ DFM2_INLINE void Read_WavefrontObjWithSurfaceAttributes(
 class MaterialWavefrontObj{
 public:
   std::string name_mtl;
-  float Kd[4];
-  float Ka[4];
-  float Ks[4];
-  float Ke[4];
-  float Ns;
-  int illum;
+  float Kd[4]{0};
+  float Ka[4]{0};
+  float Ks[4]{0};
+  float Ke[4]{0};
+  float Ns = 0;
+  int illum = -1;
   std::string map_Kd;
 };
 
@@ -143,7 +143,7 @@ class Shape3_WavefrontObj{
 public:
   void ReadObj(const std::string& fname);
 //  void Draw() const;
-  std::vector<double> AABB3_MinMax() const;
+  [[nodiscard]] std::vector<double> AABB3_MinMax() const;
   void ScaleXYZ(double s);
   void TranslateXYZ(double x, double y, double z);
 public:

@@ -91,7 +91,7 @@ void MeshTri2D_Square(
 
 // -----------------------------
 
-int main(int argc,char* argv[])
+int main()
 {
   class CClusterData
   {

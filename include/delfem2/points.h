@@ -86,7 +86,7 @@ DFM2_INLINE void GetCenterWidthLocal(
  */
 template<typename T>
 DFM2_INLINE void Rotate_Points3(
-    std::vector<T> &aXYZ,
+    std::vector<T> &vec_xyz,
     T radx,
     T rady,
     T radz);

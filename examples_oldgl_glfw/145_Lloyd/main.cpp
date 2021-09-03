@@ -75,9 +75,7 @@ void Draw(
   glfwPollEvents();
 }
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   std::vector<double> aXY;
   const unsigned int ndiv = 128;

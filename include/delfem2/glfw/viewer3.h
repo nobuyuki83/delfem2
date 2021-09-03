@@ -19,9 +19,7 @@
 
 struct GLFWwindow;
 
-namespace delfem2 {
-
-namespace glfw {
+namespace delfem2::glfw {
 
 class CViewer3 {
  public:
@@ -29,7 +27,7 @@ class CViewer3 {
 
   void SwapBuffers() const;
 
-  void InitGL();
+  virtual void InitGL();
 
   void ExitIfClosed() const;
 
@@ -71,7 +69,6 @@ class CViewer3 {
   std::string window_title = "LearnOpenGL";
 };
 
-} // namespace opengl
 } // namespace delfem2
 
 

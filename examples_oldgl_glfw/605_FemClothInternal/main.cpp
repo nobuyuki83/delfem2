@@ -184,9 +184,7 @@ void myGlutDisplay() {
 
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   { // initialze data
     SetClothShape_Square(aXYZ0, aBCFlag, aTri, aQuad,
                          ndiv, cloth_size);
