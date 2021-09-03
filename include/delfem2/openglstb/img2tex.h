@@ -1,8 +1,7 @@
 
 
 #include "delfem2/opengl/tex.h"
-// #define STB_IMAGE_IMPLEMENTATION
-// #include "stb/stb_image.h"
+#include "stb/stb_image.h"
 
 namespace delfem2::openglstb {
 
