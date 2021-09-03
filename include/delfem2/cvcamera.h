@@ -1,8 +1,9 @@
-#ifndef CV_CAMERA_H
-#define CV_CAMERA_H
+#ifndef DFM2_CVCAMERA_H
+#define DFM2_CVCAMERA_H
 
 #include <vector>
 #include <fstream>
+#include <array>
 
 namespace delfem2 {
 
@@ -92,6 +93,32 @@ void ProjectionCameraWithCalibration(
   T y1 = y0 * t0 + p2 * (r2 + 2 * y0 * y0) + 2 * p1 * x0 * y0;
   coord_image[0] = img_width * 0.5 + cx + f * x1;
   coord_image[1] = img_height * 0.5 + cy + f * y1;
+}
+
+std::array<float, 16>
+Mat4_CameraInternal_MetashapePinhole(
+    float f,
+    float cx,
+    float cy,
+    float width,
+    float height){
+  return {
+      f, 0,  cx+width*0.5f, 0,
+      0, f,  cy+height*0.5f, 0,
+      0, 0, 0, 1,
+      0, 0, 1, 0 };
+}
+
+std::array<float, 16>
+Mat4_Image2Screen(
+    float width,
+    float height,
+    float z_scale){
+  return {
+      2.f/width, 0, 0, -1,
+      0, -2.f/height, 0, 1,
+      0, 0, -0.1, 0,
+      0, 0, 0, 1 };
 }
 
 }
