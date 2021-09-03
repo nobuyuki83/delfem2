@@ -151,7 +151,7 @@ void myGlutDisplay()
 
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   double lenx = 1.0;
   {

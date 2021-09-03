@@ -81,7 +81,7 @@ void myGlutDisplay
   if(  is_texture  ){ ::glEnable(GL_TEXTURE_2D); }
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   std::vector<dfm2::CDynPntSur> aPo;
   std::vector<dfm2::CDynTri> aTri;

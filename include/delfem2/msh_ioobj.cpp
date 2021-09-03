@@ -80,17 +80,17 @@ DFM2_INLINE void delfem2::Write_Obj(
 
 DFM2_INLINE void delfem2::Write_Obj_Quad(
     const std::string &str,
-    const std::vector<double> &aXYZ,
-    const std::vector<int> &aQuad) {
-  int np = (int) aXYZ.size() / 3;
-  int nq = (int) aQuad.size() / 4;
+    const std::vector<double> &vec_xyz,
+    const std::vector<int> &vec_quad) {
+  int np = (int) vec_xyz.size() / 3;
+  int nq = (int) vec_quad.size() / 4;
   std::ofstream fout(str.c_str(), std::ofstream::out);
   for (int ip = 0; ip < np; ip++) {
-    fout << "v " << aXYZ[ip * 3 + 0] << " " << aXYZ[ip * 3 + 1] << " " << aXYZ[ip * 3 + 2] << std::endl;
+    fout << "v " << vec_xyz[ip * 3 + 0] << " " << vec_xyz[ip * 3 + 1] << " " << vec_xyz[ip * 3 + 2] << std::endl;
   }
   for (int iq = 0; iq < nq; iq++) {
-    fout << "f " << aQuad[iq * 4 + 0] + 1 << " " << aQuad[iq * 4 + 1] + 1 << " " << aQuad[iq * 4 + 2] + 1 << " "
-         << aQuad[iq * 4 + 3] + 1 << std::endl;
+    fout << "f " << vec_quad[iq * 4 + 0] + 1 << " " << vec_quad[iq * 4 + 1] + 1 << " " << vec_quad[iq * 4 + 2] + 1 << " "
+         << vec_quad[iq * 4 + 3] + 1 << std::endl;
   }
 }
 

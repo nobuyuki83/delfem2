@@ -58,9 +58,7 @@ void myGlutDisplay() {
   ::glEnd();
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   {
     const double min_xyz[3] = {-1, -1, -1};
     const double max_xyz[3] = {+1, +1, +1};

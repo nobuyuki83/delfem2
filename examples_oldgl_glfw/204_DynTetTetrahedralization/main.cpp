@@ -270,9 +270,7 @@ void AddRandomPoint(
   std::cout << aPo3D.size() << std::endl;
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
   viewer.camera.view_height = 2.5;

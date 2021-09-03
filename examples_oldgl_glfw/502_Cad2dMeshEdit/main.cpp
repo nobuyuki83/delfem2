@@ -31,9 +31,7 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------------
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   class CCadMesh2DVeiwer : public delfem2::glfw::CViewer3
   {
