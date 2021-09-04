@@ -208,7 +208,7 @@ DFM2_INLINE delfem2::CVec3d delfem2::drag_AxisHandler(
     const float *mPj) {
   CVec2d spa0 = screenXYProjection(p + len * axis, mMV, mPj);
   CVec2d spa1 = screenXYProjection(p - len * axis, mMV, mPj);
-  double r = (spa0 - spa1) * (sp1 - sp0) / (spa0 - spa1).squaredNorm();
+  double r = (spa0 - spa1).dot(sp1 - sp0) / (spa0 - spa1).squaredNorm();
   return r * axis * len;
 }
 
@@ -221,7 +221,7 @@ DFM2_INLINE double delfem2::DragCircle(
     const float *mPj) {
   CVec2d spo0 = screenXYProjection(p, mMV, mPj);
   double area = Area_Tri(sp0, spo0, sp1);
-  double angl = area / ((sp0 - spo0).Length() * (sp1 - spo0).Length());
+  double angl = area / ((sp0 - spo0).norm() * (sp1 - spo0).norm());
   {
     CVec3d a3 = screenUnProjectionDirection(axis, mMV, mPj);
     if (a3.z < 0) { angl *= -1; }
@@ -238,7 +238,7 @@ DFM2_INLINE bool delfem2::isPickPoint(
     const float *mPj,
     double pick_tol) {
   CVec2d sp0 = screenXYProjection(p, mMV, mPj);
-  return (sp - sp0).Length() < pick_tol;
+  return (sp - sp0).norm() < pick_tol;
 }
 
 DFM2_INLINE bool delfem2::isPickCircle(

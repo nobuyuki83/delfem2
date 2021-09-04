@@ -960,7 +960,7 @@ bool delfem2::FindFittingPoint(
   else{
     double min_dist = -1;
     for(const auto & iq : aP2D){
-      double len = (iq-p2d_org).Length();
+      double len = (iq-p2d_org).norm();
       if( min_dist < 0 || len < min_dist ){
         min_dist = len;
         p2d_near = iq;
@@ -970,7 +970,7 @@ bool delfem2::FindFittingPoint(
     }
   }
   if( !isHit ) return false;
-  double dist = (p2d_near-p2d_org).Length();
+  double dist = (p2d_near-p2d_org).norm();
   if( dist > 0.4 ) return false;
   p2d_norm.normalize();
   return true;
@@ -1336,7 +1336,7 @@ void delfem2::CCad3D::Pick(
     ielem_edge_picked = 0;
     {
       CVec2d sp = screenXYProjection(aEdge[iedge_picked].q0, mMV, mPj);
-      if( (sp0-sp).Length() < 0.05 ){
+      if( (sp0-sp).norm() < 0.05 ){
         ielem_edge_picked = 2;
         iface_picked = -1;
         return;
@@ -1344,7 +1344,7 @@ void delfem2::CCad3D::Pick(
     }
     {
       CVec2d sp = screenXYProjection(aEdge[iedge_picked].q1, mMV, mPj);
-      if( (sp0-sp).Length() < 0.05 ){
+      if( (sp0-sp).norm() < 0.05 ){
         ielem_edge_picked = 3;
         iface_picked = -1;
         return;
@@ -1537,7 +1537,7 @@ bool delfem2::CCad3D::MouseMotion
         CVec3d axis(0, 0, 0); axis[iaxis] = 1;
         CVec2d spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
         CVec2d spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
-        double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).squaredNorm();
+        double r = (spa0-spa1).dot(sp1-sp0)/(spa0-spa1).squaredNorm();
         CVec3d d = r*axis;
         plane_org += d;
         std::vector<int> aIP = getPointsInEdges(aIE_picked, aEdge);
@@ -1560,7 +1560,7 @@ bool delfem2::CCad3D::MouseMotion
         CVec3d axis(0, 0, 0); axis[iaxis] = 1;
         CVec2d spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
         CVec2d spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
-        double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).squaredNorm();
+        double r = (spa0-spa1).dot(sp1-sp0)/(spa0-spa1).squaredNorm();
         CVec3d d = r*axis;
         plane_org += d;
         return false;

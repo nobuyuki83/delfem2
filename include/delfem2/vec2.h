@@ -17,8 +17,9 @@
 #include "delfem2/dfm2_inline.h"
 
 #if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4201 )
+#  pragma warning( push )
+// nonstandard extension used : nameless struct/union
+#  pragma warning( disable : 4201 )
 #endif
 
 // -----------------------------------------------------
@@ -72,8 +73,8 @@ CVec2<T> operator*(T1, const CVec2<T> &);
 template<typename T, typename T1>
 CVec2<T> operator*(const CVec2<T> &, T1);
 
-template<typename T>
-T operator*(const CVec2<T> &lhs, const CVec2<T> &rhs);
+//template<typename T>
+//T operator*(const CVec2<T> &lhs, const CVec2<T> &rhs);
 
 template<typename T>
 std::ostream &operator<<(std::ostream &output, const CVec2<T> &v);
@@ -158,13 +159,6 @@ class CVec2 {
   // ---------------
   // below: function
 
-//  inline T x() const { return p[0]; }
-//  inline T y() const { return p[1]; }
-
-  T Length() const {
-    return sqrt(p[0] * p[0] + p[1] * p[1]);
-  }
-
   //! @brief squared Euclidian norm (named similalty to Eigen)
   T squaredNorm() const {
     return p[0] * p[0] + p[1] * p[1];
@@ -172,7 +166,7 @@ class CVec2 {
 
   //! @brief in place normalization with Euclidian norm (named similarly to Eigen)
   void normalize() {
-    const double mag = Length();
+    const double mag = norm();
     p[0] /= mag;
     p[1] /= mag;
   }
@@ -195,6 +189,7 @@ class CVec2 {
     p[1] = T(0);
   }
 
+  //! @brief dot product (named similarly to Eigen)
   T dot(const CVec2<T>& rhs) const {
     return x*rhs.x+y*rhs.y;
   }
@@ -425,11 +420,11 @@ void MakeMassMatrixTri(
 } // namespace delfem2
 
 #if defined(_MSC_VER)
-#pragma warning( pop )
+#  pragma warning( pop )
 #endif
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/vec2.cpp"
+#  include "delfem2/vec2.cpp"
 #endif
 
 #endif // VEC_2
