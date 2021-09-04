@@ -241,17 +241,17 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPathD(
         CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
         e.p1 = CVec2d(myStod(aStr1[is + 4]), myStod(aStr1[is + 5]));
-        double len01 = (e.p1 - e.p0).Length();
+        double len01 = (e.p1 - e.p0).norm();
         const CVec2d lx = (e.p1 - e.p0) / (len01 * len01);
         const CVec2d ly = CVec2d(lx.y, -lx.x);
         e.type_edge = CCad2D_EdgeGeo::BEZIER_CUBIC;
         e.param.resize(4, 0.0);
         CVec2d p2(myStod(aStr1[is + 0]), myStod(aStr1[is + 1]));
         CVec2d p3(myStod(aStr1[is + 2]), myStod(aStr1[is + 3]));
-        e.param[0] = (p2 - e.p0) * lx;
-        e.param[1] = (p2 - e.p0) * ly;
-        e.param[2] = (p3 - e.p0) * lx;
-        e.param[3] = (p3 - e.p0) * ly;
+        e.param[0] = (p2 - e.p0).dot(lx);
+        e.param[1] = (p2 - e.p0).dot(ly);
+        e.param[2] = (p3 - e.p0).dot(lx);
+        e.param[3] = (p3 - e.p0).dot(ly);
         aEdge.push_back(e);
         pos_cur = e.p1;
         is += 6;
@@ -268,15 +268,15 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPathD(
                         pos_cur.y+ myStod(aStr1[is + 1]));
         const CVec2d p3(pos_cur.x + myStod(aStr1[is + 2]),
                         pos_cur.y + myStod(aStr1[is + 3]));
-        const double len01 = (e.p1 - e.p0).Length();
+        const double len01 = (e.p1 - e.p0).norm();
         const CVec2d lx = (e.p1 - e.p0) / (len01 * len01);
         const CVec2d ly = CVec2d(lx.y, -lx.x);
         e.type_edge = CCad2D_EdgeGeo::BEZIER_CUBIC;
         e.param.resize(4, 0.0);
-        e.param[0] = (p2 - e.p0) * lx;
-        e.param[1] = (p2 - e.p0) * ly;
-        e.param[2] = (p3 - e.p0) * lx;
-        e.param[3] = (p3 - e.p0) * ly;
+        e.param[0] = (p2 - e.p0).dot(lx);
+        e.param[1] = (p2 - e.p0).dot(ly);
+        e.param[2] = (p3 - e.p0).dot(lx);
+        e.param[3] = (p3 - e.p0).dot(ly);
         aEdge.push_back(e);
         pos_cur = e.p1;
         is += 6;
@@ -322,17 +322,17 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPathD(
       CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
       e.p1 = CVec2d(myStod(aStr1[is + 3]), myStod(aStr1[is + 4]));
-      double len01 = (e.p1 - e.p0).Length();
+      double len01 = (e.p1 - e.p0).norm();
       const CVec2d lx = (e.p1 - e.p0) / (len01 * len01);
       const CVec2d ly = CVec2d(lx.y, -lx.x);
       e.type_edge = CCad2D_EdgeGeo::BEZIER_CUBIC;
       CVec2d p2(myStod(aStr1[is + 1]), myStod(aStr1[is + 2]));
       CVec2d p3 = e.p1;
       e.param.resize(4, 0.0);
-      e.param[0] = (p2 - e.p0) * lx;
-      e.param[1] = (p2 - e.p0) * ly;
-      e.param[2] = (p3 - e.p0) * lx;
-      e.param[3] = (p3 - e.p0) * ly;
+      e.param[0] = (p2 - e.p0).dot(lx);
+      e.param[1] = (p2 - e.p0).dot(ly);
+      e.param[2] = (p3 - e.p0).dot(lx);
+      e.param[3] = (p3 - e.p0).dot(ly);
       aEdge.push_back(e);
       pos_cur = e.p1;
       is += 5;
@@ -388,8 +388,8 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPathD(
         e.p1 = p2;
         e.type_edge = CCad2D_EdgeGeo::BEZIER_QUADRATIC;
         e.param.resize(2);
-        e.param[0] = (p1 - p0) * lx;
-        e.param[1] = (p1 - p0) * ly;
+        e.param[0] = (p1 - p0).dot(lx);
+        e.param[1] = (p1 - p0).dot(ly);
       }
       aEdge.push_back(e);
       pos_cur = e.p1;
@@ -406,8 +406,8 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPathD(
         e.p1 = p2;
         e.type_edge = CCad2D_EdgeGeo::BEZIER_QUADRATIC;
         e.param.resize(2);
-        e.param[0] = (p1 - p0) * lx;
-        e.param[1] = (p1 - p0) * ly;
+        e.param[0] = (p1 - p0).dot(lx);
+        e.param[1] = (p1 - p0).dot(ly);
       }
       aEdge.push_back(e);
       pos_cur = e.p1;
@@ -415,7 +415,7 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPathD(
     } else if (aStr1[is] == "z" || aStr1[is] == "Z") {
       const CVec2d p1 = aEdge[0].p0;
       const CVec2d p0 = aEdge[aEdge.size() - 1].p1;
-      double dist0 = (p0 - p1).Length();
+      double dist0 = (p0 - p1).norm();
       if (dist0 > 1.0e-9) {
         CCad2D_EdgeGeo e;
         e.p0 = p0;
@@ -528,12 +528,12 @@ DFM2_INLINE void delfem2::CCad2D::DragPicked
         const CVec2d lx = (edge.p1 - edge.p0).normalized();
         const CVec2d ly = CVec2d(lx.y,-lx.x);
         if( ipicked_elem == 1 ){
-          edge.param[0] = (CVec2d(p1x,p1y)- edge.p0 )*lx;
-          edge.param[1] = (CVec2d(p1x,p1y)- edge.p0 )*ly;
+          edge.param[0] = (CVec2d(p1x,p1y)- edge.p0 ).dot(lx);
+          edge.param[1] = (CVec2d(p1x,p1y)- edge.p0 ).dot(ly);
         }
         else if( ipicked_elem == 2 ){
-          edge.param[2] = (CVec2d(p1x,p1y)- edge.p1 )*lx;
-          edge.param[3] = (CVec2d(p1x,p1y)- edge.p1 )*ly;
+          edge.param[2] = (CVec2d(p1x,p1y)- edge.p1 ).dot(lx);
+          edge.param[3] = (CVec2d(p1x,p1y)- edge.p1 ).dot(ly);
         }
       }
     }
@@ -771,7 +771,7 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthNDiv(
     unsigned int ndiv) const
 {
   if( type_edge == LINE ){
-    return (this->p0 - this->p1).Length();
+    return (this->p0 - this->p1).norm();
   }
   else if( this->type_edge == BEZIER_QUADRATIC ){
     const CVec2d lx = (this->p1 - this->p0);

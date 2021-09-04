@@ -89,7 +89,7 @@ template <typename T>
 void ResamplingLoop(
     std::vector<int>& loopIP1_ind,
     std::vector<int>& loopIP1,
-    std::vector<CVec2<T> >& aXY,
+    std::vector<CVec2<T> >& aVec2,
     double max_edge_length);
 
 template <typename T>
@@ -97,12 +97,13 @@ void JArray_FromVecVec_XY(
     std::vector<int>& aIndXYs,
     std::vector<int>& loopIP0,
     std::vector<CVec2<T> >& aXY,
-    const std::vector< std::vector<double> >& aaXY);
+    const std::vector< std::vector<double> >& aVecAry0);
 
 template <typename T>
 bool IsInclude_Loop(
     const double co[],
-    const int ixy_stt, const int ixy_end,
+    int ixy_stt,
+    int ixy_end,
     const std::vector<CVec2<T> >& aXY);
 
 template <typename T>

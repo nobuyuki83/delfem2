@@ -193,6 +193,7 @@ template CVec2d operator*(const CVec2d& v0, unsigned int c);
 
 //  ---------------------
 
+/*
 template<typename T>
 T operator*(const CVec2<T> &lhs, const CVec2<T> &rhs) {
   return lhs.p[0] * rhs.p[0] + lhs.p[1] * rhs.p[1];
@@ -201,6 +202,7 @@ T operator*(const CVec2<T> &lhs, const CVec2<T> &rhs) {
 template double operator * (const CVec2d& lhs, const CVec2d& rhs);
 template float  operator * (const CVec2f& lhs, const CVec2f& rhs);
 #endif
+*/
 
 //  ---------------------
 
@@ -678,7 +680,7 @@ std::vector< delfem2::CVec2<T> > delfem2::Polyline_Resample_Polyline(
   double lcur = l;
   for(;;){
     if( jcur >= (int)stroke0.size()-1 ) break;
-    double lenj = (stroke0[jcur + 1] - stroke0[jcur]).Length();
+    double lenj = (stroke0[jcur + 1] - stroke0[jcur]).norm();
     double lenjr = lenj * (1.0 - rcur);
     if( lenjr > lcur ){ // put point in this segment
       rcur += lcur / lenj;

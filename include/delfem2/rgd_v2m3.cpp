@@ -41,12 +41,12 @@ bool Nearest_Polygon2(
   for(unsigned int iej=0;iej<nej;++iej) {
     const CVec2d p0 = shape[(iej + 0) % nej];
     const CVec2d p1 = shape[(iej + 1) % nej];
-    double theta = atan2((p0-q)^(p1-q),(p0-q)*(p1-q));
+    double theta = atan2((p0-q)^(p1-q),(p0-q).dot(p1-q));
     winding_nubmer += theta;
     const CVec2d pe = GetNearest_LineSeg_Point(q, p0, p1);
-    double re0 = (pe-p0).Length()/(p1-p0).Length();
+    double re0 = (pe-p0).norm()/(p1-p0).norm();
     const CVec2d ne = (p1 - p0).Rotate(-M_PI * 0.5).normalized();
-    const double dist0 = (pe-q).Length();
+    const double dist0 = (pe-q).norm();
     if( min_dist > 0 && dist0 > min_dist ){ continue; }
     //
     min_dist = dist0;
@@ -185,7 +185,7 @@ void delfem2::Steptime_Rgd2(
         if( !is_inside ){ continue; } // not penetrating
         //
         CVec2d PB = (1-reB)*rbB.shape[(ieB+0)%rbB.shape.size()] + reB*rbB.shape[(ieB+1)%rbB.shape.size()];
-        const double penetration = (PB-pAonB)*NrmB;
+        const double penetration = (PB-pAonB).dot(NrmB);
         const CVec2d pB = PB.Mat3Vec2_AffineProjection(matAffineB.mat);
         const CVec2d nrmB = NrmB.Mat3Vec2_AffineDirection(matAffineB.mat);
         const double lambda = rgd_v2m3::ResolveContact(aRS[irbA],aRS[irbB],
@@ -224,7 +224,7 @@ void delfem2::Steptime_Rgd2(
     const CVec2d pA = (PA - rbA.posl).Rotate(rbA.theta) + rbA.posg;
     const CVec2d pB = (PB - rbB.posl).Rotate(rbB.theta) + rbB.posg;
     const CVec2d tangent_dir = c.Njn.Rotate(rbB.theta - M_PI*0.5); // tangent direction
-    double velo_slip = (vA-vB)*tangent_dir; // slipping velocity
+    double velo_slip = (vA-vB).dot(tangent_dir); // slipping velocity
     rgd_v2m3::AddFriction(rbA,rbB,
                           pA,pB,tangent_dir,velo_slip,c.lambda/dt);
   }

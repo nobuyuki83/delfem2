@@ -46,7 +46,7 @@ double delfem2::Length_Polygon(
   double len = 0;
   for(unsigned int ip0=0;ip0<np;ip0++){
     const unsigned int ip1 = (ip0+1)%np;
-    len += (aP[ip0]-aP[ip1]).Length();
+    len += (aP[ip0]-aP[ip1]).norm();
   }
   return len;
 }
@@ -178,7 +178,7 @@ T delfem2::RotationalMomentPolar_Polygon2(
     const CVec2<T> p0 = aVec2[ip0] - pivot;
     const CVec2<T> p1 = aVec2[ip1] - pivot;
     T a0 = (p0^p1)*static_cast<T>(0.5);
-    sum_I += a0*(p0*p0+p0*p1+p1*p1);
+    sum_I += a0*(p0.dot(p0)+p0.dot(p1)+p1.dot(p1));
   }
   return sum_I*static_cast<T>(1.0/6.0);
 }
@@ -367,7 +367,8 @@ template void delfem2::ResamplingLoop(
 template <typename T>
 bool delfem2::IsInclude_Loop(
     const double co[],
-    const int ixy_stt, const int ixy_end,
+    const int ixy_stt,
+    const int ixy_end,
     const std::vector<CVec2<T>>& aXY)
 {
   int inum_cross = 0;

@@ -103,7 +103,7 @@ void MeanValueCoordinate_Polygon2(
   for (unsigned int iv = 0; iv < nv; ++iv) { aW[iv] = 0.0; }
   for (unsigned int iv = 0; iv < nv; ++iv) {
     VEC v0(aXY[iv * 2 + 0] - px, aXY[iv * 2 + 1] - py);
-    if (v0.Length() > 1.0e-10) { continue; }
+    if (v0.norm() > 1.0e-10) { continue; }
     aW[iv] = 1.0;
     return;
   }
@@ -112,9 +112,9 @@ void MeanValueCoordinate_Polygon2(
     unsigned int iv1 = (ie + 1) % nv;
     VEC v0(aXY[iv0 * 2 + 0] - px, aXY[iv0 * 2 + 1] - py);
     VEC v1(aXY[iv1 * 2 + 0] - px, aXY[iv1 * 2 + 1] - py);
-    const double l0 = v0.Length();
-    const double l1 = v1.Length();
-    if (fabs((v0 * v1) / (l0 * l1) + 1) > 1.0e-10) { continue; }
+    const double l0 = v0.norm();
+    const double l1 = v1.norm();
+    if (fabs((v0.dot(v1)) / (l0 * l1) + 1) > 1.0e-10) { continue; }
     aW[iv0] = l1 / (l0 + l1);
     aW[iv1] = l0 / (l0 + l1);
     return;
@@ -127,13 +127,13 @@ void MeanValueCoordinate_Polygon2(
     VEC v0(aXY[iv0 * 2 + 0] - px, aXY[iv0 * 2 + 1] - py);
     VEC v1(aXY[iv1 * 2 + 0] - px, aXY[iv1 * 2 + 1] - py);
     VEC v2(aXY[iv2 * 2 + 0] - px, aXY[iv2 * 2 + 1] - py);
-    double c01 = (v0 * v1) / (v0.Length() * v1.Length());
+    double c01 = (v0.dot(v1)) / (v0.norm() * v1.norm());
     double s01 = (Cross(v0, v1) > 0) ? 1 : -1;
-    double c12 = (v1 * v2) / (v1.Length() * v2.Length());
+    double c12 = (v1.dot(v2)) / (v1.norm() * v2.norm());
     double s12 = (Cross(v1, v2) > 0) ? 1 : -1;
     double t01 = s01 * sqrt((1 - c01) / (1 + c01));
     double t12 = s12 * sqrt((1 - c12) / (1 + c12));
-    double w1 = (t01 + t12) / v1.Length();
+    double w1 = (t01 + t12) / v1.norm();
     aW[iv1] = w1;
     sum += w1;
   }
