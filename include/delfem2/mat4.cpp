@@ -12,8 +12,7 @@
 
 // ------------------------
 
-namespace delfem2 {
-namespace mat4 {
+namespace delfem2::mat4 {
 
 template<typename REAL>
 DFM2_INLINE void CalcInvMat(
@@ -121,7 +120,6 @@ DFM2_INLINE void Cross3D(
   r[2] = v1[0] * v2[1] - v2[0] * v1[1];
 }
 
-}
 }
 
 
@@ -380,6 +378,29 @@ template void delfem2::Vec3_Mat4Vec3_AffineProjection(
 template void delfem2::Vec3_Mat4Vec3_AffineProjection(
     double y0[3], const double a[16], const double x0[3]);
 #endif
+
+// ---------------------------
+
+template<typename T>
+DFM2_INLINE
+std::array<T,2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+    const T a[16],
+    const T x0[3]) {
+  const T x1[4] = { x0[0], x0[1], x0[2], 1};
+  T y1[4];
+  MatVec4(y1, a, x1);
+  return { y1[0] / y1[3], y1[1] / y1[3] };
+}
+#ifdef DFM2_STATIC_LIBRARY
+template std::array<float,2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+    const float a[16],
+    const float x0[3]);
+template std::array<double,2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+    const double a[16],
+    const double x0[3]);
+#endif
+
+// ----------------------------
 
 template<typename T0, typename T1, typename T2>
 DFM2_INLINE void delfem2::Vec3_Vec3Mat4_AffineProjection(

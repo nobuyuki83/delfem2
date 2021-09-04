@@ -23,7 +23,7 @@
 
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
-#include "delfem2/geoplygn2_v2.h"
+#include "delfem2/geo_polygon2.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsilu_mats.h"
@@ -335,7 +335,7 @@ void SolveProblem_LinearSolid_Static() {
 
 // ----------------------------------------------------------
 
-void draw(GLFWwindow *window) {
+void Draw(GLFWwindow *window) {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
@@ -345,7 +345,7 @@ void draw(GLFWwindow *window) {
 
   int nw, nh;
   glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float) nw / nh;
+  const float asp = static_cast<float>(nw) / static_cast<float>(nh);
   float mP[16], mMV[16];
   viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
   shdr0.Draw(mP, mMV);
@@ -379,7 +379,7 @@ int main() {
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
-  while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
+  while (!glfwWindowShouldClose(viewer.window)) { Draw(viewer.window); }
 #endif
 
   glfwDestroyWindow(viewer.window);

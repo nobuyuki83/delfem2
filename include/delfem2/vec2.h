@@ -13,6 +13,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -100,6 +101,10 @@ class CVec2 {
     this->p[0] = x;
     this->p[1] = y;
   }
+  CVec2(const std::array<T,2> &arr) {
+    this->p[0] = arr[0];
+    this->p[1] = arr[1];
+  }
   explicit CVec2(T x) {
     this->p[0] = x;
     this->p[1] = x;
@@ -155,6 +160,12 @@ class CVec2 {
   // above: operator
   // ---------------
   // below: function
+
+  //! @details (named after Eigen and STL)
+  T *data() { return p; }
+
+  //! @details (named after Eigen and STL)
+  const T *data() const { return p; }
 
   //! @brief squared Euclidian norm (named similalty to Eigen)
   T squaredNorm() const {

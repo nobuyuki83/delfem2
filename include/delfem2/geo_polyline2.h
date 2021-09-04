@@ -75,6 +75,28 @@ std::vector<CVec2<T> > Polyline_Resample_Polyline(
     const std::vector<CVec2<T> > &stroke0,
     double l);
 
+/**
+ *
+ * @tparam VEC delfem2::CVecX or Eigen::VectorX
+ * @param polyline
+ * @param scr
+ * @return
+ */
+template<typename VEC>
+unsigned int FindNearestPointInPolyline(
+    const std::vector<VEC>& polyline,
+    const VEC& scr){
+  unsigned int idx_point_min_dist = UINT_MAX;
+  float dist_min = -1;
+  for(unsigned int ip=0;ip<polyline.size();++ip){
+    auto dist = (scr-polyline[ip]).norm();
+    if( dist_min < 0 || dist < dist_min ){
+      idx_point_min_dist = ip;
+      dist_min = dist;
+    }
+  }
+  return idx_point_min_dist;
+}
 
 } // namespace delfem2
 

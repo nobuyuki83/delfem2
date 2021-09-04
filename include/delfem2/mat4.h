@@ -17,6 +17,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>  // using NaN Check
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -256,6 +257,11 @@ void Vec3_Mat4Vec3_AffineProjection(
     T0 y0[3],
     const T1 a[16],
     const T2 x0[3]);
+
+template<typename T>
+DFM2_INLINE std::array<T,2> Vec2_Mat4Vec3_AffineProjection(
+    const T a[16],
+    const T x0[3]);
 
 template<typename T0, typename T1, typename T2>
 void Vec3_Vec3Mat4_AffineProjection(

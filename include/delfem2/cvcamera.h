@@ -121,6 +121,28 @@ Mat4_Image2Screen(
       0, 0, 0, 1 };
 }
 
+
+template<typename T>
+std::tuple<T, T, std::array<T, 3>, std::array<T, 3>>
+WdW_DifferenceScreenCoordinate(
+    const float mat[16],
+    const float pos[3],
+    const float trg[2]) {
+  delfem2::CVec3f vx(mat), vy(mat + 4), vw(mat + 12), vp(pos);
+  float qx = vx.dot(vp) + mat[3];
+  float qy = vy.dot(vp) + mat[7];
+  float qw = vw.dot(vp) + mat[15];
+  float s = qx/qw;
+  float t = qy/qw;
+  auto v0 = vx / qw - qx / (qw * qw) * vw;
+  auto v1 = vy / qw - qy / (qw * qw) * vw;
+  return {
+      s - trg[0],
+      t - trg[1],
+      {v0.x, v0.y, v0.z},
+      {v1.x, v1.y, v1.z} };
+}
+
 }
 
 #endif
