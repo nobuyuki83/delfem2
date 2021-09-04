@@ -1,5 +1,5 @@
 #ifdef DFM2_INLINE
-#undef DFM2_INLINE
+#  undef DFM2_INLINE
 #endif
 
 #ifndef DFM2_STATIC_LIBRARY
