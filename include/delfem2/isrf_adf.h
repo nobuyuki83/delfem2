@@ -40,9 +40,13 @@ class CADF3 {
       double px, double py, double pz,
       double n[3]) const;
   virtual bool IntersectionPoint(
-      double p[3],
-      const double org[3], const double dir[3]) const { return false; }
-  virtual void GetMesh(std::vector<unsigned int> &aTri, std::vector<double> &aXYZ, double elen) const {}
+      [[maybe_unused]] double p[3],
+      [[maybe_unused]] const double org[3], 
+	  [[maybe_unused]] const double dir[3]) const { return false; }
+  virtual void GetMesh(
+	  [[maybe_unused]] std::vector<unsigned int> &aTri, 
+	  [[maybe_unused]] std::vector<double> &aXYZ, 
+	  [[maybe_unused]] double elen) const {}
   //
   void BuildIsoSurface_MarchingCube();
   void BuildMarchingCubeEdge();

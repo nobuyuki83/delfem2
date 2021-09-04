@@ -71,7 +71,7 @@ int main() {
       // create duplicated points for debugging purpose
       srand(3);
       for (int iip = 0; iip < 10; ++iip) { // hash collision
-        const unsigned int ip = N * (rand() / (RAND_MAX + 1.0));
+        const unsigned int ip = static_cast<unsigned int>(N * (rand() / (RAND_MAX + 1.0)));
         assert(ip < N);
         const double x0 = aXYZ[ip * 3 + 0];
         const double y0 = aXYZ[ip * 3 + 1];
@@ -99,7 +99,7 @@ int main() {
     {
       dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
       dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-      dfm2::Check_BVH(aNodeBVH, aXYZ.size() / 3);
+      dfm2::Check_BVH(aNodeBVH, static_cast<unsigned int>(aXYZ.size() / 3));
     }
   }
 

@@ -41,14 +41,14 @@ void Refine(double px, double py)
 
 void Coarse(double px, double py)
 {
-  for(unsigned int ip=aPo2D.size();ip-->0;){ // iterate ip-1 to 0
+  for(unsigned int ip=static_cast<unsigned int>(aPo2D.size());ip-->0;){ // iterate ip-1 to 0
     if( aPo2D[ip].e == UINT_MAX ){ continue; }
     if( Distance(aVec2[ip],dfm2::CVec2d(px,py)) > 0.1 ){ continue; }
     std::vector< std::pair<unsigned int,unsigned int> > aTriSuP;
     GetTriArrayAroundPoint(aTriSuP,
                            ip,aPo2D,aETri);
     std::vector<int> aPSuP(aTriSuP.size());
-    const unsigned int npsup = aPSuP.size();
+    const unsigned int npsup = static_cast<unsigned int>(aPSuP.size());
     for(unsigned int iit=0;iit<npsup;++iit){
       const int itri0 = aTriSuP[iit].first;
       const int inotri0 = aTriSuP[iit].second;
@@ -104,14 +104,14 @@ void GenMesh()
     }
     FixLoopOrientation(loopIP,
                        loopIP_ind,aVec2);
-    if( elen > 10e-10 ){
+    if constexpr( elen > 10e-10 ){
       ResamplingLoop(loopIP_ind,loopIP,aVec2,
                      elen );
     }
   }
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
-  if( elen > 1.0e-10 ){
+  if constexpr( elen > 1.0e-10 ){
     dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aPo2D.size());
     std::vector<unsigned int> aFlgTri(aETri.size(),0);
@@ -141,7 +141,7 @@ void myGlutDisplay()
   }
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();

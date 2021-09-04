@@ -204,7 +204,7 @@ void SetProblem(int iprob) {
                   delfem2::MESHELEM_TET,
                   aXYZ.size() / 3);
   aTetSurface.clear();
-  for (size_t it = 0; it < aTet.size() / 4; ++it) {
+  for (unsigned int it = 0; it < aTet.size() / 4; ++it) {
     for (int ift = 0; ift < 4; ++ift) {
       if (aTetSuTet[it * 4 + ift] != UINT_MAX) { continue; }
       aTetSurface.push_back(it);

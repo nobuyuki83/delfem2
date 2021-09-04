@@ -146,10 +146,10 @@ public:
   }
   void Pick(const float src[3], const float dir[3]){
     if( this->igizmo_mode == 1 ){
-      gizmo_rot.Pick(true, src, dir, 0.1);
+      gizmo_rot.Pick(true, src, dir, 0.1f);
     }
     else if( this->igizmo_mode == 0 ){
-      gizmo_trnsl.Pick(true, src, dir, 0.1);
+      gizmo_trnsl.Pick(true, src, dir, 0.1f);
     }
   }
   void Drag(const float src0[3], const float src1[3], const float dir[3])

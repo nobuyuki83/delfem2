@@ -210,7 +210,7 @@ DFM2_INLINE void GetClampTet(
     return;
   }
   {
-    unsigned int k1 = 10, k2, k3, k4, k5, k6;
+    unsigned int k1 = 10, k2=0, k3=0, k4=0, k5=0, k6=0;
     if (iflg == 79) {
       k1 = 1;
       k2 = 2;
@@ -2310,7 +2310,7 @@ DFM2_INLINE void delfem2::makeBackgroundLattice
         if (dist < elen_srf) {
           level_srf_goal = level_srf;
         } else {
-          level_srf_goal = level_srf - log2(dist / elen_srf);
+          level_srf_goal = static_cast<int>(level_srf - log2(dist / elen_srf));
         }
       }
 //      =

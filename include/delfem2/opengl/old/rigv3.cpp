@@ -31,10 +31,10 @@
 DFM2_INLINE void delfem2::opengl::Draw_RigBone(
     int ibone,
     bool is_selected,
-    int ielem_selected,
+    [[maybe_unused]] int ielem_selected,
     const std::vector<CRigBone>& aBone,
     double rad_bone_sphere,
-    double rad_rot_hndlr) {
+    [[maybe_unused]] double rad_rot_hndlr) {
   { // draw point
     if (is_selected) { ::glColor3d(0, 1, 1); }
     else { ::glColor3d(1, 0, 0); }
@@ -87,9 +87,9 @@ DFM2_INLINE void delfem2::opengl::DrawBone_Line(
 DFM2_INLINE void delfem2::opengl::DrawBone_Octahedron(
     const std::vector<CRigBone>& aBone,
     unsigned int ibone_selected,
-    unsigned int ielem_selected,
-    double rad_bone_sphere,
-    double rad_rot_hndlr)
+    [[maybe_unused]] unsigned int ielem_selected,
+    [[maybe_unused]] double rad_bone_sphere,
+    [[maybe_unused]] double rad_rot_hndlr)
 {
   namespace dfm2 = delfem2;
   glDisable(GL_LIGHTING);

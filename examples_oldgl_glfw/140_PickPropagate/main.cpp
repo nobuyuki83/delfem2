@@ -9,6 +9,7 @@
 #include <vector>
 #include <algorithm>
 #include <cstddef> // std::size_t
+#include <climits>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // should be before glfw3.h
@@ -101,7 +102,7 @@ private:
         dfm2::CVec3d(src),dfm2::CVec3d(dir),
         aTri,aXYZ,aIndElem,
         1.0e-3);
-    if( mapDepthPES.empty() ){ return -1; }
+    if( mapDepthPES.empty() ){ return UINT_MAX; }
     return mapDepthPES.begin()->second.itri;
   }
 

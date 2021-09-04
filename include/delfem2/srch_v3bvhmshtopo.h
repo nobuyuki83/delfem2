@@ -261,8 +261,8 @@ class CBVH_MeshTri3D {
       CVec3<REAL> &n0,
       //
       const CVec3<REAL> &p0,
-      const std::vector<double> &aXYZ,
-      const std::vector<unsigned int> &aTri,
+      const std::vector<double> &aXYZ0,
+      const std::vector<unsigned int> &aTri0,
       const std::vector<double> &aNorm) const {
     assert(aBB_BVH.size() == aNodeBVH.size());
     CPtElm2<REAL> pes;
@@ -270,22 +270,22 @@ class CBVH_MeshTri3D {
       double dist_min = -1;
       delfem2::BVH_NearestPoint_MeshTri3D(dist_min, pes,
                                           p0.x, p0.y, p0.z,
-                                          aXYZ, aTri,
+                                          aXYZ0, aTri0,
                                           iroot_bvh, aNodeBVH, aBB_BVH);
     }
-    const CVec3<REAL> q0 = pes.Pos_Tri(aXYZ, aTri);
+    const CVec3<REAL> q0 = pes.Pos_Tri(aXYZ0, aTri0);
     double dist = (q0 - p0).norm();
     if (!aBB_BVH[iroot_bvh].isInclude_Point(p0.x, p0.y, p0.z)) { // outside
       n0 = (p0 - q0).normalized();
       return -dist;
     }
-    const CVec3<REAL> n1 = pes.UNorm_Tri(aXYZ, aTri, aNorm);
+    const CVec3<REAL> n1 = pes.UNorm_Tri(aXYZ0, aTri0, aNorm);
     if (dist < 1.0e-6) {
       n0 = n1;
       if ((q0 - p0).dot(n1) > 0) { return dist; } //inside
       return -dist; // outside
     }
-    CVec3<REAL> dir = (CG_Tri3(pes.itri, aTri, aXYZ) - p0).normalized();
+    CVec3<REAL> dir = (CG_Tri3(pes.itri, aTri0, aXYZ0) - p0).normalized();
     if ((q0 - p0).dot(n1) < 0) { dir = -dir; } // probaby outside so shoot ray outside
     std::vector<unsigned int> aIndElem;
     BVH_GetIndElem_Predicate(aIndElem,
@@ -294,7 +294,7 @@ class CBVH_MeshTri3D {
     std::map<double, CPtElm2<REAL>> mapDepthPES1;
     IntersectionRay_MeshTri3DPart(mapDepthPES1,
                                   p0, dir,
-                                  aTri, aXYZ, aIndElem,
+                                  aTri0, aXYZ0, aIndElem,
                                   0.0);
     if (mapDepthPES1.size() % 2 == 0) { // outside
       n0 = (p0 - q0).normalized();

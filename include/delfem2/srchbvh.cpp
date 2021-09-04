@@ -397,9 +397,9 @@ DFM2_INLINE void delfem2::SortedMortenCode_Points3(
     const REAL min_xyz[3],
     const REAL max_xyz[3])
 {
-  std::vector<bvh::CPairMtcInd> aNodeBVH; // array of BVH node
+  std::vector<bvh::CPairMtcInd> aNodeBVH0; // array of BVH node
   const std::size_t np = aXYZ.size()/3;
-  aNodeBVH.resize(np);
+  aNodeBVH0.resize(np);
   const REAL x_min = min_xyz[0];
   const REAL y_min = min_xyz[1];
   const REAL z_min = min_xyz[2];
@@ -410,15 +410,15 @@ DFM2_INLINE void delfem2::SortedMortenCode_Points3(
     const REAL x = (aXYZ[ip*3+0]-x_min)/(x_max-x_min);
     const REAL y = (aXYZ[ip*3+1]-y_min)/(y_max-y_min);
     const REAL z = (aXYZ[ip*3+2]-z_min)/(z_max-z_min);
-    aNodeBVH[ip].imtc = MortonCode(x,y,z);
-    aNodeBVH[ip].iobj = ip;
+    aNodeBVH0[ip].imtc = MortonCode(x,y,z);
+    aNodeBVH0[ip].iobj = ip;
   }
-  std::sort(aNodeBVH.begin(), aNodeBVH.end());
-  aSortedId.resize(aNodeBVH.size());
-  aSortedMc.resize(aNodeBVH.size());
-  for(size_t ino=0;ino<aNodeBVH.size();++ino){
-    aSortedMc[ino] = aNodeBVH[ino].imtc;
-    aSortedId[ino] = aNodeBVH[ino].iobj;
+  std::sort(aNodeBVH0.begin(), aNodeBVH0.end());
+  aSortedId.resize(aNodeBVH0.size());
+  aSortedMc.resize(aNodeBVH0.size());
+  for(size_t ino=0;ino<aNodeBVH0.size();++ino){
+    aSortedMc[ino] = aNodeBVH0[ino].imtc;
+    aSortedId[ino] = aNodeBVH0[ino].iobj;
       //        std::cout << std::bitset<32>(aNodeBVH[ino].imtc) << "  " << clz(aNodeBVH[ino].imtc) << "   " << ino << std::endl;
   }
 }
