@@ -31,7 +31,7 @@
 #include "delfem2/dtri.h"
 #include "delfem2/color.h"
 #include "delfem2/jagarray.h"
-#include "delfem2/geoplygn2_v2.h"
+#include "delfem2/geo_polygon2.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/color.h"

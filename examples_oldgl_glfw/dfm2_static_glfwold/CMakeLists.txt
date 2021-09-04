@@ -39,39 +39,28 @@ include_directories(
 )
 
 file(GLOB 
-    DFM2_CPP_FILES
-    ${PROJECT_SOURCE_DIR}/../../include/delfem2/*.cpp)
+    DFM2_SRC
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/*.cpp
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/*.h)
 file(GLOB 
-    DFM2_HDR_FILES
-    ${PROJECT_SOURCE_DIR}/../../include/delfem2/*.h)    
+    DFM2_OPENGL_SRC
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/opengl/*.cpp
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/opengl/*.h)        
+file(GLOB 
+    DFM2_OPENGL_OLD_SRC
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/opengl/old/*.cpp
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/opengl/old/*.h)
+file(GLOB 
+    DFM2_GLFW_SRC
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/glfw/*.cpp
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/glfw/*.h)    
 set(DELFEM2_INC         "../../include/delfem2")    
 add_library(${PROJ_NAME} STATIC
-    ${DFM2_CPP_FILES}
-    ${DFM2_HDR_FILES}    
-    ${DELFEM2_INC}/opengl/funcs.h           ${DELFEM2_INC}/opengl/funcs.cpp
-    ${DELFEM2_INC}/opengl/tex.h             ${DELFEM2_INC}/opengl/tex.cpp
-    ${DELFEM2_INC}/opengl/r2t.h             ${DELFEM2_INC}/opengl/r2t.cpp
-    
-    ${DELFEM2_INC}/opengl/old/v2.h           ${DELFEM2_INC}/opengl/old/v2.cpp
-    ${DELFEM2_INC}/opengl/old/v3q.h          ${DELFEM2_INC}/opengl/old/v3q.cpp
-    ${DELFEM2_INC}/opengl/old/color.h        ${DELFEM2_INC}/opengl/old/color.cpp
-    ${DELFEM2_INC}/opengl/old/funcs.h        ${DELFEM2_INC}/opengl/old/funcs.cpp
-    ${DELFEM2_INC}/opengl/old/mshuni.h       ${DELFEM2_INC}/opengl/old/mshuni.cpp
-    ${DELFEM2_INC}/opengl/old/cad2dtriv2.h   ${DELFEM2_INC}/opengl/old/cad2dtriv2.cpp
-    ${DELFEM2_INC}/opengl/old/caddtri_v3.h   ${DELFEM2_INC}/opengl/old/caddtri_v3.cpp
-    ${DELFEM2_INC}/opengl/old/rigv3.h        ${DELFEM2_INC}/opengl/old/rigv3.cpp
-    ${DELFEM2_INC}/opengl/old/colorv3.h      ${DELFEM2_INC}/opengl/old/colorv3.cpp
-    ${DELFEM2_INC}/opengl/old/r2tglo.h       ${DELFEM2_INC}/opengl/old/r2tglo.cpp
-    ${DELFEM2_INC}/opengl/old/gridcube.h     ${DELFEM2_INC}/opengl/old/gridcube.cpp
-    ${DELFEM2_INC}/opengl/old/gizmo.h        ${DELFEM2_INC}/opengl/old/gizmo.cpp
-    
-    ${DELFEM2_INC}/glfw/util.h     
-    ${DELFEM2_INC}/glfw/viewer2.h     
-    ${DELFEM2_INC}/glfw/viewer2.cpp
-    ${DELFEM2_INC}/glfw/viewer3.h     
-    ${DELFEM2_INC}/glfw/viewer3.cpp
-
-    ${DELFEM2_INC}/openglstb/glyph.h         ${DELFEM2_INC}/openglstb/glyph.cpp
+    ${DFM2_SRC}
+    ${DFM2_OPENGL_SRC}
+    ${DFM2_OPENGL_OLD_SRC}
+    ${DFM2_GLFW_SRC}    
+    ${DELFEM2_INC}/openglstb/glyph.h        ${DELFEM2_INC}/openglstb/glyph.cpp
 )
 
 file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)

@@ -15,7 +15,6 @@ set(PROJ_NAME dfm2_static_glfwnew)
 project(${PROJ_NAME})
 
 set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
 add_definitions(-DDFM2_STATIC_LIBRARY=ON)
 
@@ -35,97 +34,28 @@ include_directories(
   ${3RD_PARTY}/glad4/include
 )
 
+file(GLOB 
+    DFM2_SRC
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/*.cpp
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/*.h)
+file(GLOB 
+    DFM2_OPENGL_SRC
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/opengl/*.cpp
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/opengl/*.h)        
+file(GLOB 
+    DFM2_OPENGL_NEW_SRC
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/opengl/new/*.cpp
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/opengl/new/*.h)            
+file(GLOB 
+    DFM2_GLFW_SRC
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/glfw/*.cpp
+    ${PROJECT_SOURCE_DIR}/../../include/delfem2/glfw/*.h)        
+set(DELFEM2_INC         "../../include/delfem2")
 add_library(${PROJ_NAME} STATIC
-    ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
-    ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
-    ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
-    ${DELFEM2_INC}/mat4.h                      ${DELFEM2_INC}/mat4.cpp
-    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-    ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
-    ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
-    ${DELFEM2_INC}/geoplygn2_v2.h              ${DELFEM2_INC}/geoplygn2_v2.cpp
-    ${DELFEM2_INC}/geoproximity3_v3.h          ${DELFEM2_INC}/geoproximity3_v3.cpp
-    ${DELFEM2_INC}/geoconvhull3.h
-
-    ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
-    ${DELFEM2_INC}/jagarray.h                  ${DELFEM2_INC}/jagarray.cpp
-    ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
-    
-    ${DELFEM2_INC}/points.h                    ${DELFEM2_INC}/points.cpp
-    ${DELFEM2_INC}/mshuni.h                    ${DELFEM2_INC}/mshuni.cpp
-    ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
-    ${DELFEM2_INC}/msh_ioobj.h                 ${DELFEM2_INC}/msh_ioobj.cpp
-    ${DELFEM2_INC}/msh_iomisc.h                ${DELFEM2_INC}/msh_iomisc.cpp    
-    ${DELFEM2_INC}/mshprimitive.h              ${DELFEM2_INC}/mshprimitive.cpp
-    ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
-
-    ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
-    ${DELFEM2_INC}/str.h                       ${DELFEM2_INC}/str.cpp
-    ${DELFEM2_INC}/file.h                      ${DELFEM2_INC}/file.cpp
-    ${DELFEM2_INC}/filenpy_str.h               ${DELFEM2_INC}/filenpy_str.cpp
-    
-    ${DELFEM2_INC}/isrf_iss.h                  ${DELFEM2_INC}/isrf_iss.cpp
-    ${DELFEM2_INC}/isrf_adf.h                  ${DELFEM2_INC}/isrf_adf.cpp
-
-    ${DELFEM2_INC}/srchbvh.h                   ${DELFEM2_INC}/srchbvh.cpp
-    ${DELFEM2_INC}/srchbv3sphere.h
-    ${DELFEM2_INC}/srchbv3aabb.h
-    ${DELFEM2_INC}/srchbv2aabb.h    
-    ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
-    ${DELFEM2_INC}/srchbi_v3bvh.h
-    ${DELFEM2_INC}/srch_v3bvhmshtopo.h
-
-    ${DELFEM2_INC}/pgeo.h
-    
-    ${DELFEM2_INC}/lsmats.h                    ${DELFEM2_INC}/lsmats.cpp
-    ${DELFEM2_INC}/lsilu_mats.h                ${DELFEM2_INC}/lsilu_mats.cpp
-    ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
-
-    ${DELFEM2_INC}/fempoisson.h                ${DELFEM2_INC}/fempoisson.cpp
-    ${DELFEM2_INC}/femdkt.h                    ${DELFEM2_INC}/femdkt.cpp
-    ${DELFEM2_INC}/femcloth.h                  ${DELFEM2_INC}/femcloth.cpp
-    ${DELFEM2_INC}/femhelmholtz.h              ${DELFEM2_INC}/femhelmholtz.cpp
-    ${DELFEM2_INC}/femsolidlinear.h            ${DELFEM2_INC}/femsolidlinear.cpp
-    ${DELFEM2_INC}/femstokes.h                 ${DELFEM2_INC}/femstokes.cpp
-    ${DELFEM2_INC}/femcloth.h                  ${DELFEM2_INC}/femcloth.cpp
-    ${DELFEM2_INC}/femnavierstokes.h           ${DELFEM2_INC}/femnavierstokes.cpp
-    ${DELFEM2_INC}/femutil.h                   ${DELFEM2_INC}/femutil.cpp
-    ${DELFEM2_INC}/femmips_geo3.h              ${DELFEM2_INC}/femmips_geo3.cpp
-
-    ${DELFEM2_INC}/pbd_geo3dtri23.h            ${DELFEM2_INC}/pbd_geo3dtri23.cpp
-    ${DELFEM2_INC}/pbd_geo3.h                  ${DELFEM2_INC}/pbd_geo3.cpp
-
-    ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
-    ${DELFEM2_INC}/dtri2_v2dtri.h              ${DELFEM2_INC}/dtri2_v2dtri.cpp
-    ${DELFEM2_INC}/dtri3_v3dtri.h              ${DELFEM2_INC}/dtri3_v3dtri.cpp
-    ${DELFEM2_INC}/dtet_v3.h                   ${DELFEM2_INC}/dtet_v3.cpp
-    ${DELFEM2_INC}/cad2_dtri2.h                ${DELFEM2_INC}/cad2_dtri2.cpp
-
-    ${DELFEM2_INC}/defarapenergy_geo3.h        ${DELFEM2_INC}/defarapenergy_geo3.cpp
-    ${DELFEM2_INC}/deflap.h                    ${DELFEM2_INC}/deflap.cpp
-    ${DELFEM2_INC}/defarap.h                   ${DELFEM2_INC}/defarap.cpp
-
-    ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
-    ${DELFEM2_INC}/rigopt.h
-    
-    ${DELFEM2_INC}/cloth_internal.h
-    
-    ${DELFEM2_INC}/opengl/tex.h             ${DELFEM2_INC}/opengl/tex.cpp
-    ${DELFEM2_INC}/opengl/funcs.h           ${DELFEM2_INC}/opengl/funcs.cpp
-    ${DELFEM2_INC}/opengl/r2t.h             ${DELFEM2_INC}/opengl/r2t.cpp
-
-    ${DELFEM2_INC}/opengl/new/funcs.h        ${DELFEM2_INC}/opengl/new/funcs.cpp
-    ${DELFEM2_INC}/opengl/new/mshcolor.h     ${DELFEM2_INC}/opengl/new/mshcolor.cpp
-    ${DELFEM2_INC}/opengl/new/r2tgln.h       ${DELFEM2_INC}/opengl/new/r2tgln.cpp
-    ${DELFEM2_INC}/opengl/new/v23dtricad.h   ${DELFEM2_INC}/opengl/new/v23dtricad.cpp
-    ${DELFEM2_INC}/opengl/new/shdr_mshtex.h  ${DELFEM2_INC}/opengl/new/shdr_mshtex.cpp
-    ${DELFEM2_INC}/opengl/new/shdr_mshtri.h  ${DELFEM2_INC}/opengl/new/shdr_mshtri.cpp
-    ${DELFEM2_INC}/opengl/new/shdr_points.h  ${DELFEM2_INC}/opengl/new/shdr_points.cpp
-    ${DELFEM2_INC}/opengl/new/shdr_msh.h     ${DELFEM2_INC}/opengl/new/shdr_msh.cpp
-
-    ${DELFEM2_INC}/glfw/viewer3.h     ${DELFEM2_INC}/glfw/viewer3.cpp
-    ${DELFEM2_INC}/glfw/viewer2.h     ${DELFEM2_INC}/glfw/viewer2.cpp
-    ${DELFEM2_INC}/glfw/util.h
+    ${DFM2_SRC}
+    ${DFM2_OPENGL_SRC}
+    ${DFM2_OPENGL_NEW_SRC}    
+    ${DFM2_GLFW_SRC}        
 )
 
 file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)
