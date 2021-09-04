@@ -161,11 +161,11 @@ int main()
     else{
       const unsigned int np0 = static_cast<unsigned int>(aLayer[ilayer].aXYZ.size()/3); // this
       assert( aLayer[ilayer+1].map_fine2this.size() == np0 );
-      // const unsigned int np1 = static_cast<unsigned int>(aLayer[ilayer+1].aXYZ.size()/3); // corse
+      // const unsigned int np1 = 
       aLayer[ilayer].aOdir.resize(np0*3);
       for(unsigned int ip0=0;ip0<np0;++ip0){
         unsigned int ip1 = aLayer[ilayer+1].map_fine2this[ip0];
-        assert( ip1 < np1 );
+		assert(ip1 < static_cast<unsigned int>(aLayer[ilayer + 1].aXYZ.size() / 3));
         aLayer[ilayer].aOdir[ip0*3+0] = aLayer[ilayer+1].aOdir[ip1*3+0];
         aLayer[ilayer].aOdir[ip0*3+1] = aLayer[ilayer+1].aOdir[ip1*3+1];
         aLayer[ilayer].aOdir[ip0*3+2] = aLayer[ilayer+1].aOdir[ip1*3+2];

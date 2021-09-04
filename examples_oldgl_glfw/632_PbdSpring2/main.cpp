@@ -67,7 +67,7 @@ void StepTimePbdSpring2(
     double stiffness,
     const double *gravity,
     const std::vector<double> &aMassPointInv) {  // simulation
-  const unsigned int np = aXY.size() / 2;  // number of points
+  const unsigned int np = static_cast<unsigned int>(aXY.size() / 2);  // number of points
   const std::vector<double> aXYt = aXY;
   for (unsigned int ip = 0; ip < np; ++ip) {
     if (aMassPointInv[ip] < 1.0e-5) { continue; }
@@ -128,7 +128,8 @@ void SettingUpSimulation(
   // convert triangle elements to line elements
   delfem2::MeshLine_MeshElem(
       aLine,
-      aTri.data(), aTri.size() / 3, delfem2::MESHELEM_TRI, aXY.size() / 2);
+      aTri.data(), static_cast<unsigned int>(aTri.size() / 3), 
+	  delfem2::MESHELEM_TRI, static_cast<unsigned int>(aXY.size() / 2)); 
   // setting up boundry condition (fixing the both ends of the rectangle)
   aMassPointInv.resize(aXY.size() / 2, 1.0);
   for (unsigned int ip = 0; ip < aXY.size() / 2; ++ip) {
@@ -141,7 +142,9 @@ void SettingUpSimulation(
 // =============================================
 
 // print out error
-static void error_callback(int error, const char *description) {
+static void error_callback(
+	[[maybe_unused]] int error, 
+	const char *description) {
   fputs(description, stderr);
 }
 
@@ -171,7 +174,7 @@ int main() {
   {
     viewer.view_height = 1.0;
     viewer.title = "632_PbdSpring2";
-    viewer.trans[1] = 0.3;
+    viewer.trans[1] = 0.3f;
   }
   glfwSetErrorCallback(error_callback);
   if (!glfwInit()) { exit(EXIT_FAILURE); }
