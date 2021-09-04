@@ -54,13 +54,13 @@ class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
         const unsigned int nxy = dmsh.aVec2.size();
         const auto nv = static_cast<unsigned int>(aXYVtx.size() / 2);
         aW.resize(nxy * nv);
-        for (int ixy = 0; ixy < nxy; ++ixy) {
+        for (unsigned int ixy = 0; ixy < nxy; ++ixy) {
           dfm2::MeanValueCoordinate_Polygon2<dfm2::CVec2d>(
               aW.data() + nv * ixy,
               dmsh.aVec2[ixy].x, dmsh.aVec2[ixy].y,
               aXYVtx.data(), aXYVtx.size() / 2);
           double sum = 0.0;
-          for (int iv = 0; iv < nv; ++iv) {
+          for (unsigned int iv = 0; iv < nv; ++iv) {
             sum += aW[nv * ixy + iv];
           }
           assert(fabs(sum - 1) < 1.0e-10);
@@ -86,7 +86,7 @@ class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
       for (unsigned int ip = 0; ip < np; ++ip) {
         dmsh.aVec2[ip].p[0] = 0.0;
         dmsh.aVec2[ip].p[1] = 0.0;
-        for (int iv = 0; iv < nv; ++iv) {
+        for (unsigned int iv = 0; iv < nv; ++iv) {
           dmsh.aVec2[ip].p[0] += aW[ip * nv + iv] * aXYVtx[iv * 2 + 0];
           dmsh.aVec2[ip].p[1] += aW[ip * nv + iv] * aXYVtx[iv * 2 + 1];
         }

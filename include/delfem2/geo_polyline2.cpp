@@ -146,7 +146,8 @@ DFM2_INLINE void Rotate(std::vector<CVec2d> &aP, double dt) {
 // ----------------------------
 
 template<typename T>
-std::vector< delfem2::CVec2<T> > delfem2::Polyline_Resample_Polyline(
+std::vector< delfem2::CVec2<T> >
+delfem2::Polyline_Resample_Polyline(
     const std::vector< CVec2<T> >& stroke0,
     double l)
 {
@@ -181,4 +182,7 @@ std::vector< delfem2::CVec2<T> > delfem2::Polyline_Resample_Polyline(
 template std::vector<delfem2::CVec2d> delfem2::Polyline_Resample_Polyline(
     const std::vector<CVec2d>& stroke0, double l);
 #endif
+
+// -------------------------------
+
 
