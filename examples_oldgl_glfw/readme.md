@@ -43,7 +43,6 @@ cmake --build .
 <img src="103_Noise2/thumbnail.png" width=200px>
 
 ### [104_CageDef3Mvc](104_CageDef3Mvc)
-
 <img src="104_CageDef3Mvc/thumbnail.png" width=200px>
 
 ### [105_MeshSlice](105_MeshSlices)
@@ -124,10 +123,7 @@ cmake --build .
 
 
 ### [140_PickPropagate](140_PickPropagate)
-
 <img src="140_PickPropagate/thumbnail.png" width=200>
-
-
 
 ### [141_RigBendCapsule](141_RigBendCapsule)
 <img src="141_RigBendCapsule/thumbnail.png" width=200>
@@ -248,6 +244,9 @@ cmake --build .
 
 ### [615_PbdClothCad](615_PbdClothCad)
 <img src="615_PbdClothCad/thumbnail.png" width=200>
+
+### [616_FemRod3Static](616_FemRod3Static)
+<img src="616_FemRod3Static/thumbnail.png" width=200>
 
 ### [617_FemRodHairSelfcollision](617_FemRodHairSelfcollision)
 <img src="617_FemRodHairSelfcollision/thumbnail.png" width=200>
