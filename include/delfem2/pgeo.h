@@ -103,9 +103,9 @@ T getPointCoonsTri_CubicBezierEdge(
     double u, double v, double w,
     T aP[9])
 {
-  T peu = getPointCubicBezierCurve(w/(1-u), aP[3], aP[4], aP[5], aP[6]);
-  T pev = getPointCubicBezierCurve(u/(1-v), aP[6], aP[7], aP[8], aP[0]);
-  T pew = getPointCubicBezierCurve(v/(1-w), aP[0], aP[1], aP[2], aP[3]);
+  T peu = PointOnCubicBezierCurve(w/(1-u), aP[3], aP[4], aP[5], aP[6]);
+  T pev = PointOnCubicBezierCurve(u/(1-v), aP[6], aP[7], aP[8], aP[0]);
+  T pew = PointOnCubicBezierCurve(v/(1-w), aP[0], aP[1], aP[2], aP[3]);
   T pu = (1-u)*peu + u*aP[0];
   T pv = (1-v)*pev + v*aP[3];
   T pw = (1-w)*pew + w*aP[6];
@@ -135,7 +135,7 @@ T getPointHermetianQuad(
 }
 
 template <typename VEC>
-VEC getPointCubicBezierCurve(
+VEC PointOnCubicBezierCurve(
     double t,
     const VEC& p1,
     const VEC& p2,
@@ -147,6 +147,16 @@ VEC getPointCubicBezierCurve(
   + 3*t*t*tp*p3
   + 3*t*tp*tp*p2
   + tp*tp*tp*p1;
+}
+
+template <typename VEC>
+VEC PointOnQuadraticBezierCurve(
+    double t,
+    const VEC &p1,
+    const VEC &p2,
+    const VEC &p3) {
+  double tp = 1.0 - t;
+  return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
 }
 
 template <typename T>

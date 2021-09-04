@@ -750,7 +750,7 @@ DFM2_INLINE void delfem2::CCad2D_EdgeGeo::GenMeshNDiv(
     const CVec2d q0 = p0 + param[0]*lx + param[1]*ly;
     for(unsigned int ip=1;ip<ndiv;++ip){
       double t = (double)ip/ndiv;
-      CVec2d pos = pointCurve_BezierQuadratic(t, p0, q0, p1);
+      CVec2d pos = PointOnQuadraticBezierCurve(t, p0, q0, p1);
       aP.push_back(pos);
     }
   }
@@ -761,7 +761,7 @@ DFM2_INLINE void delfem2::CCad2D_EdgeGeo::GenMeshNDiv(
     const CVec2d q1 = p0 + param[2]*lx + param[3]*ly;
     for(unsigned int ip=1;ip<ndiv;++ip){
       double t = (double)ip/ndiv;
-      CVec2d pos = pointCurve_BezierCubic(t, p0, q0, q1, p1);
+      CVec2d pos = PointOnCubicBezierCurve(t, p0, q0, q1, p1);
       aP.push_back(pos);
     }
   }
