@@ -8,6 +8,7 @@
 #ifndef DFM2_PGEO_H
 #define DFM2_PGEO_H
 
+#include <cassert>
 #include <cstdio>
 #include <vector>
 

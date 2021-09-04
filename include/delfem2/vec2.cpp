@@ -292,9 +292,9 @@ template double delfem2::Length(const CVec2d& point);
 
 // Distance between two points
 template<typename T>
-double delfem2::Distance
-    (const CVec2<T> &ipo0,
-     const CVec2<T> &ipo1) {
+T delfem2::Distance(
+    const CVec2<T> &ipo0,
+    const CVec2<T> &ipo1) {
   return Distance2(ipo0.p, ipo1.p);
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -305,9 +305,9 @@ template double delfem2::Distance(const CVec2d& ipo0, const CVec2d& ipo1);
 
 // Distance between two points
 template<typename T>
-double delfem2::SquareDistance
-    (const CVec2<T> &ipo0,
-     const CVec2<T> &ipo1) {
+double delfem2::SquareDistance(
+    const CVec2<T> &ipo0,
+    const CVec2<T> &ipo1) {
   return delfem2::SquareDistance2(ipo0.p, ipo1.p);
 }
 

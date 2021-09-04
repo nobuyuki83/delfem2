@@ -100,7 +100,7 @@ class CVec2 {
     this->p[0] = x;
     this->p[1] = y;
   }
-  CVec2(T x) {
+  explicit CVec2(T x) {
     this->p[0] = x;
     this->p[1] = x;
   }
@@ -254,9 +254,6 @@ template<typename T>
 double Cross(const CVec2<T> &v1, const CVec2<T> &v2);
 
 template<typename T>
-double SquareDistance(const CVec2<T> &ipo0, const CVec2<T> &ipo1);
-
-template<typename T>
 double SquareLength(const CVec2<T> &point);
 
 template<typename T>
@@ -264,11 +261,12 @@ double Length(const CVec2<T> &point);
 
 //! @brief Length between two points
 template<typename T>
-double Distance(const CVec2<T> &ipo0, const CVec2<T> &ipo1);
+T Distance(const CVec2<T> &ipo0, const CVec2<T> &ipo1);
 
 //! @brief Length between two points
 template<typename T>
-double SquareDistance(const CVec2<T> &ipo0, const CVec2<T> &ipo1);
+double SquareDistance(
+    const CVec2<T> &ipo0, const CVec2<T> &ipo1);
 
 //! @brief Hight of a triangle : between v1 and line of v2-v3
 template<typename T>
