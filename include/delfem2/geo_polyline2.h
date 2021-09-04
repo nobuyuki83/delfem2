@@ -13,6 +13,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <climits>
 
 #include "delfem2/vec2.h"
 #include "delfem2/dfm2_inline.h"
