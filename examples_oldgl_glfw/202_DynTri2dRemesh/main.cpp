@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include <random>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -33,25 +34,26 @@ std::vector<int> loopIP_ind, loopIP;
 void Refine(double px, double py)
 {
   dfm2::CCmdRefineMesh aCmd;
-  RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
-                                             0.05, px, py, 0.1,
-                                             aPo2D, aVec2, aETri);
+  RefinementPlan_EdgeLongerThan_InsideCircle(
+      aCmd,
+      0.05, px, py, 0.1,
+      aPo2D, aVec2, aETri);
   RefineMesh(aPo2D, aETri, aVec2, aCmd);
 }
 
 void Coarse(double px, double py)
 {
-  for(unsigned int ip=static_cast<unsigned int>(aPo2D.size());ip-->0;){ // iterate ip-1 to 0
+  for(auto ip=static_cast<unsigned int>(aPo2D.size());ip-->0;){ // iterate ip-1 to 0
     if( aPo2D[ip].e == UINT_MAX ){ continue; }
     if( Distance(aVec2[ip],dfm2::CVec2d(px,py)) > 0.1 ){ continue; }
     std::vector< std::pair<unsigned int,unsigned int> > aTriSuP;
     GetTriArrayAroundPoint(aTriSuP,
                            ip,aPo2D,aETri);
     std::vector<int> aPSuP(aTriSuP.size());
-    const unsigned int npsup = static_cast<unsigned int>(aPSuP.size());
+    const auto npsup = static_cast<unsigned int>(aPSuP.size());
     for(unsigned int iit=0;iit<npsup;++iit){
-      const int itri0 = aTriSuP[iit].first;
-      const int inotri0 = aTriSuP[iit].second;
+      const unsigned int itri0 = aTriSuP[iit].first;
+      const unsigned int inotri0 = aTriSuP[iit].second;
       assert( ip == aETri[itri0].v[inotri0] );
       aPSuP[iit] = aETri[itri0].v[ (inotri0+2)%3 ];
     }
@@ -75,8 +77,8 @@ void Coarse(double px, double py)
       assert( iit0>=0 && iit0 < (int)aPSuP.size() );
       double dist0 = mapDistTri.begin()->first;
       if( dist0 < 0.05 ){
-        const int itri0 = aTriSuP[iit0].first;
-        const int inotri0 = aTriSuP[iit0].second;
+        const unsigned int itri0 = aTriSuP[iit0].first;
+        const unsigned int inotri0 = aTriSuP[iit0].second;
         CollapseEdge_MeshDTri(itri0, (inotri0+1)%3, aPo2D, aETri);
         const unsigned int ip1 = aETri[itri0].v[ (inotri0+2)%3 ];
         DelaunayAroundPoint(ip1, aPo2D, aETri, aVec2);
@@ -95,7 +97,7 @@ void GenMesh()
     aaXY[0].assign(xys,xys+8);
   }
   // --------------------------------
-  const double elen = 0.11;
+  constexpr double elen = 0.11;
   {
     JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
                          aaXY);
@@ -115,8 +117,9 @@ void GenMesh()
     dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aPo2D.size());
     std::vector<unsigned int> aFlgTri(aETri.size(),0);
-    MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
-                  aVec2.size(), 0, elen, param);
+    MeshingInside(
+        aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
+        aVec2.size(), 0, elen, param);
   }
 }
 
@@ -146,6 +149,9 @@ int main()
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
+
+  std::mt19937 random_engine(std::random_device{}());
+  std::uniform_real_distribution<double> dist_m05p05(-0.5, +0.5);
     
   GenMesh();
   
@@ -157,8 +163,8 @@ int main()
         GenMesh();
       }
       else{
-        double px = (rand()/(RAND_MAX+1.0))-0.5;
-        double py = (rand()/(RAND_MAX+1.0))-0.5;
+        double px = dist_m05p05(random_engine);
+        double py = dist_m05p05(random_engine);
         if( iframe < 40 ){
           Refine(px, py);
         }
