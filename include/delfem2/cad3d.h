@@ -91,7 +91,7 @@ public:
     const int ndiv = (int)aP.size()-1;
     for(int ip=0;ip<ndiv+1;++ip){
       double t = (double)ip/ndiv;
-      aP[ip] = delfem2::getPointCubicBezierCurve(t, p0, q0, q1, p1);
+      aP[ip] = delfem2::PointOnCubicBezierCurve(t, p0, q0, q1, p1);
     }
   }
   void Initialize(const std::vector<CCad3D_Vertex>& aVertex, double elen){
@@ -107,7 +107,7 @@ public:
     return delfem2::getParameterCubicBezier_IntersectionWithPlane(t, org,nrm, p0,q0,q1,p1);
   }
   CVec3d GetPosInEdge(double t) const {
-    return delfem2::getPointCubicBezierCurve(t, p0, q0, q1, p1);
+    return delfem2::PointOnCubicBezierCurve(t, p0, q0, q1, p1);
   }
   CVec3d GetTangentInEdge(double t) const {
     return delfem2::getTangentCubicBezierCurve(t, p0, q0, q1, p1);

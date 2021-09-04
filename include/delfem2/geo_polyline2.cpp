@@ -9,36 +9,6 @@
 
 #include "delfem2/geo_polyline2.h"
 
-template<typename T>
-delfem2::CVec2<T> delfem2::pointCurve_BezierCubic
-    (double t,
-     const CVec2<T> &p1, const CVec2<T> &p2, const CVec2<T> &p3, const CVec2<T> &p4) {
-  double tp = 1.0 - t;
-  return t * t * t * p4 + 3 * t * t * tp * p3 + 3 * t * tp * tp * p2 + tp * tp * tp * p1;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec2d delfem2::pointCurve_BezierCubic(double t,
-                                                   const CVec2d& p1,
-                                                   const CVec2d& p2,
-                                                   const CVec2d& p3,
-                                                   const CVec2d& p4);
-#endif
-
-template<typename T>
-delfem2::CVec2<T> delfem2::pointCurve_BezierQuadratic
-    (double t,
-     const CVec2<T> &p1, const CVec2<T> &p2, const CVec2<T> &p3) {
-  double tp = 1.0 - t;
-  return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec2d delfem2::pointCurve_BezierQuadratic(double t,
-                                                       const CVec2d& p1,
-                                                       const CVec2d& p2,
-                                                       const CVec2d& p3);
-#endif
-
-
 // ----------------------------------------------------------------------------------
 // std::vector starts from here
 
@@ -52,13 +22,19 @@ void delfem2::Polyline_CubicBezierCurve(
   for (int is = 0; is < ns; is++) {
     for (int i = 0; i < n; i++) {
       double t = (double) i / n;
-      aP[is * n + i] = pointCurve_BezierCubic(t, aCP[is * 3 + 0], aCP[is * 3 + 1], aCP[is * 3 + 2], aCP[is * 3 + 3]);
+      aP[is * n + i] = PointOnCubicBezierCurve(t,
+                                               aCP[is * 3 + 0],
+                                               aCP[is * 3 + 1],
+                                               aCP[is * 3 + 2],
+                                               aCP[is * 3 + 3]);
     }
   }
   aP[ns * n] = aCP[ns * 3];
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Polyline_CubicBezierCurve(std::vector<CVec2d>& aP, const int n, const std::vector<CVec2d>& aCP);
+template void delfem2::Polyline_CubicBezierCurve(std::vector<CVec2d>& aP,
+                                                 const int n,
+                                                 const std::vector<CVec2d>& aCP);
 #endif
 
 
@@ -75,15 +51,18 @@ void delfem2::Polyline_BezierCubic(
   aP.resize(n);
   for (unsigned int i = 0;i < n; ++i) {
     const double t = (double) i / (n - 1.0);
-    aP[i] = pointCurve_BezierCubic(
+    aP[i] = PointOnCubicBezierCurve(
         t,
         p1, p2, p3, p4);
   }
 }
-template void delfem2::Polyline_BezierCubic
-    (std::vector<CVec2d> &aP,
-     const unsigned int n,
-     const CVec2d &p1, const CVec2d &p2, const CVec2d &p3, const CVec2d &p4);
+template void delfem2::Polyline_BezierCubic(
+    std::vector<CVec2d> &aP,
+    const unsigned int n,
+    const CVec2d &p1,
+    const CVec2d &p2,
+    const CVec2d &p3,
+    const CVec2d &p4);
 
 // --------------
 
@@ -97,7 +76,7 @@ void delfem2::Polyline_BezierQuadratic(
   aP.resize(n);
   for (unsigned int i = 0; i < n; ++i) {
     const double t = (double) i / (n - 1.0);
-    aP[i] = pointCurve_BezierQuadratic(
+    aP[i] = PointOnQuadraticBezierCurve(
         t,
         p1, p2, p3 );
   }

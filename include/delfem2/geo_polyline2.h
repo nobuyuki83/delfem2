@@ -16,27 +16,12 @@
 #include <climits>
 
 #include "delfem2/vec2.h"
+#include "delfem2/pgeo.h"
 #include "delfem2/dfm2_inline.h"
 
 // -----------------------------------------------------
 
 namespace delfem2 {
-
-// move to paramgeo2d?
-template<typename T>
-CVec2<T> pointCurve_BezierCubic(
-    double t,
-    const CVec2<T> &p1,
-    const CVec2<T> &p2,
-    const CVec2<T> &p3,
-    const CVec2<T> &p4);
-
-template<typename T>
-CVec2<T> pointCurve_BezierQuadratic(
-    double t,
-    const CVec2<T> &p1,
-    const CVec2<T> &p2,
-    const CVec2<T> &p3);
 
 //! @brief translate all the points
 template<typename T>
@@ -53,7 +38,7 @@ DFM2_INLINE void Rotate(
 template<typename T>
 void Polyline_CubicBezierCurve(
     std::vector<CVec2<T> > &aP,
-    const int n,
+    int n,
     const std::vector<CVec2<T> > &aCP);
 
 template<typename T>
