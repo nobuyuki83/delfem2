@@ -193,19 +193,6 @@ template CVec2d operator*(const CVec2d& v0, unsigned int c);
 
 //  ---------------------
 
-/*
-template<typename T>
-T operator*(const CVec2<T> &lhs, const CVec2<T> &rhs) {
-  return lhs.p[0] * rhs.p[0] + lhs.p[1] * rhs.p[1];
-}
-#ifdef DFM2_STATIC_LIBRARY
-template double operator * (const CVec2d& lhs, const CVec2d& rhs);
-template float  operator * (const CVec2f& lhs, const CVec2f& rhs);
-#endif
-*/
-
-//  ---------------------
-
 template<typename T>
 T operator^(const CVec2<T> &lhs, const CVec2<T> &rhs) {
   return lhs.p[0] * rhs.p[1] - lhs.p[1] * rhs.p[0];

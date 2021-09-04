@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <climits>
 
-#include "delfem2/geoplygn2_v2.h"
+#include "delfem2/geo_polygon2.h"
 
 // ===========================================
 // unexposed functions

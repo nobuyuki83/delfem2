@@ -19,7 +19,7 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/vec2.h"
 #include "delfem2/dtri.h"
-#include "delfem2/geoplygn2_v2.h"
+#include "delfem2/geo_polygon2.h"
 
 // -------------------------------
 

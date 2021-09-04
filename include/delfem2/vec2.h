@@ -73,9 +73,6 @@ CVec2<T> operator*(T1, const CVec2<T> &);
 template<typename T, typename T1>
 CVec2<T> operator*(const CVec2<T> &, T1);
 
-//template<typename T>
-//T operator*(const CVec2<T> &lhs, const CVec2<T> &rhs);
-
 template<typename T>
 std::ostream &operator<<(std::ostream &output, const CVec2<T> &v);
 

@@ -13,7 +13,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/rgd_v2m3.h"
-#include "delfem2/geoplygn2_v2.h"
+#include "delfem2/geo_polygon2.h"
 #include "delfem2/vec2.h"
 #include "delfem2/mat3.h"
 #include "delfem2/glfw/util.h"
