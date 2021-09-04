@@ -89,11 +89,14 @@ class CStep_Elem {
 
 class CStep_CartesianPoint : public CStep_Elem {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::Get_Parentheses(arg, "()");
+    std::string s = dfm2::Get_Parentheses(arg0, "()");
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     p.p[0] = stod(aToken[0]);
@@ -101,8 +104,9 @@ class CStep_CartesianPoint : public CStep_Elem {
     p.p[2] = stod(aToken[2]);
 //    std::cout << p.x << " " << p.y << " " << p.z << std::endl;
   }
-  void SetPtr(const std::vector<CStep_Elem *> &apStepElem,
-                      const std::vector<int> &mapId2Ind) override {}
+  void SetPtr(
+	  [[maybe_unused]] const std::vector<CStep_Elem *> &apStepElem,
+	  [[maybe_unused]] const std::vector<int> &mapId2Ind) override {}
   void Draw() const override {
     ::glColor3d(1, 0, 0);
     ::glPointSize(1);
@@ -116,11 +120,14 @@ class CStep_CartesianPoint : public CStep_Elem {
 
 class CStep_Direction : public CStep_Elem {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::Get_Parentheses(arg, "()");
+    std::string s = dfm2::Get_Parentheses(arg0, "()");
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     dir.p[0] = stod(aToken[0]);
@@ -128,19 +135,22 @@ class CStep_Direction : public CStep_Elem {
     dir.p[2] = stod(aToken[2]);
   }
   void SetPtr(
-      const std::vector<CStep_Elem *> &apStepElem,
-      const std::vector<int> &mapId2Ind) override {}
+      [[maybe_unused]] const std::vector<CStep_Elem *> &apStepElem,
+      [[maybe_unused]] const std::vector<int> &mapId2Ind) override {}
   void Draw() const override {}
  public:
   dfm2::CVec3d dir;
 };
 
 class CStep_Vector : public CStep_Elem {
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::Get_Parentheses(arg, "()");
+    std::string s = dfm2::Get_Parentheses(arg0, "()");
     s = dfm2::RemoveSpace(s);
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     std::string s1(aToken[1].begin() + 1, aToken[1].end());
@@ -164,11 +174,14 @@ class CStep_Vector : public CStep_Elem {
 
 class CStep_VertexPoint : public CStep_Elem {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::Get_Parentheses(arg, "()");
+    std::string s = dfm2::Get_Parentheses(arg0, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     s = dfm2::RemoveSpace(aToken[1]);
     s = std::string(s.begin() + 1, s.end());
@@ -196,13 +209,13 @@ class CStep_VertexPoint : public CStep_Elem {
 class CStep_Axis2Placement3D : public CStep_Elem {
  public:
   void Init(
-      int id,
-      const std::string &stype,
-      const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+      int id0,
+      const std::string &stype0,
+      const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::RemoveSpace(arg);
+    std::string s = dfm2::RemoveSpace(arg0);
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     assert(aToken.size() == 4);
@@ -272,11 +285,14 @@ class CStep_Curve : public CStep_Elem {
 };
 
 class CStep_Line : public CStep_Curve {
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::RemoveSpace(arg);
+    std::string s = dfm2::RemoveSpace(arg0);
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     assert(aToken.size() == 3);
@@ -337,11 +353,14 @@ class CStep_Line : public CStep_Curve {
 
 class CStep_Circle : public CStep_Curve {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::RemoveSpace(arg);
+    std::string s = dfm2::RemoveSpace(arg0);
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     assert(aToken.size() == 3);
@@ -394,13 +413,16 @@ class CStep_Circle : public CStep_Curve {
 
 class CStep_BSplineCurveWithKnots : public CStep_Curve {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
-    /////
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
+    // 
     aIdCP.clear();
     aKnotMulti.clear();
-    std::string s = dfm2::Get_Parentheses(arg, "()");
+    std::string s = dfm2::Get_Parentheses(arg0, "()");
     s = dfm2::RemoveSpace(s);
     std::vector<std::string> aToken = dfm2::Split_Parentheses(s, ',', "()");
     if (aToken.size() != 9) {
@@ -414,8 +436,8 @@ class CStep_BSplineCurveWithKnots : public CStep_Curve {
       sID = dfm2::Get_Parentheses(sID, "()");
       std::vector<std::string> at = dfm2::Split(sID, ',');
       for (auto & i : at) {
-        const int id0 = stoi(std::string(i.begin() + 1, i.end()));
-        aIdCP.push_back(id0);
+        const int id1 = stoi(std::string(i.begin() + 1, i.end()));
+        aIdCP.push_back(id1);
       }
     }
     {
@@ -473,13 +495,13 @@ class CStep_BSplineCurveWithKnots : public CStep_Curve {
 class CStep_EdgeCurve : public CStep_Elem {
  public:
   void Init(
-      int id,
-      const std::string &stype,
-      const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+      int id0,
+      const std::string &stype0,
+      const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::Get_Parentheses(arg, "()");
+    std::string s = dfm2::Get_Parentheses(arg0, "()");
     s = dfm2::RemoveSpace(s);
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     assert(aToken.size() == 5);
@@ -546,11 +568,14 @@ class CStep_EdgeCurve : public CStep_Elem {
 
 class CStep_OrientedEdge : public CStep_Elem {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
-    //////
-    std::string s = dfm2::RemoveSpace(arg);
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
+    //
+    std::string s = dfm2::RemoveSpace(arg0);
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     assert(aToken.size() == 5);
@@ -614,11 +639,14 @@ class CStep_EdgeLoop : public CStep_Elem {
 
 class CStep_FaceOuterBound : public CStep_Elem {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
-    //////
-    std::string s = dfm2::RemoveSpace(arg);
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
+    //
+    std::string s = dfm2::RemoveSpace(arg0);
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     {
@@ -656,11 +684,14 @@ class CStep_Surface : public CStep_Elem {
 
 class CStep_Plane : public CStep_Surface {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
-    //////
-    std::string s = dfm2::RemoveSpace(arg);
+  void Init(
+	  int id0, 
+	  const std::string &stype0, 
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
+    //
+    std::string s = dfm2::RemoveSpace(arg0);
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');
     assert(aToken.size() == 2);
@@ -709,17 +740,20 @@ class CStep_Plane : public CStep_Surface {
 
 class CStep_AdvancedFace : public CStep_Elem {
  public:
-  void Init(int id, const std::string &stype, const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+  void Init(
+	  int id0, 
+	  const std::string &stype0,
+	  const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //
-    std::string s = dfm2::RemoveSpace(arg);
+    std::string s = dfm2::RemoveSpace(arg0);
     std::vector<std::string> aToken;
     {
       std::string s0 = dfm2::Get_Parentheses(s, "()");
       aToken = dfm2::Split_Parentheses(s0, ',', "()");
       for (unsigned int it = 0; it < aToken.size(); ++it) {
-        std::cout << it << " " << aToken[it] << "   " << arg << " " << s << std::endl;
+        std::cout << it << " " << aToken[it] << "   " << arg0 << " " << s << std::endl;
       }
     }
     assert(aToken.size() == 4);
@@ -851,7 +885,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 }
  */
 
-int main(int argc, char *argv[]) {
+int main() {
   std::vector<CStep_Elem *> apStepElem;
   //  LoadStep("Hook.STEP",aCP,aBSCWK);
   LoadStep(std::string(PATH_INPUT_DIR) + "/bolt.STEP", apStepElem);

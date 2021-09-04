@@ -70,7 +70,7 @@ int main(
   std::vector<std::complex<double> > vec_b;
   // ----------------------
   {
-    const unsigned int np = aXY1.size() / 2;
+    const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
     aCVal.assign(np, std::complex<double>(0.0));
     aBCFlag.resize(np, 0);
     aBCFlag[ipCenter] = 1;
@@ -86,7 +86,7 @@ int main(
     ilu_A.SetPattern0(mat_A);
   }
   {
-    const unsigned int np = aXY1.size() / 2;
+    const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
     const unsigned int nDoF = np;
     const double wave_length = 0.4;
     mat_A.setZero();
@@ -94,14 +94,14 @@ int main(
     dfm2::MergeLinSys_Helmholtz_MeshTri2D(
         mat_A, vec_b.data(),
         wave_length,
-        aXY1.data(), aXY1.size() / 2,
-        aTri1.data(), aTri1.size() / 3,
+        aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+        aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
         aCVal.data());
     for (auto &ipl : aaIP) {
       dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
           mat_A, vec_b.data(),
           wave_length,
-          aXY1.data(), aXY1.size() / 2,
+          aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
           ipl.data(), ipl.size(),
           aCVal.data());
     }
@@ -159,9 +159,10 @@ int main(
       std::vector<std::pair<double, dfm2::CColor> > colorMap;
       //  makeHeatMap_BlueGrayRed(colorMap, -0.2, +0.2);
       dfm2::ColorMap_BlueCyanGreenYellowRed(colorMap, -0.2f, +0.2f);
-      dfm2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(), aXY1.size() / 2,
-                                           aTri1.data(), aTri1.size() / 3,
-                                           aVal.data(), 1, colorMap);
+      dfm2::opengl::DrawMeshTri2D_ScalarP1(
+		  aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+		  aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+		  aVal.data(), 1, colorMap);
     }
     viewer.SwapBuffers();
     glfwPollEvents();

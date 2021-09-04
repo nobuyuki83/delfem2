@@ -33,7 +33,7 @@ static delfem2::glfw::CViewer2 *pViewer2 = nullptr;
 static void glfw_callback_key(
     GLFWwindow *window,
     int key,
-    int scancode,
+    [[maybe_unused]] int scancode,
     int action,
     int mods) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -44,7 +44,8 @@ static void glfw_callback_key(
   else {}
 }
 
-static void glfw_callback_resize(GLFWwindow *window, int width, int height) {
+static void glfw_callback_resize(
+	[[maybe_unused]] GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
@@ -105,8 +106,8 @@ static void glfw_callback_cursor_position(
   if (pViewer2->nav.ibutton == 0 && pViewer2->nav.imodifier == GLFW_MOD_SHIFT) {
     ::delfem2::CMouseInput &nav = pViewer2->nav;
     const float si = 1.f / pViewer2->scale;
-    pViewer2->trans[0] += nav.dx * asp * si;
-    pViewer2->trans[1] += nav.dy * si;
+    pViewer2->trans[0] += static_cast<float>(nav.dx) * asp * si;
+    pViewer2->trans[1] += static_cast<float>(nav.dy) * si;
   }
   if (pViewer2->nav.ibutton == 0) {
     float mMVP[16];
@@ -122,7 +123,9 @@ static void glfw_callback_cursor_position(
 }
 
 static void glfw_callback_scroll(
-    GLFWwindow *window, double xoffset, double yoffset) {
+    [[maybe_unused]] GLFWwindow *window, 
+	[[maybe_unused]] double xoffset, 
+	double yoffset) {
   assert(pViewer2 != nullptr);
   pViewer2->scale *= powf(1.01f, float(yoffset));
 }
@@ -161,10 +164,10 @@ void delfem2::glfw::CViewer2::DrawBegin_oldGL() const {
   ::glfwMakeContextCurrent(window);
   //::glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
   ::glClearColor(
-      this->bgcolor[0],
-      this->bgcolor[1],
-      this->bgcolor[2],
-      this->bgcolor[3]);
+      static_cast<float>(this->bgcolor[0]),
+      static_cast<float>(this->bgcolor[1]),
+      static_cast<float>(this->bgcolor[2]),
+      static_cast<float>(this->bgcolor[3]));
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   ::glDepthFunc(GL_LESS);
