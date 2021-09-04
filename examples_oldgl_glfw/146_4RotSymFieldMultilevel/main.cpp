@@ -46,7 +46,7 @@ void Draw(
   ::glDisable(GL_LIGHTING);
   double len = 0.03;
   ::glLineWidth(3);
-  unsigned int np = aXYZ.size()/3;
+  const size_t np = aXYZ.size()/3;
   for(unsigned int ip=0;ip<np;++ip){
     const dfm2::CVec3d p = dfm2::CVec3d(aXYZ.data()+ip*3);
     const dfm2::CVec3d n = dfm2::CVec3d(aNorm.data()+ip*3).normalized();
@@ -104,7 +104,8 @@ int main()
       aLayer[0].aOdir.resize(aLayer[0].aXYZ.size());
       dfm2::Points_RandomUniform(
           aLayer[0].aOdir.data(),
-          aLayer[0].aXYZ.size() / 3, 3, minCoords, maxCoords);
+          static_cast<unsigned int>(aLayer[0].aXYZ.size() / 3), 3, 
+		  minCoords, maxCoords);
       dfm2::TangentVector_Points3(
           aLayer[0].aOdir,
           aLayer[0].aNorm);
@@ -113,8 +114,8 @@ int main()
     dfm2::MassPoint_Tri3D(
         aLayer[0].aArea.data(),
         1.0,
-        aLayer[0].aXYZ.data(), aLayer[0].aXYZ.size() / 3,
-        aTri.data(), aTri.size() / 3);
+        aLayer[0].aXYZ.data(), static_cast<unsigned int>(aLayer[0].aXYZ.size() / 3),
+        aTri.data(), static_cast<unsigned int>(aTri.size() / 3));
     dfm2::JArray_PSuP_MeshElem(
         aLayer[0].psup_ind, aLayer[0].psup,
         aTri.data(), aTri.size()/3, 3,
@@ -129,8 +130,8 @@ int main()
         pd0.aXYZ, pd0.aArea, pd0.aNorm, pd0.psup_ind, pd0.psup);
     dfm2::Clustering_Psup(
         pd1.psup_ind, pd1.psup,
-        pd1.aXYZ.size() / 3,
-        pd0.aXYZ.size() / 3,
+        static_cast<unsigned int>(pd1.aXYZ.size() / 3),
+        static_cast<unsigned int>(pd0.aXYZ.size() / 3),
         pd1.map_fine2this.data(), pd0.psup_ind.data(), pd0.psup.data());
     /*
     const unsigned int np0 = aLayer[0].aXYZ.size()/3;
@@ -144,21 +145,23 @@ int main()
     */
   }
 
-  const unsigned int nlayer = aLayer.size();
-  for(int ilayer=(int)aLayer.size()-1;ilayer>=0;--ilayer){
-    if( ilayer == (int)nlayer-1 ){
+  const unsigned nlayer = static_cast<unsigned int>(aLayer.size());
+  for(unsigned int ilayer=nlayer-1;ilayer!=UINT_MAX;--ilayer){
+    if( ilayer == nlayer-1 ){
       const double minCoords[3] = {-1, -1, -1};
       const double maxCoords[3] = {+1, +1, +1};
       aLayer[ilayer].aOdir.resize(aLayer[ilayer].aXYZ.size());
-      dfm2::Points_RandomUniform(aLayer[ilayer].aOdir.data(),
-                                 aLayer[ilayer].aXYZ.size() / 3, 3, minCoords, maxCoords);
+      dfm2::Points_RandomUniform(
+		  aLayer[ilayer].aOdir.data(),
+		  static_cast<unsigned int>(aLayer[ilayer].aXYZ.size() / 3), 3, 
+		  minCoords, maxCoords);
       dfm2::TangentVector_Points3(aLayer[ilayer].aOdir,
           aLayer[ilayer].aNorm);
     }
     else{
-      unsigned int np0 = aLayer[ilayer].aXYZ.size()/3; // this
+      const unsigned int np0 = static_cast<unsigned int>(aLayer[ilayer].aXYZ.size()/3); // this
       assert( aLayer[ilayer+1].map_fine2this.size() == np0 );
-      unsigned int np1 = aLayer[ilayer+1].aXYZ.size()/3; // corse
+      // const unsigned int np1 = static_cast<unsigned int>(aLayer[ilayer+1].aXYZ.size()/3); // corse
       aLayer[ilayer].aOdir.resize(np0*3);
       for(unsigned int ip0=0;ip0<np0;++ip0){
         unsigned int ip1 = aLayer[ilayer+1].map_fine2this[ip0];
@@ -177,6 +180,7 @@ int main()
 
   // ------------------
   delfem2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
   viewer.InitGL();
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   dfm2::opengl::setSomeLighting();

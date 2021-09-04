@@ -69,7 +69,7 @@ DFM2_INLINE void GetBound(
 DFM2_INLINE void GenMeshCadFace(
 	std::vector<CVec2d> &aVec2,
     std::vector<CDynTri> &aETri,
-    const CCad2D_FaceGeo &facegeo, 
+    [[maybe_unused]] const CCad2D_FaceGeo &facegeo, 
 	unsigned int iface0,
     const CCadTopo &topo,
     [[maybe_unused]] const std::vector<CCad2D_VtxGeo> &aVtxGeo,

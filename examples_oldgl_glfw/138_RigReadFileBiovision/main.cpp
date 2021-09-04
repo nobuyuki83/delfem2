@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <climits>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // should be before glfw3.h
@@ -72,7 +73,7 @@ int main() {
         */
     dfm2::opengl::DrawBone_Octahedron(
         aBone,
-        -1, -1,
+        UINT_MAX, UINT_MAX,
         0.1, 1.0);
     viewer.SwapBuffers();
     glfwPollEvents();

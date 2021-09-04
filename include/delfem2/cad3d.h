@@ -8,6 +8,8 @@
 #ifndef DFM2_CAD3D_H
 #define DFM2_CAD3D_H
 
+#include <climits>
+
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/vec3.h"
@@ -98,7 +100,7 @@ public:
     p0 = aVertex[iv0].pos;
     p1 = aVertex[iv1].pos;
     double len = Distance(p0, p1);
-    const int ndiv = len/elen;
+    const int ndiv = static_cast<int>(len/elen);
     aP.resize((ndiv+1));
     MovePoints(aVertex);
   }
@@ -336,10 +338,10 @@ public:
     plane_sizeX = 1.0; // norm[(inrom+1)%3]
     plane_sizeY = 1.0; // norm[(inrom+2)%3]
     imode_edit = EDIT_NONE;
-    ivtx_picked = -1;
+    ivtx_picked = UINT_MAX;
     iedge_picked = -1;
     ielem_edge_picked = 0; // 0:JustPicked, 1:PlaneEdgePickedd, 2:BezierHandlerA, 3:BezierHandlerB
-    iface_picked = -1;
+    iface_picked = UINT_MAX;
   }
   void Clear(){
     aVertex.clear();
@@ -394,8 +396,8 @@ public:
     this->ReadFile(fin);
   }
   bool isSym(int iv) const;
-  void ChangeEdgeLength(double elen){
-    this->elen = elen;
+  void ChangeEdgeLength(double elen0){
+    this->elen = elen0;
     for(unsigned int ie=0;ie<aEdge.size();ie++){
       aEdge[ie].Initialize(aVertex,elen); // ie0+0
     }

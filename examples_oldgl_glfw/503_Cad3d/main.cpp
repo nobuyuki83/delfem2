@@ -116,7 +116,7 @@ void DrawHandler(
 void DrawLine(
     const dfm2::CCad3D_Edge &ed,
     bool is_picked,
-    double view_height) {
+    [[maybe_unused]] double view_height) {
   ::glDisable(GL_LIGHTING);
   if (is_picked) {
     ::glColor3d(1, 1, 0);
@@ -134,7 +134,7 @@ void DrawLine(
 void Draw(
     const dfm2::CCad3D_Vertex &vtx,
     bool is_selected,
-    int ielem,
+    [[maybe_unused]] int ielem,
     double view_height) {
   ::glDisable(GL_LIGHTING);
   if (is_selected) {
@@ -294,7 +294,9 @@ int main() {
                     mMV, mPrj,
                     camera.view_height);
     }
-    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
+    void mouse_drag(
+		[[maybe_unused]] const float src0[3], 
+		const float src1[3], const float dir[3]) override {
       dfm2::CVec2d sp0(nav.mouse_x - nav.dx, nav.mouse_y - nav.dy);
       dfm2::CVec2d sp1(nav.mouse_x, nav.mouse_y);
       const dfm2::CVec3d src_pick(src1), dir_pick(dir);

@@ -331,12 +331,12 @@ DFM2_INLINE void AddCube(
       aVertex[iv].isConst[2] = false;
     }
     for (int ie = ie0; ie<ie0+12; ++ie){
-      int iv0 = aEdge[ie].iv0;
-      int iv1 = aEdge[ie].iv1;
+      int iv0e = aEdge[ie].iv0;
+      int iv1e = aEdge[ie].iv1;
       int inorm = aEdge[ie].inorm;
       if (inorm < 0||inorm>=3){ continue; }
-      aVertex[iv0].isConst[inorm] = true;
-      aVertex[iv1].isConst[inorm] = true;
+      aVertex[iv0e].isConst[inorm] = true;
+      aVertex[iv1e].isConst[inorm] = true;
     }
   }
 
@@ -359,19 +359,20 @@ DFM2_INLINE void AddCube(
 // ------------------------------------
 
 
-bool delfem2::CCad3D_Edge::isPick
- (double& ratio,
-  const CVec2d& sp0,
-  const float mMV[16], const float mPj[16]) const
+bool delfem2::CCad3D_Edge::isPick(
+	double& ratio,
+	const CVec2d& sp0,
+	const float mMV[16], 
+	const float mPj[16]) const
 {
   const int np = (int)aP.size();
   for(int ie=0;ie<np-1;ie++){
     int ip0 = ie;
     int ip1 = ie+1;
-    CVec3d p0 = aP[ip0];
-    CVec3d p1 = aP[ip1];
-    CVec2d s0 = screenXYProjection(p0, mMV, mPj);
-    CVec2d s1 = screenXYProjection(p1, mMV, mPj);
+    CVec3d p0a = aP[ip0];
+    CVec3d p1a = aP[ip1];
+    CVec2d s0 = screenXYProjection(p0a, mMV, mPj);
+    CVec2d s1 = screenXYProjection(p1a, mMV, mPj);
     double dist = GetDist_LineSeg_Point(sp0,s0,s1);
     if( dist < 0.03 ){
       ratio = (ip0+0.5)/(np-1.0);
@@ -386,12 +387,12 @@ bool delfem2::CCad3D_Edge::isPick
 void delfem2::CCad3D_Face::Initialize(
     const std::vector<CCad3D_Vertex>& aVertex,
     const std::vector<CCad3D_Edge>& aEdge,
-    double elen)
+    [[maybe_unused]] double elen_)
 {
   aPInfo.resize(0);
   std::vector<double> aXYZ_B0;
   std::vector<double> aXYZ_B1;
-  const unsigned int ne = aIE.size();
+  const unsigned int ne = static_cast<unsigned int>(aIE.size());
   for(std::size_t iie=0;iie<aIE.size();++iie){
     unsigned int ie0 = aIE[iie].first;
     assert( ie0<aEdge.size() );
@@ -404,7 +405,7 @@ void delfem2::CCad3D_Face::Initialize(
       aXYZ_B1.push_back(p0.y);
       aXYZ_B1.push_back(p0.z);
     }
-    const unsigned nep = e0.aP.size();
+    const unsigned nep = static_cast<unsigned int>(e0.aP.size());
     assert( nep > 0 );
     for(unsigned int iep=0;iep<nep-1;++iep){
       unsigned int iep0 = (dir0) ? iep : nep-1-iep;
@@ -426,7 +427,8 @@ void delfem2::CCad3D_Face::Initialize(
       pinfo.iep = iep0;
       aPInfo.push_back(pinfo);
     }
-    { // for debug
+#ifndef NDEBUG
+	{
       unsigned int iie1 = (iie+ne-1)%ne; // back
       unsigned int ie1 = aIE[iie1].first;
       assert( ie1<aEdge.size() );
@@ -435,6 +437,7 @@ void delfem2::CCad3D_Face::Initialize(
       int iv1 = (dir1) ? e1.iv1 : e1.iv0;
       assert( iv0 == iv1 );
     }
+#endif
   }
   ////
   CVec3d cg, norm; cad3d::FaceCenterNormal(cg,norm, aIE, aEdge);
@@ -458,7 +461,7 @@ void delfem2::CCad3D_Face::Initialize(
     /////
     std::vector<int> loopIP_ind,loopIP;
     std::vector<CVec2d> aVec2;
-    double elen = 0.05;
+    double elen0 = 0.05;
     {
       JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
                            aaXY);
@@ -473,12 +476,12 @@ void delfem2::CCad3D_Face::Initialize(
       std::vector<CDynTri> aETri;
       Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                      loopIP_ind,loopIP);
-      if( elen > 1.0e-10 ){
+      if( elen0 > 1.0e-10 ){
         CInputTriangulation_Uniform param(1.0);
         std::vector<int> aFlgPnt(aVec2.size());
         std::vector<unsigned int> aFlgTri(aETri.size());
         MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
-                      aVec2.size(), 0, elen, param);
+                      aVec2.size(), 0, elen0, param);
       }
       MeshTri2D_Export(aXY_out,aTri, aVec2,aETri);
     }
@@ -627,7 +630,7 @@ unsigned int delfem2::AddPointEdge(
 {
   if( ie_div >= aEdge.size() ) return UINT_MAX;
   if (ratio_edge < 0.01 || ratio_edge > 0.99) return UINT_MAX;
-  const unsigned int iv_new = aVertex.size();
+  const unsigned int iv_new = static_cast<unsigned int>(aVertex.size());
   {
     CVec3d nv;
     for (const auto & fc : aFace){
@@ -656,7 +659,7 @@ unsigned int delfem2::AddPointEdge(
     aEdge[ie_div].iv1 = iv_new;
     aEdge[ie_div].Initialize(aVertex,elen);
   }
-  const unsigned int ie_new = aEdge.size();
+  const unsigned int ie_new = static_cast<unsigned int>(aEdge.size());
   aEdge.emplace_back(iv_new,iv1,aEdge[ie_div].is_sim,aEdge[ie_div].inorm );
   aEdge[ie_new].Initialize(aVertex,elen);
   
@@ -780,7 +783,7 @@ void delfem2::MakeItSmooth
 void delfem2::findEdgeGroup(
     std::vector< std::pair<unsigned int,bool> >& aIE,
     unsigned int iedge0,
-    std::vector<CCad3D_Vertex>& aVertex,
+    [[maybe_unused]] std::vector<CCad3D_Vertex>& aVertex,
     std::vector<CCad3D_Edge>& aEdge)
 {
   aIE.clear();
@@ -793,8 +796,8 @@ void delfem2::findEdgeGroup(
     int iv0 = deqIE.back().second ? aEdge[ie0].iv1 : aEdge[ie0].iv0;
     int ine0 = aEdge[ie0].inorm;
     if( iv0 == aEdge[iedge0].iv0 ){ is_loop = true; break; }
-    const unsigned int ndeqIE = deqIE.size(); // prev
-    for(std::size_t ie=0;ie<aEdge.size();++ie){
+    const unsigned int ndeqIE = static_cast<unsigned int>(deqIE.size()); // prev
+    for(unsigned int ie=0;ie<aEdge.size();++ie){
       if( ie == ie0 ) continue;
       if(      aEdge[ie].iv0 == iv0 && aEdge[ie].inorm == ine0){
         deqIE.emplace_back(ie,true );
@@ -814,8 +817,8 @@ void delfem2::findEdgeGroup(
     int iv0 = deqIE.front().second ? aEdge[ie0].iv0 : aEdge[ie0].iv1;
     int ine0 = aEdge[ie0].inorm;
     assert( iv0 != aEdge[iedge0].iv1 ); // this should not be loop
-    const unsigned int ndeqIE = deqIE.size(); // prev
-    for(std::size_t ie=0;ie<aEdge.size();++ie){
+    const unsigned int ndeqIE = static_cast<unsigned int>(deqIE.size()); // prev
+    for(unsigned int ie=0;ie<aEdge.size();++ie){
       if( ie == ie0 ) continue;
       if(      aEdge[ie].iv0 == iv0 && aEdge[ie].inorm == ine0){
         deqIE.push_front( std::make_pair(ie,false ) );
@@ -925,7 +928,7 @@ bool delfem2::FindFittingPoint(
     const std::vector<CVec2d>& aP2D,
     bool isConstX,
     bool isConstY,
-    double half_view_height)
+    [[maybe_unused]] double half_view_height)
 {
   bool isHit = false;
   if( isConstX &&  isConstY ){ return false; }
@@ -1244,15 +1247,15 @@ void delfem2::BuildTriMesh
 
 }
 
-void delfem2::UpdateTriMesh
-(std::vector<double>& aXYZ,
- std::vector<double>& aNorm,
- // ---------------------
- const std::vector<unsigned int>& aTri,
- const std::vector<CCad3D_Vertex>& aVertex,
- const std::vector<CCad3D_Edge>& aEdge,
- const std::vector<CCad3D_Face>& aFace,
- int isym)
+void delfem2::UpdateTriMesh(
+	std::vector<double>& aXYZ,
+	std::vector<double>& aNorm,
+	// ---------------------
+	const std::vector<unsigned int>& aTri,
+	[[maybe_unused]] const std::vector<CCad3D_Vertex>& aVertex,
+	const std::vector<CCad3D_Edge>& aEdge,
+	const std::vector<CCad3D_Face>& aFace,
+	int isym)
 {
   for(const auto & fc : aFace){
     for(std::size_t ip=0;ip<fc.aPInfo.size();++ip){
@@ -1313,8 +1316,8 @@ void delfem2::CCad3D::Pick(
     }
   }
   if( ielem_vtx_picked == 0 || ivtx_picked >= aVertex.size() ){
-    ivtx_picked = -1;
-    for(std::size_t icp=0;icp<aVertex.size();++icp){
+    ivtx_picked = UINT_MAX;
+    for(unsigned int icp=0;icp<aVertex.size();++icp){
       const CVec3d& pos = aVertex[icp].pos;
       CVec3d pn = nearest_Line_Point(pos, src_pick, dir_pick);
       if( (pn-pos).norm() < 0.05 ){
@@ -1327,7 +1330,7 @@ void delfem2::CCad3D::Pick(
   if( ivtx_picked < aVertex.size() ){
     iedge_picked = -1;
     plane_inorm = -1;
-    iface_picked = -1;
+    iface_picked = UINT_MAX;
     aIE_picked.clear();
     return;
   }
@@ -1339,7 +1342,7 @@ void delfem2::CCad3D::Pick(
       CVec2d sp = screenXYProjection(aEdge[iedge_picked].q0, mMV, mPj);
       if( (sp0-sp).norm() < 0.05 ){
         ielem_edge_picked = 2;
-        iface_picked = -1;
+        iface_picked = UINT_MAX;
         return;
       }
     }
@@ -1347,7 +1350,7 @@ void delfem2::CCad3D::Pick(
       CVec2d sp = screenXYProjection(aEdge[iedge_picked].q1, mMV, mPj);
       if( (sp0-sp).norm() < 0.05 ){
         ielem_edge_picked = 3;
-        iface_picked = -1;
+        iface_picked = UINT_MAX;
         return;
       }
     }
@@ -1370,7 +1373,7 @@ void delfem2::CCad3D::Pick(
       double d30 = GetDist_LineSeg_Point(sp0, sp[3],sp[0]);
       if( d01 < 0.05 || d12 < 0.05 || d23 < 0.05 || d30 < 0.05 ) {
         ielem_edge_picked = 1;
-        iface_picked = -1;
+        iface_picked = UINT_MAX;
         return;
       }
     }
@@ -1381,7 +1384,7 @@ void delfem2::CCad3D::Pick(
   aIE_picked.clear();
   {
     std::map<double, std::pair<int, double> > mapDepthEdge;
-    for(std::size_t ie=0;ie<aEdge.size();++ie){
+    for(unsigned int ie=0;ie<aEdge.size();++ie){
       double ratio_edge;
       bool res = aEdge[ie].isPick(ratio_edge, sp0, mMV, mPj);
       if( res ){
@@ -1394,7 +1397,7 @@ void delfem2::CCad3D::Pick(
       iedge_picked = mapDepthEdge.begin()->second.first;
       ratio_edge_picked = mapDepthEdge.begin()->second.second;
       ielem_vtx_picked = 0;
-      iface_picked = -1;
+      iface_picked = UINT_MAX;
     }
   }
   if( iedge_picked != -1 ){ // make plane
@@ -1433,8 +1436,8 @@ void delfem2::CCad3D::Pick(
     return;
   }
   
-  iface_picked = -1;
-  for(std::size_t ifc=0;ifc<aFace.size();++ifc){
+  iface_picked = UINT_MAX;
+  for(unsigned int ifc=0;ifc<aFace.size();++ifc){
     if( aFace[ifc].isPick(src_pick, dir_pick) ){
       iface_picked = ifc;
       return;
@@ -1592,7 +1595,7 @@ void delfem2::CCad3D::MouseDown
   }
   else if( imode_edit == EDIT_ADD_CROSS_SECTION ){
     if( plane_inorm != -1 ){
-      for(std::size_t ifc=0;ifc<aFace.size();++ifc){
+      for(unsigned int ifc=0;ifc<aFace.size();++ifc){
         if( aFace[ifc].isPick(src_pick, dir_pick) ){
           DivideFace(ifc,plane_org,plane_inorm,
               aVertex,aEdge,aFace, elen);

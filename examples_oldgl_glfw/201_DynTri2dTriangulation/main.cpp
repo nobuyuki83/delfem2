@@ -199,7 +199,7 @@ void GenMesh(){
   std::vector< std::vector<double> > aaXY;
   aaXY.push_back( aVecCurve0 );
   //
-  const double elen = 0.03;
+  constexpr double elen = 0.03;
   {
     JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
                          aaXY);
@@ -208,7 +208,7 @@ void GenMesh(){
     }
     FixLoopOrientation(loopIP,
                        loopIP_ind,aVec2);
-    if( elen > 10e-10 ){
+    if constexpr( elen > 10e-10 ){
       ResamplingLoop(loopIP_ind,loopIP,aVec2,
                      elen );
     }

@@ -27,7 +27,7 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------------
 
-int main(int argc, char *argv[]) {
+int main() {
   class CMyViewer : public delfem2::glfw::CViewer3 {
    public:
     CMyViewer() {
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
       ga.Drag(src0, src1, dir);
     }
-    void key_release(int key, int mods) override {
+    void key_release([[maybe_unused]] int key, [[maybe_unused]] int mods) override {
     }
     void key_press(int key, int mods) override {
       delfem2::glfw::CViewer3::key_press(key, mods);
