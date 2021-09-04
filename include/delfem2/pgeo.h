@@ -8,8 +8,10 @@
 #ifndef DFM2_PGEO_H
 #define DFM2_PGEO_H
 
-#include <stdio.h>
-#include "delfem2/vec3.h"
+#include <cstdio>
+#include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 

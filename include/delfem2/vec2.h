@@ -341,37 +341,9 @@ int DetDelaunay(
     const CVec2<T> &p2,
     const CVec2<T> &p3);
 
-// move to paramgeo2d?
-template<typename T>
-CVec2<T> pointCurve_BezierCubic(
-    double t,
-    const CVec2<T> &p1,
-    const CVec2<T> &p2,
-    const CVec2<T> &p3,
-    const CVec2<T> &p4);
-
-template<typename T>
-CVec2<T> pointCurve_BezierQuadratic(
-    double t,
-    const CVec2<T> &p1,
-    const CVec2<T> &p2,
-    const CVec2<T> &p3);
-
 
 // ---------------------------------------------------------------
 
-
-//! @brief translate all the points
-template<typename T>
-void Translate(
-    std::vector<CVec2<T> > &aP,
-    double dx,
-    double dy);
-
-template<typename T>
-DFM2_INLINE void Rotate(
-    std::vector<CVec2<T> > &aP,
-    double dt);
 
 //! @brief Area of the Triangle (3 indexes and vertex array)
 template<typename T>
@@ -380,32 +352,6 @@ double Area_Tri(
     const int iv2,
     const int iv3,
     const std::vector<CVec2<T> > &point);
-
-template<typename T>
-void Polyline_CubicBezierCurve(
-    std::vector<CVec2<T> > &aP,
-    const int n,
-    const std::vector<CVec2<T> > &aCP);
-
-template<typename T>
-void Polyline_BezierCubic(
-    std::vector<CVec2<T> > &aP,
-    const unsigned int n,
-    const CVec2<T> &p1, const CVec2<T> &p2,
-    const CVec2<T> &p3, const CVec2<T> &p4);
-
-template<typename T>
-void Polyline_BezierQuadratic(
-    std::vector<CVec2<T>> &aP,
-    const unsigned int n,
-    const CVec2<T> &p1,
-    const CVec2<T> &p2,
-    const CVec2<T> &p3);
-
-template<typename T>
-std::vector<CVec2<T> > Polyline_Resample_Polyline(
-    const std::vector<CVec2<T> > &stroke0,
-    double l);
 
 template<typename T>
 void MakeMassMatrixTri(
