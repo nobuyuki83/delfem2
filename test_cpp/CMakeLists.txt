@@ -48,8 +48,7 @@ IF(USE_STATIC_LIB)
   file(GLOB 
     DFM2_SRC
     ${PROJECT_SOURCE_DIR}/../include/delfem2/*.cpp
-    ${PROJECT_SOURCE_DIR}/../include/delfem2/*.h)  
-  )
+    ${PROJECT_SOURCE_DIR}/../include/delfem2/*.h)
 ELSE()
   message("compile delfem2 as HEADER-ONLY library: ${PROJECT_NAME} ${USE_STATIC_LIB}}")
 ENDIF()
