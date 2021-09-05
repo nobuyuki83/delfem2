@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_IMGIO_H
-#define DFM2_IMGIO_H
+#ifndef DFM2_IMG_IOPPM_H
+#define DFM2_IMG_IOPPM_H
 
 #include <vector>
 #include <string>
@@ -59,7 +59,7 @@ DFM2_INLINE void ImageInterpolation_Bilinear(
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/imgio.cpp"
+#  include "delfem2/img_ioppm.cpp"
 #endif
 
 #endif

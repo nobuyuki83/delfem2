@@ -23,7 +23,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/opengl/tex.h"
-#include "delfem2/imgio.h"
+#include "delfem2/img_ioppm.h"
 #include "delfem2/mshprimitive.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "delfem2/openglstb/img2tex.h"

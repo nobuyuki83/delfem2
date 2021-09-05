@@ -14,7 +14,7 @@
 #include <cmath>
 #include <cassert>
 
-#include "delfem2/imgio.h"
+#include "delfem2/img_ioppm.h"
 
 // https://en.wikipedia.org/wiki/Netpbm_format
 bool delfem2::LoadImage_PPMBinary(
@@ -116,82 +116,6 @@ int delfem2::LoadImage_PPMAscii(
   }
   return 0;
 }
-
-/*
-bool delfem2::LoadTGAFile(
-    const std::string& filename,
-    SFile_TGA *tgaFile)
-{
-  FILE *filePtr;
-  unsigned char ucharBad;
-  short int sintBad;
-  long imageSize;
-  int colorMode;
-  unsigned char colorSwap;
-  
-  // Open the TGA file.
-  filePtr = fopen(filename.c_str(), "rb");
-  if (filePtr == nullptr)
-  {
-    return false;
-  }
-  
-  // Read the two first bytes we don't need.
-  size_t n0;
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr); if( n0 != 1 ){ return false; }
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr); if( n0 != 1 ){ return false; }
-  
-  // Which type of image gets stored in imageTypeCode.
-  n0 = fread(&tgaFile->imageTypeCode, sizeof(unsigned char), 1, filePtr);
-  if( n0 != 1 ){ return false; }
-  
-  // For our purposes, the type code should be 2 (uncompressed RGB image)
-  // or 3 (uncompressed black-and-white images).
-  if (tgaFile->imageTypeCode != 2 && tgaFile->imageTypeCode != 3){
-    fclose(filePtr);
-    return false;
-  }
-  
-  // Read 13 bytes of data we don't need.
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  
-  // Read the image's width and height.
-  n0 = fread(&tgaFile->imageWidth, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&tgaFile->imageHeight, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  
-  // Read the bit depth.
-  n0 = fread(&tgaFile->bitCount, sizeof(unsigned char), 1, filePtr);  if( n0 != 1 ){ return false; }
-  
-  // Read one byte of data we don't need.
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);   if( n0 != 1 ){ return false; }
-  
-  // Color mode -> 3 = BGR, 4 = BGRA.
-  colorMode = tgaFile->bitCount / 8;
-  imageSize = tgaFile->imageWidth * tgaFile->imageHeight * colorMode;
-  
-  // Allocate memory for the image data.
-  tgaFile->imageData = (unsigned char*)malloc(sizeof(unsigned char)*imageSize);
-  
-  // Read the image data.
-  n0 = fread(tgaFile->imageData, sizeof(unsigned char), imageSize, filePtr);
-  if( (long)n0 != imageSize ){ return false; }
-  
-  // Change from BGR to RGB so OpenGL can read the image data.
-  for (int imageIdx = 0; imageIdx < imageSize; imageIdx += colorMode)
-  {
-    colorSwap = tgaFile->imageData[imageIdx];
-    tgaFile->imageData[imageIdx] = tgaFile->imageData[imageIdx + 2];
-    tgaFile->imageData[imageIdx + 2] = colorSwap;
-  }
-  
-  fclose(filePtr);
-  return true;
-}
- */
 
 void delfem2::ImageInterpolation_Bilinear(
     std::vector<double>& aColor,
