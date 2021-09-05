@@ -55,7 +55,7 @@ void Adj_CubeGrid(
     int& ivx,
     int& ivy,
     int& ivz,
-    int ivox,
+    unsigned int ivox,
     int iface,
     std::vector<CCubeGrid>& aCube);
 
