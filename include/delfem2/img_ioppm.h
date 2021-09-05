@@ -33,30 +33,7 @@ DFM2_INLINE int LoadImage_PPMAscii(
     std::vector<unsigned char> &image,
     const std::string &fname);
 
-/*
-class SFile_TGA {
-public:
-  unsigned char imageTypeCode;
-  short int imageWidth;
-  short int imageHeight;
-  unsigned char bitCount;
-  unsigned char *imageData;
-};
-
-DFM2_INLINE bool LoadTGAFile(
-    const std::string &filename,
-    SFile_TGA *tgaFile);
-    */
-
-DFM2_INLINE void ImageInterpolation_Bilinear(
-    std::vector<double>& aColor,
-    int width,
-    int height,
-    const unsigned char* img,
-    const double* aXY,
-    unsigned int nXY);
-
-}
+}  // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/img_ioppm.cpp"
