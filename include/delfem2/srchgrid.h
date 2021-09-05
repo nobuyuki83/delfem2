@@ -56,14 +56,16 @@ public:
 
 public:
   void GridIndex(
-      int &ix0, int &iy0, int &iz0,
+      int &ix0, 
+	  int &iy0, 
+	  int &iz0,
       const double p[3]) const
   {
-    ix0 = floor((p[0] - bbmin[0]) / h);
+    ix0 = static_cast<int>(floor((p[0] - bbmin[0]) / h));
     if (ix0 < 0) { ix0 = 0; } else if (ix0 >= int(nx)) { ix0 = int(nx - 1); }
-    iy0 = floor((p[1] - bbmin[1]) / h);
+    iy0 = static_cast<int>(floor((p[1] - bbmin[1]) / h));
     if (iy0 < 0) { iy0 = 0; } else if (iy0 >= int(ny)) { iy0 = int(ny - 1); }
-    iz0 = floor((p[2] - bbmin[2]) / h);
+    iz0 = static_cast<int>(floor((p[2] - bbmin[2]) / h));
     if (iz0 < 0) { iz0 = 0; } else if (iz0 >= int(nz)) { iz0 = int(nz - 1); }
   }
 

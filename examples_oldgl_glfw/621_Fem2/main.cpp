@@ -167,7 +167,7 @@ void MakeMesh(
   aaXY.push_back(aXY0);
   // ---------------------------------
   std::vector<dfm2::CVec2d> aVec2;
-  const double elen = 0.05;
+  constexpr double elen = 0.05;
   {
     JArray_FromVecVec_XY(loopIP_ind, loopIP, aVec2,
                          aaXY);
@@ -186,7 +186,7 @@ void MakeMesh(
     std::vector<dfm2::CDynTri> aETri;
     Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                    loopIP_ind, loopIP);
-    if (elen > 1.0e-10) {
+    if constexpr (elen > 1.0e-10) {
       dfm2::CInputTriangulation_Uniform param(1.0);
       std::vector<int> aFlgPnt(aPo2D.size());
       std::vector<unsigned int> aFlgTri(aETri.size(), 0);

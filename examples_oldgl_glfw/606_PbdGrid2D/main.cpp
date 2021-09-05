@@ -93,7 +93,8 @@ int main() {
         aXY0.size() / 2);
     dfm2::JArray_AddDiagonal(
         clstr_ind, clstr,
-        psup_ind.data(), psup_ind.size(), psup.data(), psup.size());
+        psup_ind.data(), static_cast<unsigned int>(psup_ind.size()), 
+		psup.data(), static_cast<unsigned int>(psup.size()));
     //  Print_IndexedArray(psup_ind, psup);
     //  JArray_Print(clstr_ind, clstr);
   }

@@ -117,9 +117,9 @@ template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Tri(
 template<typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_Tri(
     const double *aXYZ_,
-    unsigned int nXYZ,
+    [[maybe_unused]] unsigned int nXYZ,
     const unsigned int *aTri_,
-    unsigned int nTri) const {
+    [[maybe_unused]] unsigned int nTri) const {
   assert(itri < nTri);
   const unsigned int i0 = aTri_[itri * 3 + 0];
   const unsigned int i1 = aTri_[itri * 3 + 1];
@@ -168,7 +168,7 @@ delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
     const double *aXYZ,
     unsigned int nXYZ,
     const unsigned int *aTri,
-    unsigned int nTri,
+    [[maybe_unused]] unsigned int nTri,
     const double *aNorm) const {
   assert(itri < nTri);
   const unsigned int i0 = aTri[itri * 3 + 0];

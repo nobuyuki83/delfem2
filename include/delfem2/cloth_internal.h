@@ -127,7 +127,7 @@ void StepTime_InternalDynamics(
       mat_A, vec_b.data(),
       stiff_contact,contact_clearance,
       input_contact,
-      aXYZ.data(), aXYZ.size()/3);
+      aXYZ.data(), static_cast<unsigned int>(aXYZ.size()/3));
   W += AddWdW_Gravity(
       vec_b,
       aXYZ,
@@ -300,7 +300,7 @@ void UpdateIntermidiateVelocity
  double mass_point // (in) mass for a point
  )
 {
-  const unsigned int np = aXYZ.size()/3; // number of point
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3); // number of point
   const unsigned int nDof = np*3; // degree of freedom
   
   // compute total energy and its first and second derivatives

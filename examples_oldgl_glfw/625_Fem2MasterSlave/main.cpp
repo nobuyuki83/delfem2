@@ -112,7 +112,7 @@ void MakeCurveSpline(
     std::vector<double> &aVecCurve,
     unsigned int ndiv = 5) {
   aVecCurve.resize(0);
-  const unsigned int nCV = aCV.size() / 2;
+  const unsigned int nCV = static_cast<unsigned int>(aCV.size() / 2);
   for (unsigned int icv = 0; icv < nCV; icv++) {
     const unsigned int icv0 = (icv + 0) % nCV;
     const unsigned int icv1 = (icv + 1) % nCV;
@@ -216,7 +216,7 @@ void InitializeProblem_Solid(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 2;
   // ----------------
   aBCFlag.assign(nDoF, 0);
@@ -252,7 +252,8 @@ void InitializeProblem_Solid(
   dfm2::JArray_AddMasterSlavePattern(
       psup_ind, psup,
       aMSFlag.data(), 2,
-      psup_ind0.data(), psup_ind0.size(), psup0.data());
+      psup_ind0.data(), static_cast<unsigned int>(psup_ind0.size()), 
+	  psup0.data());
   dfm2::JArray_Sort(psup_ind, psup);
   /*
    CJaggedArray crs;
@@ -275,7 +276,7 @@ void SolveProblem_LinearSolid_Static(
     const std::vector<unsigned int> &aTri1,
     const std::vector<unsigned int> &aMSFlag)  // master slave flag
 {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 2;
   // ----------------------
   double myu = 10.0;
@@ -288,8 +289,8 @@ void SolveProblem_LinearSolid_Static(
   dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
       mat_A, vec_b.data(),
       myu, lambda, rho, g_x, g_y,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(),  static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -332,7 +333,7 @@ void SolveProblem_LinearSolid_Dynamic(
     const std::vector<unsigned int> &aTri1,
     const std::vector<unsigned int> &aMSFlag) // master slave flag
 {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 2;
   // ------------------
   double myu = 10.0;
@@ -351,9 +352,12 @@ void SolveProblem_LinearSolid_Dynamic(
       aVal.data(), aVelo.data(), aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
-  SetMasterSlave(mat_A,
-                 aMSFlag.data());
-  dfm2::setRHS_MasterSlave(vec_b.data(), vec_b.size(), aMSFlag.data());
+  SetMasterSlave(
+	  mat_A,
+	  aMSFlag.data());
+  dfm2::setRHS_MasterSlave(
+	  vec_b.data(), static_cast<unsigned int>(vec_b.size()), 
+	  aMSFlag.data());
   // -----------------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -408,8 +412,8 @@ void ProblemSolid(
   for (unsigned int iframe = 0; iframe < 50; ++iframe) {
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
-        aXY1.data(), aXY1.size() / 2,
-        aTri1.data(), aTri1.size() / 3,
+        aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
+        aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
         aVal.data(), 2);
     viewer.SwapBuffers();
     glfwPollEvents();
@@ -449,7 +453,7 @@ void InitializeProblem_Fluid2(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 3;
   // set boundary condition
   aBCFlag.assign(nDoF, 0);
@@ -524,7 +528,7 @@ void SolveProblem_Stokes_Static(
     const std::vector<unsigned int> &aTri1,
     const std::vector<unsigned int> &aMSFlag) // master slave flag
 {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 3;
   // ---------------------
   double myu = 1.0;
@@ -597,8 +601,8 @@ void SolveProblem_Stokes_Dynamic(
       mat_A, vec_b.data(),
       myu, rho, g_x, g_y,
       dt_timestep, gamma_newmark,
-      aXY1.data(), aXY1.size() / 2,
-      aTri1.data(), aTri1.size() / 3,
+      aXY1.data(),  static_cast<unsigned int>(aXY1.size() / 2),
+      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -649,7 +653,7 @@ void SolveProblem_NavierStokes_Dynamic(
     const std::vector<unsigned int> &aMSFlag) // master slave flag
 
 {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 3;
   // ----------------------
   double myu = 0.01;
@@ -668,9 +672,12 @@ void SolveProblem_NavierStokes_Dynamic(
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
   if (aMSFlag.size() == vec_b.size()) {
-    SetMasterSlave(mat_A,
-                   aMSFlag.data());
-    dfm2::setRHS_MasterSlave(vec_b.data(), vec_b.size(), aMSFlag.data());
+    SetMasterSlave(
+		mat_A,
+		aMSFlag.data());
+    dfm2::setRHS_MasterSlave(
+		vec_b.data(), static_cast<unsigned int>(vec_b.size()), 
+		aMSFlag.data());
   }
   // ----------------------------
   std::vector<double> vec_x;
@@ -724,7 +731,7 @@ void ProblemFluidTunnel(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
   dfm2::CMatrixSparse<double> mat_A;
   dfm2::CPreconditionerILU<double> ilu_A;
   glfwSetWindowTitle(viewer.window, "Stokes Static");

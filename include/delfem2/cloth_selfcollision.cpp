@@ -455,7 +455,7 @@ void GetIntermidiateVelocityContactResolved
     }
     int nnode_riz = 0;
     for(const auto & riz : aRIZ){
-      nnode_riz += riz.size();
+      nnode_riz += static_cast<int>(riz.size());
     }
     std::cout << "  RIZ iter: " << itr << "    Contact Elem Size: " << aContactElem.size() << "   NNode In RIZ: " << nnode_riz << std::endl;
     if( aContactElem.empty() ){

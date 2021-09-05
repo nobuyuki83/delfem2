@@ -27,7 +27,8 @@ void myGlutDisplay(
     const std::vector<dfm2::CVec3d> &aP,
     const std::vector<dfm2::CVec3d> &aS,
     std::vector<unsigned int> &aIP_HairRoot) {
-  const unsigned int nhair = aIP_HairRoot.size() - 1;
+  assert(!aIP_HairRoot.empty());
+  const unsigned int nhair = static_cast<unsigned int>(aIP_HairRoot.size()) - 1;
   for (unsigned int ihair = 0; ihair < nhair; ++ihair) {
     const unsigned int ips = aIP_HairRoot[ihair];
     const unsigned int ipe = aIP_HairRoot[ihair + 1];
