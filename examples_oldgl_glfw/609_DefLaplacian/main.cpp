@@ -93,7 +93,7 @@ void myGlutDisplay(
   }
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   std::vector<int> aBCFlag;
   std::vector<unsigned int> aTri;

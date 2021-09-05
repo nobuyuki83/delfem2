@@ -68,28 +68,33 @@ double mag = 1.0;
 void GenMesh(const std::vector< std::vector<double> >& aaXY)
 {
   std::vector<int> loopIP_ind, loopIP;
-  const double elen = 0.11;
+  constexpr double elen = 0.11;
   {
     JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
                          aaXY);
-    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+    if( !CheckInputBoundaryForTriangulation(
+		loopIP_ind,aVec2) ){
       return;
     }
-    FixLoopOrientation(loopIP,
-                       loopIP_ind,aVec2);
-    if( elen > 10e-10 ){
-      ResamplingLoop(loopIP_ind,loopIP,aVec2,
-                     elen );
+    FixLoopOrientation(
+		loopIP,
+		loopIP_ind,aVec2);
+    if constexpr( elen > 10e-10 ){
+      ResamplingLoop(
+		  loopIP_ind,loopIP,aVec2,
+		  elen );
     }
   }
-  Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                 loopIP_ind,loopIP);
-  if( elen > 1.0e-10 ){
+  Meshing_SingleConnectedShape2D(
+	  aPo2D, aVec2, aETri,
+	  loopIP_ind,loopIP);
+  if constexpr( elen > 1.0e-10 ){
     dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aPo2D.size());
     std::vector<unsigned int> aFlgTri(aETri.size(),0);
-    MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
-                  aVec2.size(),0, elen, param);
+    MeshingInside(
+		aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,                
+		aVec2.size(),0, elen, param);
   }
 }
 

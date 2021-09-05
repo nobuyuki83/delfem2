@@ -309,9 +309,9 @@ int main(int argc, char *argv[])
     double d = pow( SPH_PMASS / SPH_RESTDENSITY, 1/3.0 ) * 0.87;
     const double INITMIN[3] = { 0.0, 0.0, 0.0};
     const double INITMAX[3] = { 0.05, 0.1, 0.05};
-    const int ndivx = ceil((INITMAX[0]-INITMIN[0])/d);
-    const int ndivy = ceil((INITMAX[1]-INITMIN[1])/d);
-    const int ndivz = ceil((INITMAX[2]-INITMIN[2])/d);
+    const int ndivx = static_cast<int>(ceil((INITMAX[0]-INITMIN[0])/d));
+    const int ndivy = static_cast<int>(ceil((INITMAX[1]-INITMIN[1])/d));
+    const int ndivz = static_cast<int>(ceil((INITMAX[2]-INITMIN[2])/d));
     for (int idivx=0;idivx<ndivx;++idivx) {
       for (int idivy=0;idivy<ndivy;++idivy) {
         for (int idivz=0;idivz<ndivz;++idivz) {
