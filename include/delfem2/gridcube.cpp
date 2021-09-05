@@ -81,10 +81,11 @@ void delfem2::Pick_CubeGrid(
   }
 }
 
-void delfem2::Adj_CubeGrid
- (int& ivx, int& ivy, int& ivz,
-  int icube, int iface,
-  std::vector<CCubeGrid>& aCube)
+void delfem2::Adj_CubeGrid(
+    int& ivx, int& ivy, int& ivz,
+    unsigned int icube,
+    int iface,
+    std::vector<CCubeGrid>& aCube)
 {
   ivx = aCube[icube].ivx;
   ivy = aCube[icube].ivy;

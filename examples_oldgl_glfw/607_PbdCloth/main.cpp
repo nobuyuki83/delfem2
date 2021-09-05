@@ -43,8 +43,9 @@ bool is_animation = false;
 // -------------------------------------
 
 void StepTime() {
-  dfm2::PBD_Pre3D(aXYZt,
-                  dt, gravity, aXYZ, aUVW, aBCFlag);
+  dfm2::PBD_Pre3D(
+      aXYZt,
+      dt, gravity, aXYZ, aUVW, aBCFlag);
   dfm2::PBD_TriStrain(
 	  aXYZt.data(),
 	  static_cast<unsigned int>(aXYZt.size() / 3), 
@@ -113,7 +114,7 @@ int main() {
   aXYZt = aXYZ;
   aUVW.resize(np * 3, 0.0);
   aBCFlag.resize(np, 0);
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     if (aXYZ[ip * 3 + 1] > +0.59) {
       aBCFlag[ip] = 1;
     }
@@ -121,11 +122,11 @@ int main() {
   aLine.clear();
   { // make aLine
     std::map<int, int> mapY2Ip;
-    for (int ip = 0; ip < np; ++ip) {
+    for (unsigned int ip = 0; ip < np; ++ip) {
       if (aXYZ[ip * 3 + 0] > +0.49) {
         double y0 = aXYZ[ip * 3 + 1];
         int iy = (int) (y0 / 0.0132);
-        mapY2Ip[iy] = ip;
+        mapY2Ip[iy] = static_cast<int>(ip);
       }
     }
     for (int ip = 0; ip < np; ++ip) {
