@@ -147,21 +147,27 @@ void DrawRectangle_FullCanvas_oldGL() {
 
 void delfem2::opengl::CTexRGB::InitGL() {
   if (id_tex == 0) { ::glGenTextures(1, &id_tex); }
-  // std::cout << "initialize gl ctexrgb" << id_tex << std::endl;
   glBindTexture(GL_TEXTURE_2D, id_tex);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-//  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  assert(aRGB.size() == width * height * 3);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-               static_cast<int>(width),
-               static_cast<int>(height),
-               0, GL_RGB, GL_UNSIGNED_BYTE,
-               aRGB.data());
+  assert(pixel_color.size() == width * height * channels );
+  if( this->channels ==  3 ) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 static_cast<int>(width),
+                 static_cast<int>(height),
+                 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 pixel_color.data());
+  }
+  else if( this->channels ==  4 ) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 static_cast<int>(width),
+                 static_cast<int>(height),
+                 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 pixel_color.data());
+  }
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 

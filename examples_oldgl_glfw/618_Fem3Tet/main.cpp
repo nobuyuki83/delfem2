@@ -368,8 +368,8 @@ void SolveProblem_LinearSolid_Dynamic(
       mat_A, vec_b.data(),
       myu, lambda, rho, g,
       dt_timestep, gamma_newmark, beta_newmark,
-      aXYZ.data(), static_cast<unsigend int>(aXYZ.size() / 3),
-      aTet.data(), static_cast<unsigend int>(aTet.size() / 4),
+      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
+      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
       aVal.data(), aVelo.data(), aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -384,7 +384,10 @@ void SolveProblem_LinearSolid_Dynamic(
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
     dfm2::Solve_PCG(
-        dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration,
         mat_A, ilu_A);
   }

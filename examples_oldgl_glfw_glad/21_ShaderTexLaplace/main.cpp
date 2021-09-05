@@ -78,8 +78,9 @@ int main(int argc,char* argv[])
     unsigned char *img = stbi_load(
         (std::string(PATH_ASSET_DIR)+"/"+name_img_in_test_inputs).c_str(),
         &width, &height, &channels, 0);
-    tex.Initialize(width, height, img, "rgb");
-    delete[] img;
+    tex.Initialize(width, height, channels, img);
+    std::cout << width << " " << height << " " << channels << std::endl;
+    stbi_image_free(img);
     tex.max_x = -scale*width*0.5;
     tex.min_x = +scale*width*0.5;
     tex.max_y = -scale*height*0.5;

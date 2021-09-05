@@ -188,7 +188,8 @@ int main() {
   {
     tex.width = 256;
     tex.height = 256;
-    tex.aRGB.resize(tex.width*tex.height*3);
+    tex.channels = 3;
+    tex.pixel_color.resize(tex.width*tex.height*tex.channels);
   }
   delfem2::glfw::CViewer3 viewer;
   viewer.width = 400;
@@ -236,7 +237,7 @@ int main() {
         for(int ic=0;ic<3;++ic) {
           float fc = afRGB[(ih * tex.width + iw) * 3 + ic]*0.25f/float(isample);
           fc = (fc>1.f) ? 1.f:fc;
-          tex.aRGB[(ih * tex.width + iw) * 3 + ic] = static_cast<unsigned char>(255*fc);
+          tex.pixel_color[(ih * tex.width + iw) * 3 + ic] = static_cast<unsigned char>(255*fc);
         }
       }
     }
