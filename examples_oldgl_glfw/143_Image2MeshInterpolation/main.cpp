@@ -84,9 +84,7 @@ void MeshTri2D_Square(
 
 // --------------------------------------
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   std::vector<double> aXY;
   std::vector<unsigned int> aTri;

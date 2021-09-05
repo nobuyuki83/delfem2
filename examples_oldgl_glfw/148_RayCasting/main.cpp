@@ -100,7 +100,8 @@ int main() {
   {
     tex.width = 256;
     tex.height = 256;
-    tex.aRGB.resize(tex.width * tex.height * 3);
+    tex.channels = 3;
+    tex.pixel_color.resize(tex.width * tex.height * tex.channels);
   }
 
   dfm2::glfw::CViewer3 viewer;
@@ -141,7 +142,7 @@ int main() {
           tex.height, tex.width, mMVP,
           vec_node_bvh, vec_bv, vec_xyz, vec_tri);
       ShadingImageRayLambertian(
-          tex.aRGB,
+          tex.pixel_color,
           tex.height, tex.width, mMVP,
           vec_point_on_tri, vec_xyz, vec_tri);
       tex.InitGL();

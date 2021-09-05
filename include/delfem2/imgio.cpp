@@ -17,10 +17,11 @@
 #include "delfem2/imgio.h"
 
 // https://en.wikipedia.org/wiki/Netpbm_format
-bool delfem2::LoadImage_PPMBinary
-(const std::string& filename,
- std::vector<unsigned char>& image,
- int& width, int& height)
+bool delfem2::LoadImage_PPMBinary(
+    const std::string& filename,
+    std::vector<unsigned char>& image,
+    int& width,
+    int& height)
 {
   std::ifstream file(filename.c_str(), std::ios::binary);
   if (!file) {
@@ -116,7 +117,7 @@ int delfem2::LoadImage_PPMAscii(
   return 0;
 }
 
-
+/*
 bool delfem2::LoadTGAFile(
     const std::string& filename,
     SFile_TGA *tgaFile)
@@ -190,6 +191,7 @@ bool delfem2::LoadTGAFile(
   fclose(filePtr);
   return true;
 }
+ */
 
 void delfem2::ImageInterpolation_Bilinear(
     std::vector<double>& aColor,

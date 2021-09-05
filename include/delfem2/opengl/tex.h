@@ -40,42 +40,22 @@ unsigned int LoadTexture(
 
 class CTexRGB {
  public:
-  std::vector<unsigned char> aRGB;
-  unsigned int id_tex;
-  unsigned int height, width;
+  std::vector<unsigned char> pixel_color;
+  unsigned int id_tex = 0;
+  unsigned int height =0, width=0, channels=0;
 
  public:
-  CTexRGB() {
-    id_tex = 0;
-    this->width = 0;
-    this->height = 0;
-    aRGB.clear();
-  }
-
-  /*
-  CTexIdAndRGBData(int w, int h,
-                   const unsigned char *pD,
-                   const std::string &typeData) {
-    this->Initialize(w,h, pD, typeData);
-  }
-   */
+  CTexRGB() {}
 
   virtual void Initialize(
       unsigned int w0,
       unsigned int h0,
-      const unsigned char *pD,
-      const std::string &typeData) {
+      unsigned int c0,
+      const unsigned char *pD ){
     this->height = h0;
     this->width = w0;
-    this->aRGB.assign(pD, pD + height * width * 3);
-    if (typeData == "bgr") {
-      for (unsigned int i = 0; i < height * width; ++i) { // rgb -> bgr
-        unsigned char b0 = aRGB[i * 3 + 0];
-        unsigned char r0 = aRGB[i * 3 + 2];
-        aRGB[i * 3 + 0] = r0;
-        aRGB[i * 3 + 2] = b0;
-      }
-    }
+    this->channels = c0;
+    this->pixel_color.assign(pD, pD + height * width * channels);
     id_tex = 0;
   }
 
@@ -92,10 +72,12 @@ class CTexRGB_Rect2D :
 
   void Draw_oldGL() const;
 
-  void Initialize(unsigned int w, unsigned int h,
-                  const unsigned char *pD,
-                  const std::string &typeData) override {
-    CTexRGB::Initialize(w, h, pD, typeData);
+  void Initialize(
+      unsigned int w,
+      unsigned int h,
+      unsigned int c,
+      const unsigned char *pD) override {
+    CTexRGB::Initialize(w, h, c, pD);
     this->min_x = 0.0;
     this->max_x = (double) w;
     this->min_y = 0.0;

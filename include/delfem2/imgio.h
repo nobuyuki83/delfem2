@@ -33,7 +33,7 @@ DFM2_INLINE int LoadImage_PPMAscii(
     std::vector<unsigned char> &image,
     const std::string &fname);
 
-
+/*
 class SFile_TGA {
 public:
   unsigned char imageTypeCode;
@@ -46,6 +46,7 @@ public:
 DFM2_INLINE bool LoadTGAFile(
     const std::string &filename,
     SFile_TGA *tgaFile);
+    */
 
 DFM2_INLINE void ImageInterpolation_Bilinear(
     std::vector<double>& aColor,

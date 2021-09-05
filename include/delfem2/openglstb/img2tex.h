@@ -14,11 +14,13 @@ void SetRgbToTex(
   unsigned char *img = stbi_load(
       path_img0.c_str(),
       &width, &height, &channels, 0);
-  assert(width > 0 && height > 0 && channels == 3);
+  std::cout << width << " " << height << " " << channels << std::endl;
+  assert(width > 0 && height > 0);
   tex0.width = width;
   tex0.height = height;
-  tex0.aRGB.assign(img, img + width * height * channels);
-  delete[] img;
+  tex0.channels = channels;
+  tex0.pixel_color.assign(img, img + width * height * channels);
+  stbi_image_free(img);
 }
 
 }

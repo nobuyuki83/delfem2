@@ -99,10 +99,11 @@ int main()
     std::string name_img_in_test_inputs = "lenna.png";
     // -----
     int channels;
-    unsigned char *img = stbi_load((std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
-                                   &width, &height, &channels, 0);
-    tex.Initialize(width, height, img, "rgb");
-    delete[] img;
+    unsigned char *img = stbi_load(
+        (std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
+        &width, &height, &channels, 0);
+    tex.Initialize(width, height, channels, img);
+    stbi_image_free(img);
   }
 
   std::vector<dfm2::CDynTri> aETri_Cloth;

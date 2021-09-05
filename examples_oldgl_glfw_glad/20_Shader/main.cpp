@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // should be before glfw3.h
@@ -24,12 +25,12 @@
 #include "delfem2/opengl/tex.h"
 #include "delfem2/imgio.h"
 #include "delfem2/mshprimitive.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "delfem2/openglstb/img2tex.h"
 
 namespace dfm2 = delfem2;
 
 // ----------------------------
-
-// -----------------------------
 
 std::string LoadFile(
     const std::string& fname)
@@ -42,8 +43,8 @@ std::string LoadFile(
 
 void setShaderProgram(
     int& id_shader_program,
-    std::string glslVert,
-    std::string glslFrag)
+    const std::string& glslVert,
+    const std::string& glslFrag)
 {
   glUseProgram(0);
   glDeleteProgram(id_shader_program);
@@ -88,20 +89,34 @@ void myGlutDisplay(
 }
 
 
-int main(int argc,char* argv[])
+int main()
 {
-  
-  // -------------------
-  
+  delfem2::opengl::CTexRGB tex_color, tex_normal;
+  delfem2::openglstb::SetRgbToTex(
+      tex_color,
+      std::string(PATH_ASSET_DIR)+"/rock_color.tga", true);
+  delfem2::openglstb::SetRgbToTex(
+      tex_normal,
+      std::string(PATH_ASSET_DIR)+"/rock_normal.tga", true);
   dfm2::glfw::CViewer3 viewer;
+  viewer.camera.view_height = 2.0;
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+
+  // --------
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  tex_color.InitGL();
+  tex_normal.InitGL();
+  // multi-texture setting
+  ::glActiveTexture(GL_TEXTURE0);  // this function should be called after glGenTexture
+  ::glBindTexture(GL_TEXTURE_2D, tex_color.id_tex);
+  ::glActiveTexture(GL_TEXTURE1); // this function should be called after glGenTexture
+  ::glBindTexture(GL_TEXTURE_2D, tex_normal.id_tex);
+
   delfem2::opengl::setSomeLighting();
   // --------------
   
@@ -110,39 +125,8 @@ int main(int argc,char* argv[])
   std::cout<<"OpenGL ver.: "<<glGetString(GL_VERSION)<<'\n';
   std::cout<<"OpenGL shading ver.: " <<glGetString(GL_SHADING_LANGUAGE_VERSION)<<std::endl;
   
-  // -------------------------
-  
-  dfm2::SFile_TGA tga_color;  LoadTGAFile(std::string(PATH_ASSET_DIR)+"/rock_color.tga",  &tga_color);
-  dfm2::SFile_TGA tga_normal; LoadTGAFile(std::string(PATH_ASSET_DIR)+"/rock_normal.tga", &tga_normal);
-  
-  GLuint aIndTex[2];
-  ::glGenTextures(2, aIndTex);
-  
-  // color
-  ::glActiveTexture(GL_TEXTURE0);
-  ::glBindTexture(GL_TEXTURE_2D, aIndTex[0]);
-  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  ::glTexImage2D(GL_TEXTURE_2D,
-                 0, GL_RGBA,
-                 tga_color.imageWidth, tga_color.imageHeight,
-                 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, tga_color.imageData);
-  
-  // normal
-  ::glActiveTexture(GL_TEXTURE1);
-  ::glBindTexture(GL_TEXTURE_2D, aIndTex[1]);
-  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  ::glTexImage2D(GL_TEXTURE_2D,
-                 0, GL_RGBA,
-                 tga_normal.imageWidth, tga_normal.imageHeight,
-                 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, tga_normal.imageData);
-  
-  ::glEnable(GL_TEXTURE_2D);
-  
-  
+  // ------------------------
+
   while (true)
   {
     int id_shapder_program;
