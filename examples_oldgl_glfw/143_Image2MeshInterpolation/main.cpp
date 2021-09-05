@@ -15,7 +15,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/imgio.h"
+#include "delfem2/img_ioppm.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"

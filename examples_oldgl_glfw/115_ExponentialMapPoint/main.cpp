@@ -23,7 +23,7 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/color.h"
-#include "delfem2/imgio.h"
+#include "delfem2/img_ioppm.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
