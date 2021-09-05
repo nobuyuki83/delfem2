@@ -87,15 +87,16 @@ void MeshTri2D_Square(
 
 int main()
 {
-  std::vector<double> aXY;
-  std::vector<unsigned int> aTri;
-  MeshTri2D_Square(aXY, aTri,
-             0.02);
-  std::cout << "npoint: " << aXY.size()/2 << std::endl;
+  std::vector<double> vec_xy;
+  std::vector<unsigned int> vec_idx_tri;
+  MeshTri2D_Square(
+      vec_xy, vec_idx_tri,
+      0.02);
+  std::cout << "npoint: " << vec_xy.size()/2 << std::endl;
 
   std::vector<double> aColor;
   {
-    aColor.resize(aXY.size()/2*3,0.0);
+    aColor.resize(vec_xy.size()/2*3, 0.0);
     int width, height;
     std::string name_img_in_test_inputs = "lenna.png";
     // -----
@@ -104,12 +105,19 @@ int main()
         (std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
         &width, &height, &channels, 0);
     std::cout << width << " " << height << " " << channels << std::endl;
-    dfm2::ImageInterpolation_Bilinear(aColor,
-        width,height,img,
-        aXY.data(),static_cast<unsigned int>(aXY.size()/2));
-    delete[] img;
+    unsigned int nXY = vec_xy.size()/2;
+    aColor.resize(nXY*3);
+    for(unsigned int ip=0;ip<nXY;++ip) {
+      double x = vec_xy[ip * 2 + 0] * (width - 1);
+      double y = (1.0 - vec_xy[ip * 2 + 1]) * (height - 1);
+      dfm2::ImageInterpolation_Bilinear(
+          aColor.data() + ip * 3,
+          width, height, img,
+          x, y);
+    }
+    stbi_image_free(img);
   }
-  std::cout << aXY.size()/2 << " " << 220*220 << std::endl;
+  std::cout << vec_xy.size()/2 << " " << 220*220 << std::endl;
 
 
   delfem2::glfw::CViewer3 viewer;
@@ -122,13 +130,13 @@ int main()
     // ---------
     viewer.DrawBegin_oldGL();
     ::glColor3d(0,0,0);
-    dfm2::opengl::DrawMeshTri2D_Edge(aTri,aXY);
+    dfm2::opengl::DrawMeshTri2D_Edge(vec_idx_tri, vec_xy);
 //    ::glColor3d(1,1,1);
 //    dfm2::opengl::DrawMeshTri2D_Face(aTri,aXY);
     dfm2::opengl::DrawMeshTri2D_FaceColor(
-		aTri.data(), static_cast<unsigned int>(aTri.size()/3),
-		aXY.data(), static_cast<unsigned int>(aXY.size()/2),                                         
-		aColor.data());
+        vec_idx_tri.data(), static_cast<unsigned int>(vec_idx_tri.size()/3),
+        vec_xy.data(), static_cast<unsigned int>(vec_xy.size()/2),
+        aColor.data());
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

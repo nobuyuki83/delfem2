@@ -15,14 +15,13 @@
 
 namespace delfem2 {
 
-
-DFM2_INLINE void ImageInterpolation_Bilinear(
-    std::vector<double>& aColor,
+void ImageInterpolation_Bilinear(
+    double color[3],
     int width,
     int height,
-    const unsigned char* img,
-    const double* aXY,
-    unsigned int nXY);
+    const unsigned char *img,
+    double x,
+    double y);
 
 }  // delfem2
 
