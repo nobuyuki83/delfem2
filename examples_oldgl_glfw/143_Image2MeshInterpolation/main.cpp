@@ -105,7 +105,7 @@ int main()
         (std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
         &width, &height, &channels, 0);
     std::cout << width << " " << height << " " << channels << std::endl;
-    unsigned int nXY = vec_xy.size()/2;
+    unsigned int nXY = static_cast<unsigned int>(vec_xy.size()/2);
     aColor.resize(nXY*3);
     for(unsigned int ip=0;ip<nXY;++ip) {
       double x = vec_xy[ip * 2 + 0] * (width - 1);

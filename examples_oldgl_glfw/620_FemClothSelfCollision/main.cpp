@@ -148,7 +148,7 @@ int imode_draw = 0;
 
 void MakeNormal()
 { // make normal
-  const unsigned int np = aXYZ.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3);
   const int ntri = (int)aTri.size()/3;
   aNormal.assign(np*3,0);
   for(int itri=0;itri<ntri;itri++){

@@ -31,7 +31,7 @@ namespace dfm2 = delfem2;
 // -----------------------------
 
 void myGlutDisplay(
-    const std::vector<dfm2::CDynPntSur>& aPo,
+    [[maybe_unused]] const std::vector<dfm2::CDynPntSur>& aPo,
     const std::vector<dfm2::CDynTri>& aTri,
     const std::vector<dfm2::CVec3d>& aVec3)
 {

@@ -1915,14 +1915,14 @@ void delfem2::AddPointTetDelaunay(
   }
 #endif
   { // find adjancy of new
-    for (size_t itetnew = 0; itetnew<aNew.size(); ++itetnew){
+    for (unsigned int itetnew = 0; itetnew<aNew.size(); ++itetnew){
       for (int iedtri = 0; iedtri<3; ++iedtri){
         const unsigned int i0 = aNew[itetnew].v[(iedtri+1)%3];
         const unsigned int i1 = aNew[itetnew].v[(iedtri+2)%3];
         aNew[itetnew].inew_sur[iedtri] = UINT_MAX;
-        for (size_t jtrinew = 0; jtrinew<aNew.size(); ++jtrinew){
+        for (unsigned int jtrinew = 0; jtrinew<aNew.size(); ++jtrinew){
           for (int jedtri = 0; jedtri<3; ++jedtri){
-            if (itetnew==jtrinew && iedtri==jedtri) continue;
+			if (itetnew == jtrinew && iedtri == jedtri) { continue; }
             const unsigned int j0 = aNew[jtrinew].v[(jedtri+1)%3];
             const unsigned int j1 = aNew[jtrinew].v[(jedtri+2)%3];
             assert(i0!=j0||i1!=j1); // consistent face orientatoin

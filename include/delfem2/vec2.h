@@ -219,10 +219,10 @@ class CVec2 {
     return y0;
   }
   CVec2 Mat3Vec2_AffineDirection(const T *A) const {
-    CVec2<T> y;
-    y.p[0] = A[0] * p[0] + A[1] * p[1];
-    y.p[1] = A[3] * p[0] + A[4] * p[1];
-    return y;
+    CVec2<T> y0;
+    y0.p[0] = A[0] * p[0] + A[1] * p[1];
+    y0.p[1] = A[3] * p[0] + A[4] * p[1];
+    return y0;
   }
 
   CVec2 Rotate(T t) const {

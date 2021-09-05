@@ -169,7 +169,7 @@ void MergeLinSys_NavierStokes3D_Dynamic(
     const std::vector<double>& aVal,
     const std::vector<double>& aVelo)
 {
-  const unsigned int np = aXYZ.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3);
   const unsigned int nDoF = np*4;
   mat_A.setZero();
   vec_b.assign(nDoF, 0.0);

@@ -39,16 +39,25 @@ void SetPositionAtFixedBoundary(
   {
     dfm2::Mat4_Identity(A);
     const double trans0[3] = {0, -0.8, 0};
-    dfm2::Translate_Mat4Affine(A,
-                               trans0);
-    const double axis0[3] = {0, +2.0*sin(0.03*iframe), 1.0*sin(0.07*iframe)};
-    dfm2::Rotate_Mat4AffineRodriguez(A,
-                                     axis0);
-    const double trans1[3] = {0.2*sin(0.03*iframe), +0.6+0.2*cos(0.05*iframe), 0};
-    dfm2::Translate_Mat4Affine(A,
-                               trans1);
+    dfm2::Translate_Mat4Affine(
+		A,
+		trans0);
+    const double axis0[3] = {
+		0, 
+		+2.0*sin(0.03*iframe), 
+		1.0*sin(0.07*iframe)};
+    dfm2::Rotate_Mat4AffineRodriguez(
+		A,
+		axis0);
+    const double trans1[3] = {
+		0.2*sin(0.03*iframe), 
+		+0.6+0.2*cos(0.05*iframe), 
+		0};
+    dfm2::Translate_Mat4Affine(
+		A,
+		trans1);
   }
-  const unsigned int np = aRhs.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aRhs.size()/3);
   for(unsigned int ip=0;ip<np;++ip){
     if( aBCFlag[ip*3+0] == 0 ){ continue; }
     if( aBCFlag[ip*3+0] == 1 ){
@@ -57,7 +66,8 @@ void SetPositionAtFixedBoundary(
       aRhs[ip*3+2] = aXYZ0[ip*3+2];
     }
     if( aBCFlag[ip*3+0] == 2 ) {
-      dfm2::Vec3_Mat4Vec3_AffineProjection(aRhs.data()+ip*3, A, aXYZ0.data()+ip*3);
+      dfm2::Vec3_Mat4Vec3_AffineProjection(
+		  aRhs.data()+ip*3, A, aXYZ0.data()+ip*3);
     }
   }
 }

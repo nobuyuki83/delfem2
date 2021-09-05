@@ -224,10 +224,10 @@ DFM2_INLINE delfem2::CVec3d delfem2::UnitNormal_DTri3(
 }
 
 
-bool delfem2::AssertMeshDTri2
-(const std::vector<CDynPntSur>& aPo3D,
- const std::vector<CDynTri>& aSTri,
- const std::vector<CVec3d>& aXYZ)
+bool delfem2::AssertMeshDTri2(
+	[[maybe_unused]] const std::vector<CDynPntSur>& aPo3D,
+	const std::vector<CDynTri>& aSTri,
+	const std::vector<CVec3d>& aXYZ)
 {
   for (const auto & ref_tri : aSTri){
     const int i0 = ref_tri.v[0];
