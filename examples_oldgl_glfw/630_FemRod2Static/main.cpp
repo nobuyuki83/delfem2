@@ -6,6 +6,10 @@
 */
 
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -36,7 +40,7 @@ void Solve(
     dfm2::CMatrixSparse<double> &mats) {
   const double stiff_stretch = 1.0;
   const double stiff_bend = 0.01;
-  unsigned int np = aXY.size() / 2;
+  unsigned int np = static_cast<unsigned int>(aXY.size() / 2);
   assert(np >= 3);
   assert(mats.ncolblk_ == np && mats.nrowblk_ == np);
   assert(mats.ncoldim_ == 2 && mats.nrowdim_ == 2);

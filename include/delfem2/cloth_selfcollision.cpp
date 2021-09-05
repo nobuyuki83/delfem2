@@ -17,16 +17,16 @@
 namespace dfm2 = delfem2;
 
 // 撃力を計算
-void SelfCollisionImpulse_Proximity
-(std::vector<double>& aUVWm, // (in,out)velocity
- ////
- double delta,
- double stiffness,
- double dt,
- double mass,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- const std::vector<dfm2::CContactElement>& aContactElem)
+void SelfCollisionImpulse_Proximity(
+	std::vector<double>& aUVWm, // (in,out)velocity
+	// 
+	double delta,
+	double stiffness,
+	double dt,
+	double mass,
+	const std::vector<double>& aXYZ,
+	const std::vector<unsigned int>& aTri,
+	const std::vector<dfm2::CContactElement>& aContactElem)
 {
   for(const auto & ce : aContactElem){
     const int ino0 = ce.ino0;

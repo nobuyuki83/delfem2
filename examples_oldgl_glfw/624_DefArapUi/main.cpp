@@ -39,7 +39,7 @@ int main(
           aXYZ0, aTri,
           0.2, 1.6,
           32, 32);
-      const unsigned int np = aXYZ0.size() / 3;
+      const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
       aBCFlag.assign(np * 3, 0);
       for (unsigned int ip = 0; ip < np; ++ip) {
         double y0 = aXYZ0[ip * 3 + 1];
@@ -71,8 +71,8 @@ int main(
         giz1.pivot0 = aCntBC[1].cast<float>();
         giz1.gizmo_rot.pos = aCntBC[1].cast<float>();
         giz1.gizmo_trnsl.pos = aCntBC[1].cast<float>();
-        giz1.gizmo_rot.size = 0.3;
-        giz1.gizmo_trnsl.size = 0.3;
+        giz1.gizmo_rot.size = 0.3f;
+        giz1.gizmo_trnsl.size = 0.3f;
       }
       aXYZ1 = aXYZ0;
       aQuat1.resize(np * 4);
@@ -87,7 +87,9 @@ int main(
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
       giz1.Drag(src0, src1, dir);
     }
-    void key_release(int key, int mods) override {
+    void key_release(
+		[[maybe_unused]] int key, 
+		[[maybe_unused]] int mods) override {
     }
     void key_press(int key, int mods) override {
       if (key == GLFW_KEY_R) { giz1.igizmo_mode = 1; }

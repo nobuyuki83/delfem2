@@ -36,7 +36,7 @@ static void FetchData
 
 void delfem2::PBD_TriStrain(
     double* aXYZt,
-    unsigned int nXYZ,
+    [[maybe_unused]] unsigned int nXYZ,
     const std::vector<delfem2::CDynTri>& aETri,
     const std::vector<CVec2d>& aVec2)
 {
@@ -59,7 +59,7 @@ void delfem2::PBD_TriStrain(
 
 void delfem2::PBD_Bend(
     double* aXYZt,
-    unsigned int nXYZ,
+    [[maybe_unused]] unsigned int nXYZ,
     const std::vector<delfem2::CDynTri>& aETri,
     const std::vector<CVec2d>& aVec2,
     double ratio)

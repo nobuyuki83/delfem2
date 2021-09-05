@@ -509,12 +509,12 @@ void delfem2::Read_WavefrontMaterial(
     ss >> str0;
     if (str0 == "newmtl") {
       aMtl.resize(aMtl.size() + 1);
-      const int imtl0 = aMtl.size() - 1;
+      const int imtl0 = static_cast<int>(aMtl.size()) - 1;
       ss >> str1;
       aMtl[imtl0].name_mtl = str1;
     }
+	const int imtl0 = static_cast<int>(aMtl.size()) - 1;
     if (str0 == "Kd") {
-      const int imtl0 = aMtl.size() - 1;
       ss >> str1 >> str2 >> str3;
       aMtl[imtl0].Kd[0] = std::stof(str1);
       aMtl[imtl0].Kd[1] = std::stof(str2);
@@ -522,7 +522,6 @@ void delfem2::Read_WavefrontMaterial(
       aMtl[imtl0].Kd[3] = 1.0;
     }
     if (str0 == "Ka") {
-      const int imtl0 = aMtl.size() - 1;
       ss >> str1 >> str2 >> str3;
       aMtl[imtl0].Ka[0] = std::stof(str1);
       aMtl[imtl0].Ka[1] = std::stof(str2);
@@ -530,7 +529,6 @@ void delfem2::Read_WavefrontMaterial(
       aMtl[imtl0].Ka[3] = 1.0;
     }
     if (str0 == "Ks") {
-      const int imtl0 = aMtl.size() - 1;
       ss >> str1 >> str2 >> str3;
       aMtl[imtl0].Ks[0] = std::stof(str1);
       aMtl[imtl0].Ks[1] = std::stof(str2);
@@ -538,7 +536,6 @@ void delfem2::Read_WavefrontMaterial(
       aMtl[imtl0].Ks[3] = 1.0;
     }
     if (str0 == "Ke") {
-      const int imtl0 = aMtl.size() - 1;
       ss >> str1 >> str2 >> str3;
       aMtl[imtl0].Ke[0] = std::stof(str1);
       aMtl[imtl0].Ke[1] = std::stof(str2);
@@ -546,17 +543,14 @@ void delfem2::Read_WavefrontMaterial(
       aMtl[imtl0].Ke[3] = std::stof(str3);
     }
     if (str0 == "Ns") {
-      const int imtl0 = aMtl.size() - 1;
       ss >> str1;
       aMtl[imtl0].Ns = std::stof(str1);
     }
     if (str0 == "illum") {
-      const int imtl0 = aMtl.size() - 1;
       ss >> str1;
-      aMtl[imtl0].illum = std::stof(str1);
+      aMtl[imtl0].illum = std::stoi(str1);
     }
-    if (str0 == "map_Kd") {
-      const int imtl0 = aMtl.size() - 1;
+    if (str0 == "map_Kd") {      
       ss >> str1;
       aMtl[imtl0].map_Kd = str1;
     }

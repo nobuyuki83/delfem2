@@ -102,7 +102,7 @@ int main(
           mat_A, vec_b.data(),
           wave_length,
           aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-          ipl.data(), ipl.size(),
+          ipl.data(), static_cast<unsigned int>(ipl.size()),
           aCVal.data());
     }
     mat_A.SetFixedBC(aBCFlag.data());

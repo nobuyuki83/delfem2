@@ -224,10 +224,10 @@ void MakeInitialSuperTet(
   aSTet[0].v[1] = 1;
   aSTet[0].v[2] = 2;
   aSTet[0].v[3] = 3;
-  aSTet[0].s[0] = -1;
-  aSTet[0].s[1] = -1;
-  aSTet[0].s[2] = -1;
-  aSTet[0].s[3] = -1;
+  aSTet[0].s[0] = UINT_MAX;
+  aSTet[0].s[1] = UINT_MAX;
+  aSTet[0].s[2] = UINT_MAX;
+  aSTet[0].s[3] = UINT_MAX;
   // ---------------
   aCent.resize(1);
   aCent[0] = CircumCenter(aPo3D[0].p,aPo3D[1].p,aPo3D[2].p,aPo3D[3].p);
@@ -246,8 +246,8 @@ void AddRandomPoint(
   int ip_ins = (int)aPo3D.size();
   aPo3D.resize(ip_ins+1);
   aPo3D[ip_ins].p = dfm2::CVec3d(x0,y0,z0);
-  aPo3D[ip_ins].e = -1;
-  aPo3D[ip_ins].poel = -1;
+  aPo3D[ip_ins].e = UINT_MAX;
+  aPo3D[ip_ins].poel = UINT_MAX;
   unsigned int itet_ins = UINT_MAX;
   for (unsigned int it = 0; it<aSTet.size(); ++it){
     unsigned int j0 = aSTet[it].v[0];

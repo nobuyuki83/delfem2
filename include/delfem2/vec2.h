@@ -210,13 +210,13 @@ class CVec2 {
   };
 
   CVec2 Mat3Vec2_AffineProjection(const T *A) const {
-    CVec2<T> y;
-    y.p[0] = A[0] * p[0] + A[1] * p[1] + A[2];
-    y.p[1] = A[3] * p[0] + A[4] * p[1] + A[5];
+    CVec2<T> y0;
+    y0.p[0] = A[0] * p[0] + A[1] * p[1] + A[2];
+    y0.p[1] = A[3] * p[0] + A[4] * p[1] + A[5];
     const T w = A[6] * p[0] + A[7] * p[1] + A[8];
-    y.p[0] /= w;
-    y.p[1] /= w;
-    return y;
+    y0.p[0] /= w;
+    y0.p[1] /= w;
+    return y0;
   }
   CVec2 Mat3Vec2_AffineDirection(const T *A) const {
     CVec2<T> y;

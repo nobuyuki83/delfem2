@@ -102,7 +102,7 @@ void QuadErrorMetric_MeshDTri3(
     std::vector<dfm2::CDynTri>& aDTri,
     std::vector<dfm2::CVec3d>& aVec3)
 {
-  const unsigned int np = aDP.size();
+  const unsigned int np = static_cast<unsigned int>(aDP.size());
   aSymMat4.assign(np*10, 0.0);
   for(unsigned int ip=0;ip<np;++ip){
     std::vector< std::pair<unsigned int,unsigned int> > aTriSurPo;
