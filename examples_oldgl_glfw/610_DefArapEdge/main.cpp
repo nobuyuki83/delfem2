@@ -45,7 +45,7 @@ void SetPositionAtFixedBoundary(
     dfm2::Translate_Mat4Affine(A,
                                trans1);
   }
-  const unsigned int np = aRhs.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aRhs.size()/3);
   for(unsigned int ip=0;ip<np;++ip){
     if( aBCFlag[ip*3+0] == 0 ){ continue; }
     if( aBCFlag[ip*3+0] == 1 ){
@@ -95,7 +95,7 @@ void Draw_BCFlag(
 
 // --------------------------------------------------
 
-int main(int argc,char* argv[])
+int main()
 {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
@@ -113,7 +113,7 @@ int main(int argc,char* argv[])
         0.2, 1.6,
         16, 16);
     {
-      const unsigned int np = aXYZ0.size() / 3;
+      const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
       aBCFlag.assign(np * 3, 0);
       for(unsigned int ip=0;ip<np;++ip) {
         double y0 = aXYZ0[ip*3+1];
@@ -156,7 +156,7 @@ int main(int argc,char* argv[])
     // -------------------------------------------------------
     { // begin lienar disprot without preconditioner
       glfwSetWindowTitle(viewer.window, "(2) Arap Edge Linear Disprot without Prec");
-      unsigned int np = aXYZ0.size()/3;
+      unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
       dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, false);
       std::vector<double> aQuat(np*4); // array of quaternion
@@ -179,7 +179,7 @@ int main(int argc,char* argv[])
     // -------------------------------
     { // begin lienar disprot with preconditioner
       glfwSetWindowTitle(viewer.window, "(3) Arap Edge Linear Disprot with Prec");
-      const unsigned int np = aXYZ0.size()/3;
+      const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
       dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
       std::vector<double> aQuat(np*4);
@@ -207,7 +207,7 @@ int main(int argc,char* argv[])
     // -------------------------------
     { // begin nonlienar disprot with preconditioner
       glfwSetWindowTitle(viewer.window, "(4) Arap Edge NonLinear Disprot with Prec");
-      const unsigned int np = aXYZ0.size()/3;
+      const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
       dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
       std::vector<double> aQuat(np*4);

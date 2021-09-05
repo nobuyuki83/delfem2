@@ -35,7 +35,7 @@ bool Nearest_Polygon2(
     const std::vector<CVec2d>& shape,
     const CVec2d& q)
 {
-  const unsigned int nej = shape.size();
+  const unsigned int nej = static_cast<unsigned int>(shape.size());
   double min_dist = -1.0;
   double winding_nubmer = 0.0;
   for(unsigned int iej=0;iej<nej;++iej) {
@@ -215,8 +215,8 @@ void delfem2::Steptime_Rgd2(
     const CVec2d& PA = aRS[c.irbA].shape[c.ipA];
     const CVec2d& VA = aRS[c.irbA].shape_velo[c.ipA];
     const unsigned int ieB = c.ieB;
-    const unsigned int reB = c.reB;
-    const unsigned int npB = rbB.shape.size();
+    const double reB = c.reB;
+    const unsigned int npB = static_cast<unsigned int>(rbB.shape.size());
     const CVec2d PB = (1-reB)*rbB.shape[(ieB+0)%npB] + reB*rbB.shape[(ieB+1)%npB];
     const CVec2d VB = (1-reB)*rbB.shape_velo[(ieB+0)%npB] + reB*rbB.shape_velo[(ieB+1)%npB];
     const CVec2d vA = rbA.omega*(PA - rbA.posl).Rotate(rbA.theta + M_PI*0.5) + rbA.velo + VA.Rotate(rbA.theta);

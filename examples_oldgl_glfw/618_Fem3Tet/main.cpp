@@ -315,7 +315,7 @@ void InitializeProblem_LinearSolid_Dynamic(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
   const double len = 1.1;
-  const unsigned int np = aXYZ.size() / 3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
   const unsigned int nDoF = np * 3;
   ////
   aVal.assign(nDoF, 0.0);
@@ -355,7 +355,7 @@ void SolveProblem_LinearSolid_Dynamic(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = aXYZ.size() / 3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
   const unsigned int nDoF = np * 3;
   // --------
   double myu = 10.0;
@@ -368,8 +368,8 @@ void SolveProblem_LinearSolid_Dynamic(
       mat_A, vec_b.data(),
       myu, lambda, rho, g,
       dt_timestep, gamma_newmark, beta_newmark,
-      aXYZ.data(), aXYZ.size() / 3,
-      aTet.data(), aTet.size() / 4,
+      aXYZ.data(), static_cast<unsigend int>(aXYZ.size() / 3),
+      aTet.data(), static_cast<unsigend int>(aTet.size() / 4),
       aVal.data(), aVelo.data(), aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -409,7 +409,7 @@ void InitializeProblem_Stokes_Static(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
   // set boundary condition
-  const unsigned int np = aXYZ.size() / 3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
   const unsigned int nDoF = np * 4;
   //
   aVal.assign(np * 4, 0.0);
@@ -1033,7 +1033,7 @@ void ProblemFluid(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();

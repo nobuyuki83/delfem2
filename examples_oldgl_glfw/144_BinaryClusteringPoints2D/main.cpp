@@ -113,14 +113,15 @@ int main()
       CClusterData &pd0 = aPointData[0];
       MeshTri2D_Square(pd0.aXY,aTri0,0.02);
     }
-    const unsigned int np0 = aPointData[0].aXY.size() / 2;
+    const unsigned int np0 = static_cast<unsigned int>(aPointData[0].aXY.size() / 2);
     { // make area
       CClusterData &pd0 = aPointData[0];
       pd0.aArea.resize(np0);
-      dfm2::MassPoint_Tri2D(pd0.aArea.data(),
-                            1.0,
-                            pd0.aXY.data(), np0,
-                            aTri0.data(), aTri0.size() / 3);
+      dfm2::MassPoint_Tri2D(
+		  pd0.aArea.data(),
+		  1.0,
+		  pd0.aXY.data(), np0,
+		  aTri0.data(), static_cast<unsigned int>(aTri0.size() / 3));
     }
     { // make psup
       CClusterData &pd0 = aPointData[0];
@@ -143,9 +144,10 @@ int main()
     std::vector<unsigned int> map01(pd0.aXY.size()/2);
     unsigned int np1 = dfm2::BinaryClustering_Points2d(
         map01.data(),
-        pd0.aXY.size()/2, pd0.aArea.data(), pd0.psup_ind.data(), pd0.psup.data());
+        static_cast<unsigned int>(pd0.aXY.size()/2), pd0.aArea.data(), 
+		pd0.psup_ind.data(), pd0.psup.data());
     {
-      const unsigned int np0 = pd0.aXY.size()/2;
+      const unsigned int np0 = static_cast<unsigned int>(pd0.aXY.size()/2);
       pd1.aXY.assign(np1*2,0.0);
       pd1.aArea.assign(np1,0.0);
       for(unsigned int ip0=0;ip0<np0;++ip0){
@@ -163,9 +165,10 @@ int main()
     }
     dfm2::Clustering_Psup(
         pd1.psup_ind,pd1.psup,
-        pd1.aXY.size()/2,
-        pd0.aXY.size()/2,map01.data(),pd0.psup_ind.data(),pd0.psup.data());
-    unsigned int np0 = aPointData[0].aXY.size()/2;
+        static_cast<unsigned int>(pd1.aXY.size()/2),
+        static_cast<unsigned int>(pd0.aXY.size()/2),
+		map01.data(),pd0.psup_ind.data(),pd0.psup.data());
+    unsigned int np0 = static_cast<unsigned int>(aPointData[0].aXY.size()/2);
     pd1.map0c.resize(np0,UINT_MAX);
     for(unsigned int ip=0;ip<np0;++ip){
       unsigned int ic0 = pd0.map0c[ip];
@@ -179,7 +182,7 @@ int main()
     std::random_device rd;
     std::mt19937 eng(rd());
     std::uniform_real_distribution<double> dist(0, 1.0);
-    const unsigned int np = pd.aXY.size()/2;
+    const unsigned int np = static_cast<unsigned int>(pd.aXY.size()/2);
     pd.aColor.resize(np*3);
     for(unsigned int ip=0;ip<np;++ip) {
       float *pc = pd.aColor.data() + ip * 3;
@@ -230,7 +233,7 @@ int main()
         ::glColor3d(0, 0, 0);
         ::glTranslated(0,0,+0.01);
         dfm2::opengl::DrawPoints2d_Psup(
-            pd.aXY.size()/2, pd.aXY.data(),
+            static_cast<unsigned int>(pd.aXY.size()/2), pd.aXY.data(),
             pd.psup_ind.data(), pd.psup.data());
         ::glTranslated(0,0,-0.01);
         viewer.SwapBuffers();

@@ -48,9 +48,9 @@ public:
     bbmax[0] = bbmax_[0];
     bbmax[1] = bbmax_[1];
     bbmax[2] = bbmax_[2];
-    nx = ceil((bbmax[0] - bbmin[0]) / h);
-    ny = ceil((bbmax[1] - bbmin[1]) / h);
-    nz = ceil((bbmax[2] - bbmin[2]) / h);
+    nx = static_cast<unsigned int>(ceil((bbmax[0] - bbmin[0]) / h));
+    ny = static_cast<unsigned int>(ceil((bbmax[1] - bbmin[1]) / h));
+    nz = static_cast<unsigned int>(ceil((bbmax[2] - bbmin[2]) / h));
     aGrid2Obj.resize(nobj);
   }
 

@@ -144,8 +144,8 @@ double linear_interpolate (
 {
 	x = mymax(0.0, mymin((double) nw, x));
 	y = mymax(0.0, mymin((double) nh, y));
-	int i = mymin(x, (double) nw - 2);
-	int j = mymin(y, (double) nh - 2);
+	int i = static_cast<int>(mymin(x, (double) nw - 2));
+	int j = static_cast<int>(mymin(y, (double) nh - 2));
 	return ( (i+1-x)*d[(i+j*nw    )*ndim+idim]+(x-i)*d[(i+1+j*nw    )*ndim+idim])*(j+1-y) 
         + ((i+1-x)*d[(i+(j+1)*nw)*ndim+idim]+(x-i)*d[(i+1+(j+1)*nw)*ndim+idim])*(y-j);
 }
@@ -261,7 +261,7 @@ void glutMyDisplay(
 }
 
 
-int main (int argc, char * argv[])
+int main ()
 {
   const unsigned int ngrid = 32;
   std::vector<double> velou(ngrid*(ngrid+1), 0.0);  // (ngrid+1)*ngrid

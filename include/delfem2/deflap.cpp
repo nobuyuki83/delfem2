@@ -50,7 +50,8 @@ void delfem2::CDef_LaplacianLinearAsym::Init(
       aTri.size()/3, 3,
       aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
-  mat_A.Initialize(aXYZ0.size()/3, 3, true);
+  mat_A.Initialize(
+	  static_cast<unsigned int>(aXYZ0.size()/3), 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
   // ---
@@ -194,7 +195,7 @@ void delfem2::CDef_LaplacianLinearGram::MatVec
 // for preconditioner
 void delfem2::CDef_LaplacianLinearGram::SolvePrecond(double* v) const
 {
-  const unsigned int np = aBCFlag.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aBCFlag.size()/3);
   for(unsigned int ip=0;ip<np;++ip){
     double tmp[3];
     MatVec3(tmp, aDiaInv.data()+ip*9, v+ip*3);
@@ -216,7 +217,7 @@ void DualLaplacianSymbolic_3x3(
     std::vector<double>& eM,
     const std::vector<unsigned int>& aIP)
 {
-  const unsigned int nIP = aIP.size();
+  const unsigned int nIP = static_cast<unsigned int>(aIP.size());
   const unsigned int nNg = nIP-1; // number of neighbor
   double dn = (double)nNg;
   eM.assign(nIP*nIP*9, 0.0);
@@ -239,7 +240,7 @@ void delfem2::CDef_LaplacianLinear::Init(
     const std::vector<unsigned int>& aTri,
     bool is_preconditioner_)
 {
-  const unsigned int np = aXYZ0.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
   this->is_preconditioner = is_preconditioner_;
   std::vector<unsigned int> psup_ind, psup;
   JArray_PSuP_MeshElem(
@@ -414,7 +415,7 @@ void DualLaplacianSymbolic_1x1
     (std::vector<double>& eM,
      const std::vector<unsigned int>& aIP)
 {
-  const unsigned int nIP = aIP.size();
+  const unsigned int nIP = static_cast<unsigned int>(aIP.size());
   assert( nIP > 0 );
   const unsigned int nNg = nIP-1; // number of neighbor
   double dn = (double)nNg;
@@ -438,7 +439,7 @@ void delfem2::CDef_LaplacianLinearDegenerate::Init(
     bool is_preconditioner_)
 {
   this->is_preconditioner = is_preconditioner_;
-  const unsigned int np = aXYZ0.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
   std::vector<unsigned int> psup_ind, psup;
   JArray_PSuP_MeshElem(psup_ind, psup,
                        aTri.data(), aTri.size()/3, 3,
@@ -580,7 +581,7 @@ void delfem2::CDef_LaplacianLinearDegenerate::MatVec(
 
 void delfem2::CDef_LaplacianLinearDegenerate::SolvePrecond(double* v) const
 {
-  const unsigned int np = aBCFlag.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aBCFlag.size()/3);
   for(unsigned int ip=0;ip<np;++ip){
     double tmp[3];
     MatVec3(tmp, aDiaInv.data()+ip*9, v+ip*3);

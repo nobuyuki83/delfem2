@@ -192,8 +192,8 @@ void InitializeProblem_ShellEigenPB() {
   SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
       aMassLumpedSqrtInv.data(),
       aModesKer.data(),
-      aXYZ.data(), aXYZ.size() / 3,
-      aTet.data(), aTet.size() / 4);
+      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
+      aTet.data(), static_cast<unsigned int>(aTet.size() / 4));
   // -----------------------
   double myu = 1.0;
   double lambda = 1.0;
@@ -205,8 +205,8 @@ void InitializeProblem_ShellEigenPB() {
   dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
       mat_A, aMode.data(),
       myu, lambda, rho, gravity,
-      aXYZ.data(), aXYZ.size() / 3,
-      aTet.data(), aTet.size() / 4,
+      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
+      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
       aTmp0.data());
   MatSparse_ScaleBlk_LeftRight(
       mat_A,
@@ -288,7 +288,7 @@ void myGlutDisplay() {
   else { ::glDisable(GL_LIGHTING); }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   {
     std::vector<std::vector<double> > aaXY;
     {

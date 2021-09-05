@@ -41,7 +41,7 @@ void InitializeMatrix(
     const std::vector<unsigned int>& aHex,
     const std::vector<double>& aXYZ)
 {
-  const unsigned int np = aXYZ.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3);
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_PSuP_MeshElem(
       psup_ind, psup,
@@ -69,7 +69,7 @@ void Simulation(
     double lambda,
     const double gravity[3])
 {
-  const unsigned int np = aXYZ0.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
   const unsigned int nDoF = np*3;
   smat.setZero();
   {
@@ -146,7 +146,7 @@ int main(
       aHex,aXYZ0);
 
   std::vector<double> aDisp(aXYZ0.size(), 0.0);
-  std::vector<int> aBCFlag(aXYZ0.size(), 0.0); // 0: free, 1: fix BC
+  std::vector<int> aBCFlag(aXYZ0.size(), 0); // 0: free, 1: fix BC
   {
     for(unsigned int ip=0;ip<aXYZ0.size()/3;++ip){
       double x0 = aXYZ0[ip*3+0];
@@ -179,8 +179,8 @@ int main(
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);
     delfem2::opengl::DrawMeshHex3D_EdgeDisp(
-        aXYZ0.data(),aXYZ0.size()/3,
-        aHex.data(),aHex.size()/8,
+        aXYZ0.data(), static_cast<unsigned int>(aXYZ0.size()/3),
+        aHex.data(), static_cast<unsigned int>(aHex.size()/8),
         aDisp.data());
     //
     ::glEnable(GL_LIGHTING);

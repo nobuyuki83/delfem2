@@ -109,8 +109,8 @@ void StepTime_InternalDynamics(
     double contact_clearance,
     const dfm2::CInput_Contact& input_contact)
 {
-  const size_t np = aXYZ.size()/3; // number of point，頂点数
-  const int nDof = np*3; // degree of freedom，全自由度数
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3); // number of point
+  const unsigned int nDof = np*3; // degree of freedom
   // compute total energy and its first and second derivatives
   double W = 0;
   std::vector<double> vec_b(nDof,0);
@@ -119,9 +119,9 @@ void StepTime_InternalDynamics(
   W += delfem2::MergeLinSys_Cloth(
       mat_A,vec_b.data(),
       lambda,myu,stiff_bend,
-      aXYZ0.data(), aXYZ0.size()/3, 3,
-      aTri.data(), aTri.size()/3,
-      aQuad.data(), aQuad.size()/4,
+      aXYZ0.data(), static_cast<unsigned int>(aXYZ0.size()/3), 3,
+      aTri.data(),  static_cast<unsigned int>(aTri.size()/3),
+      aQuad.data(), static_cast<unsigned int>(aQuad.size()/4),
       aXYZ.data());
   W += delfem2::MergeLinSys_Contact(
       mat_A, vec_b.data(),
@@ -136,7 +136,7 @@ void StepTime_InternalDynamics(
   //std::cout << "energy : " << W << std::endl;
   // compute coefficient matrix and left-hand-side vector
   // Back-ward Eular time integration
-  for(int i=0;i<nDof;i++){
+  for(unsigned int i=0;i<nDof;i++){
     vec_b[i] = -vec_b[i] + mass_point*aUVW[i]/dt;
   }
   for(unsigned int ip=0;ip<np;ip++){
@@ -151,7 +151,7 @@ void StepTime_InternalDynamics(
     vec_b[ip*3+1] = 0;
     vec_b[ip*3+2] = 0;
   }
-  // solve linear system，連立一次方程式を解く
+  // solve linear system
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
@@ -168,33 +168,33 @@ void StepTime_InternalDynamics(
         conv_ratio, iteration, mat_A);
   }
   std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
-  // update position，頂点位置の更新
-  for(int i=0;i<nDof;i++){ aXYZ[i] += vec_x[i]; }
-  // update velocity，頂点の速度の更新
-  for(int i=0;i<nDof;i++){ aUVW[i] = vec_x[i]/dt; }
+  // update position
+  for(unsigned int i=0;i<nDof;i++){ aXYZ[i] += vec_x[i]; }
+  // update velocity
+  for(unsigned int i=0;i<nDof;i++){ aUVW[i] = vec_x[i]/dt; }
 }
 
 void StepTime_InternalDynamicsILU(
-    std::vector<double>& aXYZ, // (in,out) deformed vertex positions，現在の頂点位置配列
-    std::vector<double>& aUVW, // (in,out) deformed vertex velocity，現在の頂点速度配列
+    std::vector<double>& aXYZ, // (in,out) deformed vertex positions
+    std::vector<double>& aUVW, // (in,out) deformed vertex velocity
     delfem2::CMatrixSparse<double>& mat_A,
     delfem2::CPreconditionerILU<double>& ilu_A,
     //
-    const std::vector<double>& aXYZ0,// (in) initial vertex positions，変形前の頂点の座標配列
-    const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)，境界条件フラグの配列
-    const std::vector<unsigned int>& aTri, // (in) triangle index，三角形の頂点インデックス配列
-    const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending，曲げ計算のための４頂点のインデックス配列
-    const double dt, // (in) size of time step，時間ステップの大きさ
-    double lambda, // (in) Lame's 1st parameter，ラメ第一定数
-    double myu, // (in) Lame's 2nd parameter，ラメ第二定数
-    double stiff_bend, // (in) bending stiffness 曲げ剛性
-    const double gravity[3], // (in) gravitatinal accereration，重力加速度
-    double mass_point, // (in) mass for a point，頂点あたりの質量
+    const std::vector<double>& aXYZ0,// (in) initial vertex positions
+    const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)
+    const std::vector<unsigned int>& aTri, // (in) triangle index
+    const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending
+    const double dt, // (in) size of time step
+    double lambda, // (in) Lame's 1st parameter
+    double myu, // (in) Lame's 2nd parameter
+    double stiff_bend, // (in) bending stiffness
+    const double gravity[3], // (in) gravitatinal accereration
+    double mass_point, // (in) mass for a point
     double stiff_contact,
     double contact_clearance,
     const dfm2::CInput_Contact& input_contact)
 {
-  const unsigned int np = aXYZ.size()/3; 
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3); 
   const unsigned int nDof = np*3;
   // compute total energy and its first and second derivatives
   double W = 0;
@@ -204,15 +204,15 @@ void StepTime_InternalDynamicsILU(
   W += delfem2::MergeLinSys_Cloth(
       mat_A,vec_b.data(),
       lambda,myu,stiff_bend,
-      aXYZ0.data(), aXYZ0.size()/3, 3,
-      aTri.data(), aTri.size()/3,
-      aQuad.data(), aQuad.size()/4,
+      aXYZ0.data(), static_cast<unsigned int>(aXYZ0.size()/3), 3,
+      aTri.data(), static_cast<unsigned int>(aTri.size()/3),
+      aQuad.data(), static_cast<unsigned int>(aQuad.size()/4),
       aXYZ.data());
   W += delfem2::MergeLinSys_Contact(
       mat_A,vec_b.data(),
       stiff_contact,contact_clearance,
       input_contact,
-      aXYZ.data(), aXYZ.size()/3);
+      aXYZ.data(), static_cast<unsigned int>(aXYZ.size()/3));
   W += AddWdW_Gravity(
       vec_b,
       aXYZ,

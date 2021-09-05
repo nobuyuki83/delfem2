@@ -111,9 +111,9 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid3D(
     const int *clstr_ind,
     int nclstr_ind,
     const int *clstr,
-    int nclstr0,
-    const double *aXYZ0,
-    int nXYZ0) {
+    [[maybe_unused]] int nclstr0,
+    [[maybe_unused]] const double *aXYZ0,
+    [[maybe_unused]] int nXYZ0) {
   const int nclstr = nclstr_ind - 1;
   for (int iclstr = 0; iclstr < nclstr; ++iclstr) {
     CVec3d pc(0, 0, 0), qc(0, 0, 0);
@@ -163,9 +163,9 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D(
     const unsigned int *clstr_ind,
     unsigned int nclstr_ind,
     const unsigned int *clstr,
-    unsigned int nclstr0,
+    [[maybe_unused]] unsigned int nclstr0,
     const double *aXY0,
-    unsigned int nXY0) {
+    [[maybe_unused]] unsigned int nXY0) {
   const unsigned int nclstr = nclstr_ind - 1;
   for (unsigned int iclstr = 0; iclstr < nclstr; ++iclstr) {
     CVec2d pc(0, 0), qc(0, 0);
@@ -490,7 +490,7 @@ DFM2_INLINE void delfem2::PBD_CdC_QuadBend(
 
 DFM2_INLINE void delfem2::PBD_Seam(
     double *aXYZt,
-    unsigned int nXYZ,
+    [[maybe_unused]] unsigned int nXYZ,
     const unsigned int *aLine,
     unsigned int nline) {
   for (unsigned int il = 0; il < nline; ++il) {
