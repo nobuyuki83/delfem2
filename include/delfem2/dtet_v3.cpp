@@ -885,8 +885,8 @@ bool delfem2::MakeOneTetSurNo
     const unsigned int npotet = 4;
 
 	for(auto & ipoin : point){
-		ipoin.e = -1;
-		ipoin.poel = -1;
+		ipoin.e = UINT_MAX;
+		ipoin.poel = UINT_MAX;
 	}
 
 	for(unsigned int itet=0;itet<tet.size();itet++){
@@ -1754,7 +1754,7 @@ bool delfem2::CheckTet
 			assert( adj < aSTet.size() );
       const int irel0 = GetRelationshipTet(aSTet[itet].v, aSTet[adj].v );
 			assert( irel0 >= 0 && irel0 < 12 );
-			const unsigned int* rel1 = tetRel[irel0];
+			[[maybe_unused]] const unsigned int* rel1 = tetRel[irel0];
 			assert( aSTet[itet].v[ noelTetFace[ifatet][0] ] == aSTet[adj].v[ rel1[ noelTetFace[ifatet][0] ] ] );
 			assert( aSTet[itet].v[ noelTetFace[ifatet][1] ] == aSTet[adj].v[ rel1[ noelTetFace[ifatet][1] ] ] );
 			assert( aSTet[itet].v[ noelTetFace[ifatet][2] ] == aSTet[adj].v[ rel1[ noelTetFace[ifatet][2] ] ] );
@@ -1837,7 +1837,7 @@ void delfem2::AddPointTetDelaunay(
         else if( tmp_buffer[itet0*4+2] != -1 ){ iold0 = tmp_buffer[itet0*4+2]; }
         else if( tmp_buffer[itet0*4+3] != -1 ){ iold0 = tmp_buffer[itet0*4+3]; }
         else{
-          iold0 = aOld.size();
+          iold0 = static_cast<unsigned int>(aOld.size());
           aOld.push_back(dtet::CTetOld(itet0,aSTet[itet0]));
         }
       }
@@ -1959,8 +1959,8 @@ void delfem2::AddPointTetDelaunay(
   } // end of find adjacency
 
   { // set CNew.itet_new
-    const unsigned int ntet_old = aOld.size();
-    const unsigned int ntet_new = aNew.size();
+    const unsigned int ntet_old = static_cast<unsigned int>(aOld.size());
+    const unsigned int ntet_new = static_cast<unsigned int>(aNew.size());
     if (ntet_new >= ntet_old) {
       aSTet.resize(aSTet.size() + ntet_new - ntet_old);
       aCent.resize(aCent.size() + ntet_new - ntet_old);

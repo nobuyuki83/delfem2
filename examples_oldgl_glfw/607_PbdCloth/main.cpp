@@ -86,7 +86,7 @@ void myGlutDisplay() {
   delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   {
     std::vector<std::vector<double> > aaXY;
     aaXY.resize(1);

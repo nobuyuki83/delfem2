@@ -141,7 +141,7 @@ void myGlutDisplay(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   const double lenx = 1.0;
   const double leny = 0.2;
   std::vector<unsigned int> aTri;

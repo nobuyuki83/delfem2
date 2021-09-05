@@ -604,13 +604,13 @@ class CStep_OrientedEdge : public CStep_Elem {
 class CStep_EdgeLoop : public CStep_Elem {
  public:
   void Init(
-      int id,
-      const std::string &stype,
-      const std::string &arg) override {
-    this->id = id;
-    this->stype = stype;
+      int id0,
+      const std::string &stype0,
+      const std::string &arg0) override {
+    this->id = id0;
+    this->stype = stype0;
     //////
-    std::string s = dfm2::RemoveSpace(arg);
+    std::string s = dfm2::RemoveSpace(arg0);
     s = dfm2::Get_Parentheses(s, "()");
     s = dfm2::Get_Parentheses(s, "()");
     std::vector<std::string> aToken = dfm2::Split(s, ',');

@@ -35,7 +35,7 @@ void stepTime(
     const std::vector<unsigned int> &clstr_ind,
     const std::vector<unsigned int> &clstr,
     const std::vector<int> &aBC,
-    const std::vector<unsigned int> &aQuad,
+    [[maybe_unused]] const std::vector<unsigned int> &aQuad,
     const std::vector<double> &aXY0) {
   const size_t ndof = aXY0.size();
   for (unsigned int idof = 0; idof < ndof; idof++) {

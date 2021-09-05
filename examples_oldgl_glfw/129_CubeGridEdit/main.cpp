@@ -30,7 +30,7 @@ namespace dfm2 = delfem2;
 
 // -----------------------------------------
 
-int main(int argc,char* argv[])
+int main()
 {
   // -------------
   class CViewer_CubeGrid : public dfm2::glfw::CViewer3
@@ -65,7 +65,9 @@ int main(int argc,char* argv[])
         if( imode_sym == 2 ){ Del_CubeGrid(aCubeGrid,ivx1,ivy1,-ivz1); }
       }
     }
-    void key_press(int key, int mods) override {
+    void key_press(
+		int key, 
+		[[maybe_unused]] int mods) override {
       if( key ==  GLFW_KEY_A ){
         glfwSetWindowTitle(this->window, "Edit Mode: Add");
         edit_mode = EDIT_ADD;
@@ -87,7 +89,7 @@ int main(int argc,char* argv[])
     std::vector<dfm2::CCubeGrid> aCubeGrid;
     const double elen = 1.0;
     dfm2::CVec3d org;
-    unsigned int icube_picked = -1;
+    unsigned int icube_picked = UINT_MAX;
     int iface_picked = -1;
     enum EDIT_MODE {
       EDIT_NONE,
