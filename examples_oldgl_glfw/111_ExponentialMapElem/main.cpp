@@ -101,9 +101,7 @@ void Draw2(
   ::glEnd();
 }
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;

@@ -202,7 +202,7 @@ void delfem2::Write_Ply(
   fout << "element face " << nTri << "\n";
   fout << "property list uchar int vertex_indices" << "\n";
   fout << "end_header\n";
-  ////
+  //
   for (unsigned int ixyz = 0; ixyz < nXYZ; ixyz++) {
     fout << paXYZ[ixyz * 3 + 0] << " " << paXYZ[ixyz * 3 + 1] << " " << paXYZ[ixyz * 3 + 2] << "\n";
   }

@@ -588,7 +588,7 @@ template void delfem2::CG_Point3(double *, const std::vector<double> &);
 template<typename T>
 void delfem2::Points_RandomUniform(
     T *aCoords,
-    unsigned int np,
+    size_t np,
     unsigned int ndim,
     const T *minCoords,
     const T *maxCoords) {

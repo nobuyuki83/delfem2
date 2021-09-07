@@ -39,29 +39,29 @@ MeshTri3_Cuboid(
     const std::array<double, 3> &pmin,
     const std::array<double, 3> &pmax) {
   std::vector<double> vec_xyz;
-  std::vector<unsigned int> aQuad_cage;
+  std::vector<unsigned int> vec_quad_cage;
   delfem2::MeshQuad3_CubeVox(
-      vec_xyz, aQuad_cage,
+      vec_xyz, vec_quad_cage,
       pmin.data(), pmax.data());
   std::vector<unsigned int> vec_tri;
   delfem2::convert2Tri_Quad(
-      vec_tri, aQuad_cage);
+      vec_tri, vec_quad_cage);
   return {vec_xyz, vec_tri};
 }
 
 std::vector<double> ComputeMeanValueCoordinate(
     const std::vector<double>& vec_xyz_ini,
     const std::vector<double>& vec_xyz_cage0,
-    const std::vector<unsigned int>& aTri_cage0){
+    const std::vector<unsigned int>& vec_tri_cage){
   const unsigned int num_point = static_cast<unsigned int>(vec_xyz_ini.size() / 3);
   const unsigned int num_point_cage0 = static_cast<unsigned int>(vec_xyz_cage0.size() / 3);
   std::vector<double> matrix0(num_point * num_point_cage0, 0.0);
   for (unsigned int iq = 0; iq < num_point; ++iq) {
     dfm2::CVec3d q0(vec_xyz_ini.data() + iq * 3);
-    for (unsigned int itc = 0; itc < aTri_cage0.size() / 3; ++itc) {
-      const unsigned int ip0 = aTri_cage0[itc * 3 + 0];
-      const unsigned int ip1 = aTri_cage0[itc * 3 + 1];
-      const unsigned int ip2 = aTri_cage0[itc * 3 + 2];
+    for (unsigned int itc = 0; itc < vec_tri_cage.size() / 3; ++itc) {
+      const unsigned int ip0 = vec_tri_cage[itc * 3 + 0];
+      const unsigned int ip1 = vec_tri_cage[itc * 3 + 1];
+      const unsigned int ip2 = vec_tri_cage[itc * 3 + 2];
       dfm2::CVec3d p0 = dfm2::CVec3d(vec_xyz_cage0.data() + ip0 * 3) - q0;
       dfm2::CVec3d p1 = dfm2::CVec3d(vec_xyz_cage0.data() + ip1 * 3) - q0;
       dfm2::CVec3d p2 = dfm2::CVec3d(vec_xyz_cage0.data() + ip2 * 3) - q0;

@@ -45,7 +45,8 @@ int main()
   delfem2::Normalize_Points3(aXYZ);
   std::vector<double> aNorm(aXYZ.size());
   dfm2::Normal_MeshTri3D(aNorm.data(),
-      aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
+      aXYZ.data(), aXYZ.size()/3,
+      aTri.data(), aTri.size()/3);
   
   std::vector<double> aOdir;
   {
@@ -53,7 +54,7 @@ int main()
     const double maxCoords[3] =  {+1., +1., +1.};
     aOdir.resize(aXYZ.size());
     dfm2::Points_RandomUniform(aOdir.data(),
-        static_cast<unsigned int>(aXYZ.size() / 3), 3, 
+        aXYZ.size() / 3, 3,
 		minCoords, maxCoords);
     dfm2::TangentVector_Points3(aOdir,
         aNorm);

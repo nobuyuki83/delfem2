@@ -90,7 +90,8 @@ void Hoge(){
   std::vector<unsigned int> aTriSuTri;
   ElSuEl_MeshElem(
       aTriSuTri,
-      aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ.size()/3);
+      aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI,
+      aXYZ.size()/3);
   
   
   std::vector<double> aHeight;

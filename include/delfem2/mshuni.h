@@ -57,7 +57,7 @@ DFM2_INLINE void FlipElement_Tri(
 
 
 /**
- * @brief make elem surrounding point
+ * make elem surrounding point
  */
 DFM2_INLINE void JArray_ElSuP_MeshElem(
     std::vector<unsigned int> &elsup_ind,

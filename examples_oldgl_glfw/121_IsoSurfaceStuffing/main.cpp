@@ -177,20 +177,24 @@ void SetProblem(int iprob) {
       std::vector<double> aXYZ_Tri;
     } mesh;
     {
-      delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_1k.ply",
-                        mesh.aXYZ_Tri, mesh.aTri);
+      delfem2::Read_Ply(
+          std::string(PATH_INPUT_DIR) + "/bunny_1k.ply",
+          mesh.aXYZ_Tri, mesh.aTri);
       delfem2::Normalize_Points3(mesh.aXYZ_Tri, 2.3);
-      mesh.obj.Init(mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size() / 3,
-                    mesh.aTri.data(), mesh.aTri.size() / 3,
-                    0.0);
+      mesh.obj.Init(
+          mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size() / 3,
+          mesh.aTri.data(), mesh.aTri.size() / 3,
+          0.0);
       mesh.aNorm.resize(mesh.aXYZ_Tri.size());
-      delfem2::Normal_MeshTri3D(mesh.aNorm.data(),
-                                mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size() / 3,
-                                mesh.aTri.data(), mesh.aTri.size() / 3);
+      delfem2::Normal_MeshTri3D(
+          mesh.aNorm.data(),
+          mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size() / 3,
+          mesh.aTri.data(), mesh.aTri.size() / 3);
     }
     double cent[3] = {0, 0, 0};
-    dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
-                             mesh, 0.18, 3.0, cent);
+    dfm2::IsoSurfaceStuffing(
+        aXYZ, aTet, aIsOnSurfXYZ,
+        mesh, 0.18, 3.0, cent);
   }
 
   aTetColor.resize(aTet.size() / 4);
@@ -219,21 +223,21 @@ void SetProblem(int iprob) {
 void myGlutDisplay() {
   ::glEnable(GL_LIGHTING);
   if (imode_draw == 0) {
-    dfm2::opengl::DrawMeshTet3D_Cut(aXYZ, aTet, aTetColor,
-                                    vis_cut_org, vis_cut_nrm);
+    dfm2::opengl::DrawMeshTet3D_Cut(
+        aXYZ, aTet, aTetColor,
+        vis_cut_org, vis_cut_nrm);
   } else if (imode_draw == 1) {
     dfm2::opengl::DrawMeshTet3DSurface_Edge(aXYZ, aTet, aTetSurface);
   } else if (imode_draw == 2) {
-    dfm2::opengl::DrawMeshTet3D_Cut(aXYZ, aTet1, aTetColor1,
-                                    vis_cut_org, vis_cut_nrm);
+    dfm2::opengl::DrawMeshTet3D_Cut(
+        aXYZ, aTet1, aTetColor1,
+        vis_cut_org, vis_cut_nrm);
   }
 }
 
 // ------------------------------------
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

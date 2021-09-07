@@ -46,8 +46,8 @@ Clustering_Psup(
     std::vector<unsigned int>& psup_ind1,
     std::vector<unsigned int>& psup1,
     //
-    unsigned int np1,
-    unsigned int np0,
+    size_t np1,
+    size_t np0,
     const unsigned int* map01,
     const unsigned int* psup_ind0,
     const unsigned int* psup0);

@@ -161,7 +161,7 @@ void MeshClustering(
     //
     unsigned int ncluster,
     const std::vector<unsigned int> &aTriSuTri,
-    unsigned int ntri)
+    size_t ntri)
 {
   std::vector<unsigned int> aDist0(ntri, UINT_MAX);
   std::random_device rd;

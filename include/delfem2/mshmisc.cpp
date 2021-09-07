@@ -991,11 +991,13 @@ void delfem2::MassPoint_Tet3D
   }
 }
 
-void delfem2::MassPoint_Tri2D
-    (double *aMass,
-     double rho,
-     const double *aXY, unsigned int nXY,
-     const unsigned int *aTri, unsigned int nTri) {
+void delfem2::MassPoint_Tri2D(
+    double *aMass,
+    double rho,
+    const double *aXY,
+    size_t nXY,
+    const unsigned int *aTri,
+    size_t nTri) {
   for (unsigned int i = 0; i < nXY; ++i) { aMass[i] = 0.0; }
   for (unsigned int it = 0; it < nTri; ++it) {
     const unsigned int i0 = aTri[it * 3 + 0];
@@ -1017,8 +1019,10 @@ void delfem2::MassPoint_Tri2D
 void delfem2::MassPoint_Tri3D(
     double *aMass,
     double rho,
-    const double *aXYZ, unsigned int nXYZ,
-    const unsigned int *aTri, unsigned int nTri) {
+    const double *aXYZ,
+    size_t nXYZ,
+    const unsigned int *aTri,
+    size_t nTri) {
   for (unsigned int ip = 0; ip < nXYZ; ++ip) { aMass[ip] = 0.0; }
   for (unsigned int it = 0; it < nTri; ++it) {
     const unsigned int i0 = aTri[it * 3 + 0];
