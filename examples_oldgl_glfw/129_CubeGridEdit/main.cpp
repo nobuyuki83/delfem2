@@ -83,7 +83,9 @@ int main() {
       dfm2::CVec3d offsym(0, 0, 0);
       if (imode_sym == 2) { offsym.p[2] = -elen * 0.5; }
       for (unsigned int ic = 0; ic < aCubeGrid.size(); ++ic) {
-        delfem2::opengl::Draw_CubeGrid(ic == icube_picked, iface_picked, elen, org + offsym, aCubeGrid[ic]);
+        delfem2::opengl::Draw_CubeGrid(
+            ic == icube_picked, iface_picked,
+            elen, org + offsym, aCubeGrid[ic]);
       }
     }
    public:

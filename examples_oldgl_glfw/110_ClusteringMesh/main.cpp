@@ -9,7 +9,6 @@
 #include <string>
 #include <cstdlib>
 #include <random>
-#include <set>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -32,23 +31,22 @@ namespace dfm2 = delfem2;
 
 // ---------------------------
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
+  std::vector<double> vec_xyz;
+  std::vector<unsigned int> vec_tri;
 
   delfem2::Read_Ply(
 //      std::string(PATH_INPUT_DIR)+"/bunny_34k.ply",
       std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
-      aXYZ,aTri);
-  delfem2::Normalize_Points3(aXYZ);
+      vec_xyz, vec_tri);
+  delfem2::Normalize_Points3(vec_xyz);
   std::vector<unsigned int> aTriSuTri;
-  ElSuEl_MeshElem(aTriSuTri,
-      aTri.data(), aTri.size()/3,
+  ElSuEl_MeshElem(
+      aTriSuTri,
+      vec_tri.data(), vec_tri.size()/3,
       delfem2::MESHELEM_TRI,
-      aXYZ.size()/3);
+      vec_xyz.size()/3);
 
   // ------
 
@@ -76,17 +74,19 @@ int main(
       c.setRandomVividColor();
       aColor.emplace_back(2,c);
     }
-    std::vector<unsigned int> aFlgElm;
+    std::vector<unsigned int> vec_triangle_flag;
     dfm2::MeshClustering(
-		aFlgElm,ncluster,aTriSuTri,
-		static_cast<unsigned int>(aTri.size()/3));
+        vec_triangle_flag, ncluster, aTriSuTri,
+        vec_tri.size()/3);
     //
     for(unsigned int iframe=0;iframe<30;++iframe) {
       viewer.DrawBegin_oldGL();
       ::glDisable(GL_LIGHTING);
       ::glColor3d(0, 0, 0);
-      delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
-      delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(aXYZ, aTri, aFlgElm, aColor);
+      delfem2::opengl::DrawMeshTri3D_Edge(
+          vec_xyz, vec_tri);
+      delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
+          vec_xyz, vec_tri, vec_triangle_flag, aColor);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
     }

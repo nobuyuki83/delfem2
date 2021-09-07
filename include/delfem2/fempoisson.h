@@ -96,9 +96,9 @@ void MergeLinSys_Poission_MeshTri2D(
     const double alpha,
     const double source,
     const double* aXY1,
-    unsigned int np,
+    size_t np,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal)
 {
   const unsigned int nDoF = np;
@@ -171,9 +171,9 @@ void MergeLinSys_Diffusion_MeshTri2D(
     const double dt_timestep,
     const double gamma_newmark,
     const double* aXY1,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal,
     const double* aVelo)
 {

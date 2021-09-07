@@ -100,9 +100,9 @@ void MergeLinSys_StokesStatic2D(
     const double g_x,
     const double g_y,
     const double* aXY1,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal)
 {
   namespace lcl = ::delfem2::femutil;
@@ -141,9 +141,9 @@ void MergeLinSys_StokesDynamic2D(
     const double dt_timestep,
     const double gamma_newmark,
     const double* aXY1,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal,
     const double* aVelo)
 {

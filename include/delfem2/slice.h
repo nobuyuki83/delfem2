@@ -46,7 +46,7 @@ void AddContour(
     std::vector<CSegInfo>& aSeg,
     double thres,
     const unsigned int* aTri,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal);
 
 // ---------------------------------------

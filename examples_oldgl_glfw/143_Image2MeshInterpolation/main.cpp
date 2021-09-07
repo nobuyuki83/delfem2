@@ -105,7 +105,7 @@ int main()
         (std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
         &width, &height, &channels, 0);
     std::cout << width << " " << height << " " << channels << std::endl;
-    unsigned int nXY = static_cast<unsigned int>(vec_xy.size()/2);
+    const auto nXY = static_cast<unsigned int>(vec_xy.size()/2);
     aColor.resize(nXY*3);
     for(unsigned int ip=0;ip<nXY;++ip) {
       double x = vec_xy[ip * 2 + 0] * (width - 1);
@@ -134,8 +134,8 @@ int main()
 //    ::glColor3d(1,1,1);
 //    dfm2::opengl::DrawMeshTri2D_Face(aTri,aXY);
     dfm2::opengl::DrawMeshTri2D_FaceColor(
-        vec_idx_tri.data(), static_cast<unsigned int>(vec_idx_tri.size()/3),
-        vec_xy.data(), static_cast<unsigned int>(vec_xy.size()/2),
+        vec_idx_tri.data(), vec_idx_tri.size()/3,
+        vec_xy.data(), vec_xy.size()/2,
         aColor.data());
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();

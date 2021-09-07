@@ -48,8 +48,9 @@ void MakeDensity(
     int width, height;
     std::string name_img_in_test_inputs = "tesla.png";
     int channels;
-    unsigned char *img = stbi_load((std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
-                                   &width, &height, &channels, 0);
+    unsigned char *img = stbi_load(
+        (std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
+        &width, &height, &channels, 0);
     assert( width == 128 && height == 128 && channels == 3 );
     for(unsigned int ipix=0;ipix<ndiv*ndiv;++ipix){
       double a = (double)img[ipix*3+0] + (double)img[ipix*3+1] + (double)img[ipix*3+2];

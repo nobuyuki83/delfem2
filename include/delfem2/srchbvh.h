@@ -56,7 +56,7 @@ int BVHTopology_TopDown_MeshElem(
  */
 void Check_BVH(
     const std::vector<CNodeBVH2>& aNodeBVH,
-    unsigned int nLeaf);
+    size_t nLeaf);
 
 
 // --------------------------------------------

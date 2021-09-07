@@ -204,14 +204,14 @@ void delfem2::CSegInfo::Pos2D(
 void delfem2::AddContour(
     std::vector<CSegInfo>& aSeg,
     double thres,
-    const unsigned int* aTri,
-    unsigned int nTri,
-    const double* aVal)
+    const unsigned int* vec_tri,
+    size_t num_tri,
+    const double* value_tri)
 {
-  for(unsigned int itri=0;itri<nTri;++itri){
-    double v0 = aVal[ aTri[itri*3+0] ];
-    double v1 = aVal[ aTri[itri*3+1] ];
-    double v2 = aVal[ aTri[itri*3+2] ];
+  for(unsigned int itri=0;itri<num_tri;++itri){
+    const double v0 = value_tri[ vec_tri[itri*3+0] ];
+    const double v1 = value_tri[ vec_tri[itri*3+1] ];
+    const double v2 = value_tri[ vec_tri[itri*3+2] ];
     if(   (v0-thres)*(v1-thres) >= 0
        && (v1-thres)*(v2-thres) >= 0
        && (v2-thres)*(v0-thres) >= 0 ){
@@ -219,7 +219,7 @@ void delfem2::AddContour(
     }
     delfem2::CSegInfo seg;
     seg.Initialize(itri,
-                   aTri,nTri,aVal,
+                   vec_tri,num_tri,value_tri,
                    thres);
     aSeg.push_back(seg);
   }

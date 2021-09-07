@@ -6,7 +6,6 @@
  */
 
 #include <vector>
-#include <string>
 #include <cstdlib>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
@@ -54,7 +53,10 @@ void InitializeProblem() {
   }
   
   for(unsigned int ip=0;ip<aXYZ_Quad.size()/3;++ip){
-    dfm2::CVec3d p0(aXYZ_Quad[ip*3+0], aXYZ_Quad[ip*3+1], aXYZ_Quad[ip*3+2]);
+    dfm2::CVec3d p0(
+        aXYZ_Quad[ip*3+0],
+        aXYZ_Quad[ip*3+1],
+        aXYZ_Quad[ip*3+2]);
     dfm2::CPtElm2<double> pes0 = Nearest_Point_MeshTri3D(p0,
         aXYZ, aTri);
     dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
@@ -98,9 +100,15 @@ void InitializeProblem() {
         const unsigned int iv2 = aQuad0[iq*4+2];
         const unsigned int iv3 = aQuad0[iq*4+3];
         dfm2::AverageFour3(aXYZ1.data()+(nv0+ne0+iq)*3,
-                           aXYZ0.data()+iv0*3, aXYZ0.data()+iv1*3, aXYZ0.data()+iv2*3, aXYZ0.data()+iv3*3);
+                           aXYZ0.data()+iv0*3,
+                           aXYZ0.data()+iv1*3,
+                           aXYZ0.data()+iv2*3,
+                           aXYZ0.data()+iv3*3);
         dfm2::AverageFour3(aNorm_Quad.data()+(nv0+ne0+iq)*3,
-                           aNorm_Quad.data()+iv0*3, aNorm_Quad.data()+iv1*3, aNorm_Quad.data()+iv2*3, aNorm_Quad.data()+iv3*3);
+                           aNorm_Quad.data()+iv0*3,
+                           aNorm_Quad.data()+iv1*3,
+                           aNorm_Quad.data()+iv2*3,
+                           aNorm_Quad.data()+iv3*3);
         dfm2::Normalize3(aNorm_Quad.data()+(nv0+ne0+iq)*3);
       }
     }
@@ -128,8 +136,9 @@ void InitializeProblem() {
     { // make normal for new vertices
       aNorm_Quad.resize((nv0+ne0+nq0)*3);
       std::vector<double> aNorm1;
-      dfm2::Normal_MeshQuad3(aNorm1,
-                             aXYZ_Quad, aaQuad[isubdiv+1]);
+      dfm2::Normal_MeshQuad3(
+          aNorm1,
+          aXYZ_Quad, aaQuad[isubdiv+1]);
       for(auto ip=nv0;ip<nv0+ne0+nq0;++ip){
         aNorm_Quad[ip*3+0] = aNorm1[ip*3+0];
         aNorm_Quad[ip*3+1] = aNorm1[ip*3+1];

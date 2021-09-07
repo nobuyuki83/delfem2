@@ -93,9 +93,9 @@ DFM2_INLINE void DrawMeshTri2D_Face(
 
 DFM2_INLINE void DrawMeshTri2D_FaceDisp2D(
     const double *aXY,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int *aTri,
-    unsigned int nTri,
+    size_t nTri,
     const double *aDisp,
     int nstride);
 
@@ -111,9 +111,9 @@ DFM2_INLINE void DrawMeshTri2D_Edge(
 
 DFM2_INLINE void DrawMeshTri2D_FaceColor(
     const unsigned int *aTri,
-    unsigned int nTri,
+    size_t nTri,
     const double *aXY,
-    unsigned int nXY,
+    size_t nXY,
     const double *aColor);
 
 // above: MeshTri2D

@@ -166,7 +166,7 @@ DFM2_INLINE double EnergyKinetic(
 template<typename T>
 DFM2_INLINE void Points_RandomUniform(
     T *aOdir,
-    unsigned int npo,
+    size_t npo,
     unsigned int ndim,
     const T *minCoords,
     const T *maxCoords);

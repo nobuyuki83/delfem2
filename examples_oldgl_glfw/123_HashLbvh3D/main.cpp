@@ -66,8 +66,9 @@ int main() {
     {
       const unsigned int N = 1000;
       aXYZ.resize(N * 3);
-      dfm2::Points_RandomUniform(aXYZ.data(),
-                                 N, 3, min_xyz, max_xyz);
+      dfm2::Points_RandomUniform(
+          aXYZ.data(),
+          N, 3, min_xyz, max_xyz);
       // create duplicated points for debugging purpose
       srand(3);
       for (int iip = 0; iip < 10; ++iip) { // hash collision
@@ -99,7 +100,7 @@ int main() {
     {
       dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
       dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-      dfm2::Check_BVH(aNodeBVH, static_cast<unsigned int>(aXYZ.size() / 3));
+      dfm2::Check_BVH(aNodeBVH, aXYZ.size() / 3);
     }
   }
 

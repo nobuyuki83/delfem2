@@ -76,9 +76,9 @@ DFM2_INLINE void DrawMeshTri_ScalarP0(
 
 DFM2_INLINE void DrawMeshTri2D_ScalarP1(
     const double *aXY,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int *aTri,
-    unsigned int nTri,
+    size_t nTri,
     const double *paVal,
     int nstride,
     const std::vector<std::pair<double, CColor> > &colorMap);
