@@ -68,9 +68,7 @@ void myGlutDisplay(
   ::glEnd();
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char* argv[])
+int main()
 {
   std::vector<double> vec_xyz; // 3d points
   std::vector<unsigned int> vec_tri;

@@ -18,8 +18,7 @@
 
 // ------------------------------------------------
 
-namespace delfem2 {
-namespace points {
+namespace delfem2::points {
 
 //! @details we have "float" and "double" versions Length3 because of sqrtf and sqrt
 DFM2_INLINE double Length3(const double p[3]) { return sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]); }
@@ -155,7 +154,6 @@ DFM2_INLINE void Mat3_Bryant(
   m[8] = cosf(ry) * cosf(rx);
 }
 
-}
 }
 
 // static function above
@@ -605,13 +603,13 @@ void delfem2::Points_RandomUniform(
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Points_RandomUniform(
     float *,
-    unsigned int,
+    size_t,
     unsigned int,
     const float *,
     const float *);
 template void delfem2::Points_RandomUniform(
     double *,
-    unsigned int,
+    size_t,
     unsigned int,
     const double *,
     const double *);

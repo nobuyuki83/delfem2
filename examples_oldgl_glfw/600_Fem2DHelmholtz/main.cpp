@@ -33,9 +33,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   std::vector<unsigned int> aTri1;
   std::vector<double> aXY1;
   std::vector<std::vector<unsigned int> > aaIP;
@@ -128,8 +126,9 @@ int main(
     }
     //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
     //
-    dfm2::XPlusAY(aCVal,
-                  nDoF, aBCFlag, std::complex<double>(1.0), vec_x);
+    dfm2::XPlusAY(
+        aCVal,
+        nDoF, aBCFlag, std::complex<double>(1.0), vec_x);
   }
   std::vector<double> aVal(aCVal.size(), 0.1);
   for (size_t ip = 0; ip < aVal.size(); ++ip) { aVal[ip] = aCVal[ip].real(); }
@@ -160,8 +159,8 @@ int main(
       //  makeHeatMap_BlueGrayRed(colorMap, -0.2, +0.2);
       dfm2::ColorMap_BlueCyanGreenYellowRed(colorMap, -0.2f, +0.2f);
       dfm2::opengl::DrawMeshTri2D_ScalarP1(
-		  aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-		  aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+		  aXY1.data(), aXY1.size() / 2,
+		  aTri1.data(), aTri1.size() / 3,
 		  aVal.data(), 1, colorMap);
     }
     viewer.SwapBuffers();
