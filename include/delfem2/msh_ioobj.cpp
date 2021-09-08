@@ -455,8 +455,11 @@ DFM2_INLINE void delfem2::Read_WavefrontObjWithSurfaceAttributes(
       continue;
     }
     if (buff[0] == 'f') {
-      if (vec_tri_group.empty()) {
-        std::cout << fname << std::endl;
+      if( vec_tri_group.empty() ){
+        vec_tri_group.resize(vec_tri_group.size() + 1);
+        const std::size_t iogt0 = vec_tri_group.size() - 1;
+        vec_tri_group[iogt0].name_group = "";
+        vec_tri_group[iogt0].name_mtl = current_material_name;
       }
       const std::size_t iogt0 = vec_tri_group.size() - 1;
       char str[256], str0[256], str1[256], str2[256];
