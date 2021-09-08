@@ -128,8 +128,8 @@ void SettingUpSimulation(
   // convert triangle elements to line elements
   delfem2::MeshLine_MeshElem(
       aLine,
-      aTri.data(), static_cast<unsigned int>(aTri.size() / 3), 
-	  delfem2::MESHELEM_TRI, static_cast<unsigned int>(aXY.size() / 2)); 
+      aTri.data(), aTri.size() / 3,
+	  delfem2::MESHELEM_TRI, aXY.size() / 2);
   // setting up boundry condition (fixing the both ends of the rectangle)
   aMassPointInv.resize(aXY.size() / 2, 1.0);
   for (unsigned int ip = 0; ip < aXY.size() / 2; ++ip) {

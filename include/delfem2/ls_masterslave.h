@@ -33,7 +33,7 @@ DFM2_INLINE void JArray_AddMasterSlavePattern(
     const unsigned int* aMSFlag,
     int ndim,
     const unsigned int *psup_ind0,
-    int npsup_ind0,
+    size_t npsup_ind0,
     const unsigned int *psup0);
 
 DFM2_INLINE void SetMasterSlave(

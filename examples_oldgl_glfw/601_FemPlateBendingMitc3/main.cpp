@@ -48,9 +48,10 @@ void InitializeProblem_PlateBendingMITC3(
   }
   //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTri.data(), aTri.size() / 3, 3,
-                             (int) aXY0.size() / 2);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTri.data(), aTri.size() / 3, 3,
+      aXY0.size() / 2);
   dfm2::JArray_Sort(psup_ind, psup);
   //
   mat_A.Initialize(np, 3, true);
@@ -183,9 +184,10 @@ int main() {
   const double gravity_z = -10.0;
   std::vector<double> vec_b;
   std::vector<int> aMSFlag; // master slave flag
-  SolveProblem_PlateBendingMITC3(aVal, vec_b, aMSFlag, mat_A, ilu_A, aBCFlag,
-                                 thickness, myu, lambda, rho, gravity_z,
-                                 aXY0, aTri);
+  SolveProblem_PlateBendingMITC3(
+      aVal, vec_b, aMSFlag, mat_A, ilu_A, aBCFlag,
+      thickness, myu, lambda, rho, gravity_z,
+      aXY0, aTri);
 
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();

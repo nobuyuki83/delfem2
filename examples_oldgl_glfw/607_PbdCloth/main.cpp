@@ -48,17 +48,15 @@ void StepTime() {
       dt, gravity, aXYZ, aUVW, aBCFlag);
   dfm2::PBD_TriStrain(
 	  aXYZt.data(),
-	  static_cast<unsigned int>(aXYZt.size() / 3), 
+	  aXYZt.size() / 3,
 	  aETri, aVec2);
   dfm2::PBD_Bend(
 	  aXYZt.data(),
-	  static_cast<unsigned int>(aXYZt.size() / 3), 
+	  aXYZt.size() / 3,
 	  aETri, aVec2, 1.0);
   dfm2::PBD_Seam(
-	  aXYZt.data(),                
-	  static_cast<unsigned int>(aXYZt.size() / 3), 
-	  aLine.data(), 
-	  static_cast<unsigned int>(aLine.size() / 2));
+	  aXYZt.data(), aXYZt.size() / 3,
+	  aLine.data(),  aLine.size() / 2);
   dfm2::PBD_Post(
 	  aXYZ, aUVW,
 	  dt, aXYZt, aBCFlag);

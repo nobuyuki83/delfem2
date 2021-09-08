@@ -53,7 +53,7 @@ DFM2_INLINE void ElemQuad_DihedralTri(
     unsigned int np);
 
 DFM2_INLINE void FlipElement_Tri(
-    std::vector<unsigned int> &aTri);
+    std::vector<unsigned int> &tri_vtx_ind);
 
 
 /**
@@ -63,10 +63,10 @@ DFM2_INLINE void JArray_ElSuP_MeshElem(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
     //
-    const unsigned int *pElem,
-    size_t nElem,
-    unsigned int nPoEl,
-    size_t nPo);
+    const unsigned int *elem_vtx_idx,
+    size_t num_elem,
+    unsigned int num_vtx_par_elem,
+    size_t num_vtx);
 
 /**
  * @brief make elem surrounding point for triangle mesh
@@ -130,11 +130,11 @@ DFM2_INLINE void JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     //
-    const unsigned int *pElem,
+    const unsigned int *elem_vtx_idx,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
-    unsigned int nnoel,
-    size_t nPoint);
+    unsigned int num_vtx_par_elem,
+    size_t num_vtx);
 
 /**
  * @brief compute indexes of points surrounding a point as a jagged array
@@ -178,19 +178,19 @@ DFM2_INLINE void MeshLine_JArrayEdge(
 /**
  * Extracting line element from mesh (e.g., triangle mesh).
  * The edges of the element becomes the line
- * @param[out] aLine
- * @param[in] aElm0
- * @param[in] nElem
+ * @param[out] line_vtx_idx
+ * @param[in] elem_vtx_idx
+ * @param[in] num_elem
  * @param[in] elem_type
- * @param[in] nPo the number of the vertices
+ * @param[in] num_vtx the number of the vertices
  */
 DFM2_INLINE void MeshLine_MeshElem(
-    std::vector<unsigned int> &aLine,
+    std::vector<unsigned int> &line_vtx_idx,
     //
-    const unsigned int *aElm0,
-    unsigned int nElem,
+    const unsigned int *elem_vtx_idx,
+    size_t num_elem,
     delfem2::MESHELEM_TYPE elem_type,
-    unsigned int nPo);
+    size_t num_vtx);
 
 // ------------------------------------
 

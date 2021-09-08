@@ -75,11 +75,15 @@ void Solve(
     const std::size_t n = vec_r.size();
     std::vector<double> tmp0(n), tmp1(n);
     auto aConvHist = dfm2::Solve_CG(
-        dfm2::CVecXd(vec_r), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_r),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         1.0e-4, 300, mats);
     if (!aConvHist.empty()) {
-      std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " "
-                << aConvHist[aConvHist.size() - 1] << std::endl;
+      std::cout << "            conv: " << aConvHist.size();
+      std::cout << " " << aConvHist[0];
+      std::cout << " " << aConvHist[aConvHist.size() - 1] << std::endl;
     }
   }
   std::cout << W << std::endl;

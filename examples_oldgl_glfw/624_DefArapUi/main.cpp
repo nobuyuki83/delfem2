@@ -29,17 +29,15 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
-  class CMyViewer : public delfem2::glfw::CViewer3 {
+int main() {
+  class MyViewer : public delfem2::glfw::CViewer3 {
    public:
-    CMyViewer() {
+    MyViewer() {
       dfm2::MeshTri3D_CylinderClosed(
           aXYZ0, aTri,
           0.2, 1.6,
           32, 32);
-      const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
+      const auto np = static_cast<unsigned int>(aXYZ0.size() / 3);
       aBCFlag.assign(np * 3, 0);
       for (unsigned int ip = 0; ip < np; ++ip) {
         double y0 = aXYZ0[ip * 3 + 1];
@@ -107,15 +105,17 @@ int main(
             aXYZ1[ip * 3 + 2] = aXYZ0[ip * 3 + 2];
           }
           if (aBCFlag[ip * 3 + 0] == 2) {
-            dfm2::Vec3_Mat4Vec3_AffineProjection(aXYZ1.data() + ip * 3,
-                                                 aff1.mat,
-                                                 aXYZ0.data() + ip * 3);
+            dfm2::Vec3_Mat4Vec3_AffineProjection(
+                aXYZ1.data() + ip * 3,
+                aff1.mat,
+                aXYZ0.data() + ip * 3);
           }
         }
         for (int itr = 0; itr < 2; ++itr) {
-          dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat1,
-                                                        aXYZ0, aXYZ1,
-                                                        def0.psup_ind, def0.psup);
+          dfm2::UpdateRotationsByMatchingCluster_Linear(
+              aQuat1,
+              aXYZ0, aXYZ1,
+              def0.psup_ind, def0.psup);
         }
       }
       def0.Deform(
@@ -130,10 +130,12 @@ int main(
       { // mesh
         ::glEnable(GL_LIGHTING);
         ::glColor3d(0, 0, 0);
-        delfem2::opengl::DrawMeshTri3D_Edge(aXYZ1.data(), aXYZ1.size() / 3,
-                                            aTri.data(), aTri.size() / 3);
-        delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(),
-                                                aTri.data(), aTri.size() / 3);
+        delfem2::opengl::DrawMeshTri3D_Edge(
+            aXYZ1.data(), aXYZ1.size() / 3,
+            aTri.data(), aTri.size() / 3);
+        delfem2::opengl::DrawMeshTri3D_FaceNorm(
+            aXYZ1.data(),
+            aTri.data(), aTri.size() / 3);
       }
       { // draw bc
         ::glDisable(GL_LIGHTING);

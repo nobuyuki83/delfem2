@@ -39,12 +39,12 @@ void InitializeMatrix(
     delfem2::CPreconditionerILU<double> &ilu,
     const std::vector<unsigned int> &aHex,
     const std::vector<double> &aXYZ) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
+  const size_t np = aXYZ.size() / 3;
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_PSuP_MeshElem(
       psup_ind, psup,
       aHex.data(), aHex.size() / 8, 8,
-      (int) aXYZ.size() / 3);
+      aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
   smat.Initialize(np, 3, true);
   smat.SetPattern(
@@ -69,8 +69,8 @@ void Simulation(
     double c2,
     double stiff_comp,
     const double gravity[3]) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXYZ0.size() / 3;
+  const size_t nDoF = np * 3;
   for (unsigned int ip = 0; ip < np; ++ip) {
     aDisp[ip * 3 + 0] += dt * aVelo[ip * 3 + 0];
     aDisp[ip * 3 + 1] += dt * aVelo[ip * 3 + 1];
@@ -131,7 +131,10 @@ void Simulation(
     const std::size_t n = vecb.size();
     std::vector<double> tmp0(n), tmp1(n);
     std::vector<double> aHist = Solve_PCG(
-        dfm2::CVecXd(vecb), dfm2::CVecXd(vecx), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vecb),
+        dfm2::CVecXd(vecx),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration,
         smat, silu);
 //    std::cout << "nconv:" << aHist.size() << std::endl;
@@ -147,9 +150,7 @@ void Simulation(
   }
 }
 
-int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+int main() {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aHex;
   dfm2::MeshHex3_Grid(
@@ -203,8 +204,8 @@ int main(
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0, 0, 0);
     delfem2::opengl::DrawMeshHex3D_EdgeDisp(
-        aXYZ0.data(), static_cast<unsigned int>(aXYZ0.size() / 3),
-        aHex.data(), static_cast<unsigned int>(aHex.size() / 8),
+        aXYZ0.data(), aXYZ0.size() / 3,
+        aHex.data(), aHex.size() / 8,
         aDisp.data());
     //
     ::glEnable(GL_LIGHTING);
