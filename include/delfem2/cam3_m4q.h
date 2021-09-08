@@ -17,7 +17,7 @@
 #ifndef DFM2_CAMERA_H
 #define DFM2_CAMERA_H
 
-#include <ostream>
+#include <iostream>
 #include <cmath>
 #include <cstdio> // memcpy
 #include <cstring>

@@ -3,12 +3,6 @@
 
 #include "delfem2/mat4.h"
 
-
-#if defined(_MSC_VER)
-  #pragma warning( push )
-  #pragma warning( disable : 4100 )
-#endif
-
 namespace delfem2 {
 
 class CMouseInput {
@@ -20,7 +14,7 @@ public:
   void MouseRay(
       float src[3],
       float dir[3],
-      float asp,
+      [[maybe_unused]] float asp,
       const float mMVP[16]) const {
     float mMVP_inv[16];
     ::delfem2::Inverse_Mat4(mMVP_inv, mMVP);
@@ -43,14 +37,14 @@ public:
       float src1[3],
       float dir0[3],
       float dir1[3],
-      float asp,
+      [[maybe_unused]] float asp,
       const float mMVP[16]) {
     float mMVP_inv[16];
     ::delfem2::Inverse_Mat4(mMVP_inv, mMVP);
-    const float p0s[3] = {(float) (mouse_x - dx), (float) (mouse_y - dy), -1.0};
-    const float p0e[3] = {(float) (mouse_x - dx), (float) (mouse_y - dy), +1.0};
-    const float p1s[3] = {(float) mouse_x, (float) mouse_y, -1.0};
-    const float p1e[3] = {(float) mouse_x, (float) mouse_y, +1.0};
+    const float p0s[3] = {(float) (mouse_x - dx), (float) (mouse_y - dy), -1.f};
+    const float p0e[3] = {(float) (mouse_x - dx), (float) (mouse_y - dy), +1.f};
+    const float p1s[3] = {(float) mouse_x, (float) mouse_y, -1.f};
+    const float p1e[3] = {(float) mouse_x, (float) mouse_y, +1.f};
     float q0s[3];
     ::delfem2::Vec3_Vec3Mat4_AffineProjection(q0s, p0s, mMVP_inv);
     float q0e[3];
@@ -87,9 +81,5 @@ public:
 
 
 }
-
-#if defined(_MSC_VER)
-  #pragma warning( pop )
-#endif
 
 #endif
