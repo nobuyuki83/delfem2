@@ -18,10 +18,10 @@
 
 namespace delfem2 {
 
-DFM2_INLINE CVec3d UnitNormal_DTri3
- (int itri0,
-  const std::vector<CDynTri>& aSTri,
-  const std::vector<CVec3d>& aVec3);
+DFM2_INLINE CVec3d UnitNormal_DTri3(
+    unsigned int itri0,
+    const std::vector<CDynTri>& aSTri,
+    const std::vector<CVec3d>& aVec3);
 
 DFM2_INLINE bool AssertMeshDTri2(
     const std::vector<CDynPntSur>& aPo3D,

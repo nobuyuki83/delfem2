@@ -309,8 +309,7 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_EnergyStVK(
     const double P[3][2],
     const double p[3][3],
     const double lambda,
-    const double myu)
-{
+    const double myu) {
   const CVec3d Gd0(P[1][0] - P[0][0], P[1][1] - P[0][1], 0.0);
   const CVec3d Gd1(P[2][0] - P[0][0], P[2][1] - P[0][1], 0.0);
   CVec3d Gd2 = Cross(Gd0, Gd1);

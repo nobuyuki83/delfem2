@@ -117,7 +117,7 @@ void DijkstraElem_MeshElemGeo3(
     //
     unsigned int ielm_ker,
     const std::vector<unsigned int> &aTri,
-    const unsigned int nelem,
+    const size_t nelem,
     const std::vector<double> &aXYZ,
     const std::vector<unsigned int> &aElSuEl)
 {

@@ -89,10 +89,11 @@ int main()
   {
     std::vector<double> aXYZ0;
     std::vector<unsigned int> aTri0;
-    delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
-                      aXYZ0,aTri0);
+    delfem2::Read_Ply(
+        std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
+        aXYZ0,aTri0);
     dfm2::Normalize_Points3(aXYZ0,2.0);
-    const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
+    const size_t np = aXYZ0.size()/3;
     aPo.resize(np);
     aVec3.resize(np);
     for(unsigned int ipo=0;ipo<aPo.size();ipo++){
@@ -102,7 +103,7 @@ int main()
     }
     InitializeMesh(
 		aPo, aTri,
-		aTri0.data(), static_cast<unsigned int>(aTri0.size()/3),
+		aTri0.data(), aTri0.size()/3,
 		aVec3.size());
     AssertDTri(aTri);
     AssertMeshDTri(aPo, aTri);

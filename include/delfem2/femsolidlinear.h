@@ -340,9 +340,9 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const double gamma_newmark,
     const double beta_newmark,
     const double* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aTet,
-    unsigned int nTet,
+    size_t nTet,
     const double* aVal,
     const double* aVelo,
     const double* aAcc)

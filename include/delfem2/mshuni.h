@@ -41,16 +41,16 @@ DFM2_INLINE void convert2Tri_Quad(
 
 /**
  * @brief Make quad mesh from tri mesh by merging adjacent triangle elements
- * @param[out] aQuad element index of quad mesh
- * @param[in] aTri element index of tri mesh
- * @param[in] nTri number of triangle mesh
- * @param[in] np number of points
+ * @param[out] quad_vtx_idx element index of quad mesh
+ * @param[in] tri_vtx_idx element index of tri mesh
+ * @param[in] num_tri number of triangle mesh
+ * @param[in] num_vtx number of points
  */
 DFM2_INLINE void ElemQuad_DihedralTri(
-    std::vector<unsigned int> &aQuad,
-    const unsigned int *aTri,
-    unsigned int nTri,
-    unsigned int np);
+    std::vector<unsigned int> &quad_vtx_idx,
+    const unsigned int *tri_vtx_idx,
+    const unsigned int num_tri,
+    const unsigned int num_vtx);
 
 DFM2_INLINE void FlipElement_Tri(
     std::vector<unsigned int> &tri_vtx_ind);
@@ -86,39 +86,39 @@ DFM2_INLINE void JArray_ElSuP_MeshTri(
 /**
  * @brief compute adjacent element index for mesh element
  * @param aElSuEl (out) neighbouring element index (UINT_MAX for boundary)
- * @param aEl (in) array of connectivity
- * @param nEl (in) number of elements
+ * @param elem_vtx_idx (in) array of connectivity
+ * @param num_elem (in) number of elements
  * @param nNoEl (in) number of nodes in a element
  * @param elsup_ind (in) jagged array index of "elem surrounding point"
  * @param elsup (in) jagged array value of "elem surrounding point"
- * @param nfael (in) number of neibouring elements
+ * @param num_face_par_elem (in) number of neibouring elements
  * @param nnofa (in) how many nodes are shared with a nighbouring element
- * @param noelElemFace
+ * @param node_on_elem_face
  */
 DFM2_INLINE void ElSuEl_MeshElem(
     std::vector<unsigned int> &aElSuEl,
-    const unsigned int *aEl,
-    size_t nEl,
+    const unsigned int *elem_vtx_idx,
+    size_t num_elem,
     int nNoEl,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
-    int nfael,
-    int nnofa,
-    const int (*noelElemFace)[4]);
+    const int num_face_par_elem,
+    const int nnofa,
+    const int (*node_on_elem_face)[4]);
 
 /**
  * @brief compute adjacent element index for mesh element
  * @param aElSuEl (ou) adjacent element index for element edge/face (UINT_MAX if face/edge is on the boundary)
- * @param aElem (in) elemnet index
- * @param nElem (in) number of elements
+ * @param elem_vtx_idx (in) elemnet index
+ * @param num_elem (in) number of elements
  * @param type (in) type of element
- * @param nXYZ (in) number of points
+ * @param num_vtx (in) number of points
  */
 DFM2_INLINE void ElSuEl_MeshElem(
     std::vector<unsigned int> &aElSuEl,
-    const unsigned int *aElem, size_t nElem,
+    const unsigned int *elem_vtx_idx, size_t num_elem,
     delfem2::MESHELEM_TYPE type,
-    size_t nXYZ);
+    const size_t num_vtx);
 
 /**
  * @brief make point surrounding point

@@ -79,11 +79,11 @@ DFM2_INLINE void myGlVertex3(
   glVertex3d(aV[i * 3 + 0], aV[i * 3 + 1], aV[i * 3 + 2]);
 }
 
-DFM2_INLINE void DrawSingleTri3D_Scalar_Vtx
-    (const double *aXYZ,
-     const unsigned int *tri,
-     const double *aValVtx,
-     const std::vector<std::pair<double, CColor> > &colorMap) {
+DFM2_INLINE void DrawSingleTri3D_Scalar_Vtx(
+    const double *aXYZ,
+    const unsigned int *tri,
+    const double *aValVtx,
+    const std::vector<std::pair<double, CColor> > &colorMap) {
   const unsigned int i0 = tri[0];
   const unsigned int i1 = tri[1];
   const unsigned int i2 = tri[2];
@@ -418,17 +418,19 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_Scalar_Vtx(
     const unsigned int ielemind1 = aElemInd[ielem + 1];
     if (ielemind1 - ielemind0 == 3) {
       ::glBegin(GL_TRIANGLES);
-      color_glold::DrawSingleTri3D_Scalar_Vtx(aXYZ.data(),
-                                              aElem.data() + ielemind0,
-                                              aValVtx,
-                                              colorMap);
+      color_glold::DrawSingleTri3D_Scalar_Vtx(
+          aXYZ.data(),
+          aElem.data() + ielemind0,
+          aValVtx,
+          colorMap);
       ::glEnd();
     } else if (ielemind1 - ielemind0 == 4) {
       ::glBegin(GL_QUADS);
-      color_glold::DrawSingleQuad3D_Scalar_Vtx(aXYZ,
-                                               aElem.data() + ielemind0,
-                                               aValVtx,
-                                               colorMap);
+      color_glold::DrawSingleQuad3D_Scalar_Vtx(
+          aXYZ,
+          aElem.data() + ielemind0,
+          aValVtx,
+          colorMap);
       ::glEnd();
     }
   }
@@ -513,9 +515,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_VtxColor(
 // 3D value
 DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_ScalarP1(
     const double *aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int *aTet,
-    unsigned int nTet,
+    size_t nTet,
     const double *aValSrf,
     const std::vector<std::pair<double, CColor> > &colorMap) {
   ::glBegin(GL_TRIANGLES);

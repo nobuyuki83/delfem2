@@ -111,7 +111,7 @@ void OptimizeRod(
         dfm2::CVecXd(tmp0),
         dfm2::CVecXd(tmp1),
         1.0e-4, 300, mats);
-    if (aConvHist.size() > 0) {
+    if (!aConvHist.empty()) {
       std::cout << "            conv: ";
       std::cout << aConvHist.size() << " ";
       std::cout << aConvHist[0] << " ";
@@ -146,14 +146,13 @@ void Draw(const std::vector<dfm2::CVec3d> &vec_pos) {
   ::glEnd();
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   std::random_device rd;
   std::mt19937 reng(rd());
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
   //
   std::vector<dfm2::CVec3d> vec_pos;
+  vec_pos.reserve(10);
   for (int ip = 0; ip < 10; ++ip) {
     vec_pos.emplace_back(ip * 0.1, 0., 0.);
   }

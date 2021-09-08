@@ -557,8 +557,8 @@ DFM2_INLINE void delfem2::InitializeMesh(
     std::vector<CDynTri> &aSTri,
     //
     const unsigned int *aTri,
-    const unsigned int nTri,
-    const unsigned int nXYZ) {
+    const size_t nTri,
+    const size_t nXYZ) {
   aPo3D.resize(nXYZ);
   for (unsigned int ipo = 0; ipo < nXYZ; ++ipo) {
     aPo3D[ipo].e = UINT_MAX; // for unreffered point

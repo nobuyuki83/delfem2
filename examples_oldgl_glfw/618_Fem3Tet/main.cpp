@@ -61,7 +61,7 @@ void InitializeProblem_Poisson(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
+  const size_t np = aXYZ.size() / 3;
   aVal.assign(np, 0.0);
   aBCFlag.assign(np, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -79,14 +79,16 @@ void InitializeProblem_Poisson(
   }
   //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTet.data(), aTet.size() / 4, 4,
-                             (int) aXYZ.size() / 3);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTet.data(), aTet.size() / 4, 4,
+      aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
-  ////
+  //
   mat_A.Initialize(np, 1, true); // diagonal
-  mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
-                   psup.data(), psup.size());
+  mat_A.SetPattern(
+      psup_ind.data(), psup_ind.size(),
+      psup.data(), psup.size());
   ilu_A.Initialize_ILUk(mat_A, 0);
 }
 
@@ -99,8 +101,8 @@ void SolveProblem_Poisson(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np;
   // -----------------------
   const double alpha = 1.0;
   const double source = 0.0;
@@ -109,8 +111,8 @@ void SolveProblem_Poisson(
   dfm2::MergeLinSys_Poission_MeshTet3D(
       mat_A, vec_b.data(),
       alpha, source,
-      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
-      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
+      aXYZ.data(), aXYZ.size() / 3,
+      aTet.data(), aTet.size() / 4,
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -144,11 +146,11 @@ void InitializeProblem_Diffusion(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
   //double len = 1.1;
-  const int np = (int) aXYZ.size() / 3;
+  const size_t np = aXYZ.size() / 3;
   aVal.assign(np, 0.0);
   aVelo.assign(np, 0.0);
   aBCFlag.assign(np, 0);
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
 //    const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip * 3 + 1];
 //    const double pz = aXYZ[ip*3+2];
@@ -163,11 +165,12 @@ void InitializeProblem_Diffusion(
   }
   //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTet.data(), aTet.size() / 4, 4,
-                             (int) aXYZ.size() / 3);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTet.data(), aTet.size() / 4, 4,
+      aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
-  ////
+  //
   mat_A.Initialize(np, 1, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(), psup.size());
@@ -183,8 +186,8 @@ void SolveProblem_Diffusion(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np;
   // -----------------
   const double alpha = 1.0;
   const double rho = 1.0;
@@ -195,8 +198,8 @@ void SolveProblem_Diffusion(
       mat_A, vec_b.data(),
       alpha, rho, source,
       dt_timestep, gamma_newmark,
-      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
-      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
+      aXYZ.data(), aXYZ.size() / 3,
+      aTet.data(), aTet.size() / 4,
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -210,9 +213,13 @@ void SolveProblem_Diffusion(
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    Solve_PCG(dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
-              conv_ratio, iteration,
-              mat_A, ilu_A);
+    Solve_PCG(
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
+        conv_ratio, iteration,
+        mat_A, ilu_A);
   }
   // ----------------------
   dfm2::XPlusAYBZ(aVal, nDoF, aBCFlag,
@@ -233,8 +240,8 @@ void InitializeProblem_ShellEigenPB(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
   // set boundary condition
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 3;
   aVal.assign(nDoF, 0.0);
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -249,9 +256,10 @@ void InitializeProblem_ShellEigenPB(
   }
   //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTet.data(), aTet.size() / 4, 4,
-                             (int) aXYZ.size() / 3);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTet.data(), aTet.size() / 4, 4,
+      aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
   //
   mat_A.Initialize(np, 3, true);
@@ -270,8 +278,8 @@ void SolveProblem_LinearSolid_Static(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 3;
   //
   double myu = 1.0;
   double lambda = 1.0;
@@ -282,8 +290,8 @@ void SolveProblem_LinearSolid_Static(
   dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
       mat_A, vec_b.data(),
       myu, lambda, rho, g,
-      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
-      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
+      aXYZ.data(), aXYZ.size() / 3,
+      aTet.data(), aTet.size() / 4,
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -297,9 +305,13 @@ void SolveProblem_LinearSolid_Static(
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    Solve_PCG(dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
-              conv_ratio, iteration,
-              mat_A, ilu_A);
+    Solve_PCG(
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
+        conv_ratio, iteration,
+        mat_A, ilu_A);
   }
   // ------------------------------
   dfm2::XPlusAY(aVal, nDoF, aBCFlag,
@@ -315,9 +327,9 @@ void InitializeProblem_LinearSolid_Dynamic(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
   const double len = 1.1;
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 3;
-  ////
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 3;
+  //
   aVal.assign(nDoF, 0.0);
   aVelo.assign(nDoF, 0.0);
   aAcc.assign(nDoF, 0.0);
@@ -355,8 +367,8 @@ void SolveProblem_LinearSolid_Dynamic(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 3;
   // --------
   double myu = 10.0;
   double lambda = 1.0;
@@ -368,8 +380,8 @@ void SolveProblem_LinearSolid_Dynamic(
       mat_A, vec_b.data(),
       myu, lambda, rho, g,
       dt_timestep, gamma_newmark, beta_newmark,
-      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
-      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
+      aXYZ.data(), aXYZ.size() / 3,
+      aTet.data(), aTet.size() / 4,
       aVal.data(), aVelo.data(), aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -412,8 +424,8 @@ void InitializeProblem_Stokes_Static(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
   // set boundary condition
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 4;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 4;
   //
   aVal.assign(np * 4, 0.0);
   aBCFlag.assign(nDoF, 0);
@@ -445,9 +457,10 @@ void InitializeProblem_Stokes_Static(
   crs.Sort();
    */
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTet.data(), aTet.size() / 4, 4,
-                             (int) aXYZ.size() / 3);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTet.data(), aTet.size() / 4, 4,
+      aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
   //
   mat_A.Initialize(np, 4, true);
@@ -466,8 +479,8 @@ void SolveProblem_Stokes_Static(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 4;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 4;
   // -------------
   double myu = 1.0;
   double rho = 1.0;
@@ -514,8 +527,8 @@ void InitializeProblem_Stokes_Dynamic(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
   // set boundary condition
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 4;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 4;
   aVal.assign(nDoF, 0.0);
   aVelo.assign(nDoF, 0.0);
   aBCFlag.assign(nDoF, 0);
@@ -548,9 +561,10 @@ void InitializeProblem_Stokes_Dynamic(
   crs.Sort();
    */
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTet.data(), aTet.size() / 4, 4,
-                             (int) aXYZ.size() / 3);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTet.data(), aTet.size() / 4, 4,
+      aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
   //
   mat_A.Initialize(np, 4, true);
@@ -569,8 +583,8 @@ void SolveProblem_Stokes_Dynamic(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = aXYZ.size() / 3;
-  const unsigned int nDoF = np * 4;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 4;
   double myu = 1;
   double rho = 100.0;
   double g_x = 0.0;
@@ -578,11 +592,12 @@ void SolveProblem_Stokes_Dynamic(
   double g_z = -0.0;
   mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_Stokes3D_Dynamic(mat_A, vec_b,
-                                     myu, rho, g_x, g_y, g_z,
-                                     dt_timestep, gamma_newmark,
-                                     aXYZ, aTet,
-                                     aVal, aVelo);
+  dfm2::MergeLinSys_Stokes3D_Dynamic(
+      mat_A, vec_b,
+      myu, rho, g_x, g_y, g_z,
+      dt_timestep, gamma_newmark,
+      aXYZ, aTet,
+      aVal, aVelo);
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
   // ------------------------
@@ -621,8 +636,8 @@ void InitializeProblem_NavierStokes_Dynamic(
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
   // set boundary condition
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 4;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 4;
   // ----------
   aVal.assign(np * 4, 0.0);
   aVelo.assign(np * 4, 0.0);
@@ -659,9 +674,10 @@ void InitializeProblem_NavierStokes_Dynamic(
   crs.Sort();
    */
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTet.data(), aTet.size() / 4, 4,
-                             (int) aXYZ.size() / 3);
+  dfm2::JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTet.data(), aTet.size() / 4, 4,
+      aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
   //
   mat_A.Initialize(np, 4, true);
@@ -681,8 +697,8 @@ void SolveProblem_NavierStokes_Dynamic(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aIsSurf) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
-  const unsigned int nDoF = np * 4;
+  const size_t np = aXYZ.size() / 3;
+  const size_t nDoF = np * 4;
   //
   double myu = 1;
   double rho = 1000.0;
@@ -691,11 +707,12 @@ void SolveProblem_NavierStokes_Dynamic(
   double g_z = -0.0;
   mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_NavierStokes3D_Dynamic(mat_A, vec_b,
-                                           myu, rho, g_x, g_y, g_z,
-                                           dt_timestep, gamma_newmark,
-                                           aXYZ, aTet,
-                                           aVal, aVelo);
+  dfm2::MergeLinSys_NavierStokes3D_Dynamic(
+      mat_A, vec_b,
+      myu, rho, g_x, g_y, g_z,
+      dt_timestep, gamma_newmark,
+      aXYZ, aTet,
+      aVal, aVelo);
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
   // --------------------------------------
@@ -720,19 +737,19 @@ void SolveProblem_NavierStokes_Dynamic(
 
 class CInSphere : public dfm2::CInput_IsosurfaceStuffing {
  public:
-  double SignedDistance(double x, double y, double z) const override {
+  [[nodiscard]] double SignedDistance(double x, double y, double z) const override {
     double n[3];
     return sdf.Projection(n,
                           x, y, z);
   }
-  virtual void Level(
+  void Level(
       int &ilevel_vol,
       int &ilevel_srf,
       int &nlayer,
       double &sdf0,
       double px,
       double py,
-      double pz) const {
+      double pz) const override {
     sdf0 = this->SignedDistance(px, py, pz);
     ilevel_vol = -1;
     ilevel_srf = 2;
@@ -745,7 +762,7 @@ class CInSphere : public dfm2::CInput_IsosurfaceStuffing {
 
 class CInBox : public dfm2::CInput_IsosurfaceStuffing {
  public:
-  double SignedDistance(double x, double y, double z) const override {
+  [[nodiscard]] double SignedDistance(double x, double y, double z) const override {
     double n[3];
     return sdf.Projection(n,
                           x, y, z);
@@ -788,12 +805,12 @@ void SetMesh(
         box.sdf.hwx = hwx;
         box.sdf.hwy = hwy;
         box.sdf.hwz = hwz;
-        ////
+        //
         const double rad = 0.1;
         sphere.sdf.radius_ = rad;
         sphere.sdf.is_out_ = true;
       }
-      virtual double SignedDistance(double x, double y, double z) const override {
+      [[nodiscard]] double SignedDistance(double x, double y, double z) const override {
         double dist0 = -sphere.SignedDistance(x, y, z);
         double cx = 0.0;
         double cy = 0.0;
@@ -847,21 +864,24 @@ void myGlutDisplay(
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0, 0, 0);
     delfem2::opengl::DrawMeshTet3D_Edge(
-        aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
-        aTet.data(), static_cast<unsigned int>(aTet.size() / 4));
+        aXYZ.data(), aXYZ.size() / 3,
+        aTet.data(), aTet.size() / 4);
     {
       std::vector<std::pair<double, delfem2::CColor> > colorMap;
       delfem2::ColorMap_BlueGrayRed(colorMap, 0, 1.0);
       delfem2::opengl::DrawMeshTet3D_ScalarP1(
-		  aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),                                             
-		  aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
+		  aXYZ.data(), aXYZ.size() / 3,
+		  aTet.data(), aTet.size() / 4,
 		  aVal.data(),
 		  colorMap);
     }
   }
   if (iphysics == 2 || iphysics == 3) {
     ::glColor3d(0, 0, 0);
-    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(), aTet.data(), aTet.size() / 4, aVal.data(), 1.0);
+    delfem2::opengl::DrawMeshTet3D_EdgeDisp(
+        aXYZ.data(),
+        aTet.data(), aTet.size() / 4,
+        aVal.data(), 1.0);
     ::glEnable(GL_LIGHTING);
     {
       float color[4] = {180.0 / 256.0, 180.0 / 256.0, 130.0 / 256.0, 1.0f};
@@ -869,9 +889,10 @@ void myGlutDisplay(
       ::glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color);
       glShadeModel(GL_FLAT);
     }
-    delfem2::opengl::DrawMeshTet3D_FaceNormDisp(aXYZ.data(), aXYZ.size() / 3,
-                                                aTet.data(), aTet.size() / 4,
-                                                aVal.data());
+    delfem2::opengl::DrawMeshTet3D_FaceNormDisp(
+        aXYZ.data(), aXYZ.size() / 3,
+        aTet.data(), aTet.size() / 4,
+        aVal.data());
   }
   if (iphysics == 4 || iphysics == 5 || iphysics == 6) {
     ::glEnable(GL_LIGHTING);

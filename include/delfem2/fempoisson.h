@@ -132,9 +132,9 @@ void MergeLinSys_Poission_MeshTet3D(
     const double alpha,
     const double source,
     const double* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aTet,
-    unsigned int nTet,
+    size_t nTet,
     const double* aVal)
 {
   const unsigned int np = nXYZ;
@@ -211,9 +211,9 @@ void MergeLinSys_Diffusion_MeshTet3D(
     const double dt_timestep,
     const double gamma_newmark,
     const double* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aTet,
-    unsigned int nTet,
+    size_t nTet,
     const double* aVal,
     const double* aVelo)
 {

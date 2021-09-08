@@ -70,32 +70,33 @@ DFM2_INLINE unsigned int delfem2::FindAdjEdgeIndex(
 }
 
 DFM2_INLINE void delfem2::ElemQuad_DihedralTri(
-    std::vector<unsigned int> &aQuad,
-    const unsigned int *aTri,
-    const unsigned int nTri,
-    const unsigned int np) {
+    std::vector<unsigned int> &quad_vtx_idx,
+    const unsigned int *tri_vtx_idx,
+    const unsigned int num_tri,
+    const unsigned int num_vtx) {
   std::vector<unsigned int> aElSuEl;
-  ElSuEl_MeshElem(aElSuEl,
-                  aTri, nTri, MESHELEM_TRI,
-                  np);
-  assert(aElSuEl.size() == nTri * 3);
-  for (unsigned int itri = 0; itri < nTri; ++itri) {
+  ElSuEl_MeshElem(
+      aElSuEl,
+      tri_vtx_idx, num_tri, MESHELEM_TRI,
+      num_vtx);
+  assert(aElSuEl.size() == num_tri * 3);
+  for (unsigned int itri = 0; itri < num_tri; ++itri) {
     for (int iedtri = 0; iedtri < 3; ++iedtri) {
       const unsigned int jtri = aElSuEl[itri * 3 + iedtri];
       if (jtri == UINT_MAX) continue; // on the boundary
       if (jtri < itri) continue;
-      const unsigned int jedtri = FindAdjEdgeIndex(itri, iedtri, jtri, aTri);
+      const unsigned int jedtri = FindAdjEdgeIndex(itri, iedtri, jtri, tri_vtx_idx);
       assert(jedtri != UINT_MAX);
-      const unsigned int ipo0 = aTri[itri * 3 + iedtri];
-      const unsigned int ipo1 = aTri[jtri * 3 + jedtri];
-      const unsigned int ipo2 = aTri[itri * 3 + (iedtri + 1) % 3];
-      const unsigned int ipo3 = aTri[itri * 3 + (iedtri + 2) % 3];
-      assert(aTri[jtri * 3 + (jedtri + 2) % 3] == ipo2);
-      assert(aTri[jtri * 3 + (jedtri + 1) % 3] == ipo3);
-      aQuad.push_back(ipo0);
-      aQuad.push_back(ipo1);
-      aQuad.push_back(ipo2);
-      aQuad.push_back(ipo3);
+      const unsigned int ipo0 = tri_vtx_idx[itri * 3 + iedtri];
+      const unsigned int ipo1 = tri_vtx_idx[jtri * 3 + jedtri];
+      const unsigned int ipo2 = tri_vtx_idx[itri * 3 + (iedtri + 1) % 3];
+      const unsigned int ipo3 = tri_vtx_idx[itri * 3 + (iedtri + 2) % 3];
+      assert(tri_vtx_idx[jtri * 3 + (jedtri + 2) % 3] == ipo2);
+      assert(tri_vtx_idx[jtri * 3 + (jedtri + 1) % 3] == ipo3);
+      quad_vtx_idx.push_back(ipo0);
+      quad_vtx_idx.push_back(ipo1);
+      quad_vtx_idx.push_back(ipo2);
+      quad_vtx_idx.push_back(ipo3);
     }
   }
 }
@@ -123,7 +124,7 @@ DFM2_INLINE void delfem2::convert2Tri_Quad(
 
 DFM2_INLINE void delfem2::FlipElement_Tri(
     std::vector<unsigned int> &tri_vtx_ind) {
-  for (std::size_t itri = 0; itri < tri_vtx_ind.size() / 3; itri++) {
+  for (unsigned int itri = 0; itri < tri_vtx_ind.size() / 3; itri++) {
     //    int i0 = aTri[itri*3+0];
     unsigned int i1 = tri_vtx_ind[itri * 3 + 1];
     unsigned int i2 = tri_vtx_ind[itri * 3 + 2];
@@ -143,7 +144,7 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshTri(
     int nXYZ) {
   JArray_ElSuP_MeshElem(
       elsup_ind, elsup,
-      aTri.data(), static_cast<unsigned int>(aTri.size() / 3), 3,
+      aTri.data(), aTri.size() / 3, 3,
       nXYZ);
 }
 
@@ -151,26 +152,26 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshTri(
 
 DFM2_INLINE void delfem2::ElSuEl_MeshElem(
     std::vector<unsigned int> &aElSuEl,
-    const unsigned int *aEl,
-    size_t nEl,
+    const unsigned int *elem_vtx_idx,
+    size_t num_elem,
     int nNoEl,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
-    const int nfael,
+    const int num_face_par_elem,
     const int nnofa,
-    const int (*noelElemFace)[4]) {
+    const int (*node_on_elem_face)[4]) {
   assert(!elsup_ind.empty());
   const std::size_t np = elsup_ind.size() - 1;
 
-  aElSuEl.assign(nEl * nfael, UINT_MAX);
+  aElSuEl.assign(num_elem * num_face_par_elem, UINT_MAX);
 
   std::vector<int> flg_point(np, 0);
   std::vector<unsigned int> inpofa(nnofa);
-  for (unsigned int iel = 0; iel < nEl; iel++) {
-    for (int ifael = 0; ifael < nfael; ifael++) {
+  for (unsigned int iel = 0; iel < num_elem; iel++) {
+    for (int ifael = 0; ifael < num_face_par_elem; ifael++) {
       for (int ipofa = 0; ipofa < nnofa; ipofa++) {
-        int int0 = noelElemFace[ifael][ipofa];
-        const unsigned int ip = aEl[iel * nNoEl + int0];
+        int int0 = node_on_elem_face[ifael][ipofa];
+        const unsigned int ip = elem_vtx_idx[iel * nNoEl + int0];
         assert(ip < np);
         inpofa[ipofa] = ip;
         flg_point[ip] = 1;
@@ -180,25 +181,25 @@ DFM2_INLINE void delfem2::ElSuEl_MeshElem(
       for (unsigned int ielsup = elsup_ind[ipoin0]; ielsup < elsup_ind[ipoin0 + 1]; ielsup++) {
         const unsigned int jelem0 = elsup[ielsup];
         if (jelem0 == iel) continue;
-        for (int jfael = 0; jfael < nfael; jfael++) {
+        for (int jfael = 0; jfael < num_face_par_elem; jfael++) {
           iflg = true;
           for (int jpofa = 0; jpofa < nnofa; jpofa++) {
-            int jnt0 = noelElemFace[jfael][jpofa];
-            const unsigned int jpoin0 = aEl[jelem0 * nNoEl + jnt0];
+            int jnt0 = node_on_elem_face[jfael][jpofa];
+            const unsigned int jpoin0 = elem_vtx_idx[jelem0 * nNoEl + jnt0];
             if (flg_point[jpoin0] == 0) {
               iflg = false;
               break;
             }
           }
           if (iflg) {
-            aElSuEl[iel * nfael + ifael] = jelem0;
+            aElSuEl[iel * num_face_par_elem + ifael] = jelem0;
             break;
           }
         }
         if (iflg) break;
       }
       if (!iflg) {
-        aElSuEl[iel * nfael + ifael] = UINT_MAX;
+        aElSuEl[iel * num_face_par_elem + ifael] = UINT_MAX;
       }
       for (int ipofa = 0; ipofa < nnofa; ipofa++) {
         flg_point[inpofa[ipofa]] = 0;
@@ -227,21 +228,23 @@ void makeSurroundingRelationship
 
 DFM2_INLINE void delfem2::ElSuEl_MeshElem(
     std::vector<unsigned int> &aElSuEl,
-    const unsigned int *aElem,
-    size_t nElem,
+    const unsigned int *elem_vtx_idx,
+    size_t num_elem,
     MESHELEM_TYPE type,
-    const size_t nXYZ) {
+    const size_t num_vtx) {
   const int nNoEl = nNodeElem(type);
   std::vector<unsigned int> elsup_ind, elsup;
-  JArray_ElSuP_MeshElem(elsup_ind, elsup,
-                        aElem, nElem, nNoEl, nXYZ);
+  JArray_ElSuP_MeshElem(
+      elsup_ind, elsup,
+      elem_vtx_idx, num_elem, nNoEl, num_vtx);
   const int nfael = nFaceElem(type);
   const int nnofa = nNodeElemFace(type, 0);
-  ElSuEl_MeshElem(aElSuEl,
-                  aElem, nElem, nNoEl,
-                  elsup_ind, elsup,
-                  nfael, nnofa, noelElemFace(type));
-  assert(aElSuEl.size() == nElem * nfael);
+  ElSuEl_MeshElem(
+      aElSuEl,
+      elem_vtx_idx, num_elem, nNoEl,
+      elsup_ind, elsup,
+      nfael, nnofa, noelElemFace(type));
+  assert(aElSuEl.size() == num_elem * nfael);
 }
 
 
@@ -374,9 +377,9 @@ DFM2_INLINE void delfem2::JArrayEdge_MeshElem(
   edge_ind.resize(nPoint0 + 1);
   edge_ind[0] = 0;
   for (unsigned int ip = 0; ip < nPoint0; ++ip) {
-    std::set<int> setIP;
+    std::set<unsigned int> setIP;
     for (unsigned int ielsup = elsup_ind[ip]; ielsup < elsup_ind[ip + 1]; ++ielsup) {
-      int iq0 = elsup[ielsup];
+      const unsigned int iq0 = elsup[ielsup];
       for (int ie = 0; ie < neElm; ++ie) {
         int inoel0 = aNoelEdge[ie][0];
         int inoel1 = aNoelEdge[ie][1];
@@ -390,10 +393,10 @@ DFM2_INLINE void delfem2::JArrayEdge_MeshElem(
         }
       }
     }
-    for (int itr : setIP) {
+    for (unsigned int itr : setIP) {
       edge.push_back(itr);
     }
-    edge_ind[ip + 1] = edge_ind[ip] + (int) setIP.size();
+    edge_ind[ip + 1] = edge_ind[ip] + static_cast<unsigned int>(setIP.size());
   }
 }
 
@@ -435,12 +438,6 @@ DFM2_INLINE void delfem2::MeshLine_MeshElem(
       edge_ind, edge);
 }
 
-
-// -----------------------------------------
-
-
-
-
 // ---------------------------------------
 
 DFM2_INLINE void delfem2::MarkConnectedElements(
@@ -451,10 +448,10 @@ DFM2_INLINE void delfem2::MarkConnectedElements(
   const std::size_t nel = aFlagElem.size();
   const std::size_t nfael = aElSuEl.size() / nel;
   aFlagElem[itri_ker] = igroup;
-  std::stack<int> next;
+  std::stack<unsigned int> next;
   next.push(itri_ker);
   while (!next.empty()) {
-    int itri0 = next.top();
+    unsigned int itri0 = next.top();
     next.pop();
     for (unsigned int ie = 0; ie < nfael; ++ie) {
       const unsigned int ita = aElSuEl[itri0 * nfael + ie];

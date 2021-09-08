@@ -53,8 +53,8 @@ std::vector<double> ComputeMeanValueCoordinate(
     const std::vector<double>& vec_xyz_ini,
     const std::vector<double>& vec_xyz_cage0,
     const std::vector<unsigned int>& vec_tri_cage){
-  const unsigned int num_point = static_cast<unsigned int>(vec_xyz_ini.size() / 3);
-  const unsigned int num_point_cage0 = static_cast<unsigned int>(vec_xyz_cage0.size() / 3);
+  const size_t num_point = vec_xyz_ini.size() / 3;
+  const size_t num_point_cage0 = vec_xyz_cage0.size() / 3;
   std::vector<double> matrix0(num_point * num_point_cage0, 0.0);
   for (unsigned int iq = 0; iq < num_point; ++iq) {
     dfm2::CVec3d q0(vec_xyz_ini.data() + iq * 3);
@@ -84,8 +84,8 @@ void Example1(
       {-0.6, -0.6, -0.6},
       {+0.6, +0.6, +0.6});
 
-  const auto num_point = static_cast<unsigned int>(aXYZ0.size() / 3);
-  const auto num_point_cage = static_cast<unsigned int>(vec_xyz_cage.size() / 3);
+  const size_t num_point = aXYZ0.size() / 3;
+  const size_t num_point_cage = vec_xyz_cage.size() / 3;
   std::vector<double> matrix = ComputeMeanValueCoordinate(aXYZ0, vec_xyz_cage, vec_tri_cage);
   for (unsigned int iq = 0; iq < num_point; ++iq) {
     double sum_val = 0.0;
@@ -157,9 +157,9 @@ void Example2(
       {-0.3, -0.3, -0.4},
       {+0.3, +0.3, -0.2});
 
-  const auto num_point = static_cast<unsigned int>(vec_xyz_ini.size() / 3);
-  const unsigned int num_point_cage0 = static_cast<unsigned int>(vec_xyz_cage0.size() / 3);
-  const unsigned int num_point_cage1 = static_cast<unsigned int>(vec_xyz_cage0.size() / 3);
+  const size_t num_point = vec_xyz_ini.size() / 3;
+  const size_t num_point_cage0 = vec_xyz_cage0.size() / 3;
+  const size_t num_point_cage1 = vec_xyz_cage0.size() / 3;
   std::vector<double> matrix0 = ComputeMeanValueCoordinate(vec_xyz_ini, vec_xyz_cage0, aTri_cage0);
   std::vector<double> matrix1 = ComputeMeanValueCoordinate(vec_xyz_ini, vec_xyz_cage1, aTri_cage1);
   //

@@ -99,8 +99,8 @@ DFM2_INLINE void InitializeMesh(
     std::vector<CDynPntSur> &aEPo2,
     std::vector<CDynTri> &aETri,
     const unsigned int *aTri,
-    const unsigned int nTri,
-    const unsigned int nXYZ);
+    const size_t nTri,
+    const size_t nXYZ);
 
 DFM2_INLINE bool FindEdge_LookAroundPoint(
     unsigned int &itri0,

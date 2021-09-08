@@ -131,22 +131,12 @@ int main()
         pd0.aXYZ, pd0.aArea, pd0.aNorm, pd0.psup_ind, pd0.psup);
     dfm2::Clustering_Psup(
         pd1.psup_ind, pd1.psup,
-        static_cast<unsigned int>(pd1.aXYZ.size() / 3),
-        static_cast<unsigned int>(pd0.aXYZ.size() / 3),
+        pd1.aXYZ.size() / 3,
+        pd0.aXYZ.size() / 3,
         pd1.map_fine2this.data(), pd0.psup_ind.data(), pd0.psup.data());
-    /*
-    const unsigned int np0 = aLayer[0].aXYZ.size()/3;
-    pd1.map0c.resize(np0,UINT_MAX);
-    for(unsigned int ip=0;ip<np0;++ip){
-      unsigned int ic0 = pd0.map0c[ip];
-      assert( ic0 < map01.size() );
-      pd1.map0c[ip] = map01[ic0];
-      assert( pd1.map0c[ip] < pd1.aXYZ.size()/3 );
-    }
-    */
   }
 
-  const unsigned nlayer = static_cast<unsigned int>(aLayer.size());
+  const auto nlayer = static_cast<unsigned int>(aLayer.size());
   for(unsigned int ilayer=nlayer-1;ilayer!=UINT_MAX;--ilayer){
     if( ilayer == nlayer-1 ){
       const double minCoords[3] = {-1, -1, -1};
@@ -160,7 +150,7 @@ int main()
           aLayer[ilayer].aNorm);
     }
     else{
-      const unsigned int np0 = static_cast<unsigned int>(aLayer[ilayer].aXYZ.size()/3); // this
+      const auto np0 = static_cast<unsigned int>(aLayer[ilayer].aXYZ.size()/3); // this
       assert( aLayer[ilayer+1].map_fine2this.size() == np0 );
       // const unsigned int np1 = 
       aLayer[ilayer].aOdir.resize(np0*3);

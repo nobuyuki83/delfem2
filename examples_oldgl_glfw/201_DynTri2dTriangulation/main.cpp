@@ -89,7 +89,9 @@ void MakeRandomCV(unsigned int nCV, std::vector<double>& aCV)
   }
 }
 
-void MakeCurveSpline(const std::vector<double>& aCV, std::vector<double>& aVecCurve)
+void MakeCurveSpline(
+    const std::vector<double>& aCV,
+    std::vector<double>& aVecCurve)
 {
   aVecCurve.resize(0);
   const size_t nCV = aCV.size()/2;
