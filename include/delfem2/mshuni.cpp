@@ -24,32 +24,31 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshElem(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
     // ----------
-    const unsigned int *pElem,
-    size_t nElem,
-    unsigned int nPoEl,
-    size_t nPo) {
-  //  const int nElem = (int)aElem.size()/nPoEl;
-  elsup_ind.assign(nPo + 1, 0);
-  for (unsigned int ielem = 0; ielem < nElem; ielem++) {
-    for (unsigned int inoel = 0; inoel < nPoEl; inoel++) {
-      const unsigned int ino1 = pElem[ielem * nPoEl + inoel];
+    const unsigned int *elem_vtx_idx,
+    size_t num_elem,
+    unsigned int num_vtx_par_elem,
+    size_t num_vtx) {
+  elsup_ind.assign(num_vtx + 1, 0);
+  for (unsigned int ielem = 0; ielem < num_elem; ielem++) {
+    for (unsigned int inoel = 0; inoel < num_vtx_par_elem; inoel++) {
+      const unsigned int ino1 = elem_vtx_idx[ielem * num_vtx_par_elem + inoel];
       elsup_ind[ino1 + 1] += 1;
     }
   }
-  for (unsigned int ino = 0; ino < nPo; ++ino) {
+  for (unsigned int ino = 0; ino < num_vtx; ++ino) {
     elsup_ind[ino + 1] += elsup_ind[ino];
   }
-  unsigned int nelsup = elsup_ind[nPo];
+  unsigned int nelsup = elsup_ind[num_vtx];
   elsup.resize(nelsup);
-  for (unsigned int ielem = 0; ielem < nElem; ielem++) {
-    for (unsigned int inoel = 0; inoel < nPoEl; inoel++) {
-      int unsigned ino1 = pElem[ielem * nPoEl + inoel];
-      int ind1 = elsup_ind[ino1];
+  for (unsigned int ielem = 0; ielem < num_elem; ielem++) {
+    for (unsigned int inoel = 0; inoel < num_vtx_par_elem; inoel++) {
+      int unsigned ino1 = elem_vtx_idx[ielem * num_vtx_par_elem + inoel];
+      unsigned int ind1 = elsup_ind[ino1];
       elsup[ind1] = ielem;
       elsup_ind[ino1] += 1;
     }
   }
-  for (int ino = (int) nPo; ino >= 1; ino--) {
+  for (int ino = static_cast<int>(num_vtx); ino >= 1; --ino) {
     elsup_ind[ino] = elsup_ind[ino - 1];
   }
   elsup_ind[0] = 0;
@@ -122,13 +121,14 @@ DFM2_INLINE void delfem2::convert2Tri_Quad(
   }
 }
 
-DFM2_INLINE void delfem2::FlipElement_Tri(std::vector<unsigned int> &aTri) {
-  for (std::size_t itri = 0; itri < aTri.size() / 3; itri++) {
+DFM2_INLINE void delfem2::FlipElement_Tri(
+    std::vector<unsigned int> &tri_vtx_ind) {
+  for (std::size_t itri = 0; itri < tri_vtx_ind.size() / 3; itri++) {
     //    int i0 = aTri[itri*3+0];
-    int i1 = aTri[itri * 3 + 1];
-    int i2 = aTri[itri * 3 + 2];
-    aTri[itri * 3 + 1] = i2;
-    aTri[itri * 3 + 2] = i1;
+    unsigned int i1 = tri_vtx_ind[itri * 3 + 1];
+    unsigned int i2 = tri_vtx_ind[itri * 3 + 2];
+    tri_vtx_ind[itri * 3 + 1] = i2;
+    tri_vtx_ind[itri * 3 + 2] = i1;
   }
 }
 
@@ -175,7 +175,7 @@ DFM2_INLINE void delfem2::ElSuEl_MeshElem(
         inpofa[ipofa] = ip;
         flg_point[ip] = 1;
       }
-      const int ipoin0 = inpofa[0];
+      const unsigned int ipoin0 = inpofa[0];
       bool iflg = false;
       for (unsigned int ielsup = elsup_ind[ipoin0]; ielsup < elsup_ind[ipoin0 + 1]; ielsup++) {
         const unsigned int jelem0 = elsup[ielsup];
@@ -251,19 +251,19 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     //
-    const unsigned int *pElem,
+    const unsigned int *elem_vtx_idx,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
-    unsigned int nnoel,
-    size_t nPoint) {
-  std::vector<int> aflg(nPoint, -1);
-  psup_ind.assign(nPoint + 1, 0);
-  for (unsigned int ipoint = 0; ipoint < nPoint; ipoint++) {
+    unsigned int num_vtx_par_elem,
+    size_t num_vtx) {
+  std::vector<unsigned int> aflg(num_vtx, UINT_MAX);
+  psup_ind.assign(num_vtx + 1, 0);
+  for (unsigned int ipoint = 0; ipoint < num_vtx; ipoint++) {
     aflg[ipoint] = ipoint;
     for (unsigned int ielsup = elsup_ind[ipoint]; ielsup < elsup_ind[ipoint + 1]; ielsup++) {
       unsigned int jelem = elsup[ielsup];
-      for (unsigned int jnoel = 0; jnoel < nnoel; jnoel++) {
-        unsigned int jnode = pElem[jelem * nnoel + jnoel];
+      for (unsigned int jnoel = 0; jnoel < num_vtx_par_elem; jnoel++) {
+        unsigned int jnode = elem_vtx_idx[jelem * num_vtx_par_elem + jnoel];
         if (aflg[jnode] != (int) ipoint) {
           aflg[jnode] = ipoint;
           psup_ind[ipoint + 1]++;
@@ -271,28 +271,28 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
       }
     }
   }
-  for (unsigned int ipoint = 0; ipoint < nPoint; ipoint++) {
+  for (unsigned int ipoint = 0; ipoint < num_vtx; ipoint++) {
     psup_ind[ipoint + 1] += psup_ind[ipoint];
   }
-  const int npsup = psup_ind[nPoint];
+  const unsigned int npsup = psup_ind[num_vtx];
   psup.resize(npsup);
-  for (unsigned int ipoint = 0; ipoint < nPoint; ipoint++) { aflg[ipoint] = -1; }
-  for (unsigned int ipoint = 0; ipoint < nPoint; ipoint++) {
+  for (unsigned int ipoint = 0; ipoint < num_vtx; ipoint++) { aflg[ipoint] = UINT_MAX; }
+  for (unsigned int ipoint = 0; ipoint < num_vtx; ipoint++) {
     aflg[ipoint] = ipoint;
     for (unsigned int ielsup = elsup_ind[ipoint]; ielsup < elsup_ind[ipoint + 1]; ielsup++) {
       unsigned int jelem = elsup[ielsup];
-      for (unsigned int jnoel = 0; jnoel < nnoel; jnoel++) {
-        unsigned int jnode = pElem[jelem * nnoel + jnoel];
+      for (unsigned int jnoel = 0; jnoel < num_vtx_par_elem; jnoel++) {
+        unsigned int jnode = elem_vtx_idx[jelem * num_vtx_par_elem + jnoel];
         if (aflg[jnode] != (int) ipoint) {
           aflg[jnode] = ipoint;
-          const int ind = psup_ind[ipoint];
+          const unsigned int ind = psup_ind[ipoint];
           psup[ind] = jnode;
           psup_ind[ipoint]++;
         }
       }
     }
   }
-  for (int ipoint = (int) nPoint; ipoint > 0; ipoint--) {
+  for (int ipoint = (int) num_vtx; ipoint > 0; --ipoint) {
     psup_ind[ipoint] = psup_ind[ipoint - 1];
   }
   psup_ind[0] = 0;
@@ -414,22 +414,25 @@ DFM2_INLINE void delfem2::MeshLine_JArrayEdge(
 }
 
 DFM2_INLINE void delfem2::MeshLine_MeshElem(
-    std::vector<unsigned int> &aLine,
-    const unsigned int *aElm0,
-    unsigned int nElem,
+    std::vector<unsigned int> &line_vtx_idx,
+    const unsigned int *elem_vtx_idx,
+    size_t num_elem,
     MESHELEM_TYPE elem_type,
-    unsigned int nPo) {
+    size_t num_vtx) {
   std::vector<unsigned int> elsup_ind, elsup;
   const unsigned int nPoEl = mapMeshElemType2NNodeElem[elem_type];
-  JArray_ElSuP_MeshElem(elsup_ind, elsup,
-                        aElm0, nElem, nPoEl, nPo);
+  JArray_ElSuP_MeshElem(
+      elsup_ind, elsup,
+      elem_vtx_idx, num_elem, nPoEl, num_vtx);
   std::vector<unsigned int> edge_ind, edge;
-  JArrayEdge_MeshElem(edge_ind, edge,
-                      aElm0,
-                      elem_type,
-                      elsup_ind, elsup, false);
-  MeshLine_JArrayEdge(aLine,
-                      edge_ind, edge);
+  JArrayEdge_MeshElem(
+      edge_ind, edge,
+      elem_vtx_idx,
+      elem_type,
+      elsup_ind, elsup, false);
+  MeshLine_JArrayEdge(
+      line_vtx_idx,
+      edge_ind, edge);
 }
 
 

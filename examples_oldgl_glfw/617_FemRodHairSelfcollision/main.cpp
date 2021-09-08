@@ -26,12 +26,13 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------
 
-void myDraw
-(const std::vector<dfm2::CVec3d>& aP,
- const std::vector<dfm2::CVec3d>& aS,
- std::vector<unsigned int>& aIP_HairRoot)
+void myDraw(
+	const std::vector<dfm2::CVec3d>& aP,
+	const std::vector<dfm2::CVec3d>& aS,
+	std::vector<unsigned int>& aIP_HairRoot)
 {
-  const unsigned int nhair = aIP_HairRoot.size()-1;
+  assert(!aIP_HairRoot.empty());
+  const unsigned int nhair = static_cast<unsigned int>(aIP_HairRoot.size())-1;
   for(unsigned int ihair=0;ihair<nhair;++ihair){
     const unsigned int ips = aIP_HairRoot[ihair];
     const unsigned int ipe = aIP_HairRoot[ihair+1];
@@ -129,7 +130,7 @@ void FindRodHairContactCCD(
     const std::vector<unsigned int>& aIP_HairRoot,
     const std::vector<dfm2::CVec3d>& aPt) // indexes of root point
 {
-  const unsigned int nr = aP.size();
+  const unsigned int nr = static_cast<unsigned int>(aP.size());
   assert( aPt.size() == nr );
   std::vector<bool> aIsRod(nr,true);
   for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
@@ -214,7 +215,8 @@ int main(
     [[maybe_unused]] char* argv[])
 {
   class CViewerDemo : public dfm2::glfw::CViewer3 {
-    void  key_press(int key, int mods) override {
+    void  key_press(int key, 
+		[[maybe_unused]] int mods) override {
       if( key == GLFW_KEY_A ){
         is_animation = !is_animation;
       }

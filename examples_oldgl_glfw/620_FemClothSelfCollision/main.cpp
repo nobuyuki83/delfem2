@@ -148,7 +148,7 @@ int imode_draw = 0;
 
 void MakeNormal()
 { // make normal
-  const unsigned int np = aXYZ.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3);
   const int ntri = (int)aTri.size()/3;
   aNormal.assign(np*3,0);
   for(int itri=0;itri<ntri;itri++){
@@ -263,9 +263,9 @@ void myGlutDisplay()
     ::glColor3d(0,0,0);
     ::glBegin(GL_LINES);
     for(unsigned int itri=0;itri<aTri.size()/3;itri++){
-      const int ip0 = aTri[itri*3+0];
-      const int ip1 = aTri[itri*3+1];
-      const int ip2 = aTri[itri*3+2];
+      const unsigned int ip0 = aTri[itri*3+0];
+      const unsigned int ip1 = aTri[itri*3+1];
+      const unsigned int ip2 = aTri[itri*3+2];
       ::glVertex3d(aXYZ[ip0*3+0],aXYZ[ip0*3+1],aXYZ[ip0*3+2]);
       ::glVertex3d(aXYZ[ip1*3+0],aXYZ[ip1*3+1],aXYZ[ip1*3+2]);
       ::glVertex3d(aXYZ[ip1*3+0],aXYZ[ip1*3+1],aXYZ[ip1*3+2]);
@@ -283,9 +283,9 @@ void myGlutDisplay()
     glShadeModel(GL_SMOOTH);
     ::glBegin(GL_TRIANGLES);
     for(unsigned int itri=0;itri<aTri.size()/3;itri++){
-      const int ip0 = aTri[itri*3+0];
-      const int ip1 = aTri[itri*3+1];
-      const int ip2 = aTri[itri*3+2];
+      const unsigned int ip0 = aTri[itri*3+0];
+      const unsigned int ip1 = aTri[itri*3+1];
+      const unsigned int ip2 = aTri[itri*3+2];
       double c[3][3] = {
         { aXYZ[ip0*3+0],aXYZ[ip0*3+1],aXYZ[ip0*3+2] },
         { aXYZ[ip1*3+0],aXYZ[ip1*3+1],aXYZ[ip1*3+2] },
@@ -355,9 +355,7 @@ void myGlutDisplay()
 //  ::glutSwapBuffers();
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char* argv[])
+int main()
 {
   { // initialze data
     double total_area;
@@ -422,18 +420,6 @@ int main(
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
-
-  /*
-  delfem2::opengl::setSomeLighting();
-  glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
-  nav.camera.psi = 3.1415*0.2;
-  nav.camera.theta = 3.1415*0.1;
-  nav.camera.view_height = 2.0;
- 
-  glutMainLoop();
-	return 0;
-   */
 }
 
 

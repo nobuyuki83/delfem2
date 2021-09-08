@@ -162,9 +162,9 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
     const double g_x,
     const double g_y,
     const double* aXY1,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal)
 {
   const unsigned int np = nXY;
@@ -198,9 +198,9 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D(
     const double rho,
     const double *g,
     const double* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aTet,
-    unsigned int nTet,
+    size_t nTet,
     const double* aDisp)
 {
   const unsigned int np = nXYZ;
@@ -291,9 +291,9 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double gamma_newmark,
     const double beta_newmark,
     const double* aXY1,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal,
     const double* aVelo,
     const double* aAcc)

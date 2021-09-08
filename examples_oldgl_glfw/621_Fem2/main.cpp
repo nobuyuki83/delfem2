@@ -167,7 +167,7 @@ void MakeMesh(
   aaXY.push_back(aXY0);
   // ---------------------------------
   std::vector<dfm2::CVec2d> aVec2;
-  const double elen = 0.05;
+  constexpr double elen = 0.05;
   {
     JArray_FromVecVec_XY(loopIP_ind, loopIP, aVec2,
                          aaXY);
@@ -186,7 +186,7 @@ void MakeMesh(
     std::vector<dfm2::CDynTri> aETri;
     Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                    loopIP_ind, loopIP);
-    if (elen > 1.0e-10) {
+    if constexpr (elen > 1.0e-10) {
       dfm2::CInputTriangulation_Uniform param(1.0);
       std::vector<int> aFlgPnt(aPo2D.size());
       std::vector<unsigned int> aFlgTri(aETri.size(), 0);
@@ -210,7 +210,7 @@ void InitializeProblem_Scalar(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const size_t np = aXY1.size() / 2;
   aBCFlag.assign(np, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
     const double px = aXY1[ip * 2 + 0];
@@ -250,8 +250,8 @@ void SolveProblem_Poisson(
   dfm2::MergeLinSys_Poission_MeshTri2D(
       mat_A, vec_b.data(),
       alpha, source,
-      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(), aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -289,8 +289,8 @@ void SolveProblem_Diffusion(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np;
   // ------------------
   const double alpha = 1.0;
   const double rho = 1.0;
@@ -302,8 +302,8 @@ void SolveProblem_Diffusion(
       mat_A, vec_b.data(),
       alpha, rho, source,
       dt_timestep, gamma_newmark,
-      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(), aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -315,13 +315,13 @@ void SolveProblem_Diffusion(
   ilu_A.Decompose();
   vec_x.resize(vec_b.size());
   {
-    const std::size_t n = vec_b.size();
+    const size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
     Solve_PCG(
         dfm2::CVecXd(vec_b),
-		dfm2::CVecXd(vec_x), 
-		dfm2::CVecXd(tmp0), 
-		dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
@@ -343,8 +343,8 @@ void DrawScalar(
     std::vector<std::pair<double, delfem2::CColor> > colorMap;
     ColorMap_BlueGrayRed(colorMap, 0, +0.1f);
     delfem2::opengl::DrawMeshTri2D_ScalarP1(
-        aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-        aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+        aXY1.data(), aXY1.size() / 2,
+        aTri1.data(), aTri1.size() / 3,
         aVal.data(), 1, colorMap);
   }
   ::glColor3d(0, 0, 0);
@@ -408,8 +408,8 @@ void InitializeProblem_Solid(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np * 2;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 2;
   // ----------------
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -453,10 +453,8 @@ void SolveProblem_LinearSolid_Static(
   dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
       mat_A, vec_b.data(),
       myu, lambda, rho, g_x, g_y,
-      aXY1.data(), 
-	  static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(),
-	  static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(), aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -503,8 +501,8 @@ void SolveProblem_LinearSolid_Dynamic(
       mat_A, vec_b.data(),
       myu, lambda, rho, g_x, g_y,
       dt_timestep, gamma_newmark, beta_newmark,
-      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(), aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data(), aVelo.data(), aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -555,10 +553,8 @@ void ProblemSolid(
   for (unsigned int iframe = 0; iframe < 50; ++iframe) {
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
-        aXY1.data(), 
-		static_cast<unsigned int>(aXY1.size() / 2),
-        aTri1.data(), 
-		static_cast<unsigned int>(aTri1.size() / 3),
+        aXY1.data(), aXY1.size() / 2,
+        aTri1.data(), aTri1.size() / 3,
         aVal.data(), 2);
     viewer.SwapBuffers();
     glfwPollEvents();
@@ -578,8 +574,8 @@ void ProblemSolid(
         aXY1, aTri1, aBCFlag);
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
-        aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-        aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+        aXY1.data(), aXY1.size() / 2,
+        aTri1.data(), aTri1.size() / 3,
         aVal.data(), 2);
     viewer.SwapBuffers();
     glfwPollEvents();
@@ -655,8 +651,8 @@ void InitializeProblem_Fluid2(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 3;
   // set boundary condition
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -682,7 +678,8 @@ void InitializeProblem_Fluid2(
   std::vector<unsigned int> psup_ind0, psup0;
   dfm2::JArray_PSuP_MeshElem(
       psup_ind0, psup0,
-      aTri1.data(), aTri1.size() / 3, 3, (int) aXY1.size() / 2);
+      aTri1.data(), aTri1.size() / 3, 3,
+      aXY1.size() / 2);
   //
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind0.data(), psup_ind0.size(), psup0.data(), psup0.size());
@@ -710,10 +707,8 @@ void SolveProblem_Stokes_Static(
   dfm2::MergeLinSys_StokesStatic2D(
       mat_A, vec_b.data(),
       myu, g_x, g_y,
-      aXY1.data(), 
-	  static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), 
-	  static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(), aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -761,8 +756,8 @@ void SolveProblem_Stokes_Dynamic(
       mat_A, vec_b.data(),
       myu, rho, g_x, g_y,
       dt_timestep, gamma_newmark,
-      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(), aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -776,8 +771,12 @@ void SolveProblem_Stokes_Dynamic(
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    Solve_PCG(dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
-              conv_ratio, iteration, mat_A, ilu_A);
+    Solve_PCG(
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
+        conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   // --------------------
@@ -810,8 +809,8 @@ void SolveProblem_NavierStokes_Dynamic(
       mat_A, vec_b.data(),
       myu, rho, g_x, g_y,
       dt_timestep, gamma_newmark,
-      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(), aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -840,8 +839,8 @@ void DrawVelocityField(
   std::vector<std::pair<double, delfem2::CColor> > colorMap;
   delfem2::ColorMap_BlueGrayRed(colorMap, -30, +30);
   delfem2::opengl::DrawMeshTri2D_ScalarP1(
-      aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(), aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data() + 2, 3, colorMap);
   ::glColor3d(0, 0, 0);
   delfem2::opengl::DrawPoints2D_Vectors(
@@ -981,9 +980,7 @@ void ProblemFluidTunnel(
   }
 }
 
-int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();

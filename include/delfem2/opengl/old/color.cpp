@@ -319,9 +319,9 @@ template void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP1(
     const double *aXY,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int *aTri,
-    unsigned int nTri,
+    size_t nTri,
     const double *paVal,
     int nstride,
     const std::vector<std::pair<double, CColor> > &colorMap) {

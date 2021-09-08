@@ -127,9 +127,9 @@ DFM2_INLINE void PBD_CdC_QuadBend(
 
 DFM2_INLINE void PBD_Seam(
     double *aXYZt,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int *aLine,
-    unsigned int nline);
+    size_t nline);
 
 template<typename T>
 DFM2_INLINE void GetConstConstDiff_Bend(

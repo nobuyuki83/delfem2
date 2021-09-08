@@ -45,7 +45,8 @@ int main()
   delfem2::Normalize_Points3(aXYZ);
   std::vector<double> aNorm(aXYZ.size());
   dfm2::Normal_MeshTri3D(aNorm.data(),
-      aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
+      aXYZ.data(), aXYZ.size()/3,
+      aTri.data(), aTri.size()/3);
   
   std::vector<double> aOdir;
   {
@@ -53,7 +54,8 @@ int main()
     const double maxCoords[3] =  {+1., +1., +1.};
     aOdir.resize(aXYZ.size());
     dfm2::Points_RandomUniform(aOdir.data(),
-        aXYZ.size() / 3, 3, minCoords, maxCoords);
+        aXYZ.size() / 3, 3,
+		minCoords, maxCoords);
     dfm2::TangentVector_Points3(aOdir,
         aNorm);
   }
@@ -75,8 +77,10 @@ int main()
       const double minCoords[3] =  {-1., -1., -1.};
       const double maxCoords[3] =  {+1., +1., +1.};
       aOdir.resize(aXYZ.size());
-      dfm2::Points_RandomUniform(aOdir.data(),
-                                 aXYZ.size() / 3, 3, minCoords, maxCoords);
+      dfm2::Points_RandomUniform(
+		  aOdir.data(),
+		  static_cast<unsigned int>(aXYZ.size() / 3), 3, 
+		  minCoords, maxCoords);
       dfm2::TangentVector_Points3(aOdir,aNorm);
     }
     if( iframe > 30 ){
@@ -91,7 +95,7 @@ int main()
       ::glDisable(GL_LIGHTING);
       double len = 0.03;
       ::glLineWidth(3);
-      unsigned int np = aXYZ.size()/3;
+      unsigned int np = static_cast<unsigned int>(aXYZ.size()/3);
       for(unsigned int ip=0;ip<np;++ip){
         const dfm2::CVec3d p = dfm2::CVec3d(aXYZ.data()+ip*3);
         const dfm2::CVec3d n = dfm2::CVec3d(aNorm.data()+ip*3).normalized();

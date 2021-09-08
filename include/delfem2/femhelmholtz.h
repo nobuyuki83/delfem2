@@ -42,9 +42,9 @@ void MergeLinSys_Helmholtz_MeshTri2D(
     std::complex<double>* vec_b,
     const double wave_length,
     const double* aXY1,
-    unsigned int np,
+    size_t np,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const std::complex<double>* aVal)
 {
   using COMPLEX = std::complex<double>;
@@ -78,9 +78,9 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
     std::complex<double>* vec_b,
     const double wave_length,
     const double* aXY1,
-    unsigned int np,
+    size_t np,
     const unsigned int* aIPPolyline,
-    unsigned int nIPPolyline,
+    size_t nIPPolyline,
     const std::complex<double>* aVal)
 {
   using COMPLEX = std::complex<double>;

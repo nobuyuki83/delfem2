@@ -63,19 +63,22 @@ void StepTime() {
       dt, gravity, aXYZ, aUVW, aBCFlag);
   dfm2::PBD_TriStrain(
       aXYZt.data(),
-      aXYZt.size() / 3, aETri, aVec2);
+      static_cast<unsigned int>(aXYZt.size() / 3), 
+	  aETri, aVec2);
   dfm2::PBD_Bend(
       aXYZt.data(),
-      aXYZt.size() / 3, aETri, aVec2, 1.0);
+      static_cast<unsigned int>(aXYZt.size() / 3), aETri, aVec2, 1.0);
   dfm2::PBD_Seam(
       aXYZt.data(),
-      aXYZt.size() / 3, aLine.data(), aLine.size() / 2);
+      static_cast<unsigned int>(aXYZt.size() / 3), 
+	  aLine.data(), 
+	  static_cast<unsigned int>(aLine.size() / 2) );
   dfm2::Project_PointsIncludedInBVH_Outside_Cache(
       aXYZt.data(), aInfoNearest,
-      aXYZt.size() / 3,
+      static_cast<unsigned int>(aXYZt.size() / 3),
       contact_clearance, bvh,
-      aXYZ_Contact.data(), aXYZ_Contact.size() / 3,
-      aTri_Contact.data(), aTri_Contact.size() / 3,
+      aXYZ_Contact.data(), static_cast<unsigned int>(aXYZ_Contact.size() / 3),
+      aTri_Contact.data(), static_cast<unsigned int>(aTri_Contact.size() / 3),
       aNorm_Contact.data(), 0.1);
   dfm2::PBD_Post(
       aXYZ, aUVW,
@@ -162,14 +165,14 @@ int main(
       aXYZ[ip * 3 + 2] = p1.z;
     }
     {
-      CRigidTrans_2DTo3D rt23;
-      rt23.org2 = dfm2::CVec2d(0.5, 0.5);
-      rt23.org3 = dfm2::CVec3d(0.0, 0.0, -0.5);
-      rt23.R.SetIdentity();
-      std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1, 0), cad);
-      for (int ip : aIP) {
-        dfm2::CVec3d p0(aVec2[ip].x - rt23.org2.x, aVec2[ip].y - rt23.org2.y, 0.0);
-        dfm2::CVec3d p1 = rt23.org3 + dfm2::MatVec(rt23.R, p0);
+      CRigidTrans_2DTo3D rt23_;
+      rt23_.org2 = dfm2::CVec2d(0.5, 0.5);
+      rt23_.org3 = dfm2::CVec3d(0.0, 0.0, -0.5);
+      rt23_.R.SetIdentity();
+      std::vector<int> aIP0 = mesher.IndPoint_IndFaceArray(std::vector<int>(1, 0), cad);
+      for (int ip : aIP0) {
+        dfm2::CVec3d p0(aVec2[ip].x - rt23_.org2.x, aVec2[ip].y - rt23_.org2.y, 0.0);
+        dfm2::CVec3d p1 = rt23_.org3 + dfm2::MatVec(rt23_.R, p0);
         aXYZ[ip * 3 + 0] = p1.x;
         aXYZ[ip * 3 + 1] = p1.y;
         aXYZ[ip * 3 + 2] = p1.z;
@@ -179,7 +182,7 @@ int main(
     {
       std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(1, true, cad);
       std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(7, true, cad);
-      const unsigned int npe = aIP0.size();
+      const unsigned int npe = static_cast<unsigned int>(aIP0.size());
       assert(aIP1.size() == npe);
       for (unsigned int iip = 0; iip < npe; ++iip) {
         const unsigned int ip0 = aIP0[iip];
@@ -191,7 +194,7 @@ int main(
     {
       std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(3, true, cad);
       std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(5, true, cad);
-      const unsigned int npe = aIP0.size();
+      const unsigned int npe = static_cast<unsigned int>(aIP0.size());
       assert(aIP1.size() == npe);
       for (unsigned int iip = 0; iip < npe; ++iip) {
         const unsigned int ip0 = aIP0[iip];

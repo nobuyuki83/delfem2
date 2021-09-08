@@ -5,6 +5,10 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -47,9 +51,7 @@ void Draw(
   ::glEnd();
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   dfm2::glfw::InitGLOld();
   dfm2::glfw::CViewer3 viewer;
   viewer.InitGL();

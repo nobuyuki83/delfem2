@@ -80,7 +80,8 @@ void InitializeProblem() {
     std::vector<unsigned int> elsup_ind, elsup;
     dfm2::JArray_ElSuP_MeshElem(
         elsup_ind, elsup,
-        aTri.data(), aTri.size() / 3, 3, aXYZ.size() / 3);
+        aTri.data(), aTri.size() / 3, 3,
+        aXYZ.size() / 3);
     dfm2::ElSuEl_MeshElem(
         aElSuTri,
         aTri.data(), aTri.size() / 3, 3,
@@ -97,9 +98,10 @@ void UpdateProblem() {
     for( auto o2d : pos2d_org_corner ) {
       const dfm2::CVec3d o3d(o2d[0],o2d[1],10);
       std::map<double,dfm2::CPtElm2<double>> mapDepthPES;
-      IntersectionRay_MeshTri3(mapDepthPES,
-                               o3d,dir,aTri,aXYZ,
-                               0.0);
+      IntersectionRay_MeshTri3(
+          mapDepthPES,
+          o3d,dir,aTri,aXYZ,
+          0.0);
       if( !mapDepthPES.empty() ){
         aPES0.push_back(mapDepthPES.begin()->second);
       }
@@ -142,9 +144,10 @@ void UpdateProblem() {
         double r3 = (1-ri)*rj;
         const dfm2::CVec3d pA = r0*p0 + r1*p1 + r2*p2 + r3*p3;
         const dfm2::CVec3d nA = r0*n0 + r1*n1 + r2*n2 + r3*n3;
-        const std::vector<dfm2::CPtElm2<double>> aPES = IntersectionLine_MeshTri3(pA, nA,
-                                                                                         aTri, aXYZ,
-                                                                                         0.0);
+        const std::vector<dfm2::CPtElm2<double>> aPES = IntersectionLine_MeshTri3(
+            pA, nA,
+            aTri, aXYZ,
+            0.0);
         std::map<double,dfm2::CPtElm2<double>> mapPES;
         for(auto pes : aPES){
           dfm2::CVec3d p_intersec = pes.Pos_Tri(aXYZ,aTri);

@@ -29,10 +29,10 @@ namespace dfm2 = delfem2;
 
 // -----------------------------
 
-void myGlutDisplay
- (const std::vector<dfm2::CDynPntSur>& aPo,
-  const std::vector<dfm2::CDynTri>& aTri,
-  const std::vector<dfm2::CVec3d>& aVec3)
+void myGlutDisplay(
+	[[maybe_unused]] const std::vector<dfm2::CDynPntSur>& aPo,
+	const std::vector<dfm2::CDynTri>& aTri, 
+	const std::vector<dfm2::CVec3d>& aVec3)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
@@ -92,7 +92,7 @@ int main()
     delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
                       aXYZ0,aTri0);
     dfm2::Normalize_Points3(aXYZ0,2.0);
-    const unsigned int np = aXYZ0.size()/3;
+    const unsigned int np = static_cast<unsigned int>(aXYZ0.size()/3);
     aPo.resize(np);
     aVec3.resize(np);
     for(unsigned int ipo=0;ipo<aPo.size();ipo++){
@@ -100,8 +100,10 @@ int main()
       aVec3[ipo].p[1] = aXYZ0[ipo*3+1];
       aVec3[ipo].p[2] = aXYZ0[ipo*3+2];
     }
-    InitializeMesh(aPo, aTri,
-                   aTri0.data(),aTri0.size()/3,aVec3.size());
+    InitializeMesh(
+		aPo, aTri,
+		aTri0.data(), static_cast<unsigned int>(aTri0.size()/3),
+		aVec3.size());
     AssertDTri(aTri);
     AssertMeshDTri(aPo, aTri);
     AssertMeshDTri2(aPo, aTri, aVec3);

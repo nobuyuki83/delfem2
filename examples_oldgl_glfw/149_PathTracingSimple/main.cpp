@@ -92,7 +92,7 @@ inline bool intersect(
     int &id,
     const std::vector<CSphere>& spheres)
 {
-  double n = spheres.size();
+  double n = static_cast<double>(spheres.size());
   double inf = t = 1e20;
   for (int i = int(n); i--;) {
     const double d = spheres[i].intersect(r);
@@ -171,7 +171,7 @@ CVec3d radiance(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   std::vector<CSphere> aSphere = {//Scene: radius, position, emission, color, material
       CSphere(1e5, CVec3d(1e5 + 1, 40.8, 81.6), CVec3d(), CVec3d(.75, .25, .25), DIFF),//Left
       CSphere(1e5, CVec3d(-1e5 + 99, 40.8, 81.6), CVec3d(), CVec3d(.25, .25, .75), DIFF),//Rght
@@ -188,7 +188,8 @@ int main(int argc, char *argv[]) {
   {
     tex.width = 256;
     tex.height = 256;
-    tex.aRGB.resize(tex.width*tex.height*3);
+    tex.channels = 3;
+    tex.pixel_color.resize(tex.width*tex.height*tex.channels);
   }
   delfem2::glfw::CViewer3 viewer;
   viewer.width = 400;
@@ -208,7 +209,7 @@ int main(int argc, char *argv[]) {
   CVec3d cx = CVec3d(nw * .5135 / nh, 0, 0);
   CVec3d cy = (cx ^ cam.d).normalized() * .5135;
   std::vector<float> afRGB(tex.height*tex.width*3, 0.f);
-  unsigned int isample = 0.0;
+  unsigned int isample = 0;
   while (!glfwWindowShouldClose(viewer.window))
   {
     for (unsigned int ih = 0; ih < nh; ih++) {
@@ -223,9 +224,9 @@ int main(int argc, char *argv[]) {
             CVec3d d = cx * (((sx + .5 + dx) / 2 + iw) / nw - .5) +
                        cy * (((sy + .5 + dy) / 2 + ih) / nh - .5) + cam.d;
             CVec3d r = radiance(Ray(cam.o + d * 140., d.normalized()), 0, Xi, aSphere);
-            afRGB[(ih*nw+iw)*3+0] += r.x;
-            afRGB[(ih*nw+iw)*3+1] += r.y;
-            afRGB[(ih*nw+iw)*3+2] += r.z;
+            afRGB[(ih*nw+iw)*3+0] += static_cast<float>(r.x);
+            afRGB[(ih*nw+iw)*3+1] += static_cast<float>(r.y);
+            afRGB[(ih*nw+iw)*3+2] += static_cast<float>(r.z);
           }
         }
       }
@@ -236,7 +237,7 @@ int main(int argc, char *argv[]) {
         for(int ic=0;ic<3;++ic) {
           float fc = afRGB[(ih * tex.width + iw) * 3 + ic]*0.25f/float(isample);
           fc = (fc>1.f) ? 1.f:fc;
-          tex.aRGB[(ih * tex.width + iw) * 3 + ic] = 255*fc;
+          tex.pixel_color[(ih * tex.width + iw) * 3 + ic] = static_cast<unsigned char>(255*fc);
         }
       }
     }

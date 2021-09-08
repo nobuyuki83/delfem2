@@ -95,7 +95,7 @@ DFM2_INLINE void delfem2::PBD_Update_Const3(
   double lmd[nc];
   MatVec3(lmd, Ainv, C);
   for (int ine = 0; ine < np; ++ine) {
-    const int ip0 = aIP[ine];
+    const unsigned int ip0 = aIP[ine];
     for (int ic = 0; ic < nc; ++ic) {
       for (int idim = 0; idim < ndim; ++idim) {
         aXYZt[ip0 * 3 + idim] -= ratio * MinvC[ic * np * ndim + ine * ndim + idim] * lmd[ic];
@@ -111,9 +111,9 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid3D(
     const int *clstr_ind,
     int nclstr_ind,
     const int *clstr,
-    int nclstr0,
-    const double *aXYZ0,
-    int nXYZ0) {
+    [[maybe_unused]] int nclstr0,
+    [[maybe_unused]] const double *aXYZ0,
+    [[maybe_unused]] int nXYZ0) {
   const int nclstr = nclstr_ind - 1;
   for (int iclstr = 0; iclstr < nclstr; ++iclstr) {
     CVec3d pc(0, 0, 0), qc(0, 0, 0);
@@ -163,9 +163,9 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D(
     const unsigned int *clstr_ind,
     unsigned int nclstr_ind,
     const unsigned int *clstr,
-    unsigned int nclstr0,
+    [[maybe_unused]] unsigned int nclstr0,
     const double *aXY0,
-    unsigned int nXY0) {
+    [[maybe_unused]] unsigned int nXY0) {
   const unsigned int nclstr = nclstr_ind - 1;
   for (unsigned int iclstr = 0; iclstr < nclstr; ++iclstr) {
     CVec2d pc(0, 0), qc(0, 0);
@@ -490,9 +490,9 @@ DFM2_INLINE void delfem2::PBD_CdC_QuadBend(
 
 DFM2_INLINE void delfem2::PBD_Seam(
     double *aXYZt,
-    unsigned int nXYZ,
+    [[maybe_unused]] size_t nXYZ,
     const unsigned int *aLine,
-    unsigned int nline) {
+    size_t nline) {
   for (unsigned int il = 0; il < nline; ++il) {
     const unsigned int ip0 = aLine[il * 2 + 0];
     const unsigned int ip1 = aLine[il * 2 + 1];

@@ -54,8 +54,8 @@ int main() {
                           path_svg, 1.0);
 //      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       dfm2::CBoundingBox2D bb = cad.BB();
-      viewer.trans[0] = -(bb.x_min + bb.x_max) * 0.5;
-      viewer.trans[1] = -(bb.y_min + bb.y_max) * 0.5;
+      viewer.trans[0] = -(bb.x_min + bb.x_max) * 0.5f;
+      viewer.trans[1] = -(bb.y_min + bb.y_max) * 0.5f;
       viewer.view_height = 0.5 * bb.LengthDiagonal();
       viewer.scale = 1.0;
       cad.iedge_picked = 22;

@@ -125,7 +125,7 @@ void MakeProblemSetting_Spiral(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
@@ -149,8 +149,8 @@ int main(int argc, char *argv[]) {
                               dist01(reng));  // dangle
     std::vector<int> aBCFlag;
     {
-      const unsigned int np = aP0.size();
-      const unsigned int ns = aS0.size();
+      const unsigned int np = static_cast<unsigned int>(aP0.size());
+      const unsigned int ns = static_cast<unsigned int>(aS0.size());
       const unsigned int nNode = np + ns;
       aBCFlag.assign(nNode * 3, 0);
       {
@@ -188,11 +188,11 @@ int main(int argc, char *argv[]) {
       if (aBCFlag[ip * 3 + 1] == 0) { aP[ip].p[1] += rnd.y; }
       if (aBCFlag[ip * 3 + 2] == 0) { aP[ip].p[2] += rnd.z; }
     }
-    const unsigned int ns = aS.size();
+    const unsigned int ns = static_cast<unsigned int>(aS.size());
     for (unsigned int is = 0; is < ns; ++is) {
       aS[is] = aS0[is];
       auto rnd = dfm2::CVec3d::Random(dist03, reng);
-      const unsigned int np = aP.size();
+      const unsigned int np = static_cast<unsigned int>(aP.size());
       if (aBCFlag[(np + is) * 3 + 0] == 0) { aS[is].p[0] += rnd.x; }
       if (aBCFlag[(np + is) * 3 + 1] == 0) { aS[is].p[1] += rnd.y; }
       if (aBCFlag[(np + is) * 3 + 2] == 0) { aS[is].p[2] += rnd.z; }
