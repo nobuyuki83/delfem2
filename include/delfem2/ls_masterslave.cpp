@@ -25,24 +25,23 @@ delfem2::setRHS_MasterSlave(
   }
 }
 
-DFM2_INLINE void
-delfem2::JArray_AddMasterSlavePattern(
+DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
     std::vector<unsigned int> &index,
     std::vector<unsigned int> &array,
     const unsigned int* aMSFlag,
     int ndim,
     const unsigned int *psup_ind0,
-    int npsup_ind0,
+    size_t npsup_ind0,
     const unsigned int *psup0)
 {
   assert(npsup_ind0>0);
-  const int nno = npsup_ind0-1;
+  const size_t nno = npsup_ind0-1;
   //assert( aMSFlag.size() == nno*ndim );
   std::vector< std::vector<int> > mapM2S(nno);
-  for(int ino1=0;ino1<nno;++ino1){
+  for(unsigned int ino1=0;ino1<nno;++ino1){
     for(int idim1=0;idim1<ndim;++idim1){
-      int idof0 = aMSFlag[ino1*ndim+idim1];
-      if( idof0 == -1 ){ continue; }
+      unsigned int idof0 = aMSFlag[ino1*ndim+idim1];
+      if( idof0 == UINT_MAX ){ continue; }
       int ino0 = idof0/ndim;
 //      int idim0 = idof0 - ino0*ndim;
       assert( ino0 < nno && idof0 - ino0*ndim < ndim );
@@ -80,8 +79,8 @@ delfem2::JArray_AddMasterSlavePattern(
     for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
       const unsigned int jno = psup0[icrs];
       for(int jdim=0;jdim<ndim;++jdim){
-        int kdof = aMSFlag[jno*ndim+jdim];
-        if( kdof == -1 ) continue;
+        unsigned int kdof = aMSFlag[jno*ndim+jdim];
+        if( kdof == UINT_MAX ) continue;
         int kno = kdof/ndim;
         if( aflg[kno] == ino0 ){ continue; }
         aflg[kno] = ino0;
@@ -125,8 +124,8 @@ delfem2::JArray_AddMasterSlavePattern(
     for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
       const unsigned int jno = psup0[icrs];
       for(int jdim=0;jdim<ndim;++jdim){
-        int kdof = aMSFlag[jno*ndim+jdim];
-        if( kdof == -1 ) continue;
+        unsigned int kdof = aMSFlag[jno*ndim+jdim];
+        if( kdof == UINT_MAX ) continue;
         int kno = kdof/ndim;
         if( aflg[kno] == ino0 ){ continue; }
         aflg[kno] = ino0;
@@ -137,7 +136,7 @@ delfem2::JArray_AddMasterSlavePattern(
     }
   }
   // ---------
-  for(int ino=nno;ino>0;ino--){ index[ino] = index[ino-1]; }
+  for(int ino=static_cast<int>(nno);ino>0;ino--){ index[ino] = index[ino-1]; }
   index[0] = 0;
 }
 

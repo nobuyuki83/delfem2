@@ -71,11 +71,13 @@ int main()
   int width, height;
   {
     int channels;
-    unsigned char *img = stbi_load((std::string(PATH_INPUT_DIR)+"/uglysweater.jpg").c_str(),
-                                   &width, &height, &channels, 0);
-    tex.Initialize(width, height, img, "rgb");
+    {
+      unsigned char *img = stbi_load((std::string(PATH_INPUT_DIR) + "/uglysweater.jpg").c_str(),
+                                     &width, &height, &channels, 0);
+      tex.Initialize(width, height, channels, img);
+      stbi_image_free(img);
+    }
     double scale = 0.0020;
-    delete[] img;
     tex.max_x = -scale*width*0.5;
     tex.min_x = +scale*width*0.5;
     tex.max_y = -scale*height*0.5;

@@ -32,9 +32,7 @@ namespace dfm2 = delfem2;
 
 // -----------------------------
 
-int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+int main() {
   class CClusterData {
    public:
     std::vector<double> aXYZ; // center position of the cluster
@@ -60,9 +58,10 @@ int main(
     { // make normal
       CClusterData &pd0 = aPointData[0];
       pd0.aNorm.resize(pd0.aXYZ.size());
-      dfm2::Normal_MeshTri3D(pd0.aNorm.data(),
-                             pd0.aXYZ.data(), pd0.aXYZ.size() / 3,
-                             aTri0.data(), aTri0.size() / 3);
+      dfm2::Normal_MeshTri3D(
+          pd0.aNorm.data(),
+          pd0.aXYZ.data(), pd0.aXYZ.size() / 3,
+          aTri0.data(), aTri0.size() / 3);
     }
     { // make area
       CClusterData &pd0 = aPointData[0];
@@ -70,18 +69,19 @@ int main(
       dfm2::MassPoint_Tri3D(
 		  pd0.aArea.data(),
 		  1.0,                           
-		  pd0.aXYZ.data(), static_cast<unsigned int>(pd0.aXYZ.size() / 3),
-		  aTri0.data(), static_cast<unsigned int>(aTri0.size() / 3));
+		  pd0.aXYZ.data(), pd0.aXYZ.size() / 3,
+		  aTri0.data(), aTri0.size() / 3);
     }
     { // make psup
       CClusterData &pd0 = aPointData[0];
-      dfm2::JArray_PSuP_MeshElem(pd0.psup_ind, pd0.psup,
-                                 aTri0.data(), aTri0.size() / 3, 3,
-                                 pd0.aXYZ.size() / 3);
+      dfm2::JArray_PSuP_MeshElem(
+          pd0.psup_ind, pd0.psup,
+          aTri0.data(), aTri0.size() / 3, 3,
+          pd0.aXYZ.size() / 3);
     }
     {
       CClusterData &pd0 = aPointData[0];
-      unsigned int np0 = static_cast<unsigned int>(pd0.aXYZ.size() / 3);
+      auto np0 = static_cast<unsigned int>(pd0.aXYZ.size() / 3);
       aPointData[0].map0c.resize(np0);
       for (unsigned int ip = 0; ip < np0; ++ip) {
         aPointData[0].map0c[ip] = ip;
@@ -99,10 +99,10 @@ int main(
         pd0.aXYZ, pd0.aArea, pd0.aNorm, pd0.psup_ind, pd0.psup);
     dfm2::Clustering_Psup(
 		pd1.psup_ind, pd1.psup,
-		static_cast<unsigned int>(pd1.aXYZ.size() / 3),
-		static_cast<unsigned int>(pd0.aXYZ.size() / 3), 
+		pd1.aXYZ.size() / 3,
+		pd0.aXYZ.size() / 3,
 		map01.data(), pd0.psup_ind.data(), pd0.psup.data());
-    unsigned int np0 = static_cast<unsigned int>(aPointData[0].aXYZ.size() / 3);
+    auto np0 = static_cast<unsigned int>(aPointData[0].aXYZ.size() / 3);
     pd1.map0c.resize(np0, UINT_MAX);
     for (unsigned int ip = 0; ip < np0; ++ip) {
       unsigned int ic0 = pd0.map0c[ip];
@@ -117,7 +117,7 @@ int main(
     std::random_device rd;
     std::mt19937 eng(rd());
     std::uniform_real_distribution<double> dist(0, 1.0);
-    const unsigned int np = static_cast<unsigned int>(pd.aXYZ.size() / 3);
+    const auto np = static_cast<unsigned int>(pd.aXYZ.size() / 3);
     pd.aColor.resize(np * 3);
     for (unsigned int ip = 0; ip < np; ++ip) {
       float *pc = pd.aColor.data() + ip * 3;
@@ -157,10 +157,11 @@ int main(
         }
         ::glEnd();
         ::glColor3d(0, 0, 0);
-        dfm2::opengl::DrawMeshTri3D_Edge(aPointData[0].aXYZ.data(),
-                                         aPointData[0].aXYZ.size() / 3,
-                                         aTri0.data(),
-                                         aTri0.size() / 3);
+        dfm2::opengl::DrawMeshTri3D_Edge(
+            aPointData[0].aXYZ.data(),
+            aPointData[0].aXYZ.size() / 3,
+            aTri0.data(),
+            aTri0.size() / 3);
         viewer.SwapBuffers();
         glfwPollEvents();
       }

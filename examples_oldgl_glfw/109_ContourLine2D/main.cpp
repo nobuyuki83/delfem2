@@ -37,14 +37,16 @@ void myGlutDisplay()
 {
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(1);
-  delfem2::opengl::DrawMeshTri2D_Edge(aXY.data(), aXY.size()/2, aTri.data(), aTri.size()/3);
+  delfem2::opengl::DrawMeshTri2D_Edge(
+      aXY.data(), aXY.size()/2,
+      aTri.data(), aTri.size()/3);
   
   std::vector< std::pair<double,delfem2::CColor> > colorMap;
   delfem2::ColorMap_BlueCyanGreenYellowRed(colorMap,
                                            -1, 1);
   delfem2::opengl::DrawMeshTri2D_ScalarP1(
-	  aXY.data(), static_cast<unsigned int>(aXY.size()/2),                                         
-	  aTri.data(), static_cast<unsigned int>(aTri.size()/3),
+	  aXY.data(), aXY.size()/2,
+	  aTri.data(), aTri.size()/3,
 	  aVal.data(), 1,
 	  colorMap);
   ::glLineWidth(5);
@@ -90,9 +92,7 @@ void Hoge()
   
 }
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
@@ -111,7 +111,7 @@ int main(
       aSeg.clear();
       delfem2::AddContour(aSeg,
           thres,
-          aTri.data(), static_cast<unsigned int>(aTri.size()/3),
+          aTri.data(), aTri.size()/3,
           aVal.data());
       iframe += 1;
     }

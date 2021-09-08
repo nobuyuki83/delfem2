@@ -229,7 +229,7 @@ class CBVH_MeshTri3D {
       CPtElm2<REAL> &pes,
       const CVec3<REAL> &p0,
       double rad_exp, // look leaf inside this radius
-      const double *aXYZ,
+      const double *aXYZ0,
       size_t nXYZ,
       const unsigned int *aTri,
       size_t nTri) const {
@@ -239,7 +239,7 @@ class CBVH_MeshTri3D {
     delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
         dist, dist_min, pes,
         p0.x, p0.y, p0.z, rad_exp,
-        aXYZ, nXYZ, aTri, nTri,
+        aXYZ0, nXYZ, aTri, nTri,
         iroot_bvh, aNodeBVH, aBB_BVH);
     if (pes.itri == UINT_MAX) { return dist_min; }
     return dist;

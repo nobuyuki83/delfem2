@@ -119,9 +119,9 @@ void MergeLinSys_NavierStokes2D(
     const double dt_timestep,
     const double gamma_newmark,
     const double* aXY1,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int* aTri1,
-    unsigned int nTri,
+    size_t nTri,
     const double* aVal, // vx,vy,press
     const double* aDtVal) // ax,ay,apress
 {
@@ -169,7 +169,7 @@ void MergeLinSys_NavierStokes3D_Dynamic(
     const std::vector<double>& aVal,
     const std::vector<double>& aVelo)
 {
-  const unsigned int np = aXYZ.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3);
   const unsigned int nDoF = np*4;
   mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
@@ -209,4 +209,4 @@ void MergeLinSys_NavierStokes3D_Dynamic(
 #  include "delfem2/femnavierstokes.cpp"
 #endif
   
-#endif /* fem_ematrix_h */
+#endif /* DFM2_FEMNAVIERSTOKES_H */

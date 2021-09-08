@@ -7,7 +7,8 @@
 
 /**
  * @brief implementation of 4 rotatoinal symetry field
- * @details implementation is based on "Wenzel Jakob, Marco Tarini, Daniele Panozzo, and Olga Sorkine-Hornung. Instant field-aligned meshes. Siggraph Asia 2015"
+ * @details implementation is based on "Wenzel Jakob, Marco Tarini, Daniele Panozzo, and Olga Sorkine-Hornung.
+ * Instant field-aligned meshes. Siggraph Asia 2015"
  */
 
 #include <cstdlib>
@@ -104,7 +105,7 @@ int main()
       aLayer[0].aOdir.resize(aLayer[0].aXYZ.size());
       dfm2::Points_RandomUniform(
           aLayer[0].aOdir.data(),
-          static_cast<unsigned int>(aLayer[0].aXYZ.size() / 3), 3, 
+          aLayer[0].aXYZ.size() / 3, 3,
 		  minCoords, maxCoords);
       dfm2::TangentVector_Points3(
           aLayer[0].aOdir,
@@ -114,8 +115,8 @@ int main()
     dfm2::MassPoint_Tri3D(
         aLayer[0].aArea.data(),
         1.0,
-        aLayer[0].aXYZ.data(), static_cast<unsigned int>(aLayer[0].aXYZ.size() / 3),
-        aTri.data(), static_cast<unsigned int>(aTri.size() / 3));
+        aLayer[0].aXYZ.data(), aLayer[0].aXYZ.size() / 3,
+        aTri.data(), aTri.size() / 3);
     dfm2::JArray_PSuP_MeshElem(
         aLayer[0].psup_ind, aLayer[0].psup,
         aTri.data(), aTri.size()/3, 3,
@@ -153,7 +154,7 @@ int main()
       aLayer[ilayer].aOdir.resize(aLayer[ilayer].aXYZ.size());
       dfm2::Points_RandomUniform(
 		  aLayer[ilayer].aOdir.data(),
-		  static_cast<unsigned int>(aLayer[ilayer].aXYZ.size() / 3), 3, 
+		  aLayer[ilayer].aXYZ.size() / 3, 3,
 		  minCoords, maxCoords);
       dfm2::TangentVector_Points3(aLayer[ilayer].aOdir,
           aLayer[ilayer].aNorm);

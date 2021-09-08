@@ -41,9 +41,9 @@ DFM2_INLINE void JArray_AddDiagonal(
     std::vector<unsigned int> &psup_ind1,
     std::vector<unsigned int> &psup1,
     const unsigned int *psup_ind0,
-    int npsup_ind0,
+    size_t npsup_ind0,
     const unsigned int *psup0,
-    int npsup0);
+    size_t npsup0);
 
 DFM2_INLINE void JArray_Print(
     const std::vector<int> &index,

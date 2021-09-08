@@ -183,7 +183,7 @@ void StepTime_Mpm2Snow(
       if (grid[2] <= 0) { continue; } // grid is empty
       grid /= grid[2];                                   // Normalize by mass
       grid += dt * delfem2::CVec3f(0, -200, 0); // Gravity
-      const float boundary = 0.05;
+      const float boundary = 0.05f;
       const float x = float(igrid) / float(ngrid);
       const float y = float(jgrid) / float(ngrid); // boundary thick.,node coord
       if (x < boundary || x > 1 - boundary || y > 1 - boundary) {
@@ -225,9 +225,9 @@ static void error_callback(
 
 int main() {
   std::vector<CParticle> aParticles;
-  AddParticlesCircle(aParticles, delfem2::CVec2f(0.3, 0.8), 0xFF0000);
-  AddParticlesCircle(aParticles, delfem2::CVec2f(0.4, 0.6), 0x00FF00);
-  AddParticlesCircle(aParticles, delfem2::CVec2f(0.5, 0.8), 0x0000FF);
+  AddParticlesCircle(aParticles, delfem2::CVec2f(0.3f, 0.8f), 0xFF0000);
+  AddParticlesCircle(aParticles, delfem2::CVec2f(0.4f, 0.6f), 0x00FF00);
+  AddParticlesCircle(aParticles, delfem2::CVec2f(0.5f, 0.8f), 0x0000FF);
   const int n = 80;
   const float dx = 1.0f / n;
   std::vector<delfem2::CVec3f> aVeloGrid((n + 1) * (n + 1));

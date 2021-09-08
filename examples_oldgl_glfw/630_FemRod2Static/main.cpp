@@ -6,6 +6,10 @@
 */
 
 #include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // this should come before glfw3.h
+#endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
@@ -36,7 +40,7 @@ void Solve(
     dfm2::CMatrixSparse<double> &mats) {
   const double stiff_stretch = 1.0;
   const double stiff_bend = 0.01;
-  unsigned int np = aXY.size() / 2;
+  unsigned int np = static_cast<unsigned int>(aXY.size() / 2);
   assert(np >= 3);
   assert(mats.ncolblk_ == np && mats.nrowblk_ == np);
   assert(mats.ncoldim_ == 2 && mats.nrowdim_ == 2);
@@ -71,11 +75,15 @@ void Solve(
     const std::size_t n = vec_r.size();
     std::vector<double> tmp0(n), tmp1(n);
     auto aConvHist = dfm2::Solve_CG(
-        dfm2::CVecXd(vec_r), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_r),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         1.0e-4, 300, mats);
     if (!aConvHist.empty()) {
-      std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " "
-                << aConvHist[aConvHist.size() - 1] << std::endl;
+      std::cout << "            conv: " << aConvHist.size();
+      std::cout << " " << aConvHist[0];
+      std::cout << " " << aConvHist[aConvHist.size() - 1] << std::endl;
     }
   }
   std::cout << W << std::endl;

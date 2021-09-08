@@ -19,7 +19,6 @@
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v2.h"
-#include "delfem2/opengl/old/funcs.h"
 
 namespace dfm2 = delfem2;
 
@@ -74,9 +73,7 @@ void myGlutDisplay() {
   delfem2::opengl::drawPolyLine2D(polyline0);
 }
 
-int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

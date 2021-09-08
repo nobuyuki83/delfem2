@@ -20,7 +20,7 @@
 #include "delfem2/msh_iomisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
-#include "delfem2/imgio.h"
+#include "delfem2/img_ioppm.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -101,9 +101,7 @@ void Draw2(
   ::glEnd();
 }
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;

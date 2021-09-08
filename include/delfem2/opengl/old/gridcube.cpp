@@ -77,7 +77,7 @@ void delfem2::opengl::Draw_CubeGrid(
       ::myGlColorDiffuse(1,1,0,1);
     }
     else{
-      ::myGlColorDiffuse(0.8,0.8,0.8,1);
+      ::myGlColorDiffuse(0.8f,0.8f,0.8f,1.f);
     }
     myGlNormal(normalHexFace[iface]);
     myGlVertex(aP[noelElemFace_Vox[iface][0]]);

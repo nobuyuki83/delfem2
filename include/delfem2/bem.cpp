@@ -66,12 +66,12 @@ double delfem2::squaredNorm(const std::vector<double>& v)
 
 
 // {y} = [A]{x}
-void delfem2::matVec
-(std::vector<double>& y,
-const std::vector<double>& A,
-const std::vector<double>& x)
+void delfem2::matVec(
+	std::vector<double>& y,
+	const std::vector<double>& A,
+	const std::vector<double>& x)
 {
-  const unsigned int n = x.size();
+  const unsigned int n = static_cast<unsigned int>(x.size());
   assert(A.size()==n*n);
   y.resize(n);
   for (unsigned int i = 0; i<n; ++i){
@@ -100,7 +100,7 @@ const std::vector<double>& y_vec)
   const double conv_ratio_tol = conv_ratio;
   const unsigned int mx_iter = iteration;
 
-  const unsigned int n = y_vec.size();
+  const unsigned int n = static_cast<unsigned int>(y_vec.size());
 
   u_vec.assign(n, 0);
 
@@ -347,7 +347,7 @@ delfem2::CVec3d delfem2::evaluateField_PotentialFlow_Order1st(
     const std::vector<double>& aXYZ,
     const std::vector<int>& aTri)
 {
-  const unsigned int np = aXYZ.size()/3;
+  const unsigned int np = static_cast<unsigned int>(aXYZ.size()/3);
   if (aValSrf.size()!=np){ return CVec3d(0, 0, 0); }
   CVec3d gradphi_pos = CVec3d(0, 0, 0);
   phi_pos = 0;
@@ -475,7 +475,7 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int> &aTri)
 {
-  const unsigned int nt = aTri.size()/3;
+  const unsigned int nt = static_cast<unsigned int>(aTri.size()/3);
   if (aValTri.size()!=nt){
     gradphi_pos = CVec3d(0,0,0);
     return;
@@ -531,12 +531,12 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
 
 // ---------------------------------------------
 
-void delfem2::BEM_VortexSheet_Coeff_0th
-(double aC[4], 
-const CVec3d& x0, const CVec3d& x1, const CVec3d& x2,
-const CVec3d& y0, const CVec3d& y1, const CVec3d& y2,
-const CVec3d& velo,
-int ngauss)
+void delfem2::BEM_VortexSheet_Coeff_0th(
+	double aC[4], 
+	const CVec3d& x0, const CVec3d& x1, const CVec3d& x2,
+	const CVec3d& y0, const CVec3d& y1, const CVec3d& y2,
+	const CVec3d& velo,
+	int ngauss)
 {
   assert(ngauss>=0&&ngauss<6);
   const int nint = NIntTriGauss[ngauss]; // number of integral points
@@ -835,9 +835,9 @@ void delfem2::viscousityVortexParticleGrid
   double wx = max_x-min_x;
   double wy = max_y-min_y;
   double wz = max_z-min_z;
-  grid.nx = wx/h+1;
-  grid.ny = wy/h+1;
-  grid.nz = wz/h+1;
+  grid.nx = static_cast<int>(wx/h)+1;
+  grid.ny = static_cast<int>(wy/h)+1;
+  grid.nz = static_cast<int>(wz/h)+1;
   const int nx = grid.nx;
   const int ny = grid.ny;
   const int nz = grid.nz;
@@ -849,9 +849,9 @@ void delfem2::viscousityVortexParticleGrid
   }
   for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     CVec3d p = aVortexParticle[ivp].pos;
-    int ix = (p.x-(grid.cnt.x-h*nx*0.5))/h;
-    int iy = (p.y-(grid.cnt.y-h*ny*0.5))/h;
-    int iz = (p.z-(grid.cnt.z-h*nz*0.5))/h;
+    int ix = static_cast<int>((p.x-(grid.cnt.x-h*nx*0.5))/h);
+    int iy = static_cast<int>((p.y-(grid.cnt.y-h*ny*0.5))/h);
+    int iz = static_cast<int>((p.z-(grid.cnt.z-h*nz*0.5))/h);
     assert(ix>=0&&ix<nx);
     assert(iy>=0&&iy<ny);
     assert(iz>=0&&iz<nz);

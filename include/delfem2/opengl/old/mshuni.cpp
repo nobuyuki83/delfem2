@@ -843,9 +843,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Face(
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
     const double *aXY,
-    unsigned int nXY,
+    size_t nXY,
     const unsigned int *aTri,
-    unsigned int nTri,
+    size_t nTri,
     const double *aDisp,
     int nstride_disp) {
   namespace lcl = ::delfem2::opengl::old::mshuni;
@@ -912,9 +912,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge(
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceColor(
     const unsigned int *aTri,
-    unsigned int nTri,
+    size_t nTri,
     const double *aXY,
-    unsigned int nXY,
+    size_t nXY,
     const double *aColor) {
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri = 0; itri < nTri; itri++) {
@@ -1450,16 +1450,18 @@ DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_Edge(
 }
 
 DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_EdgeDisp(
-    const double *aXYZ,
-    const unsigned int nXYZ,
-    const unsigned int *aHex,
-    const unsigned int nHex,
-    const double *aDisp) {
+    const double *vtx_xyz,
+    size_t num_vtx,
+    const unsigned int *hex_vtx_idx,
+    size_t num_hex,
+    const double *displacement_xyz_vtx) {
   namespace lcl = ::delfem2::opengl::old::mshuni;
   ::glBegin(GL_LINES);
-  for (unsigned int ihex = 0; ihex < nHex; ihex++) {
+  for (unsigned int ihex = 0; ihex < num_hex; ihex++) {
     double aP[8][3];
-    lcl::FetchDeformedPosition<8, 3>(aP, aHex + ihex * 8, aXYZ, aDisp, 1.);
+    lcl::FetchDeformedPosition<8, 3>(
+        aP, hex_vtx_idx + ihex * 8,
+        vtx_xyz, displacement_xyz_vtx, 1.);
     for (auto iedge : lcl::noelEdge_Hex) {
       ::glVertex3dv(aP[iedge[0]]);
       ::glVertex3dv(aP[iedge[1]]);

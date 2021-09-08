@@ -543,7 +543,7 @@ DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(
 
 DFM2_INLINE void delfem2::Check_BVH(
 	const std::vector<CNodeBVH2>& aNodeBVH,
-	unsigned int N)
+	size_t N)
 {
   std::vector<int> aFlg(N,0);
   bvh::mark_child(aFlg, 0, aNodeBVH);
