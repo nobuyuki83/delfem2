@@ -35,7 +35,7 @@ class CRigidBodyState {
   CVec3d velo;
   CVec3d Omega;
  public:
-  CRigidBodyState Step(double dt, const std::vector<CVec3d> &vOpA) const {
+  [[nodiscard]] CRigidBodyState Step(double dt, const std::vector<CVec3d> &vOpA) const {
     CRigidBodyState rb_out;
     rb_out.velo = velo + dt * vOpA[0];
     rb_out.Omega = Omega + dt * vOpA[1];
@@ -67,7 +67,7 @@ std::vector<CVec3d> VelocityRigidBody(
     const CRigidBodyInertia &rbi,
     const CRigidBodyForceModel &rbfm) {
   CVec3d F, T;
-  rbfm.GetForceTorque(F, T);
+  delfem2::CRigidBodyForceModel::GetForceTorque(F, T);
   std::vector<CVec3d> V(4);
   V[0] = (rbs.R * F) * (1.0 / rbi.mass);
   V[1] = rbi.invIrot * ((rbs.Omega ^ (rbi.Irot * rbs.Omega)) + T);
@@ -134,10 +134,14 @@ void myGlutDisplay(
   ::glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0, 0, 0);
-  dfm2::opengl::DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size() / 3, aTri.data(), aTri.size() / 3);
+  dfm2::opengl::DrawMeshTri3D_Edge(
+      aXYZ.data(), aXYZ.size() / 3,
+      aTri.data(), aTri.size() / 3);
   ::glEnable(GL_LIGHTING);
   ::glColor3d(1, 1, 1);
-  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size() / 3);
+  dfm2::opengl::DrawMeshTri3D_FaceNorm(
+      aXYZ.data(),
+      aTri.data(), aTri.size() / 3);
   ::glPopMatrix();
 }
 

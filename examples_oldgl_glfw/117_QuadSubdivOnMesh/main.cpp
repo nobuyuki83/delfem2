@@ -182,9 +182,7 @@ void myGlutDisplay()
   ::glEnable(GL_DEPTH_TEST);
 }
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();

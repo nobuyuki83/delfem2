@@ -239,8 +239,8 @@ void SolveProblem_Poisson(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np;
   // -----------------------
   const double alpha = 1.0;
   const double source = 1.0;
@@ -439,7 +439,7 @@ void SolveProblem_LinearSolid_Static(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const auto np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 2;
   // ----------------------
   double myu = 10.0;
@@ -486,7 +486,7 @@ void SolveProblem_LinearSolid_Dynamic(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const auto np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 2;
   // ------------------
   double myu = 10.0;
@@ -538,7 +538,7 @@ void ProblemSolid(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const auto np = static_cast<unsigned int>(aXY1.size() / 2);
   dfm2::CMatrixSparse<double> mat_A;
   dfm2::CPreconditionerILU<double> ilu_A;
   std::vector<int> aBCFlag;
@@ -695,7 +695,7 @@ void SolveProblem_Stokes_Static(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const auto np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 3;
   // ---------------------
   double myu = 1.0;
@@ -742,7 +742,7 @@ void SolveProblem_Stokes_Dynamic(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const auto np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 3;
   // --------------------
   double myu = 1.0;
@@ -795,7 +795,7 @@ void SolveProblem_NavierStokes_Dynamic(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     const std::vector<int> &aBCFlag) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const auto np = static_cast<unsigned int>(aXY1.size() / 2);
   const unsigned int nDoF = np * 3;
   // ----------------------
   double myu = 0.01;
@@ -845,7 +845,7 @@ void DrawVelocityField(
   ::glColor3d(0, 0, 0);
   delfem2::opengl::DrawPoints2D_Vectors(
 	  aXY1.data(), 
-	  static_cast<unsigned int>(aXY1.size() / 2),
+	  aXY1.size() / 2,
 	  aVal.data(), 3, 0, 0.1);
   ::glPointSize(2);
   ::glColor3d(0, 0, 0);

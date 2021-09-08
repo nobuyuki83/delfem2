@@ -117,7 +117,8 @@ int main()
 
   std::vector<unsigned int> elsup_ind, elsup;
   dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
-      aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
+      aTri.data(), aTri.size()/3, 3,
+      aXYZ.size()/3);
 
   std::vector<unsigned int> aTriSuTri;
   ElSuEl_MeshElem(aTriSuTri,
@@ -138,7 +139,7 @@ int main()
     dfm2::DijkstraElem_MeshElemGeo3(
         aDist, aOrder, expmap,
         ielm_ker,
-        aTri, static_cast<unsigned int>(aTri.size() / 3),
+        aTri, aTri.size() / 3,
         aXYZ,
         aTriSuTri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];

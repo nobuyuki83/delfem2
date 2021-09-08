@@ -381,17 +381,17 @@ template void delfem2::Scale_PointsX(std::vector<double> &, double);
 template<typename T>
 void delfem2::Scale_Points(
     T *aVec,
-    const unsigned int np,
+    const size_t np,
     const unsigned int ndim,
     const T s) {
-  const unsigned int n = np * ndim;
+  const size_t n = np * ndim;
   for (unsigned int i = 0; i < n; i++) { aVec[i] *= s; }
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Scale_Points(
-    float *, unsigned int, unsigned int, float);
+    float *, size_t, unsigned int, float);
 template void delfem2::Scale_Points(
-    double *, unsigned int, unsigned int, double);
+    double *, size_t, unsigned int, double);
 #endif
 
 // --------------

@@ -159,8 +159,9 @@ void SetProblem(int iprob) {
      public:
       [[nodiscard]] double SignedDistance(double x, double y, double z) const override {
         dfm2::CVec3d n0;
-        return obj.SignedDistanceFunction(n0,
-                                          dfm2::CVec3d(x, y, z), aXYZ_Tri, aTri, aNorm);
+        return obj.SignedDistanceFunction(
+            n0,
+            dfm2::CVec3d(x, y, z), aXYZ_Tri, aTri, aNorm);
       }
       void Level(
           int &ilevel_vol, int &ilevel_srf, int &nlayer, double &sdf,

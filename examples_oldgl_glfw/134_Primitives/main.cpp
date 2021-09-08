@@ -57,8 +57,9 @@ int main() {
     }
     // --------------
     dfm2::MeshQuad2D_Grid(aXYZ, aElm, 16, 8);
-    dfm2::Scale_Points(aXYZ.data(), 
-		static_cast<unsigned int>(aXYZ.size() / 3), 3, 0.1);
+    dfm2::Scale_Points(
+        aXYZ.data(), aXYZ.size() / 3, 3,
+        0.1);
     for (int iframe = 0; iframe < 30; ++iframe) {
       viewer.DrawBegin_oldGL();
       ::glColor3d(0, 0, 0);
@@ -119,8 +120,8 @@ int main() {
     }
     // ----
     dfm2::MeshTri3D_Icosahedron(aXYZ, aElm);
-    dfm2::Scale_Points(aXYZ.data(),
-		static_cast<unsigned int>(aXYZ.size() / 3), 3, 0.5);
+    dfm2::Scale_Points(
+        aXYZ.data(), aXYZ.size() / 3, 3, 0.5);
     for (int iframe = 0; iframe < 30; ++iframe) {
       viewer.DrawBegin_oldGL();
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
@@ -155,8 +156,9 @@ int main() {
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // -----
-    dfm2::MeshTri3D_Disk(aXYZ, aElm,
-                         0.5, 8, 32);
+    dfm2::MeshTri3D_Disk(
+        aXYZ, aElm,
+        0.5, 8, 32);
     for (int iframe = 0; iframe < 30; ++iframe) {
       viewer.DrawBegin_oldGL();
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);

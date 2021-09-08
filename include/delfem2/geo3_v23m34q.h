@@ -71,21 +71,35 @@ DFM2_INLINE void SetDiag(CMat3d &m, const CVec3d &d);
 
 DFM2_INLINE void SetRotMatrix_Cartesian(CMat3d &m, const CVec3d &v);
 
-void SetSpinTensor(CMat3d &m, const CVec3d &vec0);
-void SetOuterProduct(CMat3d &m,
-                     const CVec3d &vec0,
-                     const CVec3d &vec1);
-CVec3d GetSpinVector(const CMat3d &m);
-CVec3d GetCartesianRotationVector(const CMat3d &m);
+void SetSpinTensor(
+    CMat3d &m,
+    const CVec3d &vec0);
+
+void SetOuterProduct(
+    CMat3d &m,
+    const CVec3d &vec0,
+    const CVec3d &vec1);
+
+CVec3d GetSpinVector(
+    const CMat3d &m);
+
+CVec3d GetCartesianRotationVector(
+    const CMat3d &m);
 
 CMat3d Mat3(const CVec3d &vec0,
             const CVec3d &vec1,
             const CVec3d &vec2);
 CMat3d Mat3(const CVec3d &vec0);
-CMat3d Mat3(const CVec3d &vec0,
-            const CVec3d &vec1);
-CMat3d RotMatrix_Cartesian(const CVec3d &v);
-CMat3d Mat3_RotCartesian(const CVec3d &vec0);
+
+CMat3d Mat3(
+    const CVec3d &vec0,
+    const CVec3d &vec1);
+
+CMat3d RotMatrix_Cartesian(
+    const CVec3d &v);
+
+CMat3d Mat3_RotCartesian(
+    const CVec3d &vec0);
 
 /**
  * @brief output outer product Vec0 * Vec1^T
@@ -120,26 +134,32 @@ DFM2_INLINE void Mat4_ScaleMatTransl(
  * @param v (in) rotation to
  */
 template<typename REAL>
-CMat3<REAL> Mat3_MinimumRotation
-    (const CVec3<REAL> &V,
-     const CVec3<REAL> &v);
+CMat3<REAL> Mat3_MinimumRotation(
+    const CVec3<REAL> &V,
+    const CVec3<REAL> &v);
 
 // ----------------------
 // below: inertia tensor
 
-CMat3d Mat3_IrotTri(const CVec3d &d0,
-                    const CVec3d &d1,
-                    const CVec3d &d2);
+CMat3d Mat3_IrotTri(
+    const CVec3d &d0,
+    const CVec3d &d1,
+    const CVec3d &d2);
 
 /**
  * @brief moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
  */
-CMat3d Mat3_IrotTriSolid(const CVec3d &d0,
-                         const CVec3d &d1,
-                         const CVec3d &d2);
-CMat3d Mat3_IrotLineSeg(const CVec3d &d0,
-                        const CVec3d &d1);
-CMat3d Mat3_IrotPoint(const CVec3d &d0);
+CMat3d Mat3_IrotTriSolid(
+    const CVec3d &d0,
+    const CVec3d &d1,
+    const CVec3d &d2);
+
+CMat3d Mat3_IrotLineSeg(
+    const CVec3d &d0,
+    const CVec3d &d1);
+
+CMat3d Mat3_IrotPoint(
+    const CVec3d &d0);
 
 // above: inertia tensor
 // ----------------------
@@ -200,4 +220,4 @@ DFM2_INLINE bool Distortion_MappingTriangleFrom2To3Dim(
 #  include "delfem2/geo3_v23m34q.cpp"
 #endif
 
-#endif /* vec23mat3quat_hpp */
+#endif /* DFM2_V23M34Q_H */

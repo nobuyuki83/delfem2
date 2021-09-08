@@ -129,9 +129,9 @@ DFM2_INLINE void DrawMeshElem3D_Scalar_Vtx(
 // 3D value
 DFM2_INLINE void DrawMeshTet3D_ScalarP1(
     const double *aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int *aTet,
-    unsigned int nTet,
+    size_t nTet,
     const double *aValSrf,
     const std::vector<std::pair<double, CColor> > &colorMap);
 

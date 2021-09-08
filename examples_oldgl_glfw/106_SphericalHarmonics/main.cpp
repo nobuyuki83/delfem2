@@ -74,9 +74,9 @@ static void drawShphere_Heatmap(
   ::glEnd();
 }
 
-static void drawShphere_Radius
-(double (*value)(double,double,double),
- void (*color)(double) )
+static void drawShphere_Radius(
+    double (*value)(double,double,double),
+    void (*color)(double) )
 {
   const double pi = 3.1415926535;
   int nla = 64; double dla = pi/nla;

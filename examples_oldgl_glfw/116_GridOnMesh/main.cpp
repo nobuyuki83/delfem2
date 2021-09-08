@@ -94,15 +94,15 @@ void InitializeProblem() {
 void UpdateProblem() {
   {
     aPES0.clear();
-    dfm2::CVec3d dir(0,0,-1);
-    for( auto o2d : pos2d_org_corner ) {
-      const dfm2::CVec3d o3d(o2d[0],o2d[1],10);
-      std::map<double,dfm2::CPtElm2<double>> mapDepthPES;
+    dfm2::CVec3d dir(0, 0, -1);
+    for (auto o2d : pos2d_org_corner) {
+      const dfm2::CVec3d o3d(o2d[0], o2d[1], 10);
+      std::map<double, dfm2::CPtElm2<double>> mapDepthPES;
       IntersectionRay_MeshTri3(
           mapDepthPES,
-          o3d,dir,aTri,aXYZ,
+          o3d, dir, aTri, aXYZ,
           0.0);
-      if( !mapDepthPES.empty() ){
+      if (!mapDepthPES.empty()) {
         aPES0.push_back(mapDepthPES.begin()->second);
       }
       /*
@@ -122,84 +122,81 @@ void UpdateProblem() {
   {
     aNorm.resize(aXYZ.size());
     dfm2::Normal_MeshTri3D(aNorm.data(),
-        aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
+                           aXYZ.data(), aXYZ.size() / 3, aTri.data(), aTri.size() / 3);
   }
   {
     aPES1.clear();
-    dfm2::CVec3d p0 = aPES0[0].Pos_Tri(aXYZ,aTri);
-    dfm2::CVec3d p1 = aPES0[1].Pos_Tri(aXYZ,aTri);
-    dfm2::CVec3d p2 = aPES0[2].Pos_Tri(aXYZ,aTri);
-    dfm2::CVec3d p3 = aPES0[3].Pos_Tri(aXYZ,aTri);
-    dfm2::CVec3d n0 = aPES0[0].UNorm_Tri(aXYZ,aTri,aNorm);
-    dfm2::CVec3d n1 = aPES0[1].UNorm_Tri(aXYZ,aTri,aNorm);
-    dfm2::CVec3d n2 = aPES0[2].UNorm_Tri(aXYZ,aTri,aNorm);
-    dfm2::CVec3d n3 = aPES0[3].UNorm_Tri(aXYZ,aTri,aNorm);
-    for(unsigned int i=0;i<ndiv+1;++i){
-      for(unsigned int j=0;j<ndiv+1;++j) {
-        double ri = (double)i/ndiv;
-        double rj = (double)j/ndiv;
-        double r0 = (1-ri)*(1-rj);
-        double r1 = ri*(1-rj);
-        double r2 = ri*rj;
-        double r3 = (1-ri)*rj;
-        const dfm2::CVec3d pA = r0*p0 + r1*p1 + r2*p2 + r3*p3;
-        const dfm2::CVec3d nA = r0*n0 + r1*n1 + r2*n2 + r3*n3;
+    dfm2::CVec3d p0 = aPES0[0].Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3d p1 = aPES0[1].Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3d p2 = aPES0[2].Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3d p3 = aPES0[3].Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3d n0 = aPES0[0].UNorm_Tri(aXYZ, aTri, aNorm);
+    dfm2::CVec3d n1 = aPES0[1].UNorm_Tri(aXYZ, aTri, aNorm);
+    dfm2::CVec3d n2 = aPES0[2].UNorm_Tri(aXYZ, aTri, aNorm);
+    dfm2::CVec3d n3 = aPES0[3].UNorm_Tri(aXYZ, aTri, aNorm);
+    for (unsigned int i = 0; i < ndiv + 1; ++i) {
+      for (unsigned int j = 0; j < ndiv + 1; ++j) {
+        double ri = (double) i / ndiv;
+        double rj = (double) j / ndiv;
+        double r0 = (1 - ri) * (1 - rj);
+        double r1 = ri * (1 - rj);
+        double r2 = ri * rj;
+        double r3 = (1 - ri) * rj;
+        const dfm2::CVec3d pA = r0 * p0 + r1 * p1 + r2 * p2 + r3 * p3;
+        const dfm2::CVec3d nA = r0 * n0 + r1 * n1 + r2 * n2 + r3 * n3;
         const std::vector<dfm2::CPtElm2<double>> aPES = IntersectionLine_MeshTri3(
             pA, nA,
             aTri, aXYZ,
             0.0);
-        std::map<double,dfm2::CPtElm2<double>> mapPES;
-        for(auto pes : aPES){
-          dfm2::CVec3d p_intersec = pes.Pos_Tri(aXYZ,aTri);
-          mapPES.insert( std::make_pair( Distance(p_intersec,pA), pes) );
+        std::map<double, dfm2::CPtElm2<double>> mapPES;
+        for (auto pes : aPES) {
+          dfm2::CVec3d p_intersec = pes.Pos_Tri(aXYZ, aTri);
+          mapPES.insert(std::make_pair(Distance(p_intersec, pA), pes));
         }
-        if( mapPES.empty() ) {
+        if (mapPES.empty()) {
           aPES1.emplace_back();
-        }
-        else {
+        } else {
           aPES1.push_back(mapPES.begin()->second);
         }
       }
     }
-    assert( aPES1.size() == (ndiv+1)*(ndiv+1) );
+    assert(aPES1.size() == (ndiv + 1) * (ndiv + 1));
   }
 
 }
 
 // -----------------------------------------------------
 
-void myGlutDisplay()
-{
+void myGlutDisplay() {
   ::glEnable(GL_LIGHTING);
   { // ball
     ::glDisable(GL_TEXTURE_2D);
-    float gray[4] = {1.0f,0.0f,0.0f,1.f};
+    float gray[4] = {1.0f, 0.0f, 0.0f, 1.f};
     ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, gray);
-    float shine[4] = {0,0,0,0};
+    float shine[4] = {0, 0, 0, 0};
     ::glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, shine);
     ::glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127.0);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   }
-  for(auto PES : aPES0){
-    auto v0 = PES.Pos_Tri(aXYZ,aTri);
-    float gray[4] = {0.0f,0.0f,1.0f,1.f};
+  for (auto PES : aPES0) {
+    auto v0 = PES.Pos_Tri(aXYZ, aTri);
+    float gray[4] = {0.0f, 0.0f, 1.0f, 1.f};
     ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, gray);
-    dfm2::opengl::DrawSphereAt(32,32,0.02, v0.x,v0.y,v0.z);
+    dfm2::opengl::DrawSphereAt(32, 32, 0.02, v0.x, v0.y, v0.z);
   }
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_DEPTH_TEST);
   ::glBegin(GL_QUADS);
-  for(unsigned int idiv=0;idiv<ndiv;++idiv){
-    for(unsigned int jdiv=0;jdiv<ndiv;++jdiv){
-      dfm2::CVec3d p0 = aPES1[(idiv+0)*(ndiv+1)+(jdiv+0)].Pos_Tri(aXYZ,aTri);
-      dfm2::CVec3d p1 = aPES1[(idiv+1)*(ndiv+1)+(jdiv+0)].Pos_Tri(aXYZ,aTri);
-      dfm2::CVec3d p2 = aPES1[(idiv+1)*(ndiv+1)+(jdiv+1)].Pos_Tri(aXYZ,aTri);
-      dfm2::CVec3d p3 = aPES1[(idiv+0)*(ndiv+1)+(jdiv+1)].Pos_Tri(aXYZ,aTri);
-      if( (idiv+jdiv)%2 == 0 ){
-        ::glColor3d(0,0,0);
-      }
-      else{
-        ::glColor3d(1,1,1);
+  for (unsigned int idiv = 0; idiv < ndiv; ++idiv) {
+    for (unsigned int jdiv = 0; jdiv < ndiv; ++jdiv) {
+      dfm2::CVec3d p0 = aPES1[(idiv + 0) * (ndiv + 1) + (jdiv + 0)].Pos_Tri(aXYZ, aTri);
+      dfm2::CVec3d p1 = aPES1[(idiv + 1) * (ndiv + 1) + (jdiv + 0)].Pos_Tri(aXYZ, aTri);
+      dfm2::CVec3d p2 = aPES1[(idiv + 1) * (ndiv + 1) + (jdiv + 1)].Pos_Tri(aXYZ, aTri);
+      dfm2::CVec3d p3 = aPES1[(idiv + 0) * (ndiv + 1) + (jdiv + 1)].Pos_Tri(aXYZ, aTri);
+      if ((idiv + jdiv) % 2 == 0) {
+        ::glColor3d(0, 0, 0);
+      } else {
+        ::glColor3d(1, 1, 1);
       }
       dfm2::opengl::myGlVertex(p0);
       dfm2::opengl::myGlVertex(p1);
@@ -211,10 +208,7 @@ void myGlutDisplay()
   ::glEnable(GL_DEPTH_TEST);
 }
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
-{
+int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
@@ -226,11 +220,10 @@ int main(
   UpdateProblem();
 
   int iframe = 0;
-  while (!glfwWindowShouldClose(viewer.window))
-  {
+  while (!glfwWindowShouldClose(viewer.window)) {
     iframe += 1;
-    pos2d_org_corner[2][0] = +0.2+0.1*sin(iframe*0.2);
-    pos2d_org_corner[2][1] = +0.0+0.1*cos(iframe*0.2);
+    pos2d_org_corner[2][0] = +0.2 + 0.1 * sin(iframe * 0.2);
+    pos2d_org_corner[2][1] = +0.0 + 0.1 * cos(iframe * 0.2);
     UpdateProblem();
     // -------
     viewer.DrawBegin_oldGL();

@@ -49,7 +49,7 @@ void Coarse(double px, double py)
     std::vector< std::pair<unsigned int,unsigned int> > aTriSuP;
     GetTriArrayAroundPoint(aTriSuP,
                            ip,aPo2D,aETri);
-    std::vector<int> aPSuP(aTriSuP.size());
+    std::vector<unsigned int> aPSuP(aTriSuP.size());
     const auto npsup = static_cast<unsigned int>(aPSuP.size());
     for(unsigned int iit=0;iit<npsup;++iit){
       const unsigned int itri0 = aTriSuP[iit].first;
@@ -59,12 +59,12 @@ void Coarse(double px, double py)
     }
     std::map<double,int> mapDistTri;
     for(unsigned int iit=0;iit<npsup;++iit){
-      int ip1 = aPSuP[iit];
+      unsigned int ip1 = aPSuP[iit];
       double d01 = Distance(aVec2[ip],aVec2[ip1]);
       double min_area = 0.0;
       for(unsigned int jjt=0;jjt<npsup-2;++jjt){
-        const int ip2 = aPSuP[(iit+jjt+1)%npsup];
-        const int ip3 = aPSuP[(iit+jjt+2)%npsup];
+        const unsigned int ip2 = aPSuP[(iit+jjt+1)%npsup];
+        const unsigned int ip3 = aPSuP[(iit+jjt+2)%npsup];
         double area = Area_Tri(aVec2[ip1],aVec2[ip2],aVec2[ip3]);
         if( jjt == 0 || area < min_area ){ min_area = area; }
       }

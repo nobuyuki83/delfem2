@@ -30,9 +30,7 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char* argv[])
+int main()
 {
   // shape definition
   std::vector<double> aXYZ0; // undeformed vertex positions
@@ -95,7 +93,7 @@ int main(
     {
       cur_time += 0.02;
       double d = sin(cur_time);
-      for(int ip=0;ip<(int)aXYZ.size()/3;ip++){
+      for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
         aXYZ[ip*3+0] =  aXYZ0[ip*3+0] + aUVW[ip*3+0]*d;
         aXYZ[ip*3+1] =  aXYZ0[ip*3+1] + aUVW[ip*3+1]*d;
         aXYZ[ip*3+2] =  aXYZ0[ip*3+2] + aUVW[ip*3+2]*d;

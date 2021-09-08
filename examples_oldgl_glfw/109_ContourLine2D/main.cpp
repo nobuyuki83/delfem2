@@ -33,86 +33,85 @@ std::vector<delfem2::CSegInfo> aSeg;
 
 // ---------------------------
 
-void myGlutDisplay()
-{
+void myGlutDisplay() {
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(1);
   delfem2::opengl::DrawMeshTri2D_Edge(
-      aXY.data(), aXY.size()/2,
-      aTri.data(), aTri.size()/3);
-  
-  std::vector< std::pair<double,delfem2::CColor> > colorMap;
-  delfem2::ColorMap_BlueCyanGreenYellowRed(colorMap,
-                                           -1, 1);
+      aXY.data(), aXY.size() / 2,
+      aTri.data(), aTri.size() / 3);
+
+  std::vector<std::pair<double, delfem2::CColor> > colorMap;
+  delfem2::ColorMap_BlueCyanGreenYellowRed(
+      colorMap,
+      -1, 1);
   delfem2::opengl::DrawMeshTri2D_ScalarP1(
-	  aXY.data(), aXY.size()/2,
-	  aTri.data(), aTri.size()/3,
-	  aVal.data(), 1,
-	  colorMap);
+      aXY.data(), aXY.size() / 2,
+      aTri.data(), aTri.size() / 3,
+      aVal.data(), 1,
+      colorMap);
   ::glLineWidth(5);
   ::glBegin(GL_LINES);
-  ::glColor3d(0,0,0);
-  for(auto & iseg : aSeg){
+  ::glColor3d(0, 0, 0);
+  for (auto &iseg : aSeg) {
     double pA[2], pB[2];
-    iseg.Pos2D(pA,pB,
-                     aXY.data(), aTri.data());
+    iseg.Pos2D(pA, pB,
+               aXY.data(), aTri.data());
     ::glVertex2dv(pA);
     ::glVertex2dv(pB);
   }
   ::glEnd();
-  
+
 }
 
-void Hoge()
-{
+void Hoge() {
   { // make mesh
     const int ndiv = 16;
     std::vector<unsigned int> aQuad;
-    delfem2::MeshQuad2D_Grid(aXY, aQuad,
-        ndiv,ndiv);
-    delfem2::convert2Tri_Quad(aTri,
+    delfem2::MeshQuad2D_Grid(
+        aXY, aQuad,
+        ndiv, ndiv);
+    delfem2::convert2Tri_Quad(
+        aTri,
         aQuad);
-    delfem2::Translate_Points2(aXY,
-        -ndiv*0.5, -ndiv*0.5);
-    delfem2::Scale_PointsX(aXY,
-        1.0/ndiv);
+    delfem2::Translate_Points2(
+        aXY,
+        -ndiv * 0.5, -ndiv * 0.5);
+    delfem2::Scale_PointsX(
+        aXY,
+        1.0 / ndiv);
   }
-  
+
   { // make value
-    const size_t np = aXY.size()/2;
+    const size_t np = aXY.size() / 2;
     aVal.resize(np);
-    for(size_t ip=0;ip<np;++ip){
-      double x0 = aXY[ip*2+0];
-      double y0 = aXY[ip*2+1];
-      aVal[ip] = sqrt(x0*x0+y0*y0)*4.0-1.5;
+    for (size_t ip = 0; ip < np; ++ip) {
+      double x0 = aXY[ip * 2 + 0];
+      double y0 = aXY[ip * 2 + 1];
+      aVal[ip] = sqrt(x0 * x0 + y0 * y0) * 4.0 - 1.5;
     }
   }
-  
 
-  
 }
 
-int main()
-{
+int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  
+
   viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode  = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+
   Hoge();
-  
-  while (!glfwWindowShouldClose(viewer.window))
-  {
+
+  while (!glfwWindowShouldClose(viewer.window)) {
     {
       static int iframe = 0;
-      double thres = 0.9*sin(iframe*0.001);
+      double thres = 0.9 * sin(iframe * 0.001);
       aSeg.clear();
       delfem2::AddContour(aSeg,
-          thres,
-          aTri.data(), aTri.size()/3,
-          aVal.data());
+                          thres,
+                          aTri.data(), aTri.size() / 3,
+                          aVal.data());
       iframe += 1;
     }
     // ------------------

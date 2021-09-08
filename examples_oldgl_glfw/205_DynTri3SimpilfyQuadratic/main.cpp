@@ -102,7 +102,7 @@ void QuadErrorMetric_MeshDTri3(
     std::vector<dfm2::CDynTri>& aDTri,
     std::vector<dfm2::CVec3d>& aVec3)
 {
-  const unsigned int np = static_cast<unsigned int>(aDP.size());
+  const auto np = static_cast<unsigned int>(aDP.size());
   aSymMat4.assign(np*10, 0.0);
   for(unsigned int ip=0;ip<np;++ip){
     std::vector< std::pair<unsigned int,unsigned int> > aTriSurPo;
@@ -194,7 +194,7 @@ void RemoveOnePoint(
   bool res = CollapseEdge_MeshDTri(itri0, ied0, aDP, aDTri);
   if( !res ){ return; }
 #if !defined(NDEBUG)
-  if( res ){ assert( aDP[ip_del].e == UINT_MAX ); }
+  assert( aDP[ip_del].e == UINT_MAX );
   AssertDTri(aDTri);
   AssertMeshDTri(aDP, aDTri);
 #endif
@@ -246,7 +246,7 @@ int main()
 		std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
 		aXYZ0,aTri0);
     dfm2::Normalize_Points3(aXYZ0,2.0);
-    const auto np = static_cast<unsigned int>(aXYZ0.size()/3);
+    const size_t np = aXYZ0.size()/3;
     aDP.resize(np);
     aVec3.resize(np);
     for(unsigned int ipo=0;ipo<aDP.size();ipo++){
@@ -256,8 +256,8 @@ int main()
     }
     InitializeMesh(
 		aDP, aDTri,
-		aTri0.data(),static_cast<unsigned int>(aTri0.size()/3),
-		static_cast<unsigned int>(aVec3.size()));
+		aTri0.data(),aTri0.size()/3,
+		aVec3.size());
 #if !defined(NDEBUG)
     AssertDTri(aDTri);
     AssertMeshDTri(aDP, aDTri);
