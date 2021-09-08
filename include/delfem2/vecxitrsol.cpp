@@ -180,8 +180,8 @@ void delfem2::ScaleX(
   for (unsigned int i = 0; i < n; ++i) { p0[i] *= s; }
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::ScaleX(float *p0, float s, unsigned int n);
-template void delfem2::ScaleX(double *p0, double s, unsigned int n);
+template void delfem2::ScaleX(float *p0, float s, size_t n);
+template void delfem2::ScaleX(double *p0, double s, size_t n);
 #endif
 
 

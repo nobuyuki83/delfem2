@@ -5,6 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include <iostream>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -83,9 +84,8 @@ int main()
   while(true){
     viewer.Draw();
     glfwPollEvents();
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+	if (glfwWindowShouldClose(viewer.window)) { break; }
   }
-EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
