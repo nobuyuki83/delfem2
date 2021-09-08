@@ -95,7 +95,7 @@ DFM2_INLINE void delfem2::PBD_Update_Const3(
   double lmd[nc];
   MatVec3(lmd, Ainv, C);
   for (int ine = 0; ine < np; ++ine) {
-    const int ip0 = aIP[ine];
+    const unsigned int ip0 = aIP[ine];
     for (int ic = 0; ic < nc; ++ic) {
       for (int idim = 0; idim < ndim; ++idim) {
         aXYZt[ip0 * 3 + idim] -= ratio * MinvC[ic * np * ndim + ine * ndim + idim] * lmd[ic];
@@ -490,9 +490,9 @@ DFM2_INLINE void delfem2::PBD_CdC_QuadBend(
 
 DFM2_INLINE void delfem2::PBD_Seam(
     double *aXYZt,
-    [[maybe_unused]] unsigned int nXYZ,
+    [[maybe_unused]] size_t nXYZ,
     const unsigned int *aLine,
-    unsigned int nline) {
+    size_t nline) {
   for (unsigned int il = 0; il < nline; ++il) {
     const unsigned int ip0 = aLine[il * 2 + 0];
     const unsigned int ip1 = aLine[il * 2 + 1];

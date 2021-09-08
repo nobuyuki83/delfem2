@@ -216,8 +216,8 @@ void InitializeProblem_Solid(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np * 2;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 2;
   // ----------------
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -227,7 +227,7 @@ void InitializeProblem_Solid(
     aBCFlag[ip * 2 + 0] = 1;
     aBCFlag[ip * 2 + 1] = 1;
   }
-  aMSFlag.assign(nDoF, -1);
+  aMSFlag.assign(nDoF, UINT_MAX);
   { // master slave
     int iseed = -1;
     for (unsigned int ip = 0; ip < np; ++ip) {

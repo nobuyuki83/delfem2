@@ -68,7 +68,7 @@ int main() {
   std::vector<std::complex<double> > vec_b;
   // ----------------------
   {
-    const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+    const auto np = static_cast<unsigned int>(aXY1.size() / 2);
     aCVal.assign(np, std::complex<double>(0.0));
     aBCFlag.resize(np, 0);
     aBCFlag[ipCenter] = 1;
@@ -84,7 +84,7 @@ int main() {
     ilu_A.SetPattern0(mat_A);
   }
   {
-    const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+    const auto np = static_cast<unsigned int>(aXY1.size() / 2);
     const unsigned int nDoF = np;
     const double wave_length = 0.4;
     mat_A.setZero();
@@ -92,15 +92,15 @@ int main() {
     dfm2::MergeLinSys_Helmholtz_MeshTri2D(
         mat_A, vec_b.data(),
         wave_length,
-        aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-        aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+        aXY1.data(), aXY1.size() / 2,
+        aTri1.data(), aTri1.size() / 3,
         aCVal.data());
     for (auto &ipl : aaIP) {
       dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
           mat_A, vec_b.data(),
           wave_length,
-          aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-          ipl.data(), static_cast<unsigned int>(ipl.size()),
+          aXY1.data(), aXY1.size() / 2,
+          ipl.data(), ipl.size(),
           aCVal.data());
     }
     mat_A.SetFixedBC(aBCFlag.data());
@@ -117,8 +117,9 @@ int main() {
      std::vector<double> aConv = Solve_BiCGSTAB_Complex(vec_b, vec_x,
      1.0e-4,400, mat_A);
      */
-    std::vector<double> aConv = Solve_PCOCG(vec_b.data(), vec_x.data(),
-                                            1.0e-4, 400, mat_A, ilu_A);
+    std::vector<double> aConv = Solve_PCOCG(
+        vec_b.data(), vec_x.data(),
+        1.0e-4, 400, mat_A, ilu_A);
     std::cout << aConv.size() << " " << aConv[aConv.size() - 1] << std::endl;
 
     for (size_t ic = 0; ic < aConv.size(); ++ic) {

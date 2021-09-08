@@ -73,8 +73,10 @@ void GenMesh(
 void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
     double *aMassLumpedSqrtInv,
     double *aModesKer,
-    const double *aXYZ, unsigned int nXYZ,
-    const unsigned int *aTet, unsigned int nTet) {
+    const double *aXYZ,
+    size_t nXYZ,
+    const unsigned int *aTet,
+    size_t nTet) {
   const unsigned int nDoF = nXYZ * 3;
   std::vector<double> aMassLumpedSqrt(nXYZ);
   dfm2::MassPoint_Tet3D(aMassLumpedSqrt.data(),
@@ -179,7 +181,7 @@ void InitializeProblem_ShellEigenPB() {
   dfm2::JArray_PSuP_MeshElem(
       psup_ind, psup,
       aTet.data(), aTet.size() / 4, 4,
-      (int) aXYZ.size() / 3);
+      aXYZ.size() / 3);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(
@@ -192,8 +194,8 @@ void InitializeProblem_ShellEigenPB() {
   SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
       aMassLumpedSqrtInv.data(),
       aModesKer.data(),
-      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
-      aTet.data(), static_cast<unsigned int>(aTet.size() / 4));
+      aXYZ.data(), aXYZ.size() / 3,
+      aTet.data(), aTet.size() / 4);
   // -----------------------
   double myu = 1.0;
   double lambda = 1.0;
@@ -205,8 +207,8 @@ void InitializeProblem_ShellEigenPB() {
   dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
       mat_A, aMode.data(),
       myu, lambda, rho, gravity,
-      aXYZ.data(), static_cast<unsigned int>(aXYZ.size() / 3),
-      aTet.data(), static_cast<unsigned int>(aTet.size() / 4),
+      aXYZ.data(), aXYZ.size() / 3,
+      aTet.data(), aTet.size() / 4,
       aTmp0.data());
   MatSparse_ScaleBlk_LeftRight(
       mat_A,
@@ -267,10 +269,11 @@ void myGlutDisplay() {
 
   {
     ::glColor3d(0, 0, 0);
-    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(),
-                                            aTet.data(), aTet.size() / 4,
-                                            aMode.data(),
-                                            0.1);
+    delfem2::opengl::DrawMeshTet3D_EdgeDisp(
+        aXYZ.data(),
+        aTet.data(), aTet.size() / 4,
+        aMode.data(),
+        0.1);
     ::glEnable(GL_LIGHTING);
     {
       float color[4] = {180.0 / 256.0, 180.0 / 256.0, 130.0 / 256.0, 1.0f};
@@ -279,8 +282,9 @@ void myGlutDisplay() {
       glShadeModel(GL_FLAT);
     }
 
-    delfem2::opengl::DrawMeshTet3D_FaceNorm(aXYZ.data(),
-                                            aTet.data(), aTet.size() / 4);
+    delfem2::opengl::DrawMeshTet3D_FaceNorm(
+        aXYZ.data(),
+        aTet.data(), aTet.size() / 4);
 
   }
 

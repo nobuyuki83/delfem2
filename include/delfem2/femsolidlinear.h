@@ -198,9 +198,9 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D(
     const double rho,
     const double *g,
     const double* aXYZ,
-    unsigned int nXYZ,
+    size_t nXYZ,
     const unsigned int* aTet,
-    unsigned int nTet,
+    size_t nTet,
     const double* aDisp)
 {
   const unsigned int np = nXYZ;

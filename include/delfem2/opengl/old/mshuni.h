@@ -285,11 +285,11 @@ DFM2_INLINE void DrawMeshHex3D_Edge(
     unsigned int nHex);
 
 DFM2_INLINE void DrawMeshHex3D_EdgeDisp(
-    const double *aXYZ,
-    unsigned int nXYZ,
-    const unsigned int *aHex,
-    unsigned int nHex,
-    const double *aDisp);
+    const double *vtx_xyz,
+    size_t num_vtx,
+    const unsigned int *hex_vtx_idx,
+    size_t num_hex,
+    const double *displacement_xyz_vtx);
 
 DFM2_INLINE void DrawMeshHex3D_FaceNorm(
     const double *aXYZ,
