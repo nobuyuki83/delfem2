@@ -176,7 +176,7 @@ template<typename VAL>
 void delfem2::ScaleX(
     VAL *p0,
     VAL s,
-    unsigned int n) {
+    size_t n) {
   for (unsigned int i = 0; i < n; ++i) { p0[i] *= s; }
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -192,7 +192,7 @@ template void delfem2::ScaleX(double *p0, double s, unsigned int n);
 
 DFM2_INLINE void delfem2::NormalizeX(
     double *p0,
-    unsigned int n) {
+    size_t n) {
   const double ss = delfem2::DotX(p0, p0, n);
   ScaleX(p0, 1.0 / sqrt(ss), n);
 }
@@ -200,7 +200,7 @@ DFM2_INLINE void delfem2::NormalizeX(
 DFM2_INLINE void delfem2::OrthogonalizeToUnitVectorX(
     double *p1,
     const double *p0,
-    unsigned int n) {
+    size_t n) {
   double d = delfem2::DotX(p0, p1, n);
   for (unsigned int i = 0; i < n; ++i) { p1[i] -= d * p0[i]; }
 }
@@ -226,7 +226,7 @@ namespace delfem2 {
 template<>
 DFM2_INLINE void XPlusAY(
     std::vector<double> &X,
-    const unsigned int nDoF,
+    const size_t nDoF,
     const std::vector<int> &aBCFlag,
     double alpha,
     const std::vector<double> &Y) {
@@ -240,7 +240,7 @@ template<>
 DFM2_INLINE void
 XPlusAY(
     std::vector<std::complex<double> > &X,
-    const unsigned int nDoF,
+    const size_t nDoF,
     const std::vector<int> &aBCFlag,
     std::complex<double> alpha,
     const std::vector<std::complex<double> > &Y) {
@@ -285,7 +285,7 @@ DFM2_INLINE void setRHS_Zero(
 DFM2_INLINE void
 delfem2::XPlusAYBZ(
     std::vector<double> &X,
-    const unsigned int nDoF,
+    const size_t nDoF,
     const std::vector<int> &aBCFlag,
     double alpha,
     const std::vector<double> &Y,
@@ -300,7 +300,7 @@ delfem2::XPlusAYBZ(
 DFM2_INLINE void
 delfem2::XPlusAYBZCW(
     std::vector<double> &X,
-    const unsigned int nDoF,
+    const size_t nDoF,
     const std::vector<int> &aBCFlag,
     double alpha,
     const std::vector<double> &Y,

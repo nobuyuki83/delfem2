@@ -48,7 +48,7 @@ void MergeLinSys_Helmholtz_MeshTri2D(
     const std::complex<double>* aVal)
 {
   using COMPLEX = std::complex<double>;
-  const unsigned int nDoF = np;
+  const size_t nDoF = np;
   std::vector<unsigned int> tmp_buffer(nDoF, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
@@ -84,7 +84,7 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
     const std::complex<double>* aVal)
 {
   using COMPLEX = std::complex<double>;
-  const unsigned int nDoF = np;
+  const size_t nDoF = np;
   std::vector<unsigned int> tmp_buffer(nDoF, UINT_MAX);
   assert( nIPPolyline >= 2 );
   for(unsigned int iel=0; iel < nIPPolyline - 1; ++iel){

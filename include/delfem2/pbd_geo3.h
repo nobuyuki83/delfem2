@@ -52,9 +52,12 @@ DFM2_INLINE void PBD_Update_Const3(
 DFM2_INLINE void PBD_ConstProj_Rigid2D(
     double *aXYt,
     double stiffness,
-    const unsigned int *clstr_ind, unsigned int nclstr_ind,
-    const unsigned int *clstr, unsigned int nclstr0,
-    const double *aXY0, unsigned int nXY0);
+    const unsigned int *clstr_ind, 
+	size_t nclstr_ind,
+    const unsigned int *clstr, 
+	size_t nclstr0,
+    const double *aXY0, 
+	size_t nXY0);
 
 DFM2_INLINE void PBD_ConstProj_Rigid3D(
     double *aXYZt,

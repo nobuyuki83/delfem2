@@ -165,8 +165,8 @@ template delfem2::CVec3d delfem2::CPtElm2<double>::UNorm_Tri(
 
 template<typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
-    const double *aXYZ,
-    unsigned int nXYZ,
+    [[maybe_unused]] const double *aXYZ,
+    [[maybe_unused]] unsigned int nXYZ,
     const unsigned int *aTri,
     [[maybe_unused]] unsigned int nTri,
     const double *aNorm) const {

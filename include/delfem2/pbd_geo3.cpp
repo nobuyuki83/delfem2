@@ -161,12 +161,12 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D(
     double *aXYt,
     double stiffness,
     const unsigned int *clstr_ind,
-    unsigned int nclstr_ind,
+    size_t nclstr_ind,
     const unsigned int *clstr,
-    [[maybe_unused]] unsigned int nclstr0,
+    [[maybe_unused]] size_t nclstr0,
     const double *aXY0,
-    [[maybe_unused]] unsigned int nXY0) {
-  const unsigned int nclstr = nclstr_ind - 1;
+    [[maybe_unused]] size_t nXY0) {
+  const size_t nclstr = nclstr_ind - 1;
   for (unsigned int iclstr = 0; iclstr < nclstr; ++iclstr) {
     CVec2d pc(0, 0), qc(0, 0);
     for (unsigned int iip = clstr_ind[iclstr]; iip < clstr_ind[iclstr + 1]; iip++) {

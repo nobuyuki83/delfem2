@@ -147,7 +147,7 @@ int main(
   aETri = dmesh.aETri;
   aVec2 = dmesh.aVec2;
 
-  const unsigned int np = aPo2D.size();
+  const size_t np = aPo2D.size();
   aUVW.resize(np * 3, 0.0);
   aBCFlag.resize(np, 0);
   aXYZ.resize(np * 3);

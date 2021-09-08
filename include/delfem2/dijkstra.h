@@ -60,7 +60,7 @@ void DijkstraElem_MeshElemTopo(
     //
     unsigned int ielm_ker,
     const std::vector<unsigned int> &aElSuEl,
-    unsigned int nelem)
+    size_t nelem)
 {
   aOrder.assign(nelem,UINT_MAX);
   aDist.assign(nelem, UINT_MAX);
@@ -166,7 +166,8 @@ void MeshClustering(
   std::vector<unsigned int> aDist0(ntri, UINT_MAX);
   std::random_device rd;
   std::mt19937 rdeng(rd());
-  std::uniform_int_distribution<unsigned int> dist0(0, ntri - 1);
+  std::uniform_int_distribution<unsigned int> dist0(
+	  0, static_cast<unsigned int>(ntri) - 1);
   const unsigned int itri_ker = dist0(rdeng);
   assert(itri_ker < ntri);
   aFlgElm.assign(ntri, 0);

@@ -101,7 +101,7 @@ void MergeLinSys_Poission_MeshTri2D(
     size_t nTri,
     const double* aVal)
 {
-  const unsigned int nDoF = np;
+  const size_t nDoF = np;
   //
   std::vector<unsigned int> tmp_buffer(nDoF, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
@@ -137,7 +137,7 @@ void MergeLinSys_Poission_MeshTet3D(
     size_t nTet,
     const double* aVal)
 {
-  const unsigned int np = nXYZ;
+  const size_t np = nXYZ;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int itet = 0; itet<nTet; ++itet){
     const unsigned int i0 = aTet[itet*4+0];
@@ -217,7 +217,7 @@ void MergeLinSys_Diffusion_MeshTet3D(
     const double* aVal,
     const double* aVelo)
 {
-  const int np = nXYZ;
+  const size_t np = nXYZ;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];

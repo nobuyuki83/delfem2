@@ -96,8 +96,8 @@ public:
     bb.push_back(z_max);
     return bb;
   }
-  int insertPointElem(int itri0, double r0, double r1){
-    const size_t ipo0 = aEPo.size();
+  unsigned int insertPointElem(int itri0, double r0, double r1){
+    const unsigned int ipo0 = static_cast<unsigned int>(aEPo.size());
     CVec3d v3;
     {
       int i0 = aETri[itri0].v[0];

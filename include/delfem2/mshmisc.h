@@ -125,7 +125,8 @@ DFM2_INLINE void Normal_MeshQuad3(
     const std::vector<unsigned int> &aQuad);
 
 DFM2_INLINE void Quality_MeshTri2D(
-    double &max_aspect, double &min_area,
+    double &max_aspect, 
+	double &min_area,
     const double *aXY,
     const unsigned int *aTri,
     unsigned int nTri);
@@ -136,7 +137,8 @@ DFM2_INLINE void Quality_MeshTri2D(
 DFM2_INLINE void SetTopology_ExtrudeTri2Tet(
     unsigned int *aTet,
     int nXY,
-    const unsigned int *aTri, int nTri,
+    const unsigned int *aTri, 
+	int nTri,
     int nlayer);
 
 DFM2_INLINE void ExtrudeTri2Tet(
@@ -167,8 +169,10 @@ DFM2_INLINE void makeSolidAngle(
 DFM2_INLINE void MassPoint_Tet3D(
     double *aMassMatrixLumped,
     double rho,
-    const double *aXYZ, unsigned int nXYZ,
-    const unsigned int *aTet, unsigned int nTet);
+    const double *aXYZ, 
+	size_t nXYZ,
+    const unsigned int *aTet, 
+	size_t nTet);
 
 /**
  * @brief Compute mass of the points (lumped mass) for 2D triangle mesh

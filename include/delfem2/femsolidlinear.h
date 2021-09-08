@@ -167,7 +167,7 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
     size_t nTri,
     const double* aVal)
 {
-  const unsigned int np = nXY;
+  const size_t np = nXY;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for(unsigned int iel=0; iel<nTri; ++iel){
     const unsigned int aIP[3] = {aTri1[iel*3+0], aTri1[iel*3+1], aTri1[iel*3+2]};
@@ -203,7 +203,7 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D(
     size_t nTet,
     const double* aDisp)
 {
-  const unsigned int np = nXYZ;
+  const size_t np = nXYZ;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int* aIP = aTet + iel*4;
@@ -298,7 +298,7 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double* aVelo,
     const double* aAcc)
 {
-  const unsigned int np = nXY;
+  const size_t np = nXY;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
@@ -347,7 +347,7 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const double* aVelo,
     const double* aAcc)
 {
-  const unsigned int np = nXYZ;
+  const size_t np = nXYZ;
   std::vector<unsigned int> tmp_buffer(np, -1);
   for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];

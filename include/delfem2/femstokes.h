@@ -106,7 +106,7 @@ void MergeLinSys_StokesStatic2D(
     const double* aVal)
 {
   namespace lcl = ::delfem2::femutil;
-  const unsigned int np = nXY;
+  const size_t np = nXY;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
@@ -147,7 +147,7 @@ void MergeLinSys_StokesDynamic2D(
     const double* aVal,
     const double* aVelo)
 {
-  const unsigned int np = nXY;
+  const size_t np = nXY;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
@@ -234,12 +234,12 @@ void MergeLinSys_Stokes3D_Dynamic(
     const std::vector<double>& aVal,
     const std::vector<double>& aVelo)
 {
-  const unsigned int np = aXYZ.size()/3;
-  const unsigned int nDoF = np*4;
+  const size_t np = aXYZ.size()/3;
+  const size_t nDoF = np*4;
   //
   mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
-  std::vector<unsigned int> tmp_buffer(np, -1);
+  std::vector<unsigned int> tmp_buffer(np, UINT_MAX);
   for (int iel = 0; iel<(int)aTet.size()/4; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];

@@ -193,7 +193,7 @@ int main() {
   { // initialze data
     SetClothShape_Square(aXYZ0, aBCFlag, aTri, aQuad,
                          ndiv, cloth_size);
-    const unsigned int np = aXYZ0.size() / 3;
+    const size_t np = aXYZ0.size() / 3;
     double total_area = cloth_size * cloth_size;
     mass_point = total_area * areal_density / (double) np;
     // initialize deformation

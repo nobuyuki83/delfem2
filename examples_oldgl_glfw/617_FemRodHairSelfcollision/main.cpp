@@ -119,7 +119,7 @@ void MakeProblemSetting_Spiral
       aS0.push_back(s);
     }
     aS0.emplace_back(1,0,0);
-    aIP_HairRoot.push_back(aP0.size());
+    aIP_HairRoot.push_back(static_cast<unsigned int>(aP0.size()));
   }
 }
 

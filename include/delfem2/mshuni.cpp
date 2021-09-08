@@ -72,8 +72,8 @@ DFM2_INLINE unsigned int delfem2::FindAdjEdgeIndex(
 DFM2_INLINE void delfem2::ElemQuad_DihedralTri(
     std::vector<unsigned int> &quad_vtx_idx,
     const unsigned int *tri_vtx_idx,
-    const unsigned int num_tri,
-    const unsigned int num_vtx) {
+    const size_t num_tri,
+    const size_t num_vtx) {
   std::vector<unsigned int> aElSuEl;
   ElSuEl_MeshElem(
       aElSuEl,
