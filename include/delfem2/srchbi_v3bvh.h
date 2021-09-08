@@ -486,17 +486,17 @@ void delfem2::GetContactElement_CCD
 }
 
 template <typename BBOX>
-void delfem2::GetContactElement_CCD
-(std::set<CContactElement>& aContactElem,
- /////
- double dt,
- double delta,
- const std::vector<double>& aXYZ,
- const std::vector<double>& aUVW,
- const std::vector<unsigned int>& aTri,
- int ibvh,
- const std::vector<delfem2::CNodeBVH2>& aBVH,
- const std::vector<BBOX>& aBB)
+void delfem2::GetContactElement_CCD(
+	std::set<CContactElement>& aContactElem,
+	//
+	double dt,
+	double delta,
+	const std::vector<double>& aXYZ,
+	const std::vector<double>& aUVW,
+	const std::vector<unsigned int>& aTri,
+	int ibvh,
+	const std::vector<delfem2::CNodeBVH2>& aBVH,
+	const std::vector<BBOX>& aBB)
 {
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];

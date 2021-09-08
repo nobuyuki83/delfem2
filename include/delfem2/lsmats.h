@@ -42,10 +42,10 @@ class CMatrixSparse {
     this->ncoldim_ = 0;
   }
 
-  void Initialize(unsigned int nblk, unsigned int len, bool is_dia) {
-    this->nrowblk_ = nblk;
+  void Initialize(size_t nblk, unsigned int len, bool is_dia) {
+    this->nrowblk_ = static_cast<unsigned int>(nblk);
     this->nrowdim_ = len;
-    this->ncolblk_ = nblk;
+    this->ncolblk_ = static_cast<unsigned int>(nblk);
     this->ncoldim_ = len;
     col_ind_.assign(nblk + 1, 0);
     row_ptr_.clear();

@@ -49,12 +49,12 @@ template <typename T>
 void ScaleX(
     T *p0,
     T s,
-    unsigned int n);
+    size_t n);
 
 template<typename T>
 void XPlusAY(
     std::vector<T> &X,
-    const unsigned int nDoF,
+    size_t nDoF,
     const std::vector<int> &aBCFlag,
     T alpha,
     const std::vector<T> &Y);
@@ -90,7 +90,7 @@ std::complex<double> MultSumX(
 
 void XPlusAYBZ(
     std::vector<double> &X,
-    const unsigned int nDoF,
+    size_t nDoF,
     const std::vector<int> &aBCFlag,
     double alpha,
     const std::vector<double> &Y,
@@ -99,7 +99,7 @@ void XPlusAYBZ(
 
 void XPlusAYBZCW(
     std::vector<double> &X,
-    const unsigned int nDoF,
+    const size_t nDoF,
     const std::vector<int> &aBCFlag,
     double alpha,
     const std::vector<double> &Y,
@@ -110,12 +110,12 @@ void XPlusAYBZCW(
 
 DFM2_INLINE void NormalizeX(
     double *p0,
-    unsigned int n);
+    size_t n);
 
 DFM2_INLINE void OrthogonalizeToUnitVectorX(
     double *p1,
     const double *p0,
-    unsigned int n);
+    size_t n);
 
 // set boundary condition
 

@@ -402,12 +402,12 @@ void delfem2::makeLinearSystem_PotentialFlow_Order0th(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int> &aTri)
 {
-  const std::size_t nt = aTri.size()/3;
+  const size_t nt = aTri.size()/3;
   A.assign(nt*nt, 0.0);
   f.assign(nt, 0.0);
-  for (std::size_t it = 0; it<nt; it++){
+  for (unsigned int it = 0; it<nt; it++){
     const CVec3d pm = MidPoint(it, aTri, aXYZ);
-    for (std::size_t jt = 0; jt<nt; ++jt){
+    for (unsigned int jt = 0; jt<nt; ++jt){
       if (it==jt) continue;
       const unsigned int jq0 = aTri[jt*3+0];
       const unsigned int jq1 = aTri[jt*3+1];
@@ -638,7 +638,7 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
  int jtri_exclude)
 {
   assert(ngauss>=0&&ngauss<6);
-  const unsigned int nt = aTri.size()/3;
+  const size_t nt = aTri.size()/3;
   CVec3d velo_res(0,0,0);
   for (unsigned int jt = 0; jt<nt; ++jt){
     if ((int)jt==jtri_exclude){ continue; }

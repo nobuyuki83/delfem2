@@ -964,11 +964,13 @@ void delfem2::makeSolidAngle
   }
 }
 
-void delfem2::MassPoint_Tet3D
-    (double *aMassMatrixLumped,
-     double rho,
-     const double *aXYZ, unsigned int nXYZ,
-     const unsigned int *aTet, unsigned int nTet) {
+void delfem2::MassPoint_Tet3D(
+	double *aMassMatrixLumped,
+	double rho,    
+	const double *aXYZ, 
+	size_t nXYZ,
+    const unsigned int *aTet, 
+	size_t nTet) {
   for (unsigned int i = 0; i < nXYZ; ++i) { aMassMatrixLumped[i] = 0.0; }
   for (unsigned int it = 0; it < nTet; ++it) {
     const unsigned int i0 = aTet[it * 4 + 0];

@@ -77,10 +77,11 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
     size_t nXYZ,
     const unsigned int *aTet,
     size_t nTet) {
-  const unsigned int nDoF = nXYZ * 3;
+  const size_t nDoF = nXYZ * 3;
   std::vector<double> aMassLumpedSqrt(nXYZ);
-  dfm2::MassPoint_Tet3D(aMassLumpedSqrt.data(),
-                        1, aXYZ, nXYZ, aTet, nTet);
+  dfm2::MassPoint_Tet3D(
+	  aMassLumpedSqrt.data(),
+	  1, aXYZ, nXYZ, aTet, nTet);
 
   for (unsigned int ip = 0; ip < nXYZ; ++ip) {
     aMassLumpedSqrt[ip] = sqrt(aMassLumpedSqrt[ip]);
@@ -155,7 +156,7 @@ dfm2::CPreconditionerILU<double> ilu_A;
 // ------------------------------------------
 
 void RemoveKernel() {
-  const int nDoF = aXYZ.size();
+  const size_t nDoF = aXYZ.size();
   const double *p0 = aModesKer.data() + nDoF * 0;
   const double *p1 = aModesKer.data() + nDoF * 1;
   const double *p2 = aModesKer.data() + nDoF * 2;

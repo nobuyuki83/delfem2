@@ -49,8 +49,8 @@ DFM2_INLINE void convert2Tri_Quad(
 DFM2_INLINE void ElemQuad_DihedralTri(
     std::vector<unsigned int> &quad_vtx_idx,
     const unsigned int *tri_vtx_idx,
-    const unsigned int num_tri,
-    const unsigned int num_vtx);
+    size_t num_tri,
+    size_t num_vtx);
 
 DFM2_INLINE void FlipElement_Tri(
     std::vector<unsigned int> &tri_vtx_ind);

@@ -397,7 +397,7 @@ void ProblemSolid(
     const std::vector<double> &aXY1,
     const std::vector<unsigned int> &aTri1,
     double len) {
-  const unsigned int np = aXY1.size() / 2;
+  const size_t np = aXY1.size() / 2;
   dfm2::CMatrixSparse<double> mat_A;
   dfm2::CPreconditionerILU<double> ilu_A;
   glfwSetWindowTitle(viewer.window, "Linear Elastic Static");

@@ -115,7 +115,7 @@ int main() {
     {
       auto &aP = aRS[1].shape;
       auto &aV = aRS[1].shape_velo;
-      unsigned int np = aP.size() / 2;
+      size_t np = aP.size() / 2;
       const double angvelo = 5.;
       const double rad = 0.02;
       for (unsigned int ip = 0; ip < np; ++ip) {

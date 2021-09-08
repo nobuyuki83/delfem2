@@ -60,7 +60,7 @@ void InitializeProblem_Poisson(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const size_t np = aXYZ.size() / 3;
   aVal.assign(np, 0.0);
   aBCFlag.assign(np, 0);
@@ -100,7 +100,7 @@ void SolveProblem_Poisson(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np;
   // -----------------------
@@ -144,7 +144,7 @@ void InitializeProblem_Diffusion(
     delfem2::CPreconditionerILU<double> &ilu_A,
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   //double len = 1.1;
   const size_t np = aXYZ.size() / 3;
   aVal.assign(np, 0.0);
@@ -185,7 +185,7 @@ void SolveProblem_Diffusion(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np;
   // -----------------
@@ -238,7 +238,7 @@ void InitializeProblem_ShellEigenPB(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   // set boundary condition
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np * 3;
@@ -277,7 +277,7 @@ void SolveProblem_LinearSolid_Static(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np * 3;
   //
@@ -325,7 +325,7 @@ void InitializeProblem_LinearSolid_Dynamic(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const double len = 1.1;
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np * 3;
@@ -366,7 +366,7 @@ void SolveProblem_LinearSolid_Dynamic(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np * 3;
   // --------
@@ -478,7 +478,7 @@ void SolveProblem_Stokes_Static(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np * 4;
   // -------------
@@ -582,7 +582,7 @@ void SolveProblem_Stokes_Dynamic(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np * 4;
   double myu = 1;
@@ -696,7 +696,7 @@ void SolveProblem_NavierStokes_Dynamic(
     //
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np * 4;
   //
@@ -837,7 +837,7 @@ void myGlutDisplay(
     int iphysics,
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aIsSurf) {
+    [[maybe_unused]] const std::vector<int> &aIsSurf) {
 //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
   ::glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

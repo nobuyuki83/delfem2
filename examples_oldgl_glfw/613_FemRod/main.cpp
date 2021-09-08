@@ -169,7 +169,7 @@ int main() {
     }
     dfm2::CMatrixSparse<double> mats;
     {
-      unsigned int nNode = aElemSeg.size() / 2 + aP0.size();
+      size_t nNode = aElemSeg.size() / 2 + aP0.size();
       std::vector<unsigned int> psup_ind, psup;
       dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                  aElemRod.data(), aElemRod.size() / 5, 5, nNode);
