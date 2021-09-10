@@ -13,8 +13,9 @@
 #include <vector>
 #include <fstream>
 
-#include "delfem2/msh_ioobj.h"
-#include "delfem2/msh_iomisc.h"
+#include "delfem2/msh_io_obj.h"
+#include "delfem2/msh_io_misc.h"
+#include "delfem2/msh_io_ply.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshsubdiv.h"

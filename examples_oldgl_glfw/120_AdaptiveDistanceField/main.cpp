@@ -9,7 +9,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <set>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -21,7 +20,7 @@
 #include "delfem2/isrf_adf.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
-#include "delfem2/msh_iomisc.h"
+#include "delfem2/msh_io_ply.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/glfw/viewer3.h"
@@ -172,9 +171,10 @@ void SetProblem(int iprob) {
      public:
       [[nodiscard]] double sdf(double x, double y, double z) const override {
         dfm2::CVec3d n0;
-        double sdf0 = obj.SignedDistanceFunction(n0,
-                                                 dfm2::CVec3d(x, y, z),
-                                                 aXYZ, aTri, aNorm);
+        double sdf0 = obj.SignedDistanceFunction(
+            n0,
+            dfm2::CVec3d(x, y, z),
+            aXYZ, aTri, aNorm);
         return sdf0;
       }
      public:
@@ -205,9 +205,7 @@ void SetProblem(int iprob) {
 
 // ------------------------------------------------
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

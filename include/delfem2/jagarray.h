@@ -72,4 +72,4 @@ DFM2_INLINE void JArrayEdgeUnidir_PointSurPoint(
 #  include "delfem2/jagarray.cpp"
 #endif
 
-#endif /* meshtopo_hpp */
+#endif /* DFM2_JAGARRAY_H */

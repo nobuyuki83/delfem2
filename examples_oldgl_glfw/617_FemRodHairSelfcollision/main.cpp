@@ -21,7 +21,6 @@
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/funcs.h"
 
-
 namespace dfm2 = delfem2;
 
 // -------------------------------------
@@ -92,11 +91,11 @@ public:
   double p0[3];
 };
 
-void MakeProblemSetting_Spiral
-(std::vector<dfm2::CVec3d>& aP0,
- std::vector<dfm2::CVec3d>& aS0,
- std::vector<unsigned int>& aIP_HairRoot,
- const std::vector<CHairShape>& aHairShape)
+void MakeProblemSetting_Spiral(
+    std::vector<dfm2::CVec3d>& aP0,
+    std::vector<dfm2::CVec3d>& aS0,
+    std::vector<unsigned int>& aIP_HairRoot,
+    const std::vector<CHairShape>& aHairShape)
 {
   aIP_HairRoot.assign(1,0);
   aP0.clear();

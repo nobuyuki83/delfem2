@@ -18,7 +18,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/points.h"
-#include "delfem2/msh_iomisc.h"
+#include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
