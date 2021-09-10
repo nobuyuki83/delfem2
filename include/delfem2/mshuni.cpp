@@ -464,7 +464,7 @@ DFM2_INLINE void delfem2::MakeGroupElem(
     std::vector<unsigned int> &aIndGroup,
     const std::vector<unsigned int> &aTri,
     const std::vector<unsigned int> &aTriSurRel,
-    const int nfael,
+    [[maybe_unused]] const int nfael,
     const int nnoel) {
   const std::size_t nelem = aTri.size() / nnoel;
   aIndGroup.assign(nelem, UINT_MAX);

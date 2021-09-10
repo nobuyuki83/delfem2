@@ -19,7 +19,8 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/msh_ioobj.h"
+#include "delfem2/msh_io_obj.h"
+
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/gridvoxel.h"

@@ -61,11 +61,11 @@ void delfem2::PBD_Bend(
     const std::vector<delfem2::CDynTri> &aETri,
     const std::vector<CVec2d> &aVec2,
     double ratio) {
-  for (size_t it = 0; it < aETri.size(); ++it) {
+  for (unsigned it = 0; it < aETri.size(); ++it) {
     for (int ie = 0; ie < 3; ++ie) {
       const unsigned int jt0 = aETri[it].s2[ie];
       if (jt0 == UINT_MAX) { continue; }
-      if (jt0 > (int) it) { continue; }
+      if (jt0 > it) { continue; }
       const unsigned int je0 = FindAdjEdgeIndex(aETri[it], ie, aETri);
       assert(aETri[jt0].s2[je0] == it);
       const unsigned int aIP[4] = {

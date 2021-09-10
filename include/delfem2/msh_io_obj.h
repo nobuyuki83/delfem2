@@ -9,8 +9,8 @@
  * @brief functions for mesh export/import
  */
 
-#ifndef DFM2_MSH_IOOBJ_H
-#define DFM2_MSH_IOOBJ_H
+#ifndef DFM2_MSH_IO_OBJ_H
+#define DFM2_MSH_IO_OBJ_H
 
 #include <cstdio>
 #include <vector>
@@ -159,7 +159,7 @@ public:
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/msh_ioobj.cpp"
+#  include "delfem2/msh_io_obj.cpp"
 #endif
 
-#endif // DFM2_MSH_IOOBJ_H
+#endif // DFM2_MSH_IO_OBJ_H

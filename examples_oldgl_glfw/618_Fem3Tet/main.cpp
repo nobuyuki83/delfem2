@@ -245,9 +245,9 @@ void InitializeProblem_ShellEigenPB(
   aVal.assign(nDoF, 0.0);
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
-    const double px = aXYZ[ip * 3 + 0];
+    [[maybe_unused]] const double px = aXYZ[ip * 3 + 0];
     const double py = aXYZ[ip * 3 + 1];
-    const double pz = aXYZ[ip * 3 + 2];
+    [[maybe_unused]] const double pz = aXYZ[ip * 3 + 2];
     if (py > 0.45) {
       aBCFlag[ip * 3 + 0] = 1;
       aBCFlag[ip * 3 + 1] = 1;
@@ -326,7 +326,7 @@ void InitializeProblem_LinearSolid_Dynamic(
     const std::vector<unsigned int> &aTet,
     const std::vector<double> &aXYZ,
     [[maybe_unused]] const std::vector<int> &aIsSurf) {
-  const double len = 1.1;
+  [[maybe_unused]] const double len = 1.1;
   const size_t np = aXYZ.size() / 3;
   const size_t nDoF = np * 3;
   //
@@ -335,9 +335,9 @@ void InitializeProblem_LinearSolid_Dynamic(
   aAcc.assign(nDoF, 0.0);
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
-    const double px = aXYZ[ip * 3 + 0];
+    [[maybe_unused]] const double px = aXYZ[ip * 3 + 0];
     const double py = aXYZ[ip * 3 + 1];
-    const double pz = aXYZ[ip * 3 + 2];
+    [[maybe_unused]] const double pz = aXYZ[ip * 3 + 2];
     if (py > 0.45) {
       aBCFlag[ip * 3 + 0] = 1;
       aBCFlag[ip * 3 + 1] = 1;

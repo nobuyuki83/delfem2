@@ -18,7 +18,7 @@
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/vec3.h"
-#include "delfem2/msh_ioobj.h"
+#include "delfem2/msh_io_obj.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 

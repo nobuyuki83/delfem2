@@ -10,8 +10,9 @@
 #include <string>
 #include <vector>
 
-#include "delfem2/msh_iomisc.h"
-#include "delfem2/msh_ioobj.h"
+#include "delfem2/msh_io_misc.h"
+#include "delfem2/msh_io_obj.h"
+#include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/dtri3_v3dtri.h"

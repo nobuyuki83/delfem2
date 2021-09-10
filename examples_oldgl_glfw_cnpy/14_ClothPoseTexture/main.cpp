@@ -17,7 +17,7 @@
 #include "delfem2/rig_geo3.h"
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/msh_ioobj.h"
+#include "delfem2/msh_io_obj.h"
 #include "delfem2/points.h"
 //
 #define GL_SILENCE_DEPRECATION
@@ -95,7 +95,7 @@ int main()
   dfm2::opengl::CTexRGB tex;
   int width, height;
   { // texture imput data
-    double scale = 0.01;
+    //double scale = 0.01;
     std::string name_img_in_test_inputs = "lenna.png";
     // -----
     int channels;

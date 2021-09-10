@@ -7,7 +7,7 @@
 
 #include <Eigen/Dense>
 
-#include "delfem2/msh_ioobj.h"
+#include "delfem2/msh_io_obj.h"
 
 std::tuple<
     Eigen::Matrix<double, -1, 3, Eigen::RowMajor>,

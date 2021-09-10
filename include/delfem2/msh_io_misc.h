@@ -9,8 +9,8 @@
  * @brief functions for mesh export/import
  */
 
-#ifndef DFM2_MSH_IOMISC_H
-#define DFM2_MSH_IOMISC_H
+#ifndef DFM2_MSH_IO_MISC_H
+#define DFM2_MSH_IO_MISC_H
 
 #include <cstdio>
 #include <vector>
@@ -50,31 +50,6 @@ DFM2_INLINE void Write_STL(
     const std::string &str,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aTri);
-
-// -----
-// PLY
-
-DFM2_INLINE void Write_Ply(
-    const std::string &fname,
-    const std::vector<double> &aXYZ,
-    const std::vector<int> &aTri);
-
-DFM2_INLINE void Write_Ply(
-    const std::string &fname,
-    unsigned int nXYZ, double *paXYZ,
-    unsigned int nTri, unsigned int *paTri);
-
-DFM2_INLINE void Read_Ply(
-    const std::string &fname,
-    int &nnode_,
-    double *&pXYZs_,
-    int &ntri_,
-    unsigned int *&aTri_);
-
-DFM2_INLINE void Read_Ply(
-    const std::string &fname,
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri);
 
 // -----------
 // VTK
@@ -142,7 +117,7 @@ DFM2_INLINE void Read_MeshTri3D_Nas(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/msh_iomisc.cpp"
+#  include "delfem2/msh_io_misc.cpp"
 #endif
 
 #endif // DFM2_MSH_IOMISC_H

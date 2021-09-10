@@ -15,11 +15,10 @@
 
 #include "delfem2/cagedef.h"
 #include "delfem2/gizmo_geo3.h"
-#include "delfem2/msh_iomisc.h"
+#include "delfem2/msh_io_ply.h"
 #include "delfem2/points.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/vec3.h"
@@ -50,21 +49,21 @@ MeshTri3_Cuboid(
 }
 
 std::vector<double> ComputeMeanValueCoordinate(
-    const std::vector<double>& vec_xyz_ini,
-    const std::vector<double>& vec_xyz_cage0,
-    const std::vector<unsigned int>& vec_tri_cage){
-  const size_t num_point = vec_xyz_ini.size() / 3;
-  const size_t num_point_cage0 = vec_xyz_cage0.size() / 3;
+    const std::vector<double>& vtx_xyz_ini,
+    const std::vector<double>& vtx_xyz_cage0,
+    const std::vector<unsigned int>& tri_vtx_id_cage){
+  const size_t num_point = vtx_xyz_ini.size() / 3;
+  const size_t num_point_cage0 = vtx_xyz_cage0.size() / 3;
   std::vector<double> matrix0(num_point * num_point_cage0, 0.0);
   for (unsigned int iq = 0; iq < num_point; ++iq) {
-    dfm2::CVec3d q0(vec_xyz_ini.data() + iq * 3);
-    for (unsigned int itc = 0; itc < vec_tri_cage.size() / 3; ++itc) {
-      const unsigned int ip0 = vec_tri_cage[itc * 3 + 0];
-      const unsigned int ip1 = vec_tri_cage[itc * 3 + 1];
-      const unsigned int ip2 = vec_tri_cage[itc * 3 + 2];
-      dfm2::CVec3d p0 = dfm2::CVec3d(vec_xyz_cage0.data() + ip0 * 3) - q0;
-      dfm2::CVec3d p1 = dfm2::CVec3d(vec_xyz_cage0.data() + ip1 * 3) - q0;
-      dfm2::CVec3d p2 = dfm2::CVec3d(vec_xyz_cage0.data() + ip2 * 3) - q0;
+    dfm2::CVec3d q0(vtx_xyz_ini.data() + iq * 3);
+    for (unsigned int itc = 0; itc < tri_vtx_id_cage.size() / 3; ++itc) {
+      const unsigned int ip0 = tri_vtx_id_cage[itc * 3 + 0];
+      const unsigned int ip1 = tri_vtx_id_cage[itc * 3 + 1];
+      const unsigned int ip2 = tri_vtx_id_cage[itc * 3 + 2];
+      dfm2::CVec3d p0 = dfm2::CVec3d(vtx_xyz_cage0.data() + ip0 * 3) - q0;
+      dfm2::CVec3d p1 = dfm2::CVec3d(vtx_xyz_cage0.data() + ip1 * 3) - q0;
+      dfm2::CVec3d p2 = dfm2::CVec3d(vtx_xyz_cage0.data() + ip2 * 3) - q0;
       double w[3];
       dfm2::MeanValueCoordinate_Triangle<dfm2::CVec3d>(w, p0, p1, p2);
       matrix0[iq * num_point_cage0 + ip0] += w[0];
@@ -146,37 +145,42 @@ void Example1(
 }
 
 void Example2(
-    const std::vector<double> &vec_xyz_ini,
-    const std::vector<unsigned int> &vec_tri) {
-  const auto[vec_xyz_cage0, aTri_cage0] =
+    const std::vector<double> &vtx_xyz_ini,
+    const std::vector<unsigned int> &tri_vtx_ind) {
+  const auto[vtx_xyz_cage0, tri_vtx_ind_cage0] =
   MeshTri3_Cuboid(
       {-0.3, -0.3, 0.2},
       {+0.3, +0.3, 0.4});
-  const auto[vec_xyz_cage1, aTri_cage1] =
+  const auto[vtx_xyz_cage1, tri_vtx_ind_cage1] =
   MeshTri3_Cuboid(
       {-0.3, -0.3, -0.4},
       {+0.3, +0.3, -0.2});
 
-  const size_t num_point = vec_xyz_ini.size() / 3;
-  const size_t num_point_cage0 = vec_xyz_cage0.size() / 3;
-  const size_t num_point_cage1 = vec_xyz_cage0.size() / 3;
-  std::vector<double> matrix0 = ComputeMeanValueCoordinate(vec_xyz_ini, vec_xyz_cage0, aTri_cage0);
-  std::vector<double> matrix1 = ComputeMeanValueCoordinate(vec_xyz_ini, vec_xyz_cage1, aTri_cage1);
-  //
-  for (unsigned int iq = 0; iq < num_point; ++iq) {
-    double sum_val = 0.0;
-    for (unsigned int ip = 0; ip < num_point_cage0; ++ip) {
-      sum_val += matrix0[iq * num_point_cage0 + ip];
+  const size_t num_vtx = vtx_xyz_ini.size() / 3;
+  const size_t num_vtx_cage0 = vtx_xyz_cage0.size() / 3;
+  const size_t num_vtx_cage1 = vtx_xyz_cage0.size() / 3;
+  std::vector<double> vector0;
+  std::vector<double> vector1;
+  {
+    std::vector<double> matrix0 = ComputeMeanValueCoordinate(vtx_xyz_ini, vtx_xyz_cage0, tri_vtx_ind_cage0);
+    std::vector<double> matrix1 = ComputeMeanValueCoordinate(vtx_xyz_ini, vtx_xyz_cage1, tri_vtx_ind_cage1);
+    vector0.assign(num_vtx, 0.);
+    for (unsigned int iq = 0; iq < num_vtx; ++iq) {
+      for (unsigned int ip = 0; ip < num_vtx_cage0; ++ip) {
+        vector0[iq] += matrix0[iq * num_vtx_cage0 + ip];
+      }
     }
-    for (unsigned int ip = 0; ip < num_point_cage1; ++ip) {
-      sum_val += matrix1[iq * num_point_cage1 + ip];
+    vector1.assign(num_vtx, 0.);
+    for (unsigned int iq = 0; iq < num_vtx; ++iq) {
+      for (unsigned int ip = 0; ip < num_vtx_cage1; ++ip) {
+        vector1[iq] += matrix1[iq * num_vtx_cage1 + ip];
+      }
     }
-    for (unsigned int ip = 0; ip < num_point_cage0; ++ip) {
-      matrix0[iq * num_point_cage0 + ip] /= sum_val;
-    }
-    for (unsigned int ip = 0; ip < num_point_cage1; ++ip) {
-      matrix1[iq * num_point_cage1 + ip] /= sum_val;
-    }
+  }
+  for (unsigned int iq = 0; iq < num_vtx; ++iq) {
+    double sum_val = vector0[iq] + vector1[iq];
+    vector0[iq] /= sum_val;
+    vector1[iq] /= sum_val;
   }
   // --------------------
   delfem2::glfw::CViewer3 viewer;
@@ -187,46 +191,41 @@ void Example2(
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
-  std::vector<double> aXYZ = vec_xyz_ini;
-  std::vector<double> vec_xyz_cage0_def = vec_xyz_cage0;
+  std::vector<double> aXYZ = vtx_xyz_ini;
+  std::vector<double> vec_xyz_cage0_def = vtx_xyz_cage0;
   // --------------------
   while (true) {
     const double time = glfwGetTime();
-    for (unsigned int ip = 0; ip < num_point_cage0; ++ip) {
-      vec_xyz_cage0_def[ip * 3 + 0] = vec_xyz_cage0[ip * 3 + 0] + 0.1 * sin(time);
-      vec_xyz_cage0_def[ip * 3 + 1] = vec_xyz_cage0[ip * 3 + 1] + 0.1 * sin(time * 2);
-      vec_xyz_cage0_def[ip * 3 + 2] = vec_xyz_cage0[ip * 3 + 2] + 0.1 * sin(time * 3);
+    double disp[3] = {
+        0.1 * sin(time),
+        0.1 * sin(time * 2),
+        0.1 * sin(time * 3) };
+    for (unsigned int ip = 0; ip < num_vtx_cage0; ++ip) {
+      vec_xyz_cage0_def[ip * 3 + 0] = vtx_xyz_cage0[ip * 3 + 0] + disp[0];
+      vec_xyz_cage0_def[ip * 3 + 1] = vtx_xyz_cage0[ip * 3 + 1] + disp[1];
+      vec_xyz_cage0_def[ip * 3 + 2] = vtx_xyz_cage0[ip * 3 + 2] + disp[2];
     }
-    for (unsigned int iq = 0; iq < num_point; ++iq) {
-      aXYZ[iq * 3 + 0] = 0.;
-      aXYZ[iq * 3 + 1] = 0.;
-      aXYZ[iq * 3 + 2] = 0.;
-      for (unsigned int ip = 0; ip < num_point_cage0; ++ip) {
-        aXYZ[iq * 3 + 0] += matrix0[iq * num_point_cage0 + ip] * vec_xyz_cage0_def[ip * 3 + 0];
-        aXYZ[iq * 3 + 1] += matrix0[iq * num_point_cage0 + ip] * vec_xyz_cage0_def[ip * 3 + 1];
-        aXYZ[iq * 3 + 2] += matrix0[iq * num_point_cage0 + ip] * vec_xyz_cage0_def[ip * 3 + 2];
-      }
-      for (unsigned int ip = 0; ip < num_point_cage1; ++ip) {
-        aXYZ[iq * 3 + 0] += matrix1[iq * num_point_cage1 + ip] * vec_xyz_cage1[ip * 3 + 0];
-        aXYZ[iq * 3 + 1] += matrix1[iq * num_point_cage1 + ip] * vec_xyz_cage1[ip * 3 + 1];
-        aXYZ[iq * 3 + 2] += matrix1[iq * num_point_cage1 + ip] * vec_xyz_cage1[ip * 3 + 2];
-      }
+    aXYZ = vtx_xyz_ini;
+    for (unsigned int iq = 0; iq < num_vtx; ++iq) {
+      aXYZ[iq * 3 + 0] += vector0[iq] * disp[0];
+      aXYZ[iq * 3 + 1] += vector0[iq] * disp[1];
+      aXYZ[iq * 3 + 2] += vector0[iq] * disp[2];
     }
     //
     viewer.DrawBegin_oldGL();
     ::glColor3d(0, 0, 0);
     delfem2::opengl::DrawMeshTri3D_Edge(
         vec_xyz_cage0_def.data(), vec_xyz_cage0_def.size() / 3,
-        aTri_cage0.data(), aTri_cage0.size() / 3);
+        tri_vtx_ind_cage0.data(), tri_vtx_ind_cage0.size() / 3);
     delfem2::opengl::DrawMeshTri3D_Edge(
-        vec_xyz_cage1.data(), vec_xyz_cage1.size() / 3,
-        aTri_cage1.data(), aTri_cage1.size() / 3);
+        vtx_xyz_cage1.data(), vtx_xyz_cage1.size() / 3,
+        tri_vtx_ind_cage1.data(), tri_vtx_ind_cage1.size() / 3);
     delfem2::opengl::DrawMeshTri3D_Edge(
         aXYZ.data(), aXYZ.size() / 3,
-        vec_tri.data(), vec_tri.size() / 3);
+        tri_vtx_ind.data(), tri_vtx_ind.size() / 3);
     delfem2::opengl::DrawMeshTri3D_FaceNorm(
         aXYZ.data(),
-        vec_tri.data(), vec_tri.size() / 3);
+        tri_vtx_ind.data(), tri_vtx_ind.size() / 3);
     viewer.SwapBuffers();
     glfwPollEvents();
     if (glfwWindowShouldClose(viewer.window)) { break; }
