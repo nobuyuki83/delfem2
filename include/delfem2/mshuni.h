@@ -85,14 +85,14 @@ DFM2_INLINE void JArray_ElSuP_MeshTri(
 
 /**
  * @brief compute adjacent element index for mesh element
- * @param aElSuEl (out) neighbouring element index (UINT_MAX for boundary)
- * @param elem_vtx_idx (in) array of connectivity
- * @param num_elem (in) number of elements
- * @param nNoEl (in) number of nodes in a element
- * @param elsup_ind (in) jagged array index of "elem surrounding point"
- * @param elsup (in) jagged array value of "elem surrounding point"
- * @param num_face_par_elem (in) number of neibouring elements
- * @param nnofa (in) how many nodes are shared with a nighbouring element
+ * @param[out] aElSuEl neighbouring element index (UINT_MAX for boundary)
+ * @param[in] elem_vtx_idx array of connectivity
+ * @param[in] num_elem number of elements
+ * @param[in] nNoEl number of nodes in a element
+ * @param[in] elsup_ind jagged array index of "elem surrounding point"
+ * @param[in] elsup jagged array value of "elem surrounding point"
+ * @param[in] num_face_par_elem number of neibouring elements
+ * @param[in] nnofa how many nodes are shared with a nighbouring element
  * @param node_on_elem_face
  */
 DFM2_INLINE void ElSuEl_MeshElem(
@@ -108,15 +108,16 @@ DFM2_INLINE void ElSuEl_MeshElem(
 
 /**
  * @brief compute adjacent element index for mesh element
- * @param aElSuEl (ou) adjacent element index for element edge/face (UINT_MAX if face/edge is on the boundary)
- * @param elem_vtx_idx (in) elemnet index
- * @param num_elem (in) number of elements
- * @param type (in) type of element
- * @param num_vtx (in) number of points
+ * @param[out] aElSuEl adjacent element index for element edge/face (UINT_MAX if face/edge is on the boundary)
+ * @param[in] elem_vtx_idx elemnet index
+ * @param[in] num_elem number of elements
+ * @param[in] type type of element
+ * @param[in] num_vtx number of points
  */
 DFM2_INLINE void ElSuEl_MeshElem(
     std::vector<unsigned int> &aElSuEl,
-    const unsigned int *elem_vtx_idx, size_t num_elem,
+    const unsigned int *elem_vtx_idx,
+    size_t num_elem,
     delfem2::MESHELEM_TYPE type,
     const size_t num_vtx);
 
@@ -214,4 +215,4 @@ DFM2_INLINE void MakeGroupElem(
 #  include "delfem2/mshuni.cpp"
 #endif
 
-#endif /* meshtopo_hpp */
+#endif /* DFM2_MSHUNI_H */

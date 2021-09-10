@@ -127,7 +127,7 @@ int main() {
         mapY2Ip[iy] = static_cast<int>(ip);
       }
     }
-    for (int ip = 0; ip < np; ++ip) {
+    for (unsigned int ip = 0; ip < np; ++ip) {
       if (aXYZ[ip * 3 + 0] < -0.49) {
         double y1 = aXYZ[ip * 3 + 1];
         int iy = (int) (y1 / 0.0132);

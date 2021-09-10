@@ -126,7 +126,7 @@ DFM2_INLINE void delfem2::JArray_AddDiagonal(
   const size_t np = npsup_ind0 - 1;
   std::vector<int> tmp(np, -1);
   psup_ind1.assign(np + 1, 0);
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     for (std::size_t ipsup = psup_ind0[ip]; ipsup < psup_ind0[ip + 1]; ++ipsup) {
       const unsigned int jp = psup0[ipsup];
       assert(tmp[jp] != ip);
@@ -138,13 +138,13 @@ DFM2_INLINE void delfem2::JArray_AddDiagonal(
       psup_ind1[ip + 1] += 1;
     }
   }
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     psup_ind1[ip + 1] += psup_ind1[ip];
   }
   const unsigned int npsup = psup_ind1[np];
   psup1.resize(npsup);
   tmp.assign(np, -1);
-  for (int ip = 0; ip < np; ++ip) {
+  for (unsigned int ip = 0; ip < np; ++ip) {
     for (std::size_t ipsup = psup_ind0[ip]; ipsup < psup_ind0[ip + 1]; ++ipsup) {
       const unsigned int jp = psup0[ipsup];
       assert(tmp[jp] != ip);

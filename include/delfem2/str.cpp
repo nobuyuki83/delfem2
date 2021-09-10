@@ -6,12 +6,11 @@
  */
 
 #include "delfem2/str.h"
+
 #include <sstream>
 #include <map>
 #include <vector>
 #include <cassert>
-#include <iostream>
-#include <cstdio>
 #include <algorithm>
 
 // ----------------------------------------
@@ -455,8 +454,8 @@ DFM2_INLINE std::string delfem2::Str_SVGPolygon
   oss << "<svg xmlns=\"http://www.w3.org/2000/svg\">\n";
   oss << "<polygon points=\"";
   for(size_t ixy=0;ixy<aXY.size()/2;++ixy){
-    double x0 = +aXY[ixy*2+0]*scale;
-    double y0 = -aXY[ixy*2+1]*scale;
+    const double x0 = +aXY[ixy*2+0]*scale;
+    const double y0 = -aXY[ixy*2+1]*scale;
     oss << x0 << "," << y0 << " ";
   }
   oss << "\" fill=\"blue\"></polygon>\n</svg>";

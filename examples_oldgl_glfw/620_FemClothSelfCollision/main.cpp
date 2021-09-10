@@ -378,7 +378,7 @@ int main() {
     {
       const size_t ntri = aTri.size() / 3;
       std::vector<double> aElemCenter(ntri * 3);
-      for (int itri = 0; itri < ntri; ++itri) {
+      for (unsigned int itri = 0; itri < ntri; ++itri) {
         dfm2::CVec3d p = dfm2::CG_Tri3(itri, aTri, aXYZ);
         aElemCenter[itri * 3 + 0] = p.x;
         aElemCenter[itri * 3 + 1] = p.y;
