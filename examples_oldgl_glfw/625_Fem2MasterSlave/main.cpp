@@ -276,8 +276,8 @@ void SolveProblem_LinearSolid_Static(
     const std::vector<unsigned int> &aTri1,
     const std::vector<unsigned int> &aMSFlag)  // master slave flag
 {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np * 2;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 2;
   // ----------------------
   double myu = 10.0;
   double lambda = 10.0;
@@ -289,8 +289,8 @@ void SolveProblem_LinearSolid_Static(
   dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(
       mat_A, vec_b.data(),
       myu, lambda, rho, g_x, g_y,
-      aXY1.data(),  static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(),  aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -309,8 +309,10 @@ void SolveProblem_LinearSolid_Static(
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
     Solve_PCG(
-        dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x),
-        dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
@@ -333,8 +335,8 @@ void SolveProblem_LinearSolid_Dynamic(
     const std::vector<unsigned int> &aTri1,
     const std::vector<unsigned int> &aMSFlag) // master slave flag
 {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np * 2;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 2;
   // ------------------
   double myu = 10.0;
   double lambda = 10.0;
@@ -369,7 +371,10 @@ void SolveProblem_LinearSolid_Dynamic(
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
     Solve_PCG(
-        dfm2::CVecXd(vec_b), dfm2::CVecXd(vec_x), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+        dfm2::CVecXd(vec_b),
+        dfm2::CVecXd(vec_x),
+        dfm2::CVecXd(tmp0),
+        dfm2::CVecXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
@@ -384,8 +389,8 @@ void SolveProblem_LinearSolid_Dynamic(
   dfm2::XPlusAY(aAcc, nDoF, aBCFlag,
                 1.0, vec_x);
   for (unsigned int idof = 0; idof < nDoF; ++idof) {
-    int jdof = aMSFlag[idof];
-    if (jdof == -1) continue;
+    unsigned int jdof = aMSFlag[idof];
+    if (jdof == UINT_MAX) continue;
     aVal[idof] = aVal[jdof];
     aVelo[idof] = aVelo[jdof];
     aAcc[idof] = aAcc[jdof];
@@ -412,8 +417,8 @@ void ProblemSolid(
   for (unsigned int iframe = 0; iframe < 50; ++iframe) {
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
-        aXY1.data(), static_cast<unsigned int>(aXY1.size() / 2),
-        aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+        aXY1.data(), aXY1.size() / 2,
+        aTri1.data(), aTri1.size() / 3,
         aVal.data(), 2);
     viewer.SwapBuffers();
     glfwPollEvents();
@@ -453,8 +458,8 @@ void InitializeProblem_Fluid2(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 3;
   // set boundary condition
   aBCFlag.assign(nDoF, 0);
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -498,7 +503,8 @@ void InitializeProblem_Fluid2(
   std::vector<unsigned int> psup_ind0, psup0;
   dfm2::JArray_PSuP_MeshElem(
       psup_ind0, psup0,
-      aTri1.data(), aTri1.size() / 3, 3, (int) aXY1.size() / 2);
+      aTri1.data(), aTri1.size() / 3, 3,
+      aXY1.size() / 2);
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_AddMasterSlavePattern(
       psup_ind, psup,
@@ -528,8 +534,8 @@ void SolveProblem_Stokes_Static(
     const std::vector<unsigned int> &aTri1,
     const std::vector<unsigned int> &aMSFlag) // master slave flag
 {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 3;
   // ---------------------
   double myu = 1.0;
   double g_x = 0.0;
@@ -571,8 +577,8 @@ void SolveProblem_Stokes_Static(
   dfm2::XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
   if (aMSFlag.size() == nDoF) {
     for (unsigned int idof = 0; idof < nDoF; ++idof) {
-      int jdof = aMSFlag[idof];
-      if (jdof == -1) continue;
+      unsigned int jdof = aMSFlag[idof];
+      if (jdof == UINT_MAX) continue;
       assert(jdof >= 0 && jdof < (int) nDoF);
       aVal[idof] = aVal[jdof];
     }
@@ -601,8 +607,8 @@ void SolveProblem_Stokes_Dynamic(
       mat_A, vec_b.data(),
       myu, rho, g_x, g_y,
       dt_timestep, gamma_newmark,
-      aXY1.data(),  static_cast<unsigned int>(aXY1.size() / 2),
-      aTri1.data(), static_cast<unsigned int>(aTri1.size() / 3),
+      aXY1.data(),  aXY1.size() / 2,
+      aTri1.data(), aTri1.size() / 3,
       aVal.data(), aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
@@ -634,9 +640,9 @@ void SolveProblem_Stokes_Dynamic(
                 1.0, vec_x);
   if (aMSFlag.size() == nDoF) {
     for (unsigned int idof = 0; idof < nDoF; ++idof) {
-      int jdof = aMSFlag[idof];
-      if (jdof == -1) continue;
-      assert(jdof >= 0 && jdof < (int) nDoF);
+      unsigned int jdof = aMSFlag[idof];
+      if (jdof == UINT_MAX) continue;
+      assert(jdof >= 0 && jdof < nDoF);
       aVal[idof] = aVal[jdof];
       aVelo[idof] = aVelo[jdof];
     }
@@ -653,8 +659,8 @@ void SolveProblem_NavierStokes_Dynamic(
     const std::vector<unsigned int> &aMSFlag) // master slave flag
 
 {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
-  const unsigned int nDoF = np * 3;
+  const size_t np = aXY1.size() / 2;
+  const size_t nDoF = np * 3;
   // ----------------------
   double myu = 0.01;
   double rho = 1;
@@ -698,9 +704,9 @@ void SolveProblem_NavierStokes_Dynamic(
                 1.0, vec_x);
   if (aMSFlag.size() == nDoF) {
     for (unsigned int idof = 0; idof < nDoF; ++idof) {
-      int jdof = aMSFlag[idof];
-      if (jdof == -1) continue;
-      assert(jdof >= 0 && jdof < (int) nDoF);
+      unsigned int jdof = aMSFlag[idof];
+      if (jdof == UINT_MAX) continue;
+      assert(jdof >= 0 && jdof < nDoF);
       aVal[idof] = aVal[jdof];
       aVelo[idof] = aVelo[jdof];
     }
@@ -731,7 +737,7 @@ void ProblemFluidTunnel(
     const std::vector<int> &loopIP_ind,
     const std::vector<int> &loopIP,
     double len) {
-  const unsigned int np = static_cast<unsigned int>(aXY1.size() / 2);
+  const size_t np = aXY1.size() / 2;
   dfm2::CMatrixSparse<double> mat_A;
   dfm2::CPreconditionerILU<double> ilu_A;
   glfwSetWindowTitle(viewer.window, "Stokes Static");
@@ -790,9 +796,7 @@ void ProblemFluidTunnel(
   }
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();

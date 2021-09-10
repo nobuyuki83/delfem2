@@ -388,7 +388,7 @@ void delfem2::CADF3::SetUp(
       dist_max = (dist > dist_max) ? dist : dist_max;
     }
   }
-  std::cout << "dist min max" << dist_min << " " << dist_max << std::endl;
+  // std::cout << "dist min max" << dist_min << " " << dist_max << std::endl;
   if (aIsoTri_ != 0) {
     delete aIsoTri_;
     aIsoTri_ = 0;

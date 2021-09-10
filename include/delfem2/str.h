@@ -144,4 +144,4 @@ DFM2_INLINE bool isNumeric(int iascii);
 #  include "delfem2/str.cpp"
 #endif
 
-#endif /* FUNCS_H */
+#endif /* DFM2_STR_H */

@@ -13,11 +13,6 @@
 #include <set>
 #include <climits>
 
-#if defined(_MSC_VER)
-#  pragma warning( push )
-#  pragma warning( disable : 4100 )
-#endif
-
 // ---------------------------------------------
 
 DFM2_INLINE void delfem2::JArray_ElSuP_MeshElem(
@@ -267,7 +262,7 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
       unsigned int jelem = elsup[ielsup];
       for (unsigned int jnoel = 0; jnoel < num_vtx_par_elem; jnoel++) {
         unsigned int jnode = elem_vtx_idx[jelem * num_vtx_par_elem + jnoel];
-        if (aflg[jnode] != (int) ipoint) {
+        if (aflg[jnode] != ipoint) {
           aflg[jnode] = ipoint;
           psup_ind[ipoint + 1]++;
         }
@@ -286,7 +281,7 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
       unsigned int jelem = elsup[ielsup];
       for (unsigned int jnoel = 0; jnoel < num_vtx_par_elem; jnoel++) {
         unsigned int jnode = elem_vtx_idx[jelem * num_vtx_par_elem + jnoel];
-        if (aflg[jnode] != (int) ipoint) {
+        if (aflg[jnode] != ipoint) {
           aflg[jnode] = ipoint;
           const unsigned int ind = psup_ind[ipoint];
           psup[ind] = jnode;
@@ -485,7 +480,3 @@ DFM2_INLINE void delfem2::MakeGroupElem(
   }
   ngroup = igroup + 1;
 }
-
-#if defined(_MSC_VER)
-#pragma warning( pop )
-#endif

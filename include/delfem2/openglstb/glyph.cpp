@@ -1,11 +1,8 @@
 
+#include "delfem2/openglstb/glyph.h"
+
 #include <iostream>
 #include <fstream>
-#include "delfem2/openglstb/glyph.h"
-#include "delfem2/str.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
 
 #if defined(_WIN32) // windows
   #include <windows.h>
@@ -17,6 +14,13 @@
 #else
   #include <GL/gl.h>
 #endif
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+
+#include "delfem2/str.h"
+
+// --------------------------------------
 
  delfem2::openglstb::CGlyph::CGlyph(const std::string &fpath) {
   int channels;
