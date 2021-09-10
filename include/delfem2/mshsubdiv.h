@@ -17,12 +17,13 @@
 #ifndef DFM2_MSHSUBDIV_H
 #define DFM2_MSHSUBDIV_H
 
-#include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>
 
+#include "delfem2/dfm2_inline.h"
+
 namespace delfem2 {
-  
+
 // -----------------------------------------------
 
 /**
@@ -64,39 +65,42 @@ DFM2_INLINE unsigned int findEdge(
     const std::vector<unsigned int> &psup);
 
 DFM2_INLINE int findFace(
-    unsigned int ip0, unsigned int ip1, unsigned int ip2, unsigned int ip3,
-    const std::vector<unsigned int> &aQuad,
-    const std::vector<unsigned int> &elsupInd,
+    unsigned int ip0,
+    unsigned int ip1,
+    unsigned int ip2,
+    unsigned int ip3,
+    const std::vector<unsigned int> &quad_vtx_idx,
+    const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup);
 
 DFM2_INLINE void SubdivisionPoints_QuadCatmullClark(
-    std::vector<double>& aXYZ1,
+    std::vector<double> &aXYZ1,
     //
-    const std::vector<unsigned int>& aQuad1,
-    const std::vector<unsigned int>& aEdgeFace0,
+    const std::vector<unsigned int> &aQuad1,
+    const std::vector<unsigned int> &aEdgeFace0,
     const std::vector<unsigned int> &psupIndQuad0,
     const std::vector<unsigned int> &psupQuad0,
-    const unsigned int* aQuad0,
+    const unsigned int *aQuad0,
     size_t nQuad0,
-    const double* aXYZ0,
+    const double *aXYZ0,
     size_t nXYZ0);
 
 DFM2_INLINE void SubdivPoints3_MeshQuad(
-    std::vector<double>& aXYZ1,
+    std::vector<double> &aXYZ1,
     //
-    const std::vector<int>& aEdgeFace0,
-    const std::vector<unsigned int>& aQuad0,
-    const std::vector<double>& aXYZ0);
+    const std::vector<int> &aEdgeFace0,
+    const std::vector<unsigned int> &aQuad0,
+    const std::vector<double> &aXYZ0);
 
 DFM2_INLINE void SubdivisionPoints_Hex(
-    std::vector<double>& aXYZ1,
+    std::vector<double> &aXYZ1,
     //
     const std::vector<unsigned int> &psupIndHex0,
     const std::vector<unsigned int> &psupHex0,
-    const std::vector<unsigned int>& aQuadHex0,
-    const unsigned int* aHex0,
+    const std::vector<unsigned int> &aQuadHex0,
+    const unsigned int *aHex0,
     unsigned int nHex0,
-    const double* aXYZ0,
+    const double *aXYZ0,
     unsigned int nXYZ0);
 
 } // end namespace delfem2
@@ -104,5 +108,5 @@ DFM2_INLINE void SubdivisionPoints_Hex(
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/mshsubdiv.cpp"
 #endif
- 
-#endif /* meshtopo_hpp */
+
+#endif /* DFM2_MSHSUBDIV_H */

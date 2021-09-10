@@ -48,32 +48,6 @@ MeshTri3_Cuboid(
   return {vec_xyz, vec_tri};
 }
 
-std::vector<double> ComputeMeanValueCoordinate(
-    const std::vector<double>& vtx_xyz_ini,
-    const std::vector<double>& vtx_xyz_cage0,
-    const std::vector<unsigned int>& tri_vtx_id_cage){
-  const size_t num_point = vtx_xyz_ini.size() / 3;
-  const size_t num_point_cage0 = vtx_xyz_cage0.size() / 3;
-  std::vector<double> matrix0(num_point * num_point_cage0, 0.0);
-  for (unsigned int iq = 0; iq < num_point; ++iq) {
-    dfm2::CVec3d q0(vtx_xyz_ini.data() + iq * 3);
-    for (unsigned int itc = 0; itc < tri_vtx_id_cage.size() / 3; ++itc) {
-      const unsigned int ip0 = tri_vtx_id_cage[itc * 3 + 0];
-      const unsigned int ip1 = tri_vtx_id_cage[itc * 3 + 1];
-      const unsigned int ip2 = tri_vtx_id_cage[itc * 3 + 2];
-      dfm2::CVec3d p0 = dfm2::CVec3d(vtx_xyz_cage0.data() + ip0 * 3) - q0;
-      dfm2::CVec3d p1 = dfm2::CVec3d(vtx_xyz_cage0.data() + ip1 * 3) - q0;
-      dfm2::CVec3d p2 = dfm2::CVec3d(vtx_xyz_cage0.data() + ip2 * 3) - q0;
-      double w[3];
-      dfm2::MeanValueCoordinate_Triangle<dfm2::CVec3d>(w, p0, p1, p2);
-      matrix0[iq * num_point_cage0 + ip0] += w[0];
-      matrix0[iq * num_point_cage0 + ip1] += w[1];
-      matrix0[iq * num_point_cage0 + ip2] += w[2];
-    }
-  }
-  return matrix0;
-}
-
 void Example1(
     const std::vector<double> &aXYZ0,
     const std::vector<unsigned int> &aTri) {
@@ -85,7 +59,8 @@ void Example1(
 
   const size_t num_point = aXYZ0.size() / 3;
   const size_t num_point_cage = vec_xyz_cage.size() / 3;
-  std::vector<double> matrix = ComputeMeanValueCoordinate(aXYZ0, vec_xyz_cage, vec_tri_cage);
+  std::vector<double> matrix = delfem2::ComputeMeanValueCoordinate<dfm2::CVec3d>(
+      aXYZ0, vec_xyz_cage, vec_tri_cage);
   for (unsigned int iq = 0; iq < num_point; ++iq) {
     double sum_val = 0.0;
     for (unsigned int ip = 0; ip < num_point_cage; ++ip) {
@@ -114,7 +89,7 @@ void Example1(
       aXYZ_cage_def[ip * 3 + 1] = vec_xyz_cage[ip * 3 + 1] + 0.1 * sin(time * ip + M_PI * 2 / 3);
       aXYZ_cage_def[ip * 3 + 2] = vec_xyz_cage[ip * 3 + 2] + 0.1 * sin(time * ip + M_PI * 4 / 3);
     }
-    for (unsigned int iq = 0; iq < num_point; ++iq){
+    for (unsigned int iq = 0; iq < num_point; ++iq) {
       aXYZ[iq * 3 + 0] = 0.;
       aXYZ[iq * 3 + 1] = 0.;
       aXYZ[iq * 3 + 2] = 0.;
@@ -156,26 +131,19 @@ void Example2(
       {-0.3, -0.3, -0.4},
       {+0.3, +0.3, -0.2});
 
+  std::vector<double> weight_dof_dofcage{1, 1, 1, 1, 1, 1, 1, 1};
+
   const size_t num_vtx = vtx_xyz_ini.size() / 3;
-  const size_t num_vtx_cage0 = vtx_xyz_cage0.size() / 3;
-  const size_t num_vtx_cage1 = vtx_xyz_cage0.size() / 3;
-  std::vector<double> vector0;
-  std::vector<double> vector1;
-  {
-    std::vector<double> matrix0 = ComputeMeanValueCoordinate(vtx_xyz_ini, vtx_xyz_cage0, tri_vtx_ind_cage0);
-    std::vector<double> matrix1 = ComputeMeanValueCoordinate(vtx_xyz_ini, vtx_xyz_cage1, tri_vtx_ind_cage1);
-    vector0.assign(num_vtx, 0.);
-    for (unsigned int iq = 0; iq < num_vtx; ++iq) {
-      for (unsigned int ip = 0; ip < num_vtx_cage0; ++ip) {
-        vector0[iq] += matrix0[iq * num_vtx_cage0 + ip];
-      }
-    }
-    vector1.assign(num_vtx, 0.);
-    for (unsigned int iq = 0; iq < num_vtx; ++iq) {
-      for (unsigned int ip = 0; ip < num_vtx_cage1; ++ip) {
-        vector1[iq] += matrix1[iq * num_vtx_cage1 + ip];
-      }
-    }
+  std::vector<double> vector0 = delfem2::ComputeMeanValueCoordinateReduced<dfm2::CVec3d>(
+      vtx_xyz_ini, vtx_xyz_cage0, tri_vtx_ind_cage0,
+      1, weight_dof_dofcage);
+  std::vector<double> vector1 = delfem2::ComputeMeanValueCoordinateReduced<dfm2::CVec3d>(
+      vtx_xyz_ini, vtx_xyz_cage1, tri_vtx_ind_cage1,
+      1, weight_dof_dofcage);
+  for (unsigned int iq = 0; iq < num_vtx; ++iq) {
+    double sum_val = vector0[iq] + vector1[iq];
+    vector0[iq] /= sum_val;
+    vector1[iq] /= sum_val;
   }
   for (unsigned int iq = 0; iq < num_vtx; ++iq) {
     double sum_val = vector0[iq] + vector1[iq];
@@ -191,7 +159,7 @@ void Example2(
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
-  std::vector<double> aXYZ = vtx_xyz_ini;
+  std::vector<double> vec_xyz;
   std::vector<double> vec_xyz_cage0_def = vtx_xyz_cage0;
   // --------------------
   while (true) {
@@ -199,17 +167,18 @@ void Example2(
     double disp[3] = {
         0.1 * sin(time),
         0.1 * sin(time * 2),
-        0.1 * sin(time * 3) };
+        0.1 * sin(time * 3)};
+    const size_t num_vtx_cage0 = vtx_xyz_cage0.size() / 3;
     for (unsigned int ip = 0; ip < num_vtx_cage0; ++ip) {
       vec_xyz_cage0_def[ip * 3 + 0] = vtx_xyz_cage0[ip * 3 + 0] + disp[0];
       vec_xyz_cage0_def[ip * 3 + 1] = vtx_xyz_cage0[ip * 3 + 1] + disp[1];
       vec_xyz_cage0_def[ip * 3 + 2] = vtx_xyz_cage0[ip * 3 + 2] + disp[2];
     }
-    aXYZ = vtx_xyz_ini;
+    vec_xyz = vtx_xyz_ini;
     for (unsigned int iq = 0; iq < num_vtx; ++iq) {
-      aXYZ[iq * 3 + 0] += vector0[iq] * disp[0];
-      aXYZ[iq * 3 + 1] += vector0[iq] * disp[1];
-      aXYZ[iq * 3 + 2] += vector0[iq] * disp[2];
+      vec_xyz[iq * 3 + 0] += vector0[iq] * disp[0];
+      vec_xyz[iq * 3 + 1] += vector0[iq] * disp[1];
+      vec_xyz[iq * 3 + 2] += vector0[iq] * disp[2];
     }
     //
     viewer.DrawBegin_oldGL();
@@ -221,10 +190,10 @@ void Example2(
         vtx_xyz_cage1.data(), vtx_xyz_cage1.size() / 3,
         tri_vtx_ind_cage1.data(), tri_vtx_ind_cage1.size() / 3);
     delfem2::opengl::DrawMeshTri3D_Edge(
-        aXYZ.data(), aXYZ.size() / 3,
+        vec_xyz.data(), vec_xyz.size() / 3,
         tri_vtx_ind.data(), tri_vtx_ind.size() / 3);
     delfem2::opengl::DrawMeshTri3D_FaceNorm(
-        aXYZ.data(),
+        vec_xyz.data(),
         tri_vtx_ind.data(), tri_vtx_ind.size() / 3);
     viewer.SwapBuffers();
     glfwPollEvents();

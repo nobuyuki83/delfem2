@@ -146,26 +146,28 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshTri(
 // ----------------------------------------------------------------------------------------------------------
 
 DFM2_INLINE void delfem2::ElSuEl_MeshElem(
-    std::vector<unsigned int> &aElSuEl,
+    std::vector<unsigned int> &elsuel,
     const unsigned int *elem_vtx_idx,
     size_t num_elem,
     int nNoEl,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     const int num_face_par_elem,
-    const int nnofa,
-    const int (*node_on_elem_face)[4]) {
+    const int num_vtx_on_face,
+    const int (*vtx_on_elem_face)[4]) {
   assert(!elsup_ind.empty());
   const std::size_t np = elsup_ind.size() - 1;
 
-  aElSuEl.assign(num_elem * num_face_par_elem, UINT_MAX);
+  elsuel.assign(
+      num_elem * num_face_par_elem,
+      UINT_MAX);
 
   std::vector<int> flg_point(np, 0);
-  std::vector<unsigned int> inpofa(nnofa);
+  std::vector<unsigned int> inpofa(num_vtx_on_face);
   for (unsigned int iel = 0; iel < num_elem; iel++) {
     for (int ifael = 0; ifael < num_face_par_elem; ifael++) {
-      for (int ipofa = 0; ipofa < nnofa; ipofa++) {
-        int int0 = node_on_elem_face[ifael][ipofa];
+      for (int ipofa = 0; ipofa < num_vtx_on_face; ipofa++) {
+        int int0 = vtx_on_elem_face[ifael][ipofa];
         const unsigned int ip = elem_vtx_idx[iel * nNoEl + int0];
         assert(ip < np);
         inpofa[ipofa] = ip;
@@ -178,8 +180,8 @@ DFM2_INLINE void delfem2::ElSuEl_MeshElem(
         if (jelem0 == iel) continue;
         for (int jfael = 0; jfael < num_face_par_elem; jfael++) {
           iflg = true;
-          for (int jpofa = 0; jpofa < nnofa; jpofa++) {
-            int jnt0 = node_on_elem_face[jfael][jpofa];
+          for (int jpofa = 0; jpofa < num_vtx_on_face; jpofa++) {
+            int jnt0 = vtx_on_elem_face[jfael][jpofa];
             const unsigned int jpoin0 = elem_vtx_idx[jelem0 * nNoEl + jnt0];
             if (flg_point[jpoin0] == 0) {
               iflg = false;
@@ -187,16 +189,16 @@ DFM2_INLINE void delfem2::ElSuEl_MeshElem(
             }
           }
           if (iflg) {
-            aElSuEl[iel * num_face_par_elem + ifael] = jelem0;
+            elsuel[iel * num_face_par_elem + ifael] = jelem0;
             break;
           }
         }
         if (iflg) break;
       }
       if (!iflg) {
-        aElSuEl[iel * num_face_par_elem + ifael] = UINT_MAX;
+        elsuel[iel * num_face_par_elem + ifael] = UINT_MAX;
       }
-      for (int ipofa = 0; ipofa < nnofa; ipofa++) {
+      for (int ipofa = 0; ipofa < num_vtx_on_face; ipofa++) {
         flg_point[inpofa[ipofa]] = 0;
       }
     }
@@ -300,17 +302,17 @@ DFM2_INLINE void delfem2::JArray_PSuP_MeshElem(
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     //
-    const unsigned int *pElem,
-    size_t nEl,
-    unsigned int nPoEl,
-    size_t nPo) {
+    const unsigned int *elem_vtx_idx,
+    size_t num_elm,
+    unsigned int num_vtx_par_elem,
+    size_t num_vtx) {
   std::vector<unsigned int> elsup_ind, elsup;
   JArray_ElSuP_MeshElem(
       elsup_ind, elsup,
-      pElem, nEl, nPoEl, nPo);
+      elem_vtx_idx, num_elm, num_vtx_par_elem, num_vtx);
   JArrayPointSurPoint_MeshOneRingNeighborhood(
       psup_ind, psup,
-      pElem, elsup_ind, elsup, nPoEl, nPo);
+      elem_vtx_idx, elsup_ind, elsup, num_vtx_par_elem, num_vtx);
 }
 
 DFM2_INLINE void delfem2::makeOneRingNeighborhood_TriFan(
@@ -360,7 +362,7 @@ DFM2_INLINE void delfem2::JArrayEdge_MeshElem(
     std::vector<unsigned int> &edge_ind,
     std::vector<unsigned int> &edge,
     //
-    const unsigned int *aElm0,
+    const unsigned int *elem_vtx_idx,
     MESHELEM_TYPE elem_type,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
@@ -378,8 +380,8 @@ DFM2_INLINE void delfem2::JArrayEdge_MeshElem(
       for (int ie = 0; ie < neElm; ++ie) {
         int inoel0 = aNoelEdge[ie][0];
         int inoel1 = aNoelEdge[ie][1];
-        unsigned int ip0 = aElm0[iq0 * nnoelElm + inoel0];
-        unsigned int ip1 = aElm0[iq0 * nnoelElm + inoel1];
+        unsigned int ip0 = elem_vtx_idx[iq0 * nnoelElm + inoel0];
+        unsigned int ip1 = elem_vtx_idx[iq0 * nnoelElm + inoel1];
         if (ip0 != ip && ip1 != ip) continue;
         if (ip0 == ip) {
           if (is_bidirectional || ip1 > ip) { setIP.insert(ip1); }
@@ -396,17 +398,17 @@ DFM2_INLINE void delfem2::JArrayEdge_MeshElem(
 }
 
 DFM2_INLINE void delfem2::MeshLine_JArrayEdge(
-    std::vector<unsigned int> &aLine,
+    std::vector<unsigned int> &line_vtx_idx,
     //
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup) {
-  aLine.reserve(psup.size() * 2);
+  line_vtx_idx.reserve(psup.size() * 2);
   const std::size_t np = psup_ind.size() - 1;
   for (unsigned int ip = 0; ip < np; ++ip) {
     for (unsigned int ipsup = psup_ind[ip]; ipsup < psup_ind[ip + 1]; ++ipsup) {
       unsigned int jp = psup[ipsup];
-      aLine.push_back(ip);
-      aLine.push_back(jp);
+      line_vtx_idx.push_back(ip);
+      line_vtx_idx.push_back(jp);
     }
   }
 }

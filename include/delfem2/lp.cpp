@@ -55,14 +55,14 @@ bool LinPro_CheckTable(
     assert(map_col2row.size()==ncol);
     std::vector<int> aFlgRow(nrow,0);
     for(int jcol=0;jcol<ncol;++jcol){
-      const int jrow = map_col2row[jcol];
+      const unsigned int jrow = map_col2row[jcol];
       assert( jrow >= 0 && jrow < nrow );
       assert(aFlgRow[jrow] == 0 );
       aFlgRow[jrow] = 1;
     }
   }
   for(int jcol=0;jcol<ncol;++jcol){
-    int jrow_dia = map_col2row[jcol];
+    unsigned int jrow_dia = map_col2row[jcol];
     for(int icol=0;icol<ncol-1;++icol){
       double dia0 = B[icol*nrow+jrow_dia];
       if( icol == jcol ){
@@ -97,7 +97,7 @@ int LinPro_SolveTable(
 {
   assert(ncol>0);
   for(unsigned int icol=0;icol<ncol-1;++icol){
-    int jrow = map_col2row[icol];
+    unsigned int jrow = map_col2row[icol];
     double b0 = B[icol*nrow+jrow];
     double b1 = B[(ncol-1)*nrow+jrow];
     if( fabs(b1)<1.0e-30 ) continue;
@@ -108,14 +108,14 @@ int LinPro_SolveTable(
     }
   }
 //  ::Print(B, ncol, nrow, map_col2row);
-  ////
+  //
   std::vector<int> flg_row(nrow,0); // 0:base 1:non_base 2:trg
   for(unsigned int ieq=0;ieq<ncol;++ieq){
-    int jrow = map_col2row[ieq];
+    unsigned int jrow = map_col2row[ieq];
     flg_row[jrow] = 1;
   }
   flg_row[0] = 2;
-  ////////
+  // -----
   for(int itr=0;itr<nitr;++itr){
 //    std::cout << "iteration: " << itr << " " << nitr << std::endl;
 //    ::Print(B,ncol,nrow,map_col2row);
@@ -181,20 +181,16 @@ int LinPro_SolveTable(
     }
     // swap basic-nonbasic index
     flg_row[jrow_min] = 1;
-    int jrow_new = map_col2row[icol_min];
+    unsigned int jrow_new = map_col2row[icol_min];
     flg_row[jrow_new] = 0;
     map_col2row[icol_min] = jrow_min;
   }
   return false;
 }
 
-
-
-
 //
 // ---------------------------------------------
 //
-
 
 std::vector<double> delfem2::CLinPro::GetValid() const
 {
@@ -247,7 +243,7 @@ int delfem2::CLinPro::Solve
 //  ::Print(B, ncol, nrow, map_col2rowB);
   std::vector<double> buff(nrow,0.0);
   for(unsigned int icol=0;icol<ncol;++icol){
-    int jrow = map_col2rowB[icol];
+    unsigned int jrow = map_col2rowB[icol];
     buff[jrow] = B[icol*nrow];
   }
   solution.resize(nvar,0.0);
@@ -261,10 +257,10 @@ int delfem2::CLinPro::Solve
 }
 
 
-void delfem2::CLinPro::AddEqn
-(const std::vector<double>& aW,
- double rhs,
- EQ_TYPE type)
+void delfem2::CLinPro::AddEqn(
+    const std::vector<double>& aW,
+    double rhs,
+    EQ_TYPE type)
 {
   CEq eq;
   eq.aCoeff.assign(aW.begin(),aW.end());
@@ -344,7 +340,7 @@ int delfem2::CLinPro::Precomp(int& nitr)
   if( nart == 0 ){ nitr=0; return 0; }
   ////
   A[(ncol-1)*nrow+1] = 1.0;
-  for(int ieq=0;ieq<aEq.size();++ieq){
+  for(unsigned int ieq=0;ieq<aEq.size();++ieq){
     if( mapEq2Art[ieq] == -1 ) continue;
     int iart = mapEq2Art[ieq];
     unsigned int jrow1 = 1+1+nvar+nslk+iart;
@@ -353,7 +349,7 @@ int delfem2::CLinPro::Precomp(int& nitr)
     map_col2row[ieq] = jrow1;
   }
   for(unsigned int icol=0;icol<ncol;++icol){
-    int jrow_dia = map_col2row[icol];
+    unsigned int jrow_dia = map_col2row[icol];
     if( A[icol*nrow+jrow_dia] < 0 ){
       for(unsigned int jrow=0;jrow<nrow;++jrow){
         A[icol*nrow+jrow] = -A[icol*nrow+jrow];

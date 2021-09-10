@@ -85,26 +85,26 @@ DFM2_INLINE void JArray_ElSuP_MeshTri(
 
 /**
  * @brief compute adjacent element index for mesh element
- * @param[out] aElSuEl neighbouring element index (UINT_MAX for boundary)
+ * @param[out] elsuel neighbouring element index (UINT_MAX for boundary)
  * @param[in] elem_vtx_idx array of connectivity
  * @param[in] num_elem number of elements
  * @param[in] nNoEl number of nodes in a element
  * @param[in] elsup_ind jagged array index of "elem surrounding point"
  * @param[in] elsup jagged array value of "elem surrounding point"
  * @param[in] num_face_par_elem number of neibouring elements
- * @param[in] nnofa how many nodes are shared with a nighbouring element
- * @param node_on_elem_face
+ * @param[in] num_vtx_on_face how many nodes are shared with a nighbouring element
+ * @param vtx_on_elem_face
  */
 DFM2_INLINE void ElSuEl_MeshElem(
-    std::vector<unsigned int> &aElSuEl,
+    std::vector<unsigned int> &elsuel,
     const unsigned int *elem_vtx_idx,
     size_t num_elem,
     int nNoEl,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     const int num_face_par_elem,
-    const int nnofa,
-    const int (*node_on_elem_face)[4]);
+    const int num_vtx_on_face,
+    const int (*vtx_on_elem_face)[4]);
 
 /**
  * @brief compute adjacent element index for mesh element
@@ -139,16 +139,16 @@ DFM2_INLINE void JArrayPointSurPoint_MeshOneRingNeighborhood(
 
 /**
  * @brief compute indexes of points surrounding a point as a jagged array
- * @param nPoEl number of nodes in an element 
+ * @param num_vtx_par_elem number of nodes in an element
  */
 DFM2_INLINE void JArray_PSuP_MeshElem(
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     //
-    const unsigned int *pElem,
-    size_t nEl,
-    unsigned int nPoEl,
-    size_t nPo);
+    const unsigned int *elem_vtx_idx,
+    size_t num_elm,
+    unsigned int num_vtx_par_elem,
+    size_t num_vtx);
 
 DFM2_INLINE void makeOneRingNeighborhood_TriFan(
     std::vector<int> &psup_ind,
@@ -164,14 +164,14 @@ DFM2_INLINE void JArrayEdge_MeshElem(
     std::vector<unsigned int> &edge_ind,
     std::vector<unsigned int> &edge,
     //
-    const unsigned int *aElm0,
+    const unsigned int *elem_vtx_idx,
     delfem2::MESHELEM_TYPE elem_type,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     bool is_bidirectional);
 
 DFM2_INLINE void MeshLine_JArrayEdge(
-    std::vector<unsigned int> &aLine,
+    std::vector<unsigned int> &line_vtx_idx,
     //
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup);

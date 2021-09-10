@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 namespace delfem2::cagedef {
 
@@ -92,7 +93,82 @@ void MeanValueCoordinate_Triangle(
   w[2] = (t2 - c1 * t0 - c0 * t1) / (d2 * sin(t0) * s1);
 }
 
-// --------
+template <typename VEC>
+std::vector<double> ComputeMeanValueCoordinate(
+    const std::vector<double> &vec_xyz_ini,
+    const std::vector<double> &vec_xyz_cage0,
+    const std::vector<unsigned int> &aTri_cage0) {
+  const auto num_point = static_cast<unsigned int>(vec_xyz_ini.size() / 3);
+  const auto num_point_cage0 = static_cast<unsigned int>(vec_xyz_cage0.size() / 3);
+  std::vector<double> matrix0(num_point * num_point_cage0, 0.0);
+  for (unsigned int iq = 0; iq < num_point; ++iq) {
+    VEC q0(vec_xyz_ini.data() + iq * 3);
+    for (unsigned int itc = 0; itc < aTri_cage0.size() / 3; ++itc) {
+      const unsigned int ip0 = aTri_cage0[itc * 3 + 0];
+      const unsigned int ip1 = aTri_cage0[itc * 3 + 1];
+      const unsigned int ip2 = aTri_cage0[itc * 3 + 2];
+      VEC p0 = VEC(vec_xyz_cage0.data() + ip0 * 3) - q0;
+      VEC p1 = VEC(vec_xyz_cage0.data() + ip1 * 3) - q0;
+      VEC p2 = VEC(vec_xyz_cage0.data() + ip2 * 3) - q0;
+      double w[3];
+      MeanValueCoordinate_Triangle<VEC>(w, p0, p1, p2);
+      matrix0[iq * num_point_cage0 + ip0] += w[0];
+      matrix0[iq * num_point_cage0 + ip1] += w[1];
+      matrix0[iq * num_point_cage0 + ip2] += w[2];
+    }
+  }
+  return matrix0;
+}
+
+/**
+ * [np,ndof] = [np,np_cage] * [ndof, np_cage]^T
+ * @tparam VEC delfem2::CVec3d
+ * @param[in] vec_xyz_ini
+ * @param[in] vec_xyz_cage0
+ * @param[in] tri_vtxidx_cage0
+ * @param[in] ndof
+ * @param[in] dof_dofcage
+ * @return
+ */
+template <typename VEC>
+std::vector<double> ComputeMeanValueCoordinateReduced(
+    const std::vector<double> &vec_xyz,
+    const std::vector<double> &vec_xyz_cage0,
+    const std::vector<unsigned int> &tri_vtxidx_cage0,
+    unsigned int ndof,
+    const std::vector<double>& dof_dofcage) {
+  const size_t num_vtx = vec_xyz.size() / 3;
+  const size_t num_vtx_cage = vec_xyz_cage0.size() / 3;
+  const size_t num_tri_cage = tri_vtxidx_cage0.size() / 3;
+  assert( dof_dofcage.size() == ndof*num_vtx_cage );
+  std::vector<double> mat_res(num_vtx * ndof, 0.0);
+  std::vector<double> mat_tmp;
+  for (unsigned int iq = 0; iq < num_vtx; ++iq) {
+    mat_tmp.assign(num_vtx_cage,0.0);
+    const VEC q0(vec_xyz.data() + iq * 3);
+    for (unsigned int itc = 0; itc < num_tri_cage; ++itc) {
+      const unsigned int ip0 = tri_vtxidx_cage0[itc * 3 + 0];
+      const unsigned int ip1 = tri_vtxidx_cage0[itc * 3 + 1];
+      const unsigned int ip2 = tri_vtxidx_cage0[itc * 3 + 2];
+      const VEC p0 = VEC(vec_xyz_cage0.data() + ip0 * 3) - q0;
+      const VEC p1 = VEC(vec_xyz_cage0.data() + ip1 * 3) - q0;
+      const VEC p2 = VEC(vec_xyz_cage0.data() + ip2 * 3) - q0;
+      double w[3];
+      MeanValueCoordinate_Triangle<VEC>(w, p0, p1, p2);
+      mat_tmp[ip0] += w[0];
+      mat_tmp[ip1] += w[1];
+      mat_tmp[ip2] += w[2];
+    }
+    for(unsigned int idof=0;idof<ndof;++idof) {
+      for(unsigned int ip=0;ip<num_vtx_cage;++ip) {
+        mat_res[iq * ndof + idof] += dof_dofcage[idof * num_vtx_cage + ip] * mat_tmp[ip];
+      }
+    }
+  }
+  return mat_res;
+}
+
+// ---------------------------------------
 
 template<class VEC>
 void MeanValueCoordinate_Polygon2(
