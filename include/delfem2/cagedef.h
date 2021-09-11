@@ -14,7 +14,7 @@
 
 #include <cmath>
 #include <vector>
-#include <iostream>
+#include <cassert>
 
 namespace delfem2::cagedef {
 
