@@ -257,31 +257,42 @@ CVec2<T> Mat2Vec(const double A[4], const CVec2<T> &v);
 
 //! @brief Area of the Triangle
 template<typename T>
-double Area_Tri(const CVec2<T> &v1,
-                const CVec2<T> &v2,
-                const CVec2<T> &v3);
+double Area_Tri(
+    const CVec2<T> &v1,
+    const CVec2<T> &v2,
+    const CVec2<T> &v3);
 
 template<typename T>
-double Cross(const CVec2<T> &v1, const CVec2<T> &v2);
+double Cross(
+    const CVec2<T> &v1,
+    const CVec2<T> &v2);
 
 template<typename T>
-double SquareLength(const CVec2<T> &point);
+double SquareLength(
+    const CVec2<T> &point);
 
 template<typename T>
-double Length(const CVec2<T> &point);
+double Length(
+    const CVec2<T> &point);
 
 //! @brief Length between two points
 template<typename T>
-T Distance(const CVec2<T> &ipo0, const CVec2<T> &ipo1);
+T Distance(
+    const CVec2<T> &ipo0,
+    const CVec2<T> &ipo1);
 
 //! @brief Length between two points
 template<typename T>
 double SquareDistance(
-    const CVec2<T> &ipo0, const CVec2<T> &ipo1);
+    const CVec2<T> &ipo0,
+    const CVec2<T> &ipo1);
 
 //! @brief Hight of a triangle : between v1 and line of v2-v3
 template<typename T>
-double TriHeight(const CVec2<T> &v1, const CVec2<T> &v2, const CVec2<T> &v3);
+double TriHeight(
+    const CVec2<T> &v1,
+    const CVec2<T> &v2,
+    const CVec2<T> &v3);
 
 //! @brief compute dot product
 template<typename T>
@@ -305,17 +316,22 @@ CVec2<T> GetNearest_LineSeg_Point(
 template<typename T>
 double GetDist_LineSeg_Point(
     const CVec2<T> &po_c,
-    const CVec2<T> &po_s, const CVec2<T> &po_e);
+    const CVec2<T> &po_s,
+    const CVec2<T> &po_e);
 
 template<typename T>
 bool IsCross_LineSeg_LineSeg(
-    const CVec2<T> &po_s0, const CVec2<T> &po_e0,
-    const CVec2<T> &po_s1, const CVec2<T> &po_e1);
+    const CVec2<T> &po_s0,
+    const CVec2<T> &po_e0,
+    const CVec2<T> &po_s1,
+    const CVec2<T> &po_e1);
 
 template<typename T>
 double GetDist_LineSeg_LineSeg(
-    const CVec2<T> &po_s0, const CVec2<T> &po_e0,
-    const CVec2<T> &po_s1, const CVec2<T> &po_e1);
+    const CVec2<T> &po_s0,
+    const CVec2<T> &po_e0,
+    const CVec2<T> &po_s1,
+    const CVec2<T> &po_e1);
 
 /**
  * @brief square root of circumradius
@@ -357,9 +373,9 @@ int DetDelaunay(
 //! @brief Area of the Triangle (3 indexes and vertex array)
 template<typename T>
 double Area_Tri(
-    const int iv1,
-    const int iv2,
-    const int iv3,
+    int iv1,
+    int iv2,
+    int iv3,
     const std::vector<CVec2<T> > &point);
 
 template<typename T>

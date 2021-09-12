@@ -277,10 +277,10 @@ class CMat3 {
   CMat3(REAL x, REAL y, REAL z);
   // ---------------
   REAL *data() { return mat; }
-  const REAL *data() const { return mat; }
+  [[nodiscard]] const REAL *data() const { return mat; }
   // ---------------
   void GetElements(REAL m[9]) const { for (unsigned int i = 0; i < 9; i++) { m[i] = mat[i]; }}
-  double Get(int i, int j) const { return mat[i * 3 + j]; }
+  [[nodiscard]] double Get(int i, int j) const { return mat[i * 3 + j]; }
   // ---------
   void AffineMatrixTrans(REAL m[16]) const {
     m[0 * 4 + 0] = mat[0];
@@ -326,10 +326,10 @@ class CMat3 {
   void MatVecTrans(const REAL vec0[], REAL vec1[]) const;
 
 //  CVector3 MatVecTrans(const CVector3& vec0) const;
-  CMat3 MatMat(const CMat3 &mat0) const;
-  CMat3 MatMatTrans(const CMat3 &mat0) const;
+  [[nodiscard]] CMat3 MatMat(const CMat3 &mat0) const;
+  [[nodiscard]] CMat3 MatMatTrans(const CMat3 &mat0) const;
   // ----------------
-  CMat3 Sym() const {
+  [[nodiscard]] CMat3 Sym() const {
     CMat3 m;
     for (unsigned int i = 0; i < 3; i++) {
       for (unsigned int j = 0; j < 3; j++) {
@@ -338,7 +338,7 @@ class CMat3 {
     }
     return m;
   }
-  inline CMat3 operator-() const { return (*this) * (-1.0); }
+  inline CMat3 operator-() const { return (*this) * static_cast<REAL>(-1); }
   inline CMat3 operator+() const { return (*this); }
   inline CMat3 &operator+=(const CMat3 &rhs) {
     for (unsigned int i = 0; i < 9; i++) { mat[i] += rhs.mat[i]; }

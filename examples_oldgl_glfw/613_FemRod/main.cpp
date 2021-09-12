@@ -77,7 +77,10 @@ void MakeProblemSetting_Spiral(
     double dangle) {
   aP0.resize(np);
   for (unsigned int ip = 0; ip < np; ++ip) {
-    aP0[ip] = dfm2::CVec3d(-1.0 + ip * pitch, rad0 * cos(dangle * ip), rad0 * sin(dangle * ip));
+    aP0[ip] = dfm2::CVec3d(
+        -1.0 + ip * pitch,
+        rad0 * cos(dangle * ip),
+        rad0 * sin(dangle * ip));
   };
   // -------------------------
   // below: par segment data
@@ -149,8 +152,8 @@ int main() {
                               dist01(reng));  // dangle
     std::vector<int> aBCFlag;
     {
-      const unsigned int np = static_cast<unsigned int>(aP0.size());
-      const unsigned int ns = static_cast<unsigned int>(aS0.size());
+      const auto np = static_cast<unsigned int>(aP0.size());
+      const auto ns = static_cast<unsigned int>(aS0.size());
       const unsigned int nNode = np + ns;
       aBCFlag.assign(nNode * 3, 0);
       {
@@ -171,8 +174,9 @@ int main() {
     {
       size_t nNode = aElemSeg.size() / 2 + aP0.size();
       std::vector<unsigned int> psup_ind, psup;
-      dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                                 aElemRod.data(), aElemRod.size() / 5, 5, nNode);
+      dfm2::JArray_PSuP_MeshElem(
+          psup_ind, psup,
+          aElemRod.data(), aElemRod.size() / 5, 5, nNode);
       dfm2::JArray_Sort(psup_ind, psup);
       mats.Initialize(nNode, 3, true);
       mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(), psup.size());
@@ -188,11 +192,11 @@ int main() {
       if (aBCFlag[ip * 3 + 1] == 0) { aP[ip].p[1] += rnd.y; }
       if (aBCFlag[ip * 3 + 2] == 0) { aP[ip].p[2] += rnd.z; }
     }
-    const unsigned int ns = static_cast<unsigned int>(aS.size());
+    const auto ns = static_cast<unsigned int>(aS.size());
     for (unsigned int is = 0; is < ns; ++is) {
       aS[is] = aS0[is];
       auto rnd = dfm2::CVec3d::Random(dist03, reng);
-      const unsigned int np = static_cast<unsigned int>(aP.size());
+      const auto np = static_cast<unsigned int>(aP.size());
       if (aBCFlag[(np + is) * 3 + 0] == 0) { aS[is].p[0] += rnd.x; }
       if (aBCFlag[(np + is) * 3 + 1] == 0) { aS[is].p[1] += rnd.y; }
       if (aBCFlag[(np + is) * 3 + 2] == 0) { aS[is].p[2] += rnd.z; }
