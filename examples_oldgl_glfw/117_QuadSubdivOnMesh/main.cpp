@@ -65,8 +65,9 @@ void InitializeProblem() {
     aXYZ_Quad[ip*3+2] = q0.z;
   }
   
-  dfm2::Normal_MeshQuad3(aNorm_Quad,
-                         aXYZ_Quad, aaQuad[0]);
+  dfm2::Normal_MeshQuad3(
+      aNorm_Quad,
+      aXYZ_Quad, aaQuad[0]);
   
   aaQuad.resize(nsubdiv+1);
   for(unsigned int isubdiv=0;isubdiv<nsubdiv;++isubdiv){

@@ -49,25 +49,25 @@ MeshTri3_Cuboid(
 }
 
 void Example1(
-    const std::vector<double> &aXYZ0,
-    const std::vector<unsigned int> &aTri) {
+    const std::vector<double> &vtx_xyz0,
+    const std::vector<unsigned int> &tri_vtxidx) {
 
   const auto[vec_xyz_cage, vec_tri_cage] =
   MeshTri3_Cuboid(
       {-0.6, -0.6, -0.6},
       {+0.6, +0.6, +0.6});
 
-  const size_t num_point = aXYZ0.size() / 3;
-  const size_t num_point_cage = vec_xyz_cage.size() / 3;
+  const size_t num_vtx = vtx_xyz0.size() / 3;
+  const size_t num_vtx_cage = vec_xyz_cage.size() / 3;
   std::vector<double> matrix = delfem2::ComputeMeanValueCoordinate<dfm2::CVec3d>(
-      aXYZ0, vec_xyz_cage, vec_tri_cage);
-  for (unsigned int iq = 0; iq < num_point; ++iq) {
+      vtx_xyz0, vec_xyz_cage, vec_tri_cage);
+  for (unsigned int iq = 0; iq < num_vtx; ++iq) {
     double sum_val = 0.0;
-    for (unsigned int ip = 0; ip < num_point_cage; ++ip) {
-      sum_val += matrix[iq * num_point_cage + ip];
+    for (unsigned int ip = 0; ip < num_vtx_cage; ++ip) {
+      sum_val += matrix[iq * num_vtx_cage + ip];
     }
-    for (unsigned int ip = 0; ip < num_point_cage; ++ip) {
-      matrix[iq * num_point_cage + ip] /= sum_val;
+    for (unsigned int ip = 0; ip < num_vtx_cage; ++ip) {
+      matrix[iq * num_vtx_cage + ip] /= sum_val;
     }
   }
   // --------------------
@@ -79,38 +79,38 @@ void Example1(
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
-  std::vector<double> aXYZ = aXYZ0;
-  std::vector<double> aXYZ_cage_def = vec_xyz_cage;
+  std::vector<double> vtx_xyz = vtx_xyz0;
+  std::vector<double> vtx_xyz_cage_def = vec_xyz_cage;
   // --------------------
   while (true) {
     const double time = glfwGetTime();
-    for (unsigned int ip = 0; ip < num_point_cage; ++ip) {
-      aXYZ_cage_def[ip * 3 + 0] = vec_xyz_cage[ip * 3 + 0] + 0.1 * sin(time * ip);
-      aXYZ_cage_def[ip * 3 + 1] = vec_xyz_cage[ip * 3 + 1] + 0.1 * sin(time * ip + M_PI * 2 / 3);
-      aXYZ_cage_def[ip * 3 + 2] = vec_xyz_cage[ip * 3 + 2] + 0.1 * sin(time * ip + M_PI * 4 / 3);
+    for (unsigned int ip = 0; ip < num_vtx_cage; ++ip) {
+      vtx_xyz_cage_def[ip * 3 + 0] = vec_xyz_cage[ip * 3 + 0] + 0.1 * sin(time * ip);
+      vtx_xyz_cage_def[ip * 3 + 1] = vec_xyz_cage[ip * 3 + 1] + 0.1 * sin(time * ip + M_PI * 2 / 3);
+      vtx_xyz_cage_def[ip * 3 + 2] = vec_xyz_cage[ip * 3 + 2] + 0.1 * sin(time * ip + M_PI * 4 / 3);
     }
-    for (unsigned int iq = 0; iq < num_point; ++iq) {
-      aXYZ[iq * 3 + 0] = 0.;
-      aXYZ[iq * 3 + 1] = 0.;
-      aXYZ[iq * 3 + 2] = 0.;
-      for (unsigned int ip = 0; ip < num_point_cage; ++ip) {
-        aXYZ[iq * 3 + 0] += matrix[iq * num_point_cage + ip] * aXYZ_cage_def[ip * 3 + 0];
-        aXYZ[iq * 3 + 1] += matrix[iq * num_point_cage + ip] * aXYZ_cage_def[ip * 3 + 1];
-        aXYZ[iq * 3 + 2] += matrix[iq * num_point_cage + ip] * aXYZ_cage_def[ip * 3 + 2];
+    for (unsigned int iq = 0; iq < num_vtx; ++iq) {
+      vtx_xyz[iq * 3 + 0] = 0.;
+      vtx_xyz[iq * 3 + 1] = 0.;
+      vtx_xyz[iq * 3 + 2] = 0.;
+      for (unsigned int ip = 0; ip < num_vtx_cage; ++ip) {
+        vtx_xyz[iq * 3 + 0] += matrix[iq * num_vtx_cage + ip] * vtx_xyz_cage_def[ip * 3 + 0];
+        vtx_xyz[iq * 3 + 1] += matrix[iq * num_vtx_cage + ip] * vtx_xyz_cage_def[ip * 3 + 1];
+        vtx_xyz[iq * 3 + 2] += matrix[iq * num_vtx_cage + ip] * vtx_xyz_cage_def[ip * 3 + 2];
       }
     }
     //
     viewer.DrawBegin_oldGL();
     ::glColor3d(0, 0, 0);
     delfem2::opengl::DrawMeshTri3D_Edge(
-        aXYZ_cage_def.data(), aXYZ_cage_def.size() / 3,
+        vtx_xyz_cage_def.data(), vtx_xyz_cage_def.size() / 3,
         vec_tri_cage.data(), vec_tri_cage.size() / 3);
     delfem2::opengl::DrawMeshTri3D_Edge(
-        aXYZ.data(), aXYZ.size() / 3,
-        aTri.data(), aTri.size() / 3);
+        vtx_xyz.data(), vtx_xyz.size() / 3,
+        tri_vtxidx.data(), tri_vtxidx.size() / 3);
     delfem2::opengl::DrawMeshTri3D_FaceNorm(
-        aXYZ.data(),
-        aTri.data(), aTri.size() / 3);
+        vtx_xyz.data(),
+        tri_vtxidx.data(), tri_vtxidx.size() / 3);
     viewer.SwapBuffers();
     glfwPollEvents();
     if (glfwWindowShouldClose(viewer.window)) { break; }

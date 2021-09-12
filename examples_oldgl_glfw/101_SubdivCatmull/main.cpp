@@ -60,22 +60,22 @@ int main() {
     aaXYZ.resize(nlevel_subdiv + 1);
     aaQuad.resize(nlevel_subdiv + 1);
     for (unsigned int il = 0; il < nlevel_subdiv; ++il) {
-      const std::vector<double> &aXYZ0 = aaXYZ[il];
-      const std::vector<unsigned int> &aQuad0 = aaQuad[il];
-      std::vector<unsigned int> &aQuad1 = aaQuad[il + 1];
+      const std::vector<double> &vtx_xyz0 = aaXYZ[il];
+      const std::vector<unsigned int> &quads0 = aaQuad[il];
+      std::vector<unsigned int> &quads1 = aaQuad[il + 1];
       std::vector<unsigned int> aEdgeFace0;
       std::vector<unsigned int> psupIndQuad0, psupQuad0;
       dfm2::SubdivTopo_MeshQuad(
-          aQuad1,
+          quads1,
           psupIndQuad0, psupQuad0, aEdgeFace0,
-          aQuad0.data(), aQuad0.size() / 4,
-          aXYZ0.size() / 3);
-      std::vector<double> &aXYZ1 = aaXYZ[il + 1];
+          quads0.data(), quads0.size() / 4,
+          vtx_xyz0.size() / 3);
+      std::vector<double> &vtx_xyz1 = aaXYZ[il + 1];
       delfem2::SubdivisionPoints_QuadCatmullClark(
-          aXYZ1,
-          aQuad1, aEdgeFace0, psupIndQuad0, psupQuad0,
-          aQuad0.data(), aQuad0.size() / 4,
-          aXYZ0.data(), aXYZ0.size() / 3);
+          vtx_xyz1,
+          quads1, aEdgeFace0, psupIndQuad0, psupQuad0,
+          quads0.data(), quads0.size() / 4,
+          vtx_xyz0.data(), vtx_xyz0.size() / 3);
     }
     // -------
     for (unsigned int isub = 0; isub <= nlevel_subdiv; ++isub) {
