@@ -165,9 +165,9 @@ TEST(mathfunc,sherical_harmonics_orthgonality)
   double area_sum = 0.0;
   std::vector<double> A(N*N,0.0);
   for(int it=0;it<aTri.size()/3;++it){
-    const int i0 = aTri[it*3+0];
-    const int i1 = aTri[it*3+1];
-    const int i2 = aTri[it*3+2];
+    const unsigned int i0 = aTri[it*3+0];
+    const unsigned int i1 = aTri[it*3+1];
+    const unsigned int i2 = aTri[it*3+2];
     dfm2::CVec3d p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
     dfm2::CVec3d p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
     dfm2::CVec3d p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);

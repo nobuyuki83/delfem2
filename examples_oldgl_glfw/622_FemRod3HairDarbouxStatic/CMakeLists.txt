@@ -15,7 +15,7 @@ ENDIF ()
 
 ##########################################################
 
-project(616_FemRod3Static)
+project(622_FemRod3HairDarbouxStatic)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

@@ -8,14 +8,14 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /EHsc ")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /EHsc")
 ELSE ()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
 ENDIF ()
 
 ##########################################################
 
-project(617_FemRodHairSelfcollision)
+project(617_FemRod3HairDarbouxSelfcollision)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

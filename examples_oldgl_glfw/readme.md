@@ -236,8 +236,8 @@ cmake --build .
 ### [612_BemPotentialFlow3D](612_BemPotentialFlow3D)
 <img src="612_BemPotentialFlow3D/thumbnail.png" width=200>
 
-### [613_FemRod](613_FemRod)
-<img src="613_FemRod/thumbnail.png" width=200>
+### [613_FemRod3Darboux](613_FemRod3Darboux)
+<img src="613_FemRod3Darboux/thumbnail.png" width=200>
 
 ### [614_FemMitc3Eigen](614_FemMitc3Eigen)
 <img src="614_FemMitc3Eigen/thumbnail.png" width=200>
@@ -245,11 +245,11 @@ cmake --build .
 ### [615_PbdClothCad](615_PbdClothCad)
 <img src="615_PbdClothCad/thumbnail.png" width=200>
 
-### [616_FemRod3Static](616_FemRod3Static)
-<img src="616_FemRod3Static/thumbnail.png" width=200>
+### [616_FemRod3StraightStatic](616_FemRod3StraightStatic)
+<img src="616_FemRod3StraightStatic/thumbnail.png" width=200>
 
-### [617_FemRodHairSelfcollision](617_FemRodHairSelfcollision)
-<img src="617_FemRodHairSelfcollision/thumbnail.png" width=200>
+### [617_FemRod3HairDarbouxSelfcollision](617_FemRod3HairDarbouxSelfcollision)
+<img src="617_FemRod3HairDarbouxSelfcollision/thumbnail.png" width=200>
 
 ### [618_Fem3Tet](618_Fem3Tet)
 <img src="618_Fem3Tet/thumbnail.png" width=200>
@@ -263,11 +263,11 @@ cmake --build .
 ### [621_Fem2](621_Fem2)
 <img src="621_Fem2/thumbnail.png" width=200 alt="621_Fem2">
 
-### [622_FemRodHairStatic](622_FemRodHairStatic)
-<img src="622_FemRodHairStatic/thumbnail.png" width=200 alt="622_FemRodHairStatic">
+### [622_FemRod3HairDarbouxStatic](622_FemRod3HairDarbouxStatic)
+<img src="622_FemRod3HairDarbouxStatic/thumbnail.png" width=200 alt="622_FemRodHairStatic">
 
-### [623_FemRodHairDynamic](623_FemRodHairDynamic)
-<img src="623_FemRodHairDynamic/thumbnail.png" width=200 alt="622_FemRodHairDynamic">
+### [623_FemRod3HairDarbouxDynamic](623_FemRod3HairDarbouxDynamic)
+<img src="623_FemRod3HairDarbouxDynamic/thumbnail.png" width=200 alt="622_FemRodHairDynamic">
 
 ### [624_DefArapUi](624_DefArapUi)
 <img src="624_DefArapUi/thumbnail.png" width=200>

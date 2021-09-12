@@ -5,9 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <random>
+#include <cstring>
+
 #include "gtest/gtest.h" // need to be defiend in the beginning
 //
-#include "delfem2/femrod.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/femmips_geo3.h"
 #include "delfem2/defarapenergy_geo3.h"
@@ -16,21 +18,24 @@
 #include "delfem2/jagarray.h"
 #include "delfem2/vec2.h"
 
-#include "delfem2/fempoisson.h"
-#include "delfem2/femmitc3.h"
-#include "delfem2/femsolidhyper.h"
-
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsvecx.h"
 
+#include "delfem2/fempoisson.h"
+#include "delfem2/femmitc3.h"
+#include "delfem2/femsolidhyper.h"
+#include "delfem2/fem_distance3.h"
+#include "delfem2/fem_rod2.h"
+#include "delfem2/fem_rod3_straight.h"
+#include "delfem2/fem_rod3_darboux.h"
+
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/mshprimitive.h"
-#include <random>
 
 namespace dfm2 = delfem2;
 
@@ -621,8 +626,9 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D) {
     dfm2::CVec3d dW_dP[2];
     dfm2::CMat3d ddW_ddP[2][2];
     const double L0 = 1.0;
-    double W = WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
-                                            stiff_stretch, P, L0);
+    double W = WdWddW_SquareLengthLineseg3D(
+        dW_dP, ddW_ddP,
+        stiff_stretch, P, L0);
     // -----
     const dfm2::CVec3d dP[2] = {
         dfm2::CVec3d::Random(dist_01, rndeng) * eps,
@@ -632,8 +638,9 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D) {
     dfm2::CVec3d dw_dP[2];
     {
       dfm2::CMat3d ddw_ddP[2][2];
-      w = WdWddW_SquareLengthLineseg3D(dw_dP, ddw_ddP,
-                                       stiff_stretch, p, L0);
+      w = WdWddW_SquareLengthLineseg3D(
+          dw_dP, ddw_ddP,
+          stiff_stretch, p, L0);
     }
     {
       const double val0 = (w - W) / eps;
@@ -1211,12 +1218,6 @@ TEST(fem, WdW_Rod3BendStraight) {
         { dist01(reng), dist01(reng), dist01(reng) } };
     if (dfm2::Distance3(vec_pos0[1], vec_pos0[0]) < 0.1) { continue; }
     if (dfm2::Distance3(vec_pos0[2], vec_pos0[1]) < 0.1) { continue; }
-    /*
-    if ((vec_pos0[1] - vec_pos0[0]).normalized().dot(
-        (vec_pos0[2] - vec_pos0[1]).normalized()) < -0.5) {
-      continue;
-    }
-     */
     double dw_dp0[3][3];
     double w0 = dfm2::WdW_Rod3BendStraight(dw_dp0, vec_pos0);
     for (int ino = 0; ino < 3; ++ino) {
@@ -1226,7 +1227,6 @@ TEST(fem, WdW_Rod3BendStraight) {
         vec_pos1[ino][idim] += eps;
         double dw_dp1[3][3];
         auto w1 = dfm2::WdW_Rod3BendStraight<double>(dw_dp1, vec_pos1);
-//      std::cout << ino << " " << idim << " ## " << (w1 - w0) / eps << " " << dw_dp0[ino](idim) << std::endl;
         double f0 = (w1 - w0) / eps;
         double f1 = dw_dp0[ino][idim];
         EXPECT_NEAR(f0, f1, 1.0e-3 * (1. + fabs(f1)));

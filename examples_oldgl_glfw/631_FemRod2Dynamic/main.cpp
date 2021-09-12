@@ -16,6 +16,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/femutil.h"
 #include "delfem2/femrod.h"
+#include "delfem2/fem_rod2.h"
 #include "delfem2/lsvecx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/vecxitrsol.h"
@@ -46,7 +47,7 @@ void Solve(
     double mass_point,
     const double gravity[2],
     dfm2::CMatrixSparse<double> &mats) {
-  unsigned int np = static_cast<unsigned int>(aXY.size() / 2);
+  auto np = static_cast<unsigned int>(aXY.size() / 2);
   assert(np >= 3);
   assert(mats.ncolblk_ == np && mats.nrowblk_ == np);
   assert(mats.ncoldim_ == 2 && mats.nrowdim_ == 2);
@@ -116,9 +117,7 @@ void Solve(
   }
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   const unsigned int N = 11;
   const double dt = 1.0 / 60.0;
   const double stiff_stretch = 10.0;
