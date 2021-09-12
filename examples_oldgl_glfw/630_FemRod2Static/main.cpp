@@ -15,6 +15,7 @@
 
 #include "delfem2/vec2.h"
 #include "delfem2/femutil.h"
+#include "delfem2/fem_rod2.h"
 #include "delfem2/femrod.h"
 #include "delfem2/lsvecx.h"
 #include "delfem2/lsitrsol.h"
@@ -40,7 +41,7 @@ void Solve(
     dfm2::CMatrixSparse<double> &mats) {
   const double stiff_stretch = 1.0;
   const double stiff_bend = 0.01;
-  unsigned int np = static_cast<unsigned int>(aXY.size() / 2);
+  const size_t np = aXY.size() / 2;
   assert(np >= 3);
   assert(mats.ncolblk_ == np && mats.nrowblk_ == np);
   assert(mats.ncoldim_ == 2 && mats.nrowdim_ == 2);
@@ -93,9 +94,7 @@ void Solve(
   }
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
+int main() {
   const unsigned int N = 11;
   std::vector<double> aXY;  // vertices of polyline in the initial config
   for (unsigned int i = 0; i < N; ++i) {

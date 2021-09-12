@@ -129,7 +129,7 @@ void FindRodHairContactCCD(
     const std::vector<unsigned int>& aIP_HairRoot,
     const std::vector<dfm2::CVec3d>& aPt) // indexes of root point
 {
-  const unsigned int nr = static_cast<unsigned int>(aP.size());
+  const auto nr = static_cast<unsigned int>(aP.size());
   assert( aPt.size() == nr );
   std::vector<bool> aIsRod(nr,true);
   for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){

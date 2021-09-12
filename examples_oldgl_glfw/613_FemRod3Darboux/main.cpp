@@ -12,9 +12,13 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/femrod.h"
+#include "delfem2/fem_rod3_darboux.h"
+#include "delfem2/fem_distance3.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/lsmats.h"
+#include "delfem2/vecxitrsol.h"
+#include "delfem2/lsitrsol.h"
+#include "delfem2/lsvecx.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/glfw/viewer3.h"
@@ -125,6 +129,178 @@ void MakeProblemSetting_Spiral(
       const dfm2::CVec3d v = (aP0[ip2] - aP0[ip1]).normalized();
       aS0[is1] = (s1 - (s1.dot(v)) * v).normalized();
     }
+  }
+}
+
+DFM2_INLINE void Solve_DispRotSeparate(
+    std::vector<delfem2::CVec3d> &aP,
+    std::vector<delfem2::CVec3d> &aS,
+    delfem2::CMatrixSparse<double> &mats,
+    const double stiff_stretch,
+    const double stiff_bendtwist[3],
+    const std::vector<delfem2::CVec3d> &aP0,
+    const std::vector<delfem2::CVec3d> &aS0,
+    const std::vector<unsigned int> &aElemSeg,
+    const std::vector<unsigned int> &aElemRod,
+    const std::vector<int> &aBCFlag) {
+  using namespace delfem2;
+  assert(mats.nrowdim_ == 3);
+  assert(mats.ncoldim_ == 3);
+  const size_t nNode = aBCFlag.size() / 3;
+  assert(aP.size() + aS.size() == nNode);
+  mats.setZero();
+  std::vector<double> vec_r;
+  vec_r.assign(nNode * 3, 0.0);
+  std::vector<unsigned int> tmp_buffer;
+  double W = 0;
+  for (unsigned int iseg = 0; iseg < aElemSeg.size() / 2; ++iseg) {
+    const unsigned int i0 = aElemSeg[iseg * 2 + 0];
+    const unsigned int i1 = aElemSeg[iseg * 2 + 1];
+    const unsigned int *aINoel = aElemSeg.data() + iseg * 2;
+    const double L0 = (aP0[i0] - aP0[i1]).norm();
+    const CVec3d aPE[2] = {aP[i0], aP[i1]};
+    // --------------
+    CVec3d dW_dP[2];
+    CMat3d ddW_ddP[2][2];
+    W += WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
+                                      stiff_stretch, aPE, L0);
+    {
+      double eM[2][2][3][3];
+      for (int in = 0; in < 2; ++in) {
+        for (int jn = 0; jn < 2; ++jn) {
+          ddW_ddP[in][jn].CopyTo(&eM[in][jn][0][0]);
+        }
+      }
+//      mats.Mearge(2, aINoel, 2, aINoel, 9, eM, tmp_buffer);
+      Merge<2, 2, 3, 3, double>(mats, aINoel, aINoel, eM, tmp_buffer);
+    }
+    {
+      for (int inoel = 0; inoel < 2; inoel++) {
+        const unsigned int ip = aINoel[inoel];
+        vec_r[ip * 3 + 0] -= dW_dP[inoel].x;
+        vec_r[ip * 3 + 1] -= dW_dP[inoel].y;
+        vec_r[ip * 3 + 2] -= dW_dP[inoel].z;
+      }
+    }
+  }
+  for (unsigned int irod = 0; irod < aElemRod.size() / 5; ++irod) {
+    const unsigned int *aINoel = aElemRod.data() + irod * 5;
+    const size_t nP = aP.size();
+    const CVec3d aPE[3] = {aP[aINoel[0]], aP[aINoel[1]], aP[aINoel[2]]};
+    const CVec3d aSE[2] = {aS[aINoel[3] - nP], aS[aINoel[4] - nP]};
+    CVec3d Darboux0;
+    {
+      const CVec3d aPE0[3] = {aP0[aINoel[0]], aP0[aINoel[1]], aP0[aINoel[2]]};
+      const CVec3d aSE0[2] = {aS0[aINoel[3] - nP], aS0[aINoel[4] - nP]};
+      Darboux0 = Darboux_Rod(aPE0, aSE0);
+    }
+    // ------
+    CVec3d dW_dP[3];
+    double dW_dt[2];
+    CMat3d ddW_ddP[3][3];
+    CVec3d ddW_dtdP[2][3];
+    double ddW_ddt[2][2];
+    W += WdWddW_Rod(
+        dW_dP, dW_dt, ddW_ddP, ddW_dtdP, ddW_ddt,
+        stiff_bendtwist,
+        aPE, aSE, Darboux0, false);
+    {
+      double eM[5][5][3][3];
+      for (int i = 0; i < 5 * 5 * 3 * 3; ++i) { (&eM[0][0][0][0])[i] = 0.0; }
+      for (int in = 0; in < 3; ++in) {
+        for (int jn = 0; jn < 3; ++jn) {
+          ddW_ddP[in][jn].CopyTo(&eM[in][jn][0][0]);
+        }
+      }
+      for (int in = 0; in < 3; ++in) {
+        for (int jn = 0; jn < 2; ++jn) {
+          eM[3 + jn][in][0][0] = eM[in][jn + 3][0][0] = ddW_dtdP[jn][in].x;
+          eM[3 + jn][in][0][1] = eM[in][jn + 3][1][0] = ddW_dtdP[jn][in].y;
+          eM[3 + jn][in][0][2] = eM[in][jn + 3][2][0] = ddW_dtdP[jn][in].z;
+        }
+      }
+      for (int in = 0; in < 2; ++in) {
+        for (int jn = 0; jn < 2; ++jn) {
+          eM[in + 3][jn + 3][0][0] = ddW_ddt[in][jn];
+        }
+      }
+      Merge<5, 5, 3, 3, double>(mats, aINoel, aINoel, eM, tmp_buffer);
+//      mats.Mearge(5, aINoel, 5, aINoel, 9, &eM[0][0][0][0], tmp_buffer);
+    }
+    {
+      for (int inoel = 0; inoel < 3; inoel++) {
+        const unsigned int ip = aINoel[inoel];
+        vec_r[ip * 3 + 0] -= dW_dP[inoel].x;
+        vec_r[ip * 3 + 1] -= dW_dP[inoel].y;
+        vec_r[ip * 3 + 2] -= dW_dP[inoel].z;
+      }
+      for (int inoel = 0; inoel < 2; inoel++) {
+        const unsigned int in0 = aINoel[3 + inoel];
+        vec_r[in0 * 3 + 0] -= dW_dt[inoel];
+      }
+    }
+  }
+  //  std::cout << CheckSymmetry(mats) << std::endl;
+  //  mats.AddDia(0.00001);
+  std::cout << "energy:" << W << std::endl;
+  //    std::cout << "sym: " << CheckSymmetry(mats) << std::endl;
+  mats.SetFixedBC(aBCFlag.data());
+  setRHS_Zero(vec_r, aBCFlag, 0);
+  std::vector<double> vec_x;
+  vec_x.assign(nNode * 3, 0.0);
+  {
+    const std::size_t n = vec_r.size();
+    std::vector<double> tmp0(n), tmp1(n);
+    auto vr = delfem2::CVecXd(vec_r);
+    auto vu = delfem2::CVecXd(vec_x);
+    auto vs = delfem2::CVecXd(tmp0);
+    auto vt = delfem2::CVecXd(tmp1);
+    auto aConvHist = delfem2::Solve_CG(
+        vr, vu, vs, vt,
+        1.0e-4, 300, mats);
+    if (!aConvHist.empty()) {
+      std::cout << "            conv: " << aConvHist.size();
+      std::cout << " " << aConvHist[0];
+      std::cout << " " << aConvHist[aConvHist.size() - 1] << std::endl;
+    }
+  }
+  /*
+   {
+   auto aConvHist = Solve_BiCGStab(vec_r,vec_x,
+   1.0e-4, 300, mats);
+   if( aConvHist.size() > 0 ){
+   std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
+   }
+   }
+   */
+  assert(aS.size() == aElemSeg.size() / 2);
+  for (unsigned int is = 0; is < aS.size(); ++is) {
+    const unsigned int i0 = aElemSeg[is * 2 + 0];
+    const unsigned int i1 = aElemSeg[is * 2 + 1];
+    CVec3d V01 = aP[i1] - aP[i0];
+    CVec3d du(vec_x[i1 * 3 + 0] - vec_x[i0 * 3 + 0],
+              vec_x[i1 * 3 + 1] - vec_x[i0 * 3 + 1],
+              vec_x[i1 * 3 + 2] - vec_x[i0 * 3 + 2]);
+    const size_t np = aP.size();
+    const double dtheta = vec_x[np * 3 + is * 3];
+    CVec3d frm[3];
+    RodFrameTrans(frm,
+                  aS[is], V01, du, dtheta);
+    aS[is] = frm[0];
+  }
+  for (unsigned int ip = 0; ip < aP.size(); ++ip) {
+    aP[ip].p[0] += vec_x[ip * 3 + 0];
+    aP[ip].p[1] += vec_x[ip * 3 + 1];
+    aP[ip].p[2] += vec_x[ip * 3 + 2];
+  }
+  for (unsigned int iseg = 0; iseg < aElemSeg.size() / 2; ++iseg) {
+    const unsigned int i0 = aElemSeg[iseg * 2 + 0];
+    const unsigned int i1 = aElemSeg[iseg * 2 + 1];
+    const CVec3d &p0 = aP[i0];
+    const CVec3d &p1 = aP[i1];
+    const CVec3d e01 = (p1 - p0).normalized();
+    aS[iseg] -= (aS[iseg].dot(e01)) * e01;
+    aS[iseg].normalize();
   }
 }
 

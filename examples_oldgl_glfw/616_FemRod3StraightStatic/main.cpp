@@ -16,6 +16,8 @@
 #include "delfem2/lsmats.h"
 #include "delfem2/lsvecx.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/fem_distance3.h"
+#include "delfem2/fem_rod3_straight.h"
 #include "delfem2/femrod.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/glfw/viewer3.h"
@@ -77,7 +79,7 @@ void OptimizeRod(
       // --------------
       dfm2::CVec3d dW_dP[3];
       dfm2::CMat3d ddW_ddP[3][3];
-      W += WdWddW_Rod3BendStraight(
+      W += dfm2::WdWddW_Rod3BendStraight(
           dW_dP, ddW_ddP,
           aPE);
       double ddW_ddP0[3][3][3][3];
