@@ -63,7 +63,7 @@ delfem2::MatVec(
   delfem2::MatVec3(vec1.p, m.mat, vec0.p);
   return vec1;
 }
-#if !defined(DFM2_HEADER_ONLY)
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::MatVec(const CMat3d& m, const CVec3d& vec0);
 template delfem2::CVec3f delfem2::MatVec(const CMat3f& m, const CVec3f& vec0);
 #endif
@@ -76,7 +76,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::MatVecTrans(
   MatTVec3(vec1.p, m.mat, vec0.p);
   return vec1;
 }
-#if !defined(DFM2_HEADER_ONLY)
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CVec3d delfem2::MatVecTrans(const CMat3d&, const CVec3d&);
 template delfem2::CVec3f delfem2::MatVecTrans(const CMat3f&, const CVec3f&);
 #endif
@@ -162,7 +162,10 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3(const CVec3d &vec0, const CVec3d &vec1
   return m;
 }
 
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3(const CVec3d &vec0, const CVec3d &vec1, const CVec3d &vec2) {
+DFM2_INLINE delfem2::CMat3d delfem2::Mat3(
+    const CVec3d &vec0,
+    const CVec3d &vec1,
+    const CVec3d &vec2) {
   CMat3d m;
   double *mat = m.mat;
   mat[0 * 3 + 0] = vec0.x;
@@ -199,13 +202,29 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_RotCartesian(const CVec3d &vec0) {
 
 namespace delfem2 {
 
-DFM2_INLINE CVec3d operator*(const CVec3d &v, const CMat3d &m) {
+template <typename T>
+DFM2_INLINE CVec3<T> operator*(
+    const CVec3<T> &v,
+    const CMat3<T> &m) {
   return MatVecTrans(m, v);
 }
+#ifdef DFM2_STATIC_LIBRARY
+template CVec3d operator*(const CVec3d &, const CMat3d &);
+template CVec3f operator*(const CVec3f &, const CMat3f &);
+#endif
 
-DFM2_INLINE CVec3d operator*(const CMat3d &m, const CVec3d &v) {
+// -------------------------------------------
+
+template <typename T>
+DFM2_INLINE CVec3<T> operator*(
+    const CMat3<T> &m,
+    const CVec3<T> &v) {
   return MatVec(m, v);
 }
+#ifdef DFM2_STATIC_LIBRARY
+template CVec3d operator*(const CMat3d &, const CVec3d &);
+template CVec3f operator*(const CMat3f &, const CVec3f &);
+#endif
 
 }
 
@@ -246,7 +265,7 @@ delfem2::CMat3<REAL> delfem2::Mat3_MinimumRotation(
   m.mat[8] = ct + (1.f - ct) * n.z * n.z;
   return m;
 }
-#if !defined(DFM2_HEADER_ONLY)
+#ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat3d delfem2::Mat3_MinimumRotation(const CVec3d& V, const CVec3d& v);
 #endif
 
@@ -273,7 +292,10 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTri(
 
   CVec3d dv = d0 + d1 + d2;
   CMat3d I0 =
-      Mat3_OuterProduct(d0, d0) + Mat3_OuterProduct(d1, d1) + Mat3_OuterProduct(d2, d2) + Mat3_OuterProduct(dv, dv);
+      Mat3_OuterProduct(d0, d0) +
+      Mat3_OuterProduct(d1, d1) +
+      Mat3_OuterProduct(d2, d2) +
+      Mat3_OuterProduct(dv, dv);
   double tr0 = I0.Trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
 
@@ -290,7 +312,10 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTriSolid(
     const CVec3d &d2) {
   CVec3d dv = d0 + d1 + d2;
   CMat3d I0 =
-      Mat3_OuterProduct(d0, d0) + Mat3_OuterProduct(d1, d1) + Mat3_OuterProduct(d2, d2) + Mat3_OuterProduct(dv, dv);
+      Mat3_OuterProduct(d0, d0) +
+      Mat3_OuterProduct(d1, d1) +
+      Mat3_OuterProduct(d2, d2) +
+      Mat3_OuterProduct(dv, dv);
   double tr0 = I0.Trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
 

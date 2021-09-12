@@ -1195,3 +1195,42 @@ TEST(fem, WdWddW_Rod3BendStraight) {
     }
   }
 }
+
+
+
+TEST(fem, WdW_Rod3BendStraight) {
+  namespace dfm2 = delfem2;
+  std::random_device rd;
+  std::mt19937 reng(rd());
+  std::uniform_real_distribution<double> dist01(0.0, 1.0);
+  const double eps = 1.0e-6;
+  for (int nitr = 0; nitr < 100; ++nitr) {
+    double vec_pos0[3][3] = {
+        { dist01(reng), dist01(reng), dist01(reng) },
+        { dist01(reng), dist01(reng), dist01(reng) },
+        { dist01(reng), dist01(reng), dist01(reng) } };
+    if (dfm2::Distance3(vec_pos0[1], vec_pos0[0]) < 0.1) { continue; }
+    if (dfm2::Distance3(vec_pos0[2], vec_pos0[1]) < 0.1) { continue; }
+    /*
+    if ((vec_pos0[1] - vec_pos0[0]).normalized().dot(
+        (vec_pos0[2] - vec_pos0[1]).normalized()) < -0.5) {
+      continue;
+    }
+     */
+    double dw_dp0[3][3];
+    double w0 = dfm2::WdW_Rod3BendStraight(dw_dp0, vec_pos0);
+    for (int ino = 0; ino < 3; ++ino) {
+      for (int idim = 0; idim < 3; ++idim) {
+        double vec_pos1[3][3];
+        std::memcpy(&vec_pos1[0][0], &vec_pos0[0][0], sizeof(double)*9);
+        vec_pos1[ino][idim] += eps;
+        double dw_dp1[3][3];
+        auto w1 = dfm2::WdW_Rod3BendStraight<double>(dw_dp1, vec_pos1);
+//      std::cout << ino << " " << idim << " ## " << (w1 - w0) / eps << " " << dw_dp0[ino](idim) << std::endl;
+        double f0 = (w1 - w0) / eps;
+        double f1 = dw_dp0[ino][idim];
+        EXPECT_NEAR(f0, f1, 1.0e-3 * (1. + fabs(f1)));
+      }
+    }
+  }
+}

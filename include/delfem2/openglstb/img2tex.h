@@ -1,4 +1,6 @@
 
+#ifndef DFM2_IMG2TEX_H
+#define DFM2_IMG2TEX_H
 
 #include "delfem2/opengl/tex.h"
 #include "stb/stb_image.h"
@@ -24,3 +26,5 @@ void SetRgbToTex(
 }
 
 }
+
+#endif /* DFM2_IMG2TEX_H */

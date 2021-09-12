@@ -920,7 +920,8 @@ CMat3<T> operator-(const CMat3<T> &lhs, const CMat3<T> &rhs) {
   return temp;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template CMat3<double> operator-(const CMat3<double> &lhs, const CMat3<double> &rhs);
+template CMat3<double> operator-(const CMat3<double> &, const CMat3<double> &);
+template CMat3<float> operator-(const CMat3<float> &, const CMat3<float> &);
 #endif
 
 // ------------------------------
@@ -1040,9 +1041,9 @@ delfem2::CMat3<T> delfem2::CMat3<T>::MatMatTrans(const CMat3<T> &mat0) const {
   for (unsigned int i = 0; i < 3; i++) {
     for (unsigned int j = 0; j < 3; j++) {
       m.mat[i * 3 + j] =
-          +mat[0 * 3 + i] * mat0.mat[0 * 3 + j]
-              + mat[1 * 3 + i] * mat0.mat[1 * 3 + j]
-              + mat[2 * 3 + i] * mat0.mat[2 * 3 + j];
+          mat[0 * 3 + i] * mat0.mat[0 * 3 + j] +
+          mat[1 * 3 + i] * mat0.mat[1 * 3 + j] +
+          mat[2 * 3 + i] * mat0.mat[2 * 3 + j];
     }
   }
   return m;

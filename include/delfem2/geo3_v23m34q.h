@@ -56,20 +56,35 @@ DFM2_INLINE bool isPickQuad(
 // ---------------------------------------------------
 // matrix 3
 
-CVec3d operator*(const CVec3d &v, const CMat3d &m);
-CVec3d operator*(const CMat3d &m, const CVec3d &v);
+template <typename T>
+CVec3<T> operator*(
+    const CVec3<T> &v,
+    const CMat3<T> &m);
+
+template <typename T>
+CVec3<T> operator*(
+    const CMat3<T> &m,
+    const CVec3<T> &v);
 
 template<typename T>
-CVec3<T> MatVec(const CMat3<T> &m, const CVec3<T> &vec0);
+CVec3<T> MatVec(
+    const CMat3<T> &m,
+    const CVec3<T> &vec0);
 
 template<typename T>
-CVec3<T> MatVecTrans(const CMat3<T> &m, const CVec3<T> &vec0);
+CVec3<T> MatVecTrans(
+    const CMat3<T> &m,
+    const CVec3<T> &vec0);
 
 void SetProjection(CMat3d &m, const CVec3d &vec0);
 
-DFM2_INLINE void SetDiag(CMat3d &m, const CVec3d &d);
+DFM2_INLINE void SetDiag(
+    CMat3d &m,
+    const CVec3d &d);
 
-DFM2_INLINE void SetRotMatrix_Cartesian(CMat3d &m, const CVec3d &v);
+DFM2_INLINE void SetRotMatrix_Cartesian(
+    CMat3d &m,
+    const CVec3d &v);
 
 void SetSpinTensor(
     CMat3d &m,
@@ -86,10 +101,13 @@ CVec3d GetSpinVector(
 CVec3d GetCartesianRotationVector(
     const CMat3d &m);
 
-CMat3d Mat3(const CVec3d &vec0,
-            const CVec3d &vec1,
-            const CVec3d &vec2);
-CMat3d Mat3(const CVec3d &vec0);
+CMat3d Mat3(
+    const CVec3d &vec0,
+    const CVec3d &vec1,
+    const CVec3d &vec2);
+
+CMat3d Mat3(
+    const CVec3d &vec0);
 
 CMat3d Mat3(
     const CVec3d &vec0,

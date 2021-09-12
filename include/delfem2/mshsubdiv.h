@@ -29,11 +29,11 @@ namespace delfem2 {
 /**
  * @brief making topology for subdivision of quad
  * @details new points is in the order of [old points], [edge points], [face points]
- * @param aQuad1 (out) new connectivity
+ * @param quad_vtxidx1 (out) new connectivity
  * @param aEdgeFace0 (out) two end points on a edge and two quads touching the edge
  */
 DFM2_INLINE void SubdivTopo_MeshQuad(
-    std::vector<unsigned int> &aQuad1,
+    std::vector<unsigned int> &quad_vtxidx1,
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     std::vector<unsigned int> &aEdgeFace0,
@@ -74,16 +74,16 @@ DFM2_INLINE int findFace(
     const std::vector<unsigned int> &elsup);
 
 DFM2_INLINE void SubdivisionPoints_QuadCatmullClark(
-    std::vector<double> &aXYZ1,
+    std::vector<double> &vtx_xyz1,
     //
-    const std::vector<unsigned int> &aQuad1,
+    const std::vector<unsigned int> &quad_vtxidx1,
     const std::vector<unsigned int> &aEdgeFace0,
     const std::vector<unsigned int> &psupIndQuad0,
     const std::vector<unsigned int> &psupQuad0,
-    const unsigned int *aQuad0,
-    size_t nQuad0,
-    const double *aXYZ0,
-    size_t nXYZ0);
+    const unsigned int *quad_vtxidx0,
+    size_t num_quad0,
+    const double *vtx_xyz0,
+    size_t num_vtx0);
 
 DFM2_INLINE void SubdivPoints3_MeshQuad(
     std::vector<double> &aXYZ1,
