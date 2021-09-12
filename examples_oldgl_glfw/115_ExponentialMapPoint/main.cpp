@@ -66,45 +66,45 @@ void myGlutDisplay(
 // ---------------------------
 
 int main() {
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtxidx;
 
   delfem2::Read_Ply(
 //      std::string(PATH_INPUT_DIR)+"/bunny_34k.ply",
       std::string(PATH_INPUT_DIR) + "/arm_16k.ply",
-      aXYZ, aTri);
-  delfem2::Normalize_Points3(aXYZ);
+      vtx_xyz, tri_vtxidx);
+  delfem2::Normalize_Points3(vtx_xyz);
 
   std::vector<unsigned int> psup_ind, psup;
   {
     std::vector<unsigned int> elsup_ind, elsup;
     dfm2::JArray_ElSuP_MeshElem(
         elsup_ind, elsup,
-        aTri.data(), aTri.size() / 3, 3,
-        aXYZ.size() / 3);
+        tri_vtxidx.data(), tri_vtxidx.size() / 3, 3,
+        vtx_xyz.size() / 3);
     dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
         psup_ind, psup,
-        aTri.data(), elsup_ind, elsup, 3,
-        aXYZ.size() / 3);
+        tri_vtxidx.data(), elsup_ind, elsup, 3,
+        vtx_xyz.size() / 3);
   }
-  std::vector<double> aNorm(aXYZ.size());
+  std::vector<double> vtx_norm(vtx_xyz.size());
   delfem2::Normal_MeshTri3D(
-      aNorm.data(),
-      aXYZ.data(), aXYZ.size() / 3,
-      aTri.data(), aTri.size() / 3 );
+      vtx_norm.data(),
+      vtx_xyz.data(), vtx_xyz.size() / 3,
+      tri_vtxidx.data(), tri_vtxidx.size() / 3 );
 
   unsigned int ip_ker = 0;
   std::vector<double> aTex;
   {
     dfm2::CExpMap_DijkstraPoint expmap(
         ip_ker,
-        aXYZ, aNorm, aTri, aTex,
+        vtx_xyz, vtx_norm, tri_vtxidx, aTex,
         psup_ind, psup);
     std::vector<unsigned int> mapIp2Io;
     std::vector<double> aDist;
     dfm2::DijkstraPoint_MeshTri3D(
         aDist, mapIp2Io, expmap,
-        ip_ker, aXYZ, psup_ind, psup);
+        ip_ker, vtx_xyz, psup_ind, psup);
   }
 
   // above: data preparation
@@ -120,13 +120,13 @@ int main() {
 
   int m_texName;
   {
-    unsigned int w, h;
-    std::vector<unsigned char> image;
+    unsigned int image_width, image_height;
+    std::vector<unsigned char> image_data_rgb;
     dfm2::LoadImage_PPMAscii(
-        w, h, image,
+        image_width, image_height, image_data_rgb,
         std::string(PATH_INPUT_DIR) + "/dep.ppm");
-    assert(image.size() == w * h * 3);
-    m_texName = dfm2::opengl::SetTexture_RGB(w, h, image);
+    assert(image_data_rgb.size() == image_width * image_height * 3);
+    m_texName = dfm2::opengl::SetTexture_RGB(image_width, image_height, image_data_rgb);
     {
       glEnable(GL_TEXTURE_2D);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -147,7 +147,7 @@ int main() {
         ::glDisable(GL_LIGHTING);
         ::glDisable(GL_TEXTURE_2D);
         ::glColor3d(0, 0, 0);
-        delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
+        delfem2::opengl::DrawMeshTri3D_Edge(vtx_xyz, tri_vtxidx);
       }
       {
         ::glEnable(GL_TEXTURE_2D);
@@ -158,7 +158,7 @@ int main() {
         ::glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, shine);
         ::glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 128.0);
       }
-      myGlutDisplay(aXYZ, aTri, aNorm, aTex);
+      myGlutDisplay(vtx_xyz, tri_vtxidx, vtx_norm, aTex);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
     }

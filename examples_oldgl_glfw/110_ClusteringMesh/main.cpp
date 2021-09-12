@@ -31,28 +31,27 @@ namespace dfm2 = delfem2;
 
 // ---------------------------
 
-int main()
-{
+int main() {
   std::vector<double> vec_xyz;
   std::vector<unsigned int> vec_tri;
 
   delfem2::Read_Ply(
 //      std::string(PATH_INPUT_DIR)+"/bunny_34k.ply",
-      std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
+      std::string(PATH_INPUT_DIR) + "/arm_16k.ply",
       vec_xyz, vec_tri);
   delfem2::Normalize_Points3(vec_xyz);
-  std::vector<unsigned int> aTriSuTri;
+  std::vector<unsigned int> tri_adjtri;
   ElSuEl_MeshElem(
-      aTriSuTri,
-      vec_tri.data(), vec_tri.size()/3,
+      tri_adjtri,
+      vec_tri.data(), vec_tri.size() / 3,
       delfem2::MESHELEM_TRI,
-      vec_xyz.size()/3);
+      vec_xyz.size() / 3);
 
   // ------
 
   std::random_device rd;
   std::mt19937 rdeng(rd());
-  std::uniform_int_distribution<unsigned int> ncluster_gen(1,100);
+  std::uniform_int_distribution<unsigned int> ncluster_gen(1, 100);
 
   // above: data preparation
   // -----------------------
@@ -63,23 +62,22 @@ int main()
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
   viewer.camera.view_height = 0.5;
-  viewer.camera.camera_rot_mode  = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  
-  while (!glfwWindowShouldClose(viewer.window))
-  {
+  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+
+  while (!glfwWindowShouldClose(viewer.window)) {
     const unsigned int ncluster = ncluster_gen(rdeng);
-    std::vector< std::pair<int,dfm2::CColor> > aColor;
-    for(unsigned int ic=0;ic<ncluster;++ic){
+    std::vector<std::pair<int, dfm2::CColor> > aColor;
+    for (unsigned int ic = 0; ic < ncluster; ++ic) {
       dfm2::CColor c;
       c.setRandomVividColor();
-      aColor.emplace_back(2,c);
+      aColor.emplace_back(2, c);
     }
     std::vector<unsigned int> vec_triangle_flag;
     dfm2::MeshClustering(
-        vec_triangle_flag, ncluster, aTriSuTri,
-        vec_tri.size()/3);
+        vec_triangle_flag, ncluster, tri_adjtri,
+        vec_tri.size() / 3);
     //
-    for(unsigned int iframe=0;iframe<30;++iframe) {
+    for (unsigned int iframe = 0; iframe < 30; ++iframe) {
       viewer.DrawBegin_oldGL();
       ::glDisable(GL_LIGHTING);
       ::glColor3d(0, 0, 0);
@@ -91,7 +89,7 @@ int main()
       glfwPollEvents();
     }
   }
-  
+
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
