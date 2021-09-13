@@ -15,44 +15,44 @@
 // -------------------------------------------------
 
 DFM2_INLINE double delfem2::WdWddW_SquareLengthLineseg3D(
-    CVec3d dW_dP[2],
-    CMat3d ddW_ddP[2][2],
-    const double stiff,
-    const CVec3d p[2],
-    double L0) {
+    CVec3d dw_dp[2],
+    CMat3d ddw_ddp[2][2],
+    double stiffness,
+    const CVec3d vtx_xyz_ini[2],
+    double edge_length_ini) {
   const double l = sqrt(
-      +(p[0][0] - p[1][0]) * (p[0][0] - p[1][0])
-          + (p[0][1] - p[1][1]) * (p[0][1] - p[1][1])
-          + (p[0][2] - p[1][2]) * (p[0][2] - p[1][2]));
-  const CVec3d v = p[0] - p[1];
-  const double R = L0 - l;
-  dW_dP[0] = (-R * stiff / l) * v;
-  dW_dP[1] = (+R * stiff / l) * v;
-  const CMat3d m = (stiff * L0 / (l * l * l)) * Mat3_OuterProduct(v, v) + (stiff * (l - L0) / l) * Mat3_Identity(1.0);
-  ddW_ddP[0][0] = +m;
-  ddW_ddP[0][1] = -m;
-  ddW_ddP[1][0] = -m;
-  ddW_ddP[1][1] = +m;
-  return 0.5 * stiff * R * R;
+      (vtx_xyz_ini[0][0] - vtx_xyz_ini[1][0]) * (vtx_xyz_ini[0][0] - vtx_xyz_ini[1][0]) +
+          (vtx_xyz_ini[0][1] - vtx_xyz_ini[1][1]) * (vtx_xyz_ini[0][1] - vtx_xyz_ini[1][1]) +
+          (vtx_xyz_ini[0][2] - vtx_xyz_ini[1][2]) * (vtx_xyz_ini[0][2] - vtx_xyz_ini[1][2]));
+  const CVec3d v = vtx_xyz_ini[0] - vtx_xyz_ini[1];
+  const double R = edge_length_ini - l;
+  dw_dp[0] = (-R * stiffness / l) * v;
+  dw_dp[1] = (+R * stiffness / l) * v;
+  const CMat3d m = (stiffness * edge_length_ini / (l * l * l)) * Mat3_OuterProduct(v, v)
+      + (stiffness * (l - edge_length_ini) / l) * Mat3_Identity(1.0);
+  ddw_ddp[0][0] = +m;
+  ddw_ddp[0][1] = -m;
+  ddw_ddp[1][0] = -m;
+  ddw_ddp[1][1] = +m;
+  return 0.5 * stiffness * R * R;
 }
 
 template<typename T>
-DFM2_INLINE T delfem2::WdW_SquareLengthLineseg3D(
-    T dW_dP[2][3],
-    const T stiff,
-    const T p[2][3],
-    T L0) {
-  const double l = sqrt(
-      (p[0][0] - p[1][0]) * (p[0][0] - p[1][0]) +
-          (p[0][1] - p[1][1]) * (p[0][1] - p[1][1]) +
-          (p[0][2] - p[1][2]) * (p[0][2] - p[1][2]));
-  const double R = L0 - l;
-  dW_dP[0][0] = (-R * stiff / l) * (p[0][0] - p[1][0]);
-  dW_dP[0][1] = (-R * stiff / l) * (p[0][1] - p[1][1]);
-  dW_dP[0][2] = (-R * stiff / l) * (p[0][2] - p[1][2]);
-  dW_dP[1][0] = -dW_dP[0][0];
-  dW_dP[1][1] = -dW_dP[0][1];
-  dW_dP[1][2] = -dW_dP[0][2];
-  return 0.5 * stiff * R * R;
+DFM2_INLINE void delfem2::CdC_SquareLengthLineseg3D(
+    T &c,
+    T dc_dpos[2][3],
+    const T pos_xyz[2][3],
+    T length_ini) {
+  const T vx = pos_xyz[0][0] - pos_xyz[1][0];
+  const T vy = pos_xyz[0][1] - pos_xyz[1][1];
+  const T vz = pos_xyz[0][2] - pos_xyz[1][2];
+  const T l = sqrt(vx * vx + vy * vy + vz * vz);
+  c = length_ini - l;
+  dc_dpos[0][0] = (-vx / l);
+  dc_dpos[0][1] = (-vy / l);
+  dc_dpos[0][2] = (-vz / l);
+  dc_dpos[1][0] = -dc_dpos[0][0];
+  dc_dpos[1][1] = -dc_dpos[0][1];
+  dc_dpos[1][2] = -dc_dpos[0][2];
 }
 

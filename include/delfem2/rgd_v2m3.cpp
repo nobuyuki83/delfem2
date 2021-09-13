@@ -13,9 +13,9 @@ CMat3d Mat3_Affine(
     const double theta,
     const CVec2d& posg)
 {
-  CMat3d mT0; Mat3_AffineTranslation(mT0.mat,(-posl).p);
-  CMat3d mR; Mat3_AffineRotation(mR.mat,theta);
-  CMat3d mT1; Mat3_AffineTranslation(mT1.mat,posg.p);
+  CMat3d mT0; Mat3_AffineTranslation(mT0.p_,(-posl).p);
+  CMat3d mR; Mat3_AffineRotation(mR.p_,theta);
+  CMat3d mT1; Mat3_AffineTranslation(mT1.p_,posg.p);
   return mT1*mR*mT0;
 }
 
@@ -174,10 +174,10 @@ void delfem2::Steptime_Rgd2(
         if( irbA == irbB ){ continue; }
         const CRigidState2& rbA = aRS[irbA];
         const CMat3d& matAffineA = rgd_v2m3::Mat3_Affine(rbA.posl,rbA.theta_tmp,rbA.posg_tmp);
-        const CVec2d& pA = rbA.shape[ip].Mat3Vec2_AffineProjection(matAffineA.mat);
+        const CVec2d& pA = rbA.shape[ip].Mat3Vec2_AffineProjection(matAffineA.p_);
         const CRigidState2& rbB = aRS[irbB];
         const CMat3d& matAffineB = rgd_v2m3::Mat3_Affine(rbB.posl,rbB.theta_tmp,rbB.posg_tmp); // j-Rigidbody's affine matrix
-        const CVec2d& pAonB = rbA.shape[ip].Mat3Vec2_AffineProjection((matAffineB.Inverse() * matAffineA).mat); // Pi in j-Rigidbody's coordinate
+        const CVec2d& pAonB = rbA.shape[ip].Mat3Vec2_AffineProjection((matAffineB.Inverse() * matAffineA).p_); // Pi in j-Rigidbody's coordinate
         unsigned int ieB;
         double reB;
         CVec2d NrmB;
@@ -186,8 +186,8 @@ void delfem2::Steptime_Rgd2(
         //
         CVec2d PB = (1-reB)*rbB.shape[(ieB+0)%rbB.shape.size()] + reB*rbB.shape[(ieB+1)%rbB.shape.size()];
         const double penetration = (PB-pAonB).dot(NrmB);
-        const CVec2d pB = PB.Mat3Vec2_AffineProjection(matAffineB.mat);
-        const CVec2d nrmB = NrmB.Mat3Vec2_AffineDirection(matAffineB.mat);
+        const CVec2d pB = PB.Mat3Vec2_AffineProjection(matAffineB.p_);
+        const CVec2d nrmB = NrmB.Mat3Vec2_AffineDirection(matAffineB.p_);
         const double lambda = rgd_v2m3::ResolveContact(aRS[irbA],aRS[irbB],
                                                        penetration, pA, pB, nrmB);
         aContact.push_back({irbA,irbB,ip,ieB,reB,NrmB,lambda});

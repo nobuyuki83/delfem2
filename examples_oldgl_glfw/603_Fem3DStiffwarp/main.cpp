@@ -95,7 +95,7 @@ void RotationAtMeshPoints(
       A += dfm2::Mat3_OuterProduct(pj - pi, Pj - Pi);
     }
     dfm2::GetRotPolarDecomp(aR.data() + ip * 9,
-                            A.mat, 100);
+                            A.p_, 100);
   }
 }
 

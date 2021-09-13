@@ -43,7 +43,7 @@ DFM2_INLINE void Rig_SensitivityBoneTransform(
     m01 = CMat4d::Quat(aBone1[ibone].quatRelativeRot) * m01;
     if( ibone == ib_s && is_rot ){
       CMat3d dn1 = CMat3d::Spin(CVec3d::Axis(idim_s).p) + CMat3d::Identity();
-      CMat4d dm1 = CMat4d::Mat3(dn1.mat);
+      CMat4d dm1 = CMat4d::Mat3(dn1.data());
       m01 = dm1 * m01;
     }
     m01 = CMat4d::Translate(aBone1[ibone].transRelative) * m01;
@@ -52,11 +52,11 @@ DFM2_INLINE void Rig_SensitivityBoneTransform(
     }
     const int ibone_p = aBone1[ibone].ibone_parent;
     if( ibone_p  == -1 ){ // root bone
-      Copy_Mat4( aM.data()+ibone*16, m01.mat );
+      Copy_Mat4( aM.data()+ibone*16, m01.data() );
       continue;
     }
     MatMat4(aM.data()+ibone*16,
-            aM.data()+ibone_p*16, m01.mat);
+            aM.data()+ibone_p*16, m01.data() );
   }
   for(std::size_t ib=0;ib<nb;++ib){
     for(int jdim=0;jdim<4;++jdim){

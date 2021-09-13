@@ -63,8 +63,9 @@ TEST(mat3, eigen3) {
     }
     double l[3];
     dfm2::CMat3d U;
-    dfm2::eigenSym3(U.mat, l,
-                    sm, 20);
+    dfm2::eigenSym3(
+        U.data(), l,
+        sm, 20);
     {
       double diffU = (U.transpose() * U - dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-10);
@@ -72,9 +73,9 @@ TEST(mat3, eigen3) {
     {
       double L[9] = {l[0], 0, 0, 0, l[1], 0, 0, 0, l[2]};
       dfm2::CMat3d UL;
-      dfm2::MatMat3(UL.mat, U.mat, L);
+      dfm2::MatMat3(UL.data(), U.data(), L);
       dfm2::CMat3d ULUt;
-      dfm2::MatMatT3(ULUt.mat, UL.mat, U.mat);
+      dfm2::MatMatT3(ULUt.data(), UL.data(), U.data());
       dfm2::CMat3d SM;
       SM.SetSymetric(sm);
       double diff = (ULUt - SM).SqNorm_Frobenius();
@@ -90,8 +91,9 @@ TEST(mat3, eigen3) {
     sm[5] = -sm[4];
     double l[3];
     dfm2::CMat3d U;
-    dfm2::eigenSym3(U.mat, l,
-                    sm, 20);
+    dfm2::eigenSym3(
+        U.data(), l,
+        sm, 20);
     {
       double diffU = (U.transpose() * U - dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-10);
@@ -99,9 +101,9 @@ TEST(mat3, eigen3) {
     {
       double L[9] = {l[0], 0, 0, 0, l[1], 0, 0, 0, l[2]};
       dfm2::CMat3d UL;
-      dfm2::MatMat3(UL.mat, U.mat, L);
+      dfm2::MatMat3(UL.data(), U.data(), L);
       dfm2::CMat3d ULUt;
-      dfm2::MatMatT3(ULUt.mat, UL.mat, U.mat);
+      dfm2::MatMatT3(ULUt.data(), UL.data(), U.data());
       dfm2::CMat3d SM;
       SM.SetSymetric(sm);
       double diff = (ULUt - SM).SqNorm_Frobenius();
@@ -116,8 +118,8 @@ TEST(mat3, svd3) {
     M.SetRandom();
     double g[3];
     dfm2::CMat3d U, V;
-    dfm2::svd3(U.mat, g, V.mat,
-               M.mat, 20);
+    dfm2::svd3(U.data(), g, V.data(),
+               M.data(), 20);
     {
       double diffU = (U.transpose() * U - dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-6);
@@ -129,9 +131,9 @@ TEST(mat3, svd3) {
     {
       const double G[9] = {g[0], 0, 0, 0, g[1], 0, 0, 0, g[2]};
       dfm2::CMat3d UG;
-      dfm2::MatMat3(UG.mat, U.mat, G);
+      dfm2::MatMat3(UG.data(), U.data(), G);
       dfm2::CMat3d UGVt;
-      dfm2::MatMatT3(UGVt.mat, UG.mat, V.mat);
+      dfm2::MatMatT3(UGVt.data(), UG.data(), V.data());
       double diff = (UGVt - M).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-10);
     }
@@ -143,7 +145,7 @@ TEST(mat3, rot_comp) {
     dfm2::CMat3d M;
     M.SetRandom();
     dfm2::CMat3d R;
-    dfm2::GetRotPolarDecomp(R.mat, M.mat, 40);
+    dfm2::GetRotPolarDecomp(R.data(), M.data(), 40);
     {
       double diff = (R.transpose() * R - dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-5);

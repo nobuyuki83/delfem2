@@ -15,8 +15,9 @@
 // -------------------------------------------------
 
 template <typename T>
-T delfem2::WdW_Rod3BendStraight(
-    T dW_dP[3][3],
+void delfem2::CdC_Rod3BendStraight(
+    T C[3],
+    T dC_dP[3][3][3],
     const T vtx_xyz[3][3]) {
   namespace dfm2 = delfem2;
   using V3 = delfem2::CVec3<T>;
@@ -27,21 +28,32 @@ T delfem2::WdW_Rod3BendStraight(
   const T l2 = v1.norm();
   const V3 u0 = v0 / l0;
   const V3 u2 = v1 / l2;
-  const M3 du0 = -(M3::Identity() - M3::OuterProduct(u0.p, u0.p)) / l0;
-  const M3 du2 = +(M3::Identity() - M3::OuterProduct(u2.p, u2.p)) / l2;
-  const T c = 1 + u0.dot(u2);
-  const V3 t = u0.cross(u2) / c;
-  const T w = t.squaredNorm()/2;
-  const M3 dtdu0 = (-M3::Spin(u2.p) - M3::OuterProduct(t.p, u2.p)) / c;
-  const M3 dtdu2 = (+M3::Spin(u0.p) - M3::OuterProduct(t.p, u0.p)) / c;
-  (+t * dtdu0 * du0).CopyTo(dW_dP[0]);
-  (+t * dtdu2 * du2).CopyTo(dW_dP[2]);
-  (-t * dtdu0 * du0 - t * dtdu2 * du2).CopyTo(dW_dP[1]);
-  return w;
+  const M3 du0dp0 = -(M3::Identity() - M3::OuterProduct(u0.p, u0.p)) / l0;
+  const M3 du2dp2 = +(M3::Identity() - M3::OuterProduct(u2.p, u2.p)) / l2;
+  const T cos0 = 1 + u0.dot(u2);
+  const V3 tan0 = u0.cross(u2) / cos0;
+  const M3 dtdu0 = (-M3::Spin(u2.p) - M3::OuterProduct(tan0.p, u2.p)) / cos0;
+  const M3 dtdu2 = (+M3::Spin(u0.p) - M3::OuterProduct(tan0.p, u0.p)) / cos0;
+  const M3 dtdp0 = dtdu0 * du0dp0;
+  const M3 dtdp2 = dtdu2 * du2dp2;
+  tan0.CopyTo(C);
+  for(int i=0;i<3;++i){
+    for(int j=0;j<3;++j) {
+      dC_dP[i][0][j] = dtdp0(i,j);
+      dC_dP[i][2][j] = dtdp2(i,j);
+      dC_dP[i][1][j] = -dC_dP[i][0][j] - dC_dP[i][2][j];
+    }
+  }
 }
 #ifdef DFM2_STATIC_LIBRARY
-template float delfem2::WdW_Rod3BendStraight(float dW_dP[3][3], const float vtx_xyz[3][3]);
-template double delfem2::WdW_Rod3BendStraight(double dW_dP[3][3], const double vtx_xyz[3][3]);
+template void delfem2::CdC_Rod3BendStraight(
+    float C[3],
+    float dC_dP[3][3][3],
+    const float vtx_xyz[3][3]);
+template void delfem2::CdC_Rod3BendStraight(
+    double C[3],
+    double dC_dP[3][3][3],
+    const double vtx_xyz[3][3]);
 #endif
 
 // --------------------------------------------

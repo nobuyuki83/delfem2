@@ -123,25 +123,28 @@ Mat4_Image2Screen(
 
 
 template<typename T>
-std::tuple<T, T, std::array<T, 3>, std::array<T, 3>>
-WdW_DifferenceScreenCoordinate(
-    const float mat[16],
-    const float pos[3],
-    const float trg[2]) {
-  delfem2::CVec3f vx(mat), vy(mat + 4), vw(mat + 12), vp(pos);
-  float qx = vx.dot(vp) + mat[3];
-  float qy = vy.dot(vp) + mat[7];
-  float qw = vw.dot(vp) + mat[15];
-  float s = qx/qw;
-  float t = qy/qw;
-  auto v0 = vx / qw - qx / (qw * qw) * vw;
-  auto v1 = vy / qw - qy / (qw * qw) * vw;
-  return {
-      s - trg[0],
-      t - trg[1],
-      {v0.x, v0.y, v0.z},
-      {v1.x, v1.y, v1.z} };
-}
+void CdC_DifferenceScreenCoordinate(
+    T c[2],
+    T dc[2][3],
+    const T mat[16],
+    const T pos[3],
+    const T trg[2]) {
+  delfem2::CVec3<T> vx(mat), vy(mat + 4), vw(mat + 12), vp(pos);
+  const auto qx = vx.dot(vp) + mat[3];
+  const auto qy = vy.dot(vp) + mat[7];
+  const auto qw = vw.dot(vp) + mat[15];
+  const auto s = qx/qw;
+  const auto t = qy/qw;
+  const auto v0 = vx / qw - qx / (qw * qw) * vw;
+  const auto v1 = vy / qw - qy / (qw * qw) * vw;
+  c[0] = s - trg[0];
+  c[1] = t - trg[1];
+  dc[0][0] = v0.x;
+  dc[0][1] = v0.y;
+  dc[0][2] = v0.z;
+  dc[1][0] = v1.x;
+  dc[1][1] = v1.y;
+  dc[1][2] = v1.z;}
 
 }
 
