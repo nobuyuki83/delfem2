@@ -346,7 +346,7 @@ class CMatContact {
           unsigned int jp0 = aIP[jjp];
           double v0[3];
           MatVec3(v0,
-                  NN.mat, x + jp0 * 4);
+                  NN.p_, x + jp0 * 4);
           y[ip0 * 4 + 0] += alpha * stiffness * aW[iip] * aW[jjp] * v0[0];
           y[ip0 * 4 + 1] += alpha * stiffness * aW[iip] * aW[jjp] * v0[1];
           y[ip0 * 4 + 2] += alpha * stiffness * aW[iip] * aW[jjp] * v0[2];

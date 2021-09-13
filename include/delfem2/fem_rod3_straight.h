@@ -15,8 +15,9 @@
 namespace delfem2 {
 
 template <typename T>
-DFM2_INLINE T WdW_Rod3BendStraight(
-    T dW_dP[3][3],
+DFM2_INLINE void CdC_Rod3BendStraight(
+    T C[3],
+    T dC_dP[3][3][3],
     const T vec_pos[3][3]);
 
 DFM2_INLINE double WdWddW_Rod3BendStraight(

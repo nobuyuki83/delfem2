@@ -15,27 +15,27 @@
 namespace delfem2 {
 /**
  * compute energy and its graident and hessian for the 3D spring
- * @param[out] dW_dP
- * @param[out] ddW_ddP
- * @param[in] stiff stiffness
- * @param[in] P current positions
- * @param[in] L0 rest length
+ * @param[out] dw_dp
+ * @param[out] ddw_ddp
+ * @param[in] stiffness stiffness
+ * @param[in] vtx_xyz_ini current positions
+ * @param[in] edge_length_ini rest length
  * @return energy
  */
 DFM2_INLINE double WdWddW_SquareLengthLineseg3D(
-    CVec3d dW_dP[2],
-    CMat3d ddW_ddP[2][2],
+    CVec3d dw_dp[2],
+    CMat3d ddw_ddp[2][2],
     //
-    double stiff,
-    const CVec3d P[2],
-    double L0);
+    double stiffness,
+    const CVec3d vtx_xyz_ini[2],
+    double edge_length_ini);
 
 template <typename T>
-DFM2_INLINE T WdW_SquareLengthLineseg3D(
-    T dW_dP[2][3],
-    T stiff,
-    const T p[2][3],
-    T L0);
+DFM2_INLINE void CdC_SquareLengthLineseg3D(
+    T& c,
+    T dc_dpos[2][3],
+    const T pos_xyz[2][3],
+    T length_ini);
 
 } // namespace delfem2
 

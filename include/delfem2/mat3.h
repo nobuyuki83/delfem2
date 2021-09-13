@@ -87,17 +87,26 @@ template<typename REAL>
 void Inverse_Mat3(
     REAL Ainv[9]);
 
+/**
+ * compute C = A*B
+ * @tparam T0
+ * @tparam T1
+ * @tparam T2
+ * @param C
+ * @param A
+ * @param B
+ */
 template<typename T0, typename T1, typename T2>
 void MatMat3(
-    T0 *UL,
-    const T1 *U,
-    const T2 *L);
+    T0 *AB,
+    const T1 *A,
+    const T2 *B);
 
 template<typename T0, typename T1, typename T2>
 void MatMatT3(
-    T0 *ULUt,
-    const T1 *UL,
-    const T2 *U);
+    T0 *ABt,
+    const T1 *A,
+    const T2 *B);
 
 /**
  * @func product of a transposed 3x3 matrix and another 3x3 matrix.
@@ -106,7 +115,7 @@ void MatMatT3(
  */
 template<typename T0, typename T1, typename T2>
 void MatTMat3(
-    T0 *C,
+    T0 *AtB,
     const T1 *A,
     const T2 *B);
 
@@ -276,24 +285,24 @@ class CMat3 {
         REAL v20, REAL v21, REAL v22);
   CMat3(REAL x, REAL y, REAL z);
   // ---------------
-  REAL *data() { return mat; }
-  [[nodiscard]] const REAL *data() const { return mat; }
+  REAL *data() { return p_; }
+  [[nodiscard]] const REAL *data() const { return p_; }
   // ---------------
-  void GetElements(REAL m[9]) const { for (unsigned int i = 0; i < 9; i++) { m[i] = mat[i]; }}
-  [[nodiscard]] double Get(int i, int j) const { return mat[i * 3 + j]; }
+  void GetElements(REAL m[9]) const { for (unsigned int i = 0; i < 9; i++) { m[i] = p_[i]; }}
+  [[nodiscard]] double Get(int i, int j) const { return p_[i * 3 + j]; }
   // ---------
   void AffineMatrixTrans(REAL m[16]) const {
-    m[0 * 4 + 0] = mat[0];
-    m[1 * 4 + 0] = mat[1];
-    m[2 * 4 + 0] = mat[2];
+    m[0 * 4 + 0] = p_[0];
+    m[1 * 4 + 0] = p_[1];
+    m[2 * 4 + 0] = p_[2];
     m[3 * 4 + 0] = 0;
-    m[0 * 4 + 1] = mat[3];
-    m[1 * 4 + 1] = mat[4];
-    m[2 * 4 + 1] = mat[5];
+    m[0 * 4 + 1] = p_[3];
+    m[1 * 4 + 1] = p_[4];
+    m[2 * 4 + 1] = p_[5];
     m[3 * 4 + 1] = 0;
-    m[0 * 4 + 2] = mat[6];
-    m[1 * 4 + 2] = mat[7];
-    m[2 * 4 + 2] = mat[8];
+    m[0 * 4 + 2] = p_[6];
+    m[1 * 4 + 2] = p_[7];
+    m[2 * 4 + 2] = p_[8];
     m[3 * 4 + 2] = 0;
     m[0 * 4 + 3] = 0;
     m[1 * 4 + 3] = 0;
@@ -301,24 +310,24 @@ class CMat3 {
     m[3 * 4 + 3] = 1;
   }
   void CopyToMat4(REAL m[16]) const {
-    m[0 * 4 + 0] = mat[0];
-    m[0 * 4 + 1] = mat[1];
-    m[0 * 4 + 2] = mat[2];
-    m[1 * 4 + 0] = mat[3];
-    m[1 * 4 + 1] = mat[4];
-    m[1 * 4 + 2] = mat[5];
-    m[2 * 4 + 0] = mat[6];
-    m[2 * 4 + 1] = mat[7];
-    m[2 * 4 + 2] = mat[8];
+    m[0 * 4 + 0] = p_[0];
+    m[0 * 4 + 1] = p_[1];
+    m[0 * 4 + 2] = p_[2];
+    m[1 * 4 + 0] = p_[3];
+    m[1 * 4 + 1] = p_[4];
+    m[1 * 4 + 2] = p_[5];
+    m[2 * 4 + 0] = p_[6];
+    m[2 * 4 + 1] = p_[7];
+    m[2 * 4 + 2] = p_[8];
   }
   void CopyTo(REAL *ptr) const {
-    for (int i = 0; i < 9; ++i) { ptr[i] = mat[i]; }
+    for (int i = 0; i < 9; ++i) { ptr[i] = p_[i]; }
   }
   void CopyToScale(REAL *ptr, REAL s) const {
-    for (int i = 0; i < 9; ++i) { ptr[i] = mat[i] * s; }
+    for (int i = 0; i < 9; ++i) { ptr[i] = p_[i] * s; }
   }
   void AddToScale(REAL *ptr, REAL s) const {
-    for (int i = 0; i < 9; ++i) { ptr[i] += mat[i] * s; }
+    for (int i = 0; i < 9; ++i) { ptr[i] += p_[i] * s; }
   }
   // ---------------
 //  CVector3 MatVec(const CVector3& vec0) const;
@@ -333,7 +342,7 @@ class CMat3 {
     CMat3 m;
     for (unsigned int i = 0; i < 3; i++) {
       for (unsigned int j = 0; j < 3; j++) {
-        m.mat[i * 3 + j] = (mat[i * 3 + j] + mat[j * 3 + i]) * 0.5;
+        m.p_[i * 3 + j] = (p_[i * 3 + j] + p_[j * 3 + i]) * 0.5;
       }
     }
     return m;
@@ -341,30 +350,33 @@ class CMat3 {
   inline CMat3 operator-() const { return (*this) * static_cast<REAL>(-1); }
   inline CMat3 operator+() const { return (*this); }
   inline CMat3 &operator+=(const CMat3 &rhs) {
-    for (unsigned int i = 0; i < 9; i++) { mat[i] += rhs.mat[i]; }
+    for (unsigned int i = 0; i < 9; i++) { p_[i] += rhs.p_[i]; }
     return *this;
   }
   inline CMat3 &operator-=(const CMat3 &rhs) {
-    for (unsigned int i = 0; i < 9; i++) { mat[i] -= rhs.mat[i]; }
+    for (unsigned int i = 0; i < 9; i++) { p_[i] -= rhs.p_[i]; }
     return *this;
   }
   inline CMat3 &operator*=(REAL d) {
-    for (auto &m : mat) { m *= d; }
+    for (auto &m : p_) { m *= d; }
     return *this;
   }
   inline CMat3 &operator/=(REAL d) {
     REAL invd = (REAL) 1.0 / d;
-    for (auto &m : mat) { m *= invd; }
+    for (auto &m : p_) { m *= invd; }
     return *this;
   }
-  inline double operator[](int i) const {
-    return this->mat[i];
+  inline REAL operator[](int i) const {
+    return this->p_[i];
   }
-  inline double &operator()(int i, int j) {
-    return this->mat[i * 3 + j];
+  inline REAL &operator()(int i, int j) {
+    return this->p_[i * 3 + j];
+  }
+  inline const REAL &operator()(int i, int j) const {
+    return this->p_[i * 3 + j];
   }
   // -------------------------
-  CMat3 Inverse() const;
+  [[nodiscard]] CMat3 Inverse() const;
   // -------------------------
   // function whose name starts with "Set" changes itself
   void SetInverse();
@@ -381,58 +393,62 @@ class CMat3 {
   void SetMat4(const REAL m[16]) {
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
-        this->mat[i * 3 + j] = m[i * 4 + j];
+        this->p_[i * 3 + j] = m[i * 4 + j];
       }
     }
   }
   // ------------------------
   void GetQuat_RotMatrix(REAL quat[]) const;
   // ------------------------
-  CMat3 transpose() const {
+  [[nodiscard]] CMat3 transpose() const {
     CMat3 m;
-    m.mat[0] = mat[0];
-    m.mat[1] = mat[3];
-    m.mat[2] = mat[6];
-    m.mat[3] = mat[1];
-    m.mat[4] = mat[4];
-    m.mat[5] = mat[7];
-    m.mat[6] = mat[2];
-    m.mat[7] = mat[5];
-    m.mat[8] = mat[8];
+    m.p_[0] = p_[0];
+    m.p_[1] = p_[3];
+    m.p_[2] = p_[6];
+    m.p_[3] = p_[1];
+    m.p_[4] = p_[4];
+    m.p_[5] = p_[7];
+    m.p_[6] = p_[2];
+    m.p_[7] = p_[5];
+    m.p_[8] = p_[8];
     return m;
   }
-  bool isNaN() const {
-    double s = mat[0] + mat[1] + mat[2] + mat[3] + mat[4] + mat[5] + mat[6] + mat[7] + mat[8];
+  [[nodiscard]] bool isNaN() const {
+    double s = p_[0] + p_[1] + p_[2] + p_[3] + p_[4] + p_[5] + p_[6] + p_[7] + p_[8];
     return myIsNAN_Matrix3(s) != 0;
   }
-  double determinant() const {
+  [[nodiscard]] double determinant() const {
     return
-        +mat[0] * mat[4] * mat[8] + mat[3] * mat[7] * mat[2] + mat[6] * mat[1] * mat[5]
-            - mat[0] * mat[7] * mat[5] - mat[6] * mat[4] * mat[2] - mat[3] * mat[1] * mat[8];
+        p_[0] * p_[4] * p_[8] +
+        p_[3] * p_[7] * p_[2] +
+        p_[6] * p_[1] * p_[5] -
+        p_[0] * p_[7] * p_[5] -
+        p_[6] * p_[4] * p_[2] -
+        p_[3] * p_[1] * p_[8];
   }
-  double SqNorm_Frobenius() const {
+  [[nodiscard]] double SqNorm_Frobenius() const {
     double s = 0.0;
-    for (auto &i : mat) {
+    for (auto &i : p_) {
       s += i * i;
     }
     return s;
   }
-  double Trace() const {
-    return mat[0] + mat[4] + mat[8];
+  [[nodiscard]] double Trace() const {
+    return p_[0] + p_[4] + p_[8];
   }
-  double SecondInvarint() const {
+  [[nodiscard]] double SecondInvarint() const {
     const CMat3 &m2 = (*this) * (*this);
     const double tr = this->Trace();
     return 0.5 * (tr * tr - m2.Trace());
   }
   void Print() const {
-    std::cout << mat[0] << " " << mat[1] << " " << mat[2] << std::endl;
-    std::cout << mat[3] << " " << mat[4] << " " << mat[5] << std::endl;
-    std::cout << mat[6] << " " << mat[7] << " " << mat[8] << std::endl;
+    std::cout << p_[0] << " " << p_[1] << " " << p_[2] << std::endl;
+    std::cout << p_[3] << " " << p_[4] << " " << p_[5] << std::endl;
+    std::cout << p_[6] << " " << p_[7] << " " << p_[8] << std::endl;
   }
   void PolerDecomp(CMat3 &R, int nitr) const {
-    GetRotPolarDecomp(R.mat,
-                      mat, nitr);
+    GetRotPolarDecomp(R.p_,
+                      p_, nitr);
   }
   // --------------------
   // static functions
@@ -448,7 +464,7 @@ class CMat3 {
   }
   static CMat3 Spin(const REAL *v) {
     CMat3 m;
-    Mat3_Spin(m.mat, v);
+    Mat3_Spin(m.p_, v);
     return m;
   }
   static CMat3 OuterProduct(const REAL *v0, const REAL *v1) {
@@ -469,19 +485,19 @@ class CMat3 {
     const REAL yw = q[1] * q[3] * 2;
     const REAL zw = q[2] * q[3] * 2;
     CMat3<REAL> m;
-    m.mat[0 * 3 + 0] = 1 - y2 - z2;
-    m.mat[0 * 3 + 1] = xy - zw;
-    m.mat[0 * 3 + 2] = zx + yw;
-    m.mat[1 * 3 + 0] = xy + zw;
-    m.mat[1 * 3 + 1] = 1 - z2 - x2;
-    m.mat[1 * 3 + 2] = yz - xw;
-    m.mat[2 * 3 + 0] = zx - yw;
-    m.mat[2 * 3 + 1] = yz + xw;
-    m.mat[2 * 3 + 2] = 1 - x2 - y2;
+    m.p_[0 * 3 + 0] = 1 - y2 - z2;
+    m.p_[0 * 3 + 1] = xy - zw;
+    m.p_[0 * 3 + 2] = zx + yw;
+    m.p_[1 * 3 + 0] = xy + zw;
+    m.p_[1 * 3 + 1] = 1 - z2 - x2;
+    m.p_[1 * 3 + 2] = yz - xw;
+    m.p_[2 * 3 + 0] = zx - yw;
+    m.p_[2 * 3 + 1] = yz + xw;
+    m.p_[2 * 3 + 2] = 1 - x2 - y2;
     return m;
   }
  public:
-  REAL mat[9]; // value with row-major order
+  REAL p_[9]; // value with row-major order
 };
 
 using CMat3d = CMat3<double>;
@@ -490,7 +506,7 @@ using CMat3f = CMat3<float>;
 template<typename T>
 CMat3<T> Mat3_Identity(T alpha) {
   CMat3<T> m;
-  Mat3_Identity(m.mat, alpha);
+  Mat3_Identity(m.p_, alpha);
   return m;
 }
 
@@ -500,4 +516,4 @@ CMat3<T> Mat3_Identity(T alpha) {
 #  include "delfem2/mat3.cpp"
 #endif
 
-#endif
+#endif /* DFM2_MAT3_H */

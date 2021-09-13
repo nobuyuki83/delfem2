@@ -28,7 +28,7 @@ DFM2_INLINE delfem2::CVec2d delfem2::screenXYProjection(
 
 DFM2_INLINE delfem2::CVec3d delfem2::GetCartesianRotationVector(
     const CMat3d &m) {
-  const double *mat = m.mat;
+  const double *mat = m.p_;
   CVec3d a;
   a.p[0] = mat[7] - mat[5];
   a.p[1] = mat[2] - mat[6];
@@ -46,7 +46,7 @@ DFM2_INLINE delfem2::CVec3d delfem2::GetCartesianRotationVector(
 
 DFM2_INLINE delfem2::CVec3d delfem2::GetSpinVector(
     const CMat3d &m) {
-  const double *mat = m.mat;
+  const double *mat = m.p_;
   CVec3d r;
   r.p[0] = (mat[7] - mat[5]) * 0.5;
   r.p[1] = (mat[2] - mat[6]) * 0.5;
@@ -60,7 +60,7 @@ delfem2::MatVec(
     const CMat3<T> &m,
     const CVec3<T> &vec0) {
   CVec3<T> vec1;
-  delfem2::MatVec3(vec1.p, m.mat, vec0.p);
+  delfem2::MatVec3(vec1.p, m.p_, vec0.p);
   return vec1;
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -73,7 +73,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::MatVecTrans(
     const CMat3<T> &m,
     const CVec3<T> &vec0) {
   CVec3<T> vec1;
-  MatTVec3(vec1.p, m.mat, vec0.p);
+  MatTVec3(vec1.p, m.p_, vec0.p);
   return vec1;
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -86,7 +86,7 @@ template delfem2::CVec3f delfem2::MatVecTrans(const CMat3f&, const CVec3f&);
 DFM2_INLINE void delfem2::SetDiag(
     CMat3d &m,
     const CVec3d &d) {
-  double *mat = m.mat;
+  double *mat = m.p_;
   mat[0 * 3 + 0] = d.x;
   mat[1 * 3 + 1] = d.y;
   mat[2 * 3 + 2] = d.z;
@@ -99,14 +99,14 @@ DFM2_INLINE void delfem2::SetRotMatrix_Cartesian(
 }
 
 DFM2_INLINE void delfem2::SetSpinTensor(CMat3d &m, const CVec3d &vec0) {
-  Mat3_Spin(m.mat, vec0.p);
+  Mat3_Spin(m.p_, vec0.p);
 }
 
 DFM2_INLINE void delfem2::SetOuterProduct(
     CMat3d &m,
     const CVec3d &vec0,
     const CVec3d &vec1) {
-  double *mat = m.mat;
+  double *mat = m.p_;
   mat[0] = vec0.x * vec1.x;
   mat[1] = vec0.x * vec1.y;
   mat[2] = vec0.x * vec1.z;
@@ -119,7 +119,7 @@ DFM2_INLINE void delfem2::SetOuterProduct(
 }
 
 DFM2_INLINE void delfem2::SetProjection(CMat3d &m, const CVec3d &vec0) {
-  double *mat = m.mat;
+  double *mat = m.p_;
   const CVec3d &u = vec0.normalized();
   mat[0] = 1 - u.x * u.x;
   mat[1] = 0 - u.x * u.y;
@@ -167,7 +167,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3(
     const CVec3d &vec1,
     const CVec3d &vec2) {
   CMat3d m;
-  double *mat = m.mat;
+  double *mat = m.p_;
   mat[0 * 3 + 0] = vec0.x;
   mat[0 * 3 + 1] = vec1.x;
   mat[0 * 3 + 2] = vec2.x;
@@ -182,7 +182,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3(
 
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_Spin(const CVec3d &vec0) {
   CMat3d m;
-  ::delfem2::Mat3_Spin(m.mat, vec0.p);
+  ::delfem2::Mat3_Spin(m.p_, vec0.p);
   return m;
 }
 
@@ -240,29 +240,29 @@ delfem2::CMat3<REAL> delfem2::Mat3_MinimumRotation(
   const double st2 = n.dot(n);
   CMat3<REAL> m;
   if (st2 < 1.0e-4f) {
-    m.mat[0] = 1.f + 0.5f * (n.x * n.x - st2);
-    m.mat[1] = -n.z + 0.5f * (n.x * n.y);
-    m.mat[2] = +n.y + 0.5f * (n.x * n.z);
-    m.mat[3] = +n.z + 0.5f * (n.y * n.x);
-    m.mat[4] = 1.f + 0.5f * (n.y * n.y - st2);
-    m.mat[5] = -n.x + 0.5f * (n.y * n.z);
-    m.mat[6] = -n.y + 0.5f * (n.z * n.x);
-    m.mat[7] = +n.x + 0.5f * (n.z * n.y);
-    m.mat[8] = 1.f + 0.5f * (n.z * n.z - st2);
+    m.p_[0] = 1.f + 0.5f * (n.x * n.x - st2);
+    m.p_[1] = -n.z + 0.5f * (n.x * n.y);
+    m.p_[2] = +n.y + 0.5f * (n.x * n.z);
+    m.p_[3] = +n.z + 0.5f * (n.y * n.x);
+    m.p_[4] = 1.f + 0.5f * (n.y * n.y - st2);
+    m.p_[5] = -n.x + 0.5f * (n.y * n.z);
+    m.p_[6] = -n.y + 0.5f * (n.z * n.x);
+    m.p_[7] = +n.x + 0.5f * (n.z * n.y);
+    m.p_[8] = 1.f + 0.5f * (n.z * n.z - st2);
     return m;
   }
   const double st = sqrt(st2);
   const double ct = ep.dot(eq);
   n.normalize();
-  m.mat[0] = ct + (1.f - ct) * n.x * n.x;
-  m.mat[1] = -n.z * st + (1.f - ct) * n.x * n.y;
-  m.mat[2] = +n.y * st + (1.f - ct) * n.x * n.z;
-  m.mat[3] = +n.z * st + (1.f - ct) * n.y * n.x;
-  m.mat[4] = ct + (1.f - ct) * n.y * n.y;
-  m.mat[5] = -n.x * st + (1.f - ct) * n.y * n.z;
-  m.mat[6] = -n.y * st + (1.f - ct) * n.z * n.x;
-  m.mat[7] = +n.x * st + (1.f - ct) * n.z * n.y;
-  m.mat[8] = ct + (1.f - ct) * n.z * n.z;
+  m.p_[0] = ct + (1.f - ct) * n.x * n.x;
+  m.p_[1] = -n.z * st + (1.f - ct) * n.x * n.y;
+  m.p_[2] = +n.y * st + (1.f - ct) * n.x * n.z;
+  m.p_[3] = +n.z * st + (1.f - ct) * n.y * n.x;
+  m.p_[4] = ct + (1.f - ct) * n.y * n.y;
+  m.p_[5] = -n.x * st + (1.f - ct) * n.y * n.z;
+  m.p_[6] = -n.y * st + (1.f - ct) * n.z * n.x;
+  m.p_[7] = +n.x * st + (1.f - ct) * n.z * n.y;
+  m.p_[8] = ct + (1.f - ct) * n.z * n.z;
   return m;
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -464,7 +464,7 @@ DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_SVD(
     A[2 * 3 + 2] += dp[2] * dq[2];
   }
   CMat3d dRi;
-  GetRotPolarDecomp(dRi.mat, A, 40);
+  GetRotPolarDecomp(dRi.p_, A, 40);
   CMat3d R1 = dRi * R0i;
   CQuatd q1;
   R1.GetQuat_RotMatrix(q1.p);

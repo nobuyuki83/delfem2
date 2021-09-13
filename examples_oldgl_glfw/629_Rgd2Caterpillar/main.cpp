@@ -32,9 +32,9 @@ void Draw(
   for (unsigned int i0 = 0; i0 < rs.shape.size(); ++i0) {
     unsigned int i1 = (i0 + 1) % rs.shape.size();
     double p0[2];
-    dfm2::Vec2_Mat3Vec2_AffineProjection(p0, mT1RT0.mat, rs.shape[i0].p);
+    dfm2::Vec2_Mat3Vec2_AffineProjection(p0, mT1RT0.p_, rs.shape[i0].p);
     double p1[2];
-    dfm2::Vec2_Mat3Vec2_AffineProjection(p1, mT1RT0.mat, rs.shape[i1].p);
+    dfm2::Vec2_Mat3Vec2_AffineProjection(p1, mT1RT0.p_, rs.shape[i1].p);
     ::glVertex2dv(p0);
     ::glVertex2dv(p1);
   }
@@ -45,7 +45,7 @@ void Draw(
   ::glColor3d(0, 0, 0);
   for (const auto & i0 : rs.shape) {
     double p0[2];
-    dfm2::Vec2_Mat3Vec2_AffineProjection(p0, mT1RT0.mat, i0.p);
+    dfm2::Vec2_Mat3Vec2_AffineProjection(p0, mT1RT0.p_, i0.p);
     ::glVertex2dv(p0);
   }
   ::glEnd();
