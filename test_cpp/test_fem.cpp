@@ -1218,6 +1218,10 @@ TEST(fem, WdW_Rod3BendStraight) {
         { dist01(reng), dist01(reng), dist01(reng) } };
     if (dfm2::Distance3(vec_pos0[1], vec_pos0[0]) < 0.1) { continue; }
     if (dfm2::Distance3(vec_pos0[2], vec_pos0[1]) < 0.1) { continue; }
+    if ((dfm2::CVec3d(vec_pos0[1]) - dfm2::CVec3d(vec_pos0[0])).normalized().dot(
+        (dfm2::CVec3d(vec_pos0[2]) - dfm2::CVec3d(vec_pos0[1])).normalized()) < -0.5) {
+      continue;
+    }
     double c0[3], dc_dp0[3][3][3];
     dfm2::CdC_Rod3BendStraight(c0, dc_dp0, vec_pos0);
     for (int ino = 0; ino < 3; ++ino) {

@@ -45,7 +45,7 @@ public:
       p2.p[2] = -(1.0/radinv_x)*(1-cos(radinv_x*x0));
     }
     delfem2::CVec3d p3;
-    delfem2::MatVec3(p3.p, R.mat,p2.p);
+    delfem2::MatVec3(p3.data(), R.data(),p2.data());
     delfem2::CVec3d p4 = org3 + p3;
     return p4;
   }
