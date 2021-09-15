@@ -169,7 +169,9 @@ class CMatrixSparse {
    * @param[in] scale scaling factor for the lumped mass (typically 1/dt^2).
    * @details the matrix need to be square matrix
    */
-  void AddDia_LumpedMass(const T *lm, double scale) {
+  void AddDia_LumpedMass(
+      const T *lm,
+      double scale) {
     assert(this->nblk_row == this->nblk_col);
     assert(this->len_row == this->nrowdim);
     const int blksize = nrowdim_ * ncoldim_;
@@ -177,7 +179,7 @@ class CMatrixSparse {
     if (val_dia_.empty()) { return; }
     for (unsigned int iblk = 0; iblk < nrowblk_; ++iblk) {
       for (int ilen = 0; ilen < nlen; ++ilen) {
-        val_dia_[iblk * blksize + ilen * nlen + ilen] += lm[iblk];
+        val_dia_[iblk * blksize + ilen * nlen + ilen] += lm[iblk] * scale;
       }
     }
   }

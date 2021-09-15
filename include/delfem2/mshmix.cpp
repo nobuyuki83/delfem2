@@ -248,19 +248,18 @@ DFM2_INLINE void delfem2::ClipGroup_MeshMix
 
 
 
-DFM2_INLINE void delfem2::Convert2Tri_MeshMix
- (std::vector<unsigned int>& aTri,
-  //
-  const std::vector<unsigned int>& aElemInd,
-  const std::vector<unsigned int>& aElem,
-  const std::vector<MESHELEM_TYPE>& aElemType)
+DFM2_INLINE void delfem2::Convert2Tri_MeshMix(
+    std::vector<unsigned int>& aTri,
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    [[maybe_unused]] const std::vector<MESHELEM_TYPE>& aElemType)
 {
   const std::size_t nElem0 = aElemInd.size()-1;
   aTri.clear();
   aTri.reserve(nElem0*6);
   for(unsigned int ie=0;ie<nElem0;++ie){
-    const int nnoel = aElemInd[ie+1]-aElemInd[ie];
-    const int iip0 = aElemInd[ie];
+    const unsigned int nnoel = aElemInd[ie+1]-aElemInd[ie];
+    const unsigned int iip0 = aElemInd[ie];
     assert( nnoel == 3 || nnoel == 4 );
     aTri.push_back(aElem[iip0+0]);
     aTri.push_back(aElem[iip0+1]);
@@ -273,22 +272,22 @@ DFM2_INLINE void delfem2::Convert2Tri_MeshMix
   }
 }
 
-DFM2_INLINE void delfem2::FlipElement_MeshMix
- (std::vector<int>& aElem_Flip,
-  // ----------
-  const std::vector<unsigned int>& aElemInd,
-  const std::vector<unsigned int>& aElem,
-  const std::vector<MESHELEM_TYPE>& aElemType)
+DFM2_INLINE void delfem2::FlipElement_MeshMix(
+    std::vector<int>& aElem_Flip,
+    //
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    [[maybe_unused]] const std::vector<MESHELEM_TYPE>& aElemType)
 {
   aElem_Flip.resize(aElem.size());
   assert(!aElemInd.empty());
   const unsigned long nelem = aElemInd.size()-1;
   for(unsigned int ie=0;ie<nelem;++ie){
-    const int nnoel = aElemInd[ie+1]-aElemInd[ie];
+    const unsigned int nnoel = aElemInd[ie+1]-aElemInd[ie];
     assert( nnoel == 3 || nnoel == 4 );
-    for(int inoel=0;inoel<nnoel;++inoel){
-      const int ip0 = aElem[ aElemInd[ie]+inoel ];
-      const int jnoel = nnoel-inoel-1;
+    for(unsigned int inoel=0;inoel<nnoel;++inoel){
+      const unsigned int ip0 = aElem[ aElemInd[ie]+inoel ];
+      const unsigned int jnoel = nnoel-inoel-1;
       aElem_Flip[ aElemInd[ie]+jnoel ] = ip0;
     }
   }
@@ -321,14 +320,14 @@ DFM2_INLINE void delfem2::MarkConnectedElements
   }
 }
 
-DFM2_INLINE void delfem2::MakeGroupElem
- (int& ngroup,
-  std::vector<int>& aIndGroup,
-  // -----------
-  const std::vector<unsigned int>& aElemInd,
-  const std::vector<unsigned int>& aElem,
-  const std::vector<int>& aElemFaceInd,
-  const std::vector<int>& aElemFaceRel)
+DFM2_INLINE void delfem2::MakeGroupElem(
+    int& ngroup,
+    std::vector<int>& aIndGroup,
+    //
+    const std::vector<unsigned int>& aElemInd,
+    [[maybe_unused]] const std::vector<unsigned int>& aElem,
+    const std::vector<int>& aElemFaceInd,
+    const std::vector<int>& aElemFaceRel)
 {
   assert(!aElemInd.empty());
   const int unsigned nelem = aElemInd.size()-1;

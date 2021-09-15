@@ -76,21 +76,21 @@ DFM2_INLINE int findFace(
 DFM2_INLINE void SubdivisionPoints_QuadCatmullClark(
     std::vector<double> &vtx_xyz1,
     //
-    const std::vector<unsigned int> &quad_vtxidx1,
+    const std::vector<unsigned int> &quad_vtx1,
     const std::vector<unsigned int> &aEdgeFace0,
     const std::vector<unsigned int> &psupIndQuad0,
     const std::vector<unsigned int> &psupQuad0,
-    const unsigned int *quad_vtxidx0,
+    const unsigned int *quad_vtx0,
     size_t num_quad0,
     const double *vtx_xyz0,
     size_t num_vtx0);
 
 DFM2_INLINE void SubdivPoints3_MeshQuad(
-    std::vector<double> &aXYZ1,
+    std::vector<double> &vtx_xyz1,
     //
     const std::vector<int> &aEdgeFace0,
-    const std::vector<unsigned int> &aQuad0,
-    const std::vector<double> &aXYZ0);
+    const std::vector<unsigned int> &quad_vtx0,
+    const std::vector<double> &vtx_xyz0);
 
 DFM2_INLINE void SubdivisionPoints_Hex(
     std::vector<double> &aXYZ1,

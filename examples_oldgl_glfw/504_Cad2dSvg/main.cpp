@@ -33,9 +33,9 @@ namespace dfm2 = delfem2;
 
 int main() {
   delfem2::openglstb::CGlyph glyph(
-      (std::filesystem::path(PATH_INPUT_DIR) / "myFont.png").string());
+      std::filesystem::path(PATH_INPUT_DIR) / "myFont.png");
   glyph.ParseGlyphInfo(
-      (std::filesystem::path(PATH_INPUT_DIR) / "myFont.fnt").string());
+      std::filesystem::path(PATH_INPUT_DIR) / "myFont.fnt");
   delfem2::CCad2D cad;
   // --------------------
   delfem2::glfw::CViewer2 viewer;
@@ -47,7 +47,7 @@ int main() {
   const unsigned int nframe_interval = 30;
   while (true) {
     if (iframe % nframe_interval == 0) {
-      std::string path_svg;
+      std::filesystem::path path_svg;
       if (iframe == nframe_interval * 0) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "shape0.svg"; }
       if (iframe == nframe_interval * 1) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "shape1.svg"; }
       if (iframe == nframe_interval * 2) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "shape2.svg"; }
@@ -56,7 +56,7 @@ int main() {
       if (iframe == nframe_interval * 5) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "lraglan.svg"; }
       dfm2::ReadSVG_Cad2D(
           cad,
-          path_svg, 1.0);
+          path_svg.string(), 1.0);
 //      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       dfm2::CBoundingBox2<double> bb = cad.BB();
       viewer.trans[0] = static_cast<float>(-(bb.x_min + bb.x_max) * 0.5);

@@ -234,7 +234,7 @@ DFM2_INLINE double delfem2::WdWddW_DotFrame(
     //
     const CVec3d P[3],
     const CVec3d S[2],
-    const double off[3]) {
+    [[maybe_unused]] const double off[3]) {
   assert(fabs(S[0].norm() - 1.0) < 1.0e-10);
   assert(fabs(S[0].dot((P[1] - P[0]).normalized())) < 1.0e-10);
   assert(fabs(S[1].norm() - 1.0) < 1.0e-10);

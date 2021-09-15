@@ -22,11 +22,9 @@ T Volume_Tet(
     const CVec3<T> &v2,
     const CVec3<T> &v3) {
   const double v =
-      (v1.p[0] - v0.p[0]) * ((v2.p[1] - v0.p[1]) * (v3.p[2] - v0.p[2]) - (v3.p[1] - v0.p[1]) * (v2.p[2] - v0.p[2]))
-          + (v1.p[1] - v0.p[1])
-              * ((v2.p[2] - v0.p[2]) * (v3.p[0] - v0.p[0]) - (v3.p[2] - v0.p[2]) * (v2.p[0] - v0.p[0]))
-          + (v1.p[2] - v0.p[2])
-              * ((v2.p[0] - v0.p[0]) * (v3.p[1] - v0.p[1]) - (v3.p[0] - v0.p[0]) * (v2.p[1] - v0.p[1]));
+      (v1.p[0] - v0.p[0]) * ((v2.p[1] - v0.p[1]) * (v3.p[2] - v0.p[2]) - (v3.p[1] - v0.p[1]) * (v2.p[2] - v0.p[2])) +
+      (v1.p[1] - v0.p[1]) * ((v2.p[2] - v0.p[2]) * (v3.p[0] - v0.p[0]) - (v3.p[2] - v0.p[2]) * (v2.p[0] - v0.p[0])) +
+      (v1.p[2] - v0.p[2]) * ((v2.p[0] - v0.p[0]) * (v3.p[1] - v0.p[1]) - (v3.p[0] - v0.p[0]) * (v2.p[1] - v0.p[1]));
   return v * 0.16666666666666666666666666666667;
 }
 
@@ -36,9 +34,9 @@ T Volume_Tet(
 // ----------------------------------------------
 
 template<typename T>
-delfem2::CVec3<T> delfem2::CPtElm3<T>::getPos_Tet
-    (const std::vector<double> &aXYZ_,
-     const std::vector<int> &aTet_) const {
+delfem2::CVec3<T> delfem2::CPtElm3<T>::getPos_Tet(
+    const std::vector<double> &aXYZ_,
+    const std::vector<int> &aTet_) const {
   assert(ielem >= 0 && ielem < (int) aTet_.size() / 4);
   int ip0 = aTet_[ielem * 4 + 0];
   int ip1 = aTet_[ielem * 4 + 1];
@@ -142,7 +140,7 @@ template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Tri(
 
 template<typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::UNorm_Tri(
-	[[maybe_unused]] const std::vector<double> &aXYZ0,
+    [[maybe_unused]] const std::vector<double> &aXYZ0,
     const std::vector<unsigned int> &aTri0,
     const std::vector<double> &aNorm0) const {
   assert(itri < aTri0.size() / 3);
@@ -227,7 +225,7 @@ template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_TetFace(
 template<typename T>
 delfem2::CVec3<T> delfem2::CPtElm2<T>::Pos_Grid(
     unsigned int nx,
-    unsigned int ny,
+    [[maybe_unused]] unsigned int ny,
     double el,
     std::vector<float> &aH) const {
   int iey = (this->itri / 2) / nx;
@@ -249,7 +247,7 @@ template delfem2::CVec3d delfem2::CPtElm2<double>::Pos_Grid(
 
 template<typename T>
 bool delfem2::CPtElm2<T>::Check(
-    const std::vector<double> &aXYZ,
+    [[maybe_unused]] const std::vector<double> &aXYZ,
     const std::vector<unsigned int> &aTri,
     double eps) const {
   if (itri >= aTri.size() / 3) { return false; }
@@ -722,10 +720,10 @@ template delfem2::CPtElm2<double> delfem2::Nearest_Point_MeshTri3DPart(
 // ----------------------------------------------------------------------------
 
 template<typename T>
-delfem2::CPtElm3<T> delfem2::Nearest_Point_MeshTet3D
-    (const CVec3<T> &q,
-     const std::vector<double> &aXYZ,
-     const std::vector<int> &aTet) {
+delfem2::CPtElm3<T> delfem2::Nearest_Point_MeshTet3D(
+    const CVec3<T> &q,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTet) {
   const double eps = 1.0e-4;
   const unsigned int ntet = aTet.size() / 4;
   for (unsigned int itet = 0; itet < ntet; ++itet) {
@@ -739,12 +737,12 @@ delfem2::CPtElm3<T> delfem2::Nearest_Point_MeshTet3D
 // ------------------------------
 
 template<typename T>
-delfem2::CPtElm3<T> delfem2::Nearest_Point_MeshTet3D
-    (const CVec3<T> &p,
-     int itet_start, // starting triangle
-     const std::vector<double> &aXYZ,
-     const std::vector<int> &aTet,
-     const std::vector<int> &aTetSurRel) {
+delfem2::CPtElm3<T> delfem2::Nearest_Point_MeshTet3D(
+    const CVec3<T> &p,
+    int itet_start, // starting triangle
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTet,
+    const std::vector<int> &aTetSurRel) {
   const double eps = 1.0e-4;
   int itet1 = itet_start;
   if (itet1 < 0 || itet1 >= (int) aTet.size() / 4) { return CPtElm3<T>(); }
@@ -781,11 +779,11 @@ delfem2::CPtElm3<T> delfem2::Nearest_Point_MeshTet3D
 // ---------------------------------------------------------------
 
 template<typename T>
-delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTetFace3D
-    (const CVec3<T> &p0,
-     const std::vector<double> &aXYZ,
-     const std::vector<int> &aTet,
-     const std::vector<int> &aTetFaceSrf) {
+delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTetFace3D(
+    const CVec3<T> &p0,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTet,
+    const std::vector<int> &aTetFaceSrf) {
   const int noelTetFace[4][3] = {
       {1, 2, 3},
       {0, 3, 2},
@@ -841,13 +839,13 @@ delfem2::CPtElm2<T> delfem2::Nearest_Point_MeshTetFace3D
 // ----------------------------------------
 
 template<typename T>
-double delfem2::SDFNormal_NearestPoint
-    (CVec3<T> &n0,
-     const CVec3<T> &p0,
-     const CPtElm2<T> &pes,
-     const double *aXYZ, unsigned int nXYZ,
-     const unsigned int *aTri, unsigned int nTri,
-     const double *aNorm) {
+double delfem2::SDFNormal_NearestPoint(
+    CVec3<T> &n0,
+    const CVec3<T> &p0,
+    const CPtElm2<T> &pes,
+    const double *aXYZ, unsigned int nXYZ,
+    const unsigned int *aTri, unsigned int nTri,
+    const double *aNorm) {
   CVec3<T> q1 = pes.Pos_Tri(aXYZ, nXYZ, aTri, nTri);
   double dist = (q1 - p0).norm();
   CVec3<T> n1 = pes.UNorm_Tri(aXYZ, nXYZ, aTri, nTri, aNorm);
@@ -874,13 +872,13 @@ template double delfem2::SDFNormal_NearestPoint
 // ------------------------------------------------------
 
 template<typename T>
-double delfem2::SDFNormal_NearestPoint
-    (CVec3<T> &n0,
-     const CVec3<T> &p0,
-     const CPtElm2<T> &pes,
-     const std::vector<double> &aXYZ,
-     const std::vector<unsigned int> &aTri,
-     const std::vector<double> &aNorm) {
+double delfem2::SDFNormal_NearestPoint(
+    CVec3<T> &n0,
+    const CVec3<T> &p0,
+    const CPtElm2<T> &pes,
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &aNorm) {
   CVec3<T> q1 = pes.Pos_Tri(aXYZ, aTri);
   double dist = (q1 - p0).norm();
   CVec3<T> n1 = pes.UNorm_Tri(aXYZ, aTri, aNorm);
@@ -907,12 +905,12 @@ template double delfem2::SDFNormal_NearestPoint
 // ---------------------------------------------
 
 template<typename T>
-double delfem2::DistanceToTri
-    (CPtElm2<T> &pes,
-     const CVec3<T> &p,
-     unsigned int itri0,
-     const std::vector<double> &aXYZ_,
-     const std::vector<unsigned int> &aTri_) {
+double delfem2::DistanceToTri(
+    CPtElm2<T> &pes,
+    const CVec3<T> &p,
+    unsigned int itri0,
+    const std::vector<double> &aXYZ_,
+    const std::vector<unsigned int> &aTri_) {
   const unsigned int i0 = aTri_[itri0 * 3 + 0];
   const unsigned int i1 = aTri_[itri0 * 3 + 1];
   const unsigned int i2 = aTri_[itri0 * 3 + 2];
@@ -944,9 +942,9 @@ double delfem2::DistanceToTri(
     const CVec3<T> &p,
     unsigned int itri0,
     const double *aXYZ_,
-    size_t nXYZ,
+    [[maybe_unused]] size_t nXYZ,
     const unsigned int *aTri_,
-    size_t nTri) {
+    [[maybe_unused]] size_t nTri) {
   const unsigned int i0 = aTri_[itri0 * 3 + 0];
   const unsigned int i1 = aTri_[itri0 * 3 + 1];
   const unsigned int i2 = aTri_[itri0 * 3 + 2];

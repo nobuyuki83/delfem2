@@ -376,7 +376,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP0(
 // vetex value
 DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1(
     const double *aXYZ,
-    unsigned int nXYZ,
+    [[maybe_unused]] unsigned int nXYZ,
     const unsigned int *aTri,
     unsigned int nTri,
     const double *aValSrf,

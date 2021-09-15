@@ -276,8 +276,8 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL() {
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::BoundingBox3(
-    double *pmin,
-    double *pmax) const {
+    [[maybe_unused]] double *pmin,
+    [[maybe_unused]] double *pmax) const {
   /*
   if( aZ.size() != nResX*nResY ){ return; }
   for(unsigned int ix=0;ix<nResX;++ix){

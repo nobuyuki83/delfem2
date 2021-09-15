@@ -1,24 +1,28 @@
 
 #include "delfem2/matb.h"
 
-static inline void CalcInvMat3(double a[], double t[] ){
-  const double det = a[0]*a[4]*a[8] + a[3]*a[7]*a[2] + a[6]*a[1]*a[5]
-  - a[0]*a[7]*a[5] - a[6]*a[4]*a[2] - a[3]*a[1]*a[8];
-  const double inv_det = 1.0/det;
-  for(int i=0;i<9;i++){ t[i] = a[i]; }
-  a[0] = inv_det*(t[4]*t[8]-t[5]*t[7]);
-  a[1] = inv_det*(t[2]*t[7]-t[1]*t[8]);
-  a[2] = inv_det*(t[1]*t[5]-t[2]*t[4]);
-  a[3] = inv_det*(t[5]*t[6]-t[3]*t[8]);
-  a[4] = inv_det*(t[0]*t[8]-t[2]*t[6]);
-  a[5] = inv_det*(t[2]*t[3]-t[0]*t[5]);
-  a[6] = inv_det*(t[3]*t[7]-t[4]*t[6]);
-  a[7] = inv_det*(t[1]*t[6]-t[0]*t[7]);
-  a[8] = inv_det*(t[0]*t[4]-t[1]*t[3]);
+namespace delfem2::matb {
+
+void CalcInvMat3(double a[], double t[]) {
+  const double det = a[0] * a[4] * a[8] + a[3] * a[7] * a[2] + a[6] * a[1] * a[5]
+      - a[0] * a[7] * a[5] - a[6] * a[4] * a[2] - a[3] * a[1] * a[8];
+  const double inv_det = 1.0 / det;
+  for (int i = 0; i < 9; i++) { t[i] = a[i]; }
+  a[0] = inv_det * (t[4] * t[8] - t[5] * t[7]);
+  a[1] = inv_det * (t[2] * t[7] - t[1] * t[8]);
+  a[2] = inv_det * (t[1] * t[5] - t[2] * t[4]);
+  a[3] = inv_det * (t[5] * t[6] - t[3] * t[8]);
+  a[4] = inv_det * (t[0] * t[8] - t[2] * t[6]);
+  a[5] = inv_det * (t[2] * t[3] - t[0] * t[5]);
+  a[6] = inv_det * (t[3] * t[7] - t[4] * t[6]);
+  a[7] = inv_det * (t[1] * t[6] - t[0] * t[7]);
+  a[8] = inv_det * (t[0] * t[4] - t[1] * t[3]);
+}
+
 }
 
 // define fixed boudnary condition
-void CTriDiaMat3::FixBC(unsigned int ino, unsigned int idof){
+void delfem2::CTriDiaMat3::FixBC(unsigned int ino, unsigned int idof){
   assert( idof < 3 && ino < n );
   if( ino != 0 ){
     double* pvu = v+ino*27-18;
@@ -38,7 +42,7 @@ void CTriDiaMat3::FixBC(unsigned int ino, unsigned int idof){
   pvc[idof*3+idof] = 1;
 }
 // execute ILU factorization
-void CTriDiaMat3::ILU_Frac()
+void delfem2::CTriDiaMat3::ILU_Frac()
 {
   double tmpBlk[9];
   for(unsigned int iblk=0;iblk<n;iblk++){
@@ -54,7 +58,7 @@ void CTriDiaMat3::ILU_Frac()
     }
     {   // calc inverse of diagonal
       double* pVal_ii = v+27*iblk;
-      CalcInvMat3(pVal_ii,tmpBlk);
+      delfem2::matb::CalcInvMat3(pVal_ii,tmpBlk);
     }
     // [U] = [1/D][U]
     if( iblk !=  n-1 ){
@@ -71,7 +75,7 @@ void CTriDiaMat3::ILU_Frac()
 }
 
 // solve matrix
-void CTriDiaMat3::Solve(std::vector<double>& res){
+void delfem2::CTriDiaMat3::Solve(std::vector<double>& res){
   double pTmpVec[3];
   for(unsigned int iblk=0;iblk<n;iblk++){
     pTmpVec[0] = res[iblk*3+0];

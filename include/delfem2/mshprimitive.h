@@ -10,7 +10,7 @@
 #ifndef DFM2_MSHPRIMITIVE_H
 #define DFM2_MSHPRIMITIVE_H
 
-#include <math.h>
+#include <cmath>
 #include <vector>
 
 #include "delfem2/isrf_sdf.h"
@@ -284,8 +284,10 @@ class CBox : public CSDF3 {
     }
     return len3;
   }
-  bool IntersectionPoint(double p[3],
-                         const double org[3], const double dir[3]) const { return true; }
+  bool IntersectionPoint(
+      [[maybe_unused]] double p[3],
+      [[maybe_unused]] const double org[3],
+      [[maybe_unused]] const double dir[3]) const { return true; }
 
  public:
   double hwx = 1; // half x width

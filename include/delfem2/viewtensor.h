@@ -9,7 +9,9 @@ class ViewTensor3 {
 public:
   ViewTensor3(
       T *ptr_,
-      unsigned int n0_, unsigned int n1_, unsigned int n2_)
+      [[maybe_unused]] unsigned int n0_,
+      unsigned int n1_,
+      unsigned int n2_)
       : ptr(ptr_), s0(n1_ * n2_), s1(n2_) {}
 
   T &operator()(
@@ -36,7 +38,10 @@ class ViewTensor4 {
 public:
   ViewTensor4(
       T *ptr_,
-      unsigned int n0_, unsigned int n1_, unsigned int n2_, unsigned int n3_)
+      [[maybe_unused]] unsigned int n0_,
+      unsigned int n1_,
+      unsigned int n2_,
+      unsigned int n3_)
       : ptr(ptr_), s0(n1_ * n2_ * n3_), s1(n2_ * n3_), s2(n3_) {}
 
   T &operator()(
@@ -63,7 +68,10 @@ class ViewTensor4Const {
 public:
   ViewTensor4Const(
       const T *ptr_,
-      unsigned int n0_, unsigned int n1_, unsigned int n2_, unsigned int n3_)
+      [[maybe_unused]] unsigned int n0_,
+      unsigned int n1_,
+      unsigned int n2_,
+      unsigned int n3_)
       : ptr(ptr_), s0(n1_ * n2_ * n3_), s1(n2_ * n3_), s2(n3_) {}
 
   const T &operator()(
@@ -85,7 +93,11 @@ class ViewTensor5Const {
 public:
   ViewTensor5Const(
       const T *ptr_,
-      unsigned int n0_, unsigned int n1_, unsigned int n2_, unsigned int n3_, unsigned int n4_)
+      [[maybe_unused]] unsigned int n0_,
+      unsigned int n1_,
+      unsigned int n2_,
+      unsigned int n3_,
+      unsigned int n4_)
       : ptr(ptr_), s0(n1_ * n2_ * n3_ * n4_), s1(n2_ * n3_ * n4_), s2(n3_ * n4_), s3(n4_) {}
 
   const T &operator()(
@@ -103,7 +115,11 @@ class ViewTensor5 {
 public:
   ViewTensor5(
       T *ptr_,
-      unsigned int n0_, unsigned int n1_, unsigned int n2_, unsigned int n3_, unsigned int n4_)
+      [[maybe_unused]] unsigned int n0_,
+      unsigned int n1_,
+      unsigned int n2_,
+      unsigned int n3_,
+      unsigned int n4_)
       : ptr(ptr_), s0(n1_ * n2_ * n3_ * n4_), s1(n2_ * n3_ * n4_), s2(n3_ * n4_), s3(n4_) {}
 
   T &operator()(
@@ -123,5 +139,4 @@ public:
 
 }
 
-
-#endif
+#endif // VIEW_TENSOR_H

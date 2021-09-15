@@ -579,11 +579,11 @@ void delfem2::SubdivTopo_MeshHex(
 void delfem2::SubdivisionPoints_QuadCatmullClark(
     std::vector<double> &vtx_xyz1,
     // ------------------------
-    const std::vector<unsigned int> &quad_vtxidx1,
+    [[maybe_unused]] const std::vector<unsigned int> &quad_vtx1,
     const std::vector<unsigned int> &aEdgeFace0,
-    const std::vector<unsigned int> &psupIndQuad0,
+    [[maybe_unused]] const std::vector<unsigned int> &psupIndQuad0,
     const std::vector<unsigned int> &psupQuad0,
-    const unsigned int *quad_vtxidx0,
+    const unsigned int *quad_vtx0,
     size_t num_quad0,
     const double *vtx_xyz0,
     size_t num_vtx0) {
@@ -600,10 +600,10 @@ void delfem2::SubdivisionPoints_QuadCatmullClark(
     vtx_xyz1[iv * 3 + 2] = 0;
   }
   for (unsigned int iq = 0; iq < nq0; ++iq) { // face
-    const unsigned int iv0 = quad_vtxidx0[iq * 4 + 0];
-    const unsigned int iv1 = quad_vtxidx0[iq * 4 + 1];
-    const unsigned int iv2 = quad_vtxidx0[iq * 4 + 2];
-    const unsigned int iv3 = quad_vtxidx0[iq * 4 + 3];
+    const unsigned int iv0 = quad_vtx0[iq * 4 + 0];
+    const unsigned int iv1 = quad_vtx0[iq * 4 + 1];
+    const unsigned int iv2 = quad_vtx0[iq * 4 + 2];
+    const unsigned int iv3 = quad_vtx0[iq * 4 + 3];
     const double p0x = (vtx_xyz0[iv0 * 3 + 0] + vtx_xyz0[iv1 * 3 + 0] + vtx_xyz0[iv2 * 3 + 0] + vtx_xyz0[iv3 * 3 + 0]) * 0.25;
     const double p0y = (vtx_xyz0[iv0 * 3 + 1] + vtx_xyz0[iv1 * 3 + 1] + vtx_xyz0[iv2 * 3 + 1] + vtx_xyz0[iv3 * 3 + 1]) * 0.25;
     const double p0z = (vtx_xyz0[iv0 * 3 + 2] + vtx_xyz0[iv1 * 3 + 2] + vtx_xyz0[iv2 * 3 + 2] + vtx_xyz0[iv3 * 3 + 2]) * 0.25;
@@ -681,39 +681,39 @@ void delfem2::SubdivisionPoints_QuadCatmullClark(
 }
 
 void delfem2::SubdivPoints3_MeshQuad(
-    std::vector<double> &aXYZ1,
+    std::vector<double> &vtx_xyz1,
     //
     const std::vector<int> &aEdgeFace0,
-    const std::vector<unsigned int> &aQuad0,
-    const std::vector<double> &aXYZ0) {
-  const std::size_t nv0 = aXYZ0.size() / 3;
+    const std::vector<unsigned int> &quad_vtx0,
+    const std::vector<double> &vtx_xyz0) {
+  const std::size_t nv0 = vtx_xyz0.size() / 3;
   const std::size_t ne0 = aEdgeFace0.size() / 4;
-  const std::size_t nq0 = aQuad0.size() / 4;
+  const std::size_t nq0 = quad_vtx0.size() / 4;
   assert(aEdgeFace0.size() == ne0 * 4);
-  aXYZ1.resize((nv0 + ne0 + nq0) * 3);
+  vtx_xyz1.resize((nv0 + ne0 + nq0) * 3);
   for (unsigned int iv = 0; iv < nv0; ++iv) {
-    aXYZ1[iv * 3 + 0] = aXYZ0[iv * 3 + 0];
-    aXYZ1[iv * 3 + 1] = aXYZ0[iv * 3 + 1];
-    aXYZ1[iv * 3 + 2] = aXYZ0[iv * 3 + 2];
+    vtx_xyz1[iv * 3 + 0] = vtx_xyz0[iv * 3 + 0];
+    vtx_xyz1[iv * 3 + 1] = vtx_xyz0[iv * 3 + 1];
+    vtx_xyz1[iv * 3 + 2] = vtx_xyz0[iv * 3 + 2];
   }
   for (unsigned int ie = 0; ie < ne0; ++ie) {
     const int iv0 = aEdgeFace0[ie * 4 + 0];
     const int iv1 = aEdgeFace0[ie * 4 + 1];
-    aXYZ1[(nv0 + ie) * 3 + 0] = (aXYZ0[iv0 * 3 + 0] + aXYZ0[iv1 * 3 + 0]) * 0.5;
-    aXYZ1[(nv0 + ie) * 3 + 1] = (aXYZ0[iv0 * 3 + 1] + aXYZ0[iv1 * 3 + 1]) * 0.5;
-    aXYZ1[(nv0 + ie) * 3 + 2] = (aXYZ0[iv0 * 3 + 2] + aXYZ0[iv1 * 3 + 2]) * 0.5;
+    vtx_xyz1[(nv0 + ie) * 3 + 0] = (vtx_xyz0[iv0 * 3 + 0] + vtx_xyz0[iv1 * 3 + 0]) * 0.5;
+    vtx_xyz1[(nv0 + ie) * 3 + 1] = (vtx_xyz0[iv0 * 3 + 1] + vtx_xyz0[iv1 * 3 + 1]) * 0.5;
+    vtx_xyz1[(nv0 + ie) * 3 + 2] = (vtx_xyz0[iv0 * 3 + 2] + vtx_xyz0[iv1 * 3 + 2]) * 0.5;
   }
   for (unsigned int iq = 0; iq < nq0; ++iq) {
-    const unsigned int iv0 = aQuad0[iq * 4 + 0];
-    const unsigned int iv1 = aQuad0[iq * 4 + 1];
-    const unsigned int iv2 = aQuad0[iq * 4 + 2];
-    const unsigned int iv3 = aQuad0[iq * 4 + 3];
-    aXYZ1[(nv0 + ne0 + iq) * 3 + 0] =
-        (aXYZ0[iv0 * 3 + 0] + aXYZ0[iv1 * 3 + 0] + aXYZ0[iv2 * 3 + 0] + aXYZ0[iv3 * 3 + 0]) * 0.25;
-    aXYZ1[(nv0 + ne0 + iq) * 3 + 1] =
-        (aXYZ0[iv0 * 3 + 1] + aXYZ0[iv1 * 3 + 1] + aXYZ0[iv2 * 3 + 1] + aXYZ0[iv3 * 3 + 1]) * 0.25;
-    aXYZ1[(nv0 + ne0 + iq) * 3 + 2] =
-        (aXYZ0[iv0 * 3 + 2] + aXYZ0[iv1 * 3 + 2] + aXYZ0[iv2 * 3 + 2] + aXYZ0[iv3 * 3 + 2]) * 0.25;
+    const unsigned int iv0 = quad_vtx0[iq * 4 + 0];
+    const unsigned int iv1 = quad_vtx0[iq * 4 + 1];
+    const unsigned int iv2 = quad_vtx0[iq * 4 + 2];
+    const unsigned int iv3 = quad_vtx0[iq * 4 + 3];
+    vtx_xyz1[(nv0 + ne0 + iq) * 3 + 0] =
+        (vtx_xyz0[iv0 * 3 + 0] + vtx_xyz0[iv1 * 3 + 0] + vtx_xyz0[iv2 * 3 + 0] + vtx_xyz0[iv3 * 3 + 0]) * 0.25;
+    vtx_xyz1[(nv0 + ne0 + iq) * 3 + 1] =
+        (vtx_xyz0[iv0 * 3 + 1] + vtx_xyz0[iv1 * 3 + 1] + vtx_xyz0[iv2 * 3 + 1] + vtx_xyz0[iv3 * 3 + 1]) * 0.25;
+    vtx_xyz1[(nv0 + ne0 + iq) * 3 + 2] =
+        (vtx_xyz0[iv0 * 3 + 2] + vtx_xyz0[iv1 * 3 + 2] + vtx_xyz0[iv2 * 3 + 2] + vtx_xyz0[iv3 * 3 + 2]) * 0.25;
   }
 }
 

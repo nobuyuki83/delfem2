@@ -89,7 +89,7 @@ int main() {
 		[[maybe_unused]] int key, 
 		[[maybe_unused]] int mods) override {
     }
-    void key_press(int key, int mods) override {
+    void key_press(int key, [[maybe_unused]] int mods) override {
       if (key == GLFW_KEY_R) { giz1.igizmo_mode = 1; }
       if (key == GLFW_KEY_G) { giz1.igizmo_mode = 0; }
     }

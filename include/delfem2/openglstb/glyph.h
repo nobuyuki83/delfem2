@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <string>
+#include <filesystem>
 #include <map>
 
 #include "delfem2/dfm2_inline.h"
@@ -32,10 +33,10 @@ public:
     int xadvance;
   };
 public:
-  explicit CGlyph(const std::string& fpath);
+  explicit CGlyph(const std::filesystem::path& fpath);
   void InitGL();
   void DrawEntireGlyph() const;
-  void ParseGlyphInfo(const std::string& fpath);
+  void ParseGlyphInfo(const std::filesystem::path& fpath);
   double DrawCharAt(char c, double scale, double px, double py);
   void DrawStringAt(const std::string& str, double scale, double px, double py);
 public:

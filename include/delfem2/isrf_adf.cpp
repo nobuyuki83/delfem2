@@ -464,32 +464,6 @@ delfem2::CADF3::CNode::CNode() {
   dists_[7] = 0;
 }
 
-delfem2::CADF3::CNode::CNode(
-    const CNode &no) {
-  cent_[0] = no.cent_[0];
-  cent_[1] = no.cent_[1];
-  cent_[2] = no.cent_[2];
-  hw_ = no.hw_;
-  ////
-  ichilds_[0] = no.ichilds_[0];
-  ichilds_[1] = no.ichilds_[1];
-  ichilds_[2] = no.ichilds_[2];
-  ichilds_[3] = no.ichilds_[3];
-  ichilds_[4] = no.ichilds_[4];
-  ichilds_[5] = no.ichilds_[5];
-  ichilds_[6] = no.ichilds_[6];
-  ichilds_[7] = no.ichilds_[7];
-  ////
-  dists_[0] = no.dists_[0];
-  dists_[1] = no.dists_[1];
-  dists_[2] = no.dists_[2];
-  dists_[3] = no.dists_[3];
-  dists_[4] = no.dists_[4];
-  dists_[5] = no.dists_[5];
-  dists_[6] = no.dists_[6];
-  dists_[7] = no.dists_[7];
-}
-
 void delfem2::CADF3::CNode::SetCornerDist(
     const CInput_ADF3 &ct) {
   dists_[0] = ct.sdf(cent_[0] - hw_, cent_[1] - hw_, cent_[2] - hw_);

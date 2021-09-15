@@ -47,23 +47,24 @@ DFM2_INLINE void Print(
 bool LinPro_CheckTable(
     std::vector<double>& B,
     std::vector<unsigned int>& map_col2row,
-    int ncol,
-    int nrow)
+    unsigned int ncol,
+    unsigned int nrow)
 {
   { // check if entries of map_col2row are unique
     assert(B.size()==ncol*nrow);
     assert(map_col2row.size()==ncol);
+    assert(ncol>0);
     std::vector<int> aFlgRow(nrow,0);
-    for(int jcol=0;jcol<ncol;++jcol){
+    for(unsigned int jcol=0;jcol<ncol;++jcol){
       const unsigned int jrow = map_col2row[jcol];
       assert( jrow >= 0 && jrow < nrow );
       assert(aFlgRow[jrow] == 0 );
       aFlgRow[jrow] = 1;
     }
   }
-  for(int jcol=0;jcol<ncol;++jcol){
+  for(unsigned int jcol=0;jcol<ncol;++jcol){
     unsigned int jrow_dia = map_col2row[jcol];
-    for(int icol=0;icol<ncol-1;++icol){
+    for(unsigned int icol=0;icol<ncol-1;++icol){
       double dia0 = B[icol*nrow+jrow_dia];
       if( icol == jcol ){
         assert(fabs(dia0-1)<1.0e-30); // typically +1 or -1
@@ -154,7 +155,7 @@ int LinPro_SolveTable(
             icol_min_cand = icol;
           }
         }
-        if( icol_min_cand == -1 ){ continue; }
+        if( icol_min_cand == UINT_MAX ){ continue; }
         mapBoundIndex.insert( std::make_pair(min_bound*d0,std::make_pair(icol_min_cand,jrow)) );
       }
       if( mapBoundIndex.empty() ){
@@ -229,7 +230,7 @@ int delfem2::CLinPro::Solve
   std::vector<unsigned int> map_col2rowB = map_col2row;
   std::vector<double> B = this->A;
   B[(ncol-1)*nrow+1] = 1;
-  for(int ic=0;ic<aCoeffTrg.size();++ic){
+  for(unsigned int ic=0;ic<aCoeffTrg.size();++ic){
     B[(ncol-1)*nrow+2+ic] = -aCoeffTrg[ic];
   }
 //  std::cout << "before solve" << std::endl;
