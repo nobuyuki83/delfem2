@@ -38,7 +38,10 @@ namespace viewer3 {
 
 static void glfw_callback_key(
     GLFWwindow *window,
-    int key, int scancode, int action, int mods) {
+    int key,
+    [[maybe_unused]] int scancode,
+    int action,
+    int mods) {
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GL_TRUE);
@@ -55,7 +58,7 @@ static void glfw_callback_key(
 }
 
 static void glfw_callback_resize(
-    GLFWwindow *window,
+    [[maybe_unused]] GLFWwindow *window,
     int width, int height) {
   glViewport(0, 0, width, height);
 }
@@ -149,7 +152,8 @@ static void glfw_callback_cursor_position(
 
 static void glfw_callback_scroll(
     GLFWwindow *window,
-    double xoffset, double yoffset) {
+    [[maybe_unused]] double xoffset,
+    double yoffset) {
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
   assert(pViewer3 != nullptr);
   pViewer3->camera.scale *= pow(1.01, yoffset);

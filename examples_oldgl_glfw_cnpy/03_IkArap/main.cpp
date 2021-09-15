@@ -10,6 +10,15 @@
  * @details skinning
  */
 
+#include <cstdlib>
+#include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/defarapenergy_geo3.h"
@@ -19,18 +28,12 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/jagarray.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
-#include <GLFW/glfw3.h>
-//
-#include <cstdlib>
-#include <random>
 
 namespace dfm2 = delfem2;
 
@@ -203,11 +206,11 @@ void Solve_MinEnergyArap(
 
 
 
-void Draw
-(const std::vector<double>& aXYZ1,
- const std::vector<unsigned int>& aTri,
- const std::vector<dfm2::CRigBone>& aBone,
- const std::vector<dfm2::CTarget>& aTarget)
+void Draw(
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<dfm2::CRigBone>& aBone,
+    const std::vector<dfm2::CTarget>& aTarget)
 {
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_DEPTH_TEST);

@@ -173,9 +173,10 @@ std::vector<double> ComputeMeanValueCoordinateReduced(
 template<class VEC>
 void MeanValueCoordinate_Polygon2(
     double *aW,
-    double px, double py,
+    double px,
+    double py,
     const double *aXY,
-    unsigned int nv) {
+    size_t nv) {
   for (unsigned int iv = 0; iv < nv; ++iv) { aW[iv] = 0.0; }
   for (unsigned int iv = 0; iv < nv; ++iv) {
     VEC v0(aXY[iv * 2 + 0] - px, aXY[iv * 2 + 1] - py);

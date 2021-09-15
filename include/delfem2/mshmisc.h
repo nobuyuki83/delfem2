@@ -13,8 +13,9 @@
 #ifndef DFM2_MSHMISC_H
 #define DFM2_MSHMISC_H
 
-#include "delfem2/dfm2_inline.h"
 #include <vector>
+
+#include "delfem2/dfm2_inline.h"
 
 // -----------------
 // work on points
@@ -221,4 +222,4 @@ DFM2_INLINE void AddMesh(
 #  include "delfem2/mshmisc.cpp"
 #endif
 
-#endif
+#endif /* DFM2_MSHMISC_H */

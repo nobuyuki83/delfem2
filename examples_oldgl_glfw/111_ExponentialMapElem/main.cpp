@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -101,12 +102,12 @@ void Draw2(
 
 int main() {
   std::vector<double> vtx_xyz;
-  std::vector<unsigned int> tri_vtxidx;
+  std::vector<unsigned int> tri_vtx;
 
   delfem2::Read_Ply(
-      std::string(PATH_INPUT_DIR) + "/bunny_34k.ply",
+      std::filesystem::path(PATH_INPUT_DIR) / "bunny_34k.ply",
 //      std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
-      vtx_xyz, tri_vtxidx);
+      vtx_xyz, tri_vtx);
   delfem2::Normalize_Points3(vtx_xyz);
   dfm2::Rotate_Points3(
       vtx_xyz,
@@ -115,13 +116,13 @@ int main() {
   std::vector<unsigned int> elsup_ind, elsup;
   dfm2::JArray_ElSuP_MeshElem(
       elsup_ind, elsup,
-      tri_vtxidx.data(), tri_vtxidx.size() / 3, 3,
+      tri_vtx.data(), tri_vtx.size() / 3, 3,
       vtx_xyz.size() / 3);
 
   std::vector<unsigned int> tri_adjtri;
   ElSuEl_MeshElem(
       tri_adjtri,
-      tri_vtxidx.data(), tri_vtxidx.size() / 3,
+      tri_vtx.data(), tri_vtx.size() / 3,
       delfem2::MESHELEM_TRI,
       vtx_xyz.size() / 3);
 
@@ -132,22 +133,22 @@ int main() {
     std::vector<double> aTexE; // element-wise texture coordinate
     dfm2::CExpMap_DijkstraElem expmap(
         aTexE,
-        ielm_ker, vtx_xyz, tri_vtxidx, tri_adjtri);
+        ielm_ker, vtx_xyz, tri_vtx, tri_adjtri);
     std::vector<double> aDist;
     std::vector<unsigned int> aOrder;
     dfm2::DijkstraElem_MeshElemGeo3(
         aDist, aOrder, expmap,
         ielm_ker,
-        tri_vtxidx, tri_vtxidx.size() / 3,
+        tri_vtx, tri_vtx.size() / 3,
         vtx_xyz,
         tri_adjtri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];
-    coordLocal[2] = dfm2::Normal_Tri3(ielm_ker, tri_vtxidx, vtx_xyz).normalized();
+    coordLocal[2] = dfm2::Normal_Tri3(ielm_ker, tri_vtx, vtx_xyz).normalized();
     assert(fabs(coordLocal[0].dot(coordLocal[2])) < 1.0e-10);
     assert(fabs(coordLocal[0].norm() - 1.0) < 1.0e-10);
     assert(fabs(coordLocal[2].norm() - 1.0) < 1.0e-10);
     coordLocal[1] = coordLocal[2] ^ coordLocal[0];
-    coordLocal[3] = dfm2::CG_Tri3(ielm_ker, tri_vtxidx, vtx_xyz);
+    coordLocal[3] = dfm2::CG_Tri3(ielm_ker, tri_vtx, vtx_xyz);
     //
     aTexP.resize(vtx_xyz.size() / 3 * 2);
     for (unsigned int ip0 = 0; ip0 < vtx_xyz.size() / 3; ++ip0) {
@@ -156,7 +157,7 @@ int main() {
       double w0 = 0.0;
       for (unsigned int ielsup = elsup_ind[ip0]; ielsup < elsup_ind[ip0 + 1]; ++ielsup) {
         const unsigned int it1 = elsup[ielsup];
-        dfm2::CVec3d p1 = dfm2::CG_Tri3(it1, tri_vtxidx, vtx_xyz);
+        dfm2::CVec3d p1 = dfm2::CG_Tri3(it1, tri_vtx, vtx_xyz);
         double w1 = 1.0 / (p0 - p1).norm();
         tex[0] += w1 * aTexE[it1 * 2 + 0];
         tex[1] += w1 * aTexE[it1 * 2 + 1];
@@ -211,22 +212,22 @@ int main() {
       viewer.DrawBegin_oldGL();
       ::glDisable(GL_LIGHTING);
       ::glColor3d(0, 0, 0);
-      delfem2::opengl::DrawMeshTri3D_Edge(vtx_xyz, tri_vtxidx);
+      delfem2::opengl::DrawMeshTri3D_Edge(vtx_xyz, tri_vtx);
       {
         ::glDisable(GL_TEXTURE_2D);
         ::glDisable(GL_LIGHTING);
         ::glColor3d(1, 0, 0);
         ::glBegin(GL_TRIANGLES);
-        unsigned int i0 = tri_vtxidx[ielm_ker * 3 + 0];
-        unsigned int i1 = tri_vtxidx[ielm_ker * 3 + 1];
-        unsigned int i2 = tri_vtxidx[ielm_ker * 3 + 2];
+        unsigned int i0 = tri_vtx[ielm_ker * 3 + 0];
+        unsigned int i1 = tri_vtx[ielm_ker * 3 + 1];
+        unsigned int i2 = tri_vtx[ielm_ker * 3 + 2];
         ::glVertex3dv(vtx_xyz.data() + i0 * 3);
         ::glVertex3dv(vtx_xyz.data() + i1 * 3);
         ::glVertex3dv(vtx_xyz.data() + i2 * 3);
         ::glEnd();
       }
-      Draw(vtx_xyz, tri_vtxidx, aTexP);
-      Draw2(vtx_xyz, tri_vtxidx, aTexP, coordLocal);
+      Draw(vtx_xyz, tri_vtx, aTexP);
+      Draw2(vtx_xyz, tri_vtx, aTexP, coordLocal);
 //      delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(aXYZ, aTri, aFlgElm, aColor);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();

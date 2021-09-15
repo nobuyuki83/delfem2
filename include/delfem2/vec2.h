@@ -93,10 +93,7 @@ template<typename T>
 class CVec2 {
  public:
   CVec2() : p{0.0, 0.0} {}
-  CVec2(const CVec2 &rhs) {
-    this->p[0] = rhs.p[0];
-    this->p[1] = rhs.p[1];
-  }
+  CVec2(const CVec2 &) = default;
   CVec2(T x, T y) {
     this->p[0] = x;
     this->p[1] = y;

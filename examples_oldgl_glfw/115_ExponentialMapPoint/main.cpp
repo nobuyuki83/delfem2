@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <set>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -67,12 +68,12 @@ void myGlutDisplay(
 
 int main() {
   std::vector<double> vtx_xyz;
-  std::vector<unsigned int> tri_vtxidx;
+  std::vector<unsigned int> tri_vtx;
 
   delfem2::Read_Ply(
 //      std::string(PATH_INPUT_DIR)+"/bunny_34k.ply",
-      std::string(PATH_INPUT_DIR) + "/arm_16k.ply",
-      vtx_xyz, tri_vtxidx);
+      std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply",
+      vtx_xyz, tri_vtx);
   delfem2::Normalize_Points3(vtx_xyz);
 
   std::vector<unsigned int> psup_ind, psup;
@@ -80,25 +81,25 @@ int main() {
     std::vector<unsigned int> elsup_ind, elsup;
     dfm2::JArray_ElSuP_MeshElem(
         elsup_ind, elsup,
-        tri_vtxidx.data(), tri_vtxidx.size() / 3, 3,
+        tri_vtx.data(), tri_vtx.size() / 3, 3,
         vtx_xyz.size() / 3);
     dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
         psup_ind, psup,
-        tri_vtxidx.data(), elsup_ind, elsup, 3,
+        tri_vtx.data(), elsup_ind, elsup, 3,
         vtx_xyz.size() / 3);
   }
   std::vector<double> vtx_norm(vtx_xyz.size());
   delfem2::Normal_MeshTri3D(
       vtx_norm.data(),
       vtx_xyz.data(), vtx_xyz.size() / 3,
-      tri_vtxidx.data(), tri_vtxidx.size() / 3 );
+      tri_vtx.data(), tri_vtx.size() / 3 );
 
   unsigned int ip_ker = 0;
   std::vector<double> aTex;
   {
     dfm2::CExpMap_DijkstraPoint expmap(
         ip_ker,
-        vtx_xyz, vtx_norm, tri_vtxidx, aTex,
+        vtx_xyz, vtx_norm, tri_vtx, aTex,
         psup_ind, psup);
     std::vector<unsigned int> mapIp2Io;
     std::vector<double> aDist;
@@ -147,7 +148,7 @@ int main() {
         ::glDisable(GL_LIGHTING);
         ::glDisable(GL_TEXTURE_2D);
         ::glColor3d(0, 0, 0);
-        delfem2::opengl::DrawMeshTri3D_Edge(vtx_xyz, tri_vtxidx);
+        delfem2::opengl::DrawMeshTri3D_Edge(vtx_xyz, tri_vtx);
       }
       {
         ::glEnable(GL_TEXTURE_2D);
@@ -158,7 +159,7 @@ int main() {
         ::glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, shine);
         ::glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 128.0);
       }
-      myGlutDisplay(vtx_xyz, tri_vtxidx, vtx_norm, aTex);
+      myGlutDisplay(vtx_xyz, tri_vtx, vtx_norm, aTex);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
     }

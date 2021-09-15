@@ -6,7 +6,6 @@
  */
 
 #include <cmath>
-#include <stack>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -18,7 +17,6 @@
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/v2.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
 
 #ifndef M_PI
@@ -64,7 +62,7 @@ int main()
         cad.AddVtxEdge(x0, -0.2, 5);
       }
       if( iframe % nframe_interval == 0 ){
-        dfm2::CBoundingBox2D bb = cad.BB();
+        dfm2::CBoundingBox2<double> bb = cad.BB();
         viewer.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
         viewer.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
         viewer.camera.trans[2] = 0.0;

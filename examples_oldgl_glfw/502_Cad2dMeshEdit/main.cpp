@@ -57,7 +57,7 @@ int main()
         dfm2::MeanValueCoordinate_Polygon2<dfm2::CVec2d>(
             aW.data()+nv*ip,
             aXY[ip*2+0], aXY[ip*2+1],
-            aXY_bound.data(), static_cast<unsigned int>(aXY_bound.size()/2));
+            aXY_bound.data(), aXY_bound.size()/2);
         double sum = 0.0;
         for(unsigned int ipb=0;ipb<aXY_bound.size()/2;++ipb){
           sum += aW[nv*ip+ipb];

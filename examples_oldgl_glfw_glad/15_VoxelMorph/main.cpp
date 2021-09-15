@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // should be before glfw3.h
@@ -29,8 +30,8 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-void Draw_CGrid3
-    (const dfm2::CGrid3<int> &grid) {
+void Draw_CGrid3(
+    const dfm2::CGrid3<int> &grid) {
   { // set-up transformation
     const dfm2::CMat4d &am = grid.am;
     dfm2::CMat4d amt = am.transpose();
@@ -81,14 +82,14 @@ void Draw_CGrid3
 
 // ------------------------------------------------------
 
-int main(int argc, char *argv[]) {
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
+int main() {
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtx;
 
   dfm2::Read_Obj(
-      std::string(PATH_INPUT_DIR) + "/bunny_1k.obj",
-      aXYZ, aTri);
-  dfm2::Normalize_Points3(aXYZ, 4.0);
+      std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.obj",
+      vtx_xyz, tri_vtx);
+  dfm2::Normalize_Points3(vtx_xyz, 4.0);
   // ---------------------------------------
 
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler_box;
@@ -116,7 +117,7 @@ int main(int argc, char *argv[]) {
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx);
     smplr.End();
   }
 

@@ -41,10 +41,9 @@ class CDynPntSur {
     e = UINT_MAX;
     d = 0;
   }
-  CDynPntSur(const CDynPntSur &rhs)
-      : e(rhs.e), d(rhs.d) {}
+  CDynPntSur(const CDynPntSur &) = default;
   CDynPntSur(int ielem, unsigned int idir)
-      : e(ielem), d(idir) {}
+  : e(ielem), d(idir) {}
  public:
   /**
    * @brief index of elements
@@ -118,35 +117,33 @@ DFM2_INLINE bool FindPointAroundPoint(
     const std::vector<CDynPntSur> &aPo,
     const std::vector<CDynTri> &aTri);
 
-
 /**
  * @details itir0 stays the same if the edge of the traingle is not found
  */
-DFM2_INLINE void FindEdge_LookAllTriangles
-    (unsigned int &itri0,
-     unsigned int &iedtri0,
-        //
-     const unsigned int ipo0,
-     const unsigned int ipo1,
-     const std::vector<CDynTri> &aETri);
+DFM2_INLINE void FindEdge_LookAllTriangles(
+    unsigned int &itri0,
+    unsigned int &iedtri0,
+    const unsigned int ipo0,
+    const unsigned int ipo1,
+    const std::vector<CDynTri> &aETri);
 
-DFM2_INLINE void GetTriArrayAroundPoint
-    (std::vector<std::pair<unsigned int, unsigned int> > &aTriSurPo,
-     unsigned int ipoin,
-     const std::vector<CDynPntSur> &aEPo2,
-     const std::vector<CDynTri> &aETri);
+DFM2_INLINE void GetTriArrayAroundPoint(
+    std::vector<std::pair<unsigned int, unsigned int> > &aTriSurPo,
+    unsigned int ipoin,
+    const std::vector<CDynPntSur> &aEPo2,
+    const std::vector<CDynTri> &aETri);
 
-DFM2_INLINE bool MoveCCW
-    (unsigned int &itri_cur,
-     unsigned int &inotri_cur,
-     unsigned int itri_adj,
-     const std::vector<CDynTri> &aTri);
+DFM2_INLINE bool MoveCCW(
+    unsigned int &itri_cur,
+    unsigned int &inotri_cur,
+    unsigned int itri_adj,
+    const std::vector<CDynTri> &aTri);
 
-DFM2_INLINE bool MoveCW
-    (unsigned int &itri_cur,
-     unsigned int &inotri_cur,
-     unsigned int itri_adj,
-     const std::vector<CDynTri> &aTri);
+DFM2_INLINE bool MoveCW(
+    unsigned int &itri_cur,
+    unsigned int &inotri_cur,
+    unsigned int itri_adj,
+    const std::vector<CDynTri> &aTri);
 
 // ---------------
 // topology edit
@@ -169,18 +166,18 @@ DFM2_INLINE bool FlipEdge(
 // ----------------------
 // insert point
 
-DFM2_INLINE bool InsertPoint_ElemEdge
-    (const unsigned int ipo_ins,  //!< the index of the new point
-     const unsigned int itri_ins, //!< triangle index
-     const unsigned int ied_ins,  //!< edge index
-     std::vector<CDynPntSur> &aEPo2,
-     std::vector<CDynTri> &aETri);
+DFM2_INLINE bool InsertPoint_ElemEdge(
+    const unsigned int ipo_ins,  //!< the index of the new point
+    const unsigned int itri_ins, //!< triangle index
+    const unsigned int ied_ins,  //!< edge index
+    std::vector<CDynPntSur> &aEPo2,
+    std::vector<CDynTri> &aETri);
 
-DFM2_INLINE bool InsertPoint_Elem
-    (const unsigned int ipo_ins,
-     const unsigned int itri_ins,
-     std::vector<CDynPntSur> &aEPo2,
-     std::vector<CDynTri> &aETri);
+DFM2_INLINE bool InsertPoint_Elem(
+    const unsigned int ipo_ins,
+    const unsigned int itri_ins,
+    std::vector<CDynPntSur> &aEPo2,
+    std::vector<CDynTri> &aETri);
 
 // -----------------
 // delete point
@@ -193,19 +190,19 @@ DFM2_INLINE bool DeleteTri(
 /**
  * @brief delete a point aETri[itri_del].v[(ied_del+2)%3]
  */
-DFM2_INLINE bool CollapseEdge_MeshDTri
-    (const unsigned int itri_del,
-     const unsigned int ied_del,
-     std::vector<CDynPntSur> &aEPo2,
-     std::vector<CDynTri> &aETri);
+DFM2_INLINE bool CollapseEdge_MeshDTri(
+    const unsigned int itri_del,
+    const unsigned int ied_del,
+    std::vector<CDynPntSur> &aEPo2,
+    std::vector<CDynTri> &aETri);
 
 
 // ------------------------------------------
 
-DFM2_INLINE void extractHoles
-    (std::vector<std::vector<int> > &aIndP_Hole,
-     const int npo,
-     const std::vector<CDynTri> &aETri);
+DFM2_INLINE void extractHoles(
+    std::vector<std::vector<int> > &aIndP_Hole,
+    const int npo,
+    const std::vector<CDynTri> &aETri);
 
 }
 
@@ -213,4 +210,4 @@ DFM2_INLINE void extractHoles
 #  include "delfem2/dtri.cpp"
 #endif
 
-#endif // #endif DTRI_H
+#endif // DFM2_DTRI_H
