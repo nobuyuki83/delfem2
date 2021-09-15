@@ -73,8 +73,8 @@ int main() {
   std::vector<unsigned int> tri_vtx;
 
   dfm2::Read_Ply(
-      std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply",
-      vtx_xyz_ini, tri_vtx);
+      vtx_xyz_ini, tri_vtx,
+      std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply");
   dfm2::Normalize_Points3(vtx_xyz_ini, 1.0);
 
   std::vector<dfm2::CRigBone> bones;

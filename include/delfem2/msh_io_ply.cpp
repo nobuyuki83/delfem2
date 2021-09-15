@@ -16,11 +16,11 @@
 // ----------------------------------------------------
 
 DFM2_INLINE void delfem2::Read_Ply(
-    const std::string &fname,
     std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri) {
+    std::vector<unsigned int> &aTri,
+    const std::filesystem::path &file_path) {
   std::ifstream fin;
-  fin.open(fname.c_str());
+  fin.open(file_path.c_str());
   if (fin.fail()) {
     std::cout << "Fail Read Fail" << std::endl;
     return;

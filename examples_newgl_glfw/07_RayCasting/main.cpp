@@ -7,6 +7,9 @@
 
 #include <vector>
 #include <algorithm>
+#if defined(_MSC_VER)
+#  include <windows.h>
+#endif
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -74,22 +77,23 @@ void ShadingImageRayLambertian(
   }
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   std::vector<double> aXYZ; // 3d points
   std::vector<unsigned int> aTri;
 
   { // load input mesh
-    delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
-                      aXYZ, aTri);
+    delfem2::Read_Ply(
+        aXYZ, aTri,
+        std::filesystem::path(PATH_INPUT_DIR) / "bunny_2k.ply");
     dfm2::Normalize_Points3(aXYZ, 2.0);
   }
 
   std::vector<dfm2::CNodeBVH2> aNodeBVH;
   std::vector<dfm2::CBV3_Sphere<double>> aAABB;
   dfm2::ConstructBVHTriangleMeshMortonCode(
-                                           aNodeBVH, aAABB,
-                                           aXYZ, aTri);
+      aNodeBVH, aAABB,
+      aXYZ, aTri);
   
   dfm2::opengl::CTexRGB_Rect2D tex;
   {

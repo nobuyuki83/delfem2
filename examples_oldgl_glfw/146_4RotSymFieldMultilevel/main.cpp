@@ -90,8 +90,8 @@ int main() {
   { // load level 0
     aLayer.resize(1);
     delfem2::Read_Ply(
-        std::string(PATH_INPUT_DIR) + "/bunny_1k.ply",
-        aLayer[0].aXYZ, aTri);
+        aLayer[0].aXYZ, aTri,
+        std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply");
     delfem2::Normalize_Points3(aLayer[0].aXYZ);
     aLayer[0].aNorm.resize(aLayer[0].aXYZ.size());
     dfm2::Normal_MeshTri3D(

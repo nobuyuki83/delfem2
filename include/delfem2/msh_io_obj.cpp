@@ -218,7 +218,7 @@ DFM2_INLINE void delfem2::Read_Obj(
 DFM2_INLINE void delfem2::Read_Obj_MeshQuad3(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aQuad,
-    const std::string &fname) {
+    const std::filesystem::path &fname) {
   std::ifstream fin;
   fin.open(fname.c_str());
   if (fin.fail()) {

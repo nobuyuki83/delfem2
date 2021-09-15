@@ -533,9 +533,13 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
 
 void delfem2::BEM_VortexSheet_Coeff_0th(
 	double aC[4], 
-	const CVec3d& x0, const CVec3d& x1, const CVec3d& x2,
-	const CVec3d& y0, const CVec3d& y1, const CVec3d& y2,
-	const CVec3d& velo,
+	const CVec3d& x0,
+	const CVec3d& x1,
+	const CVec3d& x2,
+	const CVec3d& y0,
+	const CVec3d& y1,
+	const CVec3d& y2,
+	[[maybe_unused]] const CVec3d& velo,
 	int ngauss)
 {
   assert(ngauss>=0&&ngauss<6);
@@ -986,16 +990,16 @@ int ngauss)
   }
 }
 
-std::complex<double> delfem2::evaluateField_Helmholtz_Order1st
-(const std::vector<std::complex<double>>& aSol,
-const CVec3d& p,
-const CVec3d& pos_source,
-double k, // wave number
-double beta, // admittance
-const std::vector<int>& aTri,
-const std::vector<double>& aXYZ,
-bool is_inverted_norm,
-int ngauss)
+std::complex<double> delfem2::evaluateField_Helmholtz_Order1st(
+    const std::vector<std::complex<double>>& aSol,
+    const CVec3d& p,
+    const CVec3d& pos_source,
+    double k, // wave number
+    double beta, // admittance
+    const std::vector<int>& aTri,
+    const std::vector<double>& aXYZ,
+    [[maybe_unused]] bool is_inverted_norm,
+    int ngauss)
 {
   using COMPLEX = std::complex<double>;
   const COMPLEX IMG(0.0, 1.0);

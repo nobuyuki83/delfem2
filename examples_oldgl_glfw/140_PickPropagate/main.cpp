@@ -122,11 +122,9 @@ int main()
   std::vector<unsigned int> tri_idx;
 
   { // load input mesh
-    const auto path =std::string(PATH_SOURCE_DIR) + "/../../test_inputs/arm_16k.ply";
-    std::cout << path << std::endl;
     delfem2::Read_Ply(
-        path,
-        vtx_xyz, tri_idx);
+        vtx_xyz, tri_idx,
+        std::filesystem::path(PATH_SOURCE_DIR) / ".." / ".. " / "test_inputs" / "arm_16k.ply");
     dfm2::Normalize_Points3(vtx_xyz, 2.0);
     std::cout << "point_size: " << vtx_xyz.size()/3 << std::endl;
     std::cout << "triangle_size: " << tri_idx.size()/3 << std::endl;

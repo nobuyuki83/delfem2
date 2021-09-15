@@ -46,8 +46,8 @@ class MyView
       double min_xyz[3], max_xyz[3];
       delfem2::BoundingBox3_Points3(
           min_xyz, max_xyz,
-          aCent.data(), 
-		  static_cast<unsigned int>(aCent.size() / 3));
+          aCent.data(),
+          static_cast<unsigned int>(aCent.size() / 3));
       std::vector<unsigned int> aSortedId;
       std::vector<std::uint32_t> aSortedMc;
       dfm2::SortedMortenCode_Points3(
@@ -67,8 +67,8 @@ class MyView
       { // assertion
         dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
         dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-        dfm2::Check_BVH(aNodeBVH, 
-			static_cast<unsigned int>(aCent.size() / 3));
+        dfm2::Check_BVH(aNodeBVH,
+                        static_cast<unsigned int>(aCent.size() / 3));
       }
     }
     { // make triangle surrounding graph
@@ -121,11 +121,9 @@ int main() {
   std::vector<unsigned int> aTri;
 
   { // load input mesh
-    const auto path = std::string(PATH_SOURCE_DIR) + "/../../test_inputs/arm_16k.ply";
-    std::cout << path << std::endl;
     delfem2::Read_Ply(
-        path,
-        aXYZ, aTri);
+        aXYZ, aTri,
+        std::filesystem::path(PATH_SOURCE_DIR) / ".." / ".." / "test_inputs" / "arm_16k.ply");
     dfm2::Normalize_Points3(aXYZ, 2.0);
     std::cout << "point_size: " << aXYZ.size() / 3 << std::endl;
     std::cout << "triangle_size: " << aTri.size() / 3 << std::endl;

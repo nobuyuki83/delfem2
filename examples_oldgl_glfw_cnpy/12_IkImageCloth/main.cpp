@@ -30,7 +30,7 @@
 #include "delfem2/points.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "dlefme2/cad2_io_svg.h"
+#include "delfem2/cad2_io_svg.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/opengl/old/caddtri_v3.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -95,10 +95,10 @@ void Draw(
 
 int main()
 {
-  std::vector<dfm2::CDynTri> aETri_Cloth;
+  std::vector<dfm2::CDynTri> editable_triangles_cloth;
   std::vector<dfm2::CVec2d> aVec2_Cloth;
   std::vector<double> aXYZ_Cloth; // deformed vertex positions
-  std::vector<unsigned int> aLine_Cloth;
+  std::vector<unsigned int> line_vtx_cloth;
   {
     std::string name_cad_in_test_input;
     double scale_adjust = 0.0;
@@ -118,8 +118,9 @@ int main()
     dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
     // -------
     dfm2::CMesher_Cad2D mesher;
-    dfm2::MeshingPattern(aETri_Cloth,aVec2_Cloth,aXYZ_Cloth,aLine_Cloth,mesher,
-                         aRT23,cad,aIESeam,mesher_edge_length);
+    dfm2::MeshingPattern(
+        editable_triangles_cloth, aVec2_Cloth, aXYZ_Cloth, line_vtx_cloth, mesher,
+        aRT23, cad, aIESeam, mesher_edge_length);
   }
   std::vector<double> aXYZt_Cloth = aXYZ_Cloth;
   std::vector<double> aUVW_Cloth(aXYZ_Cloth.size(), 0.0);
@@ -220,11 +221,11 @@ int main()
     for(int iframe=0;iframe<300;++iframe){
       dfm2::StepTime_PbdClothSim(
           aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth,
-          aBCFlag_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
+          aBCFlag_Cloth, editable_triangles_cloth, aVec2_Cloth, line_vtx_cloth,
           projector,
-          dt,gravity,bend_stiff_ratio);
+          dt, gravity, bend_stiff_ratio);
       damper.Damp(aUVW_Cloth);
-      Draw(projector,aTarget,tex,aETri_Cloth,aXYZ_Cloth,viewer);
+      Draw(projector, aTarget, tex, editable_triangles_cloth, aXYZ_Cloth, viewer);
       viewer.ExitIfClosed();
     }
     for(int iframe=0;iframe<1000;++iframe){
@@ -237,21 +238,21 @@ int main()
       projector.UpdatePose(false);
       dfm2::StepTime_PbdClothSim(
           aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth,
-          aBCFlag_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
+          aBCFlag_Cloth, editable_triangles_cloth, aVec2_Cloth, line_vtx_cloth,
           projector,
-          dt,gravity,bend_stiff_ratio);
+          dt, gravity, bend_stiff_ratio);
       damper.Damp(aUVW_Cloth);
-      Draw(projector,aTarget,tex,aETri_Cloth,aXYZ_Cloth,viewer);
+      Draw(projector, aTarget, tex, editable_triangles_cloth, aXYZ_Cloth, viewer);
       viewer.ExitIfClosed();
     }
     for(int iframe=0;iframe<300;iframe++){
       dfm2::StepTime_PbdClothSim(
           aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth,
-          aBCFlag_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
+          aBCFlag_Cloth, editable_triangles_cloth, aVec2_Cloth, line_vtx_cloth,
           projector,
-          dt,gravity,bend_stiff_ratio);
+          dt, gravity, bend_stiff_ratio);
       damper.Damp(aUVW_Cloth);
-      Draw(projector,aTarget,tex,aETri_Cloth,aXYZ_Cloth,viewer);
+      Draw(projector, aTarget, tex, editable_triangles_cloth, aXYZ_Cloth, viewer);
       viewer.ExitIfClosed();
     }
   }

@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -38,9 +39,9 @@ DFM2_INLINE void Read_Ply(
     unsigned int *&aTri_);
 
 DFM2_INLINE void Read_Ply(
-    const std::string &fname,
     std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri);
+    std::vector<unsigned int> &aTri,
+    const std::filesystem::path &file_path);
 
 } // namespace delfem2
 
@@ -48,4 +49,4 @@ DFM2_INLINE void Read_Ply(
 #  include "delfem2/msh_io_ply.cpp"
 #endif
 
-#endif // DFM2_MSH_IOMISC_H
+#endif // DFM2_MSH_IO_PLY_H

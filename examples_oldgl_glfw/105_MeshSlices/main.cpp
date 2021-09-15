@@ -89,8 +89,8 @@ void Hoge(
     std::vector<std::set<unsigned int> > &ReebGraphCS,
     std::vector<dfm2::CVec3d> &aCG_CS) {
   delfem2::Read_Ply(
-      (std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply").string(),
-      vtx_xyz, tri_adjtri);
+      vtx_xyz, tri_adjtri,
+      std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply");
   delfem2::Normalize_Points3(vtx_xyz);
   std::vector<unsigned int> aTriSuTri;
   ElSuEl_MeshElem(

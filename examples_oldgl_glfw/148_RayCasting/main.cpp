@@ -85,8 +85,8 @@ int main() {
 
   { // load input mesh
     delfem2::Read_Ply(
-        std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
-        vec_xyz, vec_tri);
+        vec_xyz, vec_tri,
+        std::filesystem::path(PATH_INPUT_DIR) / "bunny_2k.ply");
     dfm2::Normalize_Points3(vec_xyz, 2.0);
   }
 
