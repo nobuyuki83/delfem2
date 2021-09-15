@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if(MSVC)
   set(CMAKE_CXX_FLAGS "/W4")
 else()
-  set(CMAKE_CXX_FLAGS "-Wall -g")
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 endif()
 
 ####################################

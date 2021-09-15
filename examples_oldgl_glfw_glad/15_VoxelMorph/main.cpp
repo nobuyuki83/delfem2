@@ -87,8 +87,8 @@ int main() {
   std::vector<unsigned int> tri_vtx;
 
   dfm2::Read_Obj(
-      std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.obj",
-      vtx_xyz, tri_vtx);
+      vtx_xyz, tri_vtx,
+      std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.obj");
   dfm2::Normalize_Points3(vtx_xyz, 4.0);
   // ---------------------------------------
 

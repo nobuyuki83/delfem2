@@ -48,8 +48,8 @@ int main() {
   std::vector<double> vtx_xyz;
   std::vector<unsigned int> tri_vtx;
   dfm2::Read_Obj(
-      std::filesystem::path(PATH_ASSET_DIR) / "bunny_1k.obj",
-      vtx_xyz, tri_vtx);
+      vtx_xyz, tri_vtx,
+      std::filesystem::path(PATH_ASSET_DIR) / "bunny_1k.obj");
   dfm2::Normalize_Points3(vtx_xyz, 2.5);
   dfm2::Rotate_Points3(
       vtx_xyz,

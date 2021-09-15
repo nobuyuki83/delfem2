@@ -141,7 +141,7 @@ int main()
       int channels;
       {
         unsigned char *img = stbi_load(
-            (std::string(PATH_INPUT_DIR) + "/" + name_img_in_test_inputs).c_str(),
+            (std::filesystem::path(PATH_INPUT_DIR) / name_img_in_test_inputs).string().c_str(),
             &width, &height, &channels, 0);
         tex.Initialize(width, height, channels, img);
         stbi_image_free(img);

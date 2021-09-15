@@ -70,9 +70,9 @@ DFM2_INLINE void Write_Obj(
 // below: read obj
 
 DFM2_INLINE void Read_Obj(
-    const std::string &fname,
     std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri);
+    std::vector<unsigned int> &aTri,
+    const std::filesystem::path &fname);
 
 /**
  * Read Obj file for quad-only mesh

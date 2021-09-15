@@ -146,8 +146,8 @@ int main() {
   std::vector<double> vtx_xyz;
   std::vector<unsigned int> tri_vtx;
   delfem2::Read_Obj(
-      std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.obj",
-      vtx_xyz, tri_vtx);
+      vtx_xyz, tri_vtx,
+      std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.obj");
   delfem2::Normalize_Points3(vtx_xyz);
   std::vector<double> vtx_norm(vtx_xyz.size());
   delfem2::Normal_MeshTri3D(
