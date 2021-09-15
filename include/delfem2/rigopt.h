@@ -199,17 +199,20 @@ Solve_MinRigging(
   public:
     void MatVec(double* y,
                 double alpha, const double* x, double beta) const {
-       ::delfem2::MatVec(tmpC0.data(),                         
+       ::delfem2::MatVec(
+           tmpC0.data(),
 		   adC.data(), 
 		   static_cast<unsigned int>(nC), 
 		   static_cast<unsigned int>(nsns), 
 		   x);
-       MatTVec(y,
+       MatTVec(
+           y,
+           alpha,
 		   adC.data(),
 		   static_cast<unsigned int>(nC), 
 		   static_cast<unsigned int>(nsns), 
-		   tmpC0.data());
-      for(unsigned int i=0;i<nsns;++i){ y[i] += (beta+0.01)*x[i]; }
+		   tmpC0.data(),
+		   beta);
     }
   public:
     const std::vector<double>& adC;
@@ -220,10 +223,12 @@ Solve_MinRigging(
   
   std::vector<double> r(nsns,0.0);
    MatTVec(r.data(),
+	   1.,
 	   adC0.data(), 
 	   static_cast<unsigned int>(nC), 
 	   static_cast<unsigned int>(nsns), 
-	   aC0.data());
+	   aC0.data(),
+	   0.);
   
   std::vector<double> u(nsns,0.0);
   std::vector<double> reshist;

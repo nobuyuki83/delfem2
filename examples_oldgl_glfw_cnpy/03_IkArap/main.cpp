@@ -90,7 +90,9 @@ void Solve_MinEnergyArap(
           adC.data(), nc, nsns, x);
       dfm2::MatTVec(
           tmpM0.data(),
-          adC.data(), nc, nsns, tmpC0.data());
+          1.,
+          adC.data(), nc, nsns, tmpC0.data(),
+          0.);
       for(unsigned int isns=0;isns<nsns;++isns){
         y[isns] += alpha*weight_rig*tmpM0[isns];
       }
@@ -162,8 +164,12 @@ void Solve_MinEnergyArap(
       }
     }
     std::vector<double> rC(nsns,0.0);
-    dfm2::MatTVec(rC.data(),
-        adC0.data(), nc, nsns, aC0.data());
+    dfm2::MatTVec(
+        rC.data(),
+        1.,
+        adC0.data(), nc, nsns,
+        aC0.data(),
+        0.);
     for(unsigned int i=0;i<rC.size();++i){ r[i] += weight_rig*rC[i]; }
   }
   
@@ -420,6 +426,7 @@ int main()
     }
   }
   std::vector< dfm2::CVec3d > aTargetOriginPos;
+  aTargetOriginPos.reserve(aTarget.size());
   for(auto & it : aTarget){
     aTargetOriginPos.push_back(it.pos);
   }
