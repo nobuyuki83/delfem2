@@ -25,7 +25,7 @@
 delfem2::openglstb::CGlyph::CGlyph(const std::filesystem::path &file_path) {
   int channels;
   unsigned char *img = stbi_load(
-      file_path.c_str(),
+      file_path.string().c_str(),
       &width, &height, &channels, 0);
   aRGBA.assign(img, img + width * height * channels);
 }
