@@ -278,7 +278,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int iy = 0; iy < ny; ++iy) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
       double d0 = sampler_box.aSampler[0].aZ[iz * ny + iy];
-      const unsigned int nd = static_cast<int>(d0) * nx;
+      const unsigned int nd = static_cast<unsigned int>(d0 * nx);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = nx - id - 1;
         const unsigned int iy0 = iy;
@@ -290,7 +290,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int iy = 0; iy < ny; ++iy) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
       double d0 = sampler_box.aSampler[1].aZ[iz * ny + iy];
-      const unsigned int nd = static_cast<int>(d0) * nx;
+      const unsigned int nd = static_cast<unsigned int>(d0 * nx);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = id;
         const unsigned int iy0 = iy;
@@ -303,7 +303,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
       double d0 = sampler_box.aSampler[2].aZ[iz * nx + ix];
-      const unsigned int nd = static_cast<int>(d0) * ny;
+      const unsigned int nd = static_cast<unsigned int>(d0 * ny);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = ny - 1 - id;
@@ -315,7 +315,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
       double d0 = sampler_box.aSampler[3].aZ[iz * nx + ix];
-      const unsigned int nd = static_cast<int>(d0) * ny;
+      const unsigned int nd = static_cast<unsigned int>(d0 * ny);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = id;
@@ -327,7 +327,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iy = 0; iy < ny; ++iy) {
       double d0 = sampler_box.aSampler[4].aZ[iy * nx + ix];
-      const unsigned int nd = static_cast<int>(d0) * nz;
+      const unsigned int nd = static_cast<unsigned int>(d0 * nz);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = iy;
@@ -339,7 +339,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iy = 0; iy < ny; ++iy) {
       double d0 = sampler_box.aSampler[5].aZ[iy * nx + ix];
-      const unsigned int nd = static_cast<int>(d0) * nz;
+      const unsigned int nd = static_cast<unsigned int>(d0 * nz);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
         const unsigned int iy0 = ny - 1 - iy;

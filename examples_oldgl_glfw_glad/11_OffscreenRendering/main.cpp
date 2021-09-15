@@ -43,10 +43,10 @@ void DrawObject(
 
 int main() {
   std::vector<double> vtx_xyz;
-  std::vector<unsigned int> tri_vtxidx;
+  std::vector<unsigned int> tri_vtx;
   dfm2::Read_Obj(
-      std::filesystem::path(PATH_ASSET_DIR) / "bunny_1k.obj",
-      vtx_xyz, tri_vtxidx);
+      vtx_xyz, tri_vtx,
+      std::filesystem::path(PATH_ASSET_DIR) / "bunny_1k.obj");
   dfm2::Normalize_Points3(
       vtx_xyz,
       1.0);
@@ -111,7 +111,7 @@ int main() {
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
     glUseProgram(shaderProgram);
-    DrawObject(cur_time, vtx_xyz, tri_vtxidx);
+    DrawObject(cur_time, vtx_xyz, tri_vtx);
     smpl.End();
     cur_time += 1.0;
     // ----
@@ -121,7 +121,7 @@ int main() {
     ::glEnable(GL_LIGHTING);
     ::glColor3d(1, 1, 1);
     glUseProgram(shaderProgram);
-    DrawObject(cur_time, vtx_xyz, tri_vtxidx);
+    DrawObject(cur_time, vtx_xyz, tri_vtx);
     glUseProgram(0);
     draw_smpl.Draw(smpl);
     glfwSwapBuffers(viewer.window);

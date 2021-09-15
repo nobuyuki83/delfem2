@@ -69,7 +69,9 @@ public:
           std::filesystem::path(fname));
     }
     else if( sExt == "obj") {
-      delfem2::Read_Obj(fname, aPos, aElem);
+      delfem2::Read_Obj(
+          aPos, aElem,
+          std::filesystem::path(fname));
     }
     elem_type = delfem2::MESHELEM_TRI;
     ndim = 3;

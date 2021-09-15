@@ -79,13 +79,13 @@ void Draw_CGrid3(
 // ------------------------------------------------------
 
 int main() {
-  std::vector<double> aXYZ1;
-  std::vector<unsigned int> aTri;
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtx;
 
   dfm2::Read_Obj(
-      std::string(PATH_INPUT_DIR) + "/bunny_1k.obj",
-      aXYZ1, aTri);
-  dfm2::Normalize_Points3(aXYZ1, 4.0);
+      vtx_xyz, tri_vtx,
+      std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.obj");
+  dfm2::Normalize_Points3(vtx_xyz, 4.0);
   // ---------------------------------------
 
   // initialize sampler box
@@ -122,14 +122,14 @@ int main() {
   // ------------
 
   while (true) {
-    dfm2::Rotate_Points3(aXYZ1, 0.1, 0.0, 0.0);
+    // dfm2::Rotate_Points3(vtx_xyz, 0.1, 0.0, 0.0);
     for (auto &smplr: sampler_box.aSampler) {
       smplr.InitGL(); // move the sampled image to a texture
       smplr.Start();
       dfm2::opengl::SetView(smplr);
       ::glDisable(GL_POLYGON_OFFSET_FILL);
       ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1, aTri);
+      dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx);
       smplr.End();
     }
     CarveVoxelByDepth(grid.aVal,

@@ -257,4 +257,4 @@ Solve_MinRigging(
 }
 
 
-#endif /* rigoptim_h */
+#endif /* DFM2_RIGOPT_H */

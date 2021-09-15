@@ -171,11 +171,11 @@ DFM2_INLINE void delfem2::Write_Obj(
 }
 
 DFM2_INLINE void delfem2::Read_Obj(
-    const std::string &fname,
     std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri) {
+    std::vector<unsigned int> &aTri,
+    const std::filesystem::path &file_path) {
   std::ifstream fin;
-  fin.open(fname.c_str());
+  fin.open(file_path);
   if (fin.fail()) {
     std::cout << "File Read Fail" << std::endl;
     return;
