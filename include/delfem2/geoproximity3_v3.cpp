@@ -1225,19 +1225,19 @@ bool delfem2::FindCoplanerInterp(
 
 // CCDのFVで接触する要素を検出
 template <typename T>
-bool delfem2::IsContact_FV_CCD2
-(int ino0,
- int ino1,
- int ino2,
- int ino3,
- const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3,
- const CVec3<T>& q0,
- const CVec3<T>& q1,
- const CVec3<T>& q2,
- const CVec3<T>& q3)
+bool delfem2::IsContact_FV_CCD2(
+    [[maybe_unused]] int ino0,
+    [[maybe_unused]] int ino1,
+    [[maybe_unused]] int ino2,
+    [[maybe_unused]] int ino3,
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    const CVec3<T>& q0,
+    const CVec3<T>& q1,
+    const CVec3<T>& q2,
+    const CVec3<T>& q3)
 {
   { // CSAT
     CVec3<T> n = Cross(p1-p0,p2-p0);
@@ -1286,19 +1286,19 @@ bool delfem2::IsContact_FV_CCD2
   return true;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template bool delfem2::IsContact_FV_CCD2
-  (int ino0,
-   int ino1,
-   int ino2,
-   int ino3,
-   const CVec3d& p0,
-   const CVec3d& p1,
-   const CVec3d& p2,
-   const CVec3d& p3,
-   const CVec3d& q0,
-   const CVec3d& q1,
-   const CVec3d& q2,
-   const CVec3d& q3);
+template bool delfem2::IsContact_FV_CCD2(
+    int ino0,
+    int ino1,
+    int ino2,
+    int ino3,
+    const CVec3d& p0,
+    const CVec3d& p1,
+    const CVec3d& p2,
+    const CVec3d& p3,
+    const CVec3d& q0,
+    const CVec3d& q1,
+    const CVec3d& q2,
+    const CVec3d& q3);
 #endif
   
 

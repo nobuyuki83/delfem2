@@ -55,7 +55,7 @@ class CADF3 {
   class CNode {
    public:
     CNode();
-    CNode(const CNode &no);
+    CNode(const CNode &) = default;
     void SetCornerDist(const CInput_ADF3 &ct);
     void MakeChildTree(const CInput_ADF3 &ct, std::vector<CNode> &aNo, double min_hw, double max_hw);
     double FindDistNormal

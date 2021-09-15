@@ -37,7 +37,7 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
   const size_t nno = npsup_ind0-1;
   std::vector< std::vector<int> > mapM2S(nno);
   for(unsigned int ino1=0;ino1<nno;++ino1){
-    for(int idim1=0;idim1<ndim;++idim1){
+    for(unsigned int idim1=0;idim1<ndim;++idim1){
       unsigned int idof0 = aMSFlag[ino1*ndim+idim1];
       if( idof0 == UINT_MAX ){ continue; }
       unsigned int ino0 = idof0/ndim;
@@ -49,7 +49,7 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
   //
   index.assign(nno+1,0);
   array.clear();
-  std::vector<int> aflg(nno,-1);
+  std::vector<unsigned int> aflg(nno,UINT_MAX);
   //
   for(unsigned int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
@@ -74,7 +74,7 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
     }
     for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
       const unsigned int jno = psup0[icrs];
-      for(int jdim=0;jdim<ndim;++jdim){
+      for(unsigned int jdim=0;jdim<ndim;++jdim){
         unsigned int kdof = aMSFlag[jno*ndim+jdim];
         if( kdof == UINT_MAX ) continue;
         unsigned int kno = kdof/ndim;
@@ -119,7 +119,7 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
     }
     for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
       const unsigned int jno = psup0[icrs];
-      for(int jdim=0;jdim<ndim;++jdim){
+      for(unsigned int jdim=0;jdim<ndim;++jdim){
         unsigned int kdof = aMSFlag[jno*ndim+jdim];
         if( kdof == UINT_MAX ) continue;
         unsigned int kno = kdof/ndim;

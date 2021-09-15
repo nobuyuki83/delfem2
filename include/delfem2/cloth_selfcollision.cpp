@@ -16,7 +16,9 @@
 
 namespace dfm2 = delfem2;
 
-// 撃力を計算
+/**
+ * compute impulse force
+ */
 void SelfCollisionImpulse_Proximity(
 	std::vector<double>& aUVWm, // (in,out)velocity
 	// 
@@ -25,7 +27,7 @@ void SelfCollisionImpulse_Proximity(
 	double dt,
 	double mass,
 	const std::vector<double>& aXYZ,
-	const std::vector<unsigned int>& aTri,
+	[[maybe_unused]] const std::vector<unsigned int>& aTri,
 	const std::vector<dfm2::CContactElement>& aContactElem)
 {
   for(const auto & ce : aContactElem){
@@ -111,20 +113,19 @@ void SelfCollisionImpulse_Proximity(
 }
 
 
-// Impulseの計算
-void SelfCollisionImpulse_CCD
-(std::vector<double>& aUVWm, // (in,out)velocity
- ////
- double delta,
- double stiffness,
- double dt,
- double mass,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- const std::vector<dfm2::CContactElement>& aContactElem)
+// compute impulse force
+void SelfCollisionImpulse_CCD(
+    std::vector<double>& aUVWm, // (in,out)velocity
+    //
+    double delta,
+    [[maybe_unused]] double stiffness,
+    double dt,
+    double mass,
+    const std::vector<double>& aXYZ,
+    [[maybe_unused]] const std::vector<unsigned int>& aTri,
+    const std::vector<dfm2::CContactElement>& aContactElem)
 {
-  for(unsigned int ice=0;ice<aContactElem.size();ice++){
-    const dfm2::CContactElement& ce = aContactElem[ice];
+  for(const auto & ce : aContactElem){
     const int ino0 = ce.ino0;
     const int ino1 = ce.ino1;
     const int ino2 = ce.ino2;
@@ -139,8 +140,9 @@ void SelfCollisionImpulse_CCD
     dfm2::CVec3d v3( aUVWm[ino3*3+0], aUVWm[ino3*3+1], aUVWm[ino3*3+2] );
     double t;
     {
-      bool res = FindCoplanerInterp(t,
-                                    p0,p1,p2,p3, p0+v0,p1+v1,p2+v2,p3+v3);
+      bool res = FindCoplanerInterp(
+          t,
+          p0,p1,p2,p3, p0+v0,p1+v1,p2+v2,p3+v3);
       if( !res ) continue;
       assert( t >= 0 && t <= 1 );
     }

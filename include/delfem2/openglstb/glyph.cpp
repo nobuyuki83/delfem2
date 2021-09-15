@@ -5,14 +5,14 @@
 #include <fstream>
 
 #if defined(_WIN32) // windows
-  #include <windows.h>
+#include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
-  #define GL_SILENCE_DEPRECATION
-  #include <OpenGL/gl.h>
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl.h>
 #else
-  #include <GL/gl.h>
+#include <GL/gl.h>
 #endif
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -22,10 +22,10 @@
 
 // --------------------------------------
 
- delfem2::openglstb::CGlyph::CGlyph(const std::string &fpath) {
+delfem2::openglstb::CGlyph::CGlyph(const std::filesystem::path &file_path) {
   int channels;
   unsigned char *img = stbi_load(
-      fpath.c_str(),
+      file_path.c_str(),
       &width, &height, &channels, 0);
   aRGBA.assign(img, img + width * height * channels);
 }
@@ -40,7 +40,6 @@ void delfem2::openglstb::CGlyph::InitGL() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
-
 
 void delfem2::openglstb::CGlyph::DrawEntireGlyph() const {
   ::glEnable(GL_BLEND);
@@ -62,9 +61,9 @@ void delfem2::openglstb::CGlyph::DrawEntireGlyph() const {
   ::glEnd();
 }
 
-
-void delfem2::openglstb::CGlyph::ParseGlyphInfo(const std::string &fpath) {
-  std::ifstream fin(fpath);
+void delfem2::openglstb::CGlyph::ParseGlyphInfo(
+    const std::filesystem::path &file_path) {
+  std::ifstream fin(file_path);
   std::string line;
   getline(fin, line);
   getline(fin, line);
@@ -77,19 +76,37 @@ void delfem2::openglstb::CGlyph::ParseGlyphInfo(const std::string &fpath) {
     getline(fin, line);
     auto aVal = Split(line, ' ');
     std::cout << line << std::endl;
-    SData data;
-	int id = 0;
+    SData data{};
+    int id = 0;
     for (const std::string &s: aVal) {
-      if (s.find("id=") == 0) { id = std::strtol(s.data() + 3, 0, 10); }
-      if (s.find("x=") == 0) { data.x = std::strtol(s.data() + 2, 0, 10); }
-      if (s.find("y=") == 0) { data.y = std::strtol(s.data() + 2, 0, 10); }
-      if (s.find("width=") == 0) { data.width = std::strtol(s.data() + 6, 0, 10); }
-      if (s.find("height=") == 0) { data.height = std::strtol(s.data() + 7, 0, 10); }
-      if (s.find("xadvance=") == 0) { data.xadvance = std::strtol(s.data() + 9, 0, 10); }
+      if (s.find("id=") == 0) {
+        const auto l = std::strtol(s.data() + 3, nullptr, 10);
+        id = static_cast<int>(l);
+      }
+      else if (s.find("x=") == 0) {
+        const auto l = std::strtol(s.data() + 2, nullptr, 10);
+        data.x = static_cast<int>(l);
+      }
+      else if (s.find("y=") == 0) {
+        const auto l = std::strtol(s.data() + 2, nullptr, 10);
+        data.y = static_cast<int>(l);
+      }
+      else if (s.find("width=") == 0) {
+        const auto l = std::strtol(s.data() + 6, nullptr, 10);
+        data.width = static_cast<int>(l);
+      }
+      else if (s.find("height=") == 0) {
+        const auto l = std::strtol(s.data() + 7, nullptr, 10);
+        data.height = static_cast<int>(l);
+      }
+      else if (s.find("xadvance=") == 0) {
+        const auto l = std::strtol(s.data() + 9, nullptr, 10);
+        data.xadvance = static_cast<int>(l);
+      }
     }
     mapData.insert(std::make_pair(
-		static_cast<char>(id), 
-		data));
+        static_cast<char>(id),
+        data));
   }
 }
 
@@ -122,12 +139,16 @@ double delfem2::openglstb::CGlyph::DrawCharAt(char c, double scale, double px, d
   return px + data.xadvance * scale;
 }
 
-void delfem2::openglstb::CGlyph::DrawStringAt(const std::string &str, double scale, double px, double py) {
+void delfem2::openglstb::CGlyph::DrawStringAt(
+    const std::string &str,
+    double scale,
+    double px,
+    double py) {
   for (char c: str) {
     px = DrawCharAt(c, scale, px, py);
   }
 }
 
 #if defined(__APPLE__) && defined(__MACH__)
-  #undef GL_SILENCE_DEPRECATION
+#undef GL_SILENCE_DEPRECATION
 #endif

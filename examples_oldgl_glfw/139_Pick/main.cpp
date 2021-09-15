@@ -117,23 +117,23 @@ class MyView
 };
 
 int main() {
-  std::vector<double> aXYZ; // 3d points
-  std::vector<unsigned int> aTri;
+  std::vector<double> vtx_xyz; // 3d points
+  std::vector<unsigned int> tri_vtx;
 
   { // load input mesh
     delfem2::Read_Ply(
-        aXYZ, aTri,
+        vtx_xyz, tri_vtx,
         std::filesystem::path(PATH_SOURCE_DIR) / ".." / ".." / "test_inputs" / "arm_16k.ply");
-    dfm2::Normalize_Points3(aXYZ, 2.0);
-    std::cout << "point_size: " << aXYZ.size() / 3 << std::endl;
-    std::cout << "triangle_size: " << aTri.size() / 3 << std::endl;
+    dfm2::Normalize_Points3(vtx_xyz, 2.0);
+    std::cout << "point_size: " << vtx_xyz.size() / 3 << std::endl;
+    std::cout << "triangle_size: " << tri_vtx.size() / 3 << std::endl;
   }
 
-  std::vector<unsigned int> aFlagElem(aTri.size() / 3, 0);
+  std::vector<unsigned int> aFlagElem(tri_vtx.size() / 3, 0);
 
   MyView viewer(
       aFlagElem,
-      aXYZ, aTri);
+      vtx_xyz, tri_vtx);
 
   viewer.camera.view_height = 1.5;
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
@@ -149,9 +149,9 @@ int main() {
     viewer.DrawBegin_oldGL();
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0, 0, 0);
-    delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
+    delfem2::opengl::DrawMeshTri3D_Edge(vtx_xyz, tri_vtx);
     delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
-        aXYZ, aTri, aFlagElem, aColor);
+        vtx_xyz, tri_vtx, aFlagElem, aColor);
     // ----------
     viewer.SwapBuffers();
     glfwPollEvents();

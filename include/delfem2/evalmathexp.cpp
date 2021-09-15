@@ -78,7 +78,8 @@ public:
     return false;
   }
   static int MaxOprInd(){ return 4; }
-  void SetValue(const double& val) override{
+  void SetValue(
+      [[maybe_unused]] const double& val) override{
     assert(0);
   };
   unsigned int m_iOpr;
@@ -128,7 +129,8 @@ public:
     else if( str1 == "log" )  return 7;
     return -1;
   }
-  void SetValue(const double& val) override{
+  void SetValue(
+      [[maybe_unused]] const double& val) override{
     assert(0);
   }
 private:
@@ -287,7 +289,7 @@ int GetLowestPriorityOperator(
     std::cout << "Error!-->Binary operator misplaced " << std::endl;
     return 9;
   }
-  if( iFirstBracket == 0 && ipos_min==-1 ){
+  if( iFirstBracket == 0 && ipos_min==UINT_MAX ){
     std::cout << "Error!-->(hoge)foo" << std::endl;
     return 3;
   }
@@ -367,7 +369,7 @@ bool MakeRPN(
       std::cout << "Error!-->Cannot interprit this expression : " << cur_exp << std::endl;
       return false;
     }
-    if( itmp0 == 0 && itmp1 == (int)cur_exp.size() ){  // case operand 算術数値(PIみたいなの)
+    if( itmp0 == 0 && itmp1 == cur_exp.size() ){  // case operand 算術数値(PIみたいなの)
       assert( itmp2 == 0 || itmp2 == 1 );
       assert( itmp3>=-1 && itmp3<=COperand::GetMaxOprInd() );
       exp_node_vec[icur_old].iOpeType = itmp2;

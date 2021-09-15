@@ -81,12 +81,12 @@ class CRender2Tex {
       unsigned int nw,
       unsigned int nh,
       unsigned int nch) {
-    aRGBA_8ui.resize(nw * nh * 4, 255);
+    aRGBA_8ui.resize(nw * nh * nch, 255);
     for (unsigned int ih = 0; ih < nh; ++ih) {
       for (unsigned int iw = 0; iw < nw; ++iw) {
-        aRGBA_8ui[(ih * nw + iw) * 4 + 0] = image[(ih * nw + iw) * 3 + 0];
-        aRGBA_8ui[(ih * nw + iw) * 4 + 1] = image[(ih * nw + iw) * 3 + 1];
-        aRGBA_8ui[(ih * nw + iw) * 4 + 2] = image[(ih * nw + iw) * 3 + 2];
+        aRGBA_8ui[(ih * nw + iw) * nch + 0] = image[(ih * nw + iw) * 3 + 0];
+        aRGBA_8ui[(ih * nw + iw) * nch + 1] = image[(ih * nw + iw) * 3 + 1];
+        aRGBA_8ui[(ih * nw + iw) * nch + 2] = image[(ih * nw + iw) * 3 + 2];
       }
     }
   }
