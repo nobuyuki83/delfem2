@@ -25,17 +25,18 @@ namespace delfem2 {
  * @brief 2D bounding box
  * @details inactive if x_min > x_max
  */
-class CBoundingBox2D
+template <typename REAL>
+class CBoundingBox2
 {
 public:
-  CBoundingBox2D(){
+  CBoundingBox2(){
     x_min=1;	x_max=-1;
     y_min=0;	y_max=0;
   }
-  CBoundingBox2D(double x_min0,double x_max0,  double y_min0,double y_max0)
+  CBoundingBox2(double x_min0,double x_max0,  double y_min0,double y_max0)
   : x_min(x_min0),x_max(x_max0),  y_min(y_min0),y_max(y_max0)
   {}
-  CBoundingBox2D( const CBoundingBox2D& bb ) = default;
+  CBoundingBox2( const CBoundingBox2& bb ) = default;
   
   // -------------------------
   // const functions from here
@@ -48,7 +49,7 @@ public:
        vec.p[1] < y_min-radius || vec.p[1] > y_max+radius ) return false;
     return true;
   }
-  [[nodiscard]] bool IsIntersect(const CBoundingBox2D& bb_j, double clearance) const
+  [[nodiscard]] bool IsIntersect(const CBoundingBox2& bb_j, double clearance) const
   {
     if( bb_j.x_min > x_max+clearance || bb_j.x_max < x_min-clearance ) return false;
     if( bb_j.y_min > y_max+clearance || bb_j.y_max < y_min-clearance ) return false;
@@ -77,7 +78,7 @@ public:
     y_max = ( y_max > y0 ) ? y_max : y0;
     y_min = ( y_min < y0 ) ? y_min : y0;
   }
-  CBoundingBox2D& operator+=(const CBoundingBox2D& bb)
+  CBoundingBox2& operator+=(const CBoundingBox2& bb)
   {
     if( !bb.isActive() ){ return *this; }
     if( !isActive() ){
@@ -101,11 +102,11 @@ public:
   }
    */
 public:
-  double x_min,x_max,  y_min,y_max;
+  REAL x_min,x_max,  y_min,y_max;
 };
     
 }
 
-#endif // SRCHBV2AABB
+#endif /* DFM2_SRCHBV2AABB_H */
 
 

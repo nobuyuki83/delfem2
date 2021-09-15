@@ -6,6 +6,7 @@
  */
 
 #include <random>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // should be before glfw3.h
@@ -67,23 +68,23 @@ void Draw_CGrid3(
 
 // ------------------------------------------------------
 
-int main(int argc, char *argv[]) {
-  std::vector<double> aXYZ0;
-  std::vector<unsigned int> aTri;
+int main() {
+  std::vector<double> vtx_xyz_ini;
+  std::vector<unsigned int> tri_vtx;
 
   dfm2::Read_Ply(
-      std::string(PATH_INPUT_DIR) + "/arm_16k.ply",
-      aXYZ0, aTri);
-  dfm2::Normalize_Points3(aXYZ0, 1.0);
+      std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply",
+      vtx_xyz_ini, tri_vtx);
+  dfm2::Normalize_Points3(vtx_xyz_ini, 1.0);
 
-  std::vector<dfm2::CRigBone> aBone;
+  std::vector<dfm2::CRigBone> bones;
   { // 0
     dfm2::CRigBone b;
     b.ibone_parent = -1;
     b.transRelative[0] = -0.0;
     b.transRelative[1] = -0.0;
     b.transRelative[2] = -0.0;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 1
     dfm2::CRigBone b;
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = +0.01;
     b.transRelative[1] = +0.20;
     b.transRelative[2] = +0.01;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 2
     dfm2::CRigBone b;
@@ -99,7 +100,7 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = +0.20;
     b.transRelative[1] = +0.01;
     b.transRelative[2] = +0.01;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 3
     dfm2::CRigBone b;
@@ -107,7 +108,7 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = +0.14;
     b.transRelative[1] = +0.16;
     b.transRelative[2] = -0.21;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 4
     dfm2::CRigBone b;
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = -0.20;
     b.transRelative[1] = +0.01;
     b.transRelative[2] = +0.01;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 5
     dfm2::CRigBone b;
@@ -123,7 +124,7 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = -0.14;
     b.transRelative[1] = +0.10;
     b.transRelative[2] = -0.21;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 6
     dfm2::CRigBone b;
@@ -131,7 +132,7 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = +0.15;
     b.transRelative[1] = -0.2;
     b.transRelative[2] = +0.01;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 7
     dfm2::CRigBone b;
@@ -139,7 +140,7 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = +0.01;
     b.transRelative[1] = -0.2;
     b.transRelative[2] = +0.15;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 8
     dfm2::CRigBone b;
@@ -147,7 +148,7 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = -0.15;
     b.transRelative[1] = -0.2;
     b.transRelative[2] = +0.01;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
   { // 9
     dfm2::CRigBone b;
@@ -155,14 +156,15 @@ int main(int argc, char *argv[]) {
     b.transRelative[0] = -0.01;
     b.transRelative[1] = -0.2;
     b.transRelative[2] = +0.15;
-    aBone.push_back(b);
+    bones.push_back(b);
   }
-  dfm2::UpdateBoneRotTrans(aBone);
-  for (unsigned int ib = 0; ib < aBone.size(); ++ib) {
-    dfm2::Mat4_AffineTranslation(aBone[ib].invBindMat,
-                                 -aBone[ib].affmat3Global[0 * 4 + 3],
-                                 -aBone[ib].affmat3Global[1 * 4 + 3],
-                                 -aBone[ib].affmat3Global[2 * 4 + 3]);
+  dfm2::UpdateBoneRotTrans(bones);
+  for (auto & ib : bones) {
+    dfm2::Mat4_AffineTranslation(
+        ib.invBindMat,
+        -ib.affmat3Global[0 * 4 + 3],
+        -ib.affmat3Global[1 * 4 + 3],
+        -ib.affmat3Global[2 * 4 + 3]);
   }
 
   // ---------------------------------------
@@ -196,7 +198,7 @@ int main(int argc, char *argv[]) {
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0, aTri);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz_ini, tri_vtx);
     smplr.End();
   }
 
@@ -218,18 +220,18 @@ int main(int argc, char *argv[]) {
 
   std::vector<double> aW;
   {
-    const unsigned int np = aXYZ0.size() / 3;
-    const unsigned int nb = aBone.size();
+    const unsigned int np = vtx_xyz_ini.size() / 3;
+    const unsigned int nb = bones.size();
     aW.resize(np * nb, 0.0);
     for (unsigned ibone = 0; ibone < nb; ++ibone) { // distance from line
-      const int ibp = aBone[ibone].ibone_parent;
+      const int ibp = bones[ibone].ibone_parent;
       if (ibp == -1) { continue; }
-      const dfm2::CVec3d ps(-aBone[ibp].invBindMat[3],
-                            -aBone[ibp].invBindMat[7],
-                            -aBone[ibp].invBindMat[11]);
-      const dfm2::CVec3d pe(-aBone[ibone].invBindMat[3],
-                            -aBone[ibone].invBindMat[7],
-                            -aBone[ibone].invBindMat[11]);
+      const dfm2::CVec3d ps(-bones[ibp].invBindMat[3],
+                            -bones[ibp].invBindMat[7],
+                            -bones[ibp].invBindMat[11]);
+      const dfm2::CVec3d pe(-bones[ibone].invBindMat[3],
+                            -bones[ibone].invBindMat[7],
+                            -bones[ibone].invBindMat[11]);
 //      std::cout << ps << " " << pe << std::endl;
       std::vector<std::pair<unsigned int, double> > aIdvoxDist;
       {
@@ -241,9 +243,9 @@ int main(int argc, char *argv[]) {
         const unsigned int ny = grid.ndivy;
         for (unsigned int ivox0: aIndvox) {
           if (grid.aVal[ivox0] == 0) { continue; }
-          const int iz0 = ivox0 / (ny * nx);
-          const int iy0 = (ivox0 - iz0 * ny * nx) / nx;
-          const int ix0 = ivox0 - iz0 * ny * nx - iy0 * nx;
+          const unsigned int iz0 = ivox0 / (ny * nx);
+          const unsigned int iy0 = (ivox0 - iz0 * ny * nx) / nx;
+          const unsigned int ix0 = ivox0 - iz0 * ny * nx - iy0 * nx;
           dfm2::CVec3d p0(ix0 + 0.5, iy0 + 0.5, iz0 + 0.5);
           dfm2::CVec3d p1;
           dfm2::Vec3_Mat4Vec3_Affine(p1.p, grid.am.mat, p0.p);
@@ -255,13 +257,13 @@ int main(int argc, char *argv[]) {
       std::vector<double> aDist;
       VoxelGeodesic(aDist,
                     aIdvoxDist, sampler_box.edgeLen(), grid);
-      const int nx = grid.ndivx;
-      const int ny = grid.ndivy;
-      const int nz = grid.ndivz;
+      const unsigned int nx = grid.ndivx;
+      const unsigned int ny = grid.ndivy;
+      const unsigned int nz = grid.ndivz;
       const dfm2::CMat4d &ami = grid.am.Inverse();
       for (unsigned int ip = 0; ip < np; ip++) {
         dfm2::CVec3d p0;
-        dfm2::Vec3_Mat4Vec3_Affine(p0.p, ami.mat, aXYZ0.data() + ip * 3);
+        dfm2::Vec3_Mat4Vec3_Affine(p0.p, ami.mat, vtx_xyz_ini.data() + ip * 3);
         int ix0 = (int) floor(p0.x - 0.5);
         int iy0 = (int) floor(p0.y - 0.5);
         int iz0 = (int) floor(p0.z - 0.5);
@@ -294,8 +296,8 @@ int main(int argc, char *argv[]) {
     }
   } // nbone
   {
-    unsigned int nb = aBone.size();
-    for (unsigned int ip = 0; ip < aXYZ0.size() / 3; ++ip) {
+    unsigned int nb = bones.size();
+    for (unsigned int ip = 0; ip < vtx_xyz_ini.size() / 3; ++ip) {
       double w0 = 0.0;
       for (unsigned int ib = 0; ib < nb; ++ib) {
         w0 += aW[ip * nb + ib];
@@ -308,7 +310,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  std::vector<double> aXYZ1 = aXYZ0;
+  std::vector<double> aXYZ1 = vtx_xyz_ini;
 
   std::random_device rd;
   std::mt19937 reng(rd());
@@ -332,18 +334,18 @@ int main(int argc, char *argv[]) {
   while (true) {
     iframe = 0;
     for (; iframe < 100; ++iframe) { // draw the result
-      aBone[1].SetRotationBryant(0, sin(iframe * 0.01), 0.0);
-      dfm2::UpdateBoneRotTrans(aBone);
-      dfm2::Skinning_LBS(aXYZ1, aXYZ0, aBone, aW);
+      bones[1].SetRotationBryant(0, sin(iframe * 0.01), 0.0);
+      dfm2::UpdateBoneRotTrans(bones);
+      dfm2::Skinning_LBS(aXYZ1, vtx_xyz_ini, bones, aW);
       // --------
       viewer.DrawBegin_oldGL();
 //      Draw_CGrid3(grid,colorMap,iframe*0.1);
       dfm2::opengl::myGlColorDiffuse(dfm2::CColor::Gray(0.9));
       ::glEnable(GL_LIGHTING);
-      dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), aTri.data(), aTri.size() / 3);
+      dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), tri_vtx.data(), tri_vtx.size() / 3);
       ::glDisable(GL_DEPTH_TEST);
       ::glDisable(GL_LIGHTING);
-      dfm2::opengl::DrawBone_Line(aBone, -1, -1, 0.02, -0.2);
+      dfm2::opengl::DrawBone_Line(bones, -1, -1, 0.02, -0.2);
       dfm2::opengl::myGlColorDiffuse(dfm2::CColor::Red());
       ::glColor3d(0, 0, 0);
       viewer.SwapBuffers();

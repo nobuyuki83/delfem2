@@ -6,12 +6,13 @@
  */
 
 #include <cmath>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // should be before glfw3.h
 #endif
-#include <glad/glad.h> // glad need to be defiend in the begenning
 #define GL_SILENCE_DEPRECATION
+#include <glad/glad.h> // glad need to be defiend in the begenning
 #include <GLFW/glfw3.h>
 
 #include "delfem2/glfw/viewer3.h"
@@ -28,12 +29,12 @@ namespace dfm2 = delfem2;
 // ------------------------------------------------------
 
 int main() {
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtx;
   dfm2::Read_Obj(
-      std::string(PATH_INPUT_DIR) + "/rollsRoyce.obj",
-      aXYZ, aTri);
-  dfm2::Normalize_Points3(aXYZ, 4.0);
+      std::filesystem::path(PATH_INPUT_DIR) / "rollsRoyce.obj",
+      vtx_xyz, tri_vtx);
+  dfm2::Normalize_Points3(vtx_xyz, 4.0);
   // ---------------------------------------
 
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler_box;
@@ -69,7 +70,7 @@ int main() {
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx);
     smplr.End();
   }
 
@@ -77,7 +78,7 @@ int main() {
     viewer.DrawBegin_oldGL();
     sampler_box.Draw();
     ::glEnable(GL_LIGHTING);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

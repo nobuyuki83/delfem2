@@ -10,29 +10,32 @@
  * @details skinning
  */
 
+#include <cstdlib>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/v3q.h"
 #include "delfem2/rigopt.h"
 #include "delfem2/rig_geo3.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include <GLFW/glfw3.h>
-//
-#include <cstdlib>
 
 namespace dfm2 = delfem2;
 
 // -------------------
 
-void Draw
-(const std::vector<double>& aXYZ1,
- const std::vector<unsigned int>& aTri,
- const std::vector<dfm2::CRigBone>& aBone,
- const std::vector<dfm2::CTarget>& aTarget)
+void Draw(
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<dfm2::CRigBone>& aBone,
+    const std::vector<dfm2::CTarget>& aTarget)
 {
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_DEPTH_TEST);
@@ -43,12 +46,12 @@ void Draw
     ::glDisable(GL_LIGHTING);
     ::glPointSize(10);
     ::glBegin(GL_POINTS);
-    for(unsigned int it=0;it<aTarget.size();++it){
-      const unsigned int ib = aTarget[it].ib;
+    for(const auto & it : aTarget){
+      const unsigned int ib = it.ib;
       ::glColor3d(1,0,0);
       dfm2::opengl::myGlVertex(aBone[ib].Pos());
       ::glColor3d(1,0,0);
-      dfm2::opengl::myGlVertex(aTarget[it].pos);
+      dfm2::opengl::myGlVertex(it.pos);
     }
     ::glEnd();
   }
@@ -66,17 +69,17 @@ void Draw
 
 int main()
 {
-  std::vector<double> aXYZ0;
+  std::vector<double> vtx_xyz_ini;
   std::vector<double> aW;
-  std::vector<dfm2::CRigBone> aBone;
-  std::vector<unsigned int> aTri;
+  std::vector<dfm2::CRigBone> bones;
+  std::vector<unsigned int> tri_vtx;
   {
     std::vector<unsigned int> aIndBoneParent;
     std::vector<double> aJntRgrs;
     dfm2::cnpy::LoadSmpl_Bone(
-        aXYZ0,
+        vtx_xyz_ini,
         aW,
-        aTri,
+        tri_vtx,
         aIndBoneParent,
         aJntRgrs,
         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
@@ -84,23 +87,24 @@ int main()
       std::vector<double> aJntPos0;
       dfm2::Points3_WeighttranspPosition(
           aJntPos0,
-          aJntRgrs, aXYZ0);
+          aJntRgrs, vtx_xyz_ini);
       dfm2::InitBones_JointPosition(
-          aBone,
+          bones,
           aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
   }
   
-  std::vector<double> aXYZ1 = aXYZ0;
+  std::vector<double> vtx_xyz = vtx_xyz_ini;
   { // initalize pose
     /*
     for(int ibone=0;ibone<aBone.size();++ibone){
       dfm2::CQuatd::Random(0.2).CopyTo(aBone[ibone].quatRelativeRot);
     }
      */
-    dfm2::UpdateBoneRotTrans(aBone);
-    dfm2::Skinning_LBS(aXYZ1,
-        aXYZ0, aBone, aW);
+    dfm2::UpdateBoneRotTrans(bones);
+    dfm2::Skinning_LBS(
+        vtx_xyz,
+        vtx_xyz_ini, bones, aW);
   }
   
   std::vector<dfm2::CTarget> aTarget;
@@ -108,17 +112,18 @@ int main()
     {
       dfm2::CTarget t;
       t.ib = 20;
-      t.pos = aBone[t.ib].Pos();
+      t.pos = bones[t.ib].Pos();
       aTarget.push_back(t);
     }
     {
       dfm2::CTarget t;
       t.ib = 10;
-      t.pos = aBone[t.ib].Pos();
+      t.pos = bones[t.ib].Pos();
       aTarget.push_back(t);
     }
   }
   std::vector< dfm2::CVec3d > aTargetOriginPos;
+  aTargetOriginPos.reserve(aTarget.size());
   for(auto & trg : aTarget){
     aTargetOriginPos.push_back(trg.pos);
   }
@@ -136,14 +141,14 @@ int main()
     {
       aTarget[0].pos = aTargetOriginPos[0] + 0.4*dfm2::CVec3d(1-cos(0.1*iframe), sin(0.1*iframe), 0.0);
       aTarget[1].pos = aTargetOriginPos[1] + 0.1*dfm2::CVec3d(sin(0.1*iframe), 1-cos(0.1*iframe), 0.0);
-      Solve_MinRigging(aBone, aTarget);
-      Skinning_LBS(aXYZ1,
-                   aXYZ0, aBone, aW);
+      Solve_MinRigging(bones, aTarget);
+      Skinning_LBS(vtx_xyz,
+                   vtx_xyz_ini, bones, aW);
     }
     
     // -------------------
     viewer.DrawBegin_oldGL();
-    Draw(aXYZ1,aTri,aBone,aTarget);
+    Draw(vtx_xyz, tri_vtx, bones, aTarget);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

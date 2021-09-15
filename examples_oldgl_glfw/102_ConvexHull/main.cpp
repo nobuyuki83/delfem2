@@ -48,7 +48,7 @@ int main() {
   viewer.camera.view_height = 1.5;
 
   std::vector<dfm2::CVec3d> vtx_xyz(100);
-  std::vector<unsigned int> tri_vtxidx;
+  std::vector<unsigned int> tri_vtx;
 
   double time_last_update = -2;
   while (!glfwWindowShouldClose(viewer.window)) {
@@ -61,7 +61,7 @@ int main() {
         p.y = dist_m1p1(rngeng);
         p.z = dist_m1p1(rngeng);
       }
-      delfem2::ConvexHull<double>(tri_vtxidx, vtx_xyz);
+      delfem2::ConvexHull<double>(tri_vtx, vtx_xyz);
       time_last_update = time_now;
     }
 
@@ -80,13 +80,13 @@ int main() {
       }
       ::glEnd();
 
-      const size_t num_tri = tri_vtxidx.size() / 3;
+      const size_t num_tri = tri_vtx.size() / 3;
       ::glColor4d(1, 1, 1, 0.8);
       ::glBegin(GL_TRIANGLES);
       for (unsigned int itri = 0; itri < num_tri; itri++) {
-        const unsigned int i1 = tri_vtxidx[itri * 3 + 0];
-        const unsigned int i2 = tri_vtxidx[itri * 3 + 1];
-        const unsigned int i3 = tri_vtxidx[itri * 3 + 2];
+        const unsigned int i1 = tri_vtx[itri * 3 + 0];
+        const unsigned int i2 = tri_vtx[itri * 3 + 1];
+        const unsigned int i3 = tri_vtx[itri * 3 + 2];
         myGlVertex3d(i1, vtx_xyz);
         myGlVertex3d(i2, vtx_xyz);
         myGlVertex3d(i3, vtx_xyz);
@@ -95,9 +95,9 @@ int main() {
       ::glColor3d(0, 0, 0);
       ::glBegin(GL_LINES);
       for (unsigned int itri = 0; itri < num_tri; itri++) {
-        const unsigned int i1 = tri_vtxidx[itri * 3 + 0];
-        const unsigned int i2 = tri_vtxidx[itri * 3 + 1];
-        const unsigned int i3 = tri_vtxidx[itri * 3 + 2];
+        const unsigned int i1 = tri_vtx[itri * 3 + 0];
+        const unsigned int i2 = tri_vtx[itri * 3 + 1];
+        const unsigned int i3 = tri_vtx[itri * 3 + 2];
         myGlVertex3d(i1, vtx_xyz);
         myGlVertex3d(i2, vtx_xyz);
         myGlVertex3d(i2, vtx_xyz);

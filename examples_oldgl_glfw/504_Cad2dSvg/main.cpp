@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <stack>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -20,6 +21,7 @@
 #include "delfem2/opengl/old/cad2dtriv2.h"
 #include "delfem2/openglstb/glyph.h"
 #include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2_io_svg.h"
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793
@@ -30,8 +32,8 @@ namespace dfm2 = delfem2;
 // -------------------------------------
 
 int main() {
-  delfem2::openglstb::CGlyph glyph(std::string(PATH_INPUT_DIR) + "/myFont.png");
-  glyph.ParseGlyphInfo(std::string(PATH_INPUT_DIR) + "/myFont.fnt");
+  delfem2::openglstb::CGlyph glyph(std::filesystem::path(PATH_INPUT_DIR) / "myFont.png");
+  glyph.ParseGlyphInfo(std::filesystem::path(PATH_INPUT_DIR) / "myFont.fnt");
   delfem2::CCad2D cad;
   // --------------------
   delfem2::glfw::CViewer2 viewer;
@@ -44,21 +46,22 @@ int main() {
   while (true) {
     if (iframe % nframe_interval == 0) {
       std::string path_svg;
-      if (iframe == nframe_interval * 0) { path_svg = std::string(PATH_INPUT_DIR) + "/shape0.svg"; }
-      if (iframe == nframe_interval * 1) { path_svg = std::string(PATH_INPUT_DIR) + "/shape1.svg"; }
-      if (iframe == nframe_interval * 2) { path_svg = std::string(PATH_INPUT_DIR) + "/shape2.svg"; }
-      if (iframe == nframe_interval * 3) { path_svg = std::string(PATH_INPUT_DIR) + "/tshirt.svg"; }
-      if (iframe == nframe_interval * 4) { path_svg = std::string(PATH_INPUT_DIR) + "/ltshirt.svg"; }
-      if (iframe == nframe_interval * 5) { path_svg = std::string(PATH_INPUT_DIR) + "/lraglan.svg"; }
-      dfm2::ReadSVG_Cad2D(cad,
-                          path_svg, 1.0);
+      if (iframe == nframe_interval * 0) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "shape0.svg"; }
+      if (iframe == nframe_interval * 1) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "shape1.svg"; }
+      if (iframe == nframe_interval * 2) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "shape2.svg"; }
+      if (iframe == nframe_interval * 3) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "tshirt.svg"; }
+      if (iframe == nframe_interval * 4) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "ltshirt.svg"; }
+      if (iframe == nframe_interval * 5) { path_svg = std::filesystem::path(PATH_INPUT_DIR) / "lraglan.svg"; }
+      dfm2::ReadSVG_Cad2D(
+          cad,
+          path_svg, 1.0);
 //      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
-      dfm2::CBoundingBox2D bb = cad.BB();
-      viewer.trans[0] = -(bb.x_min + bb.x_max) * 0.5f;
-      viewer.trans[1] = -(bb.y_min + bb.y_max) * 0.5f;
-      viewer.view_height = 0.5 * bb.LengthDiagonal();
+      dfm2::CBoundingBox2<double> bb = cad.BB();
+      viewer.trans[0] = static_cast<float>(-(bb.x_min + bb.x_max) * 0.5);
+      viewer.trans[1] = static_cast<float>(-(bb.y_min + bb.y_max) * 0.5);
+      viewer.view_height = static_cast<float>(0.5 * bb.LengthDiagonal());
       viewer.scale = 1.0;
-      cad.iedge_picked = 22;
+      cad.iedge_picked = -1;
     }
     iframe = (iframe + 1) % (nframe_interval * 6);
     if (glfwWindowShouldClose(viewer.window)) { break; }

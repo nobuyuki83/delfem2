@@ -22,11 +22,11 @@
 namespace delfem2 {
 namespace cad2 {
 
-DFM2_INLINE delfem2::CBoundingBox2D BB_LoopEdgeCad2D(
+DFM2_INLINE delfem2::CBoundingBox2<double> BB_LoopEdgeCad2D(
     const std::vector<CCad2D_EdgeGeo> &aEdge) {
-  CBoundingBox2D bb;
+  CBoundingBox2<double> bb;
   for (const auto &ie : aEdge) {
-    CBoundingBox2D bb0 = ie.BB();
+    CBoundingBox2<double> bb0 = ie.BB();
     bb += bb0;
   }
   return bb;
@@ -504,8 +504,11 @@ DFM2_INLINE void delfem2::CCad2D::Pick(
 
 
 
-DFM2_INLINE void delfem2::CCad2D::DragPicked
- (double p1x, double p1y, double p0x, double p0y)
+DFM2_INLINE void delfem2::CCad2D::DragPicked(
+    double p1x,
+    double p1y,
+    double p0x,
+    double p0y)
 {
   if( ivtx_picked >= 0 && ivtx_picked < (int)aVtx.size() ){
     aVtx[ivtx_picked].pos.p[0] = p1x;
@@ -621,24 +624,24 @@ DFM2_INLINE void delfem2::CCad2D::AddVtxEdge(
 
 DFM2_INLINE std::vector<double> delfem2::CCad2D::MinMaxXYZ() const
 {
-  CBoundingBox2D bb = this->BB();
+  CBoundingBox2<double> bb = this->BB();
   return bb.MinMaxXYZ();
 }
 
-DFM2_INLINE delfem2::CBoundingBox2D delfem2::CCad2D::BB() const
+DFM2_INLINE delfem2::CBoundingBox2<double> delfem2::CCad2D::BB() const
 {
-  CBoundingBox2D bb;
+  CBoundingBox2<double> bb;
   for(const auto & ie : aEdge){
     bb += ie.BB();
   }
   return bb;
 }
 
-DFM2_INLINE void delfem2::CCad2D::GetPointsEdge
-(std::vector<int>& aIdP,
- const double* pXY, int np,
- const std::vector<int>& aIE,
- double tolerance ) const
+DFM2_INLINE void delfem2::CCad2D::GetPointsEdge(
+    std::vector<int>& aIdP,
+    const double* pXY, int np,
+    const std::vector<int>& aIE,
+    double tolerance ) const
 {
   aIdP.clear();
   for(int ip=0;ip<np;++ip){
@@ -1157,221 +1160,6 @@ DFM2_INLINE std::vector<int> delfem2::CMesher_Cad2D::IndPoint_IndFaceArray(
   }
   return res;
 }
-
-
-DFM2_INLINE bool delfem2::WriteCAD_DXF(
-    const std::string& file_name,
-    const CCad2D& cad,
-    double scale)
-{
-  FILE *fp;
-  if( (fp = ::fopen(file_name.c_str(),"w"))== nullptr ){
-    fclose(fp);
-    assert(0);
-    return false;
-  }
-  CBoundingBox2D bb;
-  {  // Get Bounding Box of this Object
-    for(const auto & edge : cad.aEdge){
-      bb += edge.BB();
-    }
-  }
-  // header section
-  fprintf(fp, "  0\nSECTION\n");
-  fprintf(fp, "  2\nHEADER\n");
-  fprintf(fp, "  9\n$ACADVER\n  1\nAC1009\n");
-  fprintf(fp, "  9\n$EXTMIN\n  10\n%lf\n  20\n%lf\n",bb.x_min*scale,bb.y_min*scale);
-  fprintf(fp, "  9\n$EXTMAX\n  10\n%lf\n  20\n%lf\n",bb.x_max*scale,bb.y_max*scale);
-  fprintf(fp, "  0\nENDSEC\n");
-  // table section
-  fprintf(fp, "  0\nSECTION\n");
-  fprintf(fp, "  2\nTABLES\n");
-  fprintf(fp, "  0\nENDSEC\n");
-  // block section
-  fprintf(fp, "  0\nSECTION\n");
-  fprintf(fp, "  2\nBLOCKS\n");
-  fprintf(fp, "  0\nENDSEC\n");
-  // entity section
-  fprintf(fp,"  0\nSECTION\n");
-  fprintf(fp,"  2\nENTITIES\n");
-  for(size_t ifc=0;ifc<cad.aFace.size();++ifc){
-    const std::vector<int>& aIL = cad.topo.aFace[ifc].aIL;
-    for(int il0 : aIL){
-      const std::vector< std::pair<int,bool> >& aIE = cad.topo.aLoop[il0].aIE;
-      for(const auto & iie : aIE){
-        unsigned int ie0 = iie.first;
-//        bool dir0 = aIE[iie].second;
-        unsigned int id_vs = cad.topo.aEdge[ie0].iv0;
-        unsigned int id_ve = cad.topo.aEdge[ie0].iv1;
-        const CVec2d& ps = cad.aVtx[id_vs].pos;
-        const CVec2d& pe = cad.aVtx[id_ve].pos;
-        if( cad.aEdge[ie0].type_edge == 0 ){
-          fprintf(fp,"  0\nLINE\n  8\n%d\n  6\nCONTINUOUS\n  62\n7\n",il0);
-          fprintf(fp,"  10\n%lf\n",ps.x*scale);
-          fprintf(fp,"  20\n%lf\n",ps.y*scale);
-          fprintf(fp,"  11\n%lf\n",pe.x*scale);
-          fprintf(fp,"  21\n%lf\n",pe.y*scale);
-        }
-        /*
-        else if( this->GetEdgeCurveType(id_e) == 1 ){ // Arc
-          const CEdge2D& edge = this->GetEdge(id_e);
-          CVector2D pc;  double r;
-          edge.GetCenterRadius(pc,r);
-          double d1, d2;
-          {
-            CVector2D vs = ps - pc;
-            CVector2D ve = pe - pc;
-            double ds = atan2(vs.y,vs.x); ds = ds * 180.0 / 3.14159265; if( ds < 0.0 ) ds += 360;
-            double de = atan2(ve.y,ve.x); de = de * 180.0 / 3.14159265; if( de < 0.0 ) de += 360;
-            if( edge.is_left_side ){ d1 = de; d2 = ds; }
-            else{                    d1 = ds; d2 = de; }
-          }
-          fprintf(fp,"  0\nARC\n  8\n%d\n  6\nCONTINUOUS\n  62\n7\n  100\nAcDbCircle\n",id_l);
-          fprintf(fp,"  10\n%lf\n",pc.x*scale);  // x coord
-          fprintf(fp,"  20\n%lf\n",pc.y*scale);  // y coord
-          fprintf(fp,"  40\n%lf\n",r*scale);  // radius
-          fprintf(fp,"  100\nAcDbArc\n");
-          fprintf(fp,"  50\n%lf\n",d1);
-          fprintf(fp,"  51\n%lf\n",d2);
-        }
-        else if( this->GetEdgeCurveType(id_e) == 2 ){ // polyline
-          const CEdge2D& edge = this->GetEdge(id_e);
-          fprintf(fp,"  0\nPOLYLINE\n  8\n%d\n  6\nCONTINUOUS\n",id_l);
-          fprintf(fp,"  10\n0.0\n");
-          fprintf(fp,"  20\n0.0\n");
-          fprintf(fp,"  30\n0.0\n");
-          fprintf(fp,"  70\n8\n");
-          fprintf(fp,"  66\n1\n");
-          ////
-          const std::vector<double>& axys = edge.aRelCoMesh;
-          assert( axys.size() % 2 == 0 );
-          const unsigned int nno = axys.size()/2;
-          const Com::CVector2D& po_s = this->GetVertexCoord( edge.id_v_s );
-          const Com::CVector2D& po_e = this->GetVertexCoord( edge.id_v_e );
-          Com::CVector2D v0 = po_e-po_s;
-          Com::CVector2D v1(-v0.y,v0.x);
-          fprintf(fp,"  0\nVERTEX\n 8\n0\n 10\n%lf\n 20\n%lf\n 30\n%lf\n", po_s.x*scale, po_s.y*scale, 0.0);
-          for(unsigned int ino=0;ino<nno;ino++){
-            const Com::CVector2D& p = po_s + v0*axys[ino*2+0] + v1*axys[ino*2+1];
-            fprintf(fp,"  0\nVERTEX\n 8\n0\n 10\n%lf\n 20\n%lf\n 30\n%lf\n", p.x*scale, p.y*scale, 0.0);
-          }
-          fprintf(fp,"  0\nVERTEX\n 8\n0\n 10\n%lf\n 20\n%lf\n 30\n%lf\n", po_e.x*scale, po_e.y*scale, 0.0);
-          fprintf(fp,"  0\nSEQEND\n");
-        }
-         */
-      }
-    }
-  }
-  fprintf(fp, "  0\nENDSEC\n  0\nEOF\n");
-  fclose(fp);
-  return true;
-}
-
-
-DFM2_INLINE void delfem2::ReadSVG_LoopEdgeCCad2D(
-    std::vector< std::vector<CCad2D_EdgeGeo>> & aaEdge,
-    const std::string& fname)
-{
-  aaEdge.clear();
-  std::vector<char> aC;
-  if( !GetFileContents(aC, fname) ){ return; }
-  
-  // ----
-  /*
-  std::cout << "svg file content: ";
-  for(unsigned int ic=0;ic<aC.size();++ic){ std::cout << aC[ic]; }
-  std::cout << std::endl;
-  */
-  // ----
-  
-  std::vector< std::string > aStrTagContent;
-  XML_SeparateTagContent(aStrTagContent,
-                         aC);
-  
-  { // get path
-    for(auto & sTagContent : aStrTagContent){
-//      std::cout << "tagcontent: " << sTagContent << std::endl;
-      std::string str_path;
-      if( sTagContent.compare(0,4,"path") == 0 || // adobe illustrator
-          sTagContent.compare(0,5,"path\r") == 0){ // inkscape
-        str_path = std::string(sTagContent.begin()+5,sTagContent.end());
-      }
-      if( str_path == "" ){ continue; }
-      // remove new line codes as inkscape svg has new line in side path tag
-      // don't remove spaces here as inkscape svg uses space for the delimiter
-      str_path = Remove(str_path, "\n\r");
-//      std::cout << "str_path: " << str_path << std::endl;
-      std::map< std::string, std::string > mapAttr;
-      ParseAttributes(mapAttr,
-                      str_path);
-      std::string str_path_d = mapAttr["d"];
-//      std::cout << "str_path_d: " << str_path_d << std::endl;
-      if( str_path_d.empty() ){ continue; }
-//      std::cout << "str_path_d: " << str_path_d << std::endl;
-      std::vector<std::string> aStr1 = cad2::SVG_Split_Path_d(str_path_d);
-      /*
-      for(unsigned int is=0;is<aStr1.size();++is){
-        std::cout << is << " " << aStr1[is] << std::endl;
-      }
-       */
-      std::vector<CCad2D_EdgeGeo> aEdge;
-      cad2::LoopEdgeCad2D_SVGPathD(aEdge,
-          aStr1);
-      /*
-      for(int ie=0;ie<aEdge.size();++ie){
-        std::cout << ie << " " << aEdge.size() << " " << aEdge[ie].param.size() << std::endl;
-      }
-       */
-      aaEdge.push_back(aEdge);
-    }
-  }
-  
-  { // get polygon
-    for(auto & sTagContent : aStrTagContent){
-      std::string str_polygon;
-      if( sTagContent.compare(0,8,"polygon ") == 0 ){
-        str_polygon = std::string(sTagContent.begin()+8,sTagContent.end());
-      }
-//    std::cout << "str_polygon: " << str_polygon << std::endl;
-      if( str_polygon == "" ){ continue; }
-      std::map< std::string, std::string > mapAttr;
-      ParseAttributes(mapAttr,
-                      str_polygon);
-      std::string str_polygon_points = mapAttr["points"];
-      std::vector<std::string> aS = Split(str_polygon_points, "  ,");
-      /*
-      for(unsigned int is=0;is<aS.size();++is){
-        std::cout << is << " " << aS[is] << std::endl;
-      }
-       */
-      std::vector<CCad2D_EdgeGeo> aEdge;
-      cad2::LoopEdgeCad2D_SVGPolygonPoints(aEdge,
-          aS);
-      aaEdge.push_back(aEdge);
-    }
-  }
-}
-
-
-DFM2_INLINE void delfem2::ReadSVG_Cad2D(
-    delfem2::CCad2D& cad,
-    const std::string& fpath,
-    double scale)
-{
-  std::vector< std::vector<delfem2::CCad2D_EdgeGeo> > aaEdge;
-  ReadSVG_LoopEdgeCCad2D(aaEdge,
-                         fpath);
-  cad.Clear();
-  for(unsigned int iae=0;iae<aaEdge.size();++iae){
-    std::vector<delfem2::CCad2D_EdgeGeo> aEdge = aaEdge[iae];
-    Transform_LoopEdgeCad2D(aEdge,false,true,scale,scale);
-    if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
-    aEdge = RemoveEdgeWithZeroLength(aEdge);
-    for(auto & ie : aEdge){ ie.GenMeshLength(-1); }
-    cad.AddFace(aEdge);
-  }
-}
-
 
 DFM2_INLINE void delfem2::Transform_LoopEdgeCad2D(
     std::vector<CCad2D_EdgeGeo>& aEdge,

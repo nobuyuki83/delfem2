@@ -8,6 +8,7 @@
 #include "gtest/gtest.h"
 //
 #include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2_io_svg.h"
 #include <string>
 
 namespace dfm2 = delfem2;

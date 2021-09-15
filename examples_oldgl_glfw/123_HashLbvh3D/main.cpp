@@ -24,18 +24,14 @@
 
 namespace dfm2 = delfem2;
 
-// ------------------------------------
-// input parameter for simulation
-std::vector<double> aXYZ; // 3d points
-std::vector<dfm2::CNodeBVH2> aNodeBVH;
-std::vector<dfm2::CBV3_Sphere<double>> aAABB;
-double cur_time = 0.0;
-double p0[3];
-unsigned int ip_nearest;
+// -----------------------------------
 
 // ----------------------------------------
 
-void myGlutDisplay() {
+void myGlutDisplay(
+    const std::vector<double> &aXYZ,
+    unsigned int ip_nearest,
+    const double p0[3]) {
   ::glDisable(GL_LIGHTING);
   ::glPointSize(2);
   ::glBegin(GL_POINTS);
@@ -59,48 +55,56 @@ void myGlutDisplay() {
 }
 
 int main() {
+  // input parameter for simulation
+  std::vector<double> vtx_xyz; // 3d points
+  std::vector<dfm2::CNodeBVH2> bvh_nodes;
+  std::vector<dfm2::CBV3_Sphere<double>> bounding_volumes;
+  double cur_time = 0.0;
+  double p0[3];
+  unsigned int idx_vtx_nearest;
+
   {
     const double min_xyz[3] = {-1, -1, -1};
     const double max_xyz[3] = {+1, +1, +1};
     dfm2::CBV3d_AABB bb(min_xyz, max_xyz);
     {
       const unsigned int N = 1000;
-      aXYZ.resize(N * 3);
+      vtx_xyz.resize(N * 3);
       dfm2::Points_RandomUniform(
-          aXYZ.data(),
+          vtx_xyz.data(),
           N, 3, min_xyz, max_xyz);
       // create duplicated points for debugging purpose
       srand(3);
       for (int iip = 0; iip < 10; ++iip) { // hash collision
-        const unsigned int ip = static_cast<unsigned int>(N * (rand() / (RAND_MAX + 1.0)));
+        const auto ip = static_cast<unsigned int>(N * (rand() / (RAND_MAX + 1.0)));
         assert(ip < N);
-        const double x0 = aXYZ[ip * 3 + 0];
-        const double y0 = aXYZ[ip * 3 + 1];
-        const double z0 = aXYZ[ip * 3 + 2];
+        const double x0 = vtx_xyz[ip * 3 + 0];
+        const double y0 = vtx_xyz[ip * 3 + 1];
+        const double z0 = vtx_xyz[ip * 3 + 2];
         for (int itr = 0; itr < 2; itr++) {
-          aXYZ.insert(aXYZ.begin(), z0);
-          aXYZ.insert(aXYZ.begin(), y0);
-          aXYZ.insert(aXYZ.begin(), x0);
+          vtx_xyz.insert(vtx_xyz.begin(), z0);
+          vtx_xyz.insert(vtx_xyz.begin(), y0);
+          vtx_xyz.insert(vtx_xyz.begin(), x0);
         }
       }
     }
-    std::vector<unsigned int> aSortedId;
-    std::vector<std::uint32_t> aSortedMc;
+    std::vector<unsigned int> sorted_idx;
+    std::vector<std::uint32_t> sorted_morton_codes;
     dfm2::SortedMortenCode_Points3(
-        aSortedId, aSortedMc,
-        aXYZ, min_xyz, max_xyz);
+        sorted_idx, sorted_morton_codes,
+        vtx_xyz, min_xyz, max_xyz);
     dfm2::BVHTopology_Morton(
-        aNodeBVH,
-        aSortedId, aSortedMc);
+        bvh_nodes,
+        sorted_idx, sorted_morton_codes);
     dfm2::CLeafVolumeMaker_Point<dfm2::CBV3_Sphere<double>, double> lvm(
-        aXYZ.data(), aXYZ.size() / 3);
+        vtx_xyz.data(), vtx_xyz.size() / 3);
     dfm2::BVH_BuildBVHGeometry(
-        aAABB,
-        0, aNodeBVH, lvm);
+        bounding_volumes,
+        0, bvh_nodes, lvm);
     {
-      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
-      dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-      dfm2::Check_BVH(aNodeBVH, aXYZ.size() / 3);
+      dfm2::Check_MortonCode_Sort(sorted_idx, sorted_morton_codes, vtx_xyz, bb.bbmin, bb.bbmax);
+      dfm2::Check_MortonCode_RangeSplit(sorted_morton_codes);
+      dfm2::Check_BVH(bvh_nodes, vtx_xyz.size() / 3);
     }
   }
 
@@ -117,15 +121,15 @@ int main() {
     p0[2] = 3.0 * sin(cur_time * 3) - 1;
     // -----------
     double dist = -1;
-    ip_nearest = 0;
+    idx_vtx_nearest = 0;
     dfm2::BVH_IndPoint_NearestPoint(
-        ip_nearest, dist,
+        idx_vtx_nearest, dist,
         p0,
-        0, aNodeBVH,
-        aAABB);
+        0, bvh_nodes,
+        bounding_volumes);
     // -----------
     viewer.DrawBegin_oldGL();
-    myGlutDisplay();
+    myGlutDisplay(vtx_xyz, idx_vtx_nearest, p0);
     viewer.SwapBuffers();
     glfwPollEvents();
   }

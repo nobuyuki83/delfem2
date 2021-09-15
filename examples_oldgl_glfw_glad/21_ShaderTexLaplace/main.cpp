@@ -66,7 +66,7 @@ void setShaderProgram(
 
 // ------------------------------------------------------
 
-int main(int argc,char* argv[])
+int main()
 {
   dfm2::opengl::CTexRGB_Rect2D tex;
   int width, height;

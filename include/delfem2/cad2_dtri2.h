@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_CAD2D_H
-#define DFM2_CAD2D_H
+#ifndef DFM2_CAD2_DTRI_H
+#define DFM2_CAD2_DTRI_H
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/dtri2_v2dtri.h"
@@ -52,8 +52,8 @@ class CCad2D_EdgeGeo {
   double Distance(double x, double y) const;
   double LengthMesh() const;
   double LengthNDiv(unsigned int ndiv) const;
-  CBoundingBox2D BB() const {
-    CBoundingBox2D bb;
+  CBoundingBox2<double> BB() const {
+    CBoundingBox2<double> bb;
     bb.Add(p0.x, p0.y);
     bb.Add(p1.x, p1.y);
     for (unsigned int ip = 0; ip < aP.size(); ++ip) { bb.Add(aP[ip].x, aP[ip].y); }
@@ -68,9 +68,14 @@ class CCad2D_EdgeGeo {
   int ip0; //!< ip0 is the p0's point index when mesh is generated
 };
 
-double AreaLoop(const std::vector<CCad2D_EdgeGeo> &aEdge);
-std::vector<CCad2D_EdgeGeo> InvertLoop(const std::vector<CCad2D_EdgeGeo> &aEdge);
-std::vector<CCad2D_EdgeGeo> RemoveEdgeWithZeroLength(const std::vector<CCad2D_EdgeGeo> &aEdge);
+double AreaLoop(
+    const std::vector<CCad2D_EdgeGeo> &aEdge);
+
+std::vector<CCad2D_EdgeGeo> InvertLoop(
+    const std::vector<CCad2D_EdgeGeo> &aEdge);
+
+std::vector<CCad2D_EdgeGeo> RemoveEdgeWithZeroLength(
+    const std::vector<CCad2D_EdgeGeo> &aEdge);
 
 void Transform_LoopEdgeCad2D(
     std::vector<CCad2D_EdgeGeo> &aEdge,
@@ -79,14 +84,8 @@ void Transform_LoopEdgeCad2D(
     double scale_x,
     double scale_y);
 
-CBoundingBox2D BB_LoopEdgeCad2D(const std::vector<CCad2D_EdgeGeo> &aEdge);
-
-/**
- * @details read an SVG image file and output first path elemnet as a loop of curves.
- * If there is no path element, output first polygon elmenet if they are.
- */
-void ReadSVG_LoopEdgeCCad2D(std::vector<std::vector<CCad2D_EdgeGeo> > &aaEdge,
-                            const std::string &fname);
+CBoundingBox2<double> BB_LoopEdgeCad2D(
+    const std::vector<CCad2D_EdgeGeo> &aEdge);
 
 /**
  * @details this class should be independent from everything
@@ -95,9 +94,9 @@ class CCad2D_FaceGeo {
  public:
   std::vector<unsigned int> aTri;
  public:
-  bool IsInside
-      (double x, double y,
-       const std::vector<CVec2d> &aVec2) const {
+  bool IsInside(
+      double x, double y,
+      const std::vector<CVec2d> &aVec2) const {
     for (unsigned int it = 0; it < aTri.size() / 3; ++it) {
       const CVec2d q0(x, y);
       const int i0 = aTri[it * 3 + 0];
@@ -143,7 +142,7 @@ class CCad2D {
   // --------------------
   // const method here
   std::vector<double> MinMaxXYZ() const;
-  CBoundingBox2D BB() const;
+  CBoundingBox2<double> BB() const;
   bool Check() const;
   int GetEdgeType(int iedge) const {
     assert(iedge >= 0 && iedge < (int) aEdge.size());
@@ -199,19 +198,6 @@ class CCad2D {
   bool is_draw_face;
 };
 
-void ReadSVG_Cad2D(
-    CCad2D &cad,
-    const std::string &fpath,
-    double scale);
-
-/**
- * @brief  write the shape of cad into DXF file
- */
-bool WriteCAD_DXF(
-    const std::string &file_name,
-    const CCad2D &cad,
-    double scale);
-
 /**
  * @brief mesher for 2 dimensional CAD
  */
@@ -265,4 +251,4 @@ class CMesher_Cad2D {
 #  include "delfem2/cad2_dtri2.cpp"
 #endif
 
-#endif
+#endif /* DFM2_CAD2_DTRI_H */

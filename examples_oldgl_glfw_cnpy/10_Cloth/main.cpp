@@ -5,18 +5,26 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <iostream>
+#include <vector>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/garment.h"
 #include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2_io_svg.h"
 #include "delfem2/rig_geo3.h"
 #include "inputs_garment.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/dtri.h"
 #include "delfem2/color.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
@@ -24,10 +32,7 @@
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"
-#include <GLFW/glfw3.h>
-//
-#include <iostream>
-#include <vector>
+
 
 // ----------------------------
 

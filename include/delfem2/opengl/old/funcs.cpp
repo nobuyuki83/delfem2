@@ -190,7 +190,7 @@ DFM2_INLINE void DrawSingleQuad3D_FaceNorm
 }
 
 DFM2_INLINE void Draw_SurfaceMeshEdge(
-    unsigned int nXYZ,
+    [[maybe_unused]] unsigned int nXYZ,
     const double *paXYZ,
     unsigned int nTri,
     const unsigned int *paTri) {
@@ -213,7 +213,7 @@ DFM2_INLINE void Draw_SurfaceMeshEdge(
 }
 
 DFM2_INLINE void Draw_SurfaceMeshFace(
-    unsigned int nXYZ,
+    [[maybe_unused]] unsigned int nXYZ,
     const double *paXYZ,
     unsigned int nTri,
     const unsigned int *paTri) {

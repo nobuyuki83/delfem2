@@ -10,8 +10,16 @@
  * @details
  */
 
-#include "delfem2/cnpy/smpl_cnpy.h"
+#include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "inputs_garment.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/garment.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/rig_geo3.h"
@@ -19,8 +27,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/points.h"
-//
-#define GL_SILENCE_DEPRECATION
+#include "delfem2/cad2_io_svg.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -29,9 +36,6 @@
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/caddtri_v3.h"
 #include "delfem2/opengl/tex.h"
-#include <GLFW/glfw3.h>
-//
-#include <random>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"

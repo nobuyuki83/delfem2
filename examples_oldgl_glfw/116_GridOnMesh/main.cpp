@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -57,7 +58,7 @@ std::vector<dfm2::CPtElm2<double>> aPES1;
 void InitializeProblem() {
   {
     dfm2::Read_Ply(
-        std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
+        std::filesystem::path(PATH_INPUT_DIR) / "bunny_2k.ply",
         vtx_xyz, tri_vtxidx);
     double cx, cy, cz, wx, wy, wz;
     dfm2::CenterWidth_Points3(

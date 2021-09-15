@@ -6,9 +6,9 @@
  */
 
 #include <vector>
-#include <string>
 #include <cstdlib>
 #include <random>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -36,8 +36,7 @@ int main() {
   std::vector<unsigned int> vec_tri;
 
   delfem2::Read_Ply(
-//      std::string(PATH_INPUT_DIR)+"/bunny_34k.ply",
-      std::string(PATH_INPUT_DIR) + "/arm_16k.ply",
+      std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply",
       vec_xyz, vec_tri);
   delfem2::Normalize_Points3(vec_xyz);
   std::vector<unsigned int> tri_adjtri;

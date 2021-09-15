@@ -7,7 +7,12 @@
 
 #include <iostream>
 #include <cmath>
-#include <fstream>
+#include <filesystem>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>  // should be before glfw3.h
+#endif
+#define GL_SILENCE_DEPRECATION
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -30,8 +35,7 @@ namespace dfm2 = delfem2;
 // -----------------------------
 
 std::string LoadFile(
-    const std::string& fname)
-{
+    const std::string &fname) {
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
   std::istreambuf_iterator<char> vdataEnd;
@@ -40,21 +44,21 @@ std::string LoadFile(
 
 // ------------------------------------------------------
 
-int main()
-{
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
+int main() {
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtx;
   dfm2::Read_Obj(
-      std::string(PATH_ASSET_DIR)+"/bunny_1k.obj",
-      aXYZ,aTri);
-  dfm2::Normalize_Points3(aXYZ,2.5);
-  dfm2::Rotate_Points3(aXYZ,
-      -M_PI*0.5, 0.0, 0.0);
-  std::vector<double> aNorm(aXYZ.size());
+      std::filesystem::path(PATH_ASSET_DIR) / "bunny_1k.obj",
+      vtx_xyz, tri_vtx);
+  dfm2::Normalize_Points3(vtx_xyz, 2.5);
+  dfm2::Rotate_Points3(
+      vtx_xyz,
+      -M_PI * 0.5, 0.0, 0.0);
+  std::vector<double> vtx_normal(vtx_xyz.size());
   dfm2::Normal_MeshTri3D(
-      aNorm.data(),
-      aXYZ.data(), aXYZ.size()/3,
-      aTri.data(), aTri.size()/3);
+      vtx_normal.data(),
+      vtx_xyz.data(), vtx_xyz.size() / 3,
+      tri_vtx.data(), tri_vtx.size() / 3);
   // ---------------------------------------
 
   unsigned int nres = 256;
@@ -77,23 +81,23 @@ int main()
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
+  if (!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
   viewer.camera.view_height = 4.0;
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
-  std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<std::endl;
-  std::cout<<"GPU: "<<glGetString(GL_RENDERER)<<std::endl;
-  std::cout<<"OpenGL ver.: "<<glGetString(GL_VERSION)<<std::endl;
-  std::cout<<"OpenGL shading ver.: " <<glGetString(GL_SHADING_LANGUAGE_VERSION)<<std::endl;
+  std::cout << "Vendor:" << glGetString(GL_VENDOR) << std::endl;
+  std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
+  std::cout << "OpenGL ver.: " << glGetString(GL_VERSION) << std::endl;
+  std::cout << "OpenGL shading ver.: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
   glfwSetWindowTitle(viewer.window, "naive");
-  
+
   // -------------------------
 
   unsigned int id_tex_depth;
-  ::glGenTextures(1,&id_tex_depth);
+  ::glGenTextures(1, &id_tex_depth);
   ::glBindTexture(GL_TEXTURE_2D, id_tex_depth);
 
   int id_shader_normal;
@@ -123,7 +127,7 @@ int main()
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
     ::glUseProgram(id_shader_normal);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri, aNorm);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx, vtx_normal);
     sampler.End();
     // ---------
     ::glGenTextures(1, &id_tex_norm);
@@ -135,10 +139,11 @@ int main()
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     // ---------
     ::glTexImage2D(GL_TEXTURE_2D,
-        0, GL_RGBA,
-        sampler.width, sampler.height,
-        0, GL_RGBA,
-        GL_UNSIGNED_BYTE, sampler.aRGBA_8ui.data());
+                   0, GL_RGBA,
+                   static_cast<int>(sampler.width),
+                   static_cast<int>(sampler.height),
+                   0, GL_RGBA,
+                   GL_UNSIGNED_BYTE, sampler.aRGBA_8ui.data());
   }
 
   { // rendering image normally
@@ -147,7 +152,7 @@ int main()
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
     ::glUseProgram(0);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx);
     sampler.End();
   }
 
@@ -179,13 +184,12 @@ int main()
   // -----
   draw_sampler.isDrawTex = true;
 
-  while (true)
-  {
+  while (true) {
     viewer.DrawBegin_oldGL();
     { // draw mesh
       ::glEnable(GL_LIGHTING);
       glUseProgram(0);
-      dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+      dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx);
     }
     { // draw texture
       ::glUseProgram(id_shader_edge);
@@ -205,9 +209,9 @@ int main()
     }
     viewer.SwapBuffers();
     glfwPollEvents();
-    if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    if (glfwWindowShouldClose(viewer.window)) goto EXIT;
   }
-EXIT:
+  EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

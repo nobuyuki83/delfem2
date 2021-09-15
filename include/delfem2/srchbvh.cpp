@@ -259,11 +259,11 @@ DFM2_INLINE unsigned int delfem2::nbits_leading_zero(
   return n;
 }
 
-DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
-(std::vector<CNodeBVH2>& aNodeBVH,
- const unsigned int nfael,
- const std::vector<unsigned int>& aElSuEl,
- const std::vector<double>& aElemCenter)
+DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem(
+    std::vector<CNodeBVH2>& aNodeBVH,
+    const unsigned int nfael,
+    const std::vector<unsigned int>& aElSuEl,
+    const std::vector<double>& aElemCenter)
 {
   aNodeBVH.clear();
   const size_t nelem = aElemCenter.size()/3;

@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // should be before glfw3.h
@@ -40,14 +41,14 @@ void DrawObject(
   ::glRotated(-cur_time, 1, 0, 0);
 }
 
-int main(int argc, char *argv[]) {
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
+int main() {
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtxidx;
   dfm2::Read_Obj(
-      std::string(PATH_ASSET_DIR) + "/bunny_1k.obj",
-      aXYZ, aTri);
+      std::filesystem::path(PATH_ASSET_DIR) / "bunny_1k.obj",
+      vtx_xyz, tri_vtxidx);
   dfm2::Normalize_Points3(
-      aXYZ,
+      vtx_xyz,
       1.0);
   // ---------------------------------------
   int nres = 100;
@@ -110,7 +111,7 @@ int main(int argc, char *argv[]) {
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
     glUseProgram(shaderProgram);
-    DrawObject(cur_time, aXYZ, aTri);
+    DrawObject(cur_time, vtx_xyz, tri_vtxidx);
     smpl.End();
     cur_time += 1.0;
     // ----
@@ -120,7 +121,7 @@ int main(int argc, char *argv[]) {
     ::glEnable(GL_LIGHTING);
     ::glColor3d(1, 1, 1);
     glUseProgram(shaderProgram);
-    DrawObject(cur_time, aXYZ, aTri);
+    DrawObject(cur_time, vtx_xyz, tri_vtxidx);
     glUseProgram(0);
     draw_smpl.Draw(smpl);
     glfwSwapBuffers(viewer.window);

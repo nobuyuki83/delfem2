@@ -10,23 +10,26 @@
  * @details skinning
  */
 
+#include <cstdlib>
+#include <random>
+#if defined(_WIN32) // windows
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
+#endif
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/quat.h"
 #include "delfem2/mat3.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/rig_geo3.h"
-//
-#define GL_SILENCE_DEPRECATION
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/rigv3.h"
-#include <GLFW/glfw3.h>
-//
-#include <cstdlib>
-#include <random>
 
 namespace dfm2 = delfem2;
 
@@ -42,7 +45,7 @@ public:
 public:
   int ibone_dist;
   bool is_adjust_orientation_parent;
-  double quatOffset[4];
+  double quatOffset[4]{};
 };
 
 
@@ -163,10 +166,11 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
   {
     { // biovision
       static int iframe = 0;
-      const int nch = aChannelRotTransBone.size();
-      SetPose_BioVisionHierarchy(aBone_MotionSrc,
-                                 aChannelRotTransBone,
-                                 aValueChanelHistoryRotTrans.data()+iframe*nch);
+      const size_t nch = aChannelRotTransBone.size();
+      SetPose_BioVisionHierarchy(
+          aBone_MotionSrc,
+          aChannelRotTransBone,
+          aValueChanelHistoryRotTrans.data()+iframe*nch);
       iframe = (iframe+1)%nframe;
     }
     
