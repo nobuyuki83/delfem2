@@ -58,8 +58,8 @@ std::vector<dfm2::CPtElm2<double>> aPES1;
 void InitializeProblem() {
   {
     dfm2::Read_Ply(
-        (std::filesystem::path(PATH_INPUT_DIR) / "bunny_2k.ply").string(),
-        vtx_xyz, tri_vtxidx);
+        vtx_xyz, tri_vtxidx,
+        std::filesystem::path(PATH_INPUT_DIR) / "bunny_2k.ply");
     double cx, cy, cz, wx, wy, wz;
     dfm2::CenterWidth_Points3(
         cx, cy, cz, wx, wy, wz,

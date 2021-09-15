@@ -31,8 +31,9 @@ int main() {
   class CMyViewer : public delfem2::glfw::CViewer3 {
    public:
     CMyViewer() {
-      delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_1k.ply",
-                        aXYZ, aTri);
+      delfem2::Read_Ply(
+          aXYZ, aTri,
+          std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply");
       delfem2::Normalize_Points3(aXYZ);
     }
     //

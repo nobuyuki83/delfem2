@@ -22,7 +22,6 @@
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/garment.h"
 #include "delfem2/pbd_geo3.h"
-#include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/mshmisc.h"

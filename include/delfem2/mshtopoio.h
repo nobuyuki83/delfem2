@@ -64,7 +64,9 @@ public:
   void Read(const std::string& fname){
     std::string sExt = delfem2::pathGetExtension(fname);
     if( sExt == "ply") {
-      delfem2::Read_Ply(fname, aPos, aElem);
+      delfem2::Read_Ply(
+          aPos, aElem,
+          std::filesystem::path(fname));
     }
     else if( sExt == "obj") {
       delfem2::Read_Obj(fname, aPos, aElem);

@@ -72,8 +72,8 @@ int main() {
 
   delfem2::Read_Ply(
 //      std::string(PATH_INPUT_DIR)+"/bunny_34k.ply",
-      (std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply").string(),
-      vtx_xyz, tri_vtx);
+      vtx_xyz, tri_vtx,
+      std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply");
   delfem2::Normalize_Points3(vtx_xyz);
 
   std::vector<unsigned int> psup_ind, psup;
@@ -88,9 +88,9 @@ int main() {
         tri_vtx.data(), elsup_ind, elsup, 3,
         vtx_xyz.size() / 3);
   }
-  std::vector<double> vtx_norm(vtx_xyz.size());
+  std::vector<double> vtx_normal(vtx_xyz.size());
   delfem2::Normal_MeshTri3D(
-      vtx_norm.data(),
+      vtx_normal.data(),
       vtx_xyz.data(), vtx_xyz.size() / 3,
       tri_vtx.data(), tri_vtx.size() / 3 );
 
@@ -99,7 +99,7 @@ int main() {
   {
     dfm2::CExpMap_DijkstraPoint expmap(
         ip_ker,
-        vtx_xyz, vtx_norm, tri_vtx, aTex,
+        vtx_xyz, vtx_normal, tri_vtx, aTex,
         psup_ind, psup);
     std::vector<unsigned int> mapIp2Io;
     std::vector<double> aDist;
@@ -159,7 +159,7 @@ int main() {
         ::glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, shine);
         ::glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 128.0);
       }
-      myGlutDisplay(vtx_xyz, tri_vtx, vtx_norm, aTex);
+      myGlutDisplay(vtx_xyz, tri_vtx, vtx_normal, aTex);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
     }

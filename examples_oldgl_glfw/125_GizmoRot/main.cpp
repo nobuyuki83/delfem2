@@ -32,8 +32,8 @@ int main() {
    public:
     CMyViewer() {
       delfem2::Read_Ply(
-          (std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply").string(),
-          vtx_xyz, tri_vtx);
+          vtx_xyz, tri_vtx,
+          std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply");
       delfem2::Normalize_Points3(vtx_xyz);
       gizmo_rot.size = 0.7f;
     }

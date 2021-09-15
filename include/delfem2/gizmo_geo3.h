@@ -141,8 +141,9 @@ public:
 template <typename REAL>
 class CGizmo_Affine {
 public:
-  void SetPivot(const CVec3<REAL>& pivot){
-    
+  void SetPivot(
+      const CVec3<REAL>& pivot){
+    pivot0 = pivot;
   }
   void Pick(const float src[3], const float dir[3]){
     if( this->igizmo_mode == 1 ){

@@ -184,8 +184,10 @@ void SetProblem(int iprob) {
     CMesh mesh;
     {
       std::cout << PATH_INPUT_DIR << std::endl;
-      delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_1k.ply", aXYZ, aTri);
-      delfem2::Normalize_Points3(aXYZ, 1.7);
+      delfem2::Read_Ply(
+          aXYZ, aTri,
+          std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply");
+          delfem2::Normalize_Points3(aXYZ, 1.7);
       mesh.obj.Init(
           aXYZ.data(), aXYZ.size() / 3,
           aTri.data(), aTri.size() / 3,

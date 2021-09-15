@@ -28,38 +28,37 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------------
 
-int main()
-{
+int main() {
   class CMyViewer : public delfem2::glfw::CViewer3 {
-  public:
-    CMyViewer(){
+   public:
+    CMyViewer() {
       delfem2::Read_Ply(
-          std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-          aXYZ,aTri);
+          aXYZ, aTri,
+          std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply");
       delfem2::Normalize_Points3(aXYZ);
     }
     //
-    void mouse_press(const float src[3], const float dir[3]) override{
+    void mouse_press(const float src[3], const float dir[3]) override {
       gizmo_trnsl.Pick(true, src, dir, 0.1f);
     }
-    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
       gizmo_trnsl.Drag(src0, src1, dir);
     }
     //
-    void Draw(){
+    void Draw() {
       DrawBegin_oldGL();
       {
         ::glMatrixMode(GL_MODELVIEW);
         ::glPushMatrix();
         delfem2::opengl::myGlTranslate(gizmo_trnsl.pos);
         ::glEnable(GL_LIGHTING);
-        ::glColor3d(0,0,0);
+        ::glColor3d(0, 0, 0);
         delfem2::opengl::DrawMeshTri3D_Edge(
-            aXYZ.data(), aXYZ.size()/3,
-            aTri.data(), aTri.size()/3);
+            aXYZ.data(), aXYZ.size() / 3,
+            aTri.data(), aTri.size() / 3);
         delfem2::opengl::DrawMeshTri3D_FaceNorm(
             aXYZ.data(),
-            aTri.data(), aTri.size()/3);
+            aTri.data(), aTri.size() / 3);
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
       }
@@ -69,7 +68,7 @@ int main()
           gizmo_trnsl.ielem_picked);
       SwapBuffers();
     }
-  public:
+   public:
     dfm2::CGizmo_Transl<float> gizmo_trnsl;
     std::vector<double> aXYZ;
     std::vector<unsigned int> aTri;
@@ -81,10 +80,10 @@ int main()
   viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   // --------------------
-  while(true){
+  while (true) {
     viewer.Draw();
     glfwPollEvents();
-	if (glfwWindowShouldClose(viewer.window)) { break; }
+    if (glfwWindowShouldClose(viewer.window)) { break; }
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

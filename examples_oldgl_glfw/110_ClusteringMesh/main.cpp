@@ -36,8 +36,8 @@ int main() {
   std::vector<unsigned int> vec_tri;
 
   delfem2::Read_Ply(
-      (std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply").string(),
-      vec_xyz, vec_tri);
+      vec_xyz, vec_tri,
+      std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply");
   delfem2::Normalize_Points3(vec_xyz);
   std::vector<unsigned int> tri_adjtri;
   ElSuEl_MeshElem(
@@ -47,9 +47,7 @@ int main() {
       vec_xyz.size() / 3);
 
   // ------
-
-  std::random_device rd;
-  std::mt19937 rdeng(rd());
+  std::mt19937 rdeng(std::random_device{}());
   std::uniform_int_distribution<unsigned int> ncluster_gen(1, 100);
 
   // above: data preparation

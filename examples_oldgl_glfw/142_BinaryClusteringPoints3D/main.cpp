@@ -51,8 +51,9 @@ int main() {
   { // make level0
     {
       CClusterData &pd0 = aPointData[0];
-      delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
-                        pd0.aXYZ, aTri0);
+      delfem2::Read_Ply(
+          pd0.aXYZ, aTri0,
+          std::filesystem::path(PATH_INPUT_DIR) / "bunny_2k.ply");
       dfm2::Normalize_Points3(pd0.aXYZ, 2.0);
     }
     { // make normal

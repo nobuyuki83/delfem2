@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -82,7 +83,7 @@ DFM2_INLINE void Read_Obj(
 DFM2_INLINE void Read_Obj_MeshQuad3(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aQuad,
-    const std::string &fname);
+    const std::filesystem::path &file_path);
 
 DFM2_INLINE void Read_Obj2(
     const std::string &fname,
