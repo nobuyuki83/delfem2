@@ -332,14 +332,16 @@ delfem2::MatVec(
 DFM2_INLINE void
 delfem2::MatTVec(
     double *y,
+    double alpha,
     const double *A,
     unsigned int ncol,
     unsigned int nrow,
-    const double *x) {
-  for (unsigned int j = 0; j < nrow; ++j) { y[j] = 0; }
+    const double *x,
+    double beta) {
+  for (unsigned int j = 0; j < nrow; ++j) { y[j] *= beta; }
   for (unsigned int i = 0; i < ncol; ++i) {
     for (unsigned int j = 0; j < nrow; ++j) {
-      y[j] += A[i * nrow + j] * x[i];
+      y[j] += alpha * A[i * nrow + j] * x[i];
     }
   }
 }

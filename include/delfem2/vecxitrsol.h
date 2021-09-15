@@ -125,14 +125,19 @@ void MatVec(
     const double* x);
 
 /**
+ * DGEMV
  * @param y vector size of nrow
  * @param A a row-major matrix with size [ncol, nrow]
  * @param x vector size of ncol
  */
 void MatTVec(
     double* y,
-    const double* A, unsigned int ncol, unsigned int nrow,
-    const double* x);
+    double alpha,
+    const double* A,
+    unsigned int ncol,
+    unsigned int nrow,
+    const double* x,
+    double beta);
 
 
 
