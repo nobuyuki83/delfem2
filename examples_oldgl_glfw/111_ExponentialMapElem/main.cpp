@@ -105,7 +105,7 @@ int main() {
   std::vector<unsigned int> tri_vtx;
 
   delfem2::Read_Ply(
-      std::filesystem::path(PATH_INPUT_DIR) / "bunny_34k.ply",
+      (std::filesystem::path(PATH_INPUT_DIR) / "bunny_34k.ply").string(),
 //      std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
       vtx_xyz, tri_vtx);
   delfem2::Normalize_Points3(vtx_xyz);

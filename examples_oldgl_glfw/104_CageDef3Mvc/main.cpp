@@ -6,6 +6,7 @@
 */
 
 #include <array>
+#include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -207,14 +208,14 @@ void Example2(
 // ---------------
 
 int main() {
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtx;
   delfem2::Read_Ply(
-      std::string(PATH_INPUT_DIR) + "/bunny_1k.ply",
-      aXYZ, aTri);
-  delfem2::Normalize_Points3(aXYZ);
-  Example1(aXYZ, aTri);
-  Example2(aXYZ, aTri);
+      (std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply").string(),
+      vtx_xyz, tri_vtx);
+  delfem2::Normalize_Points3(vtx_xyz);
+  Example1(vtx_xyz, tri_vtx);
+  Example2(vtx_xyz, tri_vtx);
 }
 
 

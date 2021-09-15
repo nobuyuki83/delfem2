@@ -40,7 +40,7 @@ int main() {
   std::vector<double> vtx_xyz;
   std::vector<unsigned int> tri_vtx;
   delfem2::Read_Ply(
-      std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply",
+      (std::filesystem::path(PATH_INPUT_DIR) / "bunny_1k.ply").string(),
       vtx_xyz, tri_vtx);
   delfem2::Normalize_Points3(vtx_xyz);
   std::vector<double> vtx_normal(vtx_xyz.size());
