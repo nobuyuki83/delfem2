@@ -32,8 +32,10 @@ namespace dfm2 = delfem2;
 // -------------------------------------
 
 int main() {
-  delfem2::openglstb::CGlyph glyph(std::filesystem::path(PATH_INPUT_DIR) / "myFont.png");
-  glyph.ParseGlyphInfo(std::filesystem::path(PATH_INPUT_DIR) / "myFont.fnt");
+  delfem2::openglstb::CGlyph glyph(
+      (std::filesystem::path(PATH_INPUT_DIR) / "myFont.png").string());
+  glyph.ParseGlyphInfo(
+      (std::filesystem::path(PATH_INPUT_DIR) / "myFont.fnt").string());
   delfem2::CCad2D cad;
   // --------------------
   delfem2::glfw::CViewer2 viewer;

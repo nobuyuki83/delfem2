@@ -28,7 +28,7 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
     std::vector<unsigned int> &index,
     std::vector<unsigned int> &array,
     const unsigned int* aMSFlag,
-    int ndim,
+    unsigned int ndim,
     const unsigned int *psup_ind0,
     size_t npsup_ind0,
     const unsigned int *psup0)
@@ -41,8 +41,8 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
       unsigned int idof0 = aMSFlag[ino1*ndim+idim1];
       if( idof0 == UINT_MAX ){ continue; }
       unsigned int ino0 = idof0/ndim;
-      assert( ino0 < nno && idof0 - ino0*ndim < ndim );
-      assert( idim1 == idof0 - ino0*ndim );
+      assert( ino0 < nno && idof0 < ndim + ino0*ndim );
+      assert( idim1 + ino0*ndim == idof0  );
       mapM2S[ino0].push_back(ino1);
     }
   }
@@ -50,8 +50,8 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
   index.assign(nno+1,0);
   array.clear();
   std::vector<int> aflg(nno,-1);
-  ///
-  for(int ino0=0;ino0<nno;++ino0){
+  //
+  for(unsigned int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
     for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
       const unsigned int jno = psup0[icrs];
@@ -85,12 +85,12 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
     }
   }
   //
-  for(int ino=0;ino<nno;ino++){ index[ino+1] += index[ino]; }
+  for(unsigned int ino=0;ino<nno;ino++){ index[ino+1] += index[ino]; }
   const unsigned int narray = index[nno];
   array.resize(narray);
-  for(int ino=0;ino<nno;ino++){ aflg[ino] = -1; }
+  for(unsigned int ino=0;ino<nno;ino++){ aflg[ino] = -1; }
   //
-  for(int ino0=0;ino0<nno;++ino0){
+  for(unsigned int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
     for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
       const unsigned int jno = psup0[icrs];
@@ -132,7 +132,7 @@ DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern(
     }
   }
   // ---------
-  for(int ino=static_cast<int>(nno);ino>0;ino--){ index[ino] = index[ino-1]; }
+  for(int ino=static_cast<int>(nno);ino>0;--ino){ index[ino] = index[ino-1]; }
   index[0] = 0;
 }
 
@@ -171,7 +171,7 @@ DFM2_INLINE void delfem2::SetMasterSlave(
       assert(jno1 != ino1);
       if (jno1 != ino0) { // add non-diagonal 1 to non-diagonal 0
         const unsigned int icrs0 = row2crs[jno1];
-        assert(icrs0 >= 0 && icrs0 < (int) mat.row_ptr_.size());
+        assert(icrs0 >= 0 && icrs0 < mat.row_ptr_.size());
         for (unsigned int jdim = 0; jdim < len; ++jdim) {
           mat.val_crs_[icrs0 * blksize + ilen0 * len + jdim] +=
               mat.val_crs_[icrs1 * blksize + ilen1 * len + jdim];
@@ -185,7 +185,7 @@ DFM2_INLINE void delfem2::SetMasterSlave(
     }
     { // add diagonal 1 to non-diagonal 0
       const unsigned int icrs0 = row2crs[ino1];
-      assert(icrs0 >= 0 && icrs0 < (int) mat.row_ptr_.size());
+      assert(icrs0 >= 0 && icrs0 < mat.row_ptr_.size());
       for (unsigned int jdim = 0; jdim < len; ++jdim) {
         mat.val_crs_[icrs0 * blksize + ilen0 * len + jdim]
             += mat.val_dia_[ino1 * blksize + ilen1 * len + jdim];
@@ -211,7 +211,7 @@ DFM2_INLINE void delfem2::SetMasterSlave(
       int jno0 = (int) (jdof0 / len);
       assert(jdof0 - jno0 * len == jlen1);
       const unsigned int icrs0 = row2crs[jno0];
-      assert(icrs0 >= 0 && icrs0 < (int) mat.row_ptr_.size());
+      assert(icrs0 >= 0 && icrs0 < mat.row_ptr_.size());
       for (unsigned int ilen = 0; ilen < len; ilen++) {
         mat.val_crs_[icrs0 * blksize + ilen * len + jlen1] +=
             mat.val_dia_[ino * blksize + ilen * len + jlen1];
@@ -233,7 +233,7 @@ DFM2_INLINE void delfem2::SetMasterSlave(
           }
         } else {
           const unsigned int icrs0 = row2crs[jno0];
-          assert(icrs0 >= 0 && icrs0 < (int) mat.row_ptr_.size());
+          assert(icrs0 >= 0 && icrs0 < mat.row_ptr_.size());
           for (unsigned int ilen = 0; ilen < len; ilen++) {
             mat.val_crs_[icrs0 * blksize + ilen * len + jlen1] +=
                 mat.val_crs_[icrs1 * blksize + ilen * len + jlen1];

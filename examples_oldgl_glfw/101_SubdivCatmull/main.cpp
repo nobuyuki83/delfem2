@@ -10,6 +10,7 @@
  */
 
 #include <cstdlib>
+#include <filesytem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>
@@ -54,7 +55,7 @@ int main() {
       dfm2::Read_Obj_MeshQuad3(
           aaXYZ[0], aaQuad[0],
 //      std::string(PATH_INPUT_DIR)+"/basemesh_female.obj");
-          std::string(PATH_INPUT_DIR) + "/basemesh_hand.obj");
+          (std::filesystem::path(PATH_INPUT_DIR) / "basemesh_hand.obj").string());
       nlevel_subdiv = 3;
     }
     aaXYZ.resize(nlevel_subdiv + 1);

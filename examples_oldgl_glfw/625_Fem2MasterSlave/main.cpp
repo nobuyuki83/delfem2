@@ -112,7 +112,7 @@ void MakeCurveSpline(
     std::vector<double> &aVecCurve,
     unsigned int ndiv = 5) {
   aVecCurve.resize(0);
-  const unsigned int nCV = static_cast<unsigned int>(aCV.size() / 2);
+  const auto nCV = static_cast<unsigned int>(aCV.size() / 2);
   for (unsigned int icv = 0; icv < nCV; icv++) {
     const unsigned int icv0 = (icv + 0) % nCV;
     const unsigned int icv1 = (icv + 1) % nCV;
@@ -579,7 +579,7 @@ void SolveProblem_Stokes_Static(
     for (unsigned int idof = 0; idof < nDoF; ++idof) {
       unsigned int jdof = aMSFlag[idof];
       if (jdof == UINT_MAX) continue;
-      assert(jdof >= 0 && jdof < (int) nDoF);
+      assert(jdof >= 0 && jdof < nDoF);
       aVal[idof] = aVal[jdof];
     }
   }

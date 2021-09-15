@@ -58,7 +58,7 @@ std::vector<dfm2::CPtElm2<double>> aPES1;
 void InitializeProblem() {
   {
     dfm2::Read_Ply(
-        std::filesystem::path(PATH_INPUT_DIR) / "bunny_2k.ply",
+        (std::filesystem::path(PATH_INPUT_DIR) / "bunny_2k.ply").string(),
         vtx_xyz, tri_vtxidx);
     double cx, cy, cz, wx, wy, wz;
     dfm2::CenterWidth_Points3(
@@ -122,8 +122,10 @@ void UpdateProblem() {
   }
   {
     vtx_norm.resize(vtx_xyz.size());
-    dfm2::Normal_MeshTri3D(vtx_norm.data(),
-                           vtx_xyz.data(), vtx_xyz.size() / 3, tri_vtxidx.data(), tri_vtxidx.size() / 3);
+    dfm2::Normal_MeshTri3D(
+        vtx_norm.data(),
+        vtx_xyz.data(), vtx_xyz.size() / 3,
+        tri_vtxidx.data(), tri_vtxidx.size() / 3);
   }
   {
     aPES1.clear();

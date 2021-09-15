@@ -37,43 +37,42 @@ namespace dfm2 = delfem2;
 // ---------------
 
 void Draw(
-    const std::vector<double>& aXYZ,
-    const std::vector<double>& aNorm,
-    const std::vector<double>& aOdir,
-    const std::vector<unsigned int>& aTri)
-{
+    const std::vector<double> &aXYZ,
+    const std::vector<double> &aNorm,
+    const std::vector<double> &aOdir,
+    const std::vector<unsigned int> &aTri) {
   ::glEnable(GL_LIGHTING);
-  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
+  dfm2::opengl::DrawMeshTri3D_FaceNorm(
+      aXYZ.data(),
+      aTri.data(), aTri.size() / 3);
   ::glDisable(GL_LIGHTING);
   double len = 0.03;
   ::glLineWidth(3);
-  const size_t np = aXYZ.size()/3;
-  for(unsigned int ip=0;ip<np;++ip){
-    const dfm2::CVec3d p = dfm2::CVec3d(aXYZ.data()+ip*3);
-    const dfm2::CVec3d n = dfm2::CVec3d(aNorm.data()+ip*3).normalized();
-    const dfm2::CVec3d o = dfm2::CVec3d(aOdir.data()+ip*3).normalized();
-    const dfm2::CVec3d q = dfm2::Cross(n,o);
+  const size_t np = aXYZ.size() / 3;
+  for (unsigned int ip = 0; ip < np; ++ip) {
+    const dfm2::CVec3d p = dfm2::CVec3d(aXYZ.data() + ip * 3);
+    const dfm2::CVec3d n = dfm2::CVec3d(aNorm.data() + ip * 3).normalized();
+    const dfm2::CVec3d o = dfm2::CVec3d(aOdir.data() + ip * 3).normalized();
+    const dfm2::CVec3d q = dfm2::Cross(n, o);
     ::glBegin(GL_LINES);
 //    ::glColor3d(0,0,0);
 //    dfm2::opengl::myGlVertex(p);
 //    dfm2::opengl::myGlVertex(p+len*n);
-    ::glColor3d(0,0,1);
-    dfm2::opengl::myGlVertex(p-len*o);
+    ::glColor3d(0, 0, 1);
+    dfm2::opengl::myGlVertex(p - len * o);
     dfm2::opengl::myGlVertex(p);
-    ::glColor3d(1,0,0);
+    ::glColor3d(1, 0, 0);
     dfm2::opengl::myGlVertex(p);
-    dfm2::opengl::myGlVertex(p+len*o);
-    dfm2::opengl::myGlVertex(p-len*q);
-    dfm2::opengl::myGlVertex(p+len*q);
+    dfm2::opengl::myGlVertex(p + len * o);
+    dfm2::opengl::myGlVertex(p - len * q);
+    dfm2::opengl::myGlVertex(p + len * q);
     ::glEnd();
   }
 }
 
-int main()
-{
-  class CClusterData
-  {
-  public:
+int main() {
+  class CClusterData {
+   public:
     std::vector<double> aXYZ; // center position of the cluster
     std::vector<double> aArea; // area of the cluster
     std::vector<double> aNorm; // normal of the cluster
@@ -106,7 +105,7 @@ int main()
       dfm2::Points_RandomUniform(
           aLayer[0].aOdir.data(),
           aLayer[0].aXYZ.size() / 3, 3,
-		  minCoords, maxCoords);
+          minCoords, maxCoords);
       dfm2::TangentVector_Points3(
           aLayer[0].aOdir,
           aLayer[0].aNorm);
@@ -119,10 +118,10 @@ int main()
         aTri.data(), aTri.size() / 3);
     dfm2::JArray_PSuP_MeshElem(
         aLayer[0].psup_ind, aLayer[0].psup,
-        aTri.data(), aTri.size()/3, 3,
-        aLayer[0].aXYZ.size()/3);
+        aTri.data(), aTri.size() / 3, 3,
+        aLayer[0].aXYZ.size() / 3);
   }
-  for(unsigned int itr=0;itr<8;++itr) {
+  for (unsigned int itr = 0; itr < 8; ++itr) {
     aLayer.resize(aLayer.size() + 1);
     const CClusterData &pd0 = aLayer[itr];
     CClusterData &pd1 = aLayer[itr + 1];
@@ -137,29 +136,28 @@ int main()
   }
 
   const auto nlayer = static_cast<unsigned int>(aLayer.size());
-  for(unsigned int ilayer=nlayer-1;ilayer!=UINT_MAX;--ilayer){
-    if( ilayer == nlayer-1 ){
+  for (unsigned int ilayer = nlayer - 1; ilayer != UINT_MAX; --ilayer) {
+    if (ilayer == nlayer - 1) {
       const double minCoords[3] = {-1, -1, -1};
       const double maxCoords[3] = {+1, +1, +1};
       aLayer[ilayer].aOdir.resize(aLayer[ilayer].aXYZ.size());
       dfm2::Points_RandomUniform(
-		  aLayer[ilayer].aOdir.data(),
-		  aLayer[ilayer].aXYZ.size() / 3, 3,
-		  minCoords, maxCoords);
+          aLayer[ilayer].aOdir.data(),
+          aLayer[ilayer].aXYZ.size() / 3, 3,
+          minCoords, maxCoords);
       dfm2::TangentVector_Points3(aLayer[ilayer].aOdir,
-          aLayer[ilayer].aNorm);
-    }
-    else{
-      const auto np0 = static_cast<unsigned int>(aLayer[ilayer].aXYZ.size()/3); // this
-      assert( aLayer[ilayer+1].map_fine2this.size() == np0 );
+                                  aLayer[ilayer].aNorm);
+    } else {
+      const auto np0 = static_cast<unsigned int>(aLayer[ilayer].aXYZ.size() / 3); // this
+      assert(aLayer[ilayer + 1].map_fine2this.size() == np0);
       // const unsigned int np1 = 
-      aLayer[ilayer].aOdir.resize(np0*3);
-      for(unsigned int ip0=0;ip0<np0;++ip0){
-        unsigned int ip1 = aLayer[ilayer+1].map_fine2this[ip0];
-		assert(ip1 < static_cast<unsigned int>(aLayer[ilayer + 1].aXYZ.size() / 3));
-        aLayer[ilayer].aOdir[ip0*3+0] = aLayer[ilayer+1].aOdir[ip1*3+0];
-        aLayer[ilayer].aOdir[ip0*3+1] = aLayer[ilayer+1].aOdir[ip1*3+1];
-        aLayer[ilayer].aOdir[ip0*3+2] = aLayer[ilayer+1].aOdir[ip1*3+2];
+      aLayer[ilayer].aOdir.resize(np0 * 3);
+      for (unsigned int ip0 = 0; ip0 < np0; ++ip0) {
+        unsigned int ip1 = aLayer[ilayer + 1].map_fine2this[ip0];
+        assert(ip1 < static_cast<unsigned int>(aLayer[ilayer + 1].aXYZ.size() / 3));
+        aLayer[ilayer].aOdir[ip0 * 3 + 0] = aLayer[ilayer + 1].aOdir[ip1 * 3 + 0];
+        aLayer[ilayer].aOdir[ip0 * 3 + 1] = aLayer[ilayer + 1].aOdir[ip1 * 3 + 1];
+        aLayer[ilayer].aOdir[ip0 * 3 + 2] = aLayer[ilayer + 1].aOdir[ip1 * 3 + 2];
       }
     }
     dfm2::Smooth4RotSym(
@@ -176,8 +174,7 @@ int main()
   viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   dfm2::opengl::setSomeLighting();
   unsigned int iframe = 0;
-  while (true)
-  {
+  while (true) {
     /*
     if( iframe == 0 ){
 //        dfm2::InitializeTangentField(aLayer[0].aOdir,aLayer[0].aNorm);
@@ -190,7 +187,7 @@ int main()
     // --------------------
 
     viewer.DrawBegin_oldGL();
-    Draw(aLayer[0].aXYZ,aLayer[0].aNorm,aLayer[0].aOdir,aTri);
+    Draw(aLayer[0].aXYZ, aLayer[0].aNorm, aLayer[0].aOdir, aTri);
 /*
     ::glColor3d(0,0,0);
     ::glLineWidth(2);
@@ -199,10 +196,10 @@ int main()
     */
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
-    iframe = (iframe+1)%60;
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    iframe = (iframe + 1) % 60;
+    if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
   }
-EXIT:
+  EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

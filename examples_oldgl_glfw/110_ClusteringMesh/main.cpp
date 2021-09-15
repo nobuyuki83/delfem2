@@ -36,7 +36,7 @@ int main() {
   std::vector<unsigned int> vec_tri;
 
   delfem2::Read_Ply(
-      std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply",
+      (std::filesystem::path(PATH_INPUT_DIR) / "arm_16k.ply").string(),
       vec_xyz, vec_tri);
   delfem2::Normalize_Points3(vec_xyz);
   std::vector<unsigned int> tri_adjtri;

@@ -31,7 +31,7 @@ DFM2_INLINE void JArray_AddMasterSlavePattern(
     std::vector<unsigned int> &index,
     std::vector<unsigned int> &array,
     const unsigned int* aMSFlag,
-    int ndim,
+    unsigned int ndim,
     const unsigned int *psup_ind0,
     size_t npsup_ind0,
     const unsigned int *psup0);
