@@ -132,7 +132,7 @@ void Solve1(
       1.0,vec_x);
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   std::vector<unsigned int> aTri1;
   std::vector<double> aXY1;

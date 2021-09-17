@@ -28,7 +28,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------
 
-int main(int argc, char *argv[]) {
+int main() {
   std::cout << "Available :SIMD Instructions: " << Eigen::SimdInstructionSetsInUse() << std::endl;
 
   const auto res = ReadTriangleMeshObj(std::string(PATH_INPUT_DIR) + "/bunny_1k.obj");

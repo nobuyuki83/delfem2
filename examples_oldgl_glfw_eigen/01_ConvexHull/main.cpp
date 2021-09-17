@@ -46,7 +46,7 @@ double MeasureTime()
   return std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   std::cout << "Available :SIMD Instructions: "<< Eigen::SimdInstructionSetsInUse() << std::endl;
 

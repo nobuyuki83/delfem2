@@ -18,7 +18,9 @@
 
 namespace dfm2 = delfem2;
 
-static void callback_error(int error, const char* description)
+static void callback_error(
+    [[maybe_unused]] int error,
+    const char* description)
 {
   fputs(description, stderr);
 }
