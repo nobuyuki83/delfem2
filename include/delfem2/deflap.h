@@ -74,8 +74,8 @@ public:
   void Init(const std::vector<double>& aXYZ0,
             const std::vector<unsigned int>& aTri,
             bool is_preconditioner);
-  void Deform(std::vector<double>& aXYZ1,
-              const std::vector<double>& aXYZ0) const;
+  void Deform(std::vector<double>& vtx_xyz_def,
+              const std::vector<double>& vtx_xyz_ini) const;
   void SetValueToPreconditioner();
   // -----------
   void MatVec(
@@ -127,9 +127,9 @@ public:
 class CDef_LaplacianLinearDegenerate{
 public:
   void Init(
-      const std::vector<double>& aXYZ0,
-      const std::vector<unsigned int>& aTri,
-      bool is_preconditinoner);
+      const std::vector<double>& vtx_xyz_ini,
+      const std::vector<unsigned int>& tri_vtx,
+      bool is_preconditioner_);
   void Deform(
       std::vector<double>& aXYZ1,
       const std::vector<double>& aXYZ0) const;

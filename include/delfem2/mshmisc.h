@@ -25,11 +25,11 @@ namespace delfem2 {
 DFM2_INLINE void GetCenterWidthGroup(
     double &cx, double &cy, double &cz,
     double &wx, double &wy, double &wz,
-    const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aElem,
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &elm_vtx,
     const int nnoel,
     int igroup,
-    const std::vector<int> &aIndGroup);
+    const std::vector<int> &elm_groupidx);
 
 DFM2_INLINE void GetCenterWidthGroup(
     double &cx, double &cy, double &cz,
@@ -64,9 +64,9 @@ DFM2_INLINE void CG_Tri(
  */
 template<typename T>
 DFM2_INLINE T CentsMaxRad_MeshTri3(
-    std::vector<T> &aXYZ_c0,
-    const std::vector<T> &aXYZ,
-    const std::vector<unsigned int> &aTri);
+    std::vector<T> &tri_centerxyz,
+    const std::vector<T> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx);
 
 template<typename T>
 DFM2_INLINE void CG_MeshTri3_Shell(
@@ -84,9 +84,9 @@ DFM2_INLINE T CG_TriMsh3Flg_Shell(
 
 template<typename T>
 DFM2_INLINE void CG_MeshTri3_Solid(
-    T cg[3],
-    const std::vector<T> &aXYZ,
-    const std::vector<unsigned int> &aTri);
+    T center_of_gravity_xyz[3],
+    const std::vector<T> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx);
 
 template<typename T>
 DFM2_INLINE void CG_MeshTet3(
@@ -110,11 +110,11 @@ DFM2_INLINE void RemoveUnreferencedPoints_MeshElem(
  */
 template<typename REAL>
 DFM2_INLINE void Normal_MeshTri3D(
-    REAL *aNorm,
-    const REAL *aXYZ,
-    size_t nXYZ,
-    const unsigned int *aTri,
-    size_t nTri);
+    REAL *vtx_normal,
+    const REAL *vtx_xyz,
+    size_t num_vtx,
+    const unsigned int *tri_vtx,
+    size_t num_tri);
 
 /**
  * @brief Normal at the vertex of a quad mesh. Defined for "float" and "double"
@@ -203,10 +203,10 @@ DFM2_INLINE void MassPoint_Tri3D(
     size_t nTri);
 
 DFM2_INLINE void LaplacianSmoothing(
-    std::vector<double> &aXYZ,
-    const std::vector<int> &aTri,
+    std::vector<double> &vtx_xyz,
+    const std::vector<int> &tri_vtx,
     const std::vector<int> &elsup_ind,
-    const std::vector<int> elsup);
+    const std::vector<int> &elsup);
 
 // ---------------------------------------------------------
 

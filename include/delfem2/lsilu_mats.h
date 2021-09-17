@@ -50,8 +50,8 @@ class CPreconditionerILU {
   // treat 1x1 block space matrix as N*N block sparse matrix where the block matrix is diagonal
   void BackwardSubstitutionDegenerate(T *vec, unsigned int N) const;
  public:
-  unsigned int nblk;
-  unsigned int ndim;
+  unsigned int nblk = 0;
+  unsigned int ndim = 0;
   std::vector<unsigned int> colInd;
   std::vector<unsigned int> rowPtr;
   std::vector<unsigned int> m_diaInd;

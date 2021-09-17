@@ -60,12 +60,12 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge(
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
   for (const auto & itri : aSTri){
-    const int i0 = itri.v[0];
-    const int i1 = itri.v[1];
-    const int i2 = itri.v[2];
-    if( i0 == -1 ){
-      assert( i1 == -1 );
-      assert( i2 == -1 );
+    const unsigned int i0 = itri.v[0];
+    const unsigned int i1 = itri.v[1];
+    const unsigned int i2 = itri.v[2];
+    if( i0 == UINT_MAX ){
+      assert( i1 == UINT_MAX );
+      assert( i2 == UINT_MAX );
     }
     const CVec2d& p0 = aVec2[i0];
     const CVec2d& p1 = aVec2[i1];
@@ -164,9 +164,10 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
   //
   ::glLineWidth(3);
   for(size_t ie=0;ie<aEdge.size();++ie){
-    Draw_CCad2DEdge(aEdge[ie],
-                    (int)ie == iedge_picked,
-                    ipicked_elem);
+    Draw_CCad2DEdge(
+        aEdge[ie],
+        (int)ie == iedge_picked,
+        ipicked_elem);
   }
   //
   if( is_draw_face ){

@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
-
 #include "delfem2/geo_polyline2.h"
+
+#include <cstdlib>
 
 // ----------------------------------------------------------------------------------
 // std::vector starts from here

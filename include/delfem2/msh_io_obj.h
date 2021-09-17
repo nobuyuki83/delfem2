@@ -70,19 +70,19 @@ DFM2_INLINE void Write_Obj(
 // below: read obj
 
 DFM2_INLINE void Read_Obj(
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri,
-    const std::filesystem::path &fname);
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    const std::filesystem::path &file_path);
 
 /**
  * Read Obj file for quad-only mesh
  * @param fname
- * @param aXYZ
- * @param aQuad
+ * @param vtx_xyz
+ * @param quad_vtx
  */
 DFM2_INLINE void Read_Obj_MeshQuad3(
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aQuad,
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &quad_vtx,
     const std::filesystem::path &file_path);
 
 DFM2_INLINE void Read_Obj2(
@@ -91,9 +91,9 @@ DFM2_INLINE void Read_Obj2(
     std::vector<unsigned int> &aTri);
 
 DFM2_INLINE void Read_Obj3(
-    const std::string &fname,
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri);
+    const std::filesystem::path &file_path,
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx);
 
 // --------------------------
 // below: obj with surface attributes
@@ -137,8 +137,8 @@ public:
 };
 
 void Read_WavefrontMaterial(
-    const std::string& fname,
-    std::vector<MaterialWavefrontObj>& aMtl);
+    const std::filesystem::path &file_path,
+    std::vector<MaterialWavefrontObj>& materials);
 
 class Shape3_WavefrontObj{
 public:

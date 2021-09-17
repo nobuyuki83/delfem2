@@ -5,18 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
+#include "delfem2/geodelaunay3_v3.h"
+
 #include <cmath>
 #include <stack>
-
-#include "delfem2/geodelaunay3_v3.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
 #endif
 
-namespace delfem2{
-namespace delaunay3{
+namespace delfem2::delaunay3{
 
 template <typename T>
 T Volume_Tet3(
@@ -32,7 +30,6 @@ T Volume_Tet3(
       ) * 0.16666666666666666666666666666667;
 }
 
-}
 }
 
 template <typename T>
@@ -149,11 +146,11 @@ template delfem2::CVec3d delfem2::CircumCenter(const CVec3d& ipo0,
  * 2 :       outsdie
  */
 template <typename T>
-int delfem2::DetDelaunay
-(const CVec3<T>& p0,
-const CVec3<T>& p1,
-const CVec3<T>& p2,
-const CVec3<T>& p3)
+int delfem2::DetDelaunay(
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3)
 {
   const double area = Area_Tri(p0, p1, p2);
   if (fabs(area) < 1.0e-10){

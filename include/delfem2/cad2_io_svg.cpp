@@ -8,7 +8,6 @@
 
 #include "delfem2/cad2_io_svg.h"
 
-#include <cstdio>
 #include <deque>
 
 #include "delfem2/geo_polyline2.h"
@@ -17,8 +16,7 @@
 
 // ------------------------------------------
 
-namespace delfem2 {
-namespace cad2_io_svg {
+namespace delfem2::cad2_io_svg {
 
 DFM2_INLINE std::vector<std::string> SVG_Split_Path_d
     (std::string &s0) {
@@ -306,7 +304,6 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPolygonPoints
   }
 }
 
-} // cad2
 } // delfem2
 
 // =========================================================

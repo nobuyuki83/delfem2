@@ -15,7 +15,6 @@
 #include <cassert>
 #include <string>
 #include <cstring>
-#include <climits>
 #include <map>
 
 #include "delfem2/points.h"
@@ -89,7 +88,8 @@ DFM2_INLINE void delfem2::Write_Obj_Quad(
     fout << "v " << vec_xyz[ip * 3 + 0] << " " << vec_xyz[ip * 3 + 1] << " " << vec_xyz[ip * 3 + 2] << std::endl;
   }
   for (int iq = 0; iq < nq; iq++) {
-    fout << "f " << vec_quad[iq * 4 + 0] + 1 << " " << vec_quad[iq * 4 + 1] + 1 << " " << vec_quad[iq * 4 + 2] + 1 << " "
+    fout << "f " << vec_quad[iq * 4 + 0] + 1 << " " << vec_quad[iq * 4 + 1] + 1 << " " << vec_quad[iq * 4 + 2] + 1
+         << " "
          << vec_quad[iq * 4 + 3] + 1 << std::endl;
   }
 }
@@ -171,8 +171,8 @@ DFM2_INLINE void delfem2::Write_Obj(
 }
 
 DFM2_INLINE void delfem2::Read_Obj(
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri,
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
     const std::filesystem::path &file_path) {
   std::ifstream fin;
   fin.open(file_path);
@@ -180,10 +180,10 @@ DFM2_INLINE void delfem2::Read_Obj(
     std::cout << "File Read Fail" << std::endl;
     return;
   }
-  aXYZ.clear();
-  aTri.clear();
-  aXYZ.reserve(256 * 16);
-  aTri.reserve(256 * 16);
+  vtx_xyz.clear();
+  tri_vtx.clear();
+  vtx_xyz.reserve(256 * 16);
+  tri_vtx.reserve(256 * 16);
   const int BUFF_SIZE = 256;
   char buff[BUFF_SIZE];
   while (fin.getline(buff, BUFF_SIZE)) {
@@ -196,9 +196,9 @@ DFM2_INLINE void delfem2::Read_Obj(
         is >> str >> x >> y >> z;
 //        sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
       }
-      aXYZ.push_back(x);
-      aXYZ.push_back(y);
-      aXYZ.push_back(z);
+      vtx_xyz.push_back(x);
+      vtx_xyz.push_back(y);
+      vtx_xyz.push_back(z);
     }
     if (buff[0] == 'f') {
       char str[256];
@@ -208,27 +208,27 @@ DFM2_INLINE void delfem2::Read_Obj(
         is >> str >> i0 >> i1 >> i2;
 //       sscanf(buff, "%s %d %d %d", str, &i0, &i1, &i2);
       }
-      aTri.push_back(i0 - 1);
-      aTri.push_back(i1 - 1);
-      aTri.push_back(i2 - 1);
+      tri_vtx.push_back(i0 - 1);
+      tri_vtx.push_back(i1 - 1);
+      tri_vtx.push_back(i2 - 1);
     }
   }
 }
 
 DFM2_INLINE void delfem2::Read_Obj_MeshQuad3(
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aQuad,
-    const std::filesystem::path &fname) {
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &quad_vtx,
+    const std::filesystem::path &file_path) {
   std::ifstream fin;
-  fin.open(fname.c_str());
+  fin.open(file_path.c_str());
   if (fin.fail()) {
     std::cout << "File Read Fail" << std::endl;
     return;
   }
-  aXYZ.clear();
-  aQuad.clear();
-  aXYZ.reserve(256 * 16);
-  aQuad.reserve(256 * 16);
+  vtx_xyz.clear();
+  quad_vtx.clear();
+  vtx_xyz.reserve(256 * 16);
+  quad_vtx.reserve(256 * 16);
   const int BUFF_SIZE = 256;
   char buff[BUFF_SIZE];
   while (fin.getline(buff, BUFF_SIZE)) {
@@ -239,9 +239,9 @@ DFM2_INLINE void delfem2::Read_Obj_MeshQuad3(
       std::istringstream is(buff);
       is >> str >> x >> y >> z;
 //      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
-      aXYZ.push_back(x);
-      aXYZ.push_back(y);
-      aXYZ.push_back(z);
+      vtx_xyz.push_back(x);
+      vtx_xyz.push_back(y);
+      vtx_xyz.push_back(z);
     }
     if (buff[0] == 'f') {
       char str[256];
@@ -249,10 +249,10 @@ DFM2_INLINE void delfem2::Read_Obj_MeshQuad3(
       std::istringstream is(buff);
       is >> str >> i0 >> i1 >> i2 >> i3;
 //      sscanf(buff, "%s %d %d %d %d", str, &i0, &i1, &i2, &i3);
-      aQuad.push_back(i0 - 1);
-      aQuad.push_back(i1 - 1);
-      aQuad.push_back(i2 - 1);
-      aQuad.push_back(i3 - 1);
+      quad_vtx.push_back(i0 - 1);
+      quad_vtx.push_back(i1 - 1);
+      quad_vtx.push_back(i2 - 1);
+      quad_vtx.push_back(i3 - 1);
     }
   }
 }
@@ -309,19 +309,19 @@ DFM2_INLINE void delfem2::Read_Obj2(
 }
 
 DFM2_INLINE void delfem2::Read_Obj3(
-    const std::string &fname,
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri) {
+    const std::filesystem::path &file_path,
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx) {
   std::ifstream fin;
-  fin.open(fname.c_str());
+  fin.open(file_path);
   if (fin.fail()) {
     std::cout << "File Read Fail" << std::endl;
     return;
   }
-  aXYZ.clear();
-  aTri.clear();
-  aXYZ.reserve(256 * 16);
-  aTri.reserve(256 * 16);
+  vtx_xyz.clear();
+  tri_vtx.clear();
+  vtx_xyz.reserve(256 * 16);
+  tri_vtx.reserve(256 * 16);
   const int BUFF_SIZE = 256;
   char buff[BUFF_SIZE];
   while (fin.getline(buff, BUFF_SIZE)) {
@@ -332,9 +332,9 @@ DFM2_INLINE void delfem2::Read_Obj3(
       std::istringstream is(buff);
       is >> str >> x >> y >> z;
 //      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);
-      aXYZ.push_back(x);
-      aXYZ.push_back(y);
-      aXYZ.push_back(z);
+      vtx_xyz.push_back(x);
+      vtx_xyz.push_back(y);
+      vtx_xyz.push_back(z);
     }
     if (buff[0] == 'f') {
       int nv = 0;
@@ -364,18 +364,18 @@ DFM2_INLINE void delfem2::Read_Obj3(
         aI[iv] = i0 - 1;
       }
       if (nv == 3) {
-        aTri.push_back(aI[0]);
-        aTri.push_back(aI[1]);
-        aTri.push_back(aI[2]);
+        tri_vtx.push_back(aI[0]);
+        tri_vtx.push_back(aI[1]);
+        tri_vtx.push_back(aI[2]);
       }
       if (nv == 4) {
-        aTri.push_back(aI[0]);
-        aTri.push_back(aI[1]);
-        aTri.push_back(aI[2]);
+        tri_vtx.push_back(aI[0]);
+        tri_vtx.push_back(aI[1]);
+        tri_vtx.push_back(aI[2]);
         ///
-        aTri.push_back(aI[0]);
-        aTri.push_back(aI[2]);
-        aTri.push_back(aI[3]);
+        tri_vtx.push_back(aI[0]);
+        tri_vtx.push_back(aI[2]);
+        tri_vtx.push_back(aI[3]);
       }
     }
   }
@@ -431,7 +431,7 @@ DFM2_INLINE void delfem2::Read_WavefrontObjWithSurfaceAttributes(
         vec_nrm.push_back(x);
         vec_nrm.push_back(y);
         vec_nrm.push_back(z);
-      } else if(buff[1] == 't'){ // tex
+      } else if (buff[1] == 't') { // tex
         is >> str >> x >> y;
         vec_tex.push_back(x);
         vec_tex.push_back(y);
@@ -455,7 +455,7 @@ DFM2_INLINE void delfem2::Read_WavefrontObjWithSurfaceAttributes(
       continue;
     }
     if (buff[0] == 'f') {
-      if( vec_tri_group.empty() ){
+      if (vec_tri_group.empty()) {
         vec_tri_group.resize(vec_tri_group.size() + 1);
         const std::size_t iogt0 = vec_tri_group.size() - 1;
         vec_tri_group[iogt0].name_group = "";
@@ -491,15 +491,15 @@ DFM2_INLINE void delfem2::Read_WavefrontObjWithSurfaceAttributes(
 }
 
 void delfem2::Read_WavefrontMaterial(
-    const std::string &fname,
-    std::vector<MaterialWavefrontObj> &aMtl) {
+    const std::filesystem::path &file_path,
+    std::vector<MaterialWavefrontObj> &materials) {
   std::ifstream fin;
-  fin.open(fname.c_str());
+  fin.open(file_path);
   if (fin.fail()) {
     std::cout << "File Read Fail" << std::endl;
     return;
   }
-  aMtl.clear();
+  materials.clear();
   const int BUFF_SIZE = 256;
   char buff[BUFF_SIZE];
   while (fin.getline(buff, BUFF_SIZE)) {
@@ -509,51 +509,51 @@ void delfem2::Read_WavefrontMaterial(
     std::string str0, str1, str2, str3, str4;
     ss >> str0;
     if (str0 == "newmtl") {
-      aMtl.resize(aMtl.size() + 1);
-      const int imtl0 = static_cast<int>(aMtl.size()) - 1;
+      materials.resize(materials.size() + 1);
+      const int imtl0 = static_cast<int>(materials.size()) - 1;
       ss >> str1;
-      aMtl[imtl0].name_mtl = str1;
+      materials[imtl0].name_mtl = str1;
     }
-	const int imtl0 = static_cast<int>(aMtl.size()) - 1;
+    const int imtl0 = static_cast<int>(materials.size()) - 1;
     if (str0 == "Kd") {
       ss >> str1 >> str2 >> str3;
-      aMtl[imtl0].Kd[0] = std::stof(str1);
-      aMtl[imtl0].Kd[1] = std::stof(str2);
-      aMtl[imtl0].Kd[2] = std::stof(str3);
-      aMtl[imtl0].Kd[3] = 1.0;
+      materials[imtl0].Kd[0] = std::stof(str1);
+      materials[imtl0].Kd[1] = std::stof(str2);
+      materials[imtl0].Kd[2] = std::stof(str3);
+      materials[imtl0].Kd[3] = 1.0;
     }
     if (str0 == "Ka") {
       ss >> str1 >> str2 >> str3;
-      aMtl[imtl0].Ka[0] = std::stof(str1);
-      aMtl[imtl0].Ka[1] = std::stof(str2);
-      aMtl[imtl0].Ka[2] = std::stof(str3);
-      aMtl[imtl0].Ka[3] = 1.0;
+      materials[imtl0].Ka[0] = std::stof(str1);
+      materials[imtl0].Ka[1] = std::stof(str2);
+      materials[imtl0].Ka[2] = std::stof(str3);
+      materials[imtl0].Ka[3] = 1.0;
     }
     if (str0 == "Ks") {
       ss >> str1 >> str2 >> str3;
-      aMtl[imtl0].Ks[0] = std::stof(str1);
-      aMtl[imtl0].Ks[1] = std::stof(str2);
-      aMtl[imtl0].Ks[2] = std::stof(str3);
-      aMtl[imtl0].Ks[3] = 1.0;
+      materials[imtl0].Ks[0] = std::stof(str1);
+      materials[imtl0].Ks[1] = std::stof(str2);
+      materials[imtl0].Ks[2] = std::stof(str3);
+      materials[imtl0].Ks[3] = 1.0;
     }
     if (str0 == "Ke") {
       ss >> str1 >> str2 >> str3;
-      aMtl[imtl0].Ke[0] = std::stof(str1);
-      aMtl[imtl0].Ke[1] = std::stof(str2);
-      aMtl[imtl0].Ke[2] = std::stof(str3);
-      aMtl[imtl0].Ke[3] = std::stof(str3);
+      materials[imtl0].Ke[0] = std::stof(str1);
+      materials[imtl0].Ke[1] = std::stof(str2);
+      materials[imtl0].Ke[2] = std::stof(str3);
+      materials[imtl0].Ke[3] = std::stof(str3);
     }
     if (str0 == "Ns") {
       ss >> str1;
-      aMtl[imtl0].Ns = std::stof(str1);
+      materials[imtl0].Ns = std::stof(str1);
     }
     if (str0 == "illum") {
       ss >> str1;
-      aMtl[imtl0].illum = std::stoi(str1);
+      materials[imtl0].illum = std::stoi(str1);
     }
-    if (str0 == "map_Kd") {      
+    if (str0 == "map_Kd") {
       ss >> str1;
-      aMtl[imtl0].map_Kd = str1;
+      materials[imtl0].map_Kd = str1;
     }
   }
 }
@@ -561,21 +561,21 @@ void delfem2::Read_WavefrontMaterial(
 // ----------------------
 
 void delfem2::Shape3_WavefrontObj::ReadObj(
-                                      const std::string &path_obj) {
+    const std::string &path_obj) {
   std::string fname_mtl;
   Read_WavefrontObjWithSurfaceAttributes(
-           path_obj,
-           fname_mtl, aXYZ, aTex, aNorm, aObjGroupTri);
+      path_obj,
+      fname_mtl, aXYZ, aTex, aNorm, aObjGroupTri);
   std::string path_dir = std::string(path_obj.begin(), path_obj.begin() + path_obj.rfind("/"));
   Read_WavefrontMaterial(path_dir + "/" + fname_mtl,
-           aMaterial);
+                         aMaterial);
   //  std::cout << aObjGroupTri.size() << " " << aMaterial.size() << std::endl;
   { //
     std::map<std::string, int> mapMtlName2Ind;
     for (int imtl = 0; imtl < (int) aMaterial.size(); ++imtl) {
       mapMtlName2Ind.insert(std::make_pair(aMaterial[imtl].name_mtl, imtl));
     }
-    for (auto &iogt : aObjGroupTri) {
+    for (auto &iogt: aObjGroupTri) {
       std::string name_mtl = iogt.name_mtl;
       auto itr = mapMtlName2Ind.find(name_mtl);
       if (name_mtl.empty() || itr == mapMtlName2Ind.end()) {
@@ -602,13 +602,13 @@ std::vector<double> delfem2::Shape3_WavefrontObj::AABB3_MinMax() const {
 }
 
 void delfem2::Shape3_WavefrontObj::ScaleXYZ(
-                                       double s) {
+    double s) {
   delfem2::Scale_PointsX(aXYZ,
                          s);
 }
 
 void delfem2::Shape3_WavefrontObj::TranslateXYZ(
-                                           double x, double y, double z) {
+    double x, double y, double z) {
   delfem2::Translate_Points3(aXYZ,
                              x, y, z);
 }

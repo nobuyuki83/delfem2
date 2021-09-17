@@ -7,11 +7,8 @@
 
 #include "delfem2/gizmo_geo3.h"
 
-#include <cstdio>
-
 #include "delfem2/vec3.h"
 #include "delfem2/geoproximity3_v3.h"
-
 
 DFM2_INLINE bool delfem2::isPickCircle(
     const CVec3d &axis,
@@ -145,7 +142,11 @@ DFM2_INLINE bool delfem2::DragHandlerRot_PosQuat(
     CVec3d v1(vo[0], vo[1], vo[2]);
     v1.normalize();
     double ar = -DragCircle(sp0, sp1, pos, v1, mMV, mPj);
-    const double dq[4] = {v0.x * sin(ar * 0.5), v0.y * sin(ar * 0.5), v0.z * sin(ar * 0.5), cos(ar * 0.5)};
+    const double dq[4] = {
+        v0.x * sin(ar * 0.5),
+        v0.y * sin(ar * 0.5),
+        v0.z * sin(ar * 0.5),
+        cos(ar * 0.5)};
     double qtmp[4];
     QuatQuat(qtmp, dq, quat);
     Copy_Quat(quat, qtmp);
@@ -173,7 +174,11 @@ bool delfem2::DragHandlerRot_Mat4(
     v1.normalize();
     CVec3d pos(mat[3], mat[7], mat[11]);
     const double ar = DragCircle(sp0, sp1, pos, v1, mMV, mPj);
-    const double dq[4] = {v0.x * sin(ar * 0.5), v0.y * sin(ar * 0.5), v0.z * sin(ar * 0.5), cos(ar * 0.5)};
+    const double dq[4] = {
+        v0.x * sin(ar * 0.5),
+        v0.y * sin(ar * 0.5),
+        v0.z * sin(ar * 0.5),
+        cos(ar * 0.5)};
     double qtmp[4];
     QuatQuat(qtmp, quat, dq);
     Copy_Quat(quat, qtmp);
@@ -326,14 +331,14 @@ void delfem2::CGizmo_Rotation<REAL>::Drag(
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CGizmo_Rotation<float>::Drag
-(const float src0[3],
- const float src1[3],
- const float dir[3]);
-template void delfem2::CGizmo_Rotation<double>::Drag
- (const double src0[3],
-  const double src1[3],
-  const double dir[3]);
+template void delfem2::CGizmo_Rotation<float>::Drag(
+    const float src0[3],
+    const float src1[3],
+    const float dir[3]);
+template void delfem2::CGizmo_Rotation<double>::Drag(
+    const double src0[3],
+    const double src1[3],
+    const double dir[3]);
 #endif
 
 // ------------------------------------------------
@@ -384,16 +389,16 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   ielem_picked = -1;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CGizmo_Transl<float>::Pick
-(bool is_down,
- const float src[3],
- const float dir[3],
- float tol);
-template void delfem2::CGizmo_Transl<double>::Pick
-(bool is_down,
- const double src[3],
- const double dir[3],
- double tol);
+template void delfem2::CGizmo_Transl<float>::Pick(
+    bool is_down,
+    const float src[3],
+    const float dir[3],
+    float tol);
+template void delfem2::CGizmo_Transl<double>::Pick(
+    bool is_down,
+    const double src[3],
+    const double dir[3],
+    double tol);
 #endif
 
 // -----------------
@@ -420,10 +425,12 @@ void delfem2::CGizmo_Transl<REAL>::Drag(
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CGizmo_Transl<float>::Drag(const float src0[3],
-                                                  const float src1[3],
-                                                  const float dir[3]);
-template void delfem2::CGizmo_Transl<double>::Drag(const double src0[3],
-                                                   const double src1[3],
-                                                   const double dir[3]);
+template void delfem2::CGizmo_Transl<float>::Drag(
+    const float src0[3],
+    const float src1[3],
+    const float dir[3]);
+template void delfem2::CGizmo_Transl<double>::Drag(
+    const double src0[3],
+    const double src1[3],
+    const double dir[3]);
 #endif

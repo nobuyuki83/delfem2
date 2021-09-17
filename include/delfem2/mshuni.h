@@ -35,8 +35,8 @@ DFM2_INLINE unsigned FindAdjEdgeIndex(
     const unsigned int *aTri);
 
 DFM2_INLINE void convert2Tri_Quad(
-    std::vector<unsigned int> &aTri,
-    const std::vector<unsigned int> &aQuad);
+    std::vector<unsigned int> &tri_vtx,
+    const std::vector<unsigned int> &quad_vtx);
 
 
 /**
@@ -75,8 +75,8 @@ DFM2_INLINE void JArray_ElSuP_MeshTri(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
     //
-    const std::vector<unsigned int> &aTri,
-    int nXYZ);
+    const std::vector<unsigned int> &tri_vtx,
+    int num_vtx);
 
 
 
@@ -131,7 +131,7 @@ DFM2_INLINE void JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     //
-    const unsigned int *elem_vtx_idx,
+    const unsigned int *elem_vtx,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     unsigned int num_vtx_par_elem,
@@ -145,7 +145,7 @@ DFM2_INLINE void JArray_PSuP_MeshElem(
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     //
-    const unsigned int *elem_vtx_idx,
+    const unsigned int *elem_vtx,
     size_t num_elm,
     unsigned int num_vtx_par_elem,
     size_t num_vtx);
@@ -164,14 +164,14 @@ DFM2_INLINE void JArrayEdge_MeshElem(
     std::vector<unsigned int> &edge_ind,
     std::vector<unsigned int> &edge,
     //
-    const unsigned int *elem_vtx_idx,
+    const unsigned int *elem_vtx,
     delfem2::MESHELEM_TYPE elem_type,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     bool is_bidirectional);
 
 DFM2_INLINE void MeshLine_JArrayEdge(
-    std::vector<unsigned int> &line_vtx_idx,
+    std::vector<unsigned int> &line_vtx,
     //
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup);
@@ -179,16 +179,16 @@ DFM2_INLINE void MeshLine_JArrayEdge(
 /**
  * Extracting line element from mesh (e.g., triangle mesh).
  * The edges of the element becomes the line
- * @param[out] line_vtx_idx
- * @param[in] elem_vtx_idx
+ * @param[out] line_vtx
+ * @param[in] elem_vtx
  * @param[in] num_elem
  * @param[in] elem_type
  * @param[in] num_vtx the number of the vertices
  */
 DFM2_INLINE void MeshLine_MeshElem(
-    std::vector<unsigned int> &line_vtx_idx,
+    std::vector<unsigned int> &line_vtx,
     //
-    const unsigned int *elem_vtx_idx,
+    const unsigned int *elem_vtx,
     size_t num_elem,
     delfem2::MESHELEM_TYPE elem_type,
     size_t num_vtx);
@@ -196,18 +196,18 @@ DFM2_INLINE void MeshLine_MeshElem(
 // ------------------------------------
 
 DFM2_INLINE void MarkConnectedElements(
-    std::vector<unsigned int> &aFlgElem,
-    unsigned int itri_ker,
-    unsigned int igroup,
-    const std::vector<unsigned int> &aElSuEl);
+    std::vector<unsigned int> &elem_flag,
+    unsigned int ielem_kernel,
+    unsigned int flag,
+    const std::vector<unsigned int> &elem_adjelem);
 
 DFM2_INLINE void MakeGroupElem(
-    int &ngroup,
-    std::vector<unsigned int> &aIndGroup,
-    const std::vector<unsigned int> &aElem,
-    const std::vector<unsigned int> &aElemSurRel,
-    int nfael,
-    int nnoel);
+    int &num_group,
+    std::vector<unsigned int> &elem_flag,
+    const std::vector<unsigned int> &elem_vtx,
+    const std::vector<unsigned int> &elem_adjelem,
+    const int num_face_par_elem,
+    const int num_vtx_par_elem);
 
 } // end namespace delfem2
 

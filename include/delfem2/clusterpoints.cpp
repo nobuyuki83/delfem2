@@ -5,14 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/clusterpoints.h"
+
 #include <cmath>
 #include <climits>
 #include <cassert>
 #include <vector>
 #include <set>
-#include "delfem2/clusterpoints.h"
 
-namespace clusterpoints {
+namespace delfem2::clusterpoints {
 
 double Dot3(const double p0[3], const double p1[3]) {
   return p0[0] * p1[0] + p0[1] * p1[1] + p0[2] * p1[2];
@@ -43,10 +44,6 @@ public:
   unsigned int ipsup;
 };
 
-}
-
-// ----------------------------------
-
 unsigned int Find_IndexPoint_From_IndexPsup(
     unsigned int ipsup,
     const unsigned int* psup_ind,
@@ -62,6 +59,11 @@ unsigned int Find_IndexPoint_From_IndexPsup(
   return UINT_MAX;
 }
 
+}
+
+// ----------------------------------
+
+
 DFM2_INLINE void delfem2::BinaryClustering_Points3d(
     std::vector<double>& aXYZ1,
     std::vector<double>& aArea1,
@@ -75,7 +77,7 @@ DFM2_INLINE void delfem2::BinaryClustering_Points3d(
     const std::vector<unsigned int>& psup0)
 {
   namespace cp = clusterpoints;
-  const unsigned int np0 = static_cast<unsigned int>(aXYZ0.size()/3);
+  const auto np0 = static_cast<unsigned int>(aXYZ0.size()/3);
   assert( aArea0.size() == np0 );
   assert( aNorm0.size() == np0*3 );
   std::set<clusterpoints::CData> aData;
@@ -105,13 +107,13 @@ DFM2_INLINE void delfem2::BinaryClustering_Points3d(
   }
   map01.assign(np0,UINT_MAX);
   for (const auto &data: aData) {
-    const unsigned int ip0 = Find_IndexPoint_From_IndexPsup(
+    const unsigned int ip0 = clusterpoints::Find_IndexPoint_From_IndexPsup(
         data.ipsup,
         psup_ind0.data(),
         psup0.data());
     const unsigned int jp0 = psup0[data.ipsup];
     assert( ip0 < jp0 );
-    const unsigned int ip1 = static_cast<unsigned int>(aXYZ1.size()/3); // index of new node
+    const auto ip1 = static_cast<unsigned int>(aXYZ1.size()/3); // index of new node
     assert( aArea1.size() == ip1 && aNorm1.size() == ip1*3 );
     if( map01[ip0] != UINT_MAX || map01[jp0] != UINT_MAX ) continue;
     map01[ip0] = ip1;
@@ -137,7 +139,7 @@ DFM2_INLINE void delfem2::BinaryClustering_Points3d(
   }
   for(unsigned int ip0=0;ip0<np0;++ip0){ // points that are not clustered
     if( map01[ip0] != UINT_MAX ){ continue; }
-    const unsigned int ip1 = static_cast<unsigned int>(aXYZ1.size()/3); // index of new node
+    const auto ip1 = static_cast<unsigned int>(aXYZ1.size()/3); // index of new node
     assert( aArea1.size() == ip1 && aNorm1.size() == ip1*3 );
     map01[ip0] = ip1;
     aXYZ1.push_back(aXYZ0[ip0*3+0]);
@@ -174,7 +176,7 @@ delfem2::BinaryClustering_Points2d(
   }
   unsigned int np1 = 0;
   for (const auto &data: aData) {
-    const unsigned int ip0 = Find_IndexPoint_From_IndexPsup(data.ipsup, psup_ind0, psup0);
+    const unsigned int ip0 = clusterpoints::Find_IndexPoint_From_IndexPsup(data.ipsup, psup_ind0, psup0);
     const unsigned int jp0 = psup0[data.ipsup];
     assert( ip0 < jp0 );
     if( map01[ip0] != UINT_MAX || map01[jp0] != UINT_MAX ) continue;

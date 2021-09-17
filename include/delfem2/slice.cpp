@@ -12,15 +12,14 @@
 
 // ---------------------------------------------
 
-namespace delfem2 {
-namespace slice {
+namespace delfem2::slice {
 
-DFM2_INLINE void IndexElement_OverlapLevels_MeshTri3D
-(std::vector< std::vector<unsigned int> >& aCST,
- //
- const std::vector<double>& aH,
- const std::vector<double>& aLevelVtx,
- const std::vector<unsigned int>& aTri)
+DFM2_INLINE void IndexElement_OverlapLevels_MeshTri3D(
+    std::vector< std::vector<unsigned int> >& aCST,
+    //
+    const std::vector<double>& aH,
+    const std::vector<double>& aLevelVtx,
+    const std::vector<unsigned int>& aTri)
 {
   const size_t ntri = aTri.size()/3;
   const size_t nH = aH.size();
@@ -59,17 +58,17 @@ DFM2_INLINE bool TraverseBoundaryLoop(
   unsigned int iseg_next = iseg_ker;
   for(;;){ // seg in cs loop
     assert( aFlgSeg[iseg_next] == 0 );
-    int jtri0 = aCST[iseg_next];
+    unsigned int jtri0 = aCST[iseg_next];
     aFlgSeg[iseg_next] = 1;
-    CSegInfo info;
+    CSegInfo info{};
     info.Initialize(
         jtri0,
         aTri.data(),aTri.size()/3,
         aLevelVtx.data(),height);
     cs.aTriInfo.push_back(info);
     unsigned int iedge_next = info.iedB;
-    int itri_next1 = aTriSuTri[jtri0*3+iedge_next];
-    if( itri_next1 == -1 ){ break; } // open loop discard
+    unsigned int itri_next1 = aTriSuTri[jtri0*3+iedge_next];
+    if( itri_next1 == UINT_MAX ){ break; } // open loop discard
     int iseg_next1 = Tri2Seg[itri_next1];
     assert( iseg_next1 != -1 );
     if( iseg_next1 == iseg_ker ){ return true; } // is_open == false
@@ -80,7 +79,7 @@ DFM2_INLINE bool TraverseBoundaryLoop(
   //
   iseg_next = iseg_ker;
   for(;;){ // seg in cs loop
-    int jtri0 = aCST[iseg_next];
+    unsigned int jtri0 = aCST[iseg_next];
     unsigned int iflg = 0;
     double aH[3];
     for(unsigned int inotri=0;inotri<3;inotri++){
@@ -111,7 +110,6 @@ DFM2_INLINE bool TraverseBoundaryLoop(
   return false;
 }
 
-}
 }
 
 // ----------------------------------------------
@@ -263,11 +261,12 @@ void delfem2::Slice_MeshTri3D_Heights
       }
       if( iseg_ker == aCST[ih].size() ) break;
       CSliceTriMesh cs(ih);
-      const bool is_closed = slice::TraverseBoundaryLoop(cs, aFlgSeg,
-                                                         iseg_ker, ih, Tri2Seg,
-                                                         aCST[ih], aLevel[ih],
-                                                         aLevelVtx,
-                                                         aTri, aTriSuTri);
+      const bool is_closed = slice::TraverseBoundaryLoop(
+          cs, aFlgSeg,
+          iseg_ker, ih, Tri2Seg,
+          aCST[ih], aLevel[ih],
+          aLevelVtx,
+          aTri, aTriSuTri);
       if( !is_closed ){ continue; }
       aCS.push_back(cs);
     }

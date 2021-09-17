@@ -5,13 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/evalmathexp.h"
+
 #include <cassert>
 #include <cerrno>	/* Need for Using "ERANGE" */
 #include <cmath>	/* Need for Using "HUGE_VAL" */
 #include <iostream>
 #include <climits>
-
-#include "delfem2/evalmathexp.h"
 
 namespace dfm2 = delfem2;
 

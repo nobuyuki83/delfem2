@@ -15,8 +15,7 @@
 
 // ----------------------------------------------------
 
-namespace delfem2 {
-namespace ilu {
+namespace delfem2::ilu {
 
 DFM2_INLINE void CalcMatPr(
     double *out, const double *d, double *tmp,
@@ -128,7 +127,6 @@ class CRowLevNext {
   unsigned int next;
 };
 
-} // ilu
 } // delfem2
 
 
