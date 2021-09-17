@@ -16,8 +16,8 @@ ENDIF ()
 project(149_PathTracingSimple)
 
 # glfw
-SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}../../3rd_party/libglfw)
+find_package(glfw3 REQUIRED)
 
 # opengl
 find_package(OpenGL REQUIRED)
@@ -29,15 +29,15 @@ set(DELFEM2_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../include")
 
 
 add_executable(${PROJECT_NAME}
-  main.cpp
-)
+	main.cpp
+	)
 
 include_directories(
-  ${DELFEM2_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIR}
-)
+	${DELFEM2_INCLUDE_DIR}	  
+	)
 
 target_link_libraries(${PROJECT_NAME}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARIES}
-)
+    ${DFM2_LIBRARY}
+    OpenGL::GL
+    glfw
+	)

@@ -15,8 +15,8 @@ set(PROJ_NAME dfm2_static_glfwold)
 project(${PROJ_NAME})
 
 # glfw
-SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}../../3rd_party/libglfw)
+find_package(glfw3 REQUIRED)
 
 # glad
 get_filename_component(GLAD_INCLUDE_DIR
@@ -31,7 +31,6 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 #####################################
 
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${GLAD_INCLUDE_DIR}
@@ -60,7 +59,8 @@ add_library(${PROJ_NAME} STATIC
     ${DFM2_OPENGL_SRC}
     ${DFM2_OPENGL_OLD_SRC}
     ${DFM2_GLFW_SRC}    
-    ${DELFEM2_INC}/openglstb/glyph.h        ${DELFEM2_INC}/openglstb/glyph.cpp
+    ${DELFEM2_INC}/openglstb/glyph.h
+    ${DELFEM2_INC}/openglstb/glyph.cpp
 )
 
 file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)
