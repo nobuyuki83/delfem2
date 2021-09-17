@@ -21,7 +21,7 @@ bool Merge(
     const unsigned int* aIpRow,
     const unsigned int* aIpCol,
     const T emat[nrow][ncol][ndimrow][ndimcol],
-    std::vector<unsigned int>& tmp_buffer)
+    [[maybe_unused]] std::vector<unsigned int>& tmp_buffer)
 {
   for(unsigned int in=0;in<nrow;++in){
     for(unsigned int jn=0;jn<ncol;++jn) {

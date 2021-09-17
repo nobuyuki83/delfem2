@@ -25,7 +25,7 @@ std::string LoadFile(
   return std::string(vdataBegin, vdataEnd);
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
   viewer.camera.view_height = 1.0;
