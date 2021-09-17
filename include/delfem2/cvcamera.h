@@ -117,7 +117,7 @@ Mat4_Image2Screen(
   return {
       2.f/width, 0, 0, -1,
       0, -2.f/height, 0, 1,
-      0, 0, -0.1, 0,
+      0, 0, z_scale, 0,
       0, 0, 0, 1 };
 }
 

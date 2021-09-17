@@ -68,12 +68,7 @@ class CMat2 {
  public:
 
   CMat2() : p{0, 0, 0, 0} {}
-  CMat2(const CMat2 &rhs) {
-    this->p[0] = rhs.p[0];
-    this->p[1] = rhs.p[1];
-    this->p[2] = rhs.p[2];
-    this->p[3] = rhs.p[3];
-  }
+  CMat2(const CMat2 &) = default;
   CMat2(T xx, T xy, T yx, T yy) {
     this->p[0] = xx;
     this->p[1] = xy;
