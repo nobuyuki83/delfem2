@@ -15,7 +15,6 @@
 #include "delfem2/mat4.h"
 #include "delfem2/quat.h"
 
-
 // ----------------------------------------
 
 DFM2_INLINE delfem2::CVec2d delfem2::screenXYProjection(
@@ -23,7 +22,7 @@ DFM2_INLINE delfem2::CVec2d delfem2::screenXYProjection(
     const float *mMV,
     const float *mPj) {
   CVec3d sp0 = screenProjection(v, mMV, mPj);
-  return delfem2::CVec2d(sp0.x, sp0.y);
+  return {sp0.x, sp0.y};
 }
 
 DFM2_INLINE delfem2::CVec3d delfem2::GetCartesianRotationVector(

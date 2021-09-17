@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/geoproximity3_v3.h"
+
 #include <cstdlib>
 #include <cmath>
 #include <stack>
-
-#include "delfem2/geoproximity3_v3.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -18,8 +18,7 @@
 // =====================================
 // below: unexposed 
 
-namespace delfem2 {
-namespace proximity3 {
+namespace delfem2::proximity3 {
 
 DFM2_INLINE bool MyIsnan(double x) { return x!=x; }
 
@@ -130,7 +129,6 @@ T Volume_Tet3(
       ) * 0.16666666666666666666666666666667;
 }
 
-}
 }
 
 // ------------------------------------------

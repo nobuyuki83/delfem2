@@ -6,10 +6,10 @@
  */
 
 #include "delfem2/pbd_geo3dtri23.h"
+
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/pbd_geo3.h"
-#include <cstdio>
 
 // -------------------------------------
 

@@ -5,14 +5,12 @@
 #include <cassert>
 #include <cmath>
 
-namespace delfem2 {
-namespace cvimggraygrad {
+namespace delfem2::cvimggraygrad {
 
 inline float Dot3(const float p[3], const float q[3]) {
   return p[0] * q[0] + p[1] * q[1] + p[2] * q[2];
 }
 
-}
 }
 
 DFM2_INLINE void delfem2::Grayscale(

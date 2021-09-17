@@ -5,11 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/quat.h"
 
 #include <cmath>
 #include <cstring>
-
-#include "delfem2/quat.h"
 
 #ifndef M_PI
 #define M_PI 3.141592

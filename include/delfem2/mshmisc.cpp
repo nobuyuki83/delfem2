@@ -5,12 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/mshmisc.h"
+
 #include <cassert>
 #include <cmath>
 #include <vector>
-#include <cstddef> // size_t
-
-#include "delfem2/mshmisc.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -18,8 +17,7 @@
 
 // ------------------------------------------------
 
-namespace delfem2 {
-namespace mshmisc {
+namespace delfem2::mshmisc {
 
 //! @details we have "float" and "double" versions Length3 because of sqrtf and sqrt
 DFM2_INLINE double Length3(const double p[3]) {
@@ -81,13 +79,17 @@ DFM2_INLINE void MatVec3(T y[3],
 //! @details we have "float" and "double" versions Distance3 because of sqrtf and sqrt
 DFM2_INLINE double Distance3(const double p0[3], const double p1[3]) {
   return sqrt(
-      (p1[0] - p0[0]) * (p1[0] - p0[0]) + (p1[1] - p0[1]) * (p1[1] - p0[1]) + (p1[2] - p0[2]) * (p1[2] - p0[2]));
+      (p1[0] - p0[0]) * (p1[0] - p0[0]) +
+      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+      (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
 //! @details we have "float" and "double" versions Distance3 because of sqrtf and sqrt
 DFM2_INLINE float Distance3(const float p0[3], const float p1[3]) {
   return sqrtf(
-      (p1[0] - p0[0]) * (p1[0] - p0[0]) + (p1[1] - p0[1]) * (p1[1] - p0[1]) + (p1[2] - p0[2]) * (p1[2] - p0[2]));
+      (p1[0] - p0[0]) * (p1[0] - p0[0]) +
+      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
+      (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
 DFM2_INLINE double Distance2D(const double p0[3], const double p1[3]) {
@@ -195,7 +197,6 @@ template void updateMinMaxXYZ(
 #endif
 
 }
-}
 
 // static function above
 // ==============================================
@@ -207,30 +208,30 @@ void delfem2::GetCenterWidthGroup(
     double &cx, double &cy, double &cz,
     double &wx, double &wy, double &wz,
     // ----------
-    const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aElem,
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &elm_vtx,
     const int nnoel,
     int igroup,
-    const std::vector<int> &aIndGroup) {
-  const std::size_t nelem = aElem.size() / nnoel;
-  assert(aElem.size() == nelem * nnoel);
-  assert(aIndGroup.size() == nelem);
+    const std::vector<int> &elm_groupidx) {
+  const std::size_t nelem = elm_vtx.size() / nnoel;
+  assert(elm_vtx.size() == nelem * nnoel);
+  assert(elm_groupidx.size() == nelem);
   bool is_ini = true;
   double x_min = 0, x_max = 0, y_min = 0, y_max = 0, z_min = 0, z_max = 0;
   for (unsigned int ielem = 0; ielem < nelem; ielem++) {
-    if (aIndGroup[ielem] != igroup) { continue; }
+    if (elm_groupidx[ielem] != igroup) { continue; }
     for (int inotri = 0; inotri < nnoel; inotri++) {
-      const int ip = aElem[ielem * 3 + inotri];
+      const unsigned int ip = elm_vtx[ielem * 3 + inotri];
       if (is_ini) {
-        x_min = x_max = aXYZ[ip * 3 + 0];
-        y_min = y_max = aXYZ[ip * 3 + 1];
-        z_min = z_max = aXYZ[ip * 3 + 2];
+        x_min = x_max = vtx_xyz[ip * 3 + 0];
+        y_min = y_max = vtx_xyz[ip * 3 + 1];
+        z_min = z_max = vtx_xyz[ip * 3 + 2];
         is_ini = false;
         continue;
       }
       mshmisc::updateMinMaxXYZ(
           x_min, x_max, y_min, y_max, z_min, z_max,
-          aXYZ[ip * 3 + 0], aXYZ[ip * 3 + 1], aXYZ[ip * 3 + 2]);
+          vtx_xyz[ip * 3 + 0], vtx_xyz[ip * 3 + 1], vtx_xyz[ip * 3 + 2]);
     }
   }
   if (is_ini) {
@@ -238,8 +239,9 @@ void delfem2::GetCenterWidthGroup(
     wx = wy = wz = 1;
     return;
   }
-  mshmisc::CenterWidth_MinMaxXYZ(cx, cy, cz, wx, wy, wz,
-                                 x_min, x_max, y_min, y_max, z_min, z_max);
+  mshmisc::CenterWidth_MinMaxXYZ(
+      cx, cy, cz, wx, wy, wz,
+      x_min, x_max, y_min, y_max, z_min, z_max);
 }
 
 void delfem2::GetCenterWidthGroup(
@@ -259,7 +261,7 @@ void delfem2::GetCenterWidthGroup(
   for (unsigned int ielem = 0; ielem < nelem; ielem++) {
     if (aIndGroup[ielem] != igroup) { continue; }
     for (unsigned int iip = aElemInd[ielem]; iip < aElemInd[ielem + 1]; iip++) {
-      const int ip = aElem[iip];
+      const unsigned int ip = aElem[iip];
       if (is_ini) {
         x_min = x_max = aXYZ[ip * 3 + 0];
         y_min = y_max = aXYZ[ip * 3 + 1];
@@ -282,42 +284,43 @@ void delfem2::GetCenterWidthGroup(
       x_min, x_max, y_min, y_max, z_min, z_max);
 }
 
-void delfem2::GetCenterWidth3DGroup
-    (double cw[6],
-        //
-     const std::vector<double> &aXYZ,
-     const std::vector<unsigned int> &aElemInd,
-     const std::vector<unsigned int> &aElem,
-     int igroup,
-     const std::vector<int> &aIndGroup) {
-  GetCenterWidthGroup(cw[0], cw[1], cw[2], cw[3], cw[4], cw[5],
-                      aXYZ, aElemInd, aElem, igroup, aIndGroup);
+void delfem2::GetCenterWidth3DGroup(
+    double cw[6],
+    //
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aElemInd,
+    const std::vector<unsigned int> &aElem,
+    int igroup,
+    const std::vector<int> &aIndGroup) {
+  GetCenterWidthGroup(
+      cw[0], cw[1], cw[2], cw[3], cw[4], cw[5],
+      aXYZ, aElemInd, aElem, igroup, aIndGroup);
 }
 
 // -------------------------------------
 
 template<typename T>
 T delfem2::CentsMaxRad_MeshTri3(
-    std::vector<T> &aXYZ_c0,
-    const std::vector<T> &aXYZ,
-    const std::vector<unsigned int> &aTri) {
+    std::vector<T> &tri_centerxyz,
+    const std::vector<T> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx) {
   T max_rad0 = -1;
-  const size_t nTri = aTri.size() / 3;
-  aXYZ_c0.resize(nTri * 3);
+  const size_t nTri = tri_vtx.size() / 3;
+  tri_centerxyz.resize(nTri * 3);
   for (unsigned int itri = 0; itri < nTri; ++itri) {
-    const unsigned int i0 = aTri[itri * 3 + 0];
-    const unsigned int i1 = aTri[itri * 3 + 1];
-    const unsigned int i2 = aTri[itri * 3 + 2];
+    const unsigned int i0 = tri_vtx[itri * 3 + 0];
+    const unsigned int i1 = tri_vtx[itri * 3 + 1];
+    const unsigned int i2 = tri_vtx[itri * 3 + 2];
     const T pc[3] = {
-        (aXYZ[i0 * 3 + 0] + aXYZ[i1 * 3 + 0] + aXYZ[i2 * 3 + 0]) / 3,
-        (aXYZ[i0 * 3 + 1] + aXYZ[i1 * 3 + 1] + aXYZ[i2 * 3 + 1]) / 3,
-        (aXYZ[i0 * 3 + 2] + aXYZ[i1 * 3 + 2] + aXYZ[i2 * 3 + 2]) / 3};
-    aXYZ_c0[itri * 3 + 0] = pc[0];
-    aXYZ_c0[itri * 3 + 1] = pc[1];
-    aXYZ_c0[itri * 3 + 2] = pc[2];
-    const T l0 = mshmisc::Distance3(pc, aXYZ.data() + i0 * 3);
-    const T l1 = mshmisc::Distance3(pc, aXYZ.data() + i1 * 3);
-    const T l2 = mshmisc::Distance3(pc, aXYZ.data() + i2 * 3);
+        (vtx_xyz[i0 * 3 + 0] + vtx_xyz[i1 * 3 + 0] + vtx_xyz[i2 * 3 + 0]) / 3,
+        (vtx_xyz[i0 * 3 + 1] + vtx_xyz[i1 * 3 + 1] + vtx_xyz[i2 * 3 + 1]) / 3,
+        (vtx_xyz[i0 * 3 + 2] + vtx_xyz[i1 * 3 + 2] + vtx_xyz[i2 * 3 + 2]) / 3};
+    tri_centerxyz[itri * 3 + 0] = pc[0];
+    tri_centerxyz[itri * 3 + 1] = pc[1];
+    tri_centerxyz[itri * 3 + 2] = pc[2];
+    const T l0 = mshmisc::Distance3(pc, vtx_xyz.data() + i0 * 3);
+    const T l1 = mshmisc::Distance3(pc, vtx_xyz.data() + i1 * 3);
+    const T l2 = mshmisc::Distance3(pc, vtx_xyz.data() + i2 * 3);
     if (max_rad0 < 0 || l0 > max_rad0) { max_rad0 = l0; }
     if (max_rad0 < 0 || l1 > max_rad0) { max_rad0 = l1; }
     if (max_rad0 < 0 || l2 > max_rad0) { max_rad0 = l2; }
@@ -326,22 +329,24 @@ T delfem2::CentsMaxRad_MeshTri3(
 }
 #ifdef DFM2_STATIC_LIBRARY
 template float delfem2::CentsMaxRad_MeshTri3(
-    std::vector<float> &,
-    const std::vector<float> &,
-    const std::vector<unsigned int> &);
+    std::vector<float> &tri_centerxyz,
+    const std::vector<float> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx);
 template double delfem2::CentsMaxRad_MeshTri3(
-    std::vector<double> &,
-    const std::vector<double> &,
-    const std::vector<unsigned int> &);
+    std::vector<double> &tri_centerxyz,
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx);
 #endif
 
-void delfem2::RemoveUnreferencedPoints_MeshElem
-    (std::vector<double> &aXYZ1,
-     std::vector<unsigned int> &aElem1,
-     std::vector<int> &aMap01,
-     unsigned int ndim,
-     const std::vector<double> &aXYZ0,
-     const std::vector<unsigned int> &aElem0) {
+// ----------------------------------------------
+
+void delfem2::RemoveUnreferencedPoints_MeshElem(
+    std::vector<double> &aXYZ1,
+    std::vector<unsigned int> &aElem1,
+    std::vector<int> &aMap01,
+    unsigned int ndim,
+    const std::vector<double> &aXYZ0,
+    const std::vector<unsigned int> &aElem0) {
   const size_t np0 = aXYZ0.size() / ndim;
   aMap01.assign(np0, -2);
   for (unsigned int ip : aElem0) {
@@ -369,57 +374,61 @@ void delfem2::RemoveUnreferencedPoints_MeshElem
   }
 }
 
+// -----------------------------------------------
+
 template<typename REAL>
 void delfem2::Normal_MeshTri3D(
-    REAL *aNorm,
-    const REAL *aXYZ,
-    size_t nXYZ,
-    const unsigned int *aTri,
-    size_t nTri) {
-  for (unsigned int i = 0; i < nXYZ * 3; i++) { aNorm[i] = 0; }
-  for (unsigned int itri = 0; itri < nTri; itri++) {
-    const unsigned int i0 = aTri[itri * 3 + 0];
-    assert(i0 < nXYZ);
-    const unsigned int i1 = aTri[itri * 3 + 1];
-    assert(i1 < nXYZ);
-    const unsigned int i2 = aTri[itri * 3 + 2];
-    assert(i2 < nXYZ);
-    const REAL *p0 = aXYZ + i0 * 3;
-    const REAL *p1 = aXYZ + i1 * 3;
-    const REAL *p2 = aXYZ + i2 * 3;
+    REAL *vtx_normal,
+    const REAL *vtx_xyz,
+    size_t num_vtx,
+    const unsigned int *tri_vtx,
+    size_t num_tri) {
+  for (unsigned int i = 0; i < num_vtx * 3; i++) { vtx_normal[i] = 0; }
+  for (unsigned int itri = 0; itri < num_tri; itri++) {
+    const unsigned int i0 = tri_vtx[itri * 3 + 0];
+    assert(i0 < num_vtx);
+    const unsigned int i1 = tri_vtx[itri * 3 + 1];
+    assert(i1 < num_vtx);
+    const unsigned int i2 = tri_vtx[itri * 3 + 2];
+    assert(i2 < num_vtx);
+    const REAL *p0 = vtx_xyz + i0 * 3;
+    const REAL *p1 = vtx_xyz + i1 * 3;
+    const REAL *p2 = vtx_xyz + i2 * 3;
     REAL un[3], area;
     mshmisc::UnitNormalAreaTri3(un, area, p0, p1, p2);
-    aNorm[i0 * 3 + 0] += un[0];
-    aNorm[i0 * 3 + 1] += un[1];
-    aNorm[i0 * 3 + 2] += un[2];
-    aNorm[i1 * 3 + 0] += un[0];
-    aNorm[i1 * 3 + 1] += un[1];
-    aNorm[i1 * 3 + 2] += un[2];
-    aNorm[i2 * 3 + 0] += un[0];
-    aNorm[i2 * 3 + 1] += un[1];
-    aNorm[i2 * 3 + 2] += un[2];
+    vtx_normal[i0 * 3 + 0] += un[0];
+    vtx_normal[i0 * 3 + 1] += un[1];
+    vtx_normal[i0 * 3 + 2] += un[2];
+    vtx_normal[i1 * 3 + 0] += un[0];
+    vtx_normal[i1 * 3 + 1] += un[1];
+    vtx_normal[i1 * 3 + 2] += un[2];
+    vtx_normal[i2 * 3 + 0] += un[0];
+    vtx_normal[i2 * 3 + 1] += un[1];
+    vtx_normal[i2 * 3 + 2] += un[2];
   }
-  for (unsigned int ino = 0; ino < nXYZ; ino++) {
-    const REAL invlen = 1 / mshmisc::Length3(aNorm + ino * 3);
-    aNorm[ino * 3 + 0] *= invlen;
-    aNorm[ino * 3 + 1] *= invlen;
-    aNorm[ino * 3 + 2] *= invlen;
+  for (unsigned int ino = 0; ino < num_vtx; ino++) {
+    const REAL invlen = 1 / mshmisc::Length3(vtx_normal + ino * 3);
+    vtx_normal[ino * 3 + 0] *= invlen;
+    vtx_normal[ino * 3 + 1] *= invlen;
+    vtx_normal[ino * 3 + 2] *= invlen;
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Normal_MeshTri3D(
-    float *aNorm,
-    const float *aXYZ,
-    size_t nXYZ,
-    const unsigned int *aTri,
-    size_t nTri);
+    float *,
+    const float *,
+    size_t,
+    const unsigned int *,
+    size_t);
 template void delfem2::Normal_MeshTri3D(
-    double *aNorm,
-    const double *aXYZ,
-    size_t nXYZ,
-    const unsigned int *aTri,
-    size_t nTri);
+    double *,
+    const double *,
+    size_t,
+    const unsigned int *,
+    size_t);
 #endif
+
+// ---------------------------------------
 
 template<typename REAL>
 void delfem2::Normal_MeshQuad3(
@@ -480,10 +489,14 @@ template void delfem2::Normal_MeshQuad3(
     const std::vector<unsigned int> &);
 #endif
 
-void delfem2::Quality_MeshTri2D
-    (double &max_aspect, double &min_area,
-     const double *aXY,
-     const unsigned int *aTri, unsigned int nTri) {
+// ---------------------------------
+
+void delfem2::Quality_MeshTri2D(
+    double &max_aspect,
+    double &min_area,
+    const double *aXY,
+    const unsigned int *aTri,
+    unsigned int nTri) {
   max_aspect = 0;
   min_area = 0;
   for (unsigned int itri = 0; itri < nTri; itri++) {
@@ -509,32 +522,36 @@ void delfem2::Quality_MeshTri2D
   }
 }
 
+// ---------------------------------------
+
 template<typename T>
 void delfem2::CG_MeshTri3_Solid(
-    T cg[3],
-    const std::vector<T> &aXYZ,
-    const std::vector<unsigned int> &aTri) { // center of gravity
-  cg[0] = cg[1] = cg[2] = 0.0;
+    T center_of_gravity_xyz[3],
+    const std::vector<T> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx) { // center of gravity
+  center_of_gravity_xyz[0] = 0;
+  center_of_gravity_xyz[1] = 0;
+  center_of_gravity_xyz[2] = 0;
   T tw = 0;
-  const size_t nTri = aTri.size() / 3;
+  const size_t nTri = tri_vtx.size() / 3;
   constexpr T quarter = static_cast<T>(0.25);
   for (unsigned int itri = 0; itri < nTri; itri++) {
-    const unsigned int i1 = aTri[itri * 3 + 0];
-    const unsigned int i2 = aTri[itri * 3 + 1];
-    const unsigned int i3 = aTri[itri * 3 + 2];
+    const unsigned int i1 = tri_vtx[itri * 3 + 0];
+    const unsigned int i2 = tri_vtx[itri * 3 + 1];
+    const unsigned int i3 = tri_vtx[itri * 3 + 2];
     const T q0[3] = {0, 0, 0};
-    const T q1[3] = {aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]};
-    const T q2[3] = {aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]};
-    const T q3[3] = {aXYZ[i3 * 3 + 0], aXYZ[i3 * 3 + 1], aXYZ[i3 * 3 + 2]};
+    const T q1[3] = {vtx_xyz[i1 * 3 + 0], vtx_xyz[i1 * 3 + 1], vtx_xyz[i1 * 3 + 2]};
+    const T q2[3] = {vtx_xyz[i2 * 3 + 0], vtx_xyz[i2 * 3 + 1], vtx_xyz[i2 * 3 + 2]};
+    const T q3[3] = {vtx_xyz[i3 * 3 + 0], vtx_xyz[i3 * 3 + 1], vtx_xyz[i3 * 3 + 2]};
     T v = mshmisc::TetVolume3D(q0, q1, q2, q3);
     tw += v;
-    cg[0] += (q0[0] + q1[0] + q2[0] + q3[0]) * quarter * v;
-    cg[1] += (q0[1] + q1[1] + q2[1] + q3[1]) * quarter * v;
-    cg[2] += (q0[2] + q1[2] + q2[2] + q3[2]) * quarter * v;
+    center_of_gravity_xyz[0] += (q0[0] + q1[0] + q2[0] + q3[0]) * quarter * v;
+    center_of_gravity_xyz[1] += (q0[1] + q1[1] + q2[1] + q3[1]) * quarter * v;
+    center_of_gravity_xyz[2] += (q0[2] + q1[2] + q2[2] + q3[2]) * quarter * v;
   }
-  cg[0] /= tw;
-  cg[1] /= tw;
-  cg[2] /= tw;
+  center_of_gravity_xyz[0] /= tw;
+  center_of_gravity_xyz[1] /= tw;
+  center_of_gravity_xyz[2] /= tw;
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CG_MeshTri3_Solid(
@@ -636,7 +653,9 @@ template double delfem2::CG_TriMsh3Flg_Shell(
 // ------------------------------------------
 
 void delfem2::CG_Tri(
-    double &cgx, double &cgy, double &cgz,
+    double &cgx,
+    double &cgy,
+    double &cgz,
     int itri,
     const std::vector<double> &aXYZ,
     const std::vector<int> &aTri) { // center of gravity
@@ -652,6 +671,8 @@ void delfem2::CG_Tri(
   cgy = (q1[1] + q2[1] + q3[1]) * 0.333333;
   cgz = (q1[2] + q2[2] + q3[2]) * 0.333333;
 }
+
+// -------------------------------
 
 template<typename T>
 void delfem2::CG_MeshTet3(
@@ -775,24 +796,24 @@ void delfem2::ExtrudeTri2Tet
 // -----------------------------------------------------------------------
 
 void delfem2::LaplacianSmoothing(
-    std::vector<double> &aXYZ,
-    const std::vector<int> &aTri,
+    std::vector<double> &vtx_xyz,
+    const std::vector<int> &tri_vtx,
     const std::vector<int> &elsup_ind,
-    const std::vector<int> elsup) {
-  for (std::size_t ip = 0; ip < aXYZ.size() / 3; ++ip) {
+    const std::vector<int> &elsup) {
+  for (std::size_t ip = 0; ip < vtx_xyz.size() / 3; ++ip) {
     double sum_area = 0.0;
     double pcnt[3] = {0, 0, 0};
     for (int ielsup = elsup_ind[ip]; ielsup < elsup_ind[ip + 1]; ++ielsup) {
       assert(ielsup < (int) elsup.size());
       int iel = elsup[ielsup];
-      assert(iel >= 0 && iel < (int) aTri.size() / 3);
-      int i0 = aTri[iel * 3 + 0];
-      int i1 = aTri[iel * 3 + 1];
-      int i2 = aTri[iel * 3 + 2];
+      assert(iel >= 0 && iel < (int) tri_vtx.size() / 3);
+      int i0 = tri_vtx[iel * 3 + 0];
+      int i1 = tri_vtx[iel * 3 + 1];
+      int i2 = tri_vtx[iel * 3 + 2];
       double aP[3][3] = {
-          {aXYZ[i0 * 3 + 0], aXYZ[i0 * 3 + 1], aXYZ[i0 * 3 + 2]},
-          {aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]},
-          {aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]}};
+          {vtx_xyz[i0 * 3 + 0], vtx_xyz[i0 * 3 + 1], vtx_xyz[i0 * 3 + 2]},
+          {vtx_xyz[i1 * 3 + 0], vtx_xyz[i1 * 3 + 1], vtx_xyz[i1 * 3 + 2]},
+          {vtx_xyz[i2 * 3 + 0], vtx_xyz[i2 * 3 + 1], vtx_xyz[i2 * 3 + 2]}};
       double area = mshmisc::TriArea3D(aP[0], aP[1], aP[2]);
       sum_area += area;
       pcnt[0] += area * (aP[0][0] + aP[1][0] + aP[2][0]) / 3.0;
@@ -802,9 +823,9 @@ void delfem2::LaplacianSmoothing(
     pcnt[0] /= sum_area;
     pcnt[1] /= sum_area;
     pcnt[2] /= sum_area;
-    aXYZ[ip * 3 + 0] = pcnt[0];
-    aXYZ[ip * 3 + 1] = pcnt[1];
-    aXYZ[ip * 3 + 2] = pcnt[2];
+    vtx_xyz[ip * 3 + 0] = pcnt[0];
+    vtx_xyz[ip * 3 + 1] = pcnt[1];
+    vtx_xyz[ip * 3 + 2] = pcnt[2];
   }
 }
 
@@ -904,10 +925,10 @@ void LaplacianSmoothing_Cotan
  */
 
 
-DFM2_INLINE double delfem2::SolidAngleTri3D
-    (const double v1[3],
-     const double v2[3],
-     const double v3[3]) {
+DFM2_INLINE double delfem2::SolidAngleTri3D(
+    const double v1[3],
+    const double v2[3],
+    const double v3[3]) {
   double l1 = mshmisc::Length3(v1);
   double l2 = mshmisc::Length3(v2);
   double l3 = mshmisc::Length3(v3);
@@ -925,13 +946,13 @@ DFM2_INLINE double delfem2::SolidAngleTri3D
   return v;
 }
 
-void delfem2::makeSolidAngle
-    (std::vector<double> &aSolidAngle,
-     const std::vector<double> &aXYZ,
-     const std::vector<unsigned int> &aTri,
-     const std::vector<double> &aNorm,
-     std::vector<int> &elsup_ind,
-     std::vector<int> &elsup) {
+void delfem2::makeSolidAngle(
+    std::vector<double> &aSolidAngle,
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &aNorm,
+    std::vector<int> &elsup_ind,
+    std::vector<int> &elsup) {
   const size_t nXYZ = aXYZ.size() / 3;
   aSolidAngle.resize(nXYZ);
   for (unsigned int ip = 0; ip < nXYZ; ++ip) {
@@ -949,8 +970,8 @@ void delfem2::makeSolidAngle
       }
       int inotri1 = (inotri0 + 1) % 3;
       int inotri2 = (inotri0 + 2) % 3;
-      int ip1 = aTri[itri0 * 3 + inotri1];
-      int ip2 = aTri[itri0 * 3 + inotri2];
+      unsigned int ip1 = aTri[itri0 * 3 + inotri1];
+      unsigned int ip2 = aTri[itri0 * 3 + inotri2];
       const double p1[3] = {aXYZ[ip1 * 3 + 0], aXYZ[ip1 * 3 + 1], aXYZ[ip1 * 3 + 2]};
       const double p2[3] = {aXYZ[ip2 * 3 + 0], aXYZ[ip2 * 3 + 1], aXYZ[ip2 * 3 + 2]};
       const double p10[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};

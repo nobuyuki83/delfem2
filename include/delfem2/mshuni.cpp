@@ -99,21 +99,21 @@ DFM2_INLINE void delfem2::ElemQuad_DihedralTri(
 // ---------------------------------
 
 DFM2_INLINE void delfem2::convert2Tri_Quad(
-    std::vector<unsigned int> &aTri,
-    const std::vector<unsigned int> &aQuad) {
-  const size_t nq = aQuad.size() / 4;
-  aTri.resize(nq * 6);
+    std::vector<unsigned int> &tri_vtx,
+    const std::vector<unsigned int> &quad_vtx) {
+  const size_t nq = quad_vtx.size() / 4;
+  tri_vtx.resize(nq * 6);
   for (unsigned int iq = 0; iq < nq; ++iq) {
-    const unsigned int i0 = aQuad[iq * 4 + 0];
-    const unsigned int i1 = aQuad[iq * 4 + 1];
-    const unsigned int i2 = aQuad[iq * 4 + 2];
-    const unsigned int i3 = aQuad[iq * 4 + 3];
-    aTri[iq * 6 + 0] = i0;
-    aTri[iq * 6 + 1] = i1;
-    aTri[iq * 6 + 2] = i2;
-    aTri[iq * 6 + 3] = i2;
-    aTri[iq * 6 + 4] = i3;
-    aTri[iq * 6 + 5] = i0;
+    const unsigned int i0 = quad_vtx[iq * 4 + 0];
+    const unsigned int i1 = quad_vtx[iq * 4 + 1];
+    const unsigned int i2 = quad_vtx[iq * 4 + 2];
+    const unsigned int i3 = quad_vtx[iq * 4 + 3];
+    tri_vtx[iq * 6 + 0] = i0;
+    tri_vtx[iq * 6 + 1] = i1;
+    tri_vtx[iq * 6 + 2] = i2;
+    tri_vtx[iq * 6 + 3] = i2;
+    tri_vtx[iq * 6 + 4] = i3;
+    tri_vtx[iq * 6 + 5] = i0;
   }
 }
 
@@ -135,12 +135,12 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshTri(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
     // --
-    const std::vector<unsigned int> &aTri,
-    int nXYZ) {
+    const std::vector<unsigned int> &tri_vtx,
+    int num_vtx) {
   JArray_ElSuP_MeshElem(
       elsup_ind, elsup,
-      aTri.data(), aTri.size() / 3, 3,
-      nXYZ);
+      tri_vtx.data(), tri_vtx.size() / 3, 3,
+      num_vtx);
 }
 
 // ----------------------------------------------------------------------------------------------------------
@@ -251,7 +251,7 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     //
-    const unsigned int *elem_vtx_idx,
+    const unsigned int *elem_vtx,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     unsigned int num_vtx_par_elem,
@@ -263,7 +263,7 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
     for (unsigned int ielsup = elsup_ind[ipoint]; ielsup < elsup_ind[ipoint + 1]; ielsup++) {
       unsigned int jelem = elsup[ielsup];
       for (unsigned int jnoel = 0; jnoel < num_vtx_par_elem; jnoel++) {
-        unsigned int jnode = elem_vtx_idx[jelem * num_vtx_par_elem + jnoel];
+        unsigned int jnode = elem_vtx[jelem * num_vtx_par_elem + jnoel];
         if (aflg[jnode] != ipoint) {
           aflg[jnode] = ipoint;
           psup_ind[ipoint + 1]++;
@@ -282,7 +282,7 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
     for (unsigned int ielsup = elsup_ind[ipoint]; ielsup < elsup_ind[ipoint + 1]; ielsup++) {
       unsigned int jelem = elsup[ielsup];
       for (unsigned int jnoel = 0; jnoel < num_vtx_par_elem; jnoel++) {
-        unsigned int jnode = elem_vtx_idx[jelem * num_vtx_par_elem + jnoel];
+        unsigned int jnode = elem_vtx[jelem * num_vtx_par_elem + jnoel];
         if (aflg[jnode] != ipoint) {
           aflg[jnode] = ipoint;
           const unsigned int ind = psup_ind[ipoint];
@@ -302,17 +302,17 @@ DFM2_INLINE void delfem2::JArray_PSuP_MeshElem(
     std::vector<unsigned int> &psup_ind,
     std::vector<unsigned int> &psup,
     //
-    const unsigned int *elem_vtx_idx,
+    const unsigned int *elem_vtx,
     size_t num_elm,
     unsigned int num_vtx_par_elem,
     size_t num_vtx) {
   std::vector<unsigned int> elsup_ind, elsup;
   JArray_ElSuP_MeshElem(
       elsup_ind, elsup,
-      elem_vtx_idx, num_elm, num_vtx_par_elem, num_vtx);
+      elem_vtx, num_elm, num_vtx_par_elem, num_vtx);
   JArrayPointSurPoint_MeshOneRingNeighborhood(
       psup_ind, psup,
-      elem_vtx_idx, elsup_ind, elsup, num_vtx_par_elem, num_vtx);
+      elem_vtx, elsup_ind, elsup, num_vtx_par_elem, num_vtx);
 }
 
 DFM2_INLINE void delfem2::makeOneRingNeighborhood_TriFan(
@@ -362,7 +362,7 @@ DFM2_INLINE void delfem2::JArrayEdge_MeshElem(
     std::vector<unsigned int> &edge_ind,
     std::vector<unsigned int> &edge,
     //
-    const unsigned int *elem_vtx_idx,
+    const unsigned int *elem_vtx,
     MESHELEM_TYPE elem_type,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
@@ -380,8 +380,8 @@ DFM2_INLINE void delfem2::JArrayEdge_MeshElem(
       for (int ie = 0; ie < neElm; ++ie) {
         int inoel0 = aNoelEdge[ie][0];
         int inoel1 = aNoelEdge[ie][1];
-        unsigned int ip0 = elem_vtx_idx[iq0 * nnoelElm + inoel0];
-        unsigned int ip1 = elem_vtx_idx[iq0 * nnoelElm + inoel1];
+        unsigned int ip0 = elem_vtx[iq0 * nnoelElm + inoel0];
+        unsigned int ip1 = elem_vtx[iq0 * nnoelElm + inoel1];
         if (ip0 != ip && ip1 != ip) continue;
         if (ip0 == ip) {
           if (is_bidirectional || ip1 > ip) { setIP.insert(ip1); }
@@ -398,24 +398,24 @@ DFM2_INLINE void delfem2::JArrayEdge_MeshElem(
 }
 
 DFM2_INLINE void delfem2::MeshLine_JArrayEdge(
-    std::vector<unsigned int> &line_vtx_idx,
+    std::vector<unsigned int> &line_vtx,
     //
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup) {
-  line_vtx_idx.reserve(psup.size() * 2);
+  line_vtx.reserve(psup.size() * 2);
   const std::size_t np = psup_ind.size() - 1;
   for (unsigned int ip = 0; ip < np; ++ip) {
     for (unsigned int ipsup = psup_ind[ip]; ipsup < psup_ind[ip + 1]; ++ipsup) {
       unsigned int jp = psup[ipsup];
-      line_vtx_idx.push_back(ip);
-      line_vtx_idx.push_back(jp);
+      line_vtx.push_back(ip);
+      line_vtx.push_back(jp);
     }
   }
 }
 
 DFM2_INLINE void delfem2::MeshLine_MeshElem(
-    std::vector<unsigned int> &line_vtx_idx,
-    const unsigned int *elem_vtx_idx,
+    std::vector<unsigned int> &line_vtx,
+    const unsigned int *elem_vtx,
     size_t num_elem,
     MESHELEM_TYPE elem_type,
     size_t num_vtx) {
@@ -423,62 +423,66 @@ DFM2_INLINE void delfem2::MeshLine_MeshElem(
   const unsigned int nPoEl = mapMeshElemType2NNodeElem[elem_type];
   JArray_ElSuP_MeshElem(
       elsup_ind, elsup,
-      elem_vtx_idx, num_elem, nPoEl, num_vtx);
+      elem_vtx, num_elem, nPoEl, num_vtx);
   std::vector<unsigned int> edge_ind, edge;
   JArrayEdge_MeshElem(
       edge_ind, edge,
-      elem_vtx_idx,
+      elem_vtx,
       elem_type,
       elsup_ind, elsup, false);
   MeshLine_JArrayEdge(
-      line_vtx_idx,
+      line_vtx,
       edge_ind, edge);
 }
 
 // ---------------------------------------
 
 DFM2_INLINE void delfem2::MarkConnectedElements(
-    std::vector<unsigned int> &aFlagElem,
-    unsigned int itri_ker,
-    unsigned int igroup,
-    const std::vector<unsigned int> &aElSuEl) {
-  const std::size_t nel = aFlagElem.size();
-  const std::size_t nfael = aElSuEl.size() / nel;
-  aFlagElem[itri_ker] = igroup;
+    std::vector<unsigned int> &elem_flag,
+    unsigned int ielem_kernel,
+    unsigned int flag,
+    const std::vector<unsigned int> &elem_adjelem) {
+  const std::size_t nel = elem_flag.size();
+  const std::size_t nfael = elem_adjelem.size() / nel;
+  elem_flag[ielem_kernel] = flag;
   std::stack<unsigned int> next;
-  next.push(itri_ker);
+  next.push(ielem_kernel);
   while (!next.empty()) {
     unsigned int itri0 = next.top();
     next.pop();
     for (unsigned int ie = 0; ie < nfael; ++ie) {
-      const unsigned int ita = aElSuEl[itri0 * nfael + ie];
+      const unsigned int ita = elem_adjelem[itri0 * nfael + ie];
       if (ita == UINT_MAX) continue;
-      if (aFlagElem[ita] != igroup) {
-        aFlagElem[ita] = igroup;
+      if (elem_flag[ita] != flag) {
+        elem_flag[ita] = flag;
         next.push(ita);
       }
     }
   }
 }
 
+// ---------------------------
+
 DFM2_INLINE void delfem2::MakeGroupElem(
-    int &ngroup,
-    std::vector<unsigned int> &aIndGroup,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<unsigned int> &aTriSurRel,
-    [[maybe_unused]] const int nfael,
-    const int nnoel) {
-  const std::size_t nelem = aTri.size() / nnoel;
-  aIndGroup.assign(nelem, UINT_MAX);
+    int &num_group,
+    std::vector<unsigned int> &elem_flag,
+    const std::vector<unsigned int> &elem_vtx,
+    const std::vector<unsigned int> &elem_adjelem,
+    [[maybe_unused]] const int num_face_par_elem,
+    const int num_vtx_par_elem) {
+  const std::size_t nelem = elem_vtx.size() / num_vtx_par_elem;
+  elem_flag.assign(nelem, UINT_MAX);
   int igroup = -1;
   for (;;) {
     unsigned int itri_ker = 0;
     for (; itri_ker < nelem; ++itri_ker) {
-      if (aIndGroup[itri_ker] == UINT_MAX) break;
+      if (elem_flag[itri_ker] == UINT_MAX) break;
     }
     if (itri_ker == nelem) break;
     igroup++;
-    MarkConnectedElements(aIndGroup, itri_ker, igroup, aTriSurRel);
+    MarkConnectedElements(
+        elem_flag,
+        itri_ker, igroup, elem_adjelem);
   }
-  ngroup = igroup + 1;
+  num_group = igroup + 1;
 }

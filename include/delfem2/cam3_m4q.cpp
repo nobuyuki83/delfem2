@@ -104,7 +104,10 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Mat4_AffineTransModelView(float
   }
   MatMat4(mMV, Mr, Mt);
 }
-template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Mat4_AffineTransModelView(float mMV[16]) const;
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Mat4_AffineTransModelView(
+    float mMV[16]) const;
+#endif
 
 // -------------------------
 
@@ -138,7 +141,8 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Rot_Camera(REAL dx, REAL dy) {
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Rot_Camera(double dx, double dy);
+template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Rot_Camera(
+    double dx, double dy);
 #endif
 
 // ------------------------
@@ -152,7 +156,8 @@ void delfem2::CCam3_OnAxisZplusLookOrigin<REAL>::Pan_Camera(REAL dx, REAL dy) {
 
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Pan_Camera(double dx, double dy);
+template void delfem2::CCam3_OnAxisZplusLookOrigin<double>::Pan_Camera(
+    double dx, double dy);
 #endif
 
 // ------------------------

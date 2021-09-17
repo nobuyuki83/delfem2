@@ -10,12 +10,9 @@
 
 #include <cstdio>
 #include <deque>
-#include <climits>
 
-#include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/geo_polyline2.h"
 #include "delfem2/str.h"
-#include "delfem2/file.h"
 
 // ------------------------------------------
 

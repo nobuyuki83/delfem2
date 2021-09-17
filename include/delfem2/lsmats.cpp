@@ -8,12 +8,9 @@
 #include "delfem2/lsmats.h"
 
 #include <cassert>
-#include <vector>
-#include <climits>
 #include <complex>
 
-namespace delfem2 {
-namespace mats {
+namespace delfem2::mats {
 
 DFM2_INLINE double MatNorm_Assym(
     const double *V0,
@@ -210,7 +207,6 @@ void MatVec_MatSparseCRS_Blk44(
 }
 
 }
-}
 
 // -------------------------------------------------------
 
@@ -330,16 +326,18 @@ void delfem2::CMatrixSparse<T>::MatVecDegenerate(
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CMatrixSparse<float>::MatVecDegenerate(float *y,
-                                                              unsigned int len,
-                                                              float alpha,
-                                                              const float *x,
-                                                              float beta) const;
-template void delfem2::CMatrixSparse<double>::MatVecDegenerate(double *y,
-                                                               unsigned int len,
-                                                               double alpha,
-                                                               const double *x,
-                                                               double beta) const;
+template void delfem2::CMatrixSparse<float>::MatVecDegenerate(
+    float *y,
+    unsigned int len,
+    float alpha,
+    const float *x,
+    float beta) const;
+template void delfem2::CMatrixSparse<double>::MatVecDegenerate(
+    double *y,
+    unsigned int len,
+    double alpha,
+    const double *x,
+    double beta) const;
 #endif
 
 // -------------------------------------------------------

@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/srchuni_v3.h"
+
 #include <map>
 
-#include "delfem2/srchuni_v3.h"
 #include "delfem2/geoproximity3_v3.h"
 #include "delfem2/vec3.h"
 
-namespace delfem2 {
-namespace srchuni {
+namespace delfem2::srchuni {
 
 //! Volume of a tetrahedra
 template<typename T>
@@ -28,7 +28,6 @@ T Volume_Tet(
   return v * 0.16666666666666666666666666666667;
 }
 
-}
 }
 
 // ----------------------------------------------

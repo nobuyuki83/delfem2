@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
-
 #include "delfem2/geo_polygon2.h"
+
+#include <cstdlib>
 
 // ================================================
 
@@ -320,7 +320,7 @@ void delfem2::ResamplingLoop(
         for(int iadd=0;iadd<nadd;++iadd){
           double r2 = (double)(iadd+1)/(nadd+1);
           CVec2<T> v2 = (1-r2)*po0 + r2*po1;
-          const unsigned int ipo2 = static_cast<unsigned int>(aVec2.size());
+          const auto ipo2 = static_cast<unsigned int>(aVec2.size());
           aVec2.push_back(v2);
           assert( iipo0>=0 && iipo0<(int)aPoInEd.size() );
           aPoInEd[ iipo0 ].push_back(ipo2);

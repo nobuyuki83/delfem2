@@ -5,9 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/caddtri_v3.h"
-#include "delfem2/vec3.h"
 
 #if defined(_WIN32) // windows
   #define NOMINMAX   // to remove min,max macro
@@ -20,6 +18,9 @@
 #else
   #include <GL/gl.h>
 #endif
+
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/vec3.h"
 
 // -------------------------------------------------
 

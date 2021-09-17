@@ -11,8 +11,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace delfem2 {
-namespace iss {
+namespace delfem2::iss {
 
 DFM2_INLINE void makeElemSurroundingPoint(
     std::vector<int> &elsup_ind,
@@ -2271,7 +2270,6 @@ DFM2_INLINE void cutoutTetFromLattice(
   }
 }
 
-} // namespace iss
 } // namespace delfem2
 
 /**

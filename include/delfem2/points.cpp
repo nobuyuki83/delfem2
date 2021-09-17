@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/points.h"
+
 #include <cassert>
 #include <cmath>
 #include <vector>
 #include <random>
-
-#include "delfem2/points.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
