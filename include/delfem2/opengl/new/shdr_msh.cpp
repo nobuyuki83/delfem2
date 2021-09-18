@@ -50,7 +50,7 @@ template<typename REAL>
 void delfem2::opengl::CShader_Mesh::UpdateVertex(
     std::vector<REAL> &aXYZd,
     unsigned int ndim,
-    std::vector<unsigned int> &aLine) {
+    [[maybe_unused]] std::vector<unsigned int> &aLine) {
   glBindVertexArray(vao.VAO); // opengl4
 
   vao.ADD_VBO(0, aXYZd);
