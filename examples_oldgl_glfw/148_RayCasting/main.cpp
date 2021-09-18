@@ -36,7 +36,7 @@ void ShadingImageRayLambertian(
     unsigned int nheight,
     unsigned int nwidth,
     const float mMVPf[16],
-    const std::vector<delfem2::CPtElm2<double> > &aPointElemSurf,
+    const std::vector<delfem2::PointOnSurfaceMesh<double> > &aPointElemSurf,
     const std::vector<double> &aXYZ, // 3d points
     const std::vector<unsigned int> &aTri) {
   double mMVPd[16];
@@ -55,7 +55,7 @@ void ShadingImageRayLambertian(
       const dfm2::CVec3d src1(qs);
       const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
       //
-      const delfem2::CPtElm2<double> &pes = aPointElemSurf[ih * nwidth + iw];
+      const delfem2::PointOnSurfaceMesh<double> &pes = aPointElemSurf[ih * nwidth + iw];
       if (pes.itri == UINT_MAX) {
         aRGB[(ih * nwidth + iw) * 3 + 0] = 200;
         aRGB[(ih * nwidth + iw) * 3 + 1] = 255;
@@ -136,7 +136,7 @@ int main() {
         }
         dfm2::MatMat4(mMVP, mMV, mP);
       }
-      std::vector<delfem2::CPtElm2d> vec_point_on_tri;
+      std::vector<delfem2::PointOnSurfaceMeshd> vec_point_on_tri;
       Intersection_ImageRay_TriMesh3(
           vec_point_on_tri,
           tex.height, tex.width, mMVP,

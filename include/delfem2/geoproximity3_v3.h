@@ -83,8 +83,8 @@ CVec3<T> nearest_Plane_Point(
   
 template <typename T>
 CVec3<T> Nearest_Origin_Tri(
-    double& r0,
-    double& r1,
+    T& r0,
+    T& r1,
     const CVec3<T>& q0,
     const CVec3<T>& q1,
     const CVec3<T>& q2);
@@ -196,8 +196,8 @@ CVec3<T> nearest_Origin_LineSeg(
 
 template <typename T>
 CVec3<T> Nearest_Orgin_PlaneTri(
-    double& r0,
-    double& r1,
+    T& r0,
+    T& r1,
     const CVec3<T>& q0,
     const CVec3<T>& q1,
     const CVec3<T>& q2);

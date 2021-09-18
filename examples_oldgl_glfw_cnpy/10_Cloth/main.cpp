@@ -79,7 +79,7 @@ void Draw(
   delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri, aXYZ.data());
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   // physics parameter
   const double dt = 0.01;

@@ -96,7 +96,7 @@ class MyView
         aIndElem,
         delfem2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>, float>(src, dir),
         0, aNodeBVH, aAABB);
-    std::map<double, dfm2::CPtElm2<double>> mapDepthPES;
+    std::map<double, dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
     dfm2::IntersectionRay_MeshTri3DPart(
         mapDepthPES,
         dfm2::CVec3d(src), dfm2::CVec3d(dir),
