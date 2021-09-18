@@ -20,8 +20,8 @@ project(00_imgui_sampledemo)
 find_package(OpenGL REQUIRED)
 
 # glfw
-set(GLFW_DIR "../../3rd_party/glfw")
-get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
+find_package(glfw3 REQUIRED)
 
 # imgui
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
@@ -32,8 +32,6 @@ set(GLAD_INCLUDE_DIR "../../3rd_party/glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLFW_DIR}/include
     ${IMGUI_DIR}
     ${IMGUI_DIR}/backends
     ${GLAD_INCLUDE_DIR}
@@ -58,27 +56,7 @@ add_executable(${PROJECT_NAME}
 
 #################################
 
-IF(APPLE)
-  find_library( COCOA_LIBRARY Cocoa )
-  find_library( IOKIT_LIBRARY IOKit )
-  find_library( COREVIDEO_LIBRARY CoreVideo )
-  target_link_libraries(${PROJECT_NAME}
-      ${OPENGL_LIBRARY}
-      ${GLFW_DIR}/src/libglfw3.a
-      ${COCOA_LIBRARY}
-      ${IOKIT_LIBRARY}
-      ${COREVIDEO_LIBRARY}
-      )
-ELSEIF(UNIX)
-  target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${GLFW_DIR}/src/libglfw3.a
-      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-      )
-ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME}
-      ${OPENGL_LIBRARY}
-      ${GLFW_DIR}/src/Release/glfw3.lib
-      )
-ENDIF()
+target_link_libraries(${PROJECT_NAME}
+    OpenGL::GL
+    glfw
+    )
