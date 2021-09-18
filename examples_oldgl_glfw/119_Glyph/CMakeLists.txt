@@ -24,7 +24,7 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 set(3RD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party")
 
 # glfw
-set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}../../3rd_party/libglfw)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
 find_package(glfw3 REQUIRED)
 
 # opengl
