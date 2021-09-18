@@ -19,7 +19,8 @@ set(3RD_PARTY           "../../3rd_party")
 add_definitions(-DDFM2_STATIC_LIBRARY=ON)
 
 # glfw
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
+find_package(glfw3 REQUIRED)
 
 # opengl
 find_package(OpenGL REQUIRED)

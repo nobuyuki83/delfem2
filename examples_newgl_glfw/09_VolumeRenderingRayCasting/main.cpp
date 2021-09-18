@@ -22,10 +22,10 @@ std::string LoadFile(
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
   std::istreambuf_iterator<char> vdataEnd;
-  return std::string(vdataBegin, vdataEnd);
+  return {vdataBegin, vdataEnd};
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
   viewer.camera.view_height = 1.0;
