@@ -99,14 +99,14 @@ int main() {
       dfm2::Vec3_Vec3Mat4_AffineProjection(p0.data(), src.data(), mat4_mvp.data());
       dfm2::CVec3d p1;
       dfm2::Vec3Mat4(p1.data(), dir.data(), mat4_mvp.data());
-      std::vector<dfm2::CPtElm2<double>> vec_point_on_triangle;
+      std::vector<dfm2::PointOnSurfaceMesh<double>> vec_point_on_triangle;
       dfm2::IntersectionLine_Hightfield(
           vec_point_on_triangle,
           p0.data(), p1.normalized().data(),
           sampler.width, sampler.height,
           sampler.aZ);
       for (const auto &pes : vec_point_on_triangle) {
-        dfm2::CVec3d lpos = pes.Pos_Grid(sampler.width, sampler.height, 1.0, sampler.aZ);
+        dfm2::CVec3d lpos = pes.PositionOnGrid2(sampler.width, sampler.height, 1.0, sampler.aZ);
         dfm2::CVec3d q2;
         dfm2::Vec3_Vec3Mat4_AffineProjection(q2.p, lpos.p, mMVPGinv.data());
         aXYZ1.push_back(q2.x);

@@ -56,7 +56,7 @@ DFM2_INLINE void DrawPoints2d_4RotSym(
 // below: 3D
 
 /**
- * @brief Draw Points using GL_POINTS
+ * @brief DrawHead Points using GL_POINTS
  * @tparam T float or double
  * @param vtx_xyz
  */
@@ -134,7 +134,7 @@ DFM2_INLINE void DrawMeshTri3D_FaceNorm(
 
 DFM2_INLINE void DrawMeshTri3D_FaceNorm(
     const std::vector<double> &vtx_xyz,
-    const std::vector<unsigned int> &tri_vtx_idx,
+    const std::vector<unsigned int> &tri_vtx,
     const std::vector<double> &vtx_normal);
 
 DFM2_INLINE void DrawMeshTri3D_FaceNorm(

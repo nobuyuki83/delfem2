@@ -57,9 +57,9 @@ void InitializeProblem() {
         aXYZ_Quad[ip*3+0],
         aXYZ_Quad[ip*3+1],
         aXYZ_Quad[ip*3+2]);
-    dfm2::CPtElm2<double> pes0 = Nearest_Point_MeshTri3D(p0,
+    dfm2::PointOnSurfaceMesh<double> pes0 = Nearest_Point_MeshTri3D(p0,
         aXYZ, aTri);
-    dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
     aXYZ_Quad[ip*3+0] = q0.x;
     aXYZ_Quad[ip*3+1] = q0.y;
     aXYZ_Quad[ip*3+2] = q0.z;
@@ -116,19 +116,19 @@ void InitializeProblem() {
     for(auto ip=nv0;ip<nv0+ne0+nq0;++ip){
       const dfm2::CVec3d p0( aXYZ_Quad[ip*3+0], aXYZ_Quad[ip*3+1], aXYZ_Quad[ip*3+2] );
       const dfm2::CVec3d n0( aNorm_Quad[ip*3+0], aNorm_Quad[ip*3+1], aNorm_Quad[ip*3+2] );
-      std::vector<dfm2::CPtElm2<double>> aPES = IntersectionLine_MeshTri3(
+      std::vector<dfm2::PointOnSurfaceMesh<double>> aPES = IntersectionLine_MeshTri3(
           p0, n0,
           aTri, aXYZ,
           1.0e-3);
-      std::map<double, dfm2::CPtElm2<double>> mapPES;
+      std::map<double, dfm2::PointOnSurfaceMesh<double>> mapPES;
       for(auto & pes : aPES){
-        dfm2::CVec3d q0 = pes.Pos_Tri(aXYZ, aTri);
+        dfm2::CVec3d q0 = pes.PositionOnMeshTri3(aXYZ, aTri);
         double h = (q0-p0).dot(n0);
         mapPES.insert( std::make_pair(-h, pes) );
       }
       if( !aPES.empty() ){
-        dfm2::CPtElm2<double>& pes0 = mapPES.begin()->second;
-        dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
+        dfm2::PointOnSurfaceMesh<double>& pes0 = mapPES.begin()->second;
+        dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
         aXYZ_Quad[ip*3+0] = q0.x;
         aXYZ_Quad[ip*3+1] = q0.y;
         aXYZ_Quad[ip*3+2] = q0.z;

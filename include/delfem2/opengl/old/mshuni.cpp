@@ -759,15 +759,15 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge(
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm(
     const std::vector<double> &vtx_xyz,
-    const std::vector<unsigned int> &tri_vtx_idx,
+    const std::vector<unsigned int> &tri_vtx,
     const std::vector<double> &vtx_normal) {
   namespace lcl = ::delfem2::opengl::old::mshuni;
-  const std::size_t nTri = tri_vtx_idx.size() / 3;
+  const std::size_t nTri = tri_vtx.size() / 3;
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri = 0; itri < nTri; itri++) {
-    const unsigned int i1 = tri_vtx_idx[itri * 3 + 0];
-    const unsigned int i2 = tri_vtx_idx[itri * 3 + 1];
-    const unsigned int i3 = tri_vtx_idx[itri * 3 + 2];
+    const unsigned int i1 = tri_vtx[itri * 3 + 0];
+    const unsigned int i2 = tri_vtx[itri * 3 + 1];
+    const unsigned int i3 = tri_vtx[itri * 3 + 2];
     lcl::myGlNorm3d(i1, vtx_normal);
     lcl::myGlVertex3d(i1, vtx_xyz);
     lcl::myGlNorm3d(i2, vtx_normal);

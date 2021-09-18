@@ -65,7 +65,7 @@ class CRigidBodyForceModel {
 std::vector<CVec3d> VelocityRigidBody(
     const CRigidBodyState &rbs,
     const CRigidBodyInertia &rbi,
-    const CRigidBodyForceModel &rbfm) {
+    [[maybe_unused]] const CRigidBodyForceModel &rbfm) {
   CVec3d F, T;
   delfem2::CRigidBodyForceModel::GetForceTorque(F, T);
   std::vector<CVec3d> V(4);

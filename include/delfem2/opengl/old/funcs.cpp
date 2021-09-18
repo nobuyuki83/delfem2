@@ -409,8 +409,8 @@ DFM2_INLINE void delfem2::opengl::CAxisXYZ::Draw() const {
   DrawAxis(len);
 }
 
-DFM2_INLINE void delfem2::opengl::DrawSphere
-    (int nla, int nlo) {
+DFM2_INLINE void delfem2::opengl::DrawSphere(
+    int nla, int nlo) {
   if (nla <= 1 || nlo <= 2) { return; }
   const double pi = 3.1415926535;
   double dla = 2.0 * pi / nla;
@@ -435,8 +435,10 @@ DFM2_INLINE void delfem2::opengl::DrawSphere
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawSphereAt
-    (int nla, int nlo, double rad, double x, double y, double z) {
+DFM2_INLINE void delfem2::opengl::DrawSphereAt(
+    int nla, int nlo, double rad,
+    double x, double y, double z) {
+  ::glMatrixMode(GL_MODELVIEW);
   ::glTranslated(+x, +y, +z);
   ::glScaled(rad, rad, rad);
   DrawSphere(nla, nlo);

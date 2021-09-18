@@ -134,7 +134,7 @@ TEST(bvh,nearestinc_sphere)
       if( itr % 2 == 0 ){ p0 *= 1.02; } // outside included in bvh
       else{               p0 *= 0.98; } // inside in included in bvh
     }
-    dfm2::CPtElm2<double> pes1;
+    dfm2::PointOnSurfaceMesh<double> pes1;
     double dist1 = bvh.Nearest_Point_IncludedInBVH(
 		pes1,p0,0.1,
 		aXYZ.data(), aXYZ.size()/3,
@@ -142,17 +142,17 @@ TEST(bvh,nearestinc_sphere)
     EXPECT_LE( dist1, 0.1 );
     EXPECT_GE( dist1, 0.0 );
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
-    dfm2::CVec3d q1 = pes1.Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3d q1 = pes1.PositionOnMeshTri3(aXYZ, aTri);
     {
-      dfm2::CPtElm2d pes0 = Nearest_Point_MeshTri3D(p0, aXYZ, aTri);
-      dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
+      dfm2::PointOnSurfaceMesh<double> pes0 = Nearest_Point_MeshTri3D(p0, aXYZ, aTri);
+      dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
       EXPECT_LT(Distance(q0,q1),1.0e-10);
     }
-    dfm2::CVec3d n0 = pes1.UNorm_Tri(aXYZ, aTri, aNorm);
+    dfm2::CVec3d n0 = pes1.UnitNormalOnMeshTri3(aXYZ, aTri, aNorm);
     EXPECT_EQ( n0.dot(p0-q1)>0, itr%2==0);
     // ---------------------
     {
-      dfm2::CPtElm2d pes2;
+      dfm2::PointOnSurfaceMesh<double> pes2;
       double dist_tri = -1, dist_bv = 0.1;
       dfm2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
           dist_tri, dist_bv, pes2,
@@ -160,7 +160,7 @@ TEST(bvh,nearestinc_sphere)
           aXYZ.data(), aXYZ.size()/3,
           aTri.data(), aXYZ.size()/3,
           bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
-      dfm2::CVec3d q2 = pes2.Pos_Tri(aXYZ, aTri);
+      dfm2::CVec3d q2 = pes2.PositionOnMeshTri3(aXYZ, aTri);
       EXPECT_LT(Distance(q2,q1),1.0e-10);
     }
   }
@@ -258,12 +258,12 @@ TEST(bvh,nearest_point) // find global nearest directry
       randomDist(randomEng),
       randomDist(randomEng),
       randomDist(randomEng) );
-    dfm2::CPtElm2<double> pes1 = bvh.NearestPoint_Global(p0,aXYZ,aTri);
+    dfm2::PointOnSurfaceMesh<double> pes1 = bvh.NearestPoint_Global(p0,aXYZ,aTri);
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
-    dfm2::CVec3d q1 = pes1.Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3d q1 = pes1.PositionOnMeshTri3(aXYZ, aTri);
     {
-      dfm2::CPtElm2<double> pes0 = Nearest_Point_MeshTri3D(p0, aXYZ, aTri);
-      dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
+      dfm2::PointOnSurfaceMesh<double> pes0 = Nearest_Point_MeshTri3D(p0, aXYZ, aTri);
+      dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
       EXPECT_LT(Distance(q0,q1),1.0e-10);
     }
   }
@@ -416,11 +416,11 @@ TEST(bvh,rayintersection)
       EXPECT_EQ( res , aFlg[itri] == 1 );
     }
     {
-      std::map<double,dfm2::CPtElm2d > mapDepthPES0;
+      std::map<double,dfm2::PointOnSurfaceMesh<double> > mapDepthPES0;
       IntersectionRay_MeshTri3(mapDepthPES0,
           s0, d0, aTri, aXYZ,
           0.0);
-      std::map<double,dfm2::CPtElm2d > mapDepthPES1;
+      std::map<double,dfm2::PointOnSurfaceMesh<double> > mapDepthPES1;
       IntersectionRay_MeshTri3DPart(mapDepthPES1,
           s0, d0,
           aTri, aXYZ, aIndElem,
@@ -431,10 +431,10 @@ TEST(bvh,rayintersection)
       auto itr1 = mapDepthPES0.begin();
       for(int i=0;i<N;++i){
         EXPECT_DOUBLE_EQ(itr0->first,itr1->first);
-        dfm2::CPtElm2d pes0 = itr0->second;
-        dfm2::CPtElm2d pes1 = itr1->second;
-        const dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
-        const dfm2::CVec3d q1 = pes1.Pos_Tri(aXYZ, aTri);
+        dfm2::PointOnSurfaceMesh<double> pes0 = itr0->second;
+        dfm2::PointOnSurfaceMesh<double> pes1 = itr1->second;
+        const dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
+        const dfm2::CVec3d q1 = pes1.PositionOnMeshTri3(aXYZ, aTri);
         EXPECT_NEAR(Distance(q0,q1), 0.0, 1.0e-10);
       }
     }
