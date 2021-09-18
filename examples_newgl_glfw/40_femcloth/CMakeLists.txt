@@ -38,7 +38,7 @@ set(GLAD_INCLUDE_DIR "../../3rd_party/glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 # glfw
-set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}../../3rd_party/libglfw)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
 find_package(glfw3 REQUIRED)
 
 # opengl
