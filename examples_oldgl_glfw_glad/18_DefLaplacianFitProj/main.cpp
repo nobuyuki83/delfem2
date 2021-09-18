@@ -260,7 +260,7 @@ void LaplacianDegenerate(
   }
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler;
   sampler.Initialize(128, 128, 128, 0.015);

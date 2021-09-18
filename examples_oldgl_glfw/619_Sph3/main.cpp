@@ -284,7 +284,7 @@ void myGlutDisplay(
 }
 
 
-int main(int argc, char *argv[])
+int main()
 {
   const double DT = 0.001;
   const double sph_radcutoff = 0.01; // radius of influence
