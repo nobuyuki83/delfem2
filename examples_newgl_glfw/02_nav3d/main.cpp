@@ -40,7 +40,8 @@ void draw(GLFWwindow* window)
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float)nw/nh;
   float mP[16], mMV[16];
-  viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+  viewer.projection.Mat4ColumnMajor(mP, asp);
+  viewer.modelview.Mat4ColumnMajor(mMV);
   shdr.Draw(mP, mMV);
   viewer.SwapBuffers();
   glfwPollEvents();
@@ -70,9 +71,7 @@ int main()
                             32,18);
     shdr.Initialize(aXYZd, 3, aTri);
   }
- 
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 2.0;
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

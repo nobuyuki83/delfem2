@@ -464,9 +464,8 @@ DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_SVD(
   }
   CMat3d dRi;
   GetRotPolarDecomp(dRi.p_, A, 40);
-  CMat3d R1 = dRi * R0i;
-  CQuatd q1;
-  R1.GetQuat_RotMatrix(q1.p);
+  const CMat3d R1 = dRi * R0i;
+  const CQuatd q1 = R1.GetQuaternion();
   q1.CopyTo(aQuat1.data() + ip * 4);
 }
 

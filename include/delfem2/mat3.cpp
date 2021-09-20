@@ -9,38 +9,7 @@
 
 #include <random>
 
-namespace delfem2 {
-namespace mat3 {
-
-// https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
-// row major matrix
-template<typename T>
-DFM2_INLINE void SetMatrix3_Quaternion
-    (T r[],
-     const T q[]) {
-  const T x2 = q[0] * q[0] * 2;
-  const T y2 = q[1] * q[1] * 2;
-  const T z2 = q[2] * q[2] * 2;
-  const T xy = q[0] * q[1] * 2;
-  const T yz = q[1] * q[2] * 2;
-  const T zx = q[2] * q[0] * 2;
-  const T xw = q[0] * q[3] * 2;
-  const T yw = q[1] * q[3] * 2;
-  const T zw = q[2] * q[3] * 2;
-  r[0] = 1 - y2 - z2;
-  r[1] = xy - zw;
-  r[2] = zx + yw;
-  r[3] = xy + zw;
-  r[4] = 1 - z2 - x2;
-  r[5] = yz - xw;
-  r[6] = zx - yw;
-  r[7] = yz + xw;
-  r[8] = 1 - x2 - y2;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void SetMatrix3_Quaternion(float r[], const float q[]);
-template void SetMatrix3_Quaternion(double r[], const double q[]);
-#endif
+namespace delfem2::mat3 {
 
 DFM2_INLINE double estimationMaxEigenValue(const double mtm[6]) {
   double maxl = 1;
@@ -71,7 +40,6 @@ DFM2_INLINE double SqLength3(const double v[3]) {
   return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
 
-}
 }
 
 // ------------------------
@@ -401,9 +369,52 @@ template void delfem2::Vec2_Mat3Vec2_AffineDirection(double [2], const double [9
 #endif
 
 // above: mat3 and vec3
-// ------------------------------------
+// --------------------------
 // below: mat3 and quaternion
 
+template <typename T>
+DFM2_INLINE void delfem2::Quat_Mat3(
+  T quat[4],
+  const T p_[9]){
+  constexpr T one4th = static_cast<T>(0.25);
+  const T smat[16] = {
+    1 + p_[0 * 3 + 0] - p_[1 * 3 + 1] - p_[2 * 3 + 2],   // 00
+    p_[0 * 3 + 1] + p_[1 * 3 + 0],  // 01
+    p_[0 * 3 + 2] + p_[2 * 3 + 0],  // 02
+    p_[2 * 3 + 1] - p_[1 * 3 + 2],  // 03
+    p_[1 * 3 + 0] + p_[0 * 3 + 1],  // 10
+    1 - p_[0 * 3 + 0] + p_[1 * 3 + 1] - p_[2 * 3 + 2],  // 11
+    p_[1 * 3 + 2] + p_[2 * 3 + 1],  // 12
+    p_[0 * 3 + 2] - p_[2 * 3 + 0],  // 13
+    p_[0 * 3 + 2] + p_[2 * 3 + 0],  // 20
+    p_[1 * 3 + 2] + p_[2 * 3 + 1],  // 21
+    1 - p_[0 * 3 + 0] - p_[1 * 3 + 1] + p_[2 * 3 + 2],  // 22
+    p_[1 * 3 + 0] - p_[0 * 3 + 1],  // 23
+    p_[2 * 3 + 1] - p_[1 * 3 + 2],  // 30
+    p_[0 * 3 + 2] - p_[2 * 3 + 0],  // 31
+    p_[1 * 3 + 0] - p_[0 * 3 + 1],  // 32
+    1 + p_[0 * 3 + 0] + p_[1 * 3 + 1] + p_[2 * 3 + 2],  // 33
+  };
+  
+  unsigned int imax;
+  imax = (smat[0 * 4 + 0] > smat[1 * 4 + 1]) ? 0 : 1;
+  imax = (smat[imax * 4 + imax] > smat[2 * 4 + 2]) ? imax : 2;
+  imax = (smat[imax * 4 + imax] > smat[3 * 4 + 3]) ? imax : 3;
+  
+  quat[imax] = std::sqrt(smat[imax * 4 + imax]) / 2;
+  for (unsigned int k = 0; k < 4; k++) {
+    if (k == imax) continue;
+    quat[k] = smat[imax * 4 + k] * one4th / quat[imax];
+  }
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::Quat_Mat3(float quat[4], const float p_[9]);
+template void delfem2::Quat_Mat3(double quat[4], const double p_[9]);
+#endif
+
+// ----------------
+
+// https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
 template<typename REAL>
 DFM2_INLINE void delfem2::Mat3_Quat(
     REAL r[],
@@ -852,7 +863,7 @@ DFM2_INLINE void delfem2::AxisAngleVectorCRV_Mat3(
     const T mat[9]) {
   T eparam2[4];
   const CMat3<T> m(mat);
-  m.GetQuat_RotMatrix(eparam2);
+  m.GetQuaternion(eparam2);
   crv[0] = 4 * eparam2[0] / (1 + eparam2[3]);
   crv[1] = 4 * eparam2[1] / (1 + eparam2[3]);
   crv[2] = 4 * eparam2[2] / (1 + eparam2[3]);
@@ -1224,7 +1235,7 @@ template void delfem2::CMat3<double>::SetRotMatrix_CRV(const double crv[]);
 
 template<typename T>
 void delfem2::CMat3<T>::SetRotMatrix_Quaternion(const T quat[]) {
-  mat3::SetMatrix3_Quaternion(p_, quat);
+  Mat3_Quat(p_, quat);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CMat3<float>::SetRotMatrix_Quaternion(const float quat[]);
@@ -1257,42 +1268,14 @@ template void delfem2::CMat3d::SetRotMatrix_BryantAngle(double rx, double ry, do
 // ---------------------------------
 
 template<typename T>
-void delfem2::CMat3<T>::GetQuat_RotMatrix(
-    T quat[]) const {
-  constexpr T one4th = static_cast<T>(0.25);
-  const T smat[16] = {
-      1 + p_[0 * 3 + 0] - p_[1 * 3 + 1] - p_[2 * 3 + 2],   // 00
-      p_[0 * 3 + 1] + p_[1 * 3 + 0],  // 01
-      p_[0 * 3 + 2] + p_[2 * 3 + 0],  // 02
-      p_[2 * 3 + 1] - p_[1 * 3 + 2],  // 03
-      p_[1 * 3 + 0] + p_[0 * 3 + 1],  // 10
-      1 - p_[0 * 3 + 0] + p_[1 * 3 + 1] - p_[2 * 3 + 2],  // 11
-      p_[1 * 3 + 2] + p_[2 * 3 + 1],  // 12
-      p_[0 * 3 + 2] - p_[2 * 3 + 0],  // 13
-      p_[0 * 3 + 2] + p_[2 * 3 + 0],  // 20
-      p_[1 * 3 + 2] + p_[2 * 3 + 1],  // 21
-      1 - p_[0 * 3 + 0] - p_[1 * 3 + 1] + p_[2 * 3 + 2],  // 22
-      p_[1 * 3 + 0] - p_[0 * 3 + 1],  // 23
-      p_[2 * 3 + 1] - p_[1 * 3 + 2],  // 30
-      p_[0 * 3 + 2] - p_[2 * 3 + 0],  // 31
-      p_[1 * 3 + 0] - p_[0 * 3 + 1],  // 32
-      1 + p_[0 * 3 + 0] + p_[1 * 3 + 1] + p_[2 * 3 + 2],  // 33
-  };
-
-  unsigned int imax;
-  imax = (smat[0 * 4 + 0] > smat[1 * 4 + 1]) ? 0 : 1;
-  imax = (smat[imax * 4 + imax] > smat[2 * 4 + 2]) ? imax : 2;
-  imax = (smat[imax * 4 + imax] > smat[3 * 4 + 3]) ? imax : 3;
-
-  quat[imax] = std::sqrt(smat[imax * 4 + imax]) / 2;
-  for (unsigned int k = 0; k < 4; k++) {
-    if (k == imax) continue;
-    quat[k] = smat[imax * 4 + k] * one4th / quat[imax];
-  }
+std::array<T,4> delfem2::CMat3<T>::GetQuaternion() const {
+  std::array<T,4> q;
+  Quat_Mat3(q.data(), p_);
+  return q;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CMat3<float>::GetQuat_RotMatrix(float quat[]) const;
-template void delfem2::CMat3<double>::GetQuat_RotMatrix(double quat[]) const;
+template std::array<float,4> delfem2::CMat3<float>::GetQuaternion() const;
+template std::array<double,4> delfem2::CMat3<double>::GetQuaternion() const;
 #endif
 
 // -------------------------------

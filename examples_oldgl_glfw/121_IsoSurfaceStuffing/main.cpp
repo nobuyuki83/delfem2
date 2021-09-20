@@ -240,12 +240,10 @@ void myGlutDisplay() {
 
 int main() {
   delfem2::glfw::CViewer3 viewer;
+  viewer.projection.view_height = 2;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-
-  viewer.camera.view_height = 2;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  ////
+  //
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_LIGHT0);
   float light0pos[4] = {0.5, 0.5, +20, 0};

@@ -14,7 +14,8 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/cam3_m4q.h"
+#include "delfem2/cam_projection.h"
+#include "delfem2/cam_modelview.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridcube.h"
@@ -104,8 +105,7 @@ int main() {
   } viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 2.0;
   delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window)) {
     viewer.DrawBegin_oldGL();

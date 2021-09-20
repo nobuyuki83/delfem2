@@ -368,6 +368,14 @@ class CMat4 {
     Mat4_Quat(mat,
               q);
   }
+
+  std::array<REAL,9> GetMat3() const {
+    return {
+      mat[0], mat[1], mat[2],
+      mat[4], mat[5], mat[6],
+      mat[8], mat[9], mat[10] };
+  }
+
   /**
    * @details named same as Eigen
    */
@@ -426,12 +434,12 @@ class CMat4 {
   };
   // ----------------------
   // below: static function
-  static CMat4<REAL> Identity() {
+  [[nodiscard]] static CMat4<REAL> Identity() {
     CMat4<REAL> m;
     m.SetIdentity();
     return m;
   }
-  static CMat4<REAL> Scale(REAL s) {
+  [[nodiscard]] static CMat4<REAL> Scale(REAL s) {
     CMat4<REAL> m;
     m.setZero();
     m.mat[0 * 4 + 0] = s;
@@ -440,7 +448,7 @@ class CMat4 {
     m.mat[3 * 4 + 3] = 1.0;
     return m;
   }
-  static CMat4<REAL> Spin(const REAL *v) {
+  [[nodiscard]] static CMat4<REAL> Spin(const REAL *v) {
     CMat4<REAL> m;
     m.setZero();
     m.mat[0 * 4 + 0] = 0;
@@ -455,8 +463,8 @@ class CMat4 {
     m.mat[3 * 4 + 3] = 1.0;
     return m;
   }
-  static CMat4<REAL> Quat(const REAL *q);
-  static CMat4<REAL> Translate(const REAL *v) {
+  [[nodiscard]] static CMat4<REAL> Quat(const REAL *q);
+  [[nodiscard]] static CMat4<REAL> Translate(const REAL *v) {
     CMat4<REAL> m;
     m.SetIdentity();
     m.mat[0 * 4 + 3] = v[0];
@@ -464,7 +472,7 @@ class CMat4 {
     m.mat[2 * 4 + 3] = v[2];
     return m;
   }
-  static CMat4<REAL> Mat3(const REAL *v) {
+  [[nodiscard]] static CMat4<REAL> Mat3(const REAL *v) {
     CMat4<REAL> m;
     m.setZero();
     m.mat[0 * 4 + 0] = v[0 * 3 + 0];

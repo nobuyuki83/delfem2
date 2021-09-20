@@ -73,9 +73,8 @@ void Example1(
   }
   // --------------------
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  delfem2::Quat_Bryant(viewer.camera.Quat_tball, -M_PI * 0.25, 0., 0.);
+  viewer.projection.view_height = 1.0;
+  delfem2::Quat_Bryant(viewer.modelview.Quat_tball, -M_PI * 0.25, 0., 0.);
   //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
@@ -153,9 +152,8 @@ void Example2(
   }
   // --------------------
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  delfem2::Quat_Bryant(viewer.camera.Quat_tball, -M_PI * 0.25, 0., 0.);
+  viewer.projection.view_height = 1.0;
+  delfem2::Quat_Bryant(viewer.modelview.Quat_tball, -M_PI * 0.25, 0., 0.);
   //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

@@ -336,8 +336,7 @@ int main() {
   RemoveKernel();
 
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 1.5;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 

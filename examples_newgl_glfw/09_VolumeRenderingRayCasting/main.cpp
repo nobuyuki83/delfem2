@@ -28,10 +28,9 @@ std::string LoadFile(
 int main()
 {
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.is_pars = true;
-  viewer.camera.fovy = 45.0;
+  viewer.projection.view_height = 1.0;
+  viewer.projection.is_pars = true;
+  viewer.projection.fovy = 45.0;
   delfem2::opengl::CShader_Mesh shdr;
   shdr.color[0] = 1;
   //
@@ -95,9 +94,8 @@ int main()
       glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
       iloc = glGetUniformLocation(id_shader, "mMVPinv");
       float mMV[16], mP[16], mMVP[16], mMVPinv[16];
-      viewer.camera.Mat4_MVP_OpenGL(
-          mMV,mP,
-          (float) viewport[2] / (float) viewport[3]);
+      viewer.projection.Mat4ColumnMajor(mP, (float) viewport[2] / (float) viewport[3]);
+      viewer.modelview.Mat4ColumnMajor(mMV);
       delfem2::MatMat4(mMVP,mMV,mP);
       delfem2::Inverse_Mat4(mMVPinv,mMVP);
       glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);

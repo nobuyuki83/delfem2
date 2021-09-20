@@ -117,8 +117,8 @@ int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 1.5;
+  // viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   // -----
   std::random_device rd;

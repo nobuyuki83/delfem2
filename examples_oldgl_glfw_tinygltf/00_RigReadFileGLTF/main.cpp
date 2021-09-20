@@ -20,7 +20,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------
 
-int main(int argc,char* argv[])
+int main()
 {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri;
@@ -51,8 +51,7 @@ int main(int argc,char* argv[])
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 2.0;
   delfem2::opengl::setSomeLighting();
   int iframe = 0;
   while(!glfwWindowShouldClose(viewer.window)){

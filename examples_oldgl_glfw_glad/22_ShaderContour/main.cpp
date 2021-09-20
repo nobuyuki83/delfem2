@@ -85,8 +85,7 @@ int main() {
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
-  viewer.camera.view_height = 4.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 4.0;
   delfem2::opengl::setSomeLighting();
   std::cout << "Vendor:" << glGetString(GL_VENDOR) << std::endl;
   std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;

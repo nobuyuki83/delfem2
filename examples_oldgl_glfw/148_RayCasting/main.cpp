@@ -107,8 +107,7 @@ int main() {
   dfm2::glfw::CViewer3 viewer;
   viewer.width = 400;
   viewer.height = 400;
-  viewer.camera.view_height = 2;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 2;
 
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
@@ -132,7 +131,9 @@ int main() {
         {
           int width0, height0;
           glfwGetFramebufferSize(viewer.window, &width0, &height0);
-          viewer.camera.Mat4_MVP_OpenGL(mMV, mP, float(width0) / float(height0));
+          viewer.projection.Mat4ColumnMajor(mP, float(width0) / float(height0));
+          viewer.modelview.Mat4ColumnMajor(mMV);
+//          viewer.camera.Mat4_MVP_OpenGL(mMV, mP, );
         }
         dfm2::MatMat4(mMVP, mMV, mP);
       }

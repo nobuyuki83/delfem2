@@ -33,10 +33,10 @@ int main()
   // -------------------
   
   dfm2::glfw::CViewer3 viewer;
+  viewer.projection.view_height = 2.0;
+  
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
 
   std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<'\n';

@@ -17,6 +17,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <array>
 #include <limits> // using NaN Check
 
 #include "delfem2/dfm2_inline.h"
@@ -242,6 +243,11 @@ DFM2_INLINE void Mat3_Quat(
     REAL r[],
     const REAL q[]);
 
+template <typename T>
+DFM2_INLINE void Quat_Mat3(
+    T quat[4],
+    const T p_[9]);
+
 template<typename T>
 class CMat3; // this pre-definition is needed for following functions
 
@@ -284,6 +290,8 @@ class CMat3 {
         REAL v10, REAL v11, REAL v12,
         REAL v20, REAL v21, REAL v22);
   CMat3(REAL x, REAL y, REAL z);
+  CMat3(const std::array<REAL,9>& m) :
+  p_{m[0],m[1],m[2],m[3],m[4],m[5],m[6],m[7],m[8]} {}
   // ---------------
   REAL *data() { return p_; }
   [[nodiscard]] const REAL *data() const { return p_; }
@@ -330,11 +338,9 @@ class CMat3 {
     for (int i = 0; i < 9; ++i) { ptr[i] += p_[i] * s; }
   }
   // ---------------
-//  CVector3 MatVec(const CVector3& vec0) const;
   void MatVec(const REAL vec0[], REAL vec1[]) const;
   void MatVecTrans(const REAL vec0[], REAL vec1[]) const;
 
-//  CVector3 MatVecTrans(const CVector3& vec0) const;
   [[nodiscard]] CMat3 MatMat(const CMat3 &mat0) const;
   [[nodiscard]] CMat3 MatMatTrans(const CMat3 &mat0) const;
   // ----------------
@@ -398,7 +404,10 @@ class CMat3 {
     }
   }
   // ------------------------
-  void GetQuat_RotMatrix(REAL quat[]) const;
+  
+  // quaterion (x,y,z,w)
+  [[nodiscard]] std::array<REAL,4> GetQuaternion() const;
+  
   // ------------------------
   [[nodiscard]] CMat3 transpose() const {
     CMat3 m;

@@ -86,8 +86,7 @@ int main()
       vec_node_bvh, vec_bv, vec_xyz, vec_tri);
   
   dfm2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 1.5;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

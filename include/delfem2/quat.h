@@ -19,6 +19,7 @@
 #endif
 
 #include <random>
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -83,10 +84,10 @@ DFM2_INLINE void Quat_CartesianAngle(
  * copy quaternion
  * @tparam REAL float or double
  */
-template<typename REAL>
+template<typename T0, typename T1>
 DFM2_INLINE void Copy_Quat(
-    REAL r[],
-    const REAL p[]);
+    T0 r[],
+    const T1 p[]);
 
 /**
  * multiply two quaternion
@@ -188,6 +189,8 @@ class CQuat {
    * but internal storage order is (x,y,z,r)
    */
   CQuat(T w, T x, T y, T z) : p{x, y, z, w} {};
+  
+  CQuat(const std::array<T,4>&& q) : p{q[0],q[1],q[2],q[3]} {};
 
   ~CQuat() = default;
   // -----------

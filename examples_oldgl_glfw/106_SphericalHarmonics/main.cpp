@@ -145,7 +145,7 @@ int main()
   
   // -----------------------------
   
-  viewer.camera.view_height = 1.0;
+  viewer.projection.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window))
   {

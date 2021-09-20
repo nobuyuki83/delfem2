@@ -217,7 +217,7 @@ int main()
   const double mass = 0.5;
   const double gravity[3] = {0,0,-10};
   aDisp.assign(aXYZ0.size(), 0.0);
-  for(int i=0;i<aDisp.size();++i){
+  for(unsigned int i=0;i<aDisp.size();++i){
     if( aBCFlag[i] != 0 ){ continue; }
     aDisp[i] = (i%10)*1.0e-4;
   }
@@ -227,7 +227,7 @@ int main()
       mass, 1.0e+5, 1.e+5, gravity);
 
   aDisp.assign(aXYZ0.size(), 0.0);
-  for(int i=0;i<aDisp.size();++i){
+  for(unsigned int i=0;i<aDisp.size();++i){
     if( aBCFlag[i] != 0 ){ continue; }
     aDisp[i] = (i%10)*1.0e-4;
   }
@@ -238,10 +238,10 @@ int main()
 
   // ----------------------
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
-  viewer.camera.theta = 0.1;
-  viewer.camera.psi = 0.1;
+  viewer.projection.view_height = 1.5;
+//  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
+//  viewer.camera.theta = 0.1;
+//  viewer.camera.psi = 0.1;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 

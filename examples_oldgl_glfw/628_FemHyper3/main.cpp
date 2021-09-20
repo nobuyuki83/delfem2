@@ -187,10 +187,10 @@ int main() {
 
   // ----------------------
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
-  viewer.camera.theta = 0.1;
-  viewer.camera.psi = 0.1;
+  viewer.projection.view_height = 1.5;
+//  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
+//  viewer.camera.theta = 0.1;
+//  viewer.camera.psi = 0.1;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 

@@ -81,9 +81,7 @@ int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.Rot_Camera(+0.0, +0.0);
+  viewer.projection.view_height = 1.0;
   dfm2::opengl::setSomeLighting();
 
   int iframe = 0;

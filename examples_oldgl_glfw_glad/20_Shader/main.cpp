@@ -99,8 +99,7 @@ int main()
       tex_normal,
       std::string(PATH_ASSET_DIR)+"/rock_normal.tga", true);
   dfm2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.projection.view_height = 2.0;
 
   // --------
   dfm2::glfw::InitGLOld();

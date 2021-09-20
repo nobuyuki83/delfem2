@@ -186,10 +186,10 @@ void myGlutDisplay()
 int main()
 {
   dfm2::glfw::CViewer3 viewer;
+  viewer.projection.view_height = 1.0;
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   dfm2::opengl::setSomeLighting();
 
   InitializeProblem();
