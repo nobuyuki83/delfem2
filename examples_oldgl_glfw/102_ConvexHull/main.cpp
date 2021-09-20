@@ -45,7 +45,7 @@ int main() {
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 
-  viewer.camera.view_height = 1.5;
+  viewer.projection.view_height = 1.5;
 
   std::vector<dfm2::CVec3d> vtx_xyz(100);
   std::vector<unsigned int> tri_vtx;

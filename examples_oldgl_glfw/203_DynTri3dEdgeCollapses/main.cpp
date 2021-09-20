@@ -111,7 +111,7 @@ int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.5;
+  viewer.projection.view_height = 1.5;
   while (!glfwWindowShouldClose(viewer.window)) {
     for (unsigned int i = 0; i < 10; i++) {
       auto itri0 = (unsigned int) ((rand() / (RAND_MAX + 1.0)) * aTri.size());

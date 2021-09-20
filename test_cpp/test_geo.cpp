@@ -177,10 +177,9 @@ TEST(mat3, quat) {
       EXPECT_NEAR(diff, 0.0, 1.0e-14);
     }
     { // q0 -> R0 -> q1 -> R1
-      double quat1[4];
-      R0.GetQuat_RotMatrix(quat1);
+      const std::array<double,4> quat1 = R0.GetQuaternion();
       dfm2::CMat3d R1;
-      R1.SetRotMatrix_Quaternion(quat1);
+      R1.SetRotMatrix_Quaternion(quat1.data());
       double diff = (R1 - R0).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-20);
     }

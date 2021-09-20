@@ -14,8 +14,8 @@
  * @details this file should be stand alone
  */
 
-#ifndef DFM2_CAMERA_H
-#define DFM2_CAMERA_H
+#ifndef DFM2_CAM_PROJECTION_H
+#define DFM2_CAM_PROJECTION_H
 
 #include <iostream>
 #include <cmath>
@@ -28,7 +28,7 @@
 
 // ---------------------------------------------------
 
-namespace delfem2{
+namespace delfem2 {
 
 // ----------------------------------------------------
 
@@ -39,29 +39,19 @@ namespace delfem2{
  *
  * @tparam REAL either float or double
  */
-template <typename REAL>
-class CCam3_OnAxisZplusLookOrigin
-{
-
-public:
-  enum class CAMERA_ROT_MODE { YTOP, ZTOP, TBALL };
-
-public:
-  CCam3_OnAxisZplusLookOrigin() :
-  trans{0,0,0}, Quat_tball{0,0,0,1}
-  {
+template<typename REAL>
+class Projection_LookOriginFromZplus {
+ public:
+  Projection_LookOriginFromZplus() {
     is_pars = false;
     fovy = 10;
     view_height = 1.0;
     scale = 1.0;
-    camera_rot_mode =  CAMERA_ROT_MODE::TBALL;
-    psi = 0;
-    theta = 0;
   }
-  
+
   // -----------------------
   // const methods from here
-  
+
   /**
    * @brief Compute "projection matrix" for OpenGL.
    * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
@@ -71,15 +61,7 @@ public:
    * @param asp
    * @param depth
    */
-  void Mat4_AffineTransProjection(float mP[16], float asp) const;
-  
-  /**
-   *
-   * @tparam REAL
-   * @param mMV model view matrix (column major order)
-   * @detail column major
-   */
-  void Mat4_AffineTransModelView(float mMV[16]) const;
+  void Mat4ColumnMajor(float mP[16], float asp) const;
 
   /**
    * @brief make 4x4 affine matrix for view transformation.
@@ -91,48 +73,77 @@ public:
    * @param[out] mP  projection matrix (column major order)
    * @param asp
    */
+   /*
   void Mat4_MVP_OpenGL(
       float mMV[16],
       float mP[16],
-      float asp) const
-  {
+      float asp) const {
     Mat4_AffineTransProjection(mP, asp); // project space into cube [-1,+1,-1,+1,-1,+1] and view from -Z
     Mat4_AffineTransModelView(mMV);
   }
+    */
   // ------------------------
-  
-  void Scale(double s);
-  void Rot_Camera(REAL dx, REAL dy);
-  void Pan_Camera(REAL dx, REAL dy);
-private:
-public:
+
+  void Scale(double s ){
+    scale *= s;
+  }
+ private:
+ public:
   bool is_pars;
   double fovy;
   double scale;
   double view_height;
-
-  double trans[3];
-  
-  CAMERA_ROT_MODE camera_rot_mode;
-  
-  // ytop
-  REAL theta;
-  REAL psi;
-  
-  // tball
-  double Quat_tball[4];
 };
 
-template <typename REAL>
-std::ostream &operator<<(std::ostream &output, CCam3_OnAxisZplusLookOrigin<REAL>& c);
 
-template <typename REAL>
-std::istream &operator>>(std::istream &input, CCam3_OnAxisZplusLookOrigin<REAL>& c);
+template<typename REAL>
+void delfem2::Projection_LookOriginFromZplus<REAL>::Mat4ColumnMajor(
+    float mP[16],
+    float asp) const {
+  const REAL mS[16] = {
+    scale, 0, 0, 0,
+    0, scale, 0, 0,
+    0, 0, scale, 0,
+    0, 0, 0, 1};
+  REAL fovyInRad = fovy * (2. * M_PI) / 360.f;
+  REAL depth = view_height / tan(fovyInRad * 0.5f);
+  REAL mP0[16];
+  if (is_pars) {
+    Mat4_AffineTransProjectionFrustum(
+        mP0,
+        fovyInRad,
+        static_cast<REAL>(asp),
+        -depth * 2.,
+        -depth * 0.01);
+  } else {
+    Mat4_AffineTransProjectionOrtho(
+        mP0,
+        -view_height * asp,
+        +view_height * asp,
+        -view_height,
+        +view_height,
+        -2 * depth,
+        0);
+  }
+  REAL mT0[16];
+  {
+    // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
+    // to view the object we translate the object at the origin (0,0,-depth)
+    const REAL t0[3] = {0.f, 0.f, -depth};
+    ::delfem2::Mat4_AffineTransTranslate(mT0, t0);
+  }
+  const REAL mRefZ[16] = { // reflection with the XY plane
+    +1.f, 0.f, 0.f, 0.f,
+    0.f, +1.f, 0.f, 0.f,
+    0.f, 0.f, -1.f, 0.f,
+    0.f, 0.f, 0.f, +1.f};
+  REAL mTmp1[16];
+  ::delfem2::MatMat4(mTmp1, mS, mT0);
+  REAL mTmp0[16];
+  ::delfem2::MatMat4(mTmp0, mTmp1, mP0);
+  ::delfem2::MatMat4(mP, mTmp0, mRefZ);
+}
 
 } // namespace delfem2
 
-#ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/cam3_m4q.cpp"
-#endif
-
-#endif
+#endif  // DFM2_CAMERA_H

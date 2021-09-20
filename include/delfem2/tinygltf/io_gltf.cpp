@@ -231,7 +231,7 @@ void dfm2::Print(const tinygltf::Model& model){
     assert( M.size()%16 == 0 );
     assert( M.size()/16 == model.skins[is].joints.size() );
     const size_t nj = model.skins[is].joints.size();
-    for(int ij=0;ij<nj;++ij){
+    for(unsigned int ij=0;ij<nj;++ij){
       for(int i=0;i<16;++i){ std::cout << "   " << ij << " " << i << " " << M[ij*16+i] << std::endl; }
     }
   }

@@ -63,11 +63,11 @@ int main()
       }
       if( iframe % nframe_interval == 0 ){
         dfm2::CBoundingBox2<double> bb = cad.BB();
-        viewer.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
-        viewer.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
-        viewer.camera.trans[2] = 0.0;
-        viewer.camera.view_height = 0.5*bb.LengthDiagonal();
-        viewer.camera.scale = 1.0;
+        viewer.modelview.trans[0] = -(bb.x_min+bb.x_max)*0.5;
+        viewer.modelview.trans[1] = -(bb.y_min+bb.y_max)*0.5;
+        viewer.modelview.trans[2] = 0.0;
+        viewer.projection.view_height = 0.5*bb.LengthDiagonal();
+        viewer.projection.scale = 1.0;
       }
       iframe = (iframe+1)%(nframe_interval*5);
     }

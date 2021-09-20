@@ -171,6 +171,7 @@ template void delfem2::Mat4_AffineTransProjectionOrtho(
 
 // -----------------------
 
+// http://www.3dcpptutorials.sk/index.php?id=2
 template<typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     REAL mP[16],

@@ -89,12 +89,12 @@ int main()
   std::uniform_real_distribution<double> dist_y(min_xy[1], max_xy[1]);
   // -----------
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.trans[0] = -0.5;
-  viewer.camera.trans[1] = -0.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.modelview.trans[0] = -0.5;
+  viewer.modelview.trans[1] = -0.5;
+//  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 0.7;
+  viewer.projection.view_height = 0.7;
   while ( true )
   {
     for(unsigned int imode=0;imode<3;++imode){

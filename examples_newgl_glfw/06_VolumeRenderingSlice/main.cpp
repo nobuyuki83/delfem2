@@ -123,12 +123,11 @@ std::string LoadFile(
   return std::string(vdataBegin,vdataEnd);
 }
 
-int main(int argc, const char * argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 0.5;
-  viewer.camera.Rot_Camera(-0.2, -0.2);
-  dfm2::glfw::InitGLNew();
+  viewer.projection.view_height = 0.5;
+  delfem2::glfw::InitGLNew();
   viewer.InitGL();
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -182,7 +181,8 @@ int main(int argc, const char * argv[])
     int nw, nh; glfwGetFramebufferSize(viewer.window, &nw, &nh);
     const float asp = (float)nw/nh;
     float mP[16], mMV[16];
-    viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+    viewer.projection.Mat4ColumnMajor(mP, asp);
+    viewer.modelview.Mat4ColumnMajor(mMV);
     
     const unsigned int nslice = 256;
 

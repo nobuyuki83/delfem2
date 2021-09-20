@@ -11,7 +11,8 @@
 #include <cstdio>
 #include <iostream>
 
-#include "delfem2/cam3_m4q.h" // for CNav3D_GLFW
+#include "delfem2/cam_modelview.h"
+#include "delfem2/cam_projection.h"
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/glfw/mouseinput.h"
 
@@ -62,7 +63,8 @@ class CViewer3 {
  public:
   GLFWwindow *window = nullptr;
   CMouseInput nav;
-  delfem2::CCam3_OnAxisZplusLookOrigin<double> camera;
+  delfem2::Projection_LookOriginFromZplus<double> projection;
+  delfem2::ModelView_Trackball<double> modelview;
   double bgcolor[4] = {1, 1, 1, 1};
   unsigned int width = 640;
   unsigned int height = 480;

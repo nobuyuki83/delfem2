@@ -470,11 +470,12 @@ class CStep_BSplineCurveWithKnots : public CStep_Curve {
     }
   }
   void Draw() const override {}
-  /////
-  [[nodiscard]] double GetParameter(const dfm2::CVec3d &p) const override { return 0; }
+  //
+  [[nodiscard]] double GetParameter([[maybe_unused]] const dfm2::CVec3d &p) const override { return 0; }
   void SampleCurve(
       std::vector<dfm2::CVec3d> &polyLine,
-      double r1, double r2,
+      [[maybe_unused]] double r1,
+      [[maybe_unused]] double r2,
       unsigned int nsmpl) const override {
     std::vector<dfm2::CVec3d> aPosCP;
     for (auto iicp : apCP) {
@@ -895,7 +896,7 @@ int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 100;
+  viewer.projection.view_height = 100;
 
   while (!glfwWindowShouldClose(viewer.window)) {
     viewer.DrawBegin_oldGL();

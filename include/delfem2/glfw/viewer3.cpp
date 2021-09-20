@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/glfw/viewer3.h"
+
 #include <cstdlib>
 #include <cassert>
 #define GL_SILENCE_DEPRECATION
@@ -20,13 +22,6 @@
 #else
 #  include <GL/gl.h>
 #endif
-
-#if defined(_MSC_VER)
-#  pragma warning( push )
-#  pragma warning( disable : 4100 )
-#endif
-
-#include "delfem2/glfw/viewer3.h"
 
 // ---------------
 
@@ -47,7 +42,7 @@ static void glfw_callback_key(
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
   if (action == GLFW_PRESS) {
-    auto &camera = pViewer3->camera;
+    auto &camera = pViewer3->projection;
     if (key == GLFW_KEY_PAGE_UP) { camera.Scale(1.03); }
     if (key == GLFW_KEY_PAGE_DOWN) { camera.Scale(1.0 / 1.03); }
     if (key == GLFW_KEY_BACKSPACE) { camera.is_pars = !camera.is_pars; }
@@ -98,7 +93,8 @@ static void glfw_callback_mouse_button(
     float mMVP[16];
     {
       float mMV[16], mP[16];
-      pViewer3->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+      pViewer3->projection.Mat4ColumnMajor(mP, asp);
+      pViewer3->modelview.Mat4ColumnMajor(mMV);
       ::delfem2::MatMat4(mMVP, mMV, mP);
     }
     pViewer3->nav.MouseRay(src, dir, asp, mMVP);
@@ -129,10 +125,11 @@ static void glfw_callback_cursor_position(
   if (pViewer3->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT) {  // drag for view control
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     if (nav.imodifier == GLFW_MOD_ALT) {
-      pViewer3->camera.Rot_Camera(nav.dx, nav.dy);
+      pViewer3->modelview.Rot_Camera(nav.dx, nav.dy);
       return;
     } else if (nav.imodifier == GLFW_MOD_SHIFT) {
-      pViewer3->camera.Pan_Camera(nav.dx, nav.dy);
+      double scale = pViewer3->projection.view_height / pViewer3->projection.scale;
+      pViewer3->modelview.Pan_Camera(nav.dx, nav.dy, scale);
       return;
     }
   }
@@ -142,7 +139,8 @@ static void glfw_callback_cursor_position(
     float mMVP[16];
     {
       float mMV[16], mP[16];
-      pViewer3->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+      pViewer3->projection.Mat4ColumnMajor(mP, asp);
+      pViewer3->modelview.Mat4ColumnMajor(mMV);
       ::delfem2::MatMat4(mMVP, mMV, mP);
     }
     pViewer3->nav.RayMouseMove(src0, src1, dir0, dir1, asp, mMVP);
@@ -156,7 +154,7 @@ static void glfw_callback_scroll(
     double yoffset) {
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
   assert(pViewer3 != nullptr);
-  pViewer3->camera.scale *= pow(1.01, yoffset);
+  pViewer3->projection.scale *= pow(1.01, yoffset);
   pViewer3->mouse_wheel(yoffset);
 }
 
@@ -214,7 +212,8 @@ void delfem2::glfw::CViewer3::DrawBegin_oldGL() const {
     int width0, height0;
     glfwGetFramebufferSize(window, &width0, &height0);
     float asp = static_cast<float>(width0) / static_cast<float>(height0);
-    camera.Mat4_MVP_OpenGL(mMV, mP, asp);
+    projection.Mat4ColumnMajor(mP, asp);
+    modelview.Mat4ColumnMajor(mMV);
   }
 
   ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGLae
@@ -238,7 +237,3 @@ void delfem2::glfw::CViewer3::ExitIfClosed() const {
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }
-
-#if defined(_MSC_VER)
-#pragma warning( pop )
-#endif

@@ -69,8 +69,8 @@ public:
         CMat3d m3;
         if (ibp == -1) { m3.SetIdentity(); }
         else { m3.SetMat4(aBone[ibp].affmat3Global); }
-        CQuatd qp;
-        m3.GetQuat_RotMatrix(qp.p);
+        const CQuatd qp = m3.GetQuaternion();
+        // m3.GetQuat_RotMatrix(qp.p);
         CQuatd qg = CQuatf(gizmo_rot.quat).cast<double>();
         CQuatd qj = qp.conjugate() * qg;
         qj.CopyTo(aBone[ipicked_bone].quatRelativeRot);
@@ -122,8 +122,7 @@ DFM2_INLINE void Draw(
       { // set quaternion
         CMat3<double> m3;
         m3.SetMat4(aBone[giz.ipicked_bone].affmat3Global);
-        CQuat<double> qj;
-        m3.GetQuat_RotMatrix(qj.p);
+        CQuat<double> qj = m3.GetQuaternion();
         qj.CopyTo(giz.gizmo_rot.quat);
       }
       opengl::Draw(giz.gizmo_rot);
@@ -197,7 +196,7 @@ public:
     std::cout << "ib:" << gizmo.ipicked_bone << " " << aBone.size() << std::endl;
   }
 
-  void key_press(int key, int mods) override {
+  void key_press(int key, [[maybe_unused]] int mods) override {
     if (key == GLFW_KEY_G) { gizmo.SetMode(CGizmo_Rig<float>::MODE_EDIT::TRNSL); }
     if (key == GLFW_KEY_R) { gizmo.SetMode(CGizmo_Rig<float>::MODE_EDIT::ROT); }
     if (key == GLFW_KEY_S) {

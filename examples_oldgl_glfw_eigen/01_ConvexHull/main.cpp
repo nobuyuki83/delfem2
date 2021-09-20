@@ -55,7 +55,7 @@ int main()
   std::vector<unsigned int> aTri;
   // --
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.5;
+  viewer.projection.view_height = 1.5;
   // ---
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

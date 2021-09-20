@@ -34,8 +34,12 @@ namespace dfm2 = delfem2;
 class CInput_ContactNothing: public dfm2::CInput_Contact
 {
 public:
-  double penetrationNormal(double& nx, double &ny, double& nz,
-                           double px, double py, double pz) const
+  double penetrationNormal([[maybe_unused]] double& nx,
+                           [[maybe_unused]] double &ny,
+                           [[maybe_unused]] double& nz,
+                           [[maybe_unused]] double px,
+                           [[maybe_unused]] double py,
+                           [[maybe_unused]] double pz) const
   {
     return -100;
   }

@@ -169,7 +169,7 @@ int main(int argc,char* argv[])
   glutSpecialFunc(myGlutSpecial);
   // ----------------------------------
   
-  nav.camera.view_height = 2.0;
+  nav.projection.view_height = 2.0;
   
   printf("renderer: %s\n", glGetString(GL_RENDERER));
   

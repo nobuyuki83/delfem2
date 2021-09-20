@@ -129,10 +129,9 @@ int main() {
 
   // -----------
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.5;
+  viewer.projection.view_height = 1.5;
   while (!glfwWindowShouldClose(viewer.window)) {
     for (const auto &pd: aPointData) {
       const CClusterData &dp0 = aPointData[0];
