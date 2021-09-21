@@ -27,8 +27,6 @@
 
 namespace delfem2::glfw::viewer3 {
 
-//static delfem2::glfw::CViewer3 *pViewer3 = nullptr; // this is only one even though there are multiple viewer3
-
 static void glfw_callback_key(
     GLFWwindow *window,
     int key,
@@ -40,12 +38,8 @@ static void glfw_callback_key(
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
   if (action == GLFW_PRESS) {
-    auto &camera = pViewer3->projection;
-    if (key == GLFW_KEY_PAGE_UP) { camera->scale *= 1.03; }
-    if (key == GLFW_KEY_PAGE_DOWN) { camera->scale *= (1.0 / 1.03); }
-//    if (key == GLFW_KEY_BACKSPACE) { camera.is_pars = !camera.is_pars; }
-//    if (key == GLFW_KEY_HOME) { camera.fovy *= 1.03; }
-//    if (key == GLFW_KEY_END) { camera.fovy *= 1.0 / 1.03; }
+    if (key == GLFW_KEY_PAGE_UP) { pViewer3->scale *= 1.03; }
+    if (key == GLFW_KEY_PAGE_DOWN) { pViewer3->scale *= (1.0 / 1.03); }
     pViewer3->key_press(key, mods);
   } else if (action == GLFW_RELEASE) { pViewer3->key_release(key, mods); }
 }
@@ -90,10 +84,12 @@ static void glfw_callback_mouse_button(
     float src[3], dir[3];
     float mMVP[16];
     {
-      float mMV[16];
+      //float mMV[16];
       const CMat4f mP = pViewer3->projection->Mat4ColumnMajor(asp);
-      pViewer3->modelview.Mat4ColumnMajor(mMV);
-      ::delfem2::MatMat4(mMVP, mMV, mP.data());
+      const CMat4f mS = CMat4f::Scale(pViewer3->scale);
+      const CMat4f mMV = pViewer3->modelview.Mat4ColumnMajor();
+      (mMV * mS * mP).CopyTo(mMVP);
+      // ::delfem2::MatMat4(mMVP, mMV, mP.data());
     }
     pViewer3->nav.MouseRay(src, dir, asp, mMVP);
     pViewer3->mouse_press(src, dir);
@@ -126,10 +122,10 @@ static void glfw_callback_cursor_position(
       pViewer3->modelview.Rot_Camera(nav.dx, nav.dy);
       return;
     } else if (nav.imodifier == GLFW_MOD_SHIFT) {
-      delfem2::CMat4f mP = pViewer3->projection->Mat4ColumnMajor(asp);
-      delfem2::CMat4f mPinv = mP.transpose().Inverse();
-      float scale = mPinv(1,1);  // where the screen (0,1,0) ends up in global coordinate
-      pViewer3->modelview.Pan_Camera(nav.dx, nav.dy, scale);
+      const delfem2::CMat4f mP = pViewer3->projection->Mat4ColumnMajor(asp);
+      const delfem2::CMat4f mPinv = mP.transpose().Inverse();
+      const float s0 = mPinv(1,1) / pViewer3->scale;  // where the screen (0,1,0) ends up in global coordinate
+      pViewer3->modelview.Pan_Camera(nav.dx, nav.dy, s0);
       return;
     }
   }
@@ -138,10 +134,9 @@ static void glfw_callback_cursor_position(
     float src0[3], src1[3], dir0[3], dir1[3];
     float mMVP[16];
     {
-      float mMV[16];
       const CMat4f mP = pViewer3->projection->Mat4ColumnMajor(asp);
-      pViewer3->modelview.Mat4ColumnMajor(mMV);
-      ::delfem2::MatMat4(mMVP, mMV, mP.data());
+      const CMat4f mMV = pViewer3->modelview.Mat4ColumnMajor();
+      ::delfem2::MatMat4(mMVP, mMV.data(), mP.data());
     }
     pViewer3->nav.RayMouseMove(src0, src1, dir0, dir1, asp, mMVP);
     pViewer3->mouse_drag(src0, src1, dir0);
@@ -154,7 +149,7 @@ static void glfw_callback_scroll(
     double yoffset) {
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
   assert(pViewer3 != nullptr);
-  pViewer3->projection->scale *= pow(1.01, yoffset);
+  pViewer3->scale *= pow(1.01, yoffset);
   pViewer3->mouse_wheel(yoffset);
 }
 
@@ -205,14 +200,15 @@ void delfem2::glfw::CViewer3::DrawBegin_oldGL() const {
     assert(n0 == 1 && n1 == 1);
   }
 
-  float mMV[16];
-  CMat4f mP;
+  CMat4f mMV, mP;
   {
     int width0, height0;
     glfwGetFramebufferSize(window, &width0, &height0);
-    float asp = static_cast<float>(width0) / static_cast<float>(height0);
+    const float asp = static_cast<float>(width0) / static_cast<float>(height0);
     mP = projection->Mat4ColumnMajor(asp);
-    modelview.Mat4ColumnMajor(mMV);
+    const CMat4f mS = CMat4f::Scale(scale);
+    mP = mS * mP;
+    mMV = modelview.Mat4ColumnMajor();
   }
 
   ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGLae
@@ -221,7 +217,7 @@ void delfem2::glfw::CViewer3::DrawBegin_oldGL() const {
   glMultMatrixf(mP.data());
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glMultMatrixf(mMV);
+  glMultMatrixf(mMV.data());
 #endif
 
 }

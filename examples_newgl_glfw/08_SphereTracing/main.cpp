@@ -28,7 +28,8 @@ std::string LoadFile(
 int main()
 {
   delfem2::glfw::CViewer3 viewer;
-  viewer.projection = std::make_unique<delfem2::Projection_LookOriginFromZplus<double>>(1.0, true, 45.0);
+  viewer.projection
+  = std::make_unique<delfem2::Projection_LookOriginFromZplus<double>>(1.0, true, 45.0);
   delfem2::opengl::CShader_Mesh shdr;
   shdr.color[0] = 1;
   //
@@ -91,18 +92,13 @@ int main()
       ::glGetIntegerv(GL_VIEWPORT, viewport);
       glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
       iloc = glGetUniformLocation(id_shader, "mMVPinv");
-      float mMV[16], mMVP[16], mMVPinv[16];
-      delfem2::CMat4f mP = viewer.projection->Mat4ColumnMajor(
-                                                   static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]));
-      viewer.modelview.Mat4ColumnMajor(mMV);
-      std::cout << "hgoe" << std::endl;
-      delfem2::Print_Mat4(mMV);
-      delfem2::Print_Mat4(mP.data());
-      delfem2::MatMat4(mMVP,mMV,mP.data());
-      delfem2::Inverse_Mat4(mMVPinv,mMVP);
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);
+      float asp = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
+      const delfem2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
+      const delfem2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
+      const delfem2::CMat4f mMVPinv = (mMV * mP).Inverse();
+      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv.data());
       iloc = glGetUniformLocation(id_shader, "mMV");
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV);
+      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV.data());
       shdr.vao.Draw(0);
       viewer.SwapBuffers();
       glfwPollEvents();

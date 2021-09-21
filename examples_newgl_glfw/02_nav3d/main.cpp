@@ -39,10 +39,9 @@ void draw(GLFWwindow* window)
 
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float)nw/nh;
-  float mMV[16];
   dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
-  viewer.modelview.Mat4ColumnMajor(mMV);
-  shdr.Draw(mP.data(), mMV);
+  dfm2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
+  shdr.Draw(mP.data(), mMV.data());
   viewer.SwapBuffers();
   glfwPollEvents();
 }

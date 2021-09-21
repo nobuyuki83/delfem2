@@ -31,7 +31,7 @@ int main()
 {
   delfem2::CCad2D cad;
   // --------------------
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(2);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
@@ -41,15 +41,13 @@ int main()
       const int nframe_interval = 10;
       if( iframe == nframe_interval*0 ){
         cad.Clear();
-        const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
-        cad.AddPolygon(std::vector<double>(poly,poly+8));
+        cad.AddPolygon(std::vector<double>{-1,-1, +1,-1, +1,+1, -1,+1});
       }
       else if( iframe == nframe_interval*1 ){
         cad.AddVtxFace(0.0, 0.1, 0);
       }
       else if( iframe == nframe_interval*2 ){
-        double param[4] = {0.2, 0.3, 0.8, 0.3};
-        std::vector<double> vparam(param,param+4);
+        std::vector<double> vparam{0.2, 0.3, 0.8, 0.3};
         cad.SetEdgeType( 0, dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam );
       }
       else if( iframe == nframe_interval*3 ){
@@ -67,7 +65,7 @@ int main()
         viewer.modelview.trans[1] = -(bb.y_min+bb.y_max)*0.5;
         viewer.modelview.trans[2] = 0.0;
         //viewer.projection.view_height = 0.5*bb.LengthDiagonal();
-        viewer.projection->scale = 1.0;
+        viewer.scale = 1.0;
       }
       iframe = (iframe+1)%(nframe_interval*5);
     }
@@ -83,30 +81,5 @@ EXIT:
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }
-
-
-
-
-
-
-
-/*
- void myGlutMotion( int x, int y ){
- nav.glutMotion(x,y);
- if( nav.imodifier != 0){ return; }
- float px0,py0, px1,py1; nav.PosMove2D(px0,py0, px1,py1);
- cad.DragPicked(px1,py1, px0,py0);
- }
- 
- void myGlutMouse(int button, int state, int x, int y)
- {
- nav.glutMouse(button,state,x,y);
- if( nav.imodifier == GLUT_ACTIVE_SHIFT || nav.imodifier == GLUT_ACTIVE_ALT ) return;
- if( state == GLUT_DOWN ){
- float px, py; nav.PosMouse2D(px, py);
- cad.Pick(px, py, nav.camera.view_height);
- }
- }
- */
 
 

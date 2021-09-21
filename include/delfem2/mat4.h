@@ -374,13 +374,6 @@ class CMat4 {
               q);
   }
 
-  std::array<REAL,9> GetMat3() const {
-    return {
-      mat[0], mat[1], mat[2],
-      mat[4], mat[5], mat[6],
-      mat[8], mat[9], mat[10] };
-  }
-
   /**
    * @details named same as Eigen
    */
@@ -401,6 +394,13 @@ class CMat4 {
     mat[2 * 4 + 2] = z;
     mat[3 * 4 + 3] = 1;
   }
+  // -----------------------
+  template <typename S>
+  void CopyTo(S* v) const {
+    for(int i=0;i<16;++i){ v[i] = mat[i]; }
+  }
+
+
   // -----------------------
   CMat4<REAL> MatMat(const CMat4<REAL> &mat0) const;
   /**

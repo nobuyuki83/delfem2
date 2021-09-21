@@ -286,12 +286,11 @@ int main() {
       int nw, nh;
       glfwGetFramebufferSize(this->window, &nw, &nh);
       const float asp = (float) nw / nh;
-      float mMV[16];
       delfem2::CMat4f mPrj = projection->Mat4ColumnMajor(asp);
-      modelview.Mat4ColumnMajor(mMV);
+      delfem2::CMat4f mMV = modelview.Mat4ColumnMajor();
       cad.MouseDown(src_pick, dir_pick,
                     dfm2::CVec2d(nav.mouse_x, nav.mouse_y),
-                    mMV, mPrj.data(),
+                    mMV.data(), mPrj.data(),
                     1.5);
     }
     void mouse_drag(
@@ -302,11 +301,10 @@ int main() {
       const dfm2::CVec3d src_pick(src1), dir_pick(dir);
       int nw, nh;
       glfwGetFramebufferSize(this->window, &nw, &nh);
-      const float asp = (float) nw / nh;
-      float mMV[16];
+      const float asp = (float) nw / (float)nh;
       delfem2::CMat4f mPrj = projection->Mat4ColumnMajor(asp);
-      modelview.Mat4ColumnMajor(mMV);
-      cad.MouseMotion(src_pick, dir_pick, sp0, sp1, mMV, mPrj.data());
+      delfem2::CMat4f mMV = modelview.Mat4ColumnMajor();
+      cad.MouseMotion(src_pick, dir_pick, sp0, sp1, mMV.data(), mPrj.data());
     }
    public:
     dfm2::CCad3D cad;
