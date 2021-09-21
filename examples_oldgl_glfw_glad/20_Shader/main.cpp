@@ -98,10 +98,8 @@ int main()
   delfem2::openglstb::SetRgbToTex(
       tex_normal,
       std::string(PATH_ASSET_DIR)+"/rock_normal.tga", true);
-  dfm2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 2.0;
-
-  // --------
+  dfm2::glfw::CViewer3 viewer(2.0);
+  // 
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers

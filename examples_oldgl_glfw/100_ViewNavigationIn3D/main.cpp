@@ -15,6 +15,7 @@
 #  include <windows.h>
 #endif
 #include <cstdlib>
+#include <memory>
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 

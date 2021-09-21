@@ -34,10 +34,12 @@ class MyView
  public:
 
   MyView(
+      double view_height,
       std::vector<unsigned int> &aFlagElem0,
       const std::vector<double> &aXYZ0, // 3d points
       const std::vector<unsigned int> &aTri0)
-      : aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0) {
+      : CViewer3(view_height), 
+      aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0) {
     { // make BVH
       std::vector<double> aCent;
       dfm2::CentsMaxRad_MeshTri3(
@@ -132,10 +134,9 @@ int main() {
   std::vector<unsigned int> aFlagElem(tri_vtx.size() / 3, 0);
 
   MyView viewer(
+      1.5,
       aFlagElem,
       vtx_xyz, tri_vtx);
-
-  viewer.projection.view_height = 1.5;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

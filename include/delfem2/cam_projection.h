@@ -21,6 +21,7 @@
 #include <cmath>
 #include <cstdio> // memcpy
 #include <cstring>
+#include <array>
 
 #include "delfem2/quat.h"
 #include "delfem2/mat4.h"
@@ -30,7 +31,28 @@
 
 namespace delfem2 {
 
-// ----------------------------------------------------
+/**
+ * Pure virtual class
+ * @tparam REAL
+ */
+template <typename REAL>
+class Projection {
+public:
+  virtual ~Projection()= default;
+  /**
+ * @brief Compute "projection matrix" for OpenGL.
+ * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
+ * A 3D point is transfromed with this affine matrix and then a cube [-1,+1, -1,+1, -1,+1] is looked from -Z directoin.
+ * The projection matrix will mirror the object Z.
+ * To look from +Z direction, The transformation needs a mirror transformation in XY plane.
+ * @param mP
+ * @param asp
+ */
+  [[nodiscard]] virtual std::array<float,16> Mat4ColumnMajor(float asp) const = 0;
+public:
+  REAL scale = 1.0;
+};
+
 
 /**
  * the camera is placed on the positive Z axis and looking at the origin.
@@ -40,70 +62,38 @@ namespace delfem2 {
  * @tparam REAL either float or double
  */
 template<typename REAL>
-class Projection_LookOriginFromZplus {
+class Projection_LookOriginFromZplus : public Projection<REAL>{
  public:
-  Projection_LookOriginFromZplus() {
-    is_pars = false;
-    fovy = 10;
-    view_height = 1.0;
-    scale = 1.0;
-  }
-
-  // -----------------------
-  // const methods from here
-
+  explicit Projection_LookOriginFromZplus(double view_height = 1,
+                                 bool is_pars = false,
+                                 double fovy = 10)
+  : view_height(view_height), is_pars(is_pars), fovy(fovy){}
+  
+  ~Projection_LookOriginFromZplus()= default;
   /**
    * @brief Compute "projection matrix" for OpenGL.
    * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
+   * A 3D point is transfromed with this affine matrix and then a cube [-1,+1, -1,+1, -1,+1] is looked from -Z directoin.
    * The projection matrix will mirror the object Z.
-   * @tparam REAL
+   * To look from +Z direction, The transformation needs a mirror transformation in XY plane.
    * @param mP
    * @param asp
-   * @param depth
    */
-  void Mat4ColumnMajor(float mP[16], float asp) const;
-
-  /**
-   * @brief make 4x4 affine matrix for view transformation.
-   * @details the matrix strage format is *column-major*. Applying trasformation need to multply vector from *left hand side*.
-   * A 3D point is transfromed with this affine matrix and then a cube [-1,+1, -1,+1, -1,+1] is looked from -Z directoin.
-   * To look from +Z direction, The transformation needs a mirror transformation in XY plane.
-   * We separate mMV and  mP because of the light (light position should not be affected by the modelview transform).
-   * @param[out] mMV modelview matrix (column major order)
-   * @param[out] mP  projection matrix (column major order)
-   * @param asp
-   */
-   /*
-  void Mat4_MVP_OpenGL(
-      float mMV[16],
-      float mP[16],
-      float asp) const {
-    Mat4_AffineTransProjection(mP, asp); // project space into cube [-1,+1,-1,+1,-1,+1] and view from -Z
-    Mat4_AffineTransModelView(mMV);
-  }
-    */
-  // ------------------------
-
-  void Scale(double s ){
-    scale *= s;
-  }
- private:
- public:
-  bool is_pars;
-  double fovy;
-  double scale;
-  double view_height;
+   [[nodiscard]] std::array<float,16> Mat4ColumnMajor(float asp) const override;
+public:
+  double view_height = 1;
+  bool is_pars = false;
+  double fovy = 10;
 };
 
 
 template<typename REAL>
-void delfem2::Projection_LookOriginFromZplus<REAL>::Mat4ColumnMajor(
-    float mP[16],
+std::array<float,16> delfem2::Projection_LookOriginFromZplus<REAL>::Mat4ColumnMajor(
     float asp) const {
   const REAL mS[16] = {
-    scale, 0, 0, 0,
-    0, scale, 0, 0,
-    0, 0, scale, 0,
+    this->scale, 0, 0, 0,
+    0, this->scale, 0, 0,
+    0, 0, this->scale, 0,
     0, 0, 0, 1};
   REAL fovyInRad = fovy * (2. * M_PI) / 360.f;
   REAL depth = view_height / tan(fovyInRad * 0.5f);
@@ -141,9 +131,11 @@ void delfem2::Projection_LookOriginFromZplus<REAL>::Mat4ColumnMajor(
   ::delfem2::MatMat4(mTmp1, mS, mT0);
   REAL mTmp0[16];
   ::delfem2::MatMat4(mTmp0, mTmp1, mP0);
-  ::delfem2::MatMat4(mP, mTmp0, mRefZ);
+  std::array<float,16> mP;
+  ::delfem2::MatMat4(mP.data(), mTmp0, mRefZ);
+  return mP;
 }
 
 } // namespace delfem2
 
-#endif  // DFM2_CAMERA_H
+#endif  // DFM2_CAM_PROJECTION_H

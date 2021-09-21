@@ -27,8 +27,12 @@ namespace dfm2 = delfem2;
 class CInput_ContactNothing: public dfm2::CInput_Contact
 {
 public:
-  double penetrationNormal(double& nx, double &ny, double& nz,
-                           double px, double py, double pz) const override
+  double penetrationNormal([[maybe_unused]] double& nx,
+                           [[maybe_unused]] double &ny,
+                           [[maybe_unused]] double& nz,
+                           [[maybe_unused]] double px,
+                           [[maybe_unused]] double py,
+                           [[maybe_unused]] double pz) const override
   {
     return -100;
   }
@@ -38,7 +42,9 @@ public:
 class CInput_ContactPlane: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
-                           double px, double py, double pz) const override
+                           [[maybe_unused]] double px,
+                           [[maybe_unused]] double py,
+                           double pz) const override
   {
     nx = 0.0;  ny = 0.0;  nz = 1.0; // normal of the plane
     return -0.5 - pz; // penetration depth
@@ -65,7 +71,7 @@ class CInput_ContactSphere: public dfm2::CInput_Contact
 
 // ---------------------------------------------------------
 
-dfm2::glfw::CViewer3 viewer;
+dfm2::glfw::CViewer3 viewer(1.5);
 dfm2::opengl::CShader_TriMesh shdr_trimsh;
 
 std::vector<double> aXYZ0; // (out) undeformed vertex positions
@@ -126,10 +132,10 @@ void draw(GLFWwindow* window)
 
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float)nw/nh;
-  float mP[16], mMV[16];
-  viewer.projection.Mat4ColumnMajor(mP, asp);
+  float mMV[16];
+  delfem2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
   viewer.modelview.Mat4ColumnMajor(mMV);
-  shdr_trimsh.Draw(mP,mMV);
+  shdr_trimsh.Draw(mP.data(),mMV);
   
   viewer.SwapBuffers();
   glfwPollEvents();
@@ -169,8 +175,7 @@ int main()
   
   shdr_trimsh.Compile();
   shdr_trimsh.Initialize(aXYZ, 3, aTri);
-  
-  viewer.projection.view_height = 1.5;
+
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

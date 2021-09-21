@@ -105,10 +105,9 @@ int main()
 
   dfm2::opengl::CShader_MeshTex shdr;
 
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(2);
   viewer.width = 400;
   viewer.height = 400;
-  viewer.projection.view_height = 2;
 
   // -----------------------
   // opengl starts from here
@@ -146,14 +145,15 @@ int main()
   {
     float mMVP[16];
     {
-      float mMV[16], mP[16];
+      float mMV[16];
+      delfem2::CMat4f mP;
       {
         int width0, height0;
         glfwGetFramebufferSize(viewer.window, &width0, &height0);
-        viewer.projection.Mat4ColumnMajor(mP, float(width0)/float(height0));
+        mP = viewer.projection->Mat4ColumnMajor(float(width0)/float(height0));
         viewer.modelview.Mat4ColumnMajor(mMV);
       }
-      dfm2::MatMat4(mMVP, mMV, mP);
+      dfm2::MatMat4(mMVP, mMV, mP.data());
     }
     std::vector< delfem2::PointOnSurfaceMesh<double> > aPointElemSurf;
     Intersection_ImageRay_TriMesh3(aPointElemSurf,

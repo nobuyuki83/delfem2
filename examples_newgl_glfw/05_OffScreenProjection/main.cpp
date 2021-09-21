@@ -28,7 +28,7 @@
 
 namespace dfm2 = delfem2;
 
-delfem2::glfw::CViewer3 viewer;
+delfem2::glfw::CViewer3 viewer(2);
 dfm2::opengl::CRender2Tex r2t;
 dfm2::opengl::CShader_TriMesh shdr_trimsh;
 dfm2::opengl::CShader_Points shdr_points;
@@ -44,12 +44,12 @@ void draw(GLFWwindow *window) {
   int nw, nh;
   glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float) nw / float(nh);
-  float mP[16], mMV[16];
-  viewer.projection.Mat4ColumnMajor(mP,asp);
+  float mMV[16];
+  dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
   viewer.modelview.Mat4ColumnMajor(mMV);
-  shdr_points.Draw(mP, mMV);
-  shdr_trimsh.Draw(mP, mMV);
-  draw_r2t.Draw(r2t, mP, mMV);
+  shdr_points.Draw(mP.data(), mMV);
+  shdr_trimsh.Draw(mP.data(), mMV);
+  draw_r2t.Draw(r2t, mP.data(), mMV);
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -103,7 +103,6 @@ int main() {
   r2t.End();
   draw_r2t.SetDepth(r2t);
   //
-  viewer.projection.view_height = 2.0;
   viewer.modelview.Rot_Camera(+0.8, -0.2);
 
 #ifdef EMSCRIPTEN

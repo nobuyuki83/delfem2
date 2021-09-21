@@ -209,11 +209,12 @@ void FindRodHairContactCCD(
   } // ir
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char* argv[])
+int main()
 {
   class CViewerDemo : public dfm2::glfw::CViewer3 {
+  public:
+    CViewerDemo() : CViewer3(1.5) {}
+    
     void  key_press(int key, 
 		[[maybe_unused]] int mods) override {
       if( key == GLFW_KEY_A ){
@@ -228,9 +229,9 @@ int main(
     bool is_animation = true;
     bool is_step = false;
   } viewer;
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.5;
   //viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
 //  viewer.camera.Rot_Camera(-0.4, -0.1);
   // viewer.camera.Rot_Camera(-3.1415*0.5,0);

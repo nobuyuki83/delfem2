@@ -208,9 +208,8 @@ void SetProblem(int iprob) {
 // ------------------------------------------------
 
 int main() {
-  delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 2.0;
-  
+  delfem2::glfw::CViewer3 viewer(2.0);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

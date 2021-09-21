@@ -192,12 +192,11 @@ int main()
   }
 
   // -----------
-  delfem2::glfw::CViewer3 viewer;
-  delfem2::glfw::InitGLOld();
+  delfem2::glfw::CViewer3 viewer(0.7);
   viewer.modelview.trans[0] = -0.5;
   viewer.modelview.trans[1] = -0.5;
+  delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 0.7;
   while (!glfwWindowShouldClose(viewer.window) )
   {
     for(const auto& pd: aPointData) {

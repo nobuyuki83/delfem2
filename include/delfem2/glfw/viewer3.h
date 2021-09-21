@@ -24,6 +24,12 @@ namespace delfem2::glfw {
 
 class CViewer3 {
  public:
+  CViewer3(double view_height=1) :
+  projection(){
+    projection = std::make_unique<Projection_LookOriginFromZplus<double>>(
+        view_height, false);
+  }
+
   void DrawBegin_oldGL() const;
 
   void SwapBuffers() const;
@@ -63,7 +69,8 @@ class CViewer3 {
  public:
   GLFWwindow *window = nullptr;
   CMouseInput nav;
-  delfem2::Projection_LookOriginFromZplus<double> projection;
+  // delfem2::Projection_LookOriginFromZplus<double> projection;
+  std::unique_ptr<Projection<double>> projection;
   delfem2::ModelView_Trackball<double> modelview;
   double bgcolor[4] = {1, 1, 1, 1};
   unsigned int width = 640;

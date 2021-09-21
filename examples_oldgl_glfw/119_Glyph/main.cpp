@@ -32,9 +32,7 @@ int main()
       std::string(PATH_INPUT_DIR)+"/myFont.fnt");
   // -------------------
   
-  dfm2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 2.0;
-  
+  dfm2::glfw::CViewer3 viewer(2.0);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

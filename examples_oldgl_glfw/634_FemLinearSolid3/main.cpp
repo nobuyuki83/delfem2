@@ -161,8 +161,7 @@ int main()
       mass, 1.0e+5,1.e+5, gravity);
 
   // ----------------------
-  delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 1.5;
+  delfem2::glfw::CViewer3 viewer(1.5);
 //  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
 //  viewer.camera.theta = 0.1;
 //  viewer.camera.psi = 0.1;

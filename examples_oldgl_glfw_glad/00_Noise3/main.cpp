@@ -155,7 +155,6 @@ int main() {
   // -----------------
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.projection.view_height = 1.0;
   viewer.InitGL();
   if (!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");

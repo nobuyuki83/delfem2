@@ -218,12 +218,11 @@ int main(
              aTri_Contact.data(), aTri_Contact.size() / 3,
              0.01);
   }
-
   delfem2::glfw::CViewer3 viewer;
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   dfm2::opengl::setSomeLighting();
-  viewer.projection.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
 
   while (true) {

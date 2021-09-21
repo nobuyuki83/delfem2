@@ -336,6 +336,11 @@ class CMat4 {
     for (int i = 0; i < 16; ++i) { mat[i] = static_cast<S>(pm[i]); }
   }
 
+  template<typename S>
+  CMat4(const std::array<S,16>&& pm){
+    for (int i = 0; i < 16; ++i) { mat[i] = static_cast<S>(pm[i]); }
+  }
+
   CMat4(REAL v00, REAL v01, REAL v02, REAL v03,
         REAL v10, REAL v11, REAL v12, REAL v13,
         REAL v20, REAL v21, REAL v22, REAL v23,

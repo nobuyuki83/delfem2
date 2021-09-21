@@ -95,8 +95,7 @@ void Hoge() {
 
 int main() {
   delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 1.0;
-  
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 

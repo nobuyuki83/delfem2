@@ -333,11 +333,9 @@ int main()
   }
   std::cout << "particle size : " << ps.size() << std::endl;
 
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(0.1);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 0.1;
-  // viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
 
   {

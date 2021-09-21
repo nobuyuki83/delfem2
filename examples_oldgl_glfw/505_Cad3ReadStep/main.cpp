@@ -893,11 +893,11 @@ int main() {
   //  LoadStep("grabcad/bumper/BUMPER.stp",aCP,aBSCWK);
   //  LoadStep("bolt.STEP",aCP,aBSCWK);
 
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(100);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 100;
-
+  //
   while (!glfwWindowShouldClose(viewer.window)) {
     viewer.DrawBegin_oldGL();
     for (auto & ipse : apStepElem) {

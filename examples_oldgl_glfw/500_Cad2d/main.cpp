@@ -66,8 +66,8 @@ int main()
         viewer.modelview.trans[0] = -(bb.x_min+bb.x_max)*0.5;
         viewer.modelview.trans[1] = -(bb.y_min+bb.y_max)*0.5;
         viewer.modelview.trans[2] = 0.0;
-        viewer.projection.view_height = 0.5*bb.LengthDiagonal();
-        viewer.projection.scale = 1.0;
+        //viewer.projection.view_height = 0.5*bb.LengthDiagonal();
+        viewer.projection->scale = 1.0;
       }
       iframe = (iframe+1)%(nframe_interval*5);
     }

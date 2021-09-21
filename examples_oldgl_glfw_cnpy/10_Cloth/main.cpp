@@ -115,9 +115,9 @@ int main()
   // ------------------------------
   // below: opengl related function
   delfem2::glfw::CViewer3 viewer;
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
 
   for(int iproblem=0;iproblem<4;++iproblem)

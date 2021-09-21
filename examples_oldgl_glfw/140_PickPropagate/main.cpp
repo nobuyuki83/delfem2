@@ -42,7 +42,8 @@ public:
       std::vector<unsigned int>& aFlagElem0,
       const std::vector<double>& aXYZ0, // 3d points
       const std::vector<unsigned int>& aTri0)
-      : aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0)
+      : CViewer3(1.5), 
+        aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0)
   {
     dfm2::ConstructBVHTriangleMeshMortonCode(
         aNodeBVH, aAABB,
@@ -136,7 +137,6 @@ int main()
       tri_flag,
       vtx_xyz,tri_idx);
 
-  viewer.projection.view_height = 1.5;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

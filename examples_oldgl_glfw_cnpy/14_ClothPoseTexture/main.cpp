@@ -197,7 +197,6 @@ int main()
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   // viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
-  viewer.projection.view_height = 1.0;
   dfm2::opengl::setSomeLighting();
   tex.InitGL();
 

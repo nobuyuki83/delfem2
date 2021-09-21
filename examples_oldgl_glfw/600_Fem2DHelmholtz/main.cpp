@@ -134,10 +134,11 @@ int main() {
   std::vector<double> aVal(aCVal.size(), 0.1);
   for (size_t ip = 0; ip < aVal.size(); ++ip) { aVal[ip] = aCVal[ip].real(); }
 
-  dfm2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 1.5;
+  dfm2::glfw::CViewer3 viewer(1.5);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
+  //
   while (!glfwWindowShouldClose(viewer.window)) {
     {
       static int iframe = 0;

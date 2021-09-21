@@ -148,10 +148,9 @@ int main()
     Solve1(aVal,aXY1,aTri1,aBCFlag);
   }
   // --------
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.5);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.5;
   // ---------
   while(!::glfwWindowShouldClose(viewer.window)){
     viewer.DrawBegin_oldGL();

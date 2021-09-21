@@ -107,13 +107,12 @@ void Draw_CGrid3(
 
 int main()
 {
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.0);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.0;
   dfm2::opengl::setSomeLighting();
-  ::glEnable(GL_DEPTH_TEST);
-  
+  ::glEnable(GL_DEPTH_TEST);  
   dfm2::CGrid3<int> grid;
   {
     const unsigned int n = 32;

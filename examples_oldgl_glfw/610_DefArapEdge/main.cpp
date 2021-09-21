@@ -98,11 +98,11 @@ void Draw_BCFlag(
 int main()
 {
   dfm2::glfw::CViewer3 viewer;
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
-  
+  //
   std::vector<unsigned int> aTri;
   std::vector<double> aXYZ0;
   std::vector<int> aBCFlag;

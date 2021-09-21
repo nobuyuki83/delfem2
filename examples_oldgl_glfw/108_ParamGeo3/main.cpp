@@ -184,12 +184,11 @@ void myGlutDisplay()
 
 int main()
 {
-  delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 4;
-  
+  delfem2::glfw::CViewer3 viewer(4);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  
+  //
   while (!glfwWindowShouldClose(viewer.window))
   {
     {

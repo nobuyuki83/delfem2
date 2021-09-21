@@ -54,8 +54,7 @@ int main()
   std::vector<Eigen::Vector4f,Eigen::aligned_allocator<Eigen::Vector4f> > aXYZ(100);
   std::vector<unsigned int> aTri;
   // --
-  delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 1.5;
+  delfem2::glfw::CViewer3 viewer(1.5);
   // ---
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

@@ -305,12 +305,12 @@ DFM2_INLINE void Solve_DispRotSeparate(
 }
 
 int main() {
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.5);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.5;
   delfem2::opengl::setSomeLighting();
-  // -----
+  //
   std::random_device rd;
   std::mt19937 reng(rd());
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
