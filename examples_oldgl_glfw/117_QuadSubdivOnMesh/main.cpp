@@ -186,7 +186,6 @@ void myGlutDisplay()
 int main()
 {
   dfm2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 1.0;
   //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();

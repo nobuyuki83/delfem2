@@ -981,13 +981,11 @@ void ProblemFluidTunnel(
 }
 
 int main() {
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.5);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.5;
-  // viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
-
   for (unsigned int itr = 0; itr < 10; ++itr) {
     std::vector<unsigned int> aTri1;
     std::vector<double> aXY1;

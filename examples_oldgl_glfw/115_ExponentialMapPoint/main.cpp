@@ -112,9 +112,8 @@ int main() {
   // -----------------------
   // below: view
 
-  delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 0.5;
-  
+  delfem2::glfw::CViewer3 viewer(0.5);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

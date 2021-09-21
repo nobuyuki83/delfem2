@@ -191,10 +191,9 @@ int main() {
     tex.channels = 3;
     tex.pixel_color.resize(tex.width*tex.height*tex.channels);
   }
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(2);
   viewer.width = 400;
   viewer.height = 400;
-  viewer.projection.view_height = 2;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   tex.InitGL();

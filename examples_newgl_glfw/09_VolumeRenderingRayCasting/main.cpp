@@ -28,9 +28,7 @@ std::string LoadFile(
 int main()
 {
   delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 1.0;
-  viewer.projection.is_pars = true;
-  viewer.projection.fovy = 45.0;
+  viewer.projection = std::make_unique<delfem2::Projection_LookOriginFromZplus<double>>(1.0, true, 45);
   delfem2::opengl::CShader_Mesh shdr;
   shdr.color[0] = 1;
   //
@@ -93,10 +91,10 @@ int main()
       ::glGetIntegerv(GL_VIEWPORT, viewport);
       glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
       iloc = glGetUniformLocation(id_shader, "mMVPinv");
-      float mMV[16], mP[16], mMVP[16], mMVPinv[16];
-      viewer.projection.Mat4ColumnMajor(mP, (float) viewport[2] / (float) viewport[3]);
+      float mMV[16], mMVP[16], mMVPinv[16];
+      delfem2::CMat4f mP = viewer.projection->Mat4ColumnMajor((float) viewport[2] / (float) viewport[3]);
       viewer.modelview.Mat4ColumnMajor(mMV);
-      delfem2::MatMat4(mMVP,mMV,mP);
+      delfem2::MatMat4(mMVP,mMV,mP.data());
       delfem2::Inverse_Mat4(mMVPinv,mMVP);
       glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);
       iloc = glGetUniformLocation(id_shader, "mMV");

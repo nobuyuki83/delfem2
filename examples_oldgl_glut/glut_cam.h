@@ -158,10 +158,10 @@ public:
     switch(Key)
     {
       case GLUT_KEY_PAGE_UP:
-        projection.Scale(1.03);
+        projection.scale *= 1.03;
         break;
       case GLUT_KEY_PAGE_DOWN:
-        projection.Scale(1.0/1.03);
+        projection.scale *= (1.0/1.03);
         break;
       case GLUT_KEY_F1:
         projection.is_pars = !projection.is_pars;
@@ -197,9 +197,8 @@ public:
     {
       ::glMatrixMode(GL_PROJECTION);
       ::glLoadIdentity();
-      float mP[16];
-      projection.Mat4ColumnMajor(mP, (double)win_w/win_h);
-      ::glMultMatrixf(mP);
+      delfem2::CMat4f mP = projection.Mat4ColumnMajor((double)win_w/win_h);
+      ::glMultMatrixf(mP.data());
     }
     {
       ::glMatrixMode(GL_MODELVIEW);

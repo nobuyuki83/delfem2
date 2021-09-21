@@ -280,10 +280,9 @@ int main() {
     }
   }
   // -----------
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(1.5);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.5;
   while (!glfwWindowShouldClose(viewer.window)) {
     RemoveOnePoint(aDP, aDTri, aVec3,
                    cost2edge, edge2cost,

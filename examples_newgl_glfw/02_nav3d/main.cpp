@@ -24,7 +24,7 @@ namespace dfm2 = delfem2;
 // ---------------------------
 // global variables
 dfm2::opengl::CShader_TriMesh shdr;
-delfem2::glfw::CViewer3 viewer;
+delfem2::glfw::CViewer3 viewer(2.0);
 
 // ---------------------------
 
@@ -39,10 +39,10 @@ void draw(GLFWwindow* window)
 
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float)nw/nh;
-  float mP[16], mMV[16];
-  viewer.projection.Mat4ColumnMajor(mP, asp);
+  float mMV[16];
+  dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
   viewer.modelview.Mat4ColumnMajor(mMV);
-  shdr.Draw(mP, mMV);
+  shdr.Draw(mP.data(), mMV);
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -71,7 +71,6 @@ int main()
                             32,18);
     shdr.Initialize(aXYZd, 3, aTri);
   }
-  viewer.projection.view_height = 2.0;
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

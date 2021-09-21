@@ -189,10 +189,9 @@ int main() {
       thickness, myu, lambda, rho, gravity_z,
       aXY0, aTri);
 
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(0.8);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 0.8;
 //  viewer.modelview.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
 //  viewer.modelview.psi = 0.2;
 //  viewer.modelview.theta = 0.2;

@@ -213,7 +213,7 @@ int main() {
     ilu_A.SetPattern0(mat_A);
   }
 
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(2.0);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
@@ -223,7 +223,6 @@ int main() {
 //  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
 //  viewer.camera.psi = 3.1415 * 0.2;
 //  viewer.camera.theta = 3.1415 * 0.1;
-  viewer.projection.view_height = 2;
   while (!glfwWindowShouldClose(viewer.window)) {
     StepTime();
     viewer.DrawBegin_oldGL();

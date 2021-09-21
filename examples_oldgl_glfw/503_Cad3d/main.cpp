@@ -270,16 +270,15 @@ void DrawVtxEdgeHandler
 int main() {
   class CCAD3DViewer : public delfem2::glfw::CViewer3 {
    public:
-    CCAD3DViewer() {
+    CCAD3DViewer() : CViewer3(1.5) {
       cad.Initialize_Sphere();
-      projection.view_height = 1.5;
       //camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
       cad.imode_edit = dfm2::CCad3D::EDIT_MOVE;
     }
     void Draw() {
       this->DrawBegin_oldGL();
       DrawFace_RightSelected(cad, false);
-      DrawVtxEdgeHandler(cad, projection.view_height);
+      DrawVtxEdgeHandler(cad, 1.5);
       this->SwapBuffers();
     }
     void mouse_press(const float src[3], const float dir[3]) override {
@@ -287,13 +286,13 @@ int main() {
       int nw, nh;
       glfwGetFramebufferSize(this->window, &nw, &nh);
       const float asp = (float) nw / nh;
-      float mMV[16], mPrj[16];
-      projection.Mat4ColumnMajor(mPrj, asp);
+      float mMV[16];
+      delfem2::CMat4f mPrj = projection->Mat4ColumnMajor(asp);
       modelview.Mat4ColumnMajor(mMV);
       cad.MouseDown(src_pick, dir_pick,
                     dfm2::CVec2d(nav.mouse_x, nav.mouse_y),
-                    mMV, mPrj,
-                    projection.view_height);
+                    mMV, mPrj.data(),
+                    1.5);
     }
     void mouse_drag(
 		[[maybe_unused]] const float src0[3], 
@@ -304,10 +303,10 @@ int main() {
       int nw, nh;
       glfwGetFramebufferSize(this->window, &nw, &nh);
       const float asp = (float) nw / nh;
-      float mMV[16], mPrj[16];
-      projection.Mat4ColumnMajor(mPrj, asp);
+      float mMV[16];
+      delfem2::CMat4f mPrj = projection->Mat4ColumnMajor(asp);
       modelview.Mat4ColumnMajor(mMV);
-      cad.MouseMotion(src_pick, dir_pick, sp0, sp1, mMV, mPrj);
+      cad.MouseMotion(src_pick, dir_pick, sp0, sp1, mMV, mPrj.data());
     }
    public:
     dfm2::CCad3D cad;

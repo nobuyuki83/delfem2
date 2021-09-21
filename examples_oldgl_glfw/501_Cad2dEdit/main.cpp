@@ -28,13 +28,13 @@
 int main() {
   class CCAD2DViewer : public delfem2::glfw::CViewer3 {
    public:
-    CCAD2DViewer() {
+    CCAD2DViewer() : CViewer3(1.5) {
       const double poly[8] = {-1, -1, +1, -1, +1, +1, -1, +1};
       cad.AddPolygon(std::vector<double>(poly, poly + 8));
     }
     //
     void mouse_press(const float src[3], [[maybe_unused]] const float dir[3]) override {
-      cad.Pick(src[0], src[1], this->projection.view_height);
+      cad.Pick(src[0], src[1], 1.5);
     }
     void mouse_drag(const float src0[3], const float src1[3], [[maybe_unused]] const float dir[3]) override {
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
@@ -51,7 +51,6 @@ int main() {
   CCAD2DViewer viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.5;
   delfem2::opengl::setSomeLighting();
   // --------------------
   while (!glfwWindowShouldClose(viewer.window)) {

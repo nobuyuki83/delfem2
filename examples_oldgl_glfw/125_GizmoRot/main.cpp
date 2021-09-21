@@ -77,7 +77,6 @@ int main() {
   // --------------------
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
   // --------------------
   while (true) {

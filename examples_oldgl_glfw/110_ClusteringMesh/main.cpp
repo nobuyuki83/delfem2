@@ -54,13 +54,12 @@ int main() {
   // -----------------------
   // below: view
 
-  delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 0.5;
-  
+  delfem2::glfw::CViewer3 viewer(0.5);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
-
+  //
   while (!glfwWindowShouldClose(viewer.window)) {
     const unsigned int ncluster = ncluster_gen(rdeng);
     std::vector<std::pair<int, dfm2::CColor> > aColor;

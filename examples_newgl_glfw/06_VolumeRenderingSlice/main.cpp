@@ -125,8 +125,7 @@ std::string LoadFile(
 
 int main()
 {
-  delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 0.5;
+  delfem2::glfw::CViewer3 viewer(0.5);
   delfem2::glfw::InitGLNew();
   viewer.InitGL();
 
@@ -180,8 +179,8 @@ int main()
     
     int nw, nh; glfwGetFramebufferSize(viewer.window, &nw, &nh);
     const float asp = (float)nw/nh;
-    float mP[16], mMV[16];
-    viewer.projection.Mat4ColumnMajor(mP, asp);
+    float mMV[16];
+    dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
     viewer.modelview.Mat4ColumnMajor(mMV);
     
     const unsigned int nslice = 256;
@@ -200,7 +199,7 @@ int main()
       const float mati[16] = {1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1};
       glUniformMatrix4fv(locMw, 1, GL_FALSE, mati);
     }
-    glUniformMatrix4fv(locMp, 1, GL_FALSE, mP);
+    glUniformMatrix4fv(locMp, 1, GL_FALSE, mP.data());
     glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, nslice); // draw idVaoSlice nslice-times
     
     viewer.SwapBuffers();

@@ -433,10 +433,10 @@ int main()
 
   // -------------
   // below: opengl
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.2);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.2;
   dfm2::opengl::setSomeLighting();
 
   int iframe = 0;

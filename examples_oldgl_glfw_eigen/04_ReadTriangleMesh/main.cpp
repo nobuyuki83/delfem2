@@ -38,8 +38,7 @@ int main() {
   std::cout << V.col(0).minCoeff() << " " << V.col(0).maxCoeff() << std::endl;
 
   delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 1.0;
-
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 

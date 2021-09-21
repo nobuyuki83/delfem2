@@ -303,12 +303,12 @@ int main(
   RotationAtMeshPoints(aR,
                        aXYZ, aDisp, psup_ind, psup);
 
-  delfem2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 2.0;
+  delfem2::glfw::CViewer3 viewer(2.0);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
-
+  //
   while (!glfwWindowShouldClose(viewer.window)) {
     if (is_stiffness_warping) { Solve_StiffnessWarping(); }
     else { Solve_Linear(); }

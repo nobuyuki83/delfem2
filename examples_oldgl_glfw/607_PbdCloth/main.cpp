@@ -140,10 +140,11 @@ int main() {
   }
 
   dfm2::glfw::CViewer3 viewer;
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
+  //
   while (!glfwWindowShouldClose(viewer.window)) {
     StepTime();
     viewer.DrawBegin_oldGL();

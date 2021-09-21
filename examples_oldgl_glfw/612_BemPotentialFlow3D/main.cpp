@@ -245,12 +245,12 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 int main()
 {
   SetProblem();
-  
   dfm2::glfw::CViewer3 viewer;
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
+  //
   while (!glfwWindowShouldClose(viewer.window))
   {
     viewer.DrawBegin_oldGL();

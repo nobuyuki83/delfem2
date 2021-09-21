@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if(MSVC)
   set(CMAKE_CXX_FLAGS "/W4")
 else()
-  set(CMAKE_CXX_FLAGS "-Wall -g" )
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 endif()
 
 ########################
@@ -31,7 +31,8 @@ include_directories(
     ${DELFEM2_INCLUDE_DIR}
 )
 
-target_link_libraries(${PROJECT_NAME} 
-  ${GLUT_LIBRARY} 
+target_link_libraries(${PROJECT_NAME}
+  GLUT::GLUT
   OpenGL::GL
+  OpenGL::GLU
   )

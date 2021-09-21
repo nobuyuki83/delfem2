@@ -85,8 +85,7 @@ int main()
   dfm2::ConstructBVHTriangleMeshMortonCode(
       vec_node_bvh, vec_bv, vec_xyz, vec_tri);
   
-  dfm2::glfw::CViewer3 viewer;
-  viewer.projection.view_height = 1.5;
+  dfm2::glfw::CViewer3 viewer(1.5);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

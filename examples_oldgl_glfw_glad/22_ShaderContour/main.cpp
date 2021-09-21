@@ -78,14 +78,13 @@ int main() {
   draw_sampler.draw_len_axis = 1.0;
 
   // -------------------
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(4.0);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   if (!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
-  viewer.projection.view_height = 4.0;
   delfem2::opengl::setSomeLighting();
   std::cout << "Vendor:" << glGetString(GL_VENDOR) << std::endl;
   std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;

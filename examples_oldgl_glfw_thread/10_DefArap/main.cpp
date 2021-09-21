@@ -134,9 +134,9 @@ int main(int argc,char* argv[])
   }
 
   dfm2::glfw::CViewer3 viewer;
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.projection.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
   
   for(unsigned int itr=0;itr<2;++itr){
