@@ -114,7 +114,7 @@ void myGlutMouse(int button, int state, int x, int y)
   ::glutPostRedisplay();
 }
 
-void myGlutKeyboard(unsigned char Key, int x, int y)
+void myGlutKeyboard(unsigned char Key, [[maybe_unused]] int x, [[maybe_unused]] int y)
 {
   switch(Key)
   {

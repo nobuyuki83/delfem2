@@ -19,8 +19,9 @@
 
 #include <iostream>
 #include <cmath>
-#include <cstdio> // memcpy
+#include <cstdio>  // memcpy
 #include <cstring>
+#include <array>
 
 #include "delfem2/quat.h"
 #include "delfem2/mat4.h"
@@ -41,7 +42,7 @@ class ModelView_Trackball {
    * @param mMV model view matrix (column major order)
    * @detail column major
    */
-  void Mat4ColumnMajor(float mMV[16]) const{
+   std::array<float,16> Mat4ColumnMajor() const{
     REAL Mt[16];
     {
       const REAL transd[3] = {trans[0], trans[1], trans[2]};
@@ -56,7 +57,9 @@ class ModelView_Trackball {
           static_cast<float>(Quat_tball[3])};
       Mat4_QuatConj(Mr, q);
     }
-    MatMat4(mMV, Mr, Mt);
+    std::array<float,16> mMV;
+    MatMat4(mMV.data(), Mr, Mt);
+    return mMV;
   }
   void Rot_Camera(REAL dx, REAL dy){
     double a = sqrt(dx * dx + dy * dy);

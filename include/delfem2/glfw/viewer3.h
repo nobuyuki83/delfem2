@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <memory>  // unique_ptr
 
 #include "delfem2/cam_modelview.h"
 #include "delfem2/cam_projection.h"
@@ -69,9 +70,9 @@ class CViewer3 {
  public:
   GLFWwindow *window = nullptr;
   CMouseInput nav;
-  // delfem2::Projection_LookOriginFromZplus<double> projection;
   std::unique_ptr<Projection<double>> projection;
   delfem2::ModelView_Trackball<double> modelview;
+  double scale = 1.0;
   double bgcolor[4] = {1, 1, 1, 1};
   unsigned int width = 640;
   unsigned int height = 480;

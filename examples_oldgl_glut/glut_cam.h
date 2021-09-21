@@ -18,17 +18,6 @@
 // end of header
 // --------------------------------------------
 
-/*
-static void DrawSphere(double r, double x, double y, double z)
-{
-  ::glMatrixMode(GL_MODELVIEW);
-  ::glPushMatrix();
-  ::glTranslated(+x,+y,+z);
-  ::glutSolidSphere(r,32, 32);
-  ::glPopMatrix();
-}
- */
-
 static void RenderBitmapString(float x, float y, void *font,const char *string)
 {
   ::glRasterPos2f(x, y);
@@ -87,8 +76,6 @@ static void ShowFPS(){
       ss << std::fixed << std::setprecision(2);
       ss << frame*1000.0/(time-timebase);
       s_fps = ss.str();
-//      s_fps = std::string("FPS:")+std::to_string(frame*1000.0/(time-timebase));
-//      sprintf(s_fps,"FPS:%4.2f",frame*1000.0/(time-timebase));
       timebase = time;
       frame = 0;
     }
@@ -109,16 +96,6 @@ public:
     GLint viewport[4];
     ::glGetIntegerv(GL_VIEWPORT,viewport);
     imodifier = glutGetModifiers();
-    /*
-    if( imodifier == 0 ){
-      if( button == 1 && state == GLUT_DOWN ){
-        imodifier = GLUT_ACTIVE_ALT;
-      }
-      if( button == 2 && state == GLUT_DOWN ){
-        imodifier = GLUT_ACTIVE_CTRL;
-      }
-    }
-     */
     if( state == GLUT_UP ){ this->ibutton = -1; }
     else{                   this->ibutton = button; }
     const int win_w = viewport[2];
@@ -145,23 +122,23 @@ public:
         modelview.Rot_Camera(dx, dy);
       }
       else if( imodifier == GLUT_ACTIVE_SHIFT ){
-        double scale = projection.view_height / projection.scale;
-        modelview.Pan_Camera(dx, dy, scale);
+        double s0 = projection.view_height / scale;
+        modelview.Pan_Camera(dx, dy, s0);
       }
     }
     mouse_x = mov_end_x;
     mouse_y = mov_end_y;
     ::glutPostRedisplay();
   }
-  void glutSpecial(int Key, int x, int y)
+  void glutSpecial(int Key, [[maybe_unused]] int x, [[maybe_unused]] int y)
   {
     switch(Key)
     {
       case GLUT_KEY_PAGE_UP:
-        projection.scale *= 1.03;
+        scale *= 1.03;
         break;
       case GLUT_KEY_PAGE_DOWN:
-        projection.scale *= (1.0/1.03);
+        scale *= (1.0/1.03);
         break;
       case GLUT_KEY_F1:
         projection.is_pars = !projection.is_pars;
@@ -197,15 +174,14 @@ public:
     {
       ::glMatrixMode(GL_PROJECTION);
       ::glLoadIdentity();
-      delfem2::CMat4f mP = projection.Mat4ColumnMajor((double)win_w/win_h);
+      const delfem2::CMat4f mP = projection.Mat4ColumnMajor((double)win_w/win_h);
       ::glMultMatrixf(mP.data());
     }
     {
       ::glMatrixMode(GL_MODELVIEW);
       ::glLoadIdentity();
-      float mMV[16];
-      modelview.Mat4ColumnMajor(mMV);
-      ::glMultMatrixf(mMV);
+      const delfem2::CMat4f mMV = modelview.Mat4ColumnMajor();
+      ::glMultMatrixf(mMV.data());
     }
   }
 public:
@@ -214,6 +190,7 @@ public:
   int ibutton;
   delfem2::Projection_LookOriginFromZplus<double> projection;
   delfem2::ModelView_Trackball<double> modelview;
+  double scale = 1.0;
   double mouse_x, mouse_y;
   double dx;
   double dy;

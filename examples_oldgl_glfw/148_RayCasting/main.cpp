@@ -126,16 +126,14 @@ int main() {
     for (unsigned int i = 0; i < 10; ++i) {
       float mMVP[16];
       {
-        float mMV[16];
-        dfm2::CMat4f mP;
+        dfm2::CMat4f mMV, mP;
         {
           int width0, height0;
           glfwGetFramebufferSize(viewer.window, &width0, &height0);
           mP = viewer.projection->Mat4ColumnMajor(float(width0) / float(height0));
-          viewer.modelview.Mat4ColumnMajor(mMV);
-//          viewer.camera.Mat4_MVP_OpenGL(mMV, mP, );
+          mMV = viewer.modelview.Mat4ColumnMajor();
         }
-        dfm2::MatMat4(mMVP, mMV, mP.data());
+        dfm2::MatMat4(mMVP, mMV.data(), mP.data());
       }
       std::vector<delfem2::PointOnSurfaceMeshd> vec_point_on_tri;
       Intersection_ImageRay_TriMesh3(

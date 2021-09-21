@@ -179,14 +179,13 @@ int main()
     
     int nw, nh; glfwGetFramebufferSize(viewer.window, &nw, &nh);
     const float asp = (float)nw/nh;
-    float mMV[16];
-    dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
-    viewer.modelview.Mat4ColumnMajor(mMV);
+    const dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
+    const dfm2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
     
     const unsigned int nslice = 256;
 
     glUseProgram(idProgramSlice);
-    glUniformMatrix4fv(locMt, 1, GL_TRUE, mMV); // apply rotation to texture. Transpose matrix here.
+    glUniformMatrix4fv(locMt, 1, GL_TRUE, mMV.data()); // apply rotation to texture. Transpose matrix here.
     glUniform1f(locSpacing, 1.0f / static_cast<GLfloat>(nslice - 1));
     glUniform1f(locThreshold, 0.5);  // threathold of surface
 
