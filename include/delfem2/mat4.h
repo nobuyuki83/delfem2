@@ -485,13 +485,23 @@ class CMat4 {
   [[nodiscard]] static CMat4<REAL> Quat(const REAL *q);
   
   template <typename S>
-  [[nodiscard]] static CMat4<REAL> Translate(const S *v) {
-    CMat4<REAL> m;
-    m.SetIdentity();
-    m.mat[0 * 4 + 3] = v[0];
-    m.mat[1 * 4 + 3] = v[1];
-    m.mat[2 * 4 + 3] = v[2];
-    return m;
+  [[nodiscard]] static CMat4<REAL> Translate(S v0, S v1, S v2) {
+    return CMat4<REAL>{
+      1,0,0,static_cast<REAL>(v0),
+      0,1,0,static_cast<REAL>(v1),
+      0,0,1,static_cast<REAL>(v2),
+      0,0,0,1
+    };
+  }
+  
+  template <typename S>
+  [[nodiscard]] static CMat4<REAL> Translate(const S v[3]) {
+    return CMat4<REAL>{
+      1,0,0,static_cast<REAL>(v[0]),
+      0,1,0,static_cast<REAL>(v[1]),
+      0,0,1,static_cast<REAL>(v[2]),
+      0,0,0,1
+    };
   }
   
   [[nodiscard]] static CMat4<REAL> Mat3(const REAL *v) {

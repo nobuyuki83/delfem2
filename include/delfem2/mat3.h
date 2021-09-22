@@ -338,7 +338,7 @@ class CMat3 {
     for (int i = 0; i < 9; ++i) { ptr[i] += p_[i] * s; }
   }
   // ---------------
-  void MatVec(const REAL vec0[], REAL vec1[]) const;
+  [[nodiscard]] std::array<REAL,3> MatVec(const REAL vec0[3]) const;
   void MatVecTrans(const REAL vec0[], REAL vec1[]) const;
 
   [[nodiscard]] CMat3 MatMat(const CMat3 &mat0) const;

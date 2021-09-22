@@ -29,13 +29,14 @@ class CViewer3 {
   projection(){
     projection = std::make_unique<Projection_LookOriginFromZplus<double>>(
         view_height, false);
+    view_rotation = std::make_unique<ModelView_Trackball>();
   }
 
   [[nodiscard]] std::array<float,16> GetModelViewMatrix() const {
     std::array<float,16> m{};
-    CMat4f mv = view_rotation.Mat4ColumnMajor();
-    CMat4f mt = CMat4f::Translate(trans);
-    (mt * mv.transpose()).CopyTo(m.data());
+    CMat4f mv = view_rotation->GetMatrix();
+    CMat4f mt = CMat4f::Translate(trans[0], trans[1], trans[2]);
+    (mt * mv).CopyTo(m.data());
     return m;
   }
 
@@ -76,9 +77,6 @@ class CViewer3 {
 
   virtual void mouse_wheel(
       [[maybe_unused]] double yoffset) {}
-  
-  
-  
 
  public:
   GLFWwindow *window = nullptr;
@@ -92,7 +90,7 @@ class CViewer3 {
 // private:
   std::unique_ptr<Projection<double>> projection;
 // private:
-  delfem2::ModelView_Trackball<double> view_rotation;
+  std::unique_ptr<delfem2::ModelView_Trackball> view_rotation;
 };
 
 } // namespace delfem2

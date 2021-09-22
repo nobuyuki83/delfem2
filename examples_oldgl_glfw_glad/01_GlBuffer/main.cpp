@@ -163,7 +163,7 @@ int main() {
   // ---------------------------
 
   dfm2::glfw::CViewer3 viewer;
-  viewer.view_rotation.Rot_Camera(-0.5, -0.5);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   if (!gladLoadGL()) {     // glad: load all OpenGL function pointers
