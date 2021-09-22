@@ -28,7 +28,7 @@ delfem2::glfw::CViewer3 viewer(2.0);
 
 // ---------------------------
 
-void draw(GLFWwindow* window)
+void draw()
 {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -37,11 +37,10 @@ void draw(GLFWwindow* window)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
 
-  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float)nw/nh;
-  dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
-  dfm2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
-  shdr.Draw(mP.data(), mMV.data());
+  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+  mP = mP.transpose() * dfm2::CMat4f::ScaleXYZ(1,1,-1);
+  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+  shdr.Draw(mP.data(), mMV.transpose().data());
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -74,7 +73,7 @@ int main()
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
-  while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
+  while (!glfwWindowShouldClose(viewer.window)) { draw(); }
 #endif
   
   glfwDestroyWindow(viewer.window);

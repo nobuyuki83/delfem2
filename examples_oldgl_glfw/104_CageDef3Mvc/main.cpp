@@ -73,8 +73,9 @@ void Example1(
   }
   // --------------------
   delfem2::glfw::CViewer3 viewer;
-  delfem2::Quat_Bryant(viewer.modelview.Quat_tball,
-                       -M_PI * 0.25, 0., 0.);
+  delfem2::Quat_Bryant(
+      viewer.view_rotation.Quat_tball,
+      -M_PI * 0.25, 0., 0.);
   //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
@@ -152,7 +153,9 @@ void Example2(
   }
   // --------------------
   delfem2::glfw::CViewer3 viewer;
-  delfem2::Quat_Bryant(viewer.modelview.Quat_tball, -M_PI * 0.25, 0., 0.);
+  delfem2::Quat_Bryant(
+      viewer.view_rotation.Quat_tball,
+      -M_PI * 0.25, 0., 0.);
   //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

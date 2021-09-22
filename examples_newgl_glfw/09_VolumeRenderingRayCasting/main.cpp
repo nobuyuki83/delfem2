@@ -91,12 +91,10 @@ int main()
       ::glGetIntegerv(GL_VIEWPORT, viewport);
       glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
       iloc = glGetUniformLocation(id_shader, "mMVPinv");
-      const float asp = (float) viewport[2] / (float) viewport[3];
-      const delfem2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
-      const delfem2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
-      const delfem2::CMat4f mMVPinv = (mMV * mP).Inverse();
-      // delfem2::MatMat4(mMVP,mMV,mP.data());
-      // delfem2::Inverse_Mat4(mMVPinv,mMVP);
+      const delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+      const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+      const delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
+      const delfem2::CMat4f mMVPinv = (mMV.transpose() * mP.transpose() * mZ).Inverse();
       glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv.data());
       iloc = glGetUniformLocation(id_shader, "mMV");
       glUniformMatrix4fv(iloc,1,GL_FALSE,mMV.data());

@@ -81,17 +81,15 @@ static void glfw_callback_mouse_button(
     return;
   }
   if (action == GLFW_PRESS) { // "press callback"
-    float src[3], dir[3];
-    float mMVP[16];
+    float mMVP_transpose[16];
     {
-      //float mMV[16];
-      const CMat4f mP = pViewer3->projection->Mat4ColumnMajor(asp);
-      const CMat4f mS = CMat4f::Scale(pViewer3->scale);
-      const CMat4f mMV = pViewer3->modelview.Mat4ColumnMajor();
-      (mMV * mS * mP).CopyTo(mMVP);
-      // ::delfem2::MatMat4(mMVP, mMV, mP.data());
+      const CMat4f mP = pViewer3->GetProjectionMatrix();
+      const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
+      const CMat4f mMV = pViewer3->GetModelViewMatrix();
+      (mMV.transpose() * mP.transpose() * mZ).CopyTo(mMVP_transpose);
     }
-    pViewer3->nav.MouseRay(src, dir, asp, mMVP);
+    float src[3], dir[3];
+    pViewer3->nav.MouseRay(src, dir, asp, mMVP_transpose);
     pViewer3->mouse_press(src, dir);
   }
   if (action == GLFW_RELEASE) { // "release callback"
@@ -119,26 +117,26 @@ static void glfw_callback_cursor_position(
   if (pViewer3->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT) {  // drag for view control
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     if (nav.imodifier == GLFW_MOD_ALT) {
-      pViewer3->modelview.Rot_Camera(nav.dx, nav.dy);
+      pViewer3->view_rotation.Rot_Camera(nav.dx, nav.dy);
       return;
     } else if (nav.imodifier == GLFW_MOD_SHIFT) {
-      const delfem2::CMat4f mP = pViewer3->projection->Mat4ColumnMajor(asp);
-      const delfem2::CMat4f mPinv = mP.transpose().Inverse();
-      const float s0 = mPinv(1,1) / pViewer3->scale;  // where the screen (0,1,0) ends up in global coordinate
-      pViewer3->modelview.Pan_Camera(nav.dx, nav.dy, s0);
+      const delfem2::CMat4f mP = pViewer3->GetProjectionMatrix();
+      const delfem2::CMat4f mPtinv = mP.Inverse();
+      const float s0 = mPtinv(1,1);  // where the screen (0,1,0) ends up in global coordinate
+      pViewer3->trans[0] += s0*nav.dx;
+      pViewer3->trans[1] += s0*nav.dy;
       return;
     }
   }
   // drag call back
   if (pViewer3->nav.ibutton == 0) {
     float src0[3], src1[3], dir0[3], dir1[3];
-    float mMVP[16];
-    {
-      const CMat4f mP = pViewer3->projection->Mat4ColumnMajor(asp);
-      const CMat4f mMV = pViewer3->modelview.Mat4ColumnMajor();
-      ::delfem2::MatMat4(mMVP, mMV.data(), mP.data());
-    }
-    pViewer3->nav.RayMouseMove(src0, src1, dir0, dir1, asp, mMVP);
+    delfem2::CMat4f mP = pViewer3->GetProjectionMatrix();
+    const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
+    const CMat4f mMV = pViewer3->GetModelViewMatrix();
+    const CMat4f mMVP_transpose = mMV.transpose() * mP.transpose() * mZ;
+    pViewer3->nav.RayMouseMove(src0, src1, dir0, dir1, asp,
+                               mMVP_transpose.data());
     pViewer3->mouse_drag(src0, src1, dir0);
   }
 }
@@ -154,6 +152,20 @@ static void glfw_callback_scroll(
 }
 
 }  // namespace delfem2
+
+// ------------------------
+
+std::array<float,16> delfem2::glfw::CViewer3::GetProjectionMatrix() const {
+  int w0, h0;
+  glfwGetWindowSize(window, &w0, &h0);
+  const float asp = static_cast<float>(w0) / static_cast<float>(h0);
+  const CMat4f mP = projection->GetMatrix(asp);
+  const CMat4f mS = CMat4f::Scale((float)scale);
+  const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
+  std::array<float,16> m{};
+  (mZ * mP * mS).CopyTo(m.data());
+  return m;
+}
 
 void delfem2::glfw::CViewer3::InitGL() {
   namespace lcl = delfem2::glfw::viewer3;
@@ -192,34 +204,31 @@ void delfem2::glfw::CViewer3::DrawBegin_oldGL() const {
   // glnew will skip compilling following section
 #ifdef GL_PROJECTION
 
-  { // make sure that the stack is clear
+#ifndef NDEBUG
+  {  // make sure that the stack is clear
     int n0;
     ::glGetIntegerv(GL_MODELVIEW_STACK_DEPTH, &n0);
     int n1;
     ::glGetIntegerv(GL_PROJECTION_STACK_DEPTH, &n1);
     assert(n0 == 1 && n1 == 1);
   }
-
-  CMat4f mMV, mP;
-  {
-    int width0, height0;
-    glfwGetFramebufferSize(window, &width0, &height0);
-    const float asp = static_cast<float>(width0) / static_cast<float>(height0);
-    mP = projection->Mat4ColumnMajor(asp);
-    const CMat4f mS = CMat4f::Scale(scale);
-    mP = mS * mP;
-    mMV = modelview.Mat4ColumnMajor();
-  }
-
-  ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGLae
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glMultMatrixf(mP.data());
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glMultMatrixf(mMV.data());
 #endif
 
+  ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGL
+  {
+    ::glMatrixMode(GL_PROJECTION);
+    ::glLoadIdentity();
+    const CMat4f mP = this->GetProjectionMatrix();
+    const CMat4f mZ = CMat4f::ScaleXYZ(1, 1, -1);
+    ::glMultMatrixf((mZ * mP).transpose().data());
+  }
+  {
+    const CMat4f mMV = this->GetModelViewMatrix();
+    ::glMatrixMode(GL_MODELVIEW);
+    ::glLoadIdentity();
+    ::glMultMatrixf(mMV.transpose().data());
+  }
+#endif
 }
 
 void delfem2::glfw::CViewer3::SwapBuffers() const {

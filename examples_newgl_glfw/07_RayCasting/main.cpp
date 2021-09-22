@@ -145,14 +145,10 @@ int main()
   {
     float mMVP[16];
     {
-      delfem2::CMat4f mMV, mP;
-      {
-        int width0, height0;
-        glfwGetFramebufferSize(viewer.window, &width0, &height0);
-        mP = viewer.projection->Mat4ColumnMajor(float(width0)/float(height0));
-        mMV = viewer.modelview.Mat4ColumnMajor();
-      }
-      dfm2::MatMat4(mMVP, mMV.data(), mP.data());
+      delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+      delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1, 1, -1);
+      delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
+      dfm2::MatMat4(mMVP, mMV.transpose().data(), (mZ*mP).transpose().data());
     }
     std::vector< delfem2::PointOnSurfaceMesh<double> > aPointElemSurf;
     Intersection_ImageRay_TriMesh3(aPointElemSurf,

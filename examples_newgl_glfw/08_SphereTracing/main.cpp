@@ -87,18 +87,22 @@ int main()
     ::glUseProgram(id_shader);
     {
       if( glfwWindowShouldClose(viewer.window) ){ break; }
-      GLint iloc = glGetUniformLocation(id_shader, "resolution");
-      GLint viewport[4];
-      ::glGetIntegerv(GL_VIEWPORT, viewport);
-      glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
-      iloc = glGetUniformLocation(id_shader, "mMVPinv");
-      float asp = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
-      const delfem2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
-      const delfem2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
-      const delfem2::CMat4f mMVPinv = (mMV * mP).Inverse();
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv.data());
-      iloc = glGetUniformLocation(id_shader, "mMV");
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV.data());
+      {
+        GLint iloc = glGetUniformLocation(id_shader, "resolution");
+        GLint viewport[4];
+        ::glGetIntegerv(GL_VIEWPORT, viewport);
+        glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
+      }
+      {
+        GLint iloc = glGetUniformLocation(id_shader, "mMVPinv");
+        const delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+        const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+        const delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
+        const delfem2::CMat4f mMVP_transpose_inv = (mMV.transpose() * mP.transpose() * mZ).Inverse();
+        glUniformMatrix4fv(iloc,1,GL_FALSE,mMVP_transpose_inv.data());
+        iloc = glGetUniformLocation(id_shader, "mMV");
+        glUniformMatrix4fv(iloc,1,GL_FALSE,mMV.transpose().data());
+      }
       shdr.vao.Draw(0);
       viewer.SwapBuffers();
       glfwPollEvents();

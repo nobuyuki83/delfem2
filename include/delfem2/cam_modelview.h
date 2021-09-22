@@ -43,11 +43,6 @@ class ModelView_Trackball {
    * @detail column major
    */
    std::array<float,16> Mat4ColumnMajor() const{
-    REAL Mt[16];
-    {
-      const REAL transd[3] = {trans[0], trans[1], trans[2]};
-      Mat4_AffineTransTranslate(Mt, transd);
-    }
     REAL Mr[16];
     {
       const REAL q[4] = {
@@ -58,7 +53,7 @@ class ModelView_Trackball {
       Mat4_QuatConj(Mr, q);
     }
     std::array<float,16> mMV;
-    MatMat4(mMV.data(), Mr, Mt);
+    Copy_Mat4(mMV.data(), Mr);
     return mMV;
   }
   void Rot_Camera(REAL dx, REAL dy){
@@ -71,14 +66,8 @@ class ModelView_Trackball {
       Copy_Quat(Quat_tball, qtmp);
     }
   }
-  void Pan_Camera(REAL dx, REAL dy, REAL s){
-    // double s = view_height / scale;
-    trans[0] += s * dx;
-    trans[1] += s * dy;
-    trans[2] += s * 0.0;
-  }
  public:
-  double trans[3] = {0,0,0};
+//  double trans[3] = {0,0,0};
   double Quat_tball[4] = {0,0,0,1};
 };
 

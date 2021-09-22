@@ -365,11 +365,11 @@ class CMat4 {
   }
   // ------------------------
   // below: "set" functions
-  void Set_AffineTranslate(REAL x, REAL y, REAL z) {
+  void SetAffineTranslate(REAL x, REAL y, REAL z) {
     Mat4_AffineTranslation(mat,
                            x, y, z);
   }
-  void Set_Quaternion(const REAL *q) {
+  void SetQuaternion(const REAL *q) {
     Mat4_Quat(mat,
               q);
   }
@@ -400,8 +400,13 @@ class CMat4 {
     for(int i=0;i<16;++i){ v[i] = mat[i]; }
   }
 
+  std::array<REAL, 9> GetMat3() const {
+    return {
+      mat[0], mat[1], mat[2],
+      mat[4], mat[5], mat[6],
+      mat[8], mat[9], mat[10] };
+  }
 
-  // -----------------------
   CMat4<REAL> MatMat(const CMat4<REAL> &mat0) const;
   /**
  * @details named same as Eigen
@@ -453,6 +458,15 @@ class CMat4 {
     m.mat[3 * 4 + 3] = 1.0;
     return m;
   }
+  [[nodiscard]] static CMat4<REAL> ScaleXYZ(REAL sx, REAL sy, REAL sz) {
+    CMat4<REAL> m;
+    m.setZero();
+    m.mat[0 * 4 + 0] = sx;
+    m.mat[1 * 4 + 1] = sy;
+    m.mat[2 * 4 + 2] = sz;
+    m.mat[3 * 4 + 3] = 1.0;
+    return m;
+  }
   [[nodiscard]] static CMat4<REAL> Spin(const REAL *v) {
     CMat4<REAL> m;
     m.setZero();
@@ -469,7 +483,9 @@ class CMat4 {
     return m;
   }
   [[nodiscard]] static CMat4<REAL> Quat(const REAL *q);
-  [[nodiscard]] static CMat4<REAL> Translate(const REAL *v) {
+  
+  template <typename S>
+  [[nodiscard]] static CMat4<REAL> Translate(const S *v) {
     CMat4<REAL> m;
     m.SetIdentity();
     m.mat[0 * 4 + 3] = v[0];
@@ -477,6 +493,7 @@ class CMat4 {
     m.mat[2 * 4 + 3] = v[2];
     return m;
   }
+  
   [[nodiscard]] static CMat4<REAL> Mat3(const REAL *v) {
     CMat4<REAL> m;
     m.setZero();

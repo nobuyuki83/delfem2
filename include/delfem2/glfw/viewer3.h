@@ -25,12 +25,22 @@ namespace delfem2::glfw {
 
 class CViewer3 {
  public:
-  CViewer3(double view_height=1) :
+  explicit CViewer3(double view_height=1) :
   projection(){
     projection = std::make_unique<Projection_LookOriginFromZplus<double>>(
         view_height, false);
   }
 
+  [[nodiscard]] std::array<float,16> GetModelViewMatrix() const {
+    std::array<float,16> m{};
+    CMat4f mv = view_rotation.Mat4ColumnMajor();
+    CMat4f mt = CMat4f::Translate(trans);
+    (mt * mv.transpose()).CopyTo(m.data());
+    return m;
+  }
+
+  [[nodiscard]] std::array<float,16> GetProjectionMatrix() const;
+  
   void DrawBegin_oldGL() const;
 
   void SwapBuffers() const;
@@ -66,17 +76,23 @@ class CViewer3 {
 
   virtual void mouse_wheel(
       [[maybe_unused]] double yoffset) {}
+  
+  
+  
 
  public:
   GLFWwindow *window = nullptr;
   CMouseInput nav;
-  std::unique_ptr<Projection<double>> projection;
-  delfem2::ModelView_Trackball<double> modelview;
   double scale = 1.0;
+  double trans[3] = {0,0,0};
   double bgcolor[4] = {1, 1, 1, 1};
   unsigned int width = 640;
   unsigned int height = 480;
   std::string window_title = "LearnOpenGL";
+// private:
+  std::unique_ptr<Projection<double>> projection;
+// private:
+  delfem2::ModelView_Trackball<double> view_rotation;
 };
 
 } // namespace delfem2

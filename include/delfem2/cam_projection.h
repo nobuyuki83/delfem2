@@ -48,7 +48,7 @@ public:
  * @param mP
  * @param asp
  */
-  [[nodiscard]] virtual std::array<float,16> Mat4ColumnMajor(float asp) const = 0;
+  [[nodiscard]] virtual std::array<float,16> GetMatrix(float asp) const = 0;
 };
 
 
@@ -77,7 +77,7 @@ class Projection_LookOriginFromZplus : public Projection<REAL>{
    * @param mP
    * @param asp
    */
-   [[nodiscard]] std::array<float,16> Mat4ColumnMajor(float asp) const override;
+   [[nodiscard]] std::array<float,16> GetMatrix(float asp) const override;
 public:
   double view_height = 1;
   bool is_pars = false;
@@ -86,7 +86,7 @@ public:
 
 
 template<typename REAL>
-std::array<float,16> delfem2::Projection_LookOriginFromZplus<REAL>::Mat4ColumnMajor(
+std::array<float,16> delfem2::Projection_LookOriginFromZplus<REAL>::GetMatrix(
     float asp) const {
   REAL fovyInRad = fovy * (2. * M_PI) / 360.f;
   REAL depth = view_height / tan(fovyInRad * 0.5f);
@@ -120,12 +120,12 @@ std::array<float,16> delfem2::Projection_LookOriginFromZplus<REAL>::Mat4ColumnMa
     0.f, +1.f, 0.f, 0.f,
     0.f, 0.f, -1.f, 0.f,
     0.f, 0.f, 0.f, +1.f};
-//  REAL mTmp1[16];
-//  ::delfem2::MatMat4(mTmp1, mS, mT0);
   REAL mTmp0[16];
   ::delfem2::MatMat4(mTmp0, mT0, mP0);
+  float mP1[16];
+  ::delfem2::MatMat4(mP1, mTmp0, mRefZ);
   std::array<float,16> mP{};
-  ::delfem2::MatMat4(mP.data(), mTmp0, mRefZ);
+  ::delfem2::Transpose_Mat4(mP.data(), mP1);
   return mP;
 }
 

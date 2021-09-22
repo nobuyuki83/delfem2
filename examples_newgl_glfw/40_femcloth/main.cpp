@@ -118,7 +118,7 @@ void StepTime()
     //  MakeNormal(aNormal, aXYZ, aTri);
 }
 
-void draw(GLFWwindow* window)
+void draw()
 {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -130,11 +130,11 @@ void draw(GLFWwindow* window)
   StepTime();
   shdr_trimsh.UpdateVertex(aXYZ, 3, aTri);
 
-  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float)nw/nh;
-  delfem2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
-  delfem2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
-  shdr_trimsh.Draw(mP.data(),mMV.data());
+  delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+  delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1.f, 1.f, -1.f);
+  delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
+  shdr_trimsh.Draw((mP.transpose() * mZ).data(),
+                   mMV.transpose().data());
   
   viewer.SwapBuffers();
   glfwPollEvents();
@@ -179,7 +179,7 @@ int main()
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
-  while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
+  while (!glfwWindowShouldClose(viewer.window)) { draw(); }
 #endif
   
   glfwDestroyWindow(viewer.window);

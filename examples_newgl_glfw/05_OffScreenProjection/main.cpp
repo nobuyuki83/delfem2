@@ -34,18 +34,17 @@ dfm2::opengl::CShader_TriMesh shdr_trimsh;
 dfm2::opengl::CShader_Points shdr_points;
 dfm2::opengl::CRender2Tex_DrawNewGL draw_r2t;
 
-void draw(GLFWwindow *window) {
+void draw() {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.1f, 4.0f);
 
-  int nw, nh;
-  glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float) nw / float(nh);
-  dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
-  dfm2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
+  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+  mP = mP.transpose() * dfm2::CMat4f::ScaleXYZ(1,1,-1);
+  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+  mMV = mMV.transpose();
   shdr_points.Draw(mP.data(), mMV.data());
   shdr_trimsh.Draw(mP.data(), mMV.data());
   draw_r2t.Draw(r2t, mP.data(), mMV.data());
@@ -102,12 +101,12 @@ int main() {
   r2t.End();
   draw_r2t.SetDepth(r2t);
   //
-  viewer.modelview.Rot_Camera(+0.8, -0.2);
+  viewer.view_rotation.Rot_Camera(+0.8, -0.2);
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
-  while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
+  while (!glfwWindowShouldClose(viewer.window)) { draw(); }
 #endif
 
   glfwDestroyWindow(viewer.window);

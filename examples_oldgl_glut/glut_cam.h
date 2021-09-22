@@ -123,7 +123,8 @@ public:
       }
       else if( imodifier == GLUT_ACTIVE_SHIFT ){
         double s0 = projection.view_height / scale;
-        modelview.Pan_Camera(dx, dy, s0);
+        trans[0] += s0 * dx;
+        trans[1] += s0 * dy;
       }
     }
     mouse_x = mov_end_x;
@@ -174,14 +175,18 @@ public:
     {
       ::glMatrixMode(GL_PROJECTION);
       ::glLoadIdentity();
-      const delfem2::CMat4f mP = projection.Mat4ColumnMajor((double)win_w/win_h);
-      ::glMultMatrixf(mP.data());
+      double asp = (double)win_w/win_h;
+      const delfem2::CMat4f mP = projection.GetMatrix(asp);
+      const delfem2::CMat4f mS = delfem2::CMat4f::Scale(scale);
+      // const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+      ::glMultMatrixf((mS * mP.transpose()).data());
     }
     {
       ::glMatrixMode(GL_MODELVIEW);
       ::glLoadIdentity();
       const delfem2::CMat4f mMV = modelview.Mat4ColumnMajor();
-      ::glMultMatrixf(mMV.data());
+      const delfem2::CMat4f mT = delfem2::CMat4f::Translate(trans);
+      ::glMultMatrixf((mMV*mT.transpose()).data());
     }
   }
 public:
@@ -191,6 +196,7 @@ public:
   delfem2::Projection_LookOriginFromZplus<double> projection;
   delfem2::ModelView_Trackball<double> modelview;
   double scale = 1.0;
+  double trans[3] = {0,0,0};
   double mouse_x, mouse_y;
   double dx;
   double dy;
