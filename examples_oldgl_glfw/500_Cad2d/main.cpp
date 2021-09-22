@@ -61,9 +61,9 @@ int main()
       }
       if( iframe % nframe_interval == 0 ){
         dfm2::CBoundingBox2<double> bb = cad.BB();
-        viewer.modelview.trans[0] = -(bb.x_min+bb.x_max)*0.5;
-        viewer.modelview.trans[1] = -(bb.y_min+bb.y_max)*0.5;
-        viewer.modelview.trans[2] = 0.0;
+        viewer.trans[0] = -(bb.x_min+bb.x_max)*0.5;
+        viewer.trans[1] = -(bb.y_min+bb.y_max)*0.5;
+        viewer.trans[2] = 0.0;
         //viewer.projection.view_height = 0.5*bb.LengthDiagonal();
         viewer.scale = 1.0;
       }

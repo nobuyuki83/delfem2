@@ -177,16 +177,16 @@ int main()
     ::glEnable(GL_POLYGON_OFFSET_FILL );
     ::glPolygonOffset( 1.1f, 4.0f );
     
-    int nw, nh; glfwGetFramebufferSize(viewer.window, &nw, &nh);
-    const float asp = (float)nw/nh;
-    const dfm2::CMat4f mP = viewer.projection->Mat4ColumnMajor(asp);
-    const dfm2::CMat4f mMV = viewer.modelview.Mat4ColumnMajor();
-    
-    const unsigned int nslice = 256;
+  
 
     glUseProgram(idProgramSlice);
-    glUniformMatrix4fv(locMt, 1, GL_TRUE, mMV.data()); // apply rotation to texture. Transpose matrix here.
+    {
+      const dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+      glUniformMatrix4fv(locMt, 1, GL_TRUE, mMV.transpose().data()); // apply rotation to texture. Transpose matrix here.
+    }
+    const unsigned int nslice = 256;
     glUniform1f(locSpacing, 1.0f / static_cast<GLfloat>(nslice - 1));
+    
     glUniform1f(locThreshold, 0.5);  // threathold of surface
 
     glUniform1i(locVol, 0);
@@ -198,8 +198,12 @@ int main()
       const float mati[16] = {1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1};
       glUniformMatrix4fv(locMw, 1, GL_FALSE, mati);
     }
-    glUniformMatrix4fv(locMp, 1, GL_FALSE, mP.data());
-    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, nslice); // draw idVaoSlice nslice-times
+    {
+      const dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+      const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
+      glUniformMatrix4fv(locMp, 1, GL_FALSE, (mP.transpose() * mZ).data());
+      glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, nslice); // draw idVaoSlice nslice-times
+    }
     
     viewer.SwapBuffers();
     glfwPollEvents();

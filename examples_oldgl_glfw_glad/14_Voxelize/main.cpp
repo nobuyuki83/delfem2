@@ -120,7 +120,7 @@ int main() {
   // ------------
 
   while (true) {
-    // dfm2::Rotate_Points3(vtx_xyz, 0.1, 0.0, 0.0);
+    dfm2::Rotate_Points3(vtx_xyz, 0.1, 0.0, 0.0);
     for (auto &smplr: sampler_box.aSampler) {
       smplr.InitGL(); // move the sampled image to a texture
       smplr.Start();

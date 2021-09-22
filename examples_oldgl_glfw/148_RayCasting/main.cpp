@@ -90,10 +90,10 @@ int main() {
     dfm2::Normalize_Points3(vec_xyz, 2.0);
   }
 
-  std::vector<dfm2::CNodeBVH2> vec_node_bvh;
-  std::vector<dfm2::CBV3_Sphere<double>> vec_bv;
+  std::vector<dfm2::CNodeBVH2> bvh_nodes;
+  std::vector<dfm2::CBV3_Sphere<double>> bvh_volumes;
   delfem2::ConstructBVHTriangleMeshMortonCode(
-      vec_node_bvh, vec_bv,
+      bvh_nodes, bvh_volumes,
       vec_xyz, vec_tri);
 
   dfm2::opengl::CTexRGB_Rect2D tex;
@@ -124,25 +124,18 @@ int main() {
       glfwPollEvents();
     }
     for (unsigned int i = 0; i < 10; ++i) {
-      float mMVP[16];
-      {
-        dfm2::CMat4f mMV, mP;
-        {
-          int width0, height0;
-          glfwGetFramebufferSize(viewer.window, &width0, &height0);
-          mP = viewer.projection->Mat4ColumnMajor(float(width0) / float(height0));
-          mMV = viewer.modelview.Mat4ColumnMajor();
-        }
-        dfm2::MatMat4(mMVP, mMV.data(), mP.data());
-      }
+      const dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+      const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
+      const dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+      const dfm2::CMat4f mMVP_transpose = mMV.transpose() * mP.transpose() * mZ;
       std::vector<delfem2::PointOnSurfaceMeshd> vec_point_on_tri;
       Intersection_ImageRay_TriMesh3(
           vec_point_on_tri,
-          tex.height, tex.width, mMVP,
-          vec_node_bvh, vec_bv, vec_xyz, vec_tri);
+          tex.height, tex.width, mMVP_transpose.data(),
+          bvh_nodes, bvh_volumes, vec_xyz, vec_tri);
       ShadingImageRayLambertian(
           tex.pixel_color,
-          tex.height, tex.width, mMVP,
+          tex.height, tex.width, mMVP_transpose.data(),
           vec_point_on_tri, vec_xyz, vec_tri);
       tex.InitGL();
       //

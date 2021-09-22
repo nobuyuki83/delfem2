@@ -193,8 +193,8 @@ int main()
 
   // -----------
   delfem2::glfw::CViewer3 viewer(0.7);
-  viewer.modelview.trans[0] = -0.5;
-  viewer.modelview.trans[1] = -0.5;
+  viewer.trans[0] = -0.5;
+  viewer.trans[1] = -0.5;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   while (!glfwWindowShouldClose(viewer.window) )

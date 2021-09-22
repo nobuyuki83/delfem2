@@ -271,7 +271,7 @@ int main()
  
   // ---------------------------------------
   dfm2::glfw::CViewer3 viewer(2.0);
-  viewer.modelview.Rot_Camera(+0.2, -0.2);
+  viewer.view_rotation.Rot_Camera(+0.2, -0.2);
   //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();

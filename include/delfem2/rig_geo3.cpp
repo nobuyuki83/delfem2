@@ -661,10 +661,10 @@ delfem2::SetMat4AffineBone_FromJointRelativeRotation(
     // inv binding mat
     double p1[3] = {aJntPos0[ibone*3+0], aJntPos0[ibone*3+1], aJntPos0[ibone*3+2]};
     CMat4<double> M0, M1, M2;
-    M0.Set_AffineTranslate(-p1[0], -p1[1], -p1[2]);
+    M0.SetAffineTranslate(-p1[0], -p1[1], -p1[2]);
     Mat4_Quat(M1.mat,
               aQuatRelativeRot.data()+ibone*4);
-    M2.Set_AffineTranslate(+p1[0], +p1[1], +p1[2]);
+    M2.SetAffineTranslate(+p1[0], +p1[1], +p1[2]);
     CMat4<double> M3 = M1.MatMat(M0);
     CMat4<double> M4 = M2.MatMat(M3);
     MatMat4(aMat4AffineBone.data()+ibone*16,
