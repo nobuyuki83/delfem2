@@ -100,8 +100,6 @@ int main() {
   }
   r2t.End();
   draw_r2t.SetDepth(r2t);
-  //
-  viewer.view_rotation.Rot_Camera(+0.8, -0.2);
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

@@ -1022,12 +1022,14 @@ template delfem2::CMat3<float>::CMat3(const float m[9]);
 #endif
 
 template<typename T>
-void delfem2::CMat3<T>::MatVec(const T vec0[], T vec1[]) const {
-  ::delfem2::MatVec3(vec1, p_, vec0);
+std::array<T,3> delfem2::CMat3<T>::MatVec(const T vec0[3]) const {
+  std::array<T,3> vec1;
+  ::delfem2::MatVec3(vec1.data(), p_, vec0);
+  return vec1;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CMat3<float>::MatVec(const float vec0[], float vec1[]) const;
-template void delfem2::CMat3<double>::MatVec(const double vec0[], double vec1[]) const;
+template std::array<float,3> delfem2::CMat3f::MatVec(const float vec0[]) const;
+template std::array<double,3> delfem2::CMat3d::MatVec(const double vec0[]) const;
 #endif
 
 // -------------------------------

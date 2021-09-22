@@ -184,9 +184,9 @@ public:
     {
       ::glMatrixMode(GL_MODELVIEW);
       ::glLoadIdentity();
-      const delfem2::CMat4f mMV = modelview.Mat4ColumnMajor();
-      const delfem2::CMat4f mT = delfem2::CMat4f::Translate(trans);
-      ::glMultMatrixf((mMV*mT.transpose()).data());
+      const delfem2::CMat4f mMV = modelview.GetMatrix();
+      const delfem2::CMat4f mT = delfem2::CMat4f::Translate(trans[0], trans[1], trans[2]);
+      ::glMultMatrixf((mT*mMV).transpose().data());
     }
   }
 public:
@@ -194,7 +194,7 @@ public:
   int imodifier;
   int ibutton;
   delfem2::Projection_LookOriginFromZplus<double> projection;
-  delfem2::ModelView_Trackball<double> modelview;
+  delfem2::ModelView_Trackball modelview;
   double scale = 1.0;
   double trans[3] = {0,0,0};
   double mouse_x, mouse_y;

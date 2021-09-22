@@ -117,14 +117,16 @@ static void glfw_callback_cursor_position(
   if (pViewer3->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT) {  // drag for view control
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     if (nav.imodifier == GLFW_MOD_ALT) {
-      pViewer3->view_rotation.Rot_Camera(nav.dx, nav.dy);
+      pViewer3->view_rotation->Rot_Camera(
+          static_cast<float>(nav.dx),
+          static_cast<float>(nav.dy));
       return;
     } else if (nav.imodifier == GLFW_MOD_SHIFT) {
       const delfem2::CMat4f mP = pViewer3->GetProjectionMatrix();
-      const delfem2::CMat4f mPtinv = mP.Inverse();
-      const float s0 = mPtinv(1,1);  // where the screen (0,1,0) ends up in global coordinate
-      pViewer3->trans[0] += s0*nav.dx;
-      pViewer3->trans[1] += s0*nav.dy;
+      const float sx = (mP(3,3) - mP(0,3))/mP(0,0);
+      const float sy = (mP(3,3) - mP(1,3))/mP(1,1);
+      pViewer3->trans[0] += sx*nav.dx;
+      pViewer3->trans[1] += sy*nav.dy;
       return;
     }
   }

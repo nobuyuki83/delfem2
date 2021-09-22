@@ -31,10 +31,28 @@
 
 namespace delfem2 {
 
+/**
+ * Pure virtual class
+ * @tparam REAL
+ */
+class ModelView {
+ public:
+  virtual ~ModelView() = default;
+  /**
+ * @brief Compute "projection matrix" for OpenGL.
+ * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
+ * A 3D point is transfromed with this affine matrix and then a cube [-1,+1, -1,+1, -1,+1] is looked from -Z directoin.
+ * The projection matrix will mirror the object Z.
+ * To look from +Z direction, The transformation needs a mirror transformation in XY plane.
+ * @param mP
+ * @param asp
+ */
+  [[nodiscard]] virtual std::array<float, 16> GetMatrix() const = 0;
+};
+
 // ----------------------------------------------------
 
-template<typename REAL>
-class ModelView_Trackball {
+class ModelView_Trackball : public ModelView {
  public:
   /**
    *
@@ -42,34 +60,32 @@ class ModelView_Trackball {
    * @param mMV model view matrix (column major order)
    * @detail column major
    */
-   std::array<float,16> Mat4ColumnMajor() const{
-    REAL Mr[16];
-    {
-      const REAL q[4] = {
-          static_cast<float>(Quat_tball[0]),
-          static_cast<float>(Quat_tball[1]),
-          static_cast<float>(Quat_tball[2]),
-          static_cast<float>(Quat_tball[3])};
-      Mat4_QuatConj(Mr, q);
-    }
-    std::array<float,16> mMV;
-    Copy_Mat4(mMV.data(), Mr);
+  [[nodiscard]] std::array<float, 16> GetMatrix() const override {
+    const CMat4f mT = CMat4f::Translate(-anchor[0], -anchor[1], -anchor[2]);
+    const CMat4f mR = CMat4f::Quat(quaternion);
+    std::array<float, 16> mMV{};
+    (mR*mT).CopyTo(mMV.data());
     return mMV;
   }
-  void Rot_Camera(REAL dx, REAL dy){
-    double a = sqrt(dx * dx + dy * dy);
-    double ar = a * 0.5; // angle
-    double dq[4] = {-dy * sin(ar) / a, dx * sin(ar) / a, 0.0, cos(ar)};
+  void Rot_Camera(float dx, float dy) {
+    const float a = sqrt(dx * dx + dy * dy);
+    const float ar = a * 0.5f; // angle
+    const float dq[4] = {
+        -dy * sin(ar) / a,
+        dx * sin(ar) / a,
+        0.0,
+        cos(ar)};
     if (a != 0.0) {
-      double qtmp[4];
-      QuatQuat(qtmp, dq, Quat_tball);
-      Copy_Quat(Quat_tball, qtmp);
+      float qtmp[4];
+      QuatQuat(qtmp, dq, quaternion);
+      Copy_Quat(quaternion, qtmp);
     }
   }
- public:
-//  double trans[3] = {0,0,0};
-  double Quat_tball[4] = {0,0,0,1};
+  float anchor[3] = {0, 0, 0};
+  float quaternion[4] = {0, 0, 0, 1};
 };
+
+// ------------------------------------
 
 template<typename REAL>
 class ModelView_Ytop {
@@ -80,7 +96,7 @@ class ModelView_Ytop {
    * @param mMV model view matrix (column major order)
    * @detail column major
    */
-  void Mat4ColumnMajor(float mMV[16]) const{
+  void Mat4ColumnMajor(float mMV[16]) const {
     REAL Mt[16];
     {
       const REAL transd[3] = {trans[0], trans[1], trans[2]};
@@ -97,21 +113,23 @@ class ModelView_Ytop {
     }
     MatMat4(mMV, Mr, Mt);
   }
-  void Rot_Camera(REAL dx, REAL dy){
+  void Rot_Camera(REAL dx, REAL dy) {
     theta -= dx;
     psi -= dy;
   }
-  void Pan_Camera(REAL dx, REAL dy, REAL s){
+  void Pan_Camera(REAL dx, REAL dy, REAL s) {
     // double s = view_height / scale;
     trans[0] += s * dx;
     trans[1] += s * dy;
     trans[2] += s * 0.0;
   }
  public:
-  double trans[3] = {0,0,0};
+  double trans[3] = {0, 0, 0};
   REAL theta = 0;
   REAL psi = 0;
 };
+
+// ------------------------------------
 
 template<typename REAL>
 class ModelView_Ztop {
@@ -122,7 +140,7 @@ class ModelView_Ztop {
    * @param mMV model view matrix (column major order)
    * @detail column major
    */
-  void Mat4ColumnMajor(float mMV[16]) const{
+  void Mat4ColumnMajor(float mMV[16]) const {
     REAL Mt[16];
     {
       const REAL transd[3] = {trans[0], trans[1], trans[2]};
@@ -139,18 +157,18 @@ class ModelView_Ztop {
     }
     MatMat4(mMV, Mr, Mt);
   }
-  void Rot_Camera(REAL dx, REAL dy){
+  void Rot_Camera(REAL dx, REAL dy) {
     theta += dx;
     psi -= dy;
   }
-  void Pan_Camera(REAL dx, REAL dy, REAL s){
+  void Pan_Camera(REAL dx, REAL dy, REAL s) {
     // double s = view_height / scale;
     trans[0] += s * dx;
     trans[1] += s * dy;
     trans[2] += s * 0.0;
   }
  public:
-  double trans[3] = {0,0,0};
+  double trans[3] = {0, 0, 0};
   REAL theta = 0;
   REAL psi = 0;
 };
