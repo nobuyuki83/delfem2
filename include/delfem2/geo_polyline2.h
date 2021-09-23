@@ -106,6 +106,25 @@ float LengthPolyline(
   return len;
 }
 
+template<typename VEC>
+VEC PositionInPolyline(
+    const std::vector<VEC>& polyline,
+    unsigned int ie,
+    float ratio){
+  assert(ie<polyline.size()-1);
+  return (1-ratio) * polyline[ie] + ratio * polyline[ie+1];
+}
+
+template<typename VEC>
+VEC NormalInPolyline(
+    const std::vector<VEC>& polyline,
+    unsigned int ie,
+    [[maybe_unused]] float ratio){
+  assert(ie<polyline.size()-1);
+  VEC ut = (polyline[ie+1] - polyline[ie]).normalized();
+  return rotate90(ut);
+}
+
 /**
  *
  * @tparam VEC delfem2::CVecX or Eigen::VectorX
@@ -114,21 +133,28 @@ float LengthPolyline(
  * @return
  */
 template<typename VEC>
-VEC FindNearestPointInPolyline(
+std::pair<unsigned int, float> FindNearestPointInPolyline(
     const std::vector<VEC>& polyline,
     const VEC& scr){
+  assert(polyline.size()>1);
+  unsigned int ie_min;
+  float ratio_min;
   float dist_min = -1;
-  VEC p_min;
   for(unsigned int ip=0;ip<polyline.size()-1;++ip){
-    unsigned int jp = ip+1;
-    VEC p_near = GetNearest_LineSeg_Point(scr, polyline[ip], polyline[jp]);
-    float dist = (p_near-scr).norm();
+    const VEC &es = polyline[ip+1] - polyline[ip];
+    const VEC &sc = polyline[ip] - scr;
+    const float a = es.squaredNorm();
+    const float b = es.dot(sc);
+    const float ratio = std::clamp(-b / a, 0.f, 1.f);
+    VEC p = (1-ratio)*polyline[ip] + ratio*polyline[ip+1];
+    float dist = (p-scr).norm();
     if( dist_min < 0 || dist < dist_min ){
       dist_min = dist;
-      p_min = p_near;
+      ie_min = ip;
+      ratio_min = ratio;
     }
   }
-  return p_min;
+  return {ie_min, ratio_min};
 }
 
 /**
@@ -142,9 +168,8 @@ template<typename VEC>
 float ArcLengthPointInPolyline(
     const std::vector<VEC>& polyline,
     const VEC& scr){
-  if( polyline.size() < 2 ){
-    return 0.f;
-  }
+
+  if( polyline.size() < 2 ){ return 0.f; }
   float dist_min = -1;
   VEC p_min;
   unsigned int ip_min = -1;
