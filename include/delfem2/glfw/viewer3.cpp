@@ -88,9 +88,11 @@ static void glfw_callback_mouse_button(
       const CMat4f mMV = pViewer3->GetModelViewMatrix();
       (mMV.transpose() * mP.transpose() * mZ).CopyTo(mMVP_transpose);
     }
-    float src[3], dir[3];
-    pViewer3->nav.MouseRay(src, dir, asp, mMVP_transpose);
-    pViewer3->mouse_press(src, dir);
+    {
+      float src[3], dir[3];
+      pViewer3->nav.MouseRay(src, dir, asp, mMVP_transpose);
+      pViewer3->mouse_press(src, dir);
+    }
   }
   if (action == GLFW_RELEASE) { // "release callback"
     pViewer3->mouse_release();
@@ -102,45 +104,7 @@ static void glfw_callback_cursor_position(
     double xpos, double ypos) {
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
   assert(pViewer3 != nullptr);
-  int width, height;
-  glfwGetWindowSize(window, &width, &height);
-  const float asp = static_cast<float>(width) / static_cast<float>(height);
-  { // update nav
-    ::delfem2::CMouseInput &nav = pViewer3->nav;
-    const double mov_end_x = (2.0 * xpos - width) / width;
-    const double mov_end_y = (height - 2.0 * ypos) / height;
-    nav.dx = mov_end_x - nav.mouse_x;
-    nav.dy = mov_end_y - nav.mouse_y;
-    nav.mouse_x = mov_end_x;
-    nav.mouse_y = mov_end_y;
-  }
-  if (pViewer3->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT) {  // drag for view control
-    ::delfem2::CMouseInput &nav = pViewer3->nav;
-    if (nav.imodifier == GLFW_MOD_ALT) {
-      pViewer3->view_rotation->Rot_Camera(
-          static_cast<float>(nav.dx),
-          static_cast<float>(nav.dy));
-      return;
-    } else if (nav.imodifier == GLFW_MOD_SHIFT) {
-      const delfem2::CMat4f mP = pViewer3->GetProjectionMatrix();
-      const float sx = (mP(3,3) - mP(0,3))/mP(0,0);
-      const float sy = (mP(3,3) - mP(1,3))/mP(1,1);
-      pViewer3->trans[0] += sx*nav.dx;
-      pViewer3->trans[1] += sy*nav.dy;
-      return;
-    }
-  }
-  // drag call back
-  if (pViewer3->nav.ibutton == 0) {
-    float src0[3], src1[3], dir0[3], dir1[3];
-    delfem2::CMat4f mP = pViewer3->GetProjectionMatrix();
-    const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
-    const CMat4f mMV = pViewer3->GetModelViewMatrix();
-    const CMat4f mMVP_transpose = mMV.transpose() * mP.transpose() * mZ;
-    pViewer3->nav.RayMouseMove(src0, src1, dir0, dir1, asp,
-                               mMVP_transpose.data());
-    pViewer3->mouse_drag(src0, src1, dir0);
-  }
+  pViewer3->CursorPosition(xpos, ypos);
 }
 
 static void glfw_callback_scroll(
@@ -167,6 +131,48 @@ std::array<float,16> delfem2::glfw::CViewer3::GetProjectionMatrix() const {
   std::array<float,16> m{};
   (mZ * mP * mS).CopyTo(m.data());
   return m;
+}
+
+void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {
+  int width0, height0;
+  glfwGetWindowSize(window, &width0, &height0);
+  const float asp = static_cast<float>(width0) / static_cast<float>(height0);
+  { // update nav
+    const double mov_end_x = (2.0 * xpos - width0) / width0;
+    const double mov_end_y = (height0 - 2.0 * ypos) / height0;
+    nav.dx = mov_end_x - nav.mouse_x;
+    nav.dy = mov_end_y - nav.mouse_y;
+    nav.mouse_x = mov_end_x;
+    nav.mouse_y = mov_end_y;
+  }
+  if (this->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT) {  // drag for view control
+    if (nav.imodifier == GLFW_MOD_ALT) {
+      this->view_rotation->Rot_Camera(
+          static_cast<float>(nav.dx),
+          static_cast<float>(nav.dy));
+      return;
+    } else if (nav.imodifier == GLFW_MOD_SHIFT) {
+      const delfem2::CMat4f mP = this->GetProjectionMatrix();
+      const float sx = (mP(3,3) - mP(0,3))/mP(0,0);
+      const float sy = (mP(3,3) - mP(1,3))/mP(1,1);
+      this->trans[0] += sx*nav.dx;
+      this->trans[1] += sy*nav.dy;
+      return;
+    }
+  }
+  // drag call back
+  if (this->nav.ibutton == 0) {
+    delfem2::CMat4f mP = this->GetProjectionMatrix();
+    const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
+    const CMat4f mMV = this->GetModelViewMatrix();
+    const CMat4f mMVP_transpose = mMV.transpose() * mP.transpose() * mZ;
+    {
+      float src0[3], src1[3], dir0[3], dir1[3];
+      this->nav.RayMouseMove(src0, src1, dir0, dir1, asp,
+                                 mMVP_transpose.data());
+      this->mouse_drag(src0, src1, dir0);
+    }
+  }
 }
 
 void delfem2::glfw::CViewer3::InitGL() {

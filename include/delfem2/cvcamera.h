@@ -5,6 +5,8 @@
 #include <fstream>
 #include <array>
 
+#include "delfem2/vec3.h"
+
 namespace delfem2 {
 
 class CCvCamera {
