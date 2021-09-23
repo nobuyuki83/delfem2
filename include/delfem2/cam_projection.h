@@ -25,7 +25,6 @@
 
 #include "delfem2/quat.h"
 #include "delfem2/mat4.h"
-#include "delfem2/cvcamera.h"
 #include "delfem2/dfm2_inline.h"
 
 // ---------------------------------------------------
