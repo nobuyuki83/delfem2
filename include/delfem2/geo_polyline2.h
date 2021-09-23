@@ -94,6 +94,26 @@ unsigned int FindNearestPointInPoints(
  * @return
  */
 template<typename VEC>
+float LengthPolyline(
+    const std::vector<VEC>& polyline) {
+  if( polyline.size() < 2 ){
+    return 0.f;
+  }
+  float len =0;
+  for (unsigned int ip = 0; ip < polyline.size() - 1; ++ip) {
+    len += (polyline[ip+1] - polyline[ip]).norm();
+  }
+  return len;
+}
+
+/**
+ *
+ * @tparam VEC delfem2::CVecX or Eigen::VectorX
+ * @param polyline
+ * @param scr
+ * @return
+ */
+template<typename VEC>
 VEC FindNearestPointInPolyline(
     const std::vector<VEC>& polyline,
     const VEC& scr){
@@ -109,6 +129,40 @@ VEC FindNearestPointInPolyline(
     }
   }
   return p_min;
+}
+
+/**
+ *
+ * @tparam VEC delfem2::CVecX or Eigen::VectorX
+ * @param polyline
+ * @param scr
+ * @return
+ */
+template<typename VEC>
+float ArcLengthPointInPolyline(
+    const std::vector<VEC>& polyline,
+    const VEC& scr){
+  if( polyline.size() < 2 ){
+    return 0.f;
+  }
+  float dist_min = -1;
+  VEC p_min;
+  unsigned int ip_min = -1;
+  for(unsigned int ip=0;ip<polyline.size()-1;++ip){
+    VEC p_near = GetNearest_LineSeg_Point(scr, polyline[ip], polyline[ip+1]);
+    float dist = (p_near-scr).norm();
+    if( dist_min < 0 || dist < dist_min ){
+      dist_min = dist;
+      p_min = p_near;
+      ip_min = ip;
+    }
+  }
+  float alen = 0;
+  for(unsigned int ip=0;ip<ip_min;++ip){
+    alen += (polyline[ip+1] - polyline[ip]).norm();
+  }
+  alen += (p_min - polyline[ip_min]).norm();
+  return alen;
 }
 
 } // namespace delfem2

@@ -31,16 +31,6 @@ class CViewer3 {
         view_height, false);
     view_rotation = std::make_unique<ModelView_Trackball>();
   }
-
-  [[nodiscard]] std::array<float,16> GetModelViewMatrix() const {
-    std::array<float,16> m{};
-    CMat4f mv = view_rotation->GetMatrix();
-    CMat4f mt = CMat4f::Translate(trans[0], trans[1], trans[2]);
-    (mt * mv).CopyTo(m.data());
-    return m;
-  }
-
-  [[nodiscard]] std::array<float,16> GetProjectionMatrix() const;
   
   void DrawBegin_oldGL() const;
 
@@ -77,6 +67,18 @@ class CViewer3 {
 
   virtual void mouse_wheel(
       [[maybe_unused]] double yoffset) {}
+
+  [[nodiscard]] std::array<float,16> GetModelViewMatrix() const {
+    std::array<float,16> m{};
+    CMat4f mv = view_rotation->GetMatrix();
+    CMat4f mt = CMat4f::Translate(trans[0], trans[1], trans[2]);
+    (mt * mv).CopyTo(m.data());
+    return m;
+  }
+
+  [[nodiscard]] std::array<float,16> GetProjectionMatrix() const;
+
+  virtual void CursorPosition(double xpos, double ypos);
 
  public:
   GLFWwindow *window = nullptr;
