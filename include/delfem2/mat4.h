@@ -259,7 +259,7 @@ void Vec3_Mat4Vec3_AffineProjection(
     const T2 x0[3]);
 
 template<typename T>
-DFM2_INLINE std::array<T,2> Vec2_Mat4Vec3_AffineProjection(
+DFM2_INLINE std::array<T, 2> Vec2_Mat4Vec3_AffineProjection(
     const T a[16],
     const T x0[3]);
 
@@ -337,7 +337,7 @@ class CMat4 {
   }
 
   template<typename S>
-  CMat4(const std::array<S,16>&& pm){
+  CMat4(const std::array<S, 16> &&pm) {
     for (int i = 0; i < 16; ++i) { mat[i] = static_cast<S>(pm[i]); }
   }
 
@@ -346,10 +346,10 @@ class CMat4 {
         REAL v20, REAL v21, REAL v22, REAL v23,
         REAL v30, REAL v31, REAL v32, REAL v33)
       : mat{
-        v00, v01, v02, v03,
-        v10, v11, v12, v13,
-        v20, v21, v22, v23,
-        v30, v31, v32, v33} {
+      v00, v01, v02, v03,
+      v10, v11, v12, v13,
+      v20, v21, v22, v23,
+      v30, v31, v32, v33} {
   }
   REAL *data() { return mat; }
   const REAL *data() const { return mat; }
@@ -378,10 +378,10 @@ class CMat4 {
    * @details named same as Eigen
    */
   void setZero() {
-    for (auto &v : mat) { v = 0; }
+    for (auto &v: mat) { v = 0; }
   }
   void SetIdentity() {
-    for (auto &v : mat) { v = 0; }
+    for (auto &v: mat) { v = 0; }
     mat[0 * 4 + 0] = 1;
     mat[1 * 4 + 1] = 1;
     mat[2 * 4 + 2] = 1;
@@ -395,16 +395,16 @@ class CMat4 {
     mat[3 * 4 + 3] = 1;
   }
   // -----------------------
-  template <typename S>
-  void CopyTo(S* v) const {
-    for(int i=0;i<16;++i){ v[i] = mat[i]; }
+  template<typename S>
+  void CopyTo(S *v) const {
+    for (int i = 0; i < 16; ++i) { v[i] = mat[i]; }
   }
 
   std::array<REAL, 9> GetMat3() const {
     return {
-      mat[0], mat[1], mat[2],
-      mat[4], mat[5], mat[6],
-      mat[8], mat[9], mat[10] };
+        mat[0], mat[1], mat[2],
+        mat[4], mat[5], mat[6],
+        mat[8], mat[9], mat[10]};
   }
 
   CMat4<REAL> MatMat(const CMat4<REAL> &mat0) const;
@@ -445,79 +445,60 @@ class CMat4 {
   // ----------------------
   // below: static function
   [[nodiscard]] static CMat4<REAL> Identity() {
-    CMat4<REAL> m;
-    m.SetIdentity();
-    return m;
+    return CMat4<REAL>{
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1};
   }
   [[nodiscard]] static CMat4<REAL> Scale(REAL s) {
-    CMat4<REAL> m;
-    m.setZero();
-    m.mat[0 * 4 + 0] = s;
-    m.mat[1 * 4 + 1] = s;
-    m.mat[2 * 4 + 2] = s;
-    m.mat[3 * 4 + 3] = 1.0;
-    return m;
+    return CMat4<REAL>{
+        s, 0, 0, 0,
+        0, s, 0, 0,
+        0, 0, s, 0,
+        0, 0, 0, 1};
   }
   [[nodiscard]] static CMat4<REAL> ScaleXYZ(REAL sx, REAL sy, REAL sz) {
-    CMat4<REAL> m;
-    m.setZero();
-    m.mat[0 * 4 + 0] = sx;
-    m.mat[1 * 4 + 1] = sy;
-    m.mat[2 * 4 + 2] = sz;
-    m.mat[3 * 4 + 3] = 1.0;
-    return m;
+    return CMat4<REAL>{
+        sx, 0, 0, 0,
+        0, sy, 0, 0,
+        0, 0, sz, 0,
+        0, 0, 0, 1};
   }
   [[nodiscard]] static CMat4<REAL> Spin(const REAL *v) {
-    CMat4<REAL> m;
-    m.setZero();
-    m.mat[0 * 4 + 0] = 0;
-    m.mat[0 * 4 + 1] = -v[2];
-    m.mat[0 * 4 + 2] = +v[1];
-    m.mat[1 * 4 + 0] = +v[2];
-    m.mat[1 * 4 + 1] = 0;
-    m.mat[1 * 4 + 2] = -v[0];
-    m.mat[2 * 4 + 0] = -v[1];
-    m.mat[2 * 4 + 1] = +v[0];
-    m.mat[2 * 4 + 2] = 0;
-    m.mat[3 * 4 + 3] = 1.0;
-    return m;
+    return CMat4<REAL>{
+        0, -v[2], +v[1], 0,
+        +v[2], 0, -v[0], 0,
+        -v[1], +v[0], 0, 0,
+        0, 0, 0, 1.0};
   }
   [[nodiscard]] static CMat4<REAL> Quat(const REAL *q);
-  
-  template <typename S>
+
+  template<typename S>
   [[nodiscard]] static CMat4<REAL> Translate(S v0, S v1, S v2) {
     return CMat4<REAL>{
-      1,0,0,static_cast<REAL>(v0),
-      0,1,0,static_cast<REAL>(v1),
-      0,0,1,static_cast<REAL>(v2),
-      0,0,0,1
-    };
+        1, 0, 0, static_cast<REAL>(v0),
+        0, 1, 0, static_cast<REAL>(v1),
+        0, 0, 1, static_cast<REAL>(v2),
+        0, 0, 0, 1 };
   }
-  
-  template <typename S>
+
+  template<typename S>
   [[nodiscard]] static CMat4<REAL> Translate(const S v[3]) {
     return CMat4<REAL>{
-      1,0,0,static_cast<REAL>(v[0]),
-      0,1,0,static_cast<REAL>(v[1]),
-      0,0,1,static_cast<REAL>(v[2]),
-      0,0,0,1
+        1, 0, 0, static_cast<REAL>(v[0]),
+        0, 1, 0, static_cast<REAL>(v[1]),
+        0, 0, 1, static_cast<REAL>(v[2]),
+        0, 0, 0, 1
     };
   }
-  
+
   [[nodiscard]] static CMat4<REAL> Mat3(const REAL *v) {
-    CMat4<REAL> m;
-    m.setZero();
-    m.mat[0 * 4 + 0] = v[0 * 3 + 0];
-    m.mat[0 * 4 + 1] = v[0 * 3 + 1];
-    m.mat[0 * 4 + 2] = v[0 * 3 + 2];
-    m.mat[1 * 4 + 0] = v[1 * 3 + 0];
-    m.mat[1 * 4 + 1] = v[1 * 3 + 1];
-    m.mat[1 * 4 + 2] = v[1 * 3 + 2];
-    m.mat[2 * 4 + 0] = v[2 * 3 + 0];
-    m.mat[2 * 4 + 1] = v[2 * 3 + 1];
-    m.mat[2 * 4 + 2] = v[2 * 3 + 2];
-    m.mat[3 * 4 + 3] = 1.0;
-    return m;
+    return CMat4<REAL>{
+        v[0 * 3 + 0], v[0 * 3 + 1], v[0 * 3 + 2], 0,
+        v[1 * 3 + 0], v[1 * 3 + 1], v[1 * 3 + 2], 0,
+        v[2 * 3 + 0], v[2 * 3 + 1], v[2 * 3 + 2], 0,
+        0, 0, 0, 1};
   }
 
  public:
