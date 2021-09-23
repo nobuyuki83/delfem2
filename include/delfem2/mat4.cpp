@@ -384,13 +384,13 @@ template void delfem2::Vec3_Mat4Vec3_AffineProjection(
 
 template<typename T>
 DFM2_INLINE
-std::array<T,2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+std::array<T, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
     const T a[16],
     const T x0[3]) {
-  const T x1[4] = { x0[0], x0[1], x0[2], 1};
+  const T x1[4] = {x0[0], x0[1], x0[2], 1};
   T y1[4];
   MatVec4(y1, a, x1);
-  return { y1[0] / y1[3], y1[1] / y1[3] };
+  return {y1[0] / y1[3], y1[1] / y1[3]};
 }
 #ifdef DFM2_STATIC_LIBRARY
 template std::array<float,2> delfem2::Vec2_Mat4Vec3_AffineProjection(
@@ -896,7 +896,6 @@ template delfem2::CMat4<double> delfem2::CMat4<double>::MatMat(
 
 template<typename REAL>
 delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL *q) {
-  CMat4<REAL> m;
   const REAL x2 = q[0] * q[0] * 2;
   const REAL y2 = q[1] * q[1] * 2;
   const REAL z2 = q[2] * q[2] * 2;
@@ -906,18 +905,11 @@ delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL *q) {
   const REAL xw = q[0] * q[3] * 2;
   const REAL yw = q[1] * q[3] * 2;
   const REAL zw = q[2] * q[3] * 2;
-  m.setZero();
-  m.mat[0 * 4 + 0] = 1 - y2 - z2;
-  m.mat[0 * 4 + 1] = xy - zw;
-  m.mat[0 * 4 + 2] = zx + yw;
-  m.mat[1 * 4 + 0] = xy + zw;
-  m.mat[1 * 4 + 1] = 1 - z2 - x2;
-  m.mat[1 * 4 + 2] = yz - xw;
-  m.mat[2 * 4 + 0] = zx - yw;
-  m.mat[2 * 4 + 1] = yz + xw;
-  m.mat[2 * 4 + 2] = 1 - x2 - y2;
-  m.mat[3 * 4 + 3] = 1;
-  return m;
+  return CMat4<REAL>{
+      1 - y2 - z2, xy - zw, zx + yw, 0,
+      xy + zw, 1 - z2 - x2, yz - xw, 0,
+      zx - yw, yz + xw, 1 - x2 - y2, 0,
+      0, 0, 0, 1};
 }
 #ifdef DFM2_STATIC_LIBRARY
 template delfem2::CMat4<float> delfem2::CMat4<float>::Quat(const float *q);

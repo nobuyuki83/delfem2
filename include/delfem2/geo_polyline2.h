@@ -14,6 +14,7 @@
 #include <cmath>
 #include <vector>
 #include <climits>
+#include <algorithm>  // for std::clamp
 
 #include "delfem2/vec2.h"
 #include "delfem2/pgeo.h"
