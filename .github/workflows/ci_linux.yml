@@ -191,17 +191,25 @@ jobs:
       run: |
         echo ########################################
         echo ## build examples alembic
-
-        sudo apt-get update -y
-        sudo apt-get install -y openexr
+        
+        git submodule update --init -- 3rd_party/Imath
+        cd 3rd_party/Imath || exit
+        git checkout master
+        git pull origin master
+        mkdir build
+        cd build || exit
+        cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
+        cmake --build .
+        cmake --install . --prefix ../../Imathlib
+        cd ../../../
 
         git submodule update --init -- 3rd_party/alembic
         cd 3rd_party/alembic
         git checkout master
         git pull origin master
-        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF
+        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_MODULE_PATH=../../Imathlib
         cmake --build . 
-        cmake --install . --prefix=libalembic
+        cmake --install . --prefix=alembiclib
         cd ../..
 
         cd examples_alembic

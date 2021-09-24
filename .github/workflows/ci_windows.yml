@@ -162,55 +162,34 @@ jobs:
         cmake --build . --config Release
         cd ../../
 
-    - name: build OpenEXR
+    - name: build Imath
       run: |
         echo "##############################""
-        echo "## build OpenEXR"
+        echo "## build Imath"
 
-        $zlib_library=Convert-Path 3rd_party\zlib\buildMake\Release\zlib.lib
-        $zlib_root=Convert-Path 3rd_party\zlib
-        echo "zlib_library: $zlib_library"
-        echo "zlib_root: $zlib_root"
-
-        cd 3rd_party
-        curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
-        7z x openexr.zip -y
-        cd openexr-2.5.2
-        cmake . -A x64 `
-          -DZLIB_ROOT="$zlib_root" `
-          -DZLIB_LIBRARY="$zlib_library" `
-          -DPYILMBASE_ENABLE=OFF `
-          -DBUILD_TESTING=OFF
-        cmake --build . --config Release
-        cd ..
-        mkdir libopenexr
-        cd openexr-2.5.2
-        $openexr_root=Convert-Path ../libopenexr
-        echo "openexr_root: $openexr_root"
-        cmake --install . --prefix "$openexr_root"
-        cd ../../
+        git submodule update --init -- 3rd_party/Imath
+        cd 3rd_party/Imath || exit
+        git checkout master
+        git pull origin master
+        mkdir build
+        cd build || exit
+        cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
+        cmake --build .
+        cmake --install . --prefix ../../Imathlib
+        cd ../../../        
 
     - name: build alembic 
       run: |
         echo "###############################"
         echo "## build alembic"
 
-        $openexr_root=Convert-Path 3rd_party/libopenexr
-        echo "openexr_root: $openexr_root"
-
-        git submodule update --init -- 3rd_party/alembic        
+        git submodule update --init -- 3rd_party/alembic
         cd 3rd_party/alembic
-        cmake . `
-            -DUSE_TESTS=OFF `
-            -DALEMBIC_SHARED_LIBS=OFF `
-            -DILMBASE_ROOT="$openexr_root"
-        cmake --build . --config Release
-        cd ..
-        mkdir libalembic
-        cd alembic
-        $alembic_root=Convert-Path ../libalembic
-        echo "alembic_root: $alembic_root" 
-        cmake --install . --prefix "$alembic_root"
+        git checkout master
+        git pull origin master
+        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_MODULE_PATH=../../Imathlib
+        cmake --build . 
+        cmake --install . --prefix=alembiclib
         cd ../..
 
     - name: build examples (alembic)
@@ -218,13 +197,10 @@ jobs:
         echo "###############################"
         echo "## build examples alembic"
 
-        $openexr_root=Convert-Path 3rd_party/libopenexr
-        echo "openexr_root: $openexr_root"
-
         cd examples_alembic
         mkdir buildVS64
         cd buildVS64
-        cmake -A x64 .. -DILMBASE_ROOT="$openexr_root"
+        cmake -A x64 .. 
         cmake --build . --config Release
         cd ../..
 
