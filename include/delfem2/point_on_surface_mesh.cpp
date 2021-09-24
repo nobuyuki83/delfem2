@@ -9,20 +9,19 @@
 
 #include <map>
 
-#include "delfem2/geoproximity3_v3.h"
 #include "delfem2/vec3.h"
 
 template<typename T>
 std::array<T,3> delfem2::PointOnSurfaceMesh<T>::PositionOnMeshTri3(
-    const std::vector<double> &aXYZ_,
-    const std::vector<unsigned int> &aTri_) const {
-  assert(itri < aTri_.size() / 3);
-  const unsigned int i0 = aTri_[itri * 3 + 0];
-  const unsigned int i1 = aTri_[itri * 3 + 1];
-  const unsigned int i2 = aTri_[itri * 3 + 2];
-  const CVec3<T> p0(aXYZ_.data() + i0 * 3);
-  const CVec3<T> p1(aXYZ_.data() + i1 * 3);
-  const CVec3<T> p2(aXYZ_.data() + i2 * 3);
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx) const {
+  assert(itri < tri_vtx.size() / 3);
+  const unsigned int i0 = tri_vtx[itri * 3 + 0];
+  const unsigned int i1 = tri_vtx[itri * 3 + 1];
+  const unsigned int i2 = tri_vtx[itri * 3 + 2];
+  const CVec3<T> p0(vtx_xyz.data() + i0 * 3);
+  const CVec3<T> p1(vtx_xyz.data() + i1 * 3);
+  const CVec3<T> p2(vtx_xyz.data() + i2 * 3);
   const CVec3<T> res = r0 * p0 + r1 * p1 + (1.0 - r0 - r1) * p2;
   return {res.x, res.y, res.z};
 }
@@ -36,26 +35,26 @@ template std::array<double,3> delfem2::PointOnSurfaceMesh<double>::PositionOnMes
 
 template<typename T>
 std::array<T,3> delfem2::PointOnSurfaceMesh<T>::PositionOnMeshTri3(
-    const double *aXYZ_,
-    [[maybe_unused]] unsigned int nXYZ,
-    const unsigned int *aTri_,
-    [[maybe_unused]] unsigned int nTri) const {
-  assert(itri < nTri);
-  const unsigned int i0 = aTri_[itri * 3 + 0];
-  const unsigned int i1 = aTri_[itri * 3 + 1];
-  const unsigned int i2 = aTri_[itri * 3 + 2];
-  const CVec3<T> p0(aXYZ_+i0 * 3);
-  const CVec3<T> p1(aXYZ_+i1 * 3);
-  const CVec3<T> p2(aXYZ_+i2 * 3);
+    const double *vtx_xyz,
+    [[maybe_unused]] size_t num_vtx,
+    const unsigned int *tri_vtx,
+    [[maybe_unused]] size_t num_tri) const {
+  assert(itri < num_tri);
+  const unsigned int i0 = tri_vtx[itri * 3 + 0];
+  const unsigned int i1 = tri_vtx[itri * 3 + 1];
+  const unsigned int i2 = tri_vtx[itri * 3 + 2];
+  const CVec3<T> p0(vtx_xyz+i0 * 3);
+  const CVec3<T> p1(vtx_xyz+i1 * 3);
+  const CVec3<T> p2(vtx_xyz+i2 * 3);
   const CVec3<T> q = r0 * p0 + r1 * p1 + (1.0 - r0 - r1) * p2;
   return {q.x, q.y, q.z};
 }
 #ifdef DFM2_STATIC_LIBRARY
 template std::array<double,3> delfem2::PointOnSurfaceMesh<double>::PositionOnMeshTri3(
     const double *,
-    unsigned int,
+    size_t,
     const unsigned int *,
-    unsigned int) const;
+    size_t) const;
 #endif
 
 // -----------------------------------------------
@@ -63,16 +62,16 @@ template std::array<double,3> delfem2::PointOnSurfaceMesh<double>::PositionOnMes
 
 template<typename T>
 std::array<T,3> delfem2::PointOnSurfaceMesh<T>::UnitNormalOnMeshTri3(
-    [[maybe_unused]] const std::vector<double> &aXYZ0,
-    const std::vector<unsigned int> &aTri0,
-    const std::vector<double> &aNorm0) const {
-  assert(itri < aTri0.size() / 3);
-  const unsigned int i0 = aTri0[itri * 3 + 0];
-  const unsigned int i1 = aTri0[itri * 3 + 1];
-  const unsigned int i2 = aTri0[itri * 3 + 2];
-  const CVec3<T> n0(aNorm0.data()+i0 * 3);
-  const CVec3<T> n1(aNorm0.data()+i1 * 3);
-  const CVec3<T> n2(aNorm0.data()+i2 * 3);
+    [[maybe_unused]] const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx,
+    const std::vector<double> &vtx_normal) const {
+  assert(itri < tri_vtx.size() / 3);
+  const unsigned int i0 = tri_vtx[itri * 3 + 0];
+  const unsigned int i1 = tri_vtx[itri * 3 + 1];
+  const unsigned int i2 = tri_vtx[itri * 3 + 2];
+  const CVec3<T> n0(vtx_normal.data()+i0 * 3);
+  const CVec3<T> n1(vtx_normal.data()+i1 * 3);
+  const CVec3<T> n2(vtx_normal.data()+i2 * 3);
   const CVec3<T> nr = (r0 * n0 + r1 * n1 + (1.0 - r0 - r1) * n2).normalized();
   return {nr.x, nr.y, nr.z};
 }
@@ -87,28 +86,28 @@ template std::array<double,3> delfem2::PointOnSurfaceMesh<double>::UnitNormalOnM
 
 template<typename T>
 std::array<T,3> delfem2::PointOnSurfaceMesh<T>::UnitNormalOnMeshTri3(
-    [[maybe_unused]] const double *aXYZ,
-    [[maybe_unused]] unsigned int nXYZ,
-    const unsigned int *aTri,
-    [[maybe_unused]] unsigned int nTri,
-    const double *aNorm) const {
-  assert(itri < nTri);
-  const unsigned int i0 = aTri[itri * 3 + 0];
-  const unsigned int i1 = aTri[itri * 3 + 1];
-  const unsigned int i2 = aTri[itri * 3 + 2];
-  const CVec3<T> n0(aNorm+i0 * 3);
-  const CVec3<T> n1(aNorm+i1 * 3);
-  const CVec3<T> n2(aNorm+i2 * 3);
+    [[maybe_unused]] const double *vtx_xyz,
+    [[maybe_unused]] unsigned int num_vtx,
+    const unsigned int *tri_vtx,
+    [[maybe_unused]] unsigned int num_tri,
+    const double *vtx_norm) const {
+  assert(itri < num_tri);
+  const unsigned int i0 = tri_vtx[itri * 3 + 0];
+  const unsigned int i1 = tri_vtx[itri * 3 + 1];
+  const unsigned int i2 = tri_vtx[itri * 3 + 2];
+  const CVec3<T> n0(vtx_norm+i0 * 3);
+  const CVec3<T> n1(vtx_norm+i1 * 3);
+  const CVec3<T> n2(vtx_norm+i2 * 3);
   const CVec3<T> nr = (r0 * n0 + r1 * n1 + (1.0 - r0 - r1) * n2).normalized();
   return {nr.x, nr.y, nr.z};
 }
 #ifdef DFM2_STATIC_LIBRARY
 template std::array<double,3> delfem2::PointOnSurfaceMesh<double>::UnitNormalOnMeshTri3(
-    const double *aXYZ,
-    unsigned int nXYZ,
-    const unsigned int *aTri,
-    unsigned int nTri,
-    const double *aNorm) const;
+    const double *vtx_xyz,
+    unsigned int num_vtx,
+    const unsigned int *tri_vtx,
+    unsigned int num_tri,
+    const double *vtx_norm) const;
 #endif
 
 // ------------------------------------------
@@ -129,9 +128,9 @@ std::array<T,3> delfem2::PointOnSurfaceMesh<T>::PositionOnFaceOfMeshTet(
   int ielno0 = noelTetFace[iface][0];
   int ielno1 = noelTetFace[iface][1];
   int ielno2 = noelTetFace[iface][2];
-  int iq0 = aTet[itet * 4 + ielno0];
-  int iq1 = aTet[itet * 4 + ielno1];
-  int iq2 = aTet[itet * 4 + ielno2];
+  const unsigned int iq0 = aTet[itet * 4 + ielno0];
+  const unsigned int iq1 = aTet[itet * 4 + ielno1];
+  const unsigned int iq2 = aTet[itet * 4 + ielno2];
   CVec3<T> p;
   p.p[0] = r0 * aXYZ[iq0 * 3 + 0] + r1 * aXYZ[iq1 * 3 + 0] + r2 * aXYZ[iq2 * 3 + 0];
   p.p[1] = r0 * aXYZ[iq0 * 3 + 1] + r1 * aXYZ[iq1 * 3 + 1] + r2 * aXYZ[iq2 * 3 + 1];
@@ -176,10 +175,10 @@ template std::array<double,3> delfem2::PointOnSurfaceMesh<double>::PositionOnGri
 
 template<typename T>
 bool delfem2::PointOnSurfaceMesh<T>::Check(
-    [[maybe_unused]] const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aTri,
+    [[maybe_unused]] const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx,
     double eps) const {
-  if (itri >= aTri.size() / 3) { return false; }
+  if (itri >= tri_vtx.size() / 3) { return false; }
   if (r0 < -eps || r0 > 1 + eps) { return false; }
   if (r1 < -eps || r1 > 1 + eps) { return false; }
   double r2 = 1 - r0 - r1;
@@ -188,7 +187,7 @@ bool delfem2::PointOnSurfaceMesh<T>::Check(
 }
 #ifdef DFM2_STATIC_LIBRARY
 template bool delfem2::PointOnSurfaceMesh<double>::Check(
-    const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx,
     double eps) const;
 #endif

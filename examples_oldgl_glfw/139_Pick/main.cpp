@@ -67,17 +67,20 @@ class MyView
           0, aNodeBVH,
           lvm);
       { // assertion
-        dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
+        dfm2::Check_MortonCode_Sort(
+            aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
         dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-        dfm2::Check_BVH(aNodeBVH,
-                        static_cast<unsigned int>(aCent.size() / 3));
+        dfm2::Check_BVH(
+            aNodeBVH,
+            aCent.size() / 3);
       }
     }
     { // make triangle surrounding graph
       std::vector<unsigned int> elsup_ind, elsup;
       dfm2::JArray_ElSuP_MeshElem(
           elsup_ind, elsup,
-          aTri.data(), aTri.size() / 3, 3, aXYZ.size() / 3);
+          aTri.data(), aTri.size() / 3, 3,
+          aXYZ.size() / 3);
       ElSuEl_MeshElem(
           aTriSuTri,
           aTri.data(), aTri.size() / 3,
