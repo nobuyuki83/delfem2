@@ -59,9 +59,9 @@ void draw(GLFWwindow *window) {
   int nw, nh;
   glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = (float) nw / float(nh);
-  dfm2::CMat4f mMV, mP;
+  delfem2::CMat4f mMV, mP;
   viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
-  const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1, 1, -1);
+  const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1, 1, -1);
   viewer.shdr_cad.Draw(
       (mZ * mP).transpose().data(),
       mMV.transpose().data(),
