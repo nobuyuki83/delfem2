@@ -53,7 +53,7 @@ public:
 	  [[maybe_unused]] int key, 
 	  [[maybe_unused]] int mods) {}
 
-  void Mat4_MVP_OpenGL(
+  void Mat4_ModelView_Projection(
 	  [[maybe_unused]] float mMV[16], 
 	  [[maybe_unused]] float mP[16], 
 	  [[maybe_unused]] float asp) const;

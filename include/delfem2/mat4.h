@@ -175,6 +175,10 @@ void Mat4_Identity(
     REAL A[16]);
 
 template<typename REAL>
+void Mat4_Transpose(
+    REAL A[16]);
+
+template<typename REAL>
 void Mat4_AffineScale(
     REAL A[16],
     REAL s);
@@ -405,6 +409,14 @@ class CMat4 {
         mat[0], mat[1], mat[2],
         mat[4], mat[5], mat[6],
         mat[8], mat[9], mat[10]};
+  }
+
+  std::array<REAL, 16> GetStlArray() const {
+    return {
+        mat[0], mat[1], mat[2], mat[3],
+        mat[4], mat[5], mat[6], mat[7],
+        mat[8], mat[9], mat[10],mat[11],
+        mat[12],mat[13],mat[14],mat[15]};
   }
 
   CMat4<REAL> MatMat(const CMat4<REAL> &mat0) const;

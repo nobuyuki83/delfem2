@@ -393,10 +393,10 @@ std::array<T, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
   return {y1[0] / y1[3], y1[1] / y1[3]};
 }
 #ifdef DFM2_STATIC_LIBRARY
-template std::array<float,2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+template std::array<float, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
     const float a[16],
     const float x0[3]);
-template std::array<double,2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+template std::array<double, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
     const double a[16],
     const double x0[3]);
 #endif
@@ -601,6 +601,23 @@ template void delfem2::Mat4_Identity(float A[16]);
 template void delfem2::Mat4_Identity(double A[16]);
 #endif
 
+// ------------------------------------------------
+
+template<typename REAL>
+void delfem2::Mat4_Transpose(
+    REAL A[16]) {
+  REAL B[16];
+  for (int i = 0; i < 16; ++i) { B[i] = A[i]; }
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      A[i * 4 + j] = B[j * 4 + i];
+    }
+  }
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::Mat4_Transpose(float A[16]);
+template void delfem2::Mat4_Transpose(double A[16]);
+#endif
 
 // ------------------------------------------------
 
@@ -793,70 +810,7 @@ template DFM2_INLINE void delfem2::Mat4_QuatConj(float *r, const float *q);
 template DFM2_INLINE void delfem2::Mat4_QuatConj(double *r, const double *q);
 #endif
 
-/*
-// maybe same as above ?
-template <typename REAL>
-DFM2_INLINE void delfem2::Mat4_AffineTransQuat(
-    REAL r[],
-    const REAL q[])
-{
-  REAL x2 = q[0] * q[0] * 2;
-  REAL y2 = q[1] * q[1] * 2;
-  REAL z2 = q[2] * q[2] * 2;
-  REAL xy = q[0] * q[1] * 2;
-  REAL yz = q[1] * q[2] * 2;
-  REAL zx = q[2] * q[0] * 2;
-  REAL xw = q[0] * q[3] * 2;
-  REAL yw = q[1] * q[3] * 2;
-  REAL zw = q[2] * q[3] * 2;
-  // column 0
-  r[ 0] = 1 - y2 - z2;
-  r[ 1] = xy + zw;
-  r[ 2] = zx - yw;
-  r[ 3] = 0;
-  // column 1
-  r[ 4] = xy - zw;
-  r[ 5] = 1 - z2 - x2;
-  r[ 6] = yz + xw;
-  r[ 7] = 0;
-  // column 2
-  r[ 8] = zx + yw;
-  r[ 9] = yz - xw;
-  r[10] = 1 - x2 - y2;
-  r[11] = 0;
-  // column 3
-  r[12] = 0;
-  r[13] = 0;
-  r[14] = 0;
-  r[15] = 1;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat4_AffineTransQuat(float r[], const float q[]);
-template void delfem2::Mat4_AffineTransQuat(double r[], const double q[]);
-#endif
-*/
-
-/*
-void delfem2::MatMat4(
-    double m01[16],
-    const double m0[16],
-    const double m1[16])
-{
-  for(int i=0;i<4;++i){
-    for(int j=0;j<4;++j){
-      m01[i*4+j] = m0[i*4+0]*m1[0*4+j] + m0[i*4+1]*m1[1*4+j] + m0[i*4+2]*m1[2*4+j] + m0[i*4+3]*m1[3*4+j];
-    }
-  }
-}
-
-void delfem2::Copy_Mat4(double m1[16], const double m0[16])
-{
-  for(int i=0;i<16;++i){ m1[i] = m0[i]; }
-}
- */
-
-
-
+// --------------------------------------
 
 template<typename REAL>
 DFM2_INLINE void delfem2::Inverse_Mat4(

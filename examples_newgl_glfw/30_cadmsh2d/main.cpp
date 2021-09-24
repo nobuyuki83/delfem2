@@ -118,11 +118,11 @@ void draw(GLFWwindow *window) {
   int nw, nh;
   glfwGetFramebufferSize(window, &nw, &nh);
   const float asp = static_cast<float>(nw) / static_cast<float>(nh);
-  float mMV[16], mP[16];
-  viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
-  viewer.shdr_cad.Draw(mP, mMV, viewer.cad);
-  viewer.shdr_dmsh.Draw(mP, mMV);
-
+  dfm2::CMat4f mMV, mP;
+  viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+  const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
+  viewer.shdr_cad.Draw((mZ*mP).transpose().data(), mMV.transpose().data(), viewer.cad);
+  viewer.shdr_dmsh.Draw((mZ*mP).transpose().data(), mMV.transpose().data());
   glfwSwapBuffers(window);
   glfwPollEvents();
 }
