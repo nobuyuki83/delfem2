@@ -60,7 +60,6 @@ static void glfw_callback_mouse_button(
   assert(pViewer3 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  const float asp = static_cast<float>(width) / static_cast<float>(height);
   { // save input
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     nav.imodifier = mods;
@@ -81,16 +80,13 @@ static void glfw_callback_mouse_button(
     return;
   }
   if (action == GLFW_PRESS) { // "press callback"
-    float mMVP_transpose[16];
-    {
-      const CMat4f mP = pViewer3->GetProjectionMatrix();
-      const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
-      const CMat4f mMV = pViewer3->GetModelViewMatrix();
-      (mMV.transpose() * mP.transpose() * mZ).CopyTo(mMVP_transpose);
-    }
+    const CMat4f mP = pViewer3->GetProjectionMatrix();
+    const CMat4f mMV = pViewer3->GetModelViewMatrix();
     {
       float src[3], dir[3];
-      pViewer3->nav.MouseRay(src, dir, asp, mMVP_transpose);
+      pViewer3->nav.MouseRay(
+          src, dir,
+          (mP * mMV).data());
       pViewer3->mouse_press(src, dir);
     }
   }
@@ -124,19 +120,16 @@ static void glfw_callback_scroll(
 std::array<float,16> delfem2::glfw::CViewer3::GetProjectionMatrix() const {
   int w0, h0;
   glfwGetWindowSize(window, &w0, &h0);
+  const CMat4f mS = CMat4f::Scale((float)scale);
   const float asp = static_cast<float>(w0) / static_cast<float>(h0);
   const CMat4f mP = projection->GetMatrix(asp);
-  const CMat4f mS = CMat4f::Scale((float)scale);
   const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
-  std::array<float,16> m{};
-  (mZ * mP * mS).CopyTo(m.data());
-  return m;
+  return (mZ * mP * mS).GetStlArray();
 }
 
 void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {
   int width0, height0;
   glfwGetWindowSize(window, &width0, &height0);
-  const float asp = static_cast<float>(width0) / static_cast<float>(height0);
   { // update nav
     const double mov_end_x = (2.0 * xpos - width0) / width0;
     const double mov_end_y = (height0 - 2.0 * ypos) / height0;
@@ -162,14 +155,13 @@ void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {
   }
   // drag call back
   if (this->nav.ibutton == 0) {
-    delfem2::CMat4f mP = this->GetProjectionMatrix();
-    const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
+    const CMat4f mP = this->GetProjectionMatrix();
     const CMat4f mMV = this->GetModelViewMatrix();
-    const CMat4f mMVP_transpose = mMV.transpose() * mP.transpose() * mZ;
     {
       float src0[3], src1[3], dir0[3], dir1[3];
-      this->nav.RayMouseMove(src0, src1, dir0, dir1, asp,
-                                 mMVP_transpose.data());
+      this->nav.RayMouseMove(
+          src0, src1, dir0, dir1,
+          (mP * mMV).data());
       this->mouse_drag(src0, src1, dir0);
     }
   }

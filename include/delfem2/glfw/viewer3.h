@@ -69,11 +69,9 @@ class CViewer3 {
       [[maybe_unused]] double yoffset) {}
 
   [[nodiscard]] std::array<float,16> GetModelViewMatrix() const {
-    std::array<float,16> m{};
     CMat4f mv = view_rotation->GetMatrix();
     CMat4f mt = CMat4f::Translate(trans[0], trans[1], trans[2]);
-    (mt * mv).CopyTo(m.data());
-    return m;
+    return (mt * mv).GetStlArray();
   }
 
   [[nodiscard]] std::array<float,16> GetProjectionMatrix() const;

@@ -49,7 +49,7 @@ class MyView
       delfem2::BoundingBox3_Points3(
           min_xyz, max_xyz,
           aCent.data(),
-          static_cast<unsigned int>(aCent.size() / 3));
+          aCent.size() / 3);
       std::vector<unsigned int> aSortedId;
       std::vector<std::uint32_t> aSortedMc;
       dfm2::SortedMortenCode_Points3(

@@ -303,10 +303,11 @@ void draw(GLFWwindow* window)
   ::glPolygonOffset( 1.1f, 4.0f );
   
   int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float)nw/nh;
-  float mP[16], mMV[16];
-  viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
-  shdr0.Draw(mP,mMV);
+  const float asp = static_cast<float>(nw)/static_cast<float>(nh);
+  dfm2::CMat4f mP, mMV;
+  viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+  const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
+  shdr0.Draw((mZ*mP).transpose().data(),mMV.transpose().data());
   
   viewer.SwapBuffers();
   glfwPollEvents();
