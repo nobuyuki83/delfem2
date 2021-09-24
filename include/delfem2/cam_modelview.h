@@ -71,10 +71,10 @@ class ModelView_Trackball : public ModelView {
     const float a = sqrt(dx * dx + dy * dy);
     const float ar = a * 0.5f; // angle
     const float dq[4] = {
-        -dy * sin(ar) / a,
-        dx * sin(ar) / a,
-        0.0,
-        cos(ar)};
+        -dy * std::sin(ar) / a,
+        dx * std::sin(ar) / a,
+        0.f,
+        std::cos(ar)};
     if (a != 0.0) {
       float qtmp[4];
       QuatQuat(qtmp, dq, quaternion);
