@@ -26,6 +26,43 @@ jobs:
       run: |
         git submodule update --init --recursive       
 
+    - name: build_examples (alembic)
+      run: |
+        echo ########################################
+        echo ## build examples alembic
+        
+        git submodule update --init -- 3rd_party/Imath
+        cd 3rd_party/Imath || exit
+        git checkout master
+        git pull origin master
+        mkdir build
+        cd build || exit
+        cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
+        cmake --build .
+        cmake --install . --prefix ../../Imathlib
+        cd ../../../
+
+        Imath_dir=$(cd $(dirname $0); pwd)/../../3rd_party/Imathlib
+        echo "$(cd $(dirname $0); pwd)"
+        echo "Imath_dir: ${Imath_dir}"
+
+        git submodule update --init -- 3rd_party/alembic
+        cd 3rd_party/alembic
+        git checkout master
+        git pull origin master
+        mkdir build
+        cd build || exit
+        cmake .. -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH=${Imath_dir}
+        cmake --build . 
+        cmake --install . --prefix=../../alembiclib
+        cd ../../../
+
+        cd examples_alembic
+        mkdir buildMakeHdronly && cd buildMakeHdronly
+        cmake ..
+        make
+        cd ../.. 
+
     - name: install_gtest
       run: |
         echo "###########################"
@@ -186,39 +223,6 @@ jobs:
         cmake ..
         cmake --build .
         cd ../../
-
-    - name: build_examples (alembic)
-      run: |
-        echo ########################################
-        echo ## build examples alembic
-        
-        git submodule update --init -- 3rd_party/Imath
-        cd 3rd_party/Imath || exit
-        git checkout master
-        git pull origin master
-        mkdir build
-        cd build || exit
-        cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
-        cmake --build .
-        cmake --install . --prefix ../../Imathlib
-        cd ../../../
-
-        git submodule update --init -- 3rd_party/alembic
-        cd 3rd_party/alembic
-        git checkout master
-        git pull origin master
-        mkdir build
-        cd build || exit
-        cmake .. -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH=../../Imathlib
-        cmake --build . 
-        cmake --install . --prefix=../../alembiclib
-        cd ../../../
-
-        cd examples_alembic
-        mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake ..
-        make
-        cd ../.. 
 
     - name: GitHub dispatch event
       env: 
