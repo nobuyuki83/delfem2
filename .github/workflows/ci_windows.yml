@@ -197,7 +197,7 @@ jobs:
         cmake -A x64 .. `
           -DUSE_TESTS=OFF `
           -DALEMBIC_SHARED_LIBS=OFF `
-          -DCMAKE_MODULE_PATH="$Imath_dir"
+          -DCMAKE_PREFIX_PATH="$Imath_dir"
         cmake --build . --config Release
         cmake --install . --prefix=../../alembiclib
         cd ../../../
