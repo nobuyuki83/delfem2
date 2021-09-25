@@ -42,8 +42,7 @@ jobs:
         cmake --install . --prefix ../../Imathlib
         cd ../../../
 
-        Imath_dir=$(cd $(dirname $0); pwd)/../../3rd_party/Imathlib
-        echo "$(cd $(dirname $0); pwd)"
+        Imath_dir=$(cd ../../3rd_parth/Imathlib; pwd)
         echo "Imath_dir: ${Imath_dir}"
 
         git submodule update --init -- 3rd_party/alembic
