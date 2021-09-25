@@ -320,10 +320,12 @@ git submodule update --init -- 3rd_party/alembic
 cd 3rd_party/alembic || exit
 git checkout master
 git pull origin master
+mkdir build
+cd build || exit
 cmake .. -DALEMBIC_SHARED_LIBS=OFF -DBUILD_TESTING=OFF -DCMAKE_MODULE_PATH=../../Imathlib
 cmake --build .
-cmake --install . --prefix ../alembiclib
-cd ../..
+cmake --install . --prefix ../../alembiclib
+cd ../../../
 
 echo "################################"
 echo "build alembic example"
