@@ -207,10 +207,12 @@ jobs:
         cd 3rd_party/alembic
         git checkout master
         git pull origin master
-        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_MODULE_PATH=../../Imathlib
+        mkdir build
+        cd build || exit
+        cmake .. -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_MODULE_PATH=../../Imathlib
         cmake --build . 
-        cmake --install . --prefix=alembiclib
-        cd ../..
+        cmake --install . --prefix=../../alembiclib
+        cd ../../../
 
         cd examples_alembic
         mkdir buildMakeHdronly && cd buildMakeHdronly
