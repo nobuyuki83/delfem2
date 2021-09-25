@@ -51,7 +51,7 @@ jobs:
         git pull origin master
         mkdir build
         cd build || exit
-        cmake .. -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="${Imath_dir}" -DImath_DIR=${Imath_dir}
+        cmake .. -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="${Imath_dir}" -DImath_DIR="${Imath_dir}" -DCMAKE_MODULE_PATH="${Imath_dir}"
         cmake --build . 
         cmake --install . --prefix=../../alembiclib
         cd ../../../
