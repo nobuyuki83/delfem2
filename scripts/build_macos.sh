@@ -342,5 +342,4 @@ cd examples_alembic || exit
 mkdir buildXcode 
 cd buildXcode || exit
 cmake -G Xcode ..
-cmake --build .
 cd ../../
