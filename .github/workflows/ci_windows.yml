@@ -168,13 +168,15 @@ jobs:
         echo "## build Imath"
 
         git submodule update --init -- 3rd_party/Imath
-        cd 3rd_party/Imath || exit
+        cd 3rd_party/Imath
         git checkout master
         git pull origin master
         mkdir build
-        cd build || exit
-        cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
-        cmake --build .
+        cd build
+        cmake -A x64 .. `
+          -DBUILD_SHARED_LIBS=OFF `
+          -DBUILD_TESTING=OFF
+        cmake --build . --config Release
         cmake --install . --prefix ../../Imathlib
         cd ../../../        
 
@@ -183,14 +185,22 @@ jobs:
         echo "###############################"
         echo "## build alembic"
 
+        $Imath_dir=Convert-Path 3rd_party\Imathlib
+        echo "Imath_dir: $Imath_dir"
+
         git submodule update --init -- 3rd_party/alembic
         cd 3rd_party/alembic
         git checkout master
         git pull origin master
-        cmake . -DUSE_TESTS=OFF -DALEMBIC_SHARED_LIBS=OFF -DCMAKE_MODULE_PATH=../../Imathlib
-        cmake --build . 
-        cmake --install . --prefix=alembiclib
-        cd ../..
+        mkdir build
+        cd build
+        cmake -A x64 .. `
+          -DUSE_TESTS=OFF `
+          -DALEMBIC_SHARED_LIBS=OFF `
+          -DCMAKE_MODULE_PATH="$Imath_dir"
+        cmake --build . --config Release
+        cmake --install . --prefix=../../alembiclib
+        cd ../../../
 
     - name: build examples (alembic)
       run: |
