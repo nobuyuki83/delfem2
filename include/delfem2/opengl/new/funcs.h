@@ -11,13 +11,19 @@
 
 #include "delfem2/dfm2_inline.h"
 
-// -----------
-#ifdef EMSCRIPTEN
-  #include <GLFW/glfw3.h>
-#endif
+#include <vector>
+#include <assert.h>
+#include <iostream>
 // -----------
 #ifdef _WIN32
   #include <windows.h>
+#endif
+// -----------
+#ifdef EMSCRIPTEN
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
+#else
+#include <glad/glad.h>
 #endif
 // -----------
 #if defined(__APPLE__) && defined(__MACH__) // Mac
@@ -25,10 +31,7 @@
 #else
   #include <GL/gl.h>
 #endif
-// -----------
-#include <vector>
-#include <assert.h>
-#include <iostream>
+// ----------
 
 namespace delfem2 {
 namespace opengl {

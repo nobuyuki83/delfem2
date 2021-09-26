@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(DFM2_HEADER_ONLY "compile delfem2 as a header-only library?" ON)
-
 ####################################
 
 enable_language(CXX)
@@ -25,14 +23,8 @@ find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 # eigen
-FILE(GLOB EIGEN3_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/eigen*) # find downloaded eigen directories in 3rd_party
-SET(EIGEN3_ROOT
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libeigen/include # installed eigen is higher priority
-    )
-#  ${EIGEN3_ROOT} ) # specify candidate for eigen location
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindEigen3.cmake) # call script to find eigen3
-#find_package(Eigen3 REQUIRED) # this works only for installation from package manager
-message(STATUS "eigen3 locatoin: ${EIGEN3_INCLUDE_DIR}")
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libeigen)
+FIND_PACKAGE(Eigen3 REQUIRED)
 
 # dfm2
 set(DELFEM2_INCLUDE_DIR "../../include")
@@ -41,7 +33,6 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 
 include_directories(
     ${DELFEM2_INCLUDE_DIR}
-    ${EIGEN3_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
@@ -51,4 +42,5 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     OpenGL::GL
     glfw
+    Eigen3::Eigen
     )
