@@ -381,29 +381,42 @@ DFM2_INLINE void delfem2::Read_Obj3(
   }
 }
 
-DFM2_INLINE void delfem2::Read_WavefrontObjWithSurfaceAttributes(
-    const std::string &fname,
+template <typename T>
+DFM2_INLINE bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
     std::string &fname_mtl,
-    std::vector<double> &vec_xyz,
-    std::vector<double> &vec_tex,
-    std::vector<double> &vec_nrm,
-    std::vector<TriGroupWavefrontObj> &vec_tri_group) {
+    std::vector<T> &vtx_xyz,
+    std::vector<T> &vtx_tex,
+    std::vector<T> &vtx_nrm,
+    std::vector<unsigned int> &elem_vtx_index,
+    std::vector<unsigned int> &elem_vtx_xyz,
+    std::vector<unsigned int> &elem_vtx_tex,
+    std::vector<unsigned int> &elem_vtx_nrm,
+    std::vector<std::string>& group_names,
+    std::vector<unsigned int>& group_elem_index,
+    const std::filesystem::path &file_path) {
   std::ifstream fin;
-  fin.open(fname.c_str());
-  if (fin.fail()) {
-    std::cout << "File Read Fail: " << fname << std::endl;
-    return;
-  }
-  vec_xyz.clear();
-  vec_tri_group.clear();
-  vec_nrm.clear();
-  vec_tex.clear();
-  vec_xyz.reserve(256 * 16);
-  vec_tri_group.reserve(100);
+  fin.open(file_path);
+  if (fin.fail()) { return false; }
+  //
+  vtx_xyz.clear();
+  vtx_nrm.clear();
+  vtx_tex.clear();
+  vtx_xyz.reserve(256 * 16);
+  //
+  elem_vtx_index.clear();
+  elem_vtx_index.push_back(0);
+  elem_vtx_xyz.clear();
+  elem_vtx_tex.clear();
+  elem_vtx_nrm.clear();
+  //
+  group_names.clear();
+  group_elem_index.clear();
+  group_elem_index.push_back(0);
+  //
   const int BUFF_SIZE = 256;
   char buff[BUFF_SIZE];
   fname_mtl.clear();
-  std::string current_material_name = "";
+  std::string current_material_name;
   while (fin.getline(buff, BUFF_SIZE)) {
     if (buff[0] == '#') { continue; }
     if (buff[0] == 'm') {
@@ -415,36 +428,34 @@ DFM2_INLINE void delfem2::Read_WavefrontObjWithSurfaceAttributes(
     }
     if (buff[0] == 'v') {
       char str[256];
-      double x, y, z;
+      T x, y, z;
       std::istringstream is(buff);
       if (buff[1] == ' ') { // vertex
         is >> str >> x >> y >> z;
-        vec_xyz.push_back(x);
-        vec_xyz.push_back(y);
-        vec_xyz.push_back(z);
+        vtx_xyz.push_back(x);
+        vtx_xyz.push_back(y);
+        vtx_xyz.push_back(z);
       } else if (buff[1] == 'n') { // noraml
         is >> str >> x >> y >> z;
-        double len = sqrt(x * x + y * y + z * z);
+        T len = std::sqrt(x * x + y * y + z * z);
         x /= len;
         y /= len;
         z /= len;
-        vec_nrm.push_back(x);
-        vec_nrm.push_back(y);
-        vec_nrm.push_back(z);
+        vtx_nrm.push_back(x);
+        vtx_nrm.push_back(y);
+        vtx_nrm.push_back(z);
       } else if (buff[1] == 't') { // tex
         is >> str >> x >> y;
-        vec_tex.push_back(x);
-        vec_tex.push_back(y);
+        vtx_tex.push_back(x);
+        vtx_tex.push_back(y);
       }
     }
     if (buff[0] == 'g') { // group
-      vec_tri_group.resize(vec_tri_group.size() + 1);
       std::stringstream ss(buff);
       std::string str0, str1;
       ss >> str0 >> str1;
-      const std::size_t iogt0 = vec_tri_group.size() - 1;
-      vec_tri_group[iogt0].name_group = str1;
-      vec_tri_group[iogt0].name_mtl = current_material_name;
+      group_names.push_back(str1);
+      group_elem_index.push_back(elem_vtx_index.size());
       continue;
     }
     if (buff[0] == 'u') { // usemtl
@@ -455,40 +466,58 @@ DFM2_INLINE void delfem2::Read_WavefrontObjWithSurfaceAttributes(
       continue;
     }
     if (buff[0] == 'f') {
-      if (vec_tri_group.empty()) {
-        vec_tri_group.resize(vec_tri_group.size() + 1);
-        const std::size_t iogt0 = vec_tri_group.size() - 1;
-        vec_tri_group[iogt0].name_group = "";
-        vec_tri_group[iogt0].name_mtl = current_material_name;
-      }
-      const std::size_t iogt0 = vec_tri_group.size() - 1;
-      char str[256], str0[256], str1[256], str2[256];
+      std::vector<std::string> vec_str;
       {
-        std::istringstream is(buff);
-        is >> str >> str0 >> str1 >> str2;
+        std::istringstream iss(buff);
+        std::string s;
+        bool is_init = true;
+        while (iss >> s) {
+          if( is_init ){ is_init = false; continue; }
+          vec_str.push_back(s);
+        }
       }
-      int ip0, it0, in0;
-      msh_ioobj::ParseVtxObj_(ip0, it0, in0, str0);
-      int ip1, it1, in1;
-      msh_ioobj::ParseVtxObj_(ip1, it1, in1, str1);
-      int ip2, it2, in2;
-      msh_ioobj::ParseVtxObj_(ip2, it2, in2, str2);
-      vec_tri_group[iogt0].vec_idx_vtx.push_back(ip0);
-      vec_tri_group[iogt0].vec_idx_vtx.push_back(ip1);
-      vec_tri_group[iogt0].vec_idx_vtx.push_back(ip2);
-      {
-        vec_tri_group[iogt0].vec_idx_tex.push_back(it0);
-        vec_tri_group[iogt0].vec_idx_tex.push_back(it1);
-        vec_tri_group[iogt0].vec_idx_tex.push_back(it2);
+      for(const auto& str0 : vec_str){
+        char buff1[256];
+        std::strncpy(buff1, str0.c_str(), str0.size());
+        buff1[str0.size()] = '\0';
+        int ip0, it0, in0;
+        msh_ioobj::ParseVtxObj_(ip0, it0, in0, buff1);
+        elem_vtx_xyz.push_back(ip0);
+        elem_vtx_tex.push_back(it0);
+        elem_vtx_nrm.push_back(in0);
       }
-      {
-        vec_tri_group[iogt0].vec_idx_nrm.push_back(in0);
-        vec_tri_group[iogt0].vec_idx_nrm.push_back(in1);
-        vec_tri_group[iogt0].vec_idx_nrm.push_back(in2);
-      }
+      elem_vtx_index.push_back(elem_vtx_nrm.size());
     }
   }
+  group_elem_index.push_back(elem_vtx_index.size());
+  return true;
 }
+#ifdef DFM2_STATIC_LIBRARY
+template bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
+    std::string &fname_mtl,
+    std::vector<float> &vtx_xyz,
+    std::vector<float> &vtx_tex,
+    std::vector<float> &vtx_nrm,
+    std::vector<unsigned int> &elem_vtx_index,
+    std::vector<unsigned int> &elem_vtx_xyz,
+    std::vector<unsigned int> &elem_vtx_tex,
+    std::vector<unsigned int> &elem_vtx_nrm,
+    std::vector<std::string>& group_names,
+    std::vector<unsigned int>& group_elem_index,
+    const std::filesystem::path &file_path);
+template bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
+    std::string &fname_mtl,
+    std::vector<double> &vtx_xyz,
+    std::vector<double> &vtx_tex,
+    std::vector<double> &vtx_nrm,
+    std::vector<unsigned int> &elem_vtx_index,
+    std::vector<unsigned int> &elem_vtx_xyz,
+    std::vector<unsigned int> &elem_vtx_tex,
+    std::vector<unsigned int> &elem_vtx_nrm,
+    std::vector<std::string>& group_names,
+    std::vector<unsigned int>& group_elem_index,
+    const std::filesystem::path &file_path);
+#endif
 
 void delfem2::Read_WavefrontMaterial(
     const std::filesystem::path &file_path,
@@ -560,10 +589,11 @@ void delfem2::Read_WavefrontMaterial(
 
 // ----------------------
 
+/*
 void delfem2::Shape3_WavefrontObj::ReadObj(
     const std::string &path_obj) {
   std::string fname_mtl;
-  Read_WavefrontObjWithSurfaceAttributes(
+  Read_WavefrontObjWithSurfaceAttributes2(
       path_obj,
       fname_mtl, aXYZ, aTex, aNorm, aObjGroupTri);
   std::string path_dir = std::string(path_obj.begin(), path_obj.begin() + path_obj.rfind("/"));
@@ -612,3 +642,4 @@ void delfem2::Shape3_WavefrontObj::TranslateXYZ(
   delfem2::Translate_Points3(aXYZ,
                              x, y, z);
 }
+*/

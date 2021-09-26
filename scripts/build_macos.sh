@@ -322,7 +322,9 @@ git checkout master
 git pull origin master
 mkdir build
 cd build || exit
-cmake .. -DALEMBIC_SHARED_LIBS=OFF -DBUILD_TESTING=OFF -DCMAKE_PREFIX_PATH=../../Imathlib
+Imath_dir=$(pwd)/../../Imathlib
+echo "Imath_dir: ${Imath_dir}"
+cmake .. -DALEMBIC_SHARED_LIBS=OFF -DBUILD_TESTING=OFF -DCMAKE_PREFIX_PATH=${Imath_dir}
 cmake --build . --config Release
 cmake --install . --prefix ../../alembiclib
 cd ../../../
