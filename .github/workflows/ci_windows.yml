@@ -235,9 +235,7 @@ jobs:
         cd test_eigen
         mkdir buildVS64
         cd buildVS64
-        cmake .. -A x64 `
-          -DUSE_STATIC_LIB=OFF `
-          -DCMAKE_BUILD_TYPE=Release
+        cmake .. -A x64
         cmake --build . --config Release
         ./Release/runUnitTests.exe 
         cd ../../
