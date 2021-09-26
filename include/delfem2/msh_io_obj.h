@@ -109,20 +109,33 @@ class TriGroupWavefrontObj {
 };
 
 /**
- * Load wavefront Obj file with triangle group
- * @param[in] fname
- * @param[out] fname_mtl
- * @param[out] vec_xyz
- * @param[out] vec_nrm
- * @param[out] vec_tri_group
+ *
+ * @param[out] fname_mtl filen ame of material
+ * @param[out] vtx_xyz
+ * @param[out] vtx_tex
+ * @param[out] vtx_nrm
+ * @param[out] elem_vtx_index jagged array index for elem-vtx array
+ * @param[out] elem_vtx_xyz
+ * @param[out] elem_vtx_tex
+ * @param[out] elem_vtx_nrm
+ * @param[out] group_names
+ * @param[out] group_elem_index jagged array index for group-elem array
+ * @param[in] file_path input file path
+ * @return return false if failed to open the file
  */
-DFM2_INLINE void Read_WavefrontObjWithSurfaceAttributes(
-    const std::string &fname,
+ template <typename T>
+DFM2_INLINE bool Read_WavefrontObjWithMaterialMixedElem(
     std::string &fname_mtl,
-    std::vector<double> &vec_xyz,
-    std::vector<double> &vec_tex,
-    std::vector<double> &vec_nrm,
-    std::vector<TriGroupWavefrontObj> &vec_tri_group);
+    std::vector<T> &vtx_xyz,
+    std::vector<T> &vtx_tex,
+    std::vector<T> &vtx_nrm,
+    std::vector<unsigned int> &elem_vtx_index,
+    std::vector<unsigned int> &elem_vtx_xyz,
+    std::vector<unsigned int> &elem_vtx_tex,
+    std::vector<unsigned int> &elem_vtx_nrm,
+    std::vector<std::string>& group_names,
+    std::vector<unsigned int>& group_elem_index,
+    const std::filesystem::path &file_path);
 
 class MaterialWavefrontObj{
 public:
@@ -140,6 +153,7 @@ void Read_WavefrontMaterial(
     const std::filesystem::path &file_path,
     std::vector<MaterialWavefrontObj>& materials);
 
+/*
 class Shape3_WavefrontObj{
 public:
   void ReadObj(const std::string& fname);
@@ -154,6 +168,7 @@ public:
   std::vector<delfem2::TriGroupWavefrontObj> aObjGroupTri;
   std::vector<MaterialWavefrontObj> aMaterial;
 };
+ */
 
 
 

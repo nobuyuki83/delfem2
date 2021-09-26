@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <iostream>
 #include <memory>  // unique_ptr
+#include <functional>
 
 #include "delfem2/cam_modelview.h"
 #include "delfem2/cam_projection.h"
@@ -87,10 +88,9 @@ class CViewer3 {
   unsigned int width = 640;
   unsigned int height = 480;
   std::string window_title = "LearnOpenGL";
-// private:
   std::unique_ptr<Projection<double>> projection;
-// private:
   std::unique_ptr<delfem2::ModelView_Trackball> view_rotation;
+  std::vector< std::function< void(int,int) >> keypress_callbacks;
 };
 
 } // namespace delfem2

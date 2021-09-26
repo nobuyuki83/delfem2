@@ -41,6 +41,9 @@ static void glfw_callback_key(
     if (key == GLFW_KEY_PAGE_UP) { pViewer3->scale *= 1.03; }
     if (key == GLFW_KEY_PAGE_DOWN) { pViewer3->scale *= (1.0 / 1.03); }
     pViewer3->key_press(key, mods);
+    for(const auto& func : pViewer3->keypress_callbacks){
+      func(key, mods);
+    }
   } else if (action == GLFW_RELEASE) { pViewer3->key_release(key, mods); }
 }
 
