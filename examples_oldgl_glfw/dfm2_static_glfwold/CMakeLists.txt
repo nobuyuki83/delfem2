@@ -17,6 +17,8 @@ project(${PROJ_NAME})
 # glfw
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
 find_package(glfw3 REQUIRED)
+get_target_property(GLFW_INCLUDE_DIR glfw INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "glfw include dir: ${GLFW_INCLUDE_DIR}")
 
 # glad
 get_filename_component(GLAD_INCLUDE_DIR
@@ -25,6 +27,7 @@ get_filename_component(GLAD_INCLUDE_DIR
 # opengl
 find_package(OpenGL REQUIRED)
 
+# delfem2
 add_definitions(-DDFM2_STATIC_LIBRARY=ON)
 set(DELFEM2_INCLUDE_DIR "../../include")
 

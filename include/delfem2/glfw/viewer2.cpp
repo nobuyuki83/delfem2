@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/glfw/viewer2.h"
+
 #include <cstdlib>
 #include <cassert>
-
-#include "delfem2/mat4.h"
 
 #if defined(_WIN32)  // windows
 #define NOMINMAX   // to remove min,max macro
@@ -23,7 +23,8 @@
 #endif
 
 #include <GLFW/glfw3.h>
-#include "delfem2/glfw/viewer2.h"
+
+#include "delfem2/mat4.h"
 
 // ---------------
 namespace delfem2::viewer2 {
