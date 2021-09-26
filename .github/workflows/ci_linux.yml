@@ -69,7 +69,6 @@ jobs:
         echo "## fetch & build googletest"
 
         git submodule update --init -- 3rd_party/googletest
-
         cd 3rd_party/googletest
         cmake .
         cmake --build .
@@ -102,6 +101,14 @@ jobs:
       run: |
         echo "#####################################"
         echo "## build delfem2 test hdronly and run"
+
+        git submodule update --init -- 3rd_party/eigen
+        cd 3rd_party/eigen || exit
+        mkdir build
+        cd build || exit
+        cmake .. 
+        cmake --install . --prefix ../../libeigen
+        cd ../../../
         
         cd test_eigen
         mkdir buildMakeStatic && cd buildMakeStatic
