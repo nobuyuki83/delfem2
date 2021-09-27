@@ -93,7 +93,7 @@ class CViewer3 {
   unsigned int height = 480;
   std::string window_title = "LearnOpenGL";
   std::unique_ptr<Projection<double>> projection;
-  std::unique_ptr<delfem2::ModelView_Trackball> view_rotation;
+  std::unique_ptr<ModelView> view_rotation;
   std::vector< std::function< void(int,int) >> keypress_callbacks;
 };
 
