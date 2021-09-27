@@ -66,6 +66,10 @@ class CViewer3 {
       [[maybe_unused]] int key,
       [[maybe_unused]] int mods) {}
 
+  virtual void key_repeat(
+      [[maybe_unused]] int key,
+      [[maybe_unused]] int mods) {}
+
   virtual void mouse_wheel(
       [[maybe_unused]] double yoffset) {}
 

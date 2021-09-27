@@ -44,7 +44,9 @@ static void glfw_callback_key(
     for(const auto& func : pViewer3->keypress_callbacks){
       func(key, mods);
     }
-  } else if (action == GLFW_RELEASE) { pViewer3->key_release(key, mods); }
+  } else if (action == GLFW_RELEASE) { pViewer3->key_release(key, mods);
+  } else if (action == GLFW_REPEAT) { pViewer3->key_repeat(key, mods); }
+
 }
 
 static void glfw_callback_resize(
