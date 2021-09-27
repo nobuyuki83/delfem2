@@ -24,12 +24,24 @@
 int main()
 {
   delfem2::glfw::CViewer3 viewer;
+  bool is_color = true;
+  {
+    // setting keyboard callback
+    const std::function<void(int,int)> rr = [&is_color](int key, [[maybe_unused]] int mods) {
+      if (key == GLFW_KEY_SPACE) { is_color = !is_color; }
+    };
+    viewer.keypress_callbacks.push_back(rr);
+  }
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 
   while (!glfwWindowShouldClose(viewer.window))
   {
     viewer.DrawBegin_oldGL();
+    if( is_color ){
+      ::glClearColor(0,0,0,1);
+      ::glClear(GL_COLOR_BUFFER_BIT );
+    }
     glBegin(GL_TRIANGLES);
     glColor3f(1.f, 0.f, 0.f);
     glVertex3f(-0.6f, -0.4f, 0.f);
