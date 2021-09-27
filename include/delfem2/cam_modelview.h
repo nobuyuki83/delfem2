@@ -38,6 +38,9 @@ namespace delfem2 {
 class ModelView {
  public:
   virtual ~ModelView() = default;
+
+  virtual void Rot_Camera(float dx, float dy) = 0;
+
   /**
  * @brief Compute "projection matrix" for OpenGL.
  * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
@@ -67,7 +70,7 @@ class ModelView_Trackball : public ModelView {
     (mR*mT).CopyTo(mMV.data());
     return mMV;
   }
-  void Rot_Camera(float dx, float dy) {
+  void Rot_Camera(float dx, float dy) override {
     const float a = sqrt(dx * dx + dy * dy);
     const float ar = a * 0.5f; // angle
     const float dq[4] = {
@@ -87,46 +90,35 @@ class ModelView_Trackball : public ModelView {
 
 // ------------------------------------
 
-template<typename REAL>
-class ModelView_Ytop {
+class ModelView_Ytop : public ModelView{
  public:
-  /**
-   *
-   * @tparam REAL
-   * @param mMV model view matrix (column major order)
-   * @detail column major
-   */
-  void Mat4ColumnMajor(float mMV[16]) const {
-    REAL Mt[16];
+  ModelView_Ytop() = default;
+  ModelView_Ytop(float theta, float psi) : theta(theta), psi(psi) {}
+  [[nodiscard]] std::array<float, 16> GetMatrix() const {
+    float Mr[16];
     {
-      const REAL transd[3] = {trans[0], trans[1], trans[2]};
-      Mat4_AffineTransTranslate(Mt, transd);
-    }
-    REAL Mr[16];
-    {
-      REAL x = std::sin(theta);
-      REAL z = std::cos(theta);
-      REAL y = std::sin(psi);
+      float x = std::sin(theta);
+      float z = std::cos(theta);
+      float y = std::sin(psi);
       x *= std::cos(psi);
       z *= std::cos(psi);
-      Mat4_AffineTransLookAt(Mr, x, y, z, 0., 0., 0., 0., 1., 0.);
+      Mat4_AffineLookAt(
+          Mr,
+          x, y, z,
+          0.f, 0.f, 0.f,
+          0.f, 1.f, 0.f);
     }
-    MatMat4(mMV, Mr, Mt);
+    std::array<float, 16> m;
+    Copy_Mat4(m.data(), Mr);
+    return m;
   }
-  void Rot_Camera(REAL dx, REAL dy) {
+  void Rot_Camera(float dx, float dy) {
     theta -= dx;
     psi -= dy;
   }
-  void Pan_Camera(REAL dx, REAL dy, REAL s) {
-    // double s = view_height / scale;
-    trans[0] += s * dx;
-    trans[1] += s * dy;
-    trans[2] += s * 0.0;
-  }
  public:
-  double trans[3] = {0, 0, 0};
-  REAL theta = 0;
-  REAL psi = 0;
+  float theta = 0.f;
+  float psi = 0.f;
 };
 
 // ------------------------------------
@@ -141,11 +133,6 @@ class ModelView_Ztop {
    * @detail column major
    */
   void Mat4ColumnMajor(float mMV[16]) const {
-    REAL Mt[16];
-    {
-      const REAL transd[3] = {trans[0], trans[1], trans[2]};
-      Mat4_AffineTransTranslate(Mt, transd);
-    }
     REAL Mr[16];
     {
       REAL x = std::sin(theta);
@@ -155,20 +142,13 @@ class ModelView_Ztop {
       y *= std::cos(psi);
       Mat4_AffineTransLookAt(Mr, x, y, z, 0., 0., 0., 0., 0., 1.);
     }
-    MatMat4(mMV, Mr, Mt);
+    Transpose_Mat4(mMV, Mr);
   }
   void Rot_Camera(REAL dx, REAL dy) {
     theta += dx;
     psi -= dy;
   }
-  void Pan_Camera(REAL dx, REAL dy, REAL s) {
-    // double s = view_height / scale;
-    trans[0] += s * dx;
-    trans[1] += s * dy;
-    trans[2] += s * 0.0;
-  }
  public:
-  double trans[3] = {0, 0, 0};
   REAL theta = 0;
   REAL psi = 0;
 };

@@ -236,8 +236,8 @@ DFM2_INLINE void delfem2::MultMat4AffineTransTranslateFromRight(
 }
 
 template<typename REAL>
-DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
-    REAL *Mr,
+DFM2_INLINE void delfem2::Mat4_AffineLookAt(
+    REAL *Mat,
     REAL eyex, REAL eyey, REAL eyez,
     REAL cntx, REAL cnty, REAL cntz,
     REAL upx, REAL upy, REAL upz) {
@@ -260,37 +260,39 @@ DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
   REAL up[3] = {0, 1, 0};
   mat4::Cross3D(up, side, forward);
   // ------------------
+  REAL Mr[16];
   Mr[0] = side[0];
   Mr[4] = side[1];
   Mr[8] = side[2];
-  Mr[12] = 0.0;
+  Mr[12] = 0;
   // ------------------
   Mr[1] = up[0];
   Mr[5] = up[1];
   Mr[9] = up[2];
-  Mr[13] = 0.0;
+  Mr[13] = 0;
   // ------------------
   Mr[2] = -forward[0];
   Mr[6] = -forward[1];
   Mr[10] = -forward[2];
-  Mr[14] = 0.0;
+  Mr[14] = 0;
   // ------------------
-  Mr[3] = 0.0;
-  Mr[7] = 0.0;
-  Mr[11] = 0.0;
-  Mr[15] = 1.0;
+  Mr[3] = 0;
+  Mr[7] = 0;
+  Mr[11] = 0;
+  Mr[15] = 1;
   // ------------------
   delfem2::MultMat4AffineTransTranslateFromRight(
       Mr,
       -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
+  Transpose_Mat4(Mat, Mr);
 }
 #ifdef DFM2_STATIC_LIBRARY
-template DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
+template DFM2_INLINE void delfem2::Mat4_AffineLookAt(
     double *Mr,
     double eyex, double eyey, double eyez,
     double cntx, double cnty, double cntz,
     double upx, double upy, double upz);
-template DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
+template DFM2_INLINE void delfem2::Mat4_AffineLookAt(
     float *Mr,
     float eyex, float eyey, float eyez,
     float cntx, float cnty, float cntz,
@@ -603,11 +605,11 @@ template void delfem2::Mat4_Identity(double A[16]);
 
 // ------------------------------------------------
 
+/*
 template<typename REAL>
 void delfem2::Mat4_Transpose(
-    REAL A[16]) {
-  REAL B[16];
-  for (int i = 0; i < 16; ++i) { B[i] = A[i]; }
+    REAL A[16],
+    REAL B[16]) {
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
       A[i * 4 + j] = B[j * 4 + i];
@@ -615,9 +617,10 @@ void delfem2::Mat4_Transpose(
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat4_Transpose(float A[16]);
-template void delfem2::Mat4_Transpose(double A[16]);
+template void delfem2::Mat4_Transpose(float A[16], float B[16]);
+template void delfem2::Mat4_Transpose(double A[16], double B[16]);
 #endif
+*/
 
 // ------------------------------------------------
 

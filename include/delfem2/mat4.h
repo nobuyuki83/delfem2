@@ -140,7 +140,7 @@ void Mat4_AffineTransProjectionOrtho(
     double zmin, double zmax);
 
 template<typename REAL>
-void Mat4_AffineTransLookAt(
+void Mat4_AffineLookAt(
     REAL *Mr,
     REAL eyex, REAL eyey, REAL eyez,
     REAL cntx, REAL cnty, REAL cntz,
@@ -172,10 +172,6 @@ void Mat4_AffineTransProjectionFrustum(
 
 template<typename REAL>
 void Mat4_Identity(
-    REAL A[16]);
-
-template<typename REAL>
-void Mat4_Transpose(
     REAL A[16]);
 
 template<typename REAL>
