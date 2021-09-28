@@ -128,8 +128,7 @@ std::array<float,16> delfem2::glfw::CViewer3::GetProjectionMatrix() const {
   const CMat4f mS = CMat4f::Scale((float)scale);
   const float asp = static_cast<float>(w0) / static_cast<float>(h0);
   const CMat4f mP = projection->GetMatrix(asp);
-  const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
-  return (mZ * mP * mS).GetStlArray();
+  return (mP * mS).GetStlArray();
 }
 
 void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {

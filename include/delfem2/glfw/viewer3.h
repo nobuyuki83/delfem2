@@ -28,7 +28,7 @@ class CViewer3 {
  public:
   explicit CViewer3(double view_height=1) :
   projection(){
-    projection = std::make_unique<Projection_LookOriginFromZplus<double>>(
+    projection = std::make_unique<Projection_LookOriginFromZplus>(
         view_height, false);
     view_rotation = std::make_unique<ModelView_Trackball>();
   }
@@ -92,7 +92,7 @@ class CViewer3 {
   unsigned int width = 640;
   unsigned int height = 480;
   std::string window_title = "LearnOpenGL";
-  std::unique_ptr<Projection<double>> projection;
+  std::unique_ptr<Projection> projection;
   std::unique_ptr<ModelView> view_rotation;
   std::vector< std::function< void(int,int) >> keypress_callbacks;
 };
