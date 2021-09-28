@@ -162,10 +162,10 @@ int main()
   // -------------------------------
   // below: opengl related codes
   dfm2::glfw::CViewer3 viewer;
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
-  viewer.camera.view_height = 1.0;
+  //viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   dfm2::opengl::setSomeLighting();
 
   {
@@ -199,7 +199,7 @@ int main()
       std::vector<double> aW_Cloth;
       aW_Cloth.assign(npc*nb, 0.0);
       for(unsigned int ipc=0;ipc<npc;++ipc){
-        dfm2::CPtElm2d pesb = dfm2::Nearest_Point_MeshTri3D(
+        dfm2::PointOnSurfaceMesh<double> pesb = dfm2::Nearest_Point_MeshTri3D(
             dfm2::CVec3d(aXYZ_Cloth.data()+ipc*3),
             body.aXYZ1_Body,
             body.aTri_Body );

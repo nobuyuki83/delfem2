@@ -36,7 +36,7 @@ int main()
   class CCadMesh2DVeiwer : public delfem2::glfw::CViewer3
   {
   public:
-    CCadMesh2DVeiwer(){
+    CCadMesh2DVeiwer() : CViewer3(1.5) {
       const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
       cad.AddPolygon(std::vector<double>(poly,poly+8));
       cad.is_draw_face = false;
@@ -68,7 +68,7 @@ int main()
     void mouse_press(
 		const float src[3], 
 		[[maybe_unused]] const float dir[3]) override{
-      cad.Pick(src[0], src[1], this->camera.view_height);
+      cad.Pick(src[0], src[1], 1.5);
     }
     void mouse_drag(
         const float src0[3],
@@ -108,8 +108,7 @@ int main()
   CCadMesh2DVeiwer viewer;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
+  //viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();

@@ -64,7 +64,7 @@ template void delfem2::opengl::CShader_TriMesh_Scalar::Initialize(
 template <typename REAL>
 void delfem2::opengl::CShader_TriMesh_Scalar::UpdateVertex(
     std::vector<REAL>& aPosD,
-    unsigned int ndim,
+    [[maybe_unused]] unsigned int ndim,
     std::vector<REAL>& aValD)
 {
   vao.ADD_VBO(0,aPosD);
@@ -196,7 +196,7 @@ template void delfem2::opengl::CShader_TriMesh_Disp::Initialize(
 template <typename REAL>
 void delfem2::opengl::CShader_TriMesh_Disp::UpdateVertex(
     std::vector<REAL>& aPosD,
-    unsigned int ndim,
+    [[maybe_unused]] unsigned int ndim,
     std::vector<REAL>& aDispD)
 {
   assert( aPosD.size() == aDispD.size() );

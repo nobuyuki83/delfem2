@@ -35,7 +35,7 @@ void ShadingImageRayLambertian(
     unsigned int height,
     unsigned int width,
     const float mat_mvp_rowmajor_float[16],
-    const std::vector< delfem2::CPtElm2<double> >& aPointElemSurf,
+    const std::vector< delfem2::PointOnSurfaceMesh<double> >& aPointElemSurf,
     const std::vector<double>& vec_xyz, // 3d points
     const std::vector<unsigned int>& vec_tri)
 {
@@ -53,7 +53,7 @@ void ShadingImageRayLambertian(
       const dfm2::CVec3d src1(qs);
       const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
       //
-      const delfem2::CPtElm2<double>& pes = aPointElemSurf[ih*width+iw];
+      const delfem2::PointOnSurfaceMesh<double>& pes = aPointElemSurf[ih*width+iw];
       if (pes.itri == UINT_MAX) {
         vec_rgb[(ih * width + iw) * 3 + 0] = 200;
         vec_rgb[(ih * width + iw) * 3 + 1] = 255;
@@ -105,11 +105,9 @@ int main()
 
   dfm2::opengl::CShader_MeshTex shdr;
 
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(2);
   viewer.width = 400;
   viewer.height = 400;
-  viewer.camera.view_height = 2;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
 
   // -----------------------
   // opengl starts from here
@@ -147,15 +145,12 @@ int main()
   {
     float mMVP[16];
     {
-      float mMV[16], mP[16];
-      {
-        int width0, height0;
-        glfwGetFramebufferSize(viewer.window, &width0, &height0);
-        viewer.camera.Mat4_MVP_OpenGL(mMV, mP, float(width0)/float(height0));
-      }
-      dfm2::MatMat4(mMVP, mMV, mP);
+      delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+      delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1, 1, -1);
+      delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
+      dfm2::MatMat4(mMVP, mMV.transpose().data(), (mZ*mP).transpose().data());
     }
-    std::vector< delfem2::CPtElm2d > aPointElemSurf;
+    std::vector< delfem2::PointOnSurfaceMesh<double> > aPointElemSurf;
     Intersection_ImageRay_TriMesh3(aPointElemSurf,
          tex.height,tex.width, mMVP,
          aNodeBVH,aAABB,aXYZ,aTri);

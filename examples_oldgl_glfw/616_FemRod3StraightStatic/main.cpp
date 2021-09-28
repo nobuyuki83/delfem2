@@ -181,12 +181,11 @@ int main() {
   std::vector<double> vec_r(vec_pos.size() * 3);
   std::vector<unsigned int> tmp_buffer;
   // -----
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.5);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  // ---------------
+  //
   while (!glfwWindowShouldClose(viewer.window)) {
     {
       OptimizeRod(

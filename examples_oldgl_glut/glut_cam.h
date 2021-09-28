@@ -6,7 +6,8 @@
 #include <sstream>
 #include <iomanip>  // for the format
 
-#include "delfem2/cam3_m4q.h"
+#include "delfem2/cam_modelview.h"
+#include "delfem2/cam_projection.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
   #include <GLUT/glut.h>
@@ -16,17 +17,6 @@
 
 // end of header
 // --------------------------------------------
-
-/*
-static void DrawSphere(double r, double x, double y, double z)
-{
-  ::glMatrixMode(GL_MODELVIEW);
-  ::glPushMatrix();
-  ::glTranslated(+x,+y,+z);
-  ::glutSolidSphere(r,32, 32);
-  ::glPopMatrix();
-}
- */
 
 static void RenderBitmapString(float x, float y, void *font,const char *string)
 {
@@ -86,8 +76,6 @@ static void ShowFPS(){
       ss << std::fixed << std::setprecision(2);
       ss << frame*1000.0/(time-timebase);
       s_fps = ss.str();
-//      s_fps = std::string("FPS:")+std::to_string(frame*1000.0/(time-timebase));
-//      sprintf(s_fps,"FPS:%4.2f",frame*1000.0/(time-timebase));
       timebase = time;
       frame = 0;
     }
@@ -108,16 +96,6 @@ public:
     GLint viewport[4];
     ::glGetIntegerv(GL_VIEWPORT,viewport);
     imodifier = glutGetModifiers();
-    /*
-    if( imodifier == 0 ){
-      if( button == 1 && state == GLUT_DOWN ){
-        imodifier = GLUT_ACTIVE_ALT;
-      }
-      if( button == 2 && state == GLUT_DOWN ){
-        imodifier = GLUT_ACTIVE_CTRL;
-      }
-    }
-     */
     if( state == GLUT_UP ){ this->ibutton = -1; }
     else{                   this->ibutton = button; }
     const int win_w = viewport[2];
@@ -141,34 +119,36 @@ public:
     dy = mov_end_y - mouse_y;
     {
       if(      imodifier == GLUT_ACTIVE_ALT   ){
-        camera.Rot_Camera(dx, dy);
+        modelview.Rot_Camera(dx, dy);
       }
       else if( imodifier == GLUT_ACTIVE_SHIFT ){
-        camera.Pan_Camera(dx, dy);
+        double s0 = projection.view_height / scale;
+        trans[0] += s0 * dx;
+        trans[1] += s0 * dy;
       }
     }
     mouse_x = mov_end_x;
     mouse_y = mov_end_y;
     ::glutPostRedisplay();
   }
-  void glutSpecial(int Key, int x, int y)
+  void glutSpecial(int Key, [[maybe_unused]] int x, [[maybe_unused]] int y)
   {
     switch(Key)
     {
       case GLUT_KEY_PAGE_UP:
-        camera.Scale(1.03);
+        scale *= 1.03;
         break;
       case GLUT_KEY_PAGE_DOWN:
-        camera.Scale(1.0/1.03);
+        scale *= (1.0/1.03);
         break;
       case GLUT_KEY_F1:
-        camera.is_pars = !camera.is_pars;
+        projection.is_pars = !projection.is_pars;
         break;
       case GLUT_KEY_F2:
-        camera.fovy *= 1.05;
+        projection.fovy *= 1.05;
         break;
       case GLUT_KEY_F3:
-        camera.fovy /= 1.05;
+        projection.fovy /= 1.05;
         break;
       case GLUT_KEY_LEFT:
         break;
@@ -195,23 +175,28 @@ public:
     {
       ::glMatrixMode(GL_PROJECTION);
       ::glLoadIdentity();
-      float mP[16];
-      camera.Mat4_AffineTransProjection(mP, (double)win_w/win_h);
-      ::glMultMatrixf(mP);
+      double asp = (double)win_w/win_h;
+      const delfem2::CMat4f mP = projection.GetMatrix(asp);
+      const delfem2::CMat4f mS = delfem2::CMat4f::Scale(scale);
+      // const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+      ::glMultMatrixf((mS * mP.transpose()).data());
     }
     {
       ::glMatrixMode(GL_MODELVIEW);
       ::glLoadIdentity();
-      float mMV[16];
-      camera.Mat4_AffineTransModelView(mMV);
-      ::glMultMatrixf(mMV);
+      const delfem2::CMat4f mMV = modelview.GetMatrix();
+      const delfem2::CMat4f mT = delfem2::CMat4f::Translate(trans[0], trans[1], trans[2]);
+      ::glMultMatrixf((mT*mMV).transpose().data());
     }
   }
 public:
   int iwin;
   int imodifier;
   int ibutton;
-  delfem2::CCam3_OnAxisZplusLookOrigin<double> camera;
+  delfem2::Projection_LookOriginFromZplus<double> projection;
+  delfem2::ModelView_Trackball modelview;
+  double scale = 1.0;
+  double trans[3] = {0,0,0};
   double mouse_x, mouse_y;
   double dx;
   double dy;

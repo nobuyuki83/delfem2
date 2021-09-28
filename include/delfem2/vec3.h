@@ -13,6 +13,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -128,11 +129,10 @@ class CVec3 {
  public:
   CVec3(T vx, T vy, T vz) : p{vx, vy, vz} {}
   CVec3() : p{0.0, 0.0, 0.0} {}
-  CVec3(const CVec3 &rhs) {
-    p[0] = rhs.p[0];
-    p[1] = rhs.p[1];
-    p[2] = rhs.p[2];
-  }
+  CVec3(const CVec3 &) = default;
+  
+  template<typename S>
+  CVec3(const std::array<S,3>&& v) : p{v[0], v[1], v[2]} {}
 
   template<typename S>
   explicit CVec3(const S *v) : p{v[0], v[1], v[2]} {}
@@ -145,11 +145,7 @@ class CVec3 {
   // above: constructor / destructor
   // -------------------------------
   // below: operator
-
-  inline CVec3 operator-() const { return ((T) (-1)) * (*this); }
-  inline CVec3 operator+() const { return *this; }
-  inline CVec3 operator+() { return *this; }
-  inline CVec3 operator-() { return CVec3(-p[0], -p[1], -p[2]); }
+  
   inline CVec3 &operator=(const CVec3 &b) {
     if (this != &b) {
       x = b.x;
@@ -158,6 +154,10 @@ class CVec3 {
     }
     return *this;
   }
+  inline CVec3 operator-() const { return ((T) (-1)) * (*this); }
+  inline CVec3 operator+() const { return *this; }
+  inline CVec3 operator+() { return *this; }
+  inline CVec3 operator-() { return CVec3(-p[0], -p[1], -p[2]); }
   inline CVec3 &operator+=(const CVec3 &b) {
     x += b.x;
     y += b.y;

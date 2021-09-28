@@ -123,12 +123,10 @@ std::string LoadFile(
   return std::string(vdataBegin,vdataEnd);
 }
 
-int main(int argc, const char * argv[])
+int main()
 {
-  delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 0.5;
-  viewer.camera.Rot_Camera(-0.2, -0.2);
-  dfm2::glfw::InitGLNew();
+  delfem2::glfw::CViewer3 viewer(0.5);
+  delfem2::glfw::InitGLNew();
   viewer.InitGL();
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -179,16 +177,16 @@ int main(int argc, const char * argv[])
     ::glEnable(GL_POLYGON_OFFSET_FILL );
     ::glPolygonOffset( 1.1f, 4.0f );
     
-    int nw, nh; glfwGetFramebufferSize(viewer.window, &nw, &nh);
-    const float asp = (float)nw/nh;
-    float mP[16], mMV[16];
-    viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-    
-    const unsigned int nslice = 256;
+  
 
     glUseProgram(idProgramSlice);
-    glUniformMatrix4fv(locMt, 1, GL_TRUE, mMV); // apply rotation to texture. Transpose matrix here.
+    {
+      const dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+      glUniformMatrix4fv(locMt, 1, GL_TRUE, mMV.transpose().data()); // apply rotation to texture. Transpose matrix here.
+    }
+    const unsigned int nslice = 256;
     glUniform1f(locSpacing, 1.0f / static_cast<GLfloat>(nslice - 1));
+    
     glUniform1f(locThreshold, 0.5);  // threathold of surface
 
     glUniform1i(locVol, 0);
@@ -200,8 +198,12 @@ int main(int argc, const char * argv[])
       const float mati[16] = {1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1};
       glUniformMatrix4fv(locMw, 1, GL_FALSE, mati);
     }
-    glUniformMatrix4fv(locMp, 1, GL_FALSE, mP);
-    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, nslice); // draw idVaoSlice nslice-times
+    {
+      const dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+      const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
+      glUniformMatrix4fv(locMp, 1, GL_FALSE, (mP.transpose() * mZ).data());
+      glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, nslice); // draw idVaoSlice nslice-times
+    }
     
     viewer.SwapBuffers();
     glfwPollEvents();

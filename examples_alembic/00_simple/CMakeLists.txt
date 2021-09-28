@@ -9,35 +9,33 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 IF(MSVC)
   set(CMAKE_CXX_FLAGS "/W4")
 ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -g")
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 ENDIF()
 
 ####################################
 
 project(00_simple)
 
-include(../../3rd_party/alembic/cmake/Modules/FindIlmBase.cmake)
-IF(MSVC)
-  get_filename_component(ALEMBIC_LIBRARY ../../3rd_party/libalembic/lib/Alembic.lib ABSOLUTE)
-ELSE()
-  get_filename_component(ALEMBIC_LIBRARY ../../3rd_party/alembic/lib/Alembic/libAlembic.a ABSOLUTE)
-ENDIF()
+set(CMAKE_PREFIX_PATH ../../3rd_party/Imathlib)
+FIND_PACKAGE(Imath)
 
+set(CMAKE_PREFIX_PATH ../../3rd_party/alembiclib)
+FIND_PACKAGE(Alembic)
 
 ####################################
 
 add_executable(${PROJECT_NAME}
 	main.cpp
 )
+
 target_include_directories(${PROJECT_NAME} 
 PUBLIC 
-	../../3rd_party/alembic/lib
-	${ILMBASE_INCLUDE_DIR}
+    Alembic::Alembic
 )
+
 target_link_libraries(${PROJECT_NAME} 
 PUBLIC
-	${ALEMBIC_LIBRARY}
-	${ALEMBIC_ILMBASE_HALF_LIB}
-	)
+    Alembic::Alembic
+)
 
 

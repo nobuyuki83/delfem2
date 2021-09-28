@@ -32,7 +32,7 @@ void InitializeProblem_PlateBendingMITC3(
     dfm2::CPreconditionerILU<double> &ilu_A,
     std::vector<int> &aBCFlag,
     const double lenx,
-    const double leny,
+    [[maybe_unused]] const double leny,
     const std::vector<double> &aXY0,
     const std::vector<unsigned int> &aTri) {
   const std::size_t np = aXY0.size() / 2;
@@ -63,7 +63,7 @@ void InitializeProblem_PlateBendingMITC3(
 void SolveProblem_PlateBendingMITC3(
     std::vector<double> &aVal,
     std::vector<double> &vec_b,
-    std::vector<int> &aMSFlag,
+    [[maybe_unused]] std::vector<int> &aMSFlag,
     dfm2::CMatrixSparse<double> &mat_A,
     dfm2::CPreconditionerILU<double> &ilu_A,
     const std::vector<int> &aBCFlag,
@@ -189,13 +189,12 @@ int main() {
       thickness, myu, lambda, rho, gravity_z,
       aXY0, aTri);
 
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(0.8);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 0.8;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
-  viewer.camera.psi = 0.2;
-  viewer.camera.theta = 0.2;
+//  viewer.modelview.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
+//  viewer.modelview.psi = 0.2;
+//  viewer.modelview.theta = 0.2;
   delfem2::opengl::setSomeLighting();
 
   {

@@ -362,9 +362,10 @@ template delfem2::CVec2d delfem2::GetNearest_LineSeg_Point(
 // --------------------------------------
 
 template<typename T>
-double delfem2::GetDist_LineSeg_Point
-    (const CVec2<T> &po_c,
-     const CVec2<T> &po_s, const CVec2<T> &po_e) {
+double delfem2::GetDist_LineSeg_Point(
+    const CVec2<T> &po_c,
+    const CVec2<T> &po_s,
+    const CVec2<T> &po_e) {
   CVec2<T> p = GetNearest_LineSeg_Point(po_c, po_s, po_e);
   return Distance(p, po_c);
 }
@@ -374,9 +375,11 @@ template double delfem2::GetDist_LineSeg_Point(
 #endif
 
 template<typename T>
-bool delfem2::IsCross_LineSeg_LineSeg
-    (const CVec2<T> &po_s0, const CVec2<T> &po_e0,
-     const CVec2<T> &po_s1, const CVec2<T> &po_e1) {
+bool delfem2::IsCross_LineSeg_LineSeg(
+    const CVec2<T> &po_s0,
+    const CVec2<T> &po_e0,
+    const CVec2<T> &po_s1,
+    const CVec2<T> &po_e1) {
   {
     const double min0x = (po_s0.p[0] < po_e0.p[0]) ? po_s0.p[0] : po_e0.p[0];
     const double max0x = (po_s0.p[0] > po_e0.p[0]) ? po_s0.p[0] : po_e0.p[0];
@@ -467,11 +470,11 @@ bool delfem2::CenterCircumcircle(
 // 1 :       on
 // 2 :       outsdie
 template<typename T>
-int delfem2::DetDelaunay
-    (const CVec2<T> &p0,
-     const CVec2<T> &p1,
-     const CVec2<T> &p2,
-     const CVec2<T> &p3) {
+int delfem2::DetDelaunay(
+    const CVec2<T> &p0,
+    const CVec2<T> &p1,
+    const CVec2<T> &p2,
+    const CVec2<T> &p3) {
   const double area = Area_Tri(p0, p1, p2);
   if (fabs(area) < 1.0e-10) {
     return 3;

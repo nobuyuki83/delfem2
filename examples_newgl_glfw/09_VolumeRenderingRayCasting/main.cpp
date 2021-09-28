@@ -22,16 +22,13 @@ std::string LoadFile(
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
   std::istreambuf_iterator<char> vdataEnd;
-  return std::string(vdataBegin, vdataEnd);
+  return {vdataBegin, vdataEnd};
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.is_pars = true;
-  viewer.camera.fovy = 45.0;
+  viewer.projection = std::make_unique<delfem2::Projection_LookOriginFromZplus<double>>(1.0, true, 45);
   delfem2::opengl::CShader_Mesh shdr;
   shdr.color[0] = 1;
   //
@@ -94,15 +91,13 @@ int main(int argc,char* argv[])
       ::glGetIntegerv(GL_VIEWPORT, viewport);
       glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
       iloc = glGetUniformLocation(id_shader, "mMVPinv");
-      float mMV[16], mP[16], mMVP[16], mMVPinv[16];
-      viewer.camera.Mat4_MVP_OpenGL(
-          mMV,mP,
-          (float) viewport[2] / (float) viewport[3]);
-      delfem2::MatMat4(mMVP,mMV,mP);
-      delfem2::Inverse_Mat4(mMVPinv,mMVP);
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);
+      const delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+      const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+      const delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
+      const delfem2::CMat4f mMVPinv = (mMV.transpose() * mP.transpose() * mZ).Inverse();
+      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv.data());
       iloc = glGetUniformLocation(id_shader, "mMV");
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV);
+      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV.data());
       shdr.vao.Draw(0);
       viewer.SwapBuffers();
       glfwPollEvents();

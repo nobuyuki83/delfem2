@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 else ()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
 endif ()
 
 #######################
@@ -20,8 +20,8 @@ add_definitions(-DPATH_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 
 # glfw
-SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
+find_package(glfw3 REQUIRED)
 
 # opengl
 find_package(OpenGL REQUIRED)
@@ -32,9 +32,7 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 #####################################
 
 include_directories(
-    ${OPENGL_INCLUDE_DIR}
     ${GLAD_INCLUDE_DIR}
-    ${GLFW_INCLUDE_DIR}
     ${DELFEM2_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party
 )
@@ -49,7 +47,6 @@ add_executable(${PROJECT_NAME}
 #####################################
 
 target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARIES}
+    OpenGL::GL
+    glfw
     )

@@ -274,40 +274,14 @@ void myGlutDisplay() {
   }
 }
 
-void myGlutKeyboard(unsigned char Key, int x, int y) {
-  switch (Key) {
-    case 'q':
-    case 'Q':
-    case '\033':exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 's': {
-      Solve();
-      break;
-    }
-    case 'r': {
-      for (unsigned int ip = 0; ip < aXY0.size() / 2; ++ip) {
-        aTmp0[ip * 3 + 0] = (rand() + 1.0) / (RAND_MAX + 1.0);
-        aTmp0[ip * 3 + 1] = (rand() + 1.0) / (RAND_MAX + 1.0);
-        aTmp0[ip * 3 + 2] = (rand() + 1.0) / (RAND_MAX + 1.0);
-      }
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-}
+int main() {
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
-
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(0.2);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   // --------------------------------
-  viewer.camera.view_height = 0.2;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
-  viewer.camera.Rot_Camera(0.5, 0.5);
+  // viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
+  // viewer.camera.Rot_Camera(0.5, 0.5);
   delfem2::opengl::setSomeLighting();
 
   MakeMesh();

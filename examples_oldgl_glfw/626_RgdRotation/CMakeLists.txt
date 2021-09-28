@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if (MSVC)
   set(CMAKE_CXX_FLAGS "/W4 /EHsc")
 else ()
-  set(CMAKE_CXX_FLAGS "-Wall -g")
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 endif ()
 
 #################################
@@ -21,8 +21,8 @@ project(626_RdgRotation)
 find_package(OpenGL REQUIRED)
 
 # glfw
-SET(GLFW_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/FindGLFW.cmake)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
+find_package(glfw3 REQUIRED)
 
 # dfm2
 IF (USE_STATIC_LIB)
@@ -39,9 +39,7 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 
 #################################
 
-include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLFW_INCLUDE_DIR}
+include_directories(        
     ${DELFEM2_INCLUDE_DIR}
 )
 
@@ -51,6 +49,6 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARIES}
+    OpenGL::GL
+    glfw
     )

@@ -284,7 +284,7 @@ void myGlutDisplay(
 }
 
 
-int main(int argc, char *argv[])
+int main()
 {
   const double DT = 0.001;
   const double sph_radcutoff = 0.01; // radius of influence
@@ -333,11 +333,9 @@ int main(int argc, char *argv[])
   }
   std::cout << "particle size : " << ps.size() << std::endl;
 
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(0.1);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 0.1;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
 
   {

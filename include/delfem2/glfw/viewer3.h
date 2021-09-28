@@ -10,8 +10,11 @@
 
 #include <cstdio>
 #include <iostream>
+#include <memory>  // unique_ptr
+#include <functional>
 
-#include "delfem2/cam3_m4q.h" // for CNav3D_GLFW
+#include "delfem2/cam_modelview.h"
+#include "delfem2/cam_projection.h"
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/glfw/mouseinput.h"
 
@@ -23,6 +26,13 @@ namespace delfem2::glfw {
 
 class CViewer3 {
  public:
+  explicit CViewer3(double view_height=1) :
+  projection(){
+    projection = std::make_unique<Projection_LookOriginFromZplus<double>>(
+        view_height, false);
+    view_rotation = std::make_unique<ModelView_Trackball>();
+  }
+  
   void DrawBegin_oldGL() const;
 
   void SwapBuffers() const;
@@ -56,17 +66,35 @@ class CViewer3 {
       [[maybe_unused]] int key,
       [[maybe_unused]] int mods) {}
 
+  virtual void key_repeat(
+      [[maybe_unused]] int key,
+      [[maybe_unused]] int mods) {}
+
   virtual void mouse_wheel(
       [[maybe_unused]] double yoffset) {}
+
+  [[nodiscard]] std::array<float,16> GetModelViewMatrix() const {
+    CMat4f mv = view_rotation->GetMatrix();
+    CMat4f mt = CMat4f::Translate(trans[0], trans[1], trans[2]);
+    return (mt * mv).GetStlArray();
+  }
+
+  [[nodiscard]] std::array<float,16> GetProjectionMatrix() const;
+
+  virtual void CursorPosition(double xpos, double ypos);
 
  public:
   GLFWwindow *window = nullptr;
   CMouseInput nav;
-  delfem2::CCam3_OnAxisZplusLookOrigin<double> camera;
+  double scale = 1.0;
+  double trans[3] = {0,0,0};
   double bgcolor[4] = {1, 1, 1, 1};
   unsigned int width = 640;
   unsigned int height = 480;
   std::string window_title = "LearnOpenGL";
+  std::unique_ptr<Projection<double>> projection;
+  std::unique_ptr<ModelView> view_rotation;
+  std::vector< std::function< void(int,int) >> keypress_callbacks;
 };
 
 } // namespace delfem2

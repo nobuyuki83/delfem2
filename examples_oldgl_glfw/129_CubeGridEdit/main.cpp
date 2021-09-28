@@ -14,7 +14,8 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/cam3_m4q.h"
+#include "delfem2/cam_projection.h"
+#include "delfem2/cam_modelview.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridcube.h"
@@ -35,7 +36,7 @@ int main() {
   // -------------
   class CViewer_CubeGrid : public dfm2::glfw::CViewer3 {
    public:
-    CViewer_CubeGrid() {
+    CViewer_CubeGrid() : CViewer3(2.0) {
       aCubeGrid.emplace_back(0, 0, 0);
       org = dfm2::CVec3d(0, 0, 0);
     }
@@ -102,10 +103,9 @@ int main() {
     };
     EDIT_MODE edit_mode = EDIT_ADD;
   } viewer;
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window)) {
     viewer.DrawBegin_oldGL();

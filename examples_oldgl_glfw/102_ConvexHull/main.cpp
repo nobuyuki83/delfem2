@@ -19,11 +19,6 @@
 #include "delfem2/geoconvhull3.h"
 #include "delfem2/vec3.h"
 
-
-#if defined(_MSC_VER)
-#  pragma warning( disable : 4100 )
-#endif
-
 namespace dfm2 = delfem2;
 
 // ---------------------------------------
@@ -41,11 +36,9 @@ static void myGlVertex3d(
 }
 
 int main() {
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(1.5);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-
-  viewer.camera.view_height = 1.5;
 
   std::vector<dfm2::CVec3d> vtx_xyz(100);
   std::vector<unsigned int> tri_vtx;

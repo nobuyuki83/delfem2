@@ -25,3 +25,6 @@
 [submodule "3rd_party/eigen"]
 	path = 3rd_party/eigen
 	url = https://gitlab.com/libeigen/eigen.git
+[submodule "3rd_party/Imath"]
+	path = 3rd_party/Imath
+	url = https://github.com/AcademySoftwareFoundation/Imath.git

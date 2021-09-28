@@ -36,7 +36,7 @@ void ShadingImageRayLambertian(
     unsigned int nheight,
     unsigned int nwidth,
     const float mMVPf[16],
-    const std::vector<delfem2::CPtElm2<double> > &aPointElemSurf,
+    const std::vector<delfem2::PointOnSurfaceMesh<double> > &aPointElemSurf,
     const std::vector<double> &aXYZ, // 3d points
     const std::vector<unsigned int> &aTri) {
   double mMVPd[16];
@@ -55,7 +55,7 @@ void ShadingImageRayLambertian(
       const dfm2::CVec3d src1(qs);
       const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
       //
-      const delfem2::CPtElm2<double> &pes = aPointElemSurf[ih * nwidth + iw];
+      const delfem2::PointOnSurfaceMesh<double> &pes = aPointElemSurf[ih * nwidth + iw];
       if (pes.itri == UINT_MAX) {
         aRGB[(ih * nwidth + iw) * 3 + 0] = 200;
         aRGB[(ih * nwidth + iw) * 3 + 1] = 255;
@@ -90,10 +90,10 @@ int main() {
     dfm2::Normalize_Points3(vec_xyz, 2.0);
   }
 
-  std::vector<dfm2::CNodeBVH2> vec_node_bvh;
-  std::vector<dfm2::CBV3_Sphere<double>> vec_bv;
+  std::vector<dfm2::CNodeBVH2> bvh_nodes;
+  std::vector<dfm2::CBV3_Sphere<double>> bvh_volumes;
   delfem2::ConstructBVHTriangleMeshMortonCode(
-      vec_node_bvh, vec_bv,
+      bvh_nodes, bvh_volumes,
       vec_xyz, vec_tri);
 
   dfm2::opengl::CTexRGB_Rect2D tex;
@@ -104,12 +104,10 @@ int main() {
     tex.pixel_color.resize(tex.width * tex.height * tex.channels);
   }
 
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(2);
   viewer.width = 400;
   viewer.height = 400;
-  viewer.camera.view_height = 2;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
@@ -126,24 +124,18 @@ int main() {
       glfwPollEvents();
     }
     for (unsigned int i = 0; i < 10; ++i) {
-      float mMVP[16];
-      {
-        float mMV[16], mP[16];
-        {
-          int width0, height0;
-          glfwGetFramebufferSize(viewer.window, &width0, &height0);
-          viewer.camera.Mat4_MVP_OpenGL(mMV, mP, float(width0) / float(height0));
-        }
-        dfm2::MatMat4(mMVP, mMV, mP);
-      }
-      std::vector<delfem2::CPtElm2d> vec_point_on_tri;
+      const dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+      const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
+      const dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+      const dfm2::CMat4f mMVP_transpose = mMV.transpose() * mP.transpose() * mZ;
+      std::vector<delfem2::PointOnSurfaceMeshd> vec_point_on_tri;
       Intersection_ImageRay_TriMesh3(
           vec_point_on_tri,
-          tex.height, tex.width, mMVP,
-          vec_node_bvh, vec_bv, vec_xyz, vec_tri);
+          tex.height, tex.width, mMVP_transpose.data(),
+          bvh_nodes, bvh_volumes, vec_xyz, vec_tri);
       ShadingImageRayLambertian(
           tex.pixel_color,
-          tex.height, tex.width, mMVP,
+          tex.height, tex.width, mMVP_transpose.data(),
           vec_point_on_tri, vec_xyz, vec_tri);
       tex.InitGL();
       //

@@ -34,10 +34,12 @@ class MyView
  public:
 
   MyView(
+      double view_height,
       std::vector<unsigned int> &aFlagElem0,
       const std::vector<double> &aXYZ0, // 3d points
       const std::vector<unsigned int> &aTri0)
-      : aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0) {
+      : CViewer3(view_height), 
+      aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0) {
     { // make BVH
       std::vector<double> aCent;
       dfm2::CentsMaxRad_MeshTri3(
@@ -47,7 +49,7 @@ class MyView
       delfem2::BoundingBox3_Points3(
           min_xyz, max_xyz,
           aCent.data(),
-          static_cast<unsigned int>(aCent.size() / 3));
+          aCent.size() / 3);
       std::vector<unsigned int> aSortedId;
       std::vector<std::uint32_t> aSortedMc;
       dfm2::SortedMortenCode_Points3(
@@ -65,17 +67,20 @@ class MyView
           0, aNodeBVH,
           lvm);
       { // assertion
-        dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
+        dfm2::Check_MortonCode_Sort(
+            aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
         dfm2::Check_MortonCode_RangeSplit(aSortedMc);
-        dfm2::Check_BVH(aNodeBVH,
-                        static_cast<unsigned int>(aCent.size() / 3));
+        dfm2::Check_BVH(
+            aNodeBVH,
+            aCent.size() / 3);
       }
     }
     { // make triangle surrounding graph
       std::vector<unsigned int> elsup_ind, elsup;
       dfm2::JArray_ElSuP_MeshElem(
           elsup_ind, elsup,
-          aTri.data(), aTri.size() / 3, 3, aXYZ.size() / 3);
+          aTri.data(), aTri.size() / 3, 3,
+          aXYZ.size() / 3);
       ElSuEl_MeshElem(
           aTriSuTri,
           aTri.data(), aTri.size() / 3,
@@ -96,7 +101,7 @@ class MyView
         aIndElem,
         delfem2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>, float>(src, dir),
         0, aNodeBVH, aAABB);
-    std::map<double, dfm2::CPtElm2<double>> mapDepthPES;
+    std::map<double, dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
     dfm2::IntersectionRay_MeshTri3DPart(
         mapDepthPES,
         dfm2::CVec3d(src), dfm2::CVec3d(dir),
@@ -132,11 +137,9 @@ int main() {
   std::vector<unsigned int> aFlagElem(tri_vtx.size() / 3, 0);
 
   MyView viewer(
+      1.5,
       aFlagElem,
       vtx_xyz, tri_vtx);
-
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

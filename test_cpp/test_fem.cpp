@@ -156,7 +156,10 @@ TEST(objfunc_v23, MIPS) {
       dfm2::CMat3d m;
       m.SetRotMatrix_Cartesian(0.3, 1.0, 0.5);
       for (int ino = 0; ino < 3; ++ino) {
-        m.MatVec(P[ino], p[ino]);
+        auto vec = m.MatVec(P[ino]);
+        p[ino][0] = vec[0];
+        p[ino][1] = vec[1];
+        p[ino][2] = vec[2];
       }
     }
     if (dfm2::Area_Tri3(p[0], p[1], p[2]) < 0.01) { continue; }

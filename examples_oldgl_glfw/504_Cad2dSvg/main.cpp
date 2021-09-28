@@ -57,7 +57,6 @@ int main() {
       dfm2::ReadSVG_Cad2D(
           cad,
           path_svg.string(), 1.0);
-//      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       dfm2::CBoundingBox2<double> bb = cad.BB();
       viewer.trans[0] = static_cast<float>(-(bb.x_min + bb.x_max) * 0.5);
       viewer.trans[1] = static_cast<float>(-(bb.y_min + bb.y_max) * 0.5);

@@ -36,53 +36,54 @@ int main() {
   dfm2::Normalize_Points3(vtx_xyz, 4.0);
   // ---------------------------------------
 
-  dfm2::opengl::CDrawerOldGL_Render2Tex draw_sampler;
-  dfm2::opengl::CRender2Tex sampler;
+  dfm2::opengl::CDrawerOldGL_Render2Tex drawer_r2t;
+  dfm2::opengl::CRender2Tex render2texture;
   {
-    unsigned int nresX = 128;
-    unsigned int nresY = 128;
-    unsigned int nresZ = 256;
+    const unsigned int nresX = 128;
+    const unsigned int nresY = 128;
+    const unsigned int nresZ = 256;
     double elen = 0.02;
-    dfm2::CVec3d origin = dfm2::CVec3d(-0.5 * elen * nresX, +0.5 * elen * nresY, +0.5 * elen * nresZ);
+    dfm2::CVec3d origin = dfm2::CVec3d(
+        -0.5 * elen * nresX,
+        +0.5 * elen * nresY,
+        +0.5 * elen * nresZ);
     dfm2::CVec3d ez = dfm2::CVec3d(0, +1, 0);
     dfm2::CVec3d ex = dfm2::CVec3d(1, +0, 0);
     //
-    sampler.SetTextureProperty(nresX, nresZ, true);
+    render2texture.SetTextureProperty(nresX, nresZ, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        sampler.mat_modelview_colmajor, sampler.mat_projection_colmajor,
+        render2texture.mat_modelview_colmajor,
+        render2texture.mat_projection_colmajor,
         origin.p, ez.p, ex.p,
         nresX, nresZ, elen, elen * nresY);
-    draw_sampler.SetPointColor(0.0, 1.0, 0.0);
-    draw_sampler.draw_len_axis = 0.2;
-    draw_sampler.isDrawTex = false;
-    draw_sampler.isDrawOnlyHitPoints = true;
+    drawer_r2t.SetPointColor(0.0, 1.0, 0.0);
+    drawer_r2t.draw_len_axis = 0.2;
+    drawer_r2t.isDrawTex = false;
+    drawer_r2t.isDrawOnlyHitPoints = true;
   }
   // ---------------------------------------
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(2.0);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.Rot_Camera(+0.2, -0.2);
   if (!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
-
   dfm2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
 
   {
-    sampler.InitGL(); // move the sampled image to a texture
-    sampler.Start();
-    dfm2::opengl::SetView(sampler);
+    render2texture.InitGL(); // move the sampled image to a texture
+    render2texture.Start();
+    dfm2::opengl::SetView(render2texture);
     ::glClearColor(1.0, 1.0, 1.0, 1.0);
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx);
-    sampler.End();
+    render2texture.End();
   }
 
   for (int iframe = 0;; iframe++) {
@@ -93,20 +94,20 @@ int main() {
     std::vector<double> aXYZ1;
     {
       dfm2::CMat4d mat4_mvp;
-      sampler.GetMVPG(mat4_mvp.data());
+      render2texture.GetMVPG(mat4_mvp.data());
       const dfm2::CMat4d mMVPGinv = mat4_mvp.Inverse();
       dfm2::CVec3d p0;
       dfm2::Vec3_Vec3Mat4_AffineProjection(p0.data(), src.data(), mat4_mvp.data());
       dfm2::CVec3d p1;
       dfm2::Vec3Mat4(p1.data(), dir.data(), mat4_mvp.data());
-      std::vector<dfm2::CPtElm2<double>> vec_point_on_triangle;
+      std::vector<dfm2::PointOnSurfaceMesh<double>> vec_point_on_triangle;
       dfm2::IntersectionLine_Hightfield(
           vec_point_on_triangle,
           p0.data(), p1.normalized().data(),
-          sampler.width, sampler.height,
-          sampler.aZ);
+          render2texture.width, render2texture.height,
+          render2texture.aZ);
       for (const auto &pes : vec_point_on_triangle) {
-        dfm2::CVec3d lpos = pes.Pos_Grid(sampler.width, sampler.height, 1.0, sampler.aZ);
+        dfm2::CVec3d lpos = pes.PositionOnGrid2(render2texture.width, render2texture.height, 1.0, render2texture.aZ);
         dfm2::CVec3d q2;
         dfm2::Vec3_Vec3Mat4_AffineProjection(q2.p, lpos.p, mMVPGinv.data());
         aXYZ1.push_back(q2.x);
@@ -149,7 +150,7 @@ int main() {
       ::glEnable(GL_LIGHTING);
       dfm2::opengl::DrawMeshTri3D_FaceNorm(vtx_xyz, tri_vtx);
       glPointSize(1);
-      draw_sampler.Draw(sampler);
+      drawer_r2t.Draw(render2texture);
       viewer.SwapBuffers();
       glfwPollEvents();
     }

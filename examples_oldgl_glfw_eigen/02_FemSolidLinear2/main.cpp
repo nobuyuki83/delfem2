@@ -132,7 +132,7 @@ void Solve1(
       1.0,vec_x);
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   std::vector<unsigned int> aTri1;
   std::vector<double> aXY1;
@@ -148,11 +148,9 @@ int main(int argc,char* argv[])
     Solve1(aVal,aXY1,aTri1,aBCFlag);
   }
   // --------
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.5);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   // ---------
   while(!::glfwWindowShouldClose(viewer.window)){
     viewer.DrawBegin_oldGL();

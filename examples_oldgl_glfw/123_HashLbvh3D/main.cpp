@@ -106,10 +106,10 @@ int main() {
     }
   }
 
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.5);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.5;
   delfem2::opengl::setSomeLighting();
 
   while (!glfwWindowShouldClose(viewer.window)) {

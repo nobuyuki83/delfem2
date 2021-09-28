@@ -18,7 +18,9 @@
 
 namespace dfm2 = delfem2;
 
-static void callback_error(int error, const char* description)
+static void callback_error(
+    [[maybe_unused]] int error,
+    const char* description)
 {
   fputs(description, stderr);
 }
@@ -95,14 +97,21 @@ void draw(GLFWwindow* window)
   glfwPollEvents();
 }
 
-void callback_key(GLFWwindow* window, int key, int scancode, int action, int mods)
+void callback_key(
+    GLFWwindow* window,
+    int key,
+    [[maybe_unused]] int scancode,
+    int action,
+    [[maybe_unused]] int mods)
 {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
 }
 
-void callback_resize(GLFWwindow* window, int width, int height)
+void callback_resize(
+    [[maybe_unused]] GLFWwindow* window,
+    int width, int height)
 {
   glViewport(0, 0, width, height);
 }

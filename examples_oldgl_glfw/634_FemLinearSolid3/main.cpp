@@ -30,7 +30,6 @@
 #include "delfem2/opengl/old/mshuni.h"
 
 
-
 namespace dfm2 = delfem2;
 
 // --------------------------------------------------------------
@@ -128,9 +127,7 @@ void Simulation(
       nDoF, aBCFlag,1.0, vecx);
 }
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char* argv[])
+int main()
 {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aHex;
@@ -164,11 +161,10 @@ int main(
       mass, 1.0e+5,1.e+5, gravity);
 
   // ----------------------
-  delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
-  viewer.camera.theta = 0.1;
-  viewer.camera.psi = 0.1;
+  delfem2::glfw::CViewer3 viewer(1.5);
+//  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
+//  viewer.camera.theta = 0.1;
+//  viewer.camera.psi = 0.1;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 

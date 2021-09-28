@@ -192,13 +192,11 @@ int main()
   }
 
   // -----------
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(0.7);
+  viewer.trans[0] = -0.5;
+  viewer.trans[1] = -0.5;
   delfem2::glfw::InitGLOld();
-  viewer.camera.trans[0] = -0.5;
-  viewer.camera.trans[1] = -0.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   viewer.InitGL();
-  viewer.camera.view_height = 0.7;
   while (!glfwWindowShouldClose(viewer.window) )
   {
     for(const auto& pd: aPointData) {

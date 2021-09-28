@@ -335,13 +335,12 @@ int main() {
   }
   RemoveKernel();
 
-  delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  delfem2::glfw::CViewer3 viewer(1.5);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-
   delfem2::opengl::setSomeLighting();
+  //
   while (!glfwWindowShouldClose(viewer.window)) {
     Solve();
     // -----

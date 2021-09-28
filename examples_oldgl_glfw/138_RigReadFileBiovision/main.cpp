@@ -44,11 +44,9 @@ int main() {
 
   // -------------------------
 
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(15.0);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 15.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
 
   // -------------------------

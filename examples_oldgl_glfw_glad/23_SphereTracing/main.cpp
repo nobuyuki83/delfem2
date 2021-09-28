@@ -54,13 +54,11 @@ void DrawRectangle_FullCanvas()
   glPopAttrib();
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.is_pars = true;
-  viewer.camera.fovy = 45.0;
+  viewer.projection
+  = std::make_unique<delfem2::Projection_LookOriginFromZplus<double>>(1.0, true, 45.0);
   //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
@@ -114,21 +112,22 @@ int main(int argc,char* argv[])
     ::glUseProgram(id_shader1);
     for(unsigned int iframe=0;iframe<100;++iframe){
       if( glfwWindowShouldClose(viewer.window) ){ break; }
-      GLint iloc = glGetUniformLocation(id_shader1, "resolution");
-      GLint viewport[4];
-      ::glGetIntegerv(GL_VIEWPORT, viewport);
-      glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
-
-      iloc = glGetUniformLocation(id_shader2, "mMVPinv");
-      float mMV[16], mP[16], mMVP[16], mMVPinv[16];
-      viewer.camera.Mat4_MVP_OpenGL(
-          mMV,mP,
-          (float) viewport[2] / (float) viewport[3]);
-      delfem2::MatMat4(mMVP,mMV,mP);
-      delfem2::Inverse_Mat4(mMVPinv,mMVP);
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);
-      iloc = glGetUniformLocation(id_shader2, "mMV");
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV);
+      {
+        GLint iloc = glGetUniformLocation(id_shader1, "resolution");
+        GLint viewport[4];
+        ::glGetIntegerv(GL_VIEWPORT, viewport);
+        glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
+      }
+      {
+        GLint iloc = glGetUniformLocation(id_shader2, "mMVPinv");
+        const delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+        const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+        const delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
+        const delfem2::CMat4f mMVPinv = (mMV.transpose() * mP.transpose() * mZ).Inverse();
+        glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv.data());
+        iloc = glGetUniformLocation(id_shader2, "mMV");
+        glUniformMatrix4fv(iloc,1,GL_FALSE,mMV.data());
+      }
       viewer.DrawBegin_oldGL();
       DrawRectangle_FullCanvas();
       viewer.SwapBuffers();
@@ -138,20 +137,22 @@ int main(int argc,char* argv[])
     ::glUseProgram(id_shader2);
     for(unsigned int iframe=0;iframe<100;++iframe){
       if( glfwWindowShouldClose(viewer.window) ){ break; }
-      GLint iloc = glGetUniformLocation(id_shader2, "resolution");
-      GLint viewport[4];
-      ::glGetIntegerv(GL_VIEWPORT, viewport);
-      glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
-      iloc = glGetUniformLocation(id_shader2, "mMVPinv");
-      float mMV[16], mP[16], mMVP[16], mMVPinv[16];
-      viewer.camera.Mat4_MVP_OpenGL(
-          mMV,mP,
-          (float) viewport[2] / (float) viewport[3]);
-      delfem2::MatMat4(mMVP,mMV,mP);
-      delfem2::Inverse_Mat4(mMVPinv,mMVP);
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMVPinv);
-      iloc = glGetUniformLocation(id_shader2, "mMV");
-      glUniformMatrix4fv(iloc,1,GL_FALSE,mMV);
+      {
+        GLint viewport[4];
+        ::glGetIntegerv(GL_VIEWPORT, viewport);
+        GLint iloc = glGetUniformLocation(id_shader2, "resolution");
+        glUniform2f(iloc, (float) viewport[2], (float) viewport[3]);
+      }
+      {
+        const delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+        const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+        const delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
+        const delfem2::CMat4f mMVP_transpose_inv = (mMV.transpose() * mP.transpose() * mZ).Inverse();
+        GLint iloc = glGetUniformLocation(id_shader2, "mMVPinv");
+        glUniformMatrix4fv(iloc,1,GL_FALSE,mMVP_transpose_inv.data());
+        iloc = glGetUniformLocation(id_shader2, "mMV");
+        glUniformMatrix4fv(iloc,1,GL_FALSE,mMV.transpose().data());
+      }
       viewer.DrawBegin_oldGL();
       DrawRectangle_FullCanvas();
       viewer.SwapBuffers();
