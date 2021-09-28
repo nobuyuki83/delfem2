@@ -55,8 +55,6 @@ public:
  * the camera is placed on the positive Z axis and looking at the origin.
  * The object will undergo movdel view transformation (rotation->translation)
  * and then perspective transformation (scale->orthognoal/perspective).
- *
- * @tparam REAL either float or double
  */
 class Projection_LookOriginFromZplus : public Projection{
  public:
@@ -75,45 +73,42 @@ class Projection_LookOriginFromZplus : public Projection{
    * @param mP
    * @param asp
    */
-   [[nodiscard]] std::array<float,16> GetMatrix(float asp) const override;
+   [[nodiscard]] DFM2_INLINE std::array<float,16> GetMatrix(float asp) const override{
+
+    const float fovyInRad = fovy * (2. * M_PI) / 360.f;
+    const float depth = view_height / tan(fovyInRad * 0.5f);
+    const float vh = static_cast<float>(view_height);
+    CMat4f mP1;
+    if (is_pars) {
+      Mat4_AffineProjectionFrustum(
+          mP1.data(),
+          fovyInRad,
+          asp,
+          -depth * 2.f,
+          -depth * 0.01f);
+    } else {
+      Mat4_AffineProjectionOrtho(
+          mP1.data(),
+          -vh * asp,
+          +vh * asp,
+          -vh,
+          +vh,
+          -2.f * depth,
+          0.f);
+    }
+    // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
+    // to view the object we translate the object at the origin (0,0,-depth)
+    CMat4f mT1;
+    ::delfem2::Mat4_AffineTranslation(
+        mT1.data(),
+        std::array<float,3>{0.f, 0.f, -depth}.data());
+    return (mP1 * mT1).GetStlArray();
+   }
 public:
   double view_height = 1;
   bool is_pars = false;
   double fovy = 10;
 };
-
-
-std::array<float,16> delfem2::Projection_LookOriginFromZplus::GetMatrix(
-    float asp) const {
-  const float fovyInRad = fovy * (2. * M_PI) / 360.f;
-  const float depth = view_height / tan(fovyInRad * 0.5f);
-  const float vh = static_cast<float>(view_height);
-  CMat4f mP1;
-  if (is_pars) {
-    Mat4_AffineProjectionFrustum(
-        mP1.data(),
-        fovyInRad,
-        asp,
-        -depth * 2.f,
-        -depth * 0.01f);
-  } else {
-    Mat4_AffineProjectionOrtho(
-        mP1.data(),
-        -vh * asp,
-        +vh * asp,
-        -vh,
-        +vh,
-        -2.f * depth,
-        0.f);
-  }
-  // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
-  // to view the object we translate the object at the origin (0,0,-depth)
-  CMat4f mT1;
-  ::delfem2::Mat4_AffineTranslation(
-      mT1.data(),
-      std::array<float,3>{0.f, 0.f, -depth}.data());
-  return (mP1 * mT1).GetStlArray();
-}
 
 } // namespace delfem2
 

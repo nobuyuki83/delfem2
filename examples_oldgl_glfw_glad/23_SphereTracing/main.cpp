@@ -23,7 +23,7 @@ std::string LoadFile(
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
   std::istreambuf_iterator<char> vdataEnd;
-  return std::string(vdataBegin, vdataEnd);
+  return {vdataBegin, vdataEnd};
 }
 
 void DrawRectangle_FullCanvas()
@@ -58,7 +58,7 @@ int main()
 {
   delfem2::glfw::CViewer3 viewer;
   viewer.projection
-  = std::make_unique<delfem2::Projection_LookOriginFromZplus<double>>(1.0, true, 45.0);
+  = std::make_unique<delfem2::Projection_LookOriginFromZplus>(1.0, true, 45.0);
   //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
