@@ -57,19 +57,21 @@ void draw(GLFWwindow *window) {
   {
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexColor);
-    float mP[16], mMV[16];
-    viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
-    mMV[3 * 4 + 0] -= 0.5;
-    shdr_mshtex.Draw(mP, mMV);
+    delfem2::CMat4f mP, mMV;
+    viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+    delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1.f,1.f,-1.f);
+    mMV(0,3) -= 0.5;
+    shdr_mshtex.Draw((mZ*mP).transpose().data(), mMV.transpose().data());
   }
 
   {
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexDepth);
-    float mP[16], mMV[16];
-    viewer.Mat4_MVP_OpenGL(mMV, mP, asp);
-    mMV[3 * 4 + 0] += 0.5;
-    shdr_mshtex.Draw(mP, mMV);
+    delfem2::CMat4f mP, mMV;
+    viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+    delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1.f,1.f,-1.f);
+    mMV(0,3) += 0.5;
+    shdr_mshtex.Draw((mZ*mP).transpose().data(), mMV.transpose().data());
   }
 
   viewer.SwapBuffers();
@@ -88,34 +90,34 @@ int main() {
 #endif
 
   {
-    std::vector<double> aXYZ;
-    std::vector<unsigned int> aTri;
-    dfm2::MeshTri3_Torus(aXYZ, aTri, 0.5, 0.5, 10, 12);
+    std::vector<double> vtx_xyz;
+    std::vector<unsigned int> tri_vtx;
+    dfm2::MeshTri3_Torus(vtx_xyz, tri_vtx, 0.5, 0.5, 10, 12);
     shdr0.Compile();
-    shdr0.Initialize(aXYZ, 3, aTri);
+    shdr0.Initialize(vtx_xyz, 3, tri_vtx);
   }
 
   shdr_mshtex.Compile();
   {
-    std::vector<float> aPos3d = {
+    std::vector<float> vtx_xy = {
         -0.5, -0.5,
         +0.5, -0.5,
         +0.5, +0.5,
         -0.5, +0.5,
     };
-    std::vector<unsigned int> aTri = {
+    std::vector<unsigned int> tri_vtx = {
         0, 1, 2,
         0, 2, 3,
     };
-    std::vector<float> aTex2d = {
+    std::vector<float> vtx_uv = {
         0.0, 0.0,
         1.0, 0.0,
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr_mshtex.setCoords(aPos3d, 2);
-    shdr_mshtex.setTexCoords(aTex2d);
-    shdr_mshtex.setElement(aTri, GL_TRIANGLES);
+    shdr_mshtex.setCoords(vtx_xy, 2);
+    shdr_mshtex.setTexCoords(vtx_uv);
+    shdr_mshtex.setElement(tri_vtx, GL_TRIANGLES);
   }
 
   const unsigned int targetTextureWidth = 256;

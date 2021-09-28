@@ -5,9 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/glfw/viewer2.h"
+
 #include <cstdlib>
 #include <cassert>
-#include "delfem2/mat4.h"
 
 #if defined(_WIN32)  // windows
 #define NOMINMAX   // to remove min,max macro
@@ -22,11 +23,11 @@
 #endif
 
 #include <GLFW/glfw3.h>
-#include "delfem2/glfw/viewer2.h"
+
+#include "delfem2/mat4.h"
 
 // ---------------
-namespace delfem2 {
-namespace viewer2 {
+namespace delfem2::viewer2 {
 
 static delfem2::glfw::CViewer2 *pViewer2 = nullptr;
 
@@ -45,7 +46,7 @@ static void glfw_callback_key(
 }
 
 static void glfw_callback_resize(
-	[[maybe_unused]] GLFWwindow *window, int width, int height) {
+    [[maybe_unused]] GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
@@ -74,14 +75,12 @@ static void glfw_callback_mouse_button(
     }
   }
   if (action == GLFW_PRESS) {
-    float mMVP[16];
-    {
-      float mMV[16], mP[16];
-      pViewer2->Mat4_MVP_OpenGL(mMV, mP, asp);
-      ::delfem2::MatMat4(mMVP, mMV, mP);
-    }
+    CMat4f mMV, mP;
+    pViewer2->Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
     float src[3], dir[3];
-    pViewer2->nav.MouseRay(src, dir, asp, mMVP);
+    pViewer2->nav.MouseRay(
+        src, dir,
+        (mP * mMV).data());
     pViewer2->mouse_press(src);
   }
 }
@@ -110,28 +109,26 @@ static void glfw_callback_cursor_position(
     pViewer2->trans[1] += static_cast<float>(nav.dy) * si;
   }
   if (pViewer2->nav.ibutton == 0) {
-    float mMVP[16];
-    {
-      float mMV[16], mP[16];
-      pViewer2->Mat4_MVP_OpenGL(mMV, mP, asp);
-      ::delfem2::MatMat4(mMVP, mMV, mP);
-    }
+    CMat4f mMV, mP;
+    pViewer2->Mat4_ModelView_Projection(
+        mMV.data(), mP.data(), asp);
     float src0[3], src1[3], dir0[3], dir1[3];
-    pViewer2->nav.RayMouseMove(src0, src1, dir0, dir1, asp, mMVP);
+    pViewer2->nav.RayMouseMove(
+        src0, src1, dir0, dir1,
+        (mP * mMV).data());
     pViewer2->mouse_drag(src0, src1);
   }
 }
 
 static void glfw_callback_scroll(
-    [[maybe_unused]] GLFWwindow *window, 
-	[[maybe_unused]] double xoffset, 
-	double yoffset) {
+    [[maybe_unused]] GLFWwindow *window,
+    [[maybe_unused]] double xoffset,
+    double yoffset) {
   assert(pViewer2 != nullptr);
   pViewer2->scale *= powf(1.01f, float(yoffset));
 }
 
-}
-}
+}  // namespace delfem2::viewer2
 
 void delfem2::glfw::CViewer2::InitGL() {
   delfem2::viewer2::pViewer2 = this;
@@ -185,22 +182,25 @@ void delfem2::glfw::CViewer2::DrawBegin_oldGL() const {
     assert(n0 == 1 && n1 == 1);
   }
 
-  float mMV[16], mP[16];
+  CMat4f mMV, mP;
   {
     int width0, height0;
     glfwGetFramebufferSize(window, &width0, &height0);
     const float asp = static_cast<float>(width0) / static_cast<float>(height0);
-    this->Mat4_MVP_OpenGL(mMV, mP, asp);
-//    camera.Mat4_MVP_OpenGL(mMV,mP, asp);
+    this->Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
   }
-
+  {
+    const CMat4f mZ = CMat4f::ScaleXYZ(1, 1, -1);
+    ::glMatrixMode(GL_PROJECTION);
+    ::glLoadIdentity();
+    ::glMultMatrixf((mZ * mP).transpose().data());
+  }
+  {
+    ::glMatrixMode(GL_MODELVIEW);
+    ::glLoadIdentity();
+    ::glMultMatrixf(mMV.transpose().data());
+  }
   ::glEnable(GL_NORMALIZE);
-  ::glMatrixMode(GL_PROJECTION);
-  ::glLoadIdentity();
-  ::glMultMatrixf(mP);
-  ::glMatrixMode(GL_MODELVIEW);
-  ::glLoadIdentity();
-  ::glMultMatrixf(mMV);
 #endif
 
 }
@@ -216,15 +216,21 @@ void delfem2::glfw::CViewer2::ExitIfClosed() const {
   exit(EXIT_SUCCESS);
 }
 
-void delfem2::glfw::CViewer2::Mat4_MVP_OpenGL(
-    float mMV[16], float mP[16], float asp) const {
+void delfem2::glfw::CViewer2::Mat4_ModelView_Projection(
+    float mMV[16],
+    float mP[16],
+    float asp) const {
   delfem2::Mat4_Identity(mMV);
-  mMV[4 * 3 + 0] += this->trans[0];
-  mMV[4 * 3 + 1] += this->trans[1];
+  mMV[0 * 4 + 3] += this->trans[0];
+  mMV[1 * 4 + 3] += this->trans[1];
   //
-  float si = view_height / scale;
-  delfem2::Mat4_AffineTransProjectionOrtho(mP,
-                                           -asp * si, +asp * si,
-                                           -1 * si, +1 * si,
-                                           -1, +1);
+  const float si = view_height / scale;
+  CMat4f mPZ;
+  delfem2::Mat4_AffineProjectionOrtho(
+      mPZ.data(),
+      -asp * si, +asp * si,
+      -1.f * si, +1.f * si,
+      -1.f, +1.f);
+  CMat4f mZ = CMat4f::ScaleXYZ(1, 1, -1);
+  (mZ * mPZ).CopyTo(mP);
 }

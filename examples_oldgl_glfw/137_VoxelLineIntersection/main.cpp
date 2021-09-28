@@ -105,19 +105,14 @@ void Draw_CGrid3(
 
 
 
-int main(
-	[[maybe_unused]] int argc,
-	[[maybe_unused]] char* argv[])
+int main()
 {
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.0);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.Rot_Camera(+0.2, -0.2);
   dfm2::opengl::setSomeLighting();
-  ::glEnable(GL_DEPTH_TEST);
-  
+  ::glEnable(GL_DEPTH_TEST);  
   dfm2::CGrid3<int> grid;
   {
     const unsigned int n = 32;

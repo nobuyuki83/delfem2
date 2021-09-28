@@ -272,8 +272,7 @@ void AddRandomPoint(
 
 int main()
 {
-  delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 2.5;
+  delfem2::glfw::CViewer3 viewer(2.5);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 

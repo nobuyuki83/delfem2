@@ -42,7 +42,8 @@ public:
       std::vector<unsigned int>& aFlagElem0,
       const std::vector<double>& aXYZ0, // 3d points
       const std::vector<unsigned int>& aTri0)
-      : aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0)
+      : CViewer3(1.5), 
+        aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0)
   {
     dfm2::ConstructBVHTriangleMeshMortonCode(
         aNodeBVH, aAABB,
@@ -96,7 +97,7 @@ private:
         aIndElem,
         delfem2::CIsBV_IntersectLine< dfm2::CBV3_Sphere<double>, float>(src,dir),
         0, aNodeBVH, aAABB);
-    std::map<double,dfm2::CPtElm2<double>> mapDepthPES;
+    std::map<double,dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
     dfm2::IntersectionRay_MeshTri3DPart(
         mapDepthPES,
         dfm2::CVec3d(src),dfm2::CVec3d(dir),
@@ -136,8 +137,6 @@ int main()
       tri_flag,
       vtx_xyz,tri_idx);
 
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

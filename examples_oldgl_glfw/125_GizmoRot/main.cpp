@@ -49,7 +49,7 @@ int main() {
       DrawBegin_oldGL();
       {
         float r[16];
-        dfm2::Mat4_Quat(r, gizmo_rot.quat);
+        dfm2::Mat4_AffineQuaternion(r, gizmo_rot.quat);
         float r0[16];
         dfm2::Transpose_Mat4(r0, r);
         ::glMatrixMode(GL_MODELVIEW);
@@ -77,8 +77,6 @@ int main() {
   // --------------------
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   // --------------------
   while (true) {

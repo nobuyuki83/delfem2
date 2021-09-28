@@ -107,23 +107,22 @@ void Random()
   aCP[ 1] += dfm2::CVec3d(-2,-1,0);
   aCP[ 2] += dfm2::CVec3d(-2,+1,0);
   aCP[ 3] += dfm2::CVec3d(-2,+2,0);
-  ////
+  //
   aCP[ 4] += dfm2::CVec3d(-1,-2,0);
   aCP[ 5] += dfm2::CVec3d(-1,-1,0);
   aCP[ 6] += dfm2::CVec3d(-1,+1,0);
   aCP[ 7] += dfm2::CVec3d(-1,+2,0);
-  ////
+  //
   aCP[ 8] += dfm2::CVec3d(+1,-2,0);
   aCP[ 9] += dfm2::CVec3d(+1,-1,0);
   aCP[10] += dfm2::CVec3d(+1,+1,0);
   aCP[11] += dfm2::CVec3d(+1,+2,0);
-  ////
+  //
   aCP[12] += dfm2::CVec3d(+2,-2,0);
   aCP[13] += dfm2::CVec3d(+2,-1,0);
   aCP[14] += dfm2::CVec3d(+2,+1,0);
   aCP[15] += dfm2::CVec3d(+2,+2,0);
-  
-  /////
+  //
   aPQuad.clear();
   AddQuads(aPQuad,n,0,aIndCP,aCP);
 }
@@ -185,12 +184,11 @@ void myGlutDisplay()
 
 int main()
 {
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(4);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.view_height = 4;
-  
+  //
   while (!glfwWindowShouldClose(viewer.window))
   {
     {

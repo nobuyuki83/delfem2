@@ -14,16 +14,15 @@ public:
   void MouseRay(
       float src[3],
       float dir[3],
-      [[maybe_unused]] float asp,
       const float mMVP[16]) const {
     float mMVP_inv[16];
     ::delfem2::Inverse_Mat4(mMVP_inv, mMVP);
-    const float ps[3] = {(float) mouse_x, (float) mouse_y, -1.0};
-    const float pe[3] = {(float) mouse_x, (float) mouse_y, +1.0};
+    const float ps[3] = {(float) mouse_x, (float) mouse_y, +1.0};
+    const float pe[3] = {(float) mouse_x, (float) mouse_y, -1.0};
     float qs[3];
-    ::delfem2::Vec3_Vec3Mat4_AffineProjection(qs, ps, mMVP_inv);
+    ::delfem2::Vec3_Mat4Vec3_AffineProjection(qs, mMVP_inv, ps);
     float qe[3];
-    ::delfem2::Vec3_Vec3Mat4_AffineProjection(qe, pe, mMVP_inv);
+    ::delfem2::Vec3_Mat4Vec3_AffineProjection(qe, mMVP_inv, pe);
     src[0] = qs[0];
     src[1] = qs[1];
     src[2] = qs[2];
@@ -37,22 +36,21 @@ public:
       float src1[3],
       float dir0[3],
       float dir1[3],
-      [[maybe_unused]] float asp,
       const float mMVP[16]) {
     float mMVP_inv[16];
     ::delfem2::Inverse_Mat4(mMVP_inv, mMVP);
-    const float p0s[3] = {(float) (mouse_x - dx), (float) (mouse_y - dy), -1.f};
-    const float p0e[3] = {(float) (mouse_x - dx), (float) (mouse_y - dy), +1.f};
-    const float p1s[3] = {(float) mouse_x, (float) mouse_y, -1.f};
-    const float p1e[3] = {(float) mouse_x, (float) mouse_y, +1.f};
+    const float p0s[3] = {(float) (mouse_x - dx), (float) (mouse_y - dy), +1.f};
+    const float p0e[3] = {(float) (mouse_x - dx), (float) (mouse_y - dy), -1.f};
+    const float p1s[3] = {(float) mouse_x, (float) mouse_y, +1.f};
+    const float p1e[3] = {(float) mouse_x, (float) mouse_y, -1.f};
     float q0s[3];
-    ::delfem2::Vec3_Vec3Mat4_AffineProjection(q0s, p0s, mMVP_inv);
+    ::delfem2::Vec3_Mat4Vec3_AffineProjection(q0s, mMVP_inv, p0s);
     float q0e[3];
-    ::delfem2::Vec3_Vec3Mat4_AffineProjection(q0e, p0e, mMVP_inv);
+    ::delfem2::Vec3_Mat4Vec3_AffineProjection(q0e, mMVP_inv, p0e);
     float q1s[3];
-    ::delfem2::Vec3_Vec3Mat4_AffineProjection(q1s, p1s, mMVP_inv);
+    ::delfem2::Vec3_Mat4Vec3_AffineProjection(q1s, mMVP_inv, p1s);
     float q1e[3];
-    ::delfem2::Vec3_Vec3Mat4_AffineProjection(q1e, p1e, mMVP_inv);
+    ::delfem2::Vec3_Mat4Vec3_AffineProjection(q1e, mMVP_inv, p1e);
     //
     src0[0] = q0s[0];
     src0[1] = q0s[1];

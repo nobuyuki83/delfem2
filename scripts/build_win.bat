@@ -113,24 +113,20 @@ cmake --build . --config Release
 cd ../../
 
 : ##############################
-: build OpenEXR
+: build Imath
 
-set path_zlib_library=%~dp0..\3rd_party\zlib\buildMake\Release\zlib.lib
-set path_zlib_root=%~dp0..\3rd_party\zlib
-set path3rdparty=%~dp0..\3rd_party
-cd 3rd_party
-curl -L https://github.com/AcademySoftwareFoundation/openexr/archive/v2.5.2.zip -o openexr.zip
-7z x openexr.zip -y
-mkdir libopenexr
-cd openexr-2.5.2
-cmake . -A x64 ^ 
-  -DZLIB_ROOT=%path_zlib_root% ^
-  -DZLIB_LIBRARY=%path_zlib_library% ^
-  -DPYILMBASE_ENABLE=OFF ^ 
+git submodule update --init -- 3rd_party/Imath
+cd 3rd_party/Imath 
+git checkout master
+git pull origin master
+mkdir build
+cd build 
+cmake -A x64 .. ^
+  -DBUILD_SHARED_LIBS=OFF ^
   -DBUILD_TESTING=OFF
 cmake --build . --config Release
-cmake --install . --prefix %path3rdparty%\libopenexr
-cd ../../
+cmake --install . --prefix ../../Imathlib
+cd ../../../
 
 : ##############################
 : build Alembic
@@ -142,20 +138,22 @@ git submodule update --init 3rd_party/alembic
 cd 3rd_party/alembic
 git checkout master
 git pull origin master
-cmake -A x64 . ^
+mkdir build
+cd build
+cmake -A x64 .. ^
   -DUSE_TESTS=OFF ^
-  -DALEMBIC_SHARED_LIBS=ON ^
-  -DILMBASE_ROOT=%path3rdparty%\libopenexr
+  -DALEMBIC_SHARED_LIBS=OFF ^
+  -DCMAKE_PREFIX_PATH="%path3rdparty%\Imathlib"
 cmake --build . --config Release
-cmake --install . --prefix %path3rdparty%\libalembic
-cd ../../
+cmake --install . --prefix ../../alembiclib
+cd ../../../
 
 : ###############################
 : build examples alembic
 
 cd examples_alembic
-mkdir buildVS64Static
-cd buildVS64Static
-cmake -A x64 .. -DILMBASE_ROOT=%path3rdparty%\libopenexr
-cmake --build .
+mkdir buildVS64
+cd buildVS64
+cmake -A x64 ..
+cmake --build . --config Release
 cd ../..

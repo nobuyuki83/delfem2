@@ -260,7 +260,7 @@ void LaplacianDegenerate(
   }
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler;
   sampler.Initialize(128, 128, 128, 0.015);
@@ -270,12 +270,10 @@ int main(int argc,char* argv[])
   trg.Init();
  
   // ---------------------------------------
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(2.0);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.Rot_Camera(+0.2, -0.2);
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);

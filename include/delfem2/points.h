@@ -36,36 +36,36 @@ DFM2_INLINE void updateMinMaxXYZ(
 
 /**
  * @param bb3 (out) bounding box in the order of <minx, miny, minz, maxx, maxy, maxz>
- * @param aXYZ (in) array of 3D coordinates of points
- * @param nXYZ (in) number of points
+ * @param vtx_xyz (in) array of 3D coordinates of points
+ * @param num_vtx (in) number of points
  * @details implemented for "float" and "double"
  */
 template<typename T>
 DFM2_INLINE void BoundingBox3_Points3(
     T min3[3],
     T max3[3],
-    const T *aXYZ,
-    unsigned int nXYZ);
+    const T *vtx_xyz,
+    const size_t num_vtx);
 
 // center & width
 template<typename T>
 DFM2_INLINE void CenterWidth_Point3(
     T &cx, T &cy, T &cz,
     T &wx, T &wy, T &wz,
-    const T *paXYZ,
-    unsigned int nXYZ);
+    const T *vtx_xyz,
+    const size_t num_vtx);
 
 template<typename T>
 DFM2_INLINE void CenterWidth_Points3(
     T &cx, T &cy, T &cz,
     T &wx, T &wy, T &wz,
-    const std::vector<T> &aXYZ);
+    const std::vector<T> &vtx_xyz);
 
 template<typename T>
 DFM2_INLINE void CenterWidth_Points3(
     T c[3],
     T w[3],
-    const std::vector<T> &aXYZ);
+    const std::vector<T> &vtx_xyz);
 
 // local coordinate
 DFM2_INLINE void GetCenterWidthLocal(
@@ -95,10 +95,10 @@ DFM2_INLINE void Rotate_Points3(
 
 template<typename T>
 DFM2_INLINE void Translate_Points(
-    T *paVec,
-    size_t np,
-    unsigned int ndim,
-    const T *trns);
+    T *vtx_coords,
+    const size_t num_vtx,
+    const unsigned int ndim,
+    const T *translation);
 
 template<typename T>
 DFM2_INLINE void Translate_Points2(
@@ -117,25 +117,25 @@ DFM2_INLINE void Translate_Points3(
 
 template<typename T>
 DFM2_INLINE void Scale_PointsX(
-    std::vector<T> &aXYZ,
-    T s);
+    std::vector<T> &vtx_xyz,
+    T scale);
 
 template<typename T>
 DFM2_INLINE void Scale_Points(
-    T *pVec,
-    size_t np,
-    unsigned int ndim,
-    T s);
+    T *vtx_coords,
+    const size_t num_vtx,
+    const unsigned int ndim,
+    T scale);
 
 /**
  * @brief uniformly scale & translate the coordinate of opints
  * specifying the longest edge of AABB and the center of AABB is origin
- * @param length_longest_aabb_edge length of longest edge of axis-aligned bounding box
+ * @param length_longest_edge_boundingbox length of longest edge of axis-aligned bounding box
  */
 template<typename REAL>
 DFM2_INLINE void Normalize_Points3(
-    std::vector<REAL> &aXYZ,
-    REAL length_longest_aabb_edge = 1);
+    std::vector<REAL> &vtx_xyz,
+    REAL length_longest_edge_boundingbox = 1);
 
 /**
  * @brief scale each vector to make norm == 1
@@ -156,8 +156,8 @@ DFM2_INLINE double Size_Points3D_LongestAABBEdge(
  */
 template<typename T>
 DFM2_INLINE void CG_Point3(
-    T *cg,
-    const std::vector<T> &aXYZ);
+    T *center_of_gravity,
+    const std::vector<T> &vtx_xyz);
 
 DFM2_INLINE double EnergyKinetic(
     const double *aUVW,

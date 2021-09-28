@@ -193,7 +193,8 @@ void MakeNormal() { // make normal
 
 class CInput_ContactPlane : public dfm2::CInput_Contact {
   double penetrationNormal(double &nx, double &ny, double &nz,
-                           double px, double py, double pz) const override {
+                           [[maybe_unused]] double px,
+                           [[maybe_unused]] double py, double pz) const override {
     nx = 0.0;
     ny = 0.0;
     nz = 1.0; // normal of the plane
@@ -414,11 +415,10 @@ int main() {
   // ---------------------------
 
 
-  delfem2::glfw::CViewer3 viewer;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
-  viewer.camera.psi = 3.1415 * 0.2;
-  viewer.camera.theta = 3.1415 * 0.1;
-  viewer.camera.view_height = 2.0;
+  delfem2::glfw::CViewer3 viewer(2.0);
+  //viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
+  //viewer.camera.psi = 3.1415 * 0.2;
+  //viewer.camera.theta = 3.1415 * 0.1;
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();

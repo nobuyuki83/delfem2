@@ -51,7 +51,7 @@ void ILU_SetPattern0(
     ilu.m_diaInd[iblk] = ilu.colInd[iblk+1];
     for(unsigned int icrs=ilu.colInd[iblk];icrs<ilu.colInd[iblk+1];icrs++){
       assert( icrs < ilu.rowPtr.size() );
-      const int jblk0 = ilu.rowPtr[icrs];
+      const unsigned int jblk0 = ilu.rowPtr[icrs];
       assert( jblk0 < nblk );
       if( jblk0 > iblk ){
         ilu.m_diaInd[iblk] = icrs;
@@ -68,7 +68,7 @@ void ILU_CopyValue(
 {
   const unsigned int nblk = ilu.nblk;
   assert( A.nrowblk == nblk && A.ncolblk == nblk );
-  std::vector<int> row2crs(nblk,-1);
+  std::vector<unsigned int> row2crs(nblk,UINT_MAX);
   // copy diagonal value
   ilu.valDia = A.valDia;
   // copy off-diagonal values
@@ -84,7 +84,7 @@ void ILU_CopyValue(
       assert( ijcrs<A.rowPtr.size() );
       const unsigned int jblk0 = A.rowPtr[ijcrs];
       assert( jblk0<nblk );
-      const int ijcrs0 = row2crs[jblk0];
+      const unsigned int ijcrs0 = row2crs[jblk0];
       if( ijcrs0 == UINT_MAX ) continue;
       ilu.valCrs[ijcrs0] = A.valCrs[ijcrs];
     }
@@ -92,7 +92,7 @@ void ILU_CopyValue(
       assert( ijcrs<ilu.rowPtr.size() );
       const unsigned int jblk0 = ilu.rowPtr[ijcrs];
       assert( jblk0 < nblk );
-      row2crs[jblk0] = -1;
+      row2crs[jblk0] = UINT_MAX;
     }
   }
 }

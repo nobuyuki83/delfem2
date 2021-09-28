@@ -21,34 +21,45 @@
 namespace delfem2::points {
 
 //! @details we have "float" and "double" versions Length3 because of sqrtf and sqrt
-DFM2_INLINE double Length3(const double p[3]) { return sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]); }
-DFM2_INLINE float Length3(const float p[3]) { return sqrtf(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]); }
+template <typename T>
+DFM2_INLINE T Length3(const T p[3]) {
+  return std::sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
+}
 
 //! @details we have "float" and "double" versions Length2 because of sqrtf and sqrt
-DFM2_INLINE double Length2(const double p[2]) { return sqrt(p[0] * p[0] + p[1] * p[1]); }
-DFM2_INLINE float Length2(const float p[2]) { return sqrtf(p[0] * p[0] + p[1] * p[1]); }
+template <typename T>
+DFM2_INLINE T Length2(const T p[2]) {
+  return std::sqrt(p[0] * p[0] + p[1] * p[1]);
+}
 
+template <typename T>
 DFM2_INLINE void Cross3D(
-    double r[3], const double v1[3], const double v2[3]) {
+    T r[3],
+    const T v1[3],
+    const T v2[3]) {
   r[0] = v1[1] * v2[2] - v2[1] * v1[2];
   r[1] = v1[2] * v2[0] - v2[2] * v1[0];
   r[2] = v1[0] * v2[1] - v2[0] * v1[1];
 }
 
+template <typename T>
 DFM2_INLINE double TriArea2D(
-    const double p0[], const double p1[], const double p2[]) {
-  return 0.5 * (
-      (p1[0] - p0[0]) * (p2[1] - p0[1]) -
-          (p2[0] - p0[0]) * (p1[1] - p0[1]));
+    const T p0[2],
+    const T p1[2],
+    const T p2[2]) {
+  return ( (p1[0] - p0[0]) * (p2[1] - p0[1]) - (p2[0] - p0[0]) * (p1[1] - p0[1]) )/2;
 }
 
+template <typename T>
 DFM2_INLINE double TriArea3D(
-    const double v1[3], const double v2[3], const double v3[3]) {
-  double n[3];
+    const T v1[3],
+    const T v2[3],
+    const T v3[3]) {
+  T n[3];
   n[0] = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]);
   n[1] = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
   n[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
-  return sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) * 0.5;
+  return std::sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) / 2;
 }
 
 template<typename T>
@@ -58,8 +69,8 @@ DFM2_INLINE void UnitNormalAreaTri3(
   n[0] = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]);
   n[1] = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
   n[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
-  a = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) * 0.5;
-  const T invlen = 0.5 / a;
+  a = std::sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) / 2;
+  const T invlen = 1 / (a * 2);
   n[0] *= invlen;
   n[1] *= invlen;
   n[2] *= invlen;
@@ -76,28 +87,22 @@ DFM2_INLINE void MatVec3(
 
 //! @details we have "float" and "double" versions
 //! Distance3 because of sqrtf and sqrt
-DFM2_INLINE double Distance3(const double p0[3], const double p1[3]) {
-  return sqrt(
+template <typename T>
+DFM2_INLINE T Distance3(const T p0[3], const T p1[3]) {
+  return std::sqrt(
       (p1[0] - p0[0]) * (p1[0] - p0[0]) +
           (p1[1] - p0[1]) * (p1[1] - p0[1]) +
           (p1[2] - p0[2]) * (p1[2] - p0[2]));
 }
 
-//! @details we have "float" and "double" versions
-//! Distance3 because of sqrtf and sqrt
-DFM2_INLINE float Distance3(const float p0[3], const float p1[3]) {
-  return sqrtf(
-      (p1[0] - p0[0]) * (p1[0] - p0[0]) +
-          (p1[1] - p0[1]) * (p1[1] - p0[1]) +
-          (p1[2] - p0[2]) * (p1[2] - p0[2]));
+template <typename T>
+DFM2_INLINE T Distance2(const T p0[3], const T p1[3]) {
+  return std::sqrt((p1[0] - p0[0]) * (p1[0] - p0[0]) + (p1[1] - p0[1]) * (p1[1] - p0[1]));
 }
 
-DFM2_INLINE double Distance2D(const double p0[3], const double p1[3]) {
-  return sqrt((p1[0] - p0[0]) * (p1[0] - p0[0]) + (p1[1] - p0[1]) * (p1[1] - p0[1]));
-}
-
-DFM2_INLINE double Dot3(const double p0[3], const double p1[3]) {
-  return p0[0] * p1[0] + p0[1] * p1[1] + p0[2] * p1[2];
+template <typename T>
+DFM2_INLINE T Dot3(const T p0[3], const T p1[3]) {
+  return p0[0]*p1[0] + p0[1]*p1[1] + p0[2]*p1[2];
 }
 
 template<typename REAL>
@@ -117,41 +122,26 @@ DFM2_INLINE T TetVolume3D(
   return
       (
           (v2[0] - v1[0]) * ((v3[1] - v1[1]) * (v4[2] - v1[2]) - (v4[1] - v1[1]) * (v3[2] - v1[2])) -
-          (v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2])) +
-          (v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]))
+              (v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2])) +
+              (v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]))
       ) * 0.16666666666666666666666666666667;
 }
 
+template <typename T>
 DFM2_INLINE void Mat3_Bryant(
-    double m[9],
-    double rx,
-    double ry,
-    double rz) {
-  m[0] = cos(rz) * cos(ry);
-  m[1] = cos(rz) * sin(ry) * sin(rx) - sin(rz) * cos(rx);
-  m[2] = cos(rz) * sin(ry) * cos(rx) + sin(rz) * sin(rx);
-  m[3] = sin(rz) * cos(ry);
-  m[4] = sin(rz) * sin(ry) * sin(rx) + cos(rz) * cos(rx);
-  m[5] = sin(rz) * sin(ry) * cos(rx) - cos(rz) * sin(rx);
-  m[6] = -sin(ry);
-  m[7] = cos(ry) * sin(rx);
-  m[8] = cos(ry) * cos(rx);
-}
-
-DFM2_INLINE void Mat3_Bryant(
-    float m[9],
-    float rx,
-    float ry,
-    float rz) {
-  m[0] = cosf(rz) * cosf(ry);
-  m[1] = cosf(rz) * sinf(ry) * sinf(rx) - sinf(rz) * cosf(rx);
-  m[2] = cosf(rz) * sinf(ry) * cosf(rx) + sinf(rz) * sinf(rx);
-  m[3] = sinf(rz) * cosf(ry);
-  m[4] = sinf(rz) * sinf(ry) * sinf(rx) + cosf(rz) * cosf(rx);
-  m[5] = sinf(rz) * sinf(ry) * cosf(rx) - cosf(rz) * sinf(rx);
-  m[6] = -sinf(ry);
-  m[7] = cosf(ry) * sinf(rx);
-  m[8] = cosf(ry) * cosf(rx);
+    T m[9],
+    T rx,
+    T ry,
+    T rz) {
+  m[0] = std::cos(rz) * std::cos(ry);
+  m[1] = std::cos(rz) * std::sin(ry) * std::sin(rx) - std::sin(rz) * std::cos(rx);
+  m[2] = std::cos(rz) * std::sin(ry) * std::cos(rx) + std::sin(rz) * std::sin(rx);
+  m[3] = std::sin(rz) * std::cos(ry);
+  m[4] = std::sin(rz) * std::sin(ry) * std::sin(rx) + std::cos(rz) * std::cos(rx);
+  m[5] = std::sin(rz) * std::sin(ry) * std::cos(rx) - std::cos(rz) * std::sin(rx);
+  m[6] = -std::sin(ry);
+  m[7] = std::cos(ry) * std::sin(rx);
+  m[8] = std::cos(ry) * std::cos(rx);
 }
 
 }
@@ -216,24 +206,27 @@ template<typename T>
 void delfem2::BoundingBox3_Points3(
     T min3[3],
     T max3[3],
-    const T *aXYZ,
-    const unsigned int nXYZ) {
+    const T *vtx_xyz,
+    const size_t num_vtx) {
   min3[0] = +1;
   max3[0] = -1;
-  for (unsigned int ixyz = 0; ixyz < nXYZ; ++ixyz) {
-    updateMinMaxXYZ(min3[0], max3[0],
-                    min3[1], max3[1],
-                    min3[2], max3[2],
-                    aXYZ[ixyz * 3 + 0], aXYZ[ixyz * 3 + 1], aXYZ[ixyz * 3 + 2]);
+  for (unsigned int ixyz = 0; ixyz < num_vtx; ++ixyz) {
+    updateMinMaxXYZ(
+        min3[0], max3[0],
+        min3[1], max3[1],
+        min3[2], max3[2],
+        vtx_xyz[ixyz * 3 + 0],
+        vtx_xyz[ixyz * 3 + 1],
+        vtx_xyz[ixyz * 3 + 2]);
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::BoundingBox3_Points3(
     double min3[3], double max3[3],
-    const double *aXYZ, const unsigned int nXYZ);
+    const double *aXYZ, const size_t nXYZ);
 template void delfem2::BoundingBox3_Points3(
     float min3[3], float max3[3],
-    const float *aXYZ, const unsigned int nXYZ);
+    const float *aXYZ, const size_t nXYZ);
 #endif
 
 // --------------------------------------------------------------------------------
@@ -242,32 +235,34 @@ template<typename T>
 void delfem2::CenterWidth_Point3(
     T &cx, T &cy, T &cz,
     T &wx, T &wy, T &wz,
-    const T *paXYZ,
-    const unsigned int nXYZ) {
-  if (paXYZ == nullptr) {
+    const T *vtx_xyz,
+    const size_t num_vtx) {
+  if (vtx_xyz == nullptr) {
     cx = cy = cz = 0;
     wx = wy = wz = 1;
     return;
   }
-  T x_min = paXYZ[0], x_max = paXYZ[0];
-  T y_min = paXYZ[1], y_max = paXYZ[1];
-  T z_min = paXYZ[2], z_max = paXYZ[2];
-  for (unsigned int ino = 0; ino < nXYZ; ino++) {
-    updateMinMaxXYZ(x_min, x_max, y_min, y_max, z_min, z_max,
-                    paXYZ[ino * 3 + 0], paXYZ[ino * 3 + 1], paXYZ[ino * 3 + 2]);
+  T x_min = vtx_xyz[0], x_max = vtx_xyz[0];
+  T y_min = vtx_xyz[1], y_max = vtx_xyz[1];
+  T z_min = vtx_xyz[2], z_max = vtx_xyz[2];
+  for (unsigned int ino = 0; ino < num_vtx; ino++) {
+    updateMinMaxXYZ(
+        x_min, x_max, y_min, y_max, z_min, z_max,
+        vtx_xyz[ino * 3 + 0], vtx_xyz[ino * 3 + 1], vtx_xyz[ino * 3 + 2]);
   }
-  CenterWidth_MinMaxXYZ(cx, cy, cz, wx, wy, wz,
-                        x_min, x_max, y_min, y_max, z_min, z_max);
+  CenterWidth_MinMaxXYZ(
+      cx, cy, cz, wx, wy, wz,
+      x_min, x_max, y_min, y_max, z_min, z_max);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CenterWidth_Point3(
     float &cx, float &cy, float &cz,
     float &wx, float &wy, float &wz,
-    const float *paXYZ, const unsigned int nXYZ);
+    const float *paXYZ, const size_t nXYZ);
 template void delfem2::CenterWidth_Point3(
     double &cx, double &cy, double &cz,
     double &wx, double &wy, double &wz,
-    const double *paXYZ, const unsigned int nXYZ);
+    const double *paXYZ, const size_t nXYZ);
 #endif
 
 
@@ -277,32 +272,34 @@ template<typename T>
 void delfem2::CenterWidth_Points3(
     T &cx, T &cy, T &cz,
     T &wx, T &wy, T &wz,
-    const std::vector<T> &aXYZ) {
-  const size_t np = aXYZ.size() / 3;
+    const std::vector<T> &vtx_xyz) {
+  const size_t np = vtx_xyz.size() / 3;
   if (np == 0) {
     cx = cy = cz = 0;
     wx = wy = wz = 1;
     return;
   }
-  T x_min = aXYZ[0], x_max = aXYZ[0];
-  T y_min = aXYZ[1], y_max = aXYZ[1];
-  T z_min = aXYZ[2], z_max = aXYZ[2];
+  T x_min = vtx_xyz[0], x_max = vtx_xyz[0];
+  T y_min = vtx_xyz[1], y_max = vtx_xyz[1];
+  T z_min = vtx_xyz[2], z_max = vtx_xyz[2];
   for (unsigned int ip = 0; ip < np; ++ip) {
-    updateMinMaxXYZ(x_min, x_max, y_min, y_max, z_min, z_max,
-                    aXYZ[ip * 3 + 0], aXYZ[ip * 3 + 1], aXYZ[ip * 3 + 2]);
+    updateMinMaxXYZ(
+        x_min, x_max, y_min, y_max, z_min, z_max,
+        vtx_xyz[ip * 3 + 0], vtx_xyz[ip * 3 + 1], vtx_xyz[ip * 3 + 2]);
   }
-  CenterWidth_MinMaxXYZ(cx, cy, cz, wx, wy, wz,
-                        x_min, x_max, y_min, y_max, z_min, z_max);
+  CenterWidth_MinMaxXYZ(
+      cx, cy, cz, wx, wy, wz,
+      x_min, x_max, y_min, y_max, z_min, z_max);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CenterWidth_Points3(
     float &cx, float &cy, float &cz,
     float &wx, float &wy, float &wz,
-    const std::vector<float> &aXYZ);
+    const std::vector<float> &);
 template void delfem2::CenterWidth_Points3(
     double &cx, double &cy, double &cz,
     double &wx, double &wy, double &wz,
-    const std::vector<double> &aXYZ);
+    const std::vector<double> &);
 #endif
 
 // -------------------------------------
@@ -311,10 +308,10 @@ template<typename T>
 void delfem2::CenterWidth_Points3(
     T c[3],
     T w[3],
-    const std::vector<T> &aXYZ) {
+    const std::vector<T> &vtx_xyz) {
   delfem2::CenterWidth_Points3(c[0], c[1], c[2],
                                w[0], w[1], w[2],
-                               aXYZ);
+                               vtx_xyz);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CenterWidth_Points3(
@@ -326,6 +323,8 @@ template void delfem2::CenterWidth_Points3(
     double w[3],
     const std::vector<double> &aXYZ);
 #endif
+
+// -------------------------------------------
 
 void delfem2::GetCenterWidthLocal(
     double &lcx, double &lcy, double &lcz,
@@ -366,10 +365,10 @@ void delfem2::GetCenterWidthLocal(
 
 template<typename T>
 void delfem2::Scale_PointsX(
-    std::vector<T> &aXYZ,
-    const T s) {
-  const std::size_t n = aXYZ.size();
-  for (unsigned int i = 0; i < n; ++i) { aXYZ[i] *= s; }
+    std::vector<T> &vtx_xyz,
+    const T scale) {
+  const std::size_t n = vtx_xyz.size();
+  for (unsigned int i = 0; i < n; ++i) { vtx_xyz[i] *= scale; }
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Scale_PointsX(std::vector<float> &, float);
@@ -380,12 +379,12 @@ template void delfem2::Scale_PointsX(std::vector<double> &, double);
 
 template<typename T>
 void delfem2::Scale_Points(
-    T *aVec,
-    const size_t np,
+    T *vtx_coords,
+    const size_t num_vtx,
     const unsigned int ndim,
-    const T s) {
-  const size_t n = np * ndim;
-  for (unsigned int i = 0; i < n; i++) { aVec[i] *= s; }
+    const T scale) {
+  const size_t n = num_vtx * ndim;
+  for (unsigned int i = 0; i < n; i++) { vtx_coords[i] *= scale; }
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Scale_Points(
@@ -398,13 +397,13 @@ template void delfem2::Scale_Points(
 
 template<typename T>
 void delfem2::Translate_Points(
-    T *pVec,
-    const size_t np,
+    T *vtx_coords,
+    const size_t num_vtx,
     const unsigned int ndim,
-    const T *trns) {
-  for (unsigned int ip = 0; ip < np; ip++) {
+    const T *translation) {
+  for (unsigned int ip = 0; ip < num_vtx; ip++) {
     for (unsigned int idim = 0; idim < ndim; ++idim) {
-      pVec[ip * ndim + idim] += trns[idim];
+      vtx_coords[ip * ndim + idim] += translation[idim];
     }
   }
 }
@@ -487,19 +486,19 @@ double delfem2::Size_Points3D_LongestAABBEdge(
 
 template<typename T>
 DFM2_INLINE void delfem2::Normalize_Points3(
-    std::vector<T> &aXYZ,
-    T s) {
+    std::vector<T> &vtx_xyz,
+    T length_longest_edge_boundingbox) {
   T c[3], w[3];
   CenterWidth_Points3(
       c, w,
-      aXYZ);
+      vtx_xyz);
   Translate_Points3(
-      aXYZ,
+      vtx_xyz,
       -c[0], -c[1], -c[2]);
   T wmax = points::largest(w[0], w[1], w[2]);
   Scale_PointsX(
-      aXYZ,
-      s / wmax);
+      vtx_xyz,
+      length_longest_edge_boundingbox / wmax);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Normalize_Points3(std::vector<float> &, float);
@@ -562,18 +561,18 @@ double delfem2::EnergyKinetic(
 
 template<typename T>
 void delfem2::CG_Point3(
-    T *cg,
-    const std::vector<T> &aXYZ) {
-  cg[0] = cg[1] = cg[2] = 0;
-  const size_t nXYZ = aXYZ.size() / 3;
+    T *center_of_gravity,
+    const std::vector<T> &vtx_xyz) {
+  center_of_gravity[0] = center_of_gravity[1] = center_of_gravity[2] = 0;
+  const size_t nXYZ = vtx_xyz.size() / 3;
   for (unsigned int ixyz = 0; ixyz < nXYZ; ixyz++) {
-    cg[0] += aXYZ[ixyz * 3 + 0];
-    cg[1] += aXYZ[ixyz * 3 + 1];
-    cg[2] += aXYZ[ixyz * 3 + 2];
+    center_of_gravity[0] += vtx_xyz[ixyz * 3 + 0];
+    center_of_gravity[1] += vtx_xyz[ixyz * 3 + 1];
+    center_of_gravity[2] += vtx_xyz[ixyz * 3 + 2];
   }
-  cg[0] /= nXYZ;
-  cg[1] /= nXYZ;
-  cg[2] /= nXYZ;
+  center_of_gravity[0] /= nXYZ;
+  center_of_gravity[1] /= nXYZ;
+  center_of_gravity[2] /= nXYZ;
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CG_Point3(float *, const std::vector<float> &);

@@ -150,15 +150,15 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
       const double* qip = aQuat0.data()+ibp*4;
       dfm2::CVec3d vi1 = dfm2::QuatVec(qip, vi);
       dfm2::CMat3d m0 = dfm2::Mat3_MinimumRotation(vi1,vj);
-      double qij[4]; m0.GetQuat_RotMatrix(qij);
+      const std::array<double,4> qij = m0.GetQuaternion();
       double qt[4];
       dfm2::QuatQuat(qt,
-                     qij,
+                     qij.data(),
                      aQuat0.data()+ibp*4);
       dfm2::Copy_Quat(aQuat0.data()+ib*4,
                       qt);
       dfm2::Copy_Quat(aMapBoneTrg2Src[ibp].quatOffset,
-                      qij);
+                      qij.data());
     }
   }
 

@@ -270,29 +270,27 @@ void DrawVtxEdgeHandler
 int main() {
   class CCAD3DViewer : public delfem2::glfw::CViewer3 {
    public:
-    CCAD3DViewer() {
+    CCAD3DViewer() : CViewer3(1.5) {
       cad.Initialize_Sphere();
-      camera.view_height = 1.5;
-      camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
+      //camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
       cad.imode_edit = dfm2::CCad3D::EDIT_MOVE;
     }
     void Draw() {
       this->DrawBegin_oldGL();
       DrawFace_RightSelected(cad, false);
-      DrawVtxEdgeHandler(cad, camera.view_height);
+      DrawVtxEdgeHandler(cad, 1.5);
       this->SwapBuffers();
     }
     void mouse_press(const float src[3], const float dir[3]) override {
       const dfm2::CVec3d src_pick(src), dir_pick(dir);
-      int nw, nh;
-      glfwGetFramebufferSize(this->window, &nw, &nh);
-      const float asp = (float) nw / nh;
-      float mMV[16], mPrj[16];
-      camera.Mat4_MVP_OpenGL(mMV, mPrj, asp);
-      cad.MouseDown(src_pick, dir_pick,
-                    dfm2::CVec2d(nav.mouse_x, nav.mouse_y),
-                    mMV, mPrj,
-                    camera.view_height);
+      delfem2::CMat4f mPrj = this->GetProjectionMatrix();
+      delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+      delfem2::CMat4f mMV = this->GetModelViewMatrix();
+      cad.MouseDown(
+          src_pick, dir_pick,
+          dfm2::CVec2d(nav.mouse_x, nav.mouse_y),
+          mMV.transpose().data(), (mPrj.transpose() * mZ).data(),
+          1.5);
     }
     void mouse_drag(
 		[[maybe_unused]] const float src0[3], 
@@ -300,12 +298,12 @@ int main() {
       dfm2::CVec2d sp0(nav.mouse_x - nav.dx, nav.mouse_y - nav.dy);
       dfm2::CVec2d sp1(nav.mouse_x, nav.mouse_y);
       const dfm2::CVec3d src_pick(src1), dir_pick(dir);
-      int nw, nh;
-      glfwGetFramebufferSize(this->window, &nw, &nh);
-      const float asp = (float) nw / nh;
-      float mMV[16], mPrj[16];
-      camera.Mat4_MVP_OpenGL(mMV, mPrj, asp);
-      cad.MouseMotion(src_pick, dir_pick, sp0, sp1, mMV, mPrj);
+      const delfem2::CMat4f mP = this->GetProjectionMatrix();
+      const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+      const delfem2::CMat4f mMV = this->GetModelViewMatrix();
+      cad.MouseMotion(
+          src_pick, dir_pick, sp0, sp1,
+          mMV.transpose().data(), (mP.transpose() * mZ).data());
     }
    public:
     dfm2::CCad3D cad;

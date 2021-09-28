@@ -156,7 +156,7 @@ void Solve_Linear() {
   //
   ilu_A.CopyValue(mat_A);
   ilu_A.Decompose();
-  const unsigned int nDoF = static_cast<unsigned int>(aXYZ.size());
+  const auto nDoF = static_cast<unsigned int>(aXYZ.size());
   std::vector<double> dv(nDoF, 0.0);
   std::vector<double> aConv = Solve_PBiCGStab(
       vec_b.data(), dv.data(),
@@ -191,7 +191,7 @@ void Solve_StiffnessWarping() {
   // -------------------
   ilu_A.CopyValue(mat_A);
   ilu_A.Decompose();
-  const unsigned int nDoF = static_cast<unsigned int>(aXYZ.size());
+  const auto nDoF = static_cast<unsigned int>(aXYZ.size());
   std::vector<double> dv(nDoF, 0.0);
   std::vector<double> aConv = Solve_PBiCGStab(
 	  vec_b.data(), dv.data(),
@@ -262,9 +262,7 @@ void myGlutDisplay() {
 
 }
 
-int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+int main() {
   {
     std::vector<std::vector<double> > aaXY;
     {
@@ -303,13 +301,15 @@ int main(
   RotationAtMeshPoints(aR,
                        aXYZ, aDisp, psup_ind, psup);
 
-  delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
+  delfem2::glfw::CViewer3 viewer(2.0);
+  {
+    viewer.view_rotation = std::make_unique<delfem2::ModelView_Ytop>();
+  }
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   delfem2::opengl::setSomeLighting();
-
+  //
   while (!glfwWindowShouldClose(viewer.window)) {
     if (is_stiffness_warping) { Solve_StiffnessWarping(); }
     else { Solve_Linear(); }

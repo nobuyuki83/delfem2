@@ -14,6 +14,7 @@
 #include <cmath>
 #include <vector>
 #include <climits>
+#include <algorithm>  // for std::clamp
 
 #include "delfem2/vec2.h"
 #include "delfem2/pgeo.h"
@@ -94,21 +95,100 @@ unsigned int FindNearestPointInPoints(
  * @return
  */
 template<typename VEC>
-VEC FindNearestPointInPolyline(
+float LengthPolyline(
+    const std::vector<VEC>& polyline) {
+  if( polyline.size() < 2 ){
+    return 0.f;
+  }
+  float len =0;
+  for (unsigned int ip = 0; ip < polyline.size() - 1; ++ip) {
+    len += (polyline[ip+1] - polyline[ip]).norm();
+  }
+  return len;
+}
+
+template<typename VEC>
+VEC PositionInPolyline(
+    const std::vector<VEC>& polyline,
+    unsigned int ie,
+    float ratio){
+  assert(ie<polyline.size()-1);
+  return (1-ratio) * polyline[ie] + ratio * polyline[ie+1];
+}
+
+template<typename VEC>
+VEC NormalInPolyline(
+    const std::vector<VEC>& polyline,
+    unsigned int ie,
+    [[maybe_unused]] float ratio){
+  assert(ie<polyline.size()-1);
+  VEC ut = (polyline[ie+1] - polyline[ie]).normalized();
+  return rotate90(ut);
+}
+
+/**
+ *
+ * @tparam VEC delfem2::CVecX or Eigen::VectorX
+ * @param polyline
+ * @param scr
+ * @return
+ */
+template<typename VEC>
+std::pair<unsigned int, float> FindNearestPointInPolyline(
     const std::vector<VEC>& polyline,
     const VEC& scr){
+  assert(polyline.size()>1);
+  unsigned int ie_min;
+  float ratio_min;
+  float dist_min = -1;
+  for(unsigned int ip=0;ip<polyline.size()-1;++ip){
+    const VEC &es = polyline[ip+1] - polyline[ip];
+    const VEC &sc = polyline[ip] - scr;
+    const float a = es.squaredNorm();
+    const float b = es.dot(sc);
+    const float ratio = std::clamp(-b / a, 0.f, 1.f);
+    VEC p = (1-ratio)*polyline[ip] + ratio*polyline[ip+1];
+    float dist = (p-scr).norm();
+    if( dist_min < 0 || dist < dist_min ){
+      dist_min = dist;
+      ie_min = ip;
+      ratio_min = ratio;
+    }
+  }
+  return {ie_min, ratio_min};
+}
+
+/**
+ *
+ * @tparam VEC delfem2::CVecX or Eigen::VectorX
+ * @param polyline
+ * @param scr
+ * @return
+ */
+template<typename VEC>
+float ArcLengthPointInPolyline(
+    const std::vector<VEC>& polyline,
+    const VEC& scr){
+
+  if( polyline.size() < 2 ){ return 0.f; }
   float dist_min = -1;
   VEC p_min;
+  unsigned int ip_min = -1;
   for(unsigned int ip=0;ip<polyline.size()-1;++ip){
-    unsigned int jp = ip+1;
-    VEC p_near = GetNearest_LineSeg_Point(scr, polyline[ip], polyline[jp]);
+    VEC p_near = GetNearest_LineSeg_Point(scr, polyline[ip], polyline[ip+1]);
     float dist = (p_near-scr).norm();
     if( dist_min < 0 || dist < dist_min ){
       dist_min = dist;
       p_min = p_near;
+      ip_min = ip;
     }
   }
-  return p_min;
+  float alen = 0;
+  for(unsigned int ip=0;ip<ip_min;++ip){
+    alen += (polyline[ip+1] - polyline[ip]).norm();
+  }
+  alen += (p_min - polyline[ip_min]).norm();
+  return alen;
 }
 
 } // namespace delfem2

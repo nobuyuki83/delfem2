@@ -65,7 +65,7 @@ class CRigidBodyForceModel {
 std::vector<CVec3d> VelocityRigidBody(
     const CRigidBodyState &rbs,
     const CRigidBodyInertia &rbi,
-    const CRigidBodyForceModel &rbfm) {
+    [[maybe_unused]] const CRigidBodyForceModel &rbfm) {
   CVec3d F, T;
   delfem2::CRigidBodyForceModel::GetForceTorque(F, T);
   std::vector<CVec3d> V(4);
@@ -170,11 +170,10 @@ int main(
   dt = 0.05;
 
   // ---------------
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(1.5);
+  //
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
 
   rbs = StepTime_RungeKutta4(dt, rbs, rbi, rbfm);

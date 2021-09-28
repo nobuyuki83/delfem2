@@ -55,8 +55,8 @@ int BVHTopology_TopDown_MeshElem(
  * @details check if the leaf is visited once
  */
 void Check_BVH(
-    const std::vector<CNodeBVH2>& aNodeBVH,
-    size_t nLeaf);
+    const std::vector<CNodeBVH2>& bvh_nodes,
+    size_t num_object);
 
 
 // --------------------------------------------
@@ -95,26 +95,26 @@ DFM2_INLINE std::uint32_t MortonCode(REAL x, REAL y, REAL z);
  */
 template <typename REAL>
 void SortedMortenCode_Points3(
-    std::vector<unsigned int> &aSortedId,
-    std::vector<unsigned int> &aSortedMc,
-    const std::vector<REAL> &aXYZ,
-    const REAL min_xyz[3],
-    const REAL max_xyz[3]);
+    std::vector<unsigned int> &sorted_object_indexes,
+    std::vector<unsigned int> &sorted_morton_codes,
+    const std::vector<REAL> &vtx_xyz,
+    const REAL aabb_min_xyz[3],
+    const REAL aabb_max_xyz[3]);
 
 void BVHTopology_Morton(
-    std::vector<CNodeBVH2>& aNodeBVH,
-    const std::vector<unsigned int>& aSortedId,
-    const std::vector<std::uint32_t>& aSortedMc);
+    std::vector<CNodeBVH2>& bvh_nodes,
+    const std::vector<unsigned int>& sorted_object_indexes,
+    const std::vector<std::uint32_t>& sorted_morton_codes);
 
 void Check_MortonCode_RangeSplit(
-    const std::vector<std::uint32_t>& aSortedMc);
+    const std::vector<std::uint32_t>& sorted_morton_codes);
 
 void Check_MortonCode_Sort(
-    const std::vector<unsigned int>& aSortedId,
-    const std::vector<std::uint32_t>& aSortedMc,
-    const std::vector<double>& aXYZ,
-    const double bbmin[3],
-    const double bbmax[3]);
+    const std::vector<unsigned int>& sorted_object_indexes,
+    const std::vector<std::uint32_t>& sorted_morton_codes,
+    const std::vector<double>& vtx_xyz,
+    const double aabb_min_xyz[3],
+    const double aabb_max_xyz[3]);
 
 // above: code related to morton code
 // -------------------------------------------------------------------

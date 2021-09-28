@@ -30,8 +30,6 @@
 
 namespace dfm2 = delfem2;
 
-// -------------------------
-
 // ---------------------------
 
 void myGlutDisplay(
@@ -150,30 +148,27 @@ void Hoge(
 }
 
 int main() {
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtx;
   std::vector<delfem2::CSliceTriMesh> aCS;
   std::vector<std::set<unsigned int> > ReebGraphCS;
   std::vector<dfm2::CVec3d> aCG_CS;
   //
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(0.5);
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 
   delfem2::opengl::setSomeLighting();
 
-  viewer.camera.view_height = 0.5;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-
   Hoge(
-      aXYZ,aTri,
-      aCS,ReebGraphCS,aCG_CS );
+      vtx_xyz, tri_vtx,
+      aCS, ReebGraphCS, aCG_CS );
 
   while (!glfwWindowShouldClose(viewer.window)) {
     viewer.DrawBegin_oldGL();
     myGlutDisplay(
-        aXYZ,aTri,
-        aCS,ReebGraphCS,aCG_CS );
+        vtx_xyz, tri_vtx,
+        aCS, ReebGraphCS, aCG_CS );
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

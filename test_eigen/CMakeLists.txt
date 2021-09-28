@@ -29,16 +29,8 @@ find_package( GTest REQUIRED )
 find_package(Threads REQUIRED)
 
 # eigen
-# find downloaded eigen directories in 3rd_party
-FILE(GLOB EIGEN3_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/eigen*)
-# specify candidate for eigen location
-SET(EIGEN3_ROOT
-    ${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/libeigen/include # installed eigen is higher priority
-    ${EIGEN3_ROOT} )
-# call script to find eigen3
-include(${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/FindEigen3.cmake)
-#find_package(Eigen3 REQUIRED) # this works only for installation from package manager
-message(STATUS "eigen3 locatoin: ${EIGEN3_INCLUDE_DIR}")
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/libeigen)
+FIND_PACKAGE(Eigen3 REQUIRED)
 
 # delfem2
 set(DELFEM2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/../include")
@@ -50,7 +42,6 @@ enable_testing()
 include_directories(
   ${GTEST_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
-  ${EIGEN3_INCLUDE_DIR}
 )
 
 add_executable(${MY_BINARY_NAME}
@@ -61,6 +52,7 @@ target_link_libraries(${MY_BINARY_NAME}
   ${GTEST_LIBRARY}
   ${GTEST_MAIN_LIBRARY}
   Threads::Threads
+  Eigen3::Eigen
 )
 
 add_test(

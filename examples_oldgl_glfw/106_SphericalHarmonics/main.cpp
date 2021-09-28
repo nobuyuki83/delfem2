@@ -139,14 +139,12 @@ double evaluateSH(double x, double y, double z)
 
 int main()
 {
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(1.0);
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  
-  // -----------------------------
-  
-  viewer.camera.view_height = 1.0;
   delfem2::opengl::setSomeLighting();
+  //
   while (!glfwWindowShouldClose(viewer.window))
   {
     {

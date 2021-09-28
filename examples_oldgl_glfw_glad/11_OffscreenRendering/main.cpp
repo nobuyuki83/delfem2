@@ -76,12 +76,9 @@ int main() {
   draw_smpl.SetPointColor(1, 0, 0);
   draw_smpl.draw_len_axis = 1.0;
   // ---------------------------------------
-  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::CViewer3 viewer(2.0);
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.Rot_Camera(+0.2, -0.2);
   if (!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);

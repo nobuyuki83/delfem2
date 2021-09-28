@@ -35,8 +35,8 @@ namespace dfm2 = delfem2;
 
 void Draw_CGrid3(
     const dfm2::CGrid3<int> &grid,
-    const std::vector<std::pair<double, dfm2::CColor> > &colorMap,
-    double thresh) {
+    [[maybe_unused]] const std::vector<std::pair<double, dfm2::CColor> > &colorMap,
+    [[maybe_unused]] double thresh) {
   { // set-up transformation
     const dfm2::CMat4d &am = grid.am;
     dfm2::CMat4d amt = am.transpose();
@@ -179,8 +179,6 @@ int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
 //  viewer.camera.Rot_Camera(+0.2, -0.2);
   if (!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
@@ -276,9 +274,9 @@ int main() {
           if ((i / 2) % 2 == 1) { iy += 1; }
           int iz = iz0;
           if ((i / 4) % 2 == 1) { iz += 1; }
-          assert(ix >= -1 && ix <= nx);
-          assert(iy >= -1 && iy <= ny);
-          assert(iz >= -1 && iz <= nz);
+          assert(ix >= -1 && ix <= (int)nx);
+          assert(iy >= -1 && iy <= (int)ny);
+          assert(iz >= -1 && iz <= (int)nz);
           unsigned int ivox = iz * ny * nx + iy * nx + ix;
           if (grid.aVal[ivox] == 0) continue;
           double len = (p0.x - ix) * (p0.x - ix) + (p0.y - iy) * (p0.y - iy) + (p0.z - iz) * (p0.z - iz);

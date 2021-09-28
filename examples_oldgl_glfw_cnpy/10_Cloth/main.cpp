@@ -79,7 +79,7 @@ void Draw(
   delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri, aXYZ.data());
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   // physics parameter
   const double dt = 0.01;
@@ -115,10 +115,9 @@ int main(int argc,char* argv[])
   // ------------------------------
   // below: opengl related function
   delfem2::glfw::CViewer3 viewer;
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
-  viewer.camera.view_height = 1.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
 
   for(int iproblem=0;iproblem<4;++iproblem)

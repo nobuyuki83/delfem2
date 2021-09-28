@@ -191,12 +191,9 @@ int main() {
     tex.channels = 3;
     tex.pixel_color.resize(tex.width*tex.height*tex.channels);
   }
-  delfem2::glfw::CViewer3 viewer;
+  delfem2::glfw::CViewer3 viewer(2);
   viewer.width = 400;
   viewer.height = 400;
-  viewer.camera.view_height = 2;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
   tex.InitGL();

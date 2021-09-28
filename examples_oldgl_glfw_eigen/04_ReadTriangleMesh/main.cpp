@@ -28,7 +28,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------
 
-int main(int argc, char *argv[]) {
+int main() {
   std::cout << "Available :SIMD Instructions: " << Eigen::SimdInstructionSetsInUse() << std::endl;
 
   const auto res = ReadTriangleMeshObj(std::string(PATH_INPUT_DIR) + "/bunny_1k.obj");
@@ -38,8 +38,7 @@ int main(int argc, char *argv[]) {
   std::cout << V.col(0).minCoeff() << " " << V.col(0).maxCoeff() << std::endl;
 
   delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.0;
-
+  //
   delfem2::glfw::InitGLOld();
   viewer.InitGL();
 

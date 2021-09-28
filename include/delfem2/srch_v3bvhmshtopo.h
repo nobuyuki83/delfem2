@@ -76,7 +76,7 @@ void ConstructBVHTriangleMeshMortonCode(
 template<typename BV, typename REAL>
 void BVH_NearestPoint_MeshTri3D(
     double &dist_min,
-    CPtElm2<REAL> &pes,
+    PointOnSurfaceMesh<REAL> &pes,
     //
     double px, double py, double pz,
     const std::vector<double> &aXYZ,
@@ -93,7 +93,7 @@ void BVH_NearestPoint_MeshTri3D(
   const unsigned int ichild1 = aBVH[ibvh].ichild[1];
   if (ichild1 == UINT_MAX) { // leaf
     const unsigned int itri0 = ichild0;
-    CPtElm2<REAL> pes_tmp;
+    PointOnSurfaceMesh<REAL> pes_tmp;
     double dist = DistanceToTri(
         pes_tmp,
         CVec3<REAL>(px, py, pz),
@@ -114,7 +114,7 @@ template<typename BV, typename REAL>
 void BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     double &dist_tri, // minimum distance to triangle
     double &dist_bv, // minimum distance to leaf bounding volume
-    CPtElm2<REAL> &pes,
+    PointOnSurfaceMesh<REAL> &pes,
     //
     double px,
     double py,
@@ -140,7 +140,7 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     if (min0 == 0.0) {
       dist_bv = 0.0;
       const unsigned int itri0 = ichild0;
-      CPtElm2<REAL> pes_tmp;
+      PointOnSurfaceMesh<REAL> pes_tmp;
       const double dist0 = DistanceToTri(
           pes_tmp,
           //
@@ -226,7 +226,7 @@ class CBVH_MeshTri3D {
     assert(aBB_BVH.size() == aNodeBVH.size());
   }
   double Nearest_Point_IncludedInBVH(
-      CPtElm2<REAL> &pes,
+      PointOnSurfaceMesh<REAL> &pes,
       const CVec3<REAL> &p0,
       double rad_exp, // look leaf inside this radius
       const double *aXYZ0,
@@ -244,12 +244,12 @@ class CBVH_MeshTri3D {
     if (pes.itri == UINT_MAX) { return dist_min; }
     return dist;
   }
-  CPtElm2<REAL> NearestPoint_Global(
+  PointOnSurfaceMesh<REAL> NearestPoint_Global(
       const CVec3<REAL> &p0,
       const std::vector<double> &aXYZ,
       const std::vector<unsigned int> &aTri) const {
     assert(aBB_BVH.size() == aNodeBVH.size());
-    CPtElm2<REAL> pes;
+    PointOnSurfaceMesh<REAL> pes;
     double dist_min = -1;
     BVH_NearestPoint_MeshTri3D(dist_min, pes,
                                p0.x, p0.y, p0.z,
@@ -265,7 +265,7 @@ class CBVH_MeshTri3D {
       const std::vector<unsigned int> &aTri0,
       const std::vector<double> &aNorm) const {
     assert(aBB_BVH.size() == aNodeBVH.size());
-    CPtElm2<REAL> pes;
+    PointOnSurfaceMesh<REAL> pes;
     {
       double dist_min = -1;
       delfem2::BVH_NearestPoint_MeshTri3D(dist_min, pes,
@@ -273,13 +273,13 @@ class CBVH_MeshTri3D {
                                           aXYZ0, aTri0,
                                           iroot_bvh, aNodeBVH, aBB_BVH);
     }
-    const CVec3<REAL> q0 = pes.Pos_Tri(aXYZ0, aTri0);
+    const CVec3<REAL> q0 = pes.PositionOnMeshTri3(aXYZ0, aTri0);
     double dist = (q0 - p0).norm();
     if (!aBB_BVH[iroot_bvh].isInclude_Point(p0.x, p0.y, p0.z)) { // outside
       n0 = (p0 - q0).normalized();
       return -dist;
     }
-    const CVec3<REAL> n1 = pes.UNorm_Tri(aXYZ0, aTri0, aNorm);
+    const CVec3<REAL> n1 = pes.UnitNormalOnMeshTri3(aXYZ0, aTri0, aNorm);
     if (dist < 1.0e-6) {
       n0 = n1;
       if ((q0 - p0).dot(n1) > 0) { return dist; } //inside
@@ -291,7 +291,7 @@ class CBVH_MeshTri3D {
     BVH_GetIndElem_Predicate(aIndElem,
                              CIsBV_IntersectRay<BV>(p0.p, dir.p),
                              iroot_bvh, aNodeBVH, aBB_BVH);
-    std::map<double, CPtElm2<REAL>> mapDepthPES1;
+    std::map<double, PointOnSurfaceMesh<REAL>> mapDepthPES1;
     IntersectionRay_MeshTri3DPart(mapDepthPES1,
                                   p0, dir,
                                   aTri0, aXYZ0, aIndElem,
@@ -319,7 +319,7 @@ void Project_PointsIncludedInBVH_Outside(
     const std::vector<double> &aNorm0) {
   for (unsigned int ip = 0; ip < aXYZt.size() / 3; ++ip) {
     CVec3<REAL> p0(aXYZt[ip * 3 + 0], aXYZt[ip * 3 + 1], aXYZt[ip * 3 + 2]);
-    CPtElm2<REAL> pes;
+    PointOnSurfaceMesh<REAL> pes;
     bvh.Nearest_Point_IncludedInBVH(pes,
                                     p0, 0.0,
                                     aXYZ0.data(), aXYZ0.size() / 3,
@@ -342,7 +342,7 @@ class CInfoNearest {
       sdf(0.0), is_active(false) {}
 
  public:
-  CPtElm2<REAL> pes;
+  PointOnSurfaceMesh<REAL> pes;
   CVec3<REAL> pos;
   double sdf;
   bool is_active;
@@ -419,7 +419,7 @@ void Project_PointsIncludedInBVH_Outside_Cache(
 
 template<typename BV>
 void Intersection_ImageRay_TriMesh3(
-    std::vector<delfem2::CPtElm2<double> > &aPointElemSurf,
+    std::vector<delfem2::PointOnSurfaceMesh<double> > &aPointElemSurf,
     unsigned int nheight,
     unsigned int nwidth,
     const float mMVPf[16],
@@ -451,7 +451,7 @@ void Intersection_ImageRay_TriMesh3(
           CIsBV_IntersectLine<BV, double>(src1.p, dir1.p),
           0, aNodeBVH, aAABB);
       if (aIndElem.empty()) { continue; } // no bv hit the ray
-      std::map<double, CPtElm2<double>> mapDepthPES;
+      std::map<double, PointOnSurfaceMesh<double>> mapDepthPES;
       IntersectionRay_MeshTri3DPart(
           mapDepthPES,
           src1, dir1,

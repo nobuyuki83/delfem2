@@ -46,7 +46,7 @@ double MeasureTime()
   return std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
 }
 
-int main(int argc,char* argv[])
+int main()
 {
   std::cout << "Available :SIMD Instructions: "<< Eigen::SimdInstructionSetsInUse() << std::endl;
 
@@ -54,8 +54,7 @@ int main(int argc,char* argv[])
   std::vector<Eigen::Vector4f,Eigen::aligned_allocator<Eigen::Vector4f> > aXYZ(100);
   std::vector<unsigned int> aTri;
   // --
-  delfem2::glfw::CViewer3 viewer;
-  viewer.camera.view_height = 1.5;
+  delfem2::glfw::CViewer3 viewer(1.5);
   // ---
   delfem2::glfw::InitGLOld();
   viewer.InitGL();

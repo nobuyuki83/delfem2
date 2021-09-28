@@ -128,30 +128,30 @@ void MatMat4(
   }
 }
 
+// ---------------------
+// below: functions to generate Mat4
+
+template<typename REAL>
+void Mat4_Identity(
+    REAL A[16]);
+
 /**
  * @brief affine matrix for orthogonal projection
  * @details column major order (fortran order)
  */
 template<typename T>
-void Mat4_AffineTransProjectionOrtho(
+void Mat4_AffineProjectionOrtho(
     T mP[16],
-    double xmin, double xmax,
-    double ymin, double ymax,
-    double zmin, double zmax);
+    T xmin, T xmax,
+    T ymin, T ymax,
+    T zmin, T zmax);
 
 template<typename REAL>
-void Mat4_AffineTransLookAt(
+void Mat4_AffineLookAt(
     REAL *Mr,
     REAL eyex, REAL eyey, REAL eyez,
     REAL cntx, REAL cnty, REAL cntz,
     REAL upx, REAL upy, REAL upz);
-
-template<typename T0, typename T1>
-void MultMat4AffineTransTranslateFromRight(
-    T0 *matrix,
-    T1 x,
-    T1 y,
-    T1 z);
 
 /**
  * construct projection matrix mapping perspective view frustrum to a cube [-1,+1, -1,+1, -1,+1]
@@ -163,16 +163,12 @@ void MultMat4AffineTransTranslateFromRight(
  * @param[in] zmax maximum Z coordinate for the view frustrum (mapped to the plane Z==+1)
  */
 template<typename REAL>
-void Mat4_AffineTransProjectionFrustum(
+void Mat4_AffineProjectionFrustum(
     REAL mP[16],
     REAL fovyInRad,
     REAL aspectRatio,
     REAL zmin,
     REAL zmax);
-
-template<typename REAL>
-void Mat4_Identity(
-    REAL A[16]);
 
 template<typename REAL>
 void Mat4_AffineScale(
@@ -189,15 +185,15 @@ void Mat4_AffineTranslation(
     REAL A[16],
     const REAL v[3]);
 
-template<typename REAL>
-DFM2_INLINE void Mat4_AffineTransTranslate(
-    REAL r[],
-    const REAL t[]);
-
 template<typename T>
 void Mat4_AffineRotationRodriguez(
     T A[16],
     T dx, T dy, T dz);
+
+template<typename REAL>
+void Mat4_AffineRotationCartesian(
+    REAL mat[16],
+    const REAL vec[3]);
 
 /**
  * @func multiply rotation affine matrix from left to an affine matrix in 3D
@@ -208,10 +204,6 @@ void Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL v[3]);
 
-template<typename REAL>
-void Mat4_Rotation_Cartesian(
-    REAL mat[16],
-    const REAL vec[3]);
 
 // ------------------------
 
@@ -259,7 +251,7 @@ void Vec3_Mat4Vec3_AffineProjection(
     const T2 x0[3]);
 
 template<typename T>
-DFM2_INLINE std::array<T,2> Vec2_Mat4Vec3_AffineProjection(
+DFM2_INLINE std::array<T, 2> Vec2_Mat4Vec3_AffineProjection(
     const T a[16],
     const T x0[3]);
 
@@ -279,7 +271,7 @@ void Vec3_Mat4Vec3_Affine(
 // below: function with mat4 and quarternion
 
 template<typename REAL>
-DFM2_INLINE void Mat4_Quat(
+DFM2_INLINE void Mat4_AffineQuaternion(
     REAL r[],
     const REAL q[]);
 
@@ -290,7 +282,7 @@ DFM2_INLINE void Mat4_Quat(
  * @param q quaternion (x,y,z,w)
  */
 template<typename REAL>
-DFM2_INLINE void Mat4_QuatConj(
+DFM2_INLINE void Mat4_AffineQuaternionConjugate(
     REAL *r,
     const REAL *q);
 
@@ -336,15 +328,20 @@ class CMat4 {
     for (int i = 0; i < 16; ++i) { mat[i] = static_cast<S>(pm[i]); }
   }
 
+  template<typename S>
+  CMat4(const std::array<S, 16> &&pm) {
+    for (int i = 0; i < 16; ++i) { mat[i] = static_cast<S>(pm[i]); }
+  }
+
   CMat4(REAL v00, REAL v01, REAL v02, REAL v03,
         REAL v10, REAL v11, REAL v12, REAL v13,
         REAL v20, REAL v21, REAL v22, REAL v23,
         REAL v30, REAL v31, REAL v32, REAL v33)
       : mat{
-        v00, v01, v02, v03,
-        v10, v11, v12, v13,
-        v20, v21, v22, v23,
-        v30, v31, v32, v33} {
+      v00, v01, v02, v03,
+      v10, v11, v12, v13,
+      v20, v21, v22, v23,
+      v30, v31, v32, v33} {
   }
   REAL *data() { return mat; }
   const REAL *data() const { return mat; }
@@ -360,22 +357,23 @@ class CMat4 {
   }
   // ------------------------
   // below: "set" functions
-  void Set_AffineTranslate(REAL x, REAL y, REAL z) {
+  void SetAffineTranslate(REAL x, REAL y, REAL z) {
     Mat4_AffineTranslation(mat,
                            x, y, z);
   }
-  void Set_Quaternion(const REAL *q) {
+  void SetQuaternion(const REAL *q) {
     Mat4_Quat(mat,
               q);
   }
+
   /**
    * @details named same as Eigen
    */
   void setZero() {
-    for (auto &v : mat) { v = 0; }
+    for (auto &v: mat) { v = 0; }
   }
   void SetIdentity() {
-    for (auto &v : mat) { v = 0; }
+    for (auto &v: mat) { v = 0; }
     mat[0 * 4 + 0] = 1;
     mat[1 * 4 + 1] = 1;
     mat[2 * 4 + 2] = 1;
@@ -389,6 +387,26 @@ class CMat4 {
     mat[3 * 4 + 3] = 1;
   }
   // -----------------------
+  template<typename S>
+  void CopyTo(S *v) const {
+    for (int i = 0; i < 16; ++i) { v[i] = mat[i]; }
+  }
+
+  std::array<REAL, 9> GetMat3() const {
+    return {
+        mat[0], mat[1], mat[2],
+        mat[4], mat[5], mat[6],
+        mat[8], mat[9], mat[10]};
+  }
+
+  std::array<REAL, 16> GetStlArray() const {
+    return {
+        mat[0], mat[1], mat[2], mat[3],
+        mat[4], mat[5], mat[6], mat[7],
+        mat[8], mat[9], mat[10],mat[11],
+        mat[12],mat[13],mat[14],mat[15]};
+  }
+
   CMat4<REAL> MatMat(const CMat4<REAL> &mat0) const;
   /**
  * @details named same as Eigen
@@ -426,58 +444,61 @@ class CMat4 {
   };
   // ----------------------
   // below: static function
-  static CMat4<REAL> Identity() {
-    CMat4<REAL> m;
-    m.SetIdentity();
-    return m;
+  [[nodiscard]] static CMat4<REAL> Identity() {
+    return CMat4<REAL>{
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1};
   }
-  static CMat4<REAL> Scale(REAL s) {
-    CMat4<REAL> m;
-    m.setZero();
-    m.mat[0 * 4 + 0] = s;
-    m.mat[1 * 4 + 1] = s;
-    m.mat[2 * 4 + 2] = s;
-    m.mat[3 * 4 + 3] = 1.0;
-    return m;
+  [[nodiscard]] static CMat4<REAL> Scale(REAL s) {
+    return CMat4<REAL>{
+        s, 0, 0, 0,
+        0, s, 0, 0,
+        0, 0, s, 0,
+        0, 0, 0, 1};
   }
-  static CMat4<REAL> Spin(const REAL *v) {
-    CMat4<REAL> m;
-    m.setZero();
-    m.mat[0 * 4 + 0] = 0;
-    m.mat[0 * 4 + 1] = -v[2];
-    m.mat[0 * 4 + 2] = +v[1];
-    m.mat[1 * 4 + 0] = +v[2];
-    m.mat[1 * 4 + 1] = 0;
-    m.mat[1 * 4 + 2] = -v[0];
-    m.mat[2 * 4 + 0] = -v[1];
-    m.mat[2 * 4 + 1] = +v[0];
-    m.mat[2 * 4 + 2] = 0;
-    m.mat[3 * 4 + 3] = 1.0;
-    return m;
+  [[nodiscard]] static CMat4<REAL> ScaleXYZ(REAL sx, REAL sy, REAL sz) {
+    return CMat4<REAL>{
+        sx, 0, 0, 0,
+        0, sy, 0, 0,
+        0, 0, sz, 0,
+        0, 0, 0, 1};
   }
-  static CMat4<REAL> Quat(const REAL *q);
-  static CMat4<REAL> Translate(const REAL *v) {
-    CMat4<REAL> m;
-    m.SetIdentity();
-    m.mat[0 * 4 + 3] = v[0];
-    m.mat[1 * 4 + 3] = v[1];
-    m.mat[2 * 4 + 3] = v[2];
-    return m;
+  [[nodiscard]] static CMat4<REAL> Spin(const REAL *v) {
+    return CMat4<REAL>{
+        0, -v[2], +v[1], 0,
+        +v[2], 0, -v[0], 0,
+        -v[1], +v[0], 0, 0,
+        0, 0, 0, 1.0};
   }
-  static CMat4<REAL> Mat3(const REAL *v) {
-    CMat4<REAL> m;
-    m.setZero();
-    m.mat[0 * 4 + 0] = v[0 * 3 + 0];
-    m.mat[0 * 4 + 1] = v[0 * 3 + 1];
-    m.mat[0 * 4 + 2] = v[0 * 3 + 2];
-    m.mat[1 * 4 + 0] = v[1 * 3 + 0];
-    m.mat[1 * 4 + 1] = v[1 * 3 + 1];
-    m.mat[1 * 4 + 2] = v[1 * 3 + 2];
-    m.mat[2 * 4 + 0] = v[2 * 3 + 0];
-    m.mat[2 * 4 + 1] = v[2 * 3 + 1];
-    m.mat[2 * 4 + 2] = v[2 * 3 + 2];
-    m.mat[3 * 4 + 3] = 1.0;
-    return m;
+  [[nodiscard]] static CMat4<REAL> Quat(const REAL *q);
+
+  template<typename S>
+  [[nodiscard]] static CMat4<REAL> Translate(S v0, S v1, S v2) {
+    return CMat4<REAL>{
+        1, 0, 0, static_cast<REAL>(v0),
+        0, 1, 0, static_cast<REAL>(v1),
+        0, 0, 1, static_cast<REAL>(v2),
+        0, 0, 0, 1 };
+  }
+
+  template<typename S>
+  [[nodiscard]] static CMat4<REAL> Translate(const S v[3]) {
+    return CMat4<REAL>{
+        1, 0, 0, static_cast<REAL>(v[0]),
+        0, 1, 0, static_cast<REAL>(v[1]),
+        0, 0, 1, static_cast<REAL>(v[2]),
+        0, 0, 0, 1
+    };
+  }
+
+  [[nodiscard]] static CMat4<REAL> Mat3(const REAL *v) {
+    return CMat4<REAL>{
+        v[0 * 3 + 0], v[0 * 3 + 1], v[0 * 3 + 2], 0,
+        v[1 * 3 + 0], v[1 * 3 + 1], v[1 * 3 + 2], 0,
+        v[2 * 3 + 0], v[2 * 3 + 1], v[2 * 3 + 2], 0,
+        0, 0, 0, 1};
   }
 
  public:

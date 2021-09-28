@@ -143,11 +143,14 @@ DFM2_INLINE void delfem2::QuatConjVec(
 // -------------------------
 
 // copy quaternion
-template<typename REAL>
+template<typename T0, typename T1>
 DFM2_INLINE void delfem2::Copy_Quat(
-    REAL r[],
-    const REAL p[]) {
-  std::memcpy(r, p, sizeof(REAL) * 4);
+    T0 r[],
+    const T1 p[]) {
+  r[0] = static_cast<T0>(p[0]);
+  r[1] = static_cast<T0>(p[1]);
+  r[2] = static_cast<T0>(p[2]);
+  r[3] = static_cast<T0>(p[3]);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::Copy_Quat(float r[], const float p[]);

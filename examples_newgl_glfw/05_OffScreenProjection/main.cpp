@@ -28,27 +28,26 @@
 
 namespace dfm2 = delfem2;
 
-delfem2::glfw::CViewer3 viewer;
+delfem2::glfw::CViewer3 viewer(2);
 dfm2::opengl::CRender2Tex r2t;
 dfm2::opengl::CShader_TriMesh shdr_trimsh;
 dfm2::opengl::CShader_Points shdr_points;
 dfm2::opengl::CRender2Tex_DrawNewGL draw_r2t;
 
-void draw(GLFWwindow *window) {
+void draw() {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.1f, 4.0f);
 
-  int nw, nh;
-  glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float) nw / float(nh);
-  float mP[16], mMV[16];
-  viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-  shdr_points.Draw(mP, mMV);
-  shdr_trimsh.Draw(mP, mMV);
-  draw_r2t.Draw(r2t, mP, mMV);
+  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+  mP = mP.transpose() * dfm2::CMat4f::ScaleXYZ(1,1,-1);
+  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+  mMV = mMV.transpose();
+  shdr_points.Draw(mP.data(), mMV.data());
+  shdr_trimsh.Draw(mP.data(), mMV.data());
+  draw_r2t.Draw(r2t, mP.data(), mMV.data());
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -101,15 +100,11 @@ int main() {
   }
   r2t.End();
   draw_r2t.SetDepth(r2t);
-  //
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
-  viewer.camera.Rot_Camera(+0.8, -0.2);
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
-  while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
+  while (!glfwWindowShouldClose(viewer.window)) { draw(); }
 #endif
 
   glfwDestroyWindow(viewer.window);

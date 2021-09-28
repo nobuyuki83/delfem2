@@ -24,11 +24,11 @@ namespace dfm2 = delfem2;
 // ---------------------------
 // global variables
 dfm2::opengl::CShader_TriMesh shdr;
-delfem2::glfw::CViewer3 viewer;
+delfem2::glfw::CViewer3 viewer(2.0);
 
 // ---------------------------
 
-void draw(GLFWwindow* window)
+void draw()
 {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -37,11 +37,10 @@ void draw(GLFWwindow* window)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
 
-  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float)nw/nh;
-  float mP[16], mMV[16];
-  viewer.camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-  shdr.Draw(mP, mMV);
+  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+  mP = mP.transpose() * dfm2::CMat4f::ScaleXYZ(1,1,-1);
+  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+  shdr.Draw(mP.data(), mMV.transpose().data());
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -70,14 +69,11 @@ int main()
                             32,18);
     shdr.Initialize(aXYZd, 3, aTri);
   }
- 
-  viewer.camera.view_height = 2.0;
-  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
-  while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
+  while (!glfwWindowShouldClose(viewer.window)) { draw(); }
 #endif
   
   glfwDestroyWindow(viewer.window);

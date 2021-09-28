@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/glfw/viewer3.h"
+
 #include <cstdlib>
 #include <cassert>
 #define GL_SILENCE_DEPRECATION
@@ -21,20 +23,9 @@
 #  include <GL/gl.h>
 #endif
 
-#if defined(_MSC_VER)
-#  pragma warning( push )
-#  pragma warning( disable : 4100 )
-#endif
-
-#include "delfem2/glfw/viewer3.h"
-
 // ---------------
 
-namespace delfem2 {
-namespace glfw {
-namespace viewer3 {
-
-//static delfem2::glfw::CViewer3 *pViewer3 = nullptr; // this is only one even though there are multiple viewer3
+namespace delfem2::glfw::viewer3 {
 
 static void glfw_callback_key(
     GLFWwindow *window,
@@ -47,14 +38,15 @@ static void glfw_callback_key(
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
   if (action == GLFW_PRESS) {
-    auto &camera = pViewer3->camera;
-    if (key == GLFW_KEY_PAGE_UP) { camera.Scale(1.03); }
-    if (key == GLFW_KEY_PAGE_DOWN) { camera.Scale(1.0 / 1.03); }
-    if (key == GLFW_KEY_BACKSPACE) { camera.is_pars = !camera.is_pars; }
-    if (key == GLFW_KEY_HOME) { camera.fovy *= 1.03; }
-    if (key == GLFW_KEY_END) { camera.fovy *= 1.0 / 1.03; }
+    if (key == GLFW_KEY_PAGE_UP) { pViewer3->scale *= 1.03; }
+    if (key == GLFW_KEY_PAGE_DOWN) { pViewer3->scale *= (1.0 / 1.03); }
     pViewer3->key_press(key, mods);
-  } else if (action == GLFW_RELEASE) { pViewer3->key_release(key, mods); }
+    for(const auto& func : pViewer3->keypress_callbacks){
+      func(key, mods);
+    }
+  } else if (action == GLFW_RELEASE) { pViewer3->key_release(key, mods);
+  } else if (action == GLFW_REPEAT) { pViewer3->key_repeat(key, mods); }
+
 }
 
 static void glfw_callback_resize(
@@ -73,7 +65,6 @@ static void glfw_callback_mouse_button(
   assert(pViewer3 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  const float asp = static_cast<float>(width) / static_cast<float>(height);
   { // save input
     ::delfem2::CMouseInput &nav = pViewer3->nav;
     nav.imodifier = mods;
@@ -94,15 +85,15 @@ static void glfw_callback_mouse_button(
     return;
   }
   if (action == GLFW_PRESS) { // "press callback"
-    float src[3], dir[3];
-    float mMVP[16];
+    const CMat4f mP = pViewer3->GetProjectionMatrix();
+    const CMat4f mMV = pViewer3->GetModelViewMatrix();
     {
-      float mMV[16], mP[16];
-      pViewer3->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-      ::delfem2::MatMat4(mMVP, mMV, mP);
+      float src[3], dir[3];
+      pViewer3->nav.MouseRay(
+          src, dir,
+          (mP * mMV).data());
+      pViewer3->mouse_press(src, dir);
     }
-    pViewer3->nav.MouseRay(src, dir, asp, mMVP);
-    pViewer3->mouse_press(src, dir);
   }
   if (action == GLFW_RELEASE) { // "release callback"
     pViewer3->mouse_release();
@@ -114,40 +105,7 @@ static void glfw_callback_cursor_position(
     double xpos, double ypos) {
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
   assert(pViewer3 != nullptr);
-  int width, height;
-  glfwGetWindowSize(window, &width, &height);
-  const float asp = static_cast<float>(width) / static_cast<float>(height);
-  { // update nav
-    ::delfem2::CMouseInput &nav = pViewer3->nav;
-    const double mov_end_x = (2.0 * xpos - width) / width;
-    const double mov_end_y = (height - 2.0 * ypos) / height;
-    nav.dx = mov_end_x - nav.mouse_x;
-    nav.dy = mov_end_y - nav.mouse_y;
-    nav.mouse_x = mov_end_x;
-    nav.mouse_y = mov_end_y;
-  }
-  if (pViewer3->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT) {  // drag for view control
-    ::delfem2::CMouseInput &nav = pViewer3->nav;
-    if (nav.imodifier == GLFW_MOD_ALT) {
-      pViewer3->camera.Rot_Camera(nav.dx, nav.dy);
-      return;
-    } else if (nav.imodifier == GLFW_MOD_SHIFT) {
-      pViewer3->camera.Pan_Camera(nav.dx, nav.dy);
-      return;
-    }
-  }
-  // drag call back
-  if (pViewer3->nav.ibutton == 0) {
-    float src0[3], src1[3], dir0[3], dir1[3];
-    float mMVP[16];
-    {
-      float mMV[16], mP[16];
-      pViewer3->camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-      ::delfem2::MatMat4(mMVP, mMV, mP);
-    }
-    pViewer3->nav.RayMouseMove(src0, src1, dir0, dir1, asp, mMVP);
-    pViewer3->mouse_drag(src0, src1, dir0);
-  }
+  pViewer3->CursorPosition(xpos, ypos);
 }
 
 static void glfw_callback_scroll(
@@ -156,13 +114,63 @@ static void glfw_callback_scroll(
     double yoffset) {
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
   assert(pViewer3 != nullptr);
-  pViewer3->camera.scale *= pow(1.01, yoffset);
+  pViewer3->scale *= pow(1.01, yoffset);
   pViewer3->mouse_wheel(yoffset);
 }
 
-}  // namespce viewer3
-}  // namespace glfw
 }  // namespace delfem2
+
+// ------------------------
+
+std::array<float,16> delfem2::glfw::CViewer3::GetProjectionMatrix() const {
+  int w0, h0;
+  glfwGetWindowSize(window, &w0, &h0);
+  const CMat4f mS = CMat4f::Scale((float)scale);
+  const float asp = static_cast<float>(w0) / static_cast<float>(h0);
+  const CMat4f mP = projection->GetMatrix(asp);
+  const CMat4f mZ = CMat4f::ScaleXYZ(1,1,-1);
+  return (mZ * mP * mS).GetStlArray();
+}
+
+void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {
+  int width0, height0;
+  glfwGetWindowSize(window, &width0, &height0);
+  { // update nav
+    const double mov_end_x = (2.0 * xpos - width0) / width0;
+    const double mov_end_y = (height0 - 2.0 * ypos) / height0;
+    nav.dx = mov_end_x - nav.mouse_x;
+    nav.dy = mov_end_y - nav.mouse_y;
+    nav.mouse_x = mov_end_x;
+    nav.mouse_y = mov_end_y;
+  }
+  if (this->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT) {  // drag for view control
+    if (nav.imodifier == GLFW_MOD_ALT) {
+      this->view_rotation->Rot_Camera(
+          static_cast<float>(nav.dx),
+          static_cast<float>(nav.dy));
+      return;
+    } else if (nav.imodifier == GLFW_MOD_SHIFT) {
+      const delfem2::CMat4f mP = this->GetProjectionMatrix();
+      const float sx = (mP(3,3) - mP(0,3))/mP(0,0);
+      const float sy = (mP(3,3) - mP(1,3))/mP(1,1);
+      this->trans[0] += sx*nav.dx;
+      this->trans[1] += sy*nav.dy;
+      return;
+    }
+  }
+  // drag call back
+  if (this->nav.ibutton == 0) {
+    const CMat4f mP = this->GetProjectionMatrix();
+    const CMat4f mMV = this->GetModelViewMatrix();
+    {
+      float src0[3], src1[3], dir0[3], dir1[3];
+      this->nav.RayMouseMove(
+          src0, src1, dir0, dir1,
+          (mP * mMV).data());
+      this->mouse_drag(src0, src1, dir0);
+    }
+  }
+}
 
 void delfem2::glfw::CViewer3::InitGL() {
   namespace lcl = delfem2::glfw::viewer3;
@@ -201,31 +209,31 @@ void delfem2::glfw::CViewer3::DrawBegin_oldGL() const {
   // glnew will skip compilling following section
 #ifdef GL_PROJECTION
 
-  { // make sure that the stack is clear
+#ifndef NDEBUG
+  {  // make sure that the stack is clear
     int n0;
     ::glGetIntegerv(GL_MODELVIEW_STACK_DEPTH, &n0);
     int n1;
     ::glGetIntegerv(GL_PROJECTION_STACK_DEPTH, &n1);
     assert(n0 == 1 && n1 == 1);
   }
-
-  float mMV[16], mP[16];
-  {
-    int width0, height0;
-    glfwGetFramebufferSize(window, &width0, &height0);
-    float asp = static_cast<float>(width0) / static_cast<float>(height0);
-    camera.Mat4_MVP_OpenGL(mMV, mP, asp);
-  }
-
-  ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGLae
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glMultMatrixf(mP);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glMultMatrixf(mMV);
 #endif
 
+  ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGL
+  {
+    ::glMatrixMode(GL_PROJECTION);
+    ::glLoadIdentity();
+    const CMat4f mP = this->GetProjectionMatrix();
+    const CMat4f mZ = CMat4f::ScaleXYZ(1, 1, -1);
+    ::glMultMatrixf((mZ * mP).transpose().data());
+  }
+  {
+    const CMat4f mMV = this->GetModelViewMatrix();
+    ::glMatrixMode(GL_MODELVIEW);
+    ::glLoadIdentity();
+    ::glMultMatrixf(mMV.transpose().data());
+  }
+#endif
 }
 
 void delfem2::glfw::CViewer3::SwapBuffers() const {
@@ -238,7 +246,3 @@ void delfem2::glfw::CViewer3::ExitIfClosed() const {
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }
-
-#if defined(_MSC_VER)
-#pragma warning( pop )
-#endif
