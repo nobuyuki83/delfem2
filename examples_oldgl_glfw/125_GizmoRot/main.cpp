@@ -49,7 +49,7 @@ int main() {
       DrawBegin_oldGL();
       {
         float r[16];
-        dfm2::Mat4_Quat(r, gizmo_rot.quat);
+        dfm2::Mat4_AffineQuaternion(r, gizmo_rot.quat);
         float r0[16];
         dfm2::Transpose_Mat4(r0, r);
         ::glMatrixMode(GL_MODELVIEW);

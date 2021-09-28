@@ -129,51 +129,51 @@ DFM2_INLINE void Cross3D(
 
 
 template<typename REAL>
-DFM2_INLINE void delfem2::Mat4_AffineTransProjectionOrtho(
+DFM2_INLINE void delfem2::Mat4_AffineProjectionOrtho(
     REAL mP[16],
-    double xmin, double xmax, // -x, +x
-    double ymin, double ymax, // -y, +y
-    double zmin, double zmax) // -z, +z
+    REAL xmin, REAL xmax, // -x, +x
+    REAL ymin, REAL ymax, // -y, +y
+    REAL zmin, REAL zmax) // -z, +z
 {
   // column 0
-  mP[0 * 4 + 0] = static_cast<REAL>(2.0 / (xmax - xmin));
-  mP[0 * 4 + 1] = 0;
-  mP[0 * 4 + 2] = 0;
-  mP[0 * 4 + 3] = 0;
+  mP[0] = static_cast<REAL>(2.0 / (xmax - xmin));
+  mP[4] = 0;
+  mP[8] = 0;
+  mP[12] = 0;
   // column 1
-  mP[1 * 4 + 0] = 0;
-  mP[1 * 4 + 1] = static_cast<REAL>(2.0 / (ymax - ymin));
-  mP[1 * 4 + 2] = 0;
-  mP[1 * 4 + 3] = 0;
+  mP[1] = 0;
+  mP[5] = static_cast<REAL>(2.0 / (ymax - ymin));
+  mP[9] = 0;
+  mP[13] = 0;
   // column 2
-  mP[2 * 4 + 0] = 0;
-  mP[2 * 4 + 1] = 0;
-  mP[2 * 4 + 2] = static_cast<REAL>(2.0 / (zmax - zmin));
-  mP[2 * 4 + 3] = 0;
+  mP[2] = 0;
+  mP[6] = 0;
+  mP[10] = static_cast<REAL>(2.0 / (zmax - zmin));
+  mP[14] = 0;
   // collumn 3
-  mP[3 * 4 + 0] = static_cast<REAL>(-(xmin + xmax) / (xmax - xmin));
-  mP[3 * 4 + 1] = static_cast<REAL>(-(ymax + ymin) / (ymax - ymin));
-  mP[3 * 4 + 2] = static_cast<REAL>(-(zmax + zmin) / (zmax - zmin));
-  mP[3 * 4 + 3] = 1;
+  mP[3] = static_cast<REAL>(-(xmin + xmax) / (xmax - xmin));
+  mP[7] = static_cast<REAL>(-(ymax + ymin) / (ymax - ymin));
+  mP[11] = static_cast<REAL>(-(zmax + zmin) / (zmax - zmin));
+  mP[15] = 1;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat4_AffineTransProjectionOrtho(
+template void delfem2::Mat4_AffineProjectionOrtho(
     double mP[16],
     double xmin, double xmax, // -x, +x
     double ymin, double ymax, // -y, +y
     double zmin, double zmax); // -z, +z
-template void delfem2::Mat4_AffineTransProjectionOrtho(
+template void delfem2::Mat4_AffineProjectionOrtho(
     float mP[16],
-    double xmin, double xmax,  // -x, +x
-    double ymin, double ymax,  // -y, +y
-    double zmin, double zmax);  // -z, +z
+    float xmin, float xmax,  // -x, +x
+    float ymin, float ymax,  // -y, +y
+    float zmin, float zmax);  // -z, +z
 #endif
 
 // -----------------------
 
 // http://www.3dcpptutorials.sk/index.php?id=2
 template<typename REAL>
-DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
+DFM2_INLINE void delfem2::Mat4_AffineProjectionFrustum(
     REAL mP[16],
     REAL fovyInRad,
     REAL aspectRatio,
@@ -182,34 +182,34 @@ DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
   const REAL yratio = 1 / std::tan(fovyInRad / 2); // how z change w.r.t. the y change
   const REAL xratio = yratio / aspectRatio;
   // column 0
-  mP[0 * 4 + 0] = xratio;
-  mP[0 * 4 + 1] = 0.0;
-  mP[0 * 4 + 2] = 0.0;
-  mP[0 * 4 + 3] = 0.0;
+  mP[0] = xratio;
+  mP[4] = 0.0;
+  mP[8] = 0.0;
+  mP[12] = 0.0;
   // column 1
-  mP[1 * 4 + 0] = 0.0;
-  mP[1 * 4 + 1] = yratio;
-  mP[1 * 4 + 2] = 0.0;
-  mP[1 * 4 + 3] = 0.0;
+  mP[1] = 0.0;
+  mP[5] = yratio;
+  mP[9] = 0.0;
+  mP[13] = 0.0;
   // column 2
-  mP[2 * 4 + 0] = 0.0;
-  mP[2 * 4 + 1] = 0.0;
-  mP[2 * 4 + 2] = -(zmin + zmax) / (zmax - zmin);
-  mP[2 * 4 + 3] = -1.0;
+  mP[2] = 0.0;
+  mP[6] = 0.0;
+  mP[10] = -(zmin + zmax) / (zmax - zmin);
+  mP[14] = -1.0;
   // column 3
-  mP[3 * 4 + 0] = 0.0;
-  mP[3 * 4 + 1] = 0.0;
-  mP[3 * 4 + 2] = +(zmin * zmax * 2) / (zmax - zmin);
-  mP[3 * 4 + 3] = 0.0;
+  mP[3] = 0.0;
+  mP[7] = 0.0;
+  mP[11] = +(zmin * zmax * 2) / (zmax - zmin);
+  mP[15] = 0.0;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
+template DFM2_INLINE void delfem2::Mat4_AffineProjectionFrustum(
     float mP[16],
     float fovyInRad,
     float aspectRatio,
     float zmin,
     float zmax);
-template DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
+template DFM2_INLINE void delfem2::Mat4_AffineProjectionFrustum(
     double mP[16],
     double fovyInRad,
     double aspectRatio,
@@ -220,20 +220,6 @@ template DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
 
 // -----------------------------------------
 
-
-
-
-template<typename T0, typename T1>
-DFM2_INLINE void delfem2::MultMat4AffineTransTranslateFromRight(
-    T0 *matrix,
-    T1 x,
-    T1 y,
-    T1 z) {
-  matrix[12] = matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12];
-  matrix[13] = matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13];
-  matrix[14] = matrix[2] * x + matrix[6] * y + matrix[10] * z + matrix[14];
-  matrix[15] = matrix[3] * x + matrix[7] * y + matrix[11] * z + matrix[15];
-}
 
 template<typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineLookAt(
@@ -260,31 +246,17 @@ DFM2_INLINE void delfem2::Mat4_AffineLookAt(
   REAL up[3] = {0, 1, 0};
   mat4::Cross3D(up, side, forward);
   // ------------------
-  REAL Mr[16];
-  Mr[0] = side[0];
-  Mr[4] = side[1];
-  Mr[8] = side[2];
-  Mr[12] = 0;
-  // ------------------
-  Mr[1] = up[0];
-  Mr[5] = up[1];
-  Mr[9] = up[2];
-  Mr[13] = 0;
-  // ------------------
-  Mr[2] = -forward[0];
-  Mr[6] = -forward[1];
-  Mr[10] = -forward[2];
-  Mr[14] = 0;
-  // ------------------
-  Mr[3] = 0;
-  Mr[7] = 0;
-  Mr[11] = 0;
-  Mr[15] = 1;
-  // ------------------
-  delfem2::MultMat4AffineTransTranslateFromRight(
-      Mr,
+  const REAL Mr[16]{
+      side[0], side[1], side[2], 0,
+      up[0], up[1], up[2], 0,
+      -forward[0], -forward[1], -forward[2], 0,
+      0, 0, 0, 1
+  };
+  REAL Mt[16];
+  Mat4_AffineTranslation(
+      Mt,
       -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
-  Transpose_Mat4(Mat, Mr);
+  MatMat4(Mat, Mr, Mt);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template DFM2_INLINE void delfem2::Mat4_AffineLookAt(
@@ -515,37 +487,6 @@ template void delfem2::Mat4_AffineTranslation(
     const double v[3]);
 #endif
 
-template<typename REAL>
-DFM2_INLINE void delfem2::Mat4_AffineTransTranslate(
-    REAL r[],
-    const REAL t[]) {
-  // column 0
-  r[0] = 1;
-  r[1] = 0;
-  r[2] = 0;
-  r[3] = 0;
-  // column 1
-  r[4] = 0;
-  r[5] = 1;
-  r[6] = 0;
-  r[7] = 0;
-  // column 2
-  r[8] = 0;
-  r[9] = 0;
-  r[10] = 1;
-  r[11] = 0;
-  // column 3
-  r[12] = t[0];
-  r[13] = t[1];
-  r[14] = t[2];
-  r[15] = 1;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat4_AffineTransTranslate(float r[], const float t[]);
-template void delfem2::Mat4_AffineTransTranslate(double r[], const double t[]);
-#endif
-
-
 // --------------------------
 
 template<typename T>
@@ -647,7 +588,7 @@ template void delfem2::Rotate_Mat4AffineRodriguez(
 // -----------------------------------
 
 template<typename REAL>
-void delfem2::Mat4_Rotation_Cartesian(
+void delfem2::Mat4_AffineRotationCartesian(
     REAL mat[16],
     const REAL vec[3]) {
   const REAL sqt = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
@@ -701,8 +642,8 @@ void delfem2::Mat4_Rotation_Cartesian(
   mat[3 * 4 + 3] = 1;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat4_Rotation_Cartesian(float mat[16], const float vec[3]);
-template void delfem2::Mat4_Rotation_Cartesian(double mat[16], const double vec[3]);
+template void delfem2::Mat4_AffineRotationCartesian(float mat[16], const float vec[3]);
+template void delfem2::Mat4_AffineRotationCartesian(double mat[16], const double vec[3]);
 #endif
 
 // ----------------------------
@@ -727,7 +668,7 @@ DFM2_INLINE void delfem2::Mat4_ScaleRotTrans(
     double scale,
     const double quat[4],
     const double trans[3]) {
-  delfem2::Mat4_Quat(m, quat);
+  delfem2::Mat4_AffineQuaternion(m, quat);
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       m[i * 4 + j] *= scale;
@@ -741,7 +682,7 @@ DFM2_INLINE void delfem2::Mat4_ScaleRotTrans(
 // ----------------------------
 
 template<typename REAL>
-DFM2_INLINE void delfem2::Mat4_Quat(
+DFM2_INLINE void delfem2::Mat4_AffineQuaternion(
     REAL r[],
     const REAL q[]) {
   const REAL x2 = q[0] * q[0] * 2;
@@ -771,15 +712,17 @@ DFM2_INLINE void delfem2::Mat4_Quat(
   r[15] = 1;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat4_Quat(float r[], const float q[]);
-template void delfem2::Mat4_Quat(double r[], const double q[]);
+template void delfem2::Mat4_AffineQuaternion(
+    float r[], const float q[]);
+template void delfem2::Mat4_AffineQuaternion(
+    double r[], const double q[]);
 #endif
 
 // --------------------------------
 
-// return transpose matrix of Mat4_Quat
+// return transpose matrix of Mat4_AffineQuaternion
 template<typename REAL>
-DFM2_INLINE void delfem2::Mat4_QuatConj(
+DFM2_INLINE void delfem2::Mat4_AffineQuaternionConjugate(
     REAL *r,
     const REAL *q) {
   const REAL x2 = q[0] * q[0] * 2;
@@ -809,8 +752,8 @@ DFM2_INLINE void delfem2::Mat4_QuatConj(
   r[15] = 1;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template DFM2_INLINE void delfem2::Mat4_QuatConj(float *r, const float *q);
-template DFM2_INLINE void delfem2::Mat4_QuatConj(double *r, const double *q);
+template DFM2_INLINE void delfem2::Mat4_AffineQuaternionConjugate(float *r, const float *q);
+template DFM2_INLINE void delfem2::Mat4_AffineQuaternionConjugate(double *r, const double *q);
 #endif
 
 // --------------------------------------
