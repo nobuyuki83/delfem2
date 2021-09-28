@@ -29,7 +29,7 @@ int main()
 {
   delfem2::glfw::CViewer3 viewer;
   viewer.projection
-  = std::make_unique<delfem2::Projection_LookOriginFromZplus<double>>(1.0, true, 45.0);
+  = std::make_unique<delfem2::Projection_LookOriginFromZplus>(1.0, true, 45.0);
   delfem2::opengl::CShader_Mesh shdr;
   shdr.color[0] = 1;
   //

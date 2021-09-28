@@ -193,7 +193,7 @@ public:
   int iwin;
   int imodifier;
   int ibutton;
-  delfem2::Projection_LookOriginFromZplus<double> projection;
+  delfem2::Projection_LookOriginFromZplus projection;
   delfem2::ModelView_Trackball modelview;
   double scale = 1.0;
   double trans[3] = {0,0,0};
