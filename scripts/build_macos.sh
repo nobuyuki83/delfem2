@@ -13,7 +13,6 @@ cd examples_oldgl_glut || exit
 mkdir buildXcode 
 cd buildXcode || exit
 cmake -G Xcode ..
-cmake --build .
 cd ../../
 
 
@@ -85,17 +84,16 @@ echo "build examples_glfwnew"
 echo "################################"
 
 cd examples_newgl_glfw || exit
-mkdir buildXcodeHdronly
-cd buildXcodeHdronly || exit
-cmake .. -G Xcode -DUSE_STATIC_LIB=OFF
+mkdir buildMakeStatic
+cd buildMakeStatic || exit
+cmake .. -DUSE_STATIC_LIB=ON
 cmake --build .
 cd ../../
 
 cd examples_newgl_glfw || exit
 mkdir buildXcodeStatic
 cd buildXcodeStatic || exit
-cmake .. -G Xcode -DUSE_STATIC_LIB=ON
-cmake --build .
+cmake .. -G Xcode -DUSE_STATIC_LIB=OFF
 cd ../../
 
 echo "################################"
@@ -103,9 +101,9 @@ echo "build examples_glfw_thread_oldgl"
 echo "################################"
 
 cd examples_oldgl_glfw_thread || exit
-mkdir buildXcodeHdronly 
-cd buildXcodeHdronly || exit
-cmake .. -G Xcode
+mkdir buildMake 
+cd buildMake || exit
+cmake ..
 cmake --build .
 cd ../../
 
@@ -125,10 +123,16 @@ echo "build examples_newgl_glfw_imgui"
 echo "################################"
 
 cd examples_newgl_glfw_imgui || exit
-mkdir buildXcodeHdronly
-cd buildXcodeHdronly || exit
-cmake .. -G Xcode
+mkdir buildMake
+cd buildMake || exit
+cmake .. 
 cmake --build .
+cd ../../
+
+cd examples_newgl_glfw_imgui || exit
+mkdir buildXCode
+cd buildXcode || exit
+cmake .. -G Xcode
 cd ../../
 
 
@@ -149,7 +153,7 @@ echo "################################"
 cd examples_oldgl_glfw_tinygltf || exit
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly || exit
-cmake .. -G Xcode
+cmake .. 
 cmake --build .
 cd ../../
 
@@ -157,7 +161,6 @@ cd examples_oldgl_glfw_tinygltf || exit
 mkdir buildXcodeStatic
 cd buildXcodeStatic || exit
 cmake .. -G Xcode
-cmake --build .
 cd ../../
 
 
@@ -228,7 +231,6 @@ cd examples_oldgl_glfw_thread || exit
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly || exit
 cmake .. -G Xcode
-cmake --build .
 cd ../../
 
 cd examples_oldgl_glfw_thread || exit

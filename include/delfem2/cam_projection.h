@@ -90,42 +90,34 @@ std::array<float,16> delfem2::Projection_LookOriginFromZplus<REAL>::GetMatrix(
     float asp) const {
   REAL fovyInRad = fovy * (2. * M_PI) / 360.f;
   REAL depth = view_height / tan(fovyInRad * 0.5f);
-  REAL mP0[16];
+  CMat4d mP1;
   if (is_pars) {
-    Mat4_AffineTransProjectionFrustum(
-        mP0,
+    Mat4_AffineProjectionFrustum(
+        mP1.data(),
         fovyInRad,
         static_cast<REAL>(asp),
         -depth * 2.,
         -depth * 0.01);
   } else {
-    Mat4_AffineTransProjectionOrtho(
-        mP0,
+    Mat4_AffineProjectionOrtho(
+        mP1.data(),
         -view_height * asp,
         +view_height * asp,
         -view_height,
         +view_height,
         -2 * depth,
-        0);
+        0.);
   }
-  REAL mT0[16];
+  CMat4d mT1;
   {
     // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
     // to view the object we translate the object at the origin (0,0,-depth)
     const REAL t0[3] = {0.f, 0.f, -depth};
-    ::delfem2::Mat4_AffineTransTranslate(mT0, t0);
+    ::delfem2::Mat4_AffineTranslation(mT1.data(), t0);
   }
-  const REAL mRefZ[16] = { // reflection with the XY plane
-    +1.f, 0.f, 0.f, 0.f,
-    0.f, +1.f, 0.f, 0.f,
-    0.f, 0.f, -1.f, 0.f,
-    0.f, 0.f, 0.f, +1.f};
-  REAL mTmp0[16];
-  ::delfem2::MatMat4(mTmp0, mT0, mP0);
-  float mP1[16];
-  ::delfem2::MatMat4(mP1, mTmp0, mRefZ);
+  const CMat4d mZ = CMat4d::ScaleXYZ(1,1,-1);
   std::array<float,16> mP{};
-  ::delfem2::Transpose_Mat4(mP.data(), mP1);
+  (mZ * mP1 * mT1).template CopyTo(mP.data());
   return mP;
 }
 

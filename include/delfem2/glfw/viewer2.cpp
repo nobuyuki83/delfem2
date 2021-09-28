@@ -225,11 +225,12 @@ void delfem2::glfw::CViewer2::Mat4_ModelView_Projection(
   mMV[1 * 4 + 3] += this->trans[1];
   //
   const float si = view_height / scale;
-  CMat4f mPZ_transpose;
-  delfem2::Mat4_AffineTransProjectionOrtho(mPZ_transpose.data(),
-                                           -asp * si, +asp * si,
-                                           -1 * si, +1 * si,
-                                           -1, +1);
+  CMat4f mPZ;
+  delfem2::Mat4_AffineProjectionOrtho(
+      mPZ.data(),
+      -asp * si, +asp * si,
+      -1.f * si, +1.f * si,
+      -1.f, +1.f);
   CMat4f mZ = CMat4f::ScaleXYZ(1, 1, -1);
-  (mPZ_transpose * mZ).transpose().CopyTo(mP);
+  (mZ * mPZ).CopyTo(mP);
 }

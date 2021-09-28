@@ -128,16 +128,23 @@ void MatMat4(
   }
 }
 
+// ---------------------
+// below: functions to generate Mat4
+
+template<typename REAL>
+void Mat4_Identity(
+    REAL A[16]);
+
 /**
  * @brief affine matrix for orthogonal projection
  * @details column major order (fortran order)
  */
 template<typename T>
-void Mat4_AffineTransProjectionOrtho(
+void Mat4_AffineProjectionOrtho(
     T mP[16],
-    double xmin, double xmax,
-    double ymin, double ymax,
-    double zmin, double zmax);
+    T xmin, T xmax,
+    T ymin, T ymax,
+    T zmin, T zmax);
 
 template<typename REAL>
 void Mat4_AffineLookAt(
@@ -145,13 +152,6 @@ void Mat4_AffineLookAt(
     REAL eyex, REAL eyey, REAL eyez,
     REAL cntx, REAL cnty, REAL cntz,
     REAL upx, REAL upy, REAL upz);
-
-template<typename T0, typename T1>
-void MultMat4AffineTransTranslateFromRight(
-    T0 *matrix,
-    T1 x,
-    T1 y,
-    T1 z);
 
 /**
  * construct projection matrix mapping perspective view frustrum to a cube [-1,+1, -1,+1, -1,+1]
@@ -163,16 +163,12 @@ void MultMat4AffineTransTranslateFromRight(
  * @param[in] zmax maximum Z coordinate for the view frustrum (mapped to the plane Z==+1)
  */
 template<typename REAL>
-void Mat4_AffineTransProjectionFrustum(
+void Mat4_AffineProjectionFrustum(
     REAL mP[16],
     REAL fovyInRad,
     REAL aspectRatio,
     REAL zmin,
     REAL zmax);
-
-template<typename REAL>
-void Mat4_Identity(
-    REAL A[16]);
 
 template<typename REAL>
 void Mat4_AffineScale(
@@ -189,15 +185,15 @@ void Mat4_AffineTranslation(
     REAL A[16],
     const REAL v[3]);
 
-template<typename REAL>
-DFM2_INLINE void Mat4_AffineTransTranslate(
-    REAL r[],
-    const REAL t[]);
-
 template<typename T>
 void Mat4_AffineRotationRodriguez(
     T A[16],
     T dx, T dy, T dz);
+
+template<typename REAL>
+void Mat4_AffineRotationCartesian(
+    REAL mat[16],
+    const REAL vec[3]);
 
 /**
  * @func multiply rotation affine matrix from left to an affine matrix in 3D
@@ -208,10 +204,6 @@ void Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL v[3]);
 
-template<typename REAL>
-void Mat4_Rotation_Cartesian(
-    REAL mat[16],
-    const REAL vec[3]);
 
 // ------------------------
 
@@ -279,7 +271,7 @@ void Vec3_Mat4Vec3_Affine(
 // below: function with mat4 and quarternion
 
 template<typename REAL>
-DFM2_INLINE void Mat4_Quat(
+DFM2_INLINE void Mat4_AffineQuaternion(
     REAL r[],
     const REAL q[]);
 
@@ -290,7 +282,7 @@ DFM2_INLINE void Mat4_Quat(
  * @param q quaternion (x,y,z,w)
  */
 template<typename REAL>
-DFM2_INLINE void Mat4_QuatConj(
+DFM2_INLINE void Mat4_AffineQuaternionConjugate(
     REAL *r,
     const REAL *q);
 

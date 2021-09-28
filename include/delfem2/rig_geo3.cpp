@@ -309,7 +309,8 @@ void delfem2::SetCurrentBoneRotationAsDefault(
     }
     else {
       assert( ibp < (int)ib );
-      double R0[16]; Mat4_Quat(R0, aBone[ibp].quatRelativeRot);
+      double R0[16];
+      Mat4_AffineQuaternion(R0, aBone[ibp].quatRelativeRot);
       MatMat4(aRot.data()+ib*16, aRot.data()+ibp*16, R0);
     }
   }
@@ -320,7 +321,8 @@ void delfem2::SetCurrentBoneRotationAsDefault(
     aBone[ib].transRelative[2] = Rv[2];
   }
   for(unsigned int ib = 0; ib < nb; ++ib) {
-    double R1[16]; Mat4_Quat(R1, aBone[ib].quatRelativeRot);
+    double R1[16];
+    Mat4_AffineQuaternion(R1, aBone[ib].quatRelativeRot);
     double R1B[16]; MatMat4(R1B, R1, aBone[ib].invBindMat);
     MatMat4(aBone[ib].invBindMat, aRot.data()+ib*16, R1B);
   }
@@ -662,8 +664,8 @@ delfem2::SetMat4AffineBone_FromJointRelativeRotation(
     double p1[3] = {aJntPos0[ibone*3+0], aJntPos0[ibone*3+1], aJntPos0[ibone*3+2]};
     CMat4<double> M0, M1, M2;
     M0.SetAffineTranslate(-p1[0], -p1[1], -p1[2]);
-    Mat4_Quat(M1.mat,
-              aQuatRelativeRot.data()+ibone*4);
+    Mat4_AffineQuaternion(M1.mat,
+                          aQuatRelativeRot.data() + ibone * 4);
     M2.SetAffineTranslate(+p1[0], +p1[1], +p1[2]);
     CMat4<double> M3 = M1.MatMat(M0);
     CMat4<double> M4 = M2.MatMat(M3);
