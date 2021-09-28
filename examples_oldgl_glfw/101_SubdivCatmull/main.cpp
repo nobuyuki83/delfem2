@@ -54,7 +54,6 @@ int main() {
     } else {
       dfm2::Read_Obj_MeshQuad3(
           array_vtx_xyz[0], array_quad_vtx[0],
-//      std::string(PATH_INPUT_DIR)+"/basemesh_female.obj");
           std::filesystem::path(PATH_INPUT_DIR) / "basemesh_hand.obj");
       nlevel_subdiv = 3;
     }
