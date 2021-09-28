@@ -35,7 +35,6 @@ namespace delfem2 {
  * Pure virtual class
  * @tparam REAL
  */
-template <typename REAL>
 class Projection {
 public:
   virtual ~Projection()= default;
@@ -59,8 +58,7 @@ public:
  *
  * @tparam REAL either float or double
  */
-template<typename REAL>
-class Projection_LookOriginFromZplus : public Projection<REAL>{
+class Projection_LookOriginFromZplus : public Projection{
  public:
   explicit Projection_LookOriginFromZplus(double view_height = 1,
                                  bool is_pars = false,
@@ -85,40 +83,36 @@ public:
 };
 
 
-template<typename REAL>
-std::array<float,16> delfem2::Projection_LookOriginFromZplus<REAL>::GetMatrix(
+std::array<float,16> delfem2::Projection_LookOriginFromZplus::GetMatrix(
     float asp) const {
-  REAL fovyInRad = fovy * (2. * M_PI) / 360.f;
-  REAL depth = view_height / tan(fovyInRad * 0.5f);
-  CMat4d mP1;
+  const float fovyInRad = fovy * (2. * M_PI) / 360.f;
+  const float depth = view_height / tan(fovyInRad * 0.5f);
+  const float vh = static_cast<float>(view_height);
+  CMat4f mP1;
   if (is_pars) {
     Mat4_AffineProjectionFrustum(
         mP1.data(),
         fovyInRad,
-        static_cast<REAL>(asp),
-        -depth * 2.,
-        -depth * 0.01);
+        asp,
+        -depth * 2.f,
+        -depth * 0.01f);
   } else {
     Mat4_AffineProjectionOrtho(
         mP1.data(),
-        -view_height * asp,
-        +view_height * asp,
-        -view_height,
-        +view_height,
-        -2 * depth,
-        0.);
+        -vh * asp,
+        +vh * asp,
+        -vh,
+        +vh,
+        -2.f * depth,
+        0.f);
   }
-  CMat4d mT1;
-  {
-    // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
-    // to view the object we translate the object at the origin (0,0,-depth)
-    const REAL t0[3] = {0.f, 0.f, -depth};
-    ::delfem2::Mat4_AffineTranslation(mT1.data(), t0);
-  }
-  const CMat4d mZ = CMat4d::ScaleXYZ(1,1,-1);
-  std::array<float,16> mP{};
-  (mZ * mP1 * mT1).template CopyTo(mP.data());
-  return mP;
+  // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
+  // to view the object we translate the object at the origin (0,0,-depth)
+  CMat4f mT1;
+  ::delfem2::Mat4_AffineTranslation(
+      mT1.data(),
+      std::array<float,3>{0.f, 0.f, -depth}.data());
+  return (mP1 * mT1).GetStlArray();
 }
 
 } // namespace delfem2
