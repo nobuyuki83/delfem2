@@ -36,13 +36,12 @@ namespace delfem2 {
  * @tparam REAL
  */
 class Projection {
-public:
-  virtual ~Projection()= default;
+ public:
+  virtual ~Projection() = default;
   /**
  * @brief Compute "projection matrix" for OpenGL.
  * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
- * A 3D point is transfromed with this affine matrix and then a cube [-1,+1, -1,+1, -1,+1] is looked from -Z directoin.
- * The projection matrix will mirror the object Z.
+ * A 3D point is transfromed with this affine matrix and then a cube [-1,+1, -1,+1, -1,+1]
  * To look from +Z direction, The transformation needs a mirror transformation in XY plane.
  * @param mP
  * @param asp
@@ -58,12 +57,12 @@ public:
  */
 class Projection_LookOriginFromZplus : public Projection{
  public:
-  explicit Projection_LookOriginFromZplus(double view_height = 1,
+  explicit Projection_LookOriginFromZplus(float view_height = 1,
                                  bool is_pars = false,
-                                 double fovy = 10)
+                                 float fovy = 10)
   : view_height(view_height), is_pars(is_pars), fovy(fovy){}
   
-  ~Projection_LookOriginFromZplus()= default;
+  ~Projection_LookOriginFromZplus() override = default;
   /**
    * @brief Compute "projection matrix" for OpenGL.
    * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
@@ -75,9 +74,8 @@ class Projection_LookOriginFromZplus : public Projection{
    */
    [[nodiscard]] DFM2_INLINE std::array<float,16> GetMatrix(float asp) const override{
 
-    const float fovyInRad = fovy * (2. * M_PI) / 360.f;
+    const float fovyInRad = fovy * (2.f * static_cast<float>(M_PI)) / 360.f;
     const float depth = view_height / tan(fovyInRad * 0.5f);
-    const float vh = static_cast<float>(view_height);
     CMat4f mP1;
     if (is_pars) {
       Mat4_AffineProjectionFrustum(
@@ -89,10 +87,10 @@ class Projection_LookOriginFromZplus : public Projection{
     } else {
       Mat4_AffineProjectionOrtho(
           mP1.data(),
-          -vh * asp,
-          +vh * asp,
-          -vh,
-          +vh,
+          -view_height * asp,
+          +view_height * asp,
+          -view_height,
+          +view_height,
           -2.f * depth,
           0.f);
     }
@@ -105,9 +103,9 @@ class Projection_LookOriginFromZplus : public Projection{
     return (mP1 * mT1).GetStlArray();
    }
 public:
-  double view_height = 1;
+  float view_height = 1;
   bool is_pars = false;
-  double fovy = 10;
+  float fovy = 10;
 };
 
 } // namespace delfem2
