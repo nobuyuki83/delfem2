@@ -23,11 +23,11 @@ namespace delfem2 {
 
 
 DFM2_INLINE void Write_Obj(
-    const std::string &str,
-    const double *aXYZ,
-    int nXYZ,
-    const unsigned int *aTri,
-    int nTri);
+    const std::string &file_path,
+    const double *vtx_xyz,
+    size_t num_xyz,
+    const unsigned int *tri_vtx,
+    size_t num_tri);
 
 DFM2_INLINE void Write_Obj_Quad(
     const std::string &str,
@@ -65,6 +65,18 @@ DFM2_INLINE void Write_Obj(
     const std::string &str,
     const std::vector<std::pair<std::vector<double>, std::vector<unsigned int> > > &aMesh);
 
+DFM2_INLINE void Write_WavefrontObj(
+    const std::filesystem::path &path_file,
+    const std::vector<double> &vtx_xyz,
+    const std::vector<double> &vtx_tex,
+    const std::vector<double> &vtx_nrm,
+    const std::vector<unsigned int> &tri_vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx_tex,
+    const std::vector<unsigned int> &tri_vtx_nrm,
+    const std::vector<std::string> &group_names,
+    const std::vector<unsigned int> &group_elem_index);
+
+
 // above: write obj
 // -------------------------
 // below: read obj
@@ -97,16 +109,6 @@ DFM2_INLINE void Read_Obj3(
 
 // --------------------------
 // below: obj with surface attributes
-
-class TriGroupWavefrontObj {
- public:
-  std::string name_group;
-  std::string name_mtl;
-  int idx_material = -1;
-  std::vector<unsigned int> vec_idx_vtx;
-  std::vector<unsigned int> vec_idx_tex;
-  std::vector<unsigned int> vec_idx_nrm;
-};
 
 /**
  *

@@ -123,8 +123,8 @@ DFM2_INLINE void Scale_PointsX(
 template<typename T>
 DFM2_INLINE void Scale_Points(
     T *vtx_coords,
-    const size_t num_vtx,
-    const unsigned int ndim,
+    size_t num_vtx,
+    unsigned int ndim,
     T scale);
 
 /**

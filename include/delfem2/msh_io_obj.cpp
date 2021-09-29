@@ -62,18 +62,23 @@ DFM2_INLINE void ParseVtxObj_(
 }
 
 DFM2_INLINE void delfem2::Write_Obj(
-    const std::string &str,
-    const double *aXYZ, int nXYZ,
-    const unsigned int *aTri, int nTri) {
-  int np = nXYZ;
-  int nt = nTri;
-  std::ofstream fout(str.c_str(), std::ofstream::out);
-  for (int ip = 0; ip < np; ip++) {
-    fout << "v " << aXYZ[ip * 3 + 0] << " " << aXYZ[ip * 3 + 1] << " " << aXYZ[ip * 3 + 2] << std::endl;
+    const std::string &file_path,
+    const double *vtx_xyz,
+    size_t num_xyz,
+    const unsigned int *tri_vtx,
+    size_t num_tri) {
+  std::ofstream fout(file_path.c_str(), std::ofstream::out);
+  for (size_t ip = 0; ip < num_xyz; ip++) {
+    fout << "v ";
+    fout << vtx_xyz[ip * 3 + 0] << " ";
+    fout << vtx_xyz[ip * 3 + 1] << " ";
+    fout << vtx_xyz[ip * 3 + 2] << std::endl;
   }
-  for (int itri = 0; itri < nt; itri++) {
-    fout << "f " << aTri[itri * 3 + 0] + 1 << " " << aTri[itri * 3 + 1] + 1 << " " << aTri[itri * 3 + 2] + 1
-         << std::endl;
+  for (size_t itri = 0; itri < num_tri; itri++) {
+    fout << "f ";
+    fout << tri_vtx[itri * 3 + 0] + 1 << " ";
+    fout << tri_vtx[itri * 3 + 1] + 1 << " ";
+    fout << tri_vtx[itri * 3 + 2] + 1 << std::endl;
   }
 }
 
@@ -81,16 +86,21 @@ DFM2_INLINE void delfem2::Write_Obj_Quad(
     const std::string &str,
     const std::vector<double> &vec_xyz,
     const std::vector<int> &vec_quad) {
-  int np = (int) vec_xyz.size() / 3;
-  int nq = (int) vec_quad.size() / 4;
   std::ofstream fout(str.c_str(), std::ofstream::out);
-  for (int ip = 0; ip < np; ip++) {
-    fout << "v " << vec_xyz[ip * 3 + 0] << " " << vec_xyz[ip * 3 + 1] << " " << vec_xyz[ip * 3 + 2] << std::endl;
+  const size_t np = vec_xyz.size() / 3;
+  for (size_t ip = 0; ip < np; ip++) {
+    fout << "v ";
+    fout << vec_xyz[ip * 3 + 0] << " ";
+    fout << vec_xyz[ip * 3 + 1] << " ";
+    fout << vec_xyz[ip * 3 + 2] << std::endl;
   }
-  for (int iq = 0; iq < nq; iq++) {
-    fout << "f " << vec_quad[iq * 4 + 0] + 1 << " " << vec_quad[iq * 4 + 1] + 1 << " " << vec_quad[iq * 4 + 2] + 1
-         << " "
-         << vec_quad[iq * 4 + 3] + 1 << std::endl;
+  const size_t nq = vec_quad.size() / 4;
+  for (size_t iq = 0; iq < nq; iq++) {
+    fout << "f ";
+    fout << vec_quad[iq * 4 + 0] + 1 << " ";
+    fout << vec_quad[iq * 4 + 1] + 1 << " ";
+    fout << vec_quad[iq * 4 + 2] + 1 << " ";
+    fout << vec_quad[iq * 4 + 3] + 1 << std::endl;
   }
 }
 
@@ -103,7 +113,10 @@ DFM2_INLINE void delfem2::Write_Obj_ElemJArray(
   const size_t np = aXYZ.size() / 3;
   std::ofstream fout(str.c_str(), std::ofstream::out);
   for (unsigned int ip = 0; ip < np; ip++) {
-    fout << "v " << aXYZ[ip * 3 + 0] << " " << aXYZ[ip * 3 + 1] << " " << aXYZ[ip * 3 + 2] << std::endl;
+    fout << "v ";
+    fout << aXYZ[ip * 3 + 0] << " ";
+    fout << aXYZ[ip * 3 + 1] << " ";
+    fout << aXYZ[ip * 3 + 2] << std::endl;
   }
   const size_t ne = aElemInd.size() - 1;
   for (unsigned int iie = 0; iie < ne; iie++) {
@@ -111,10 +124,16 @@ DFM2_INLINE void delfem2::Write_Obj_ElemJArray(
     const int nnoel = aElemInd[iie + 1] - ie0;
     assert(nnoel == 3 || nnoel == 4);
     if (nnoel == 3) {
-      fout << "f " << aElem[ie0 + 0] + 1 << " " << aElem[ie0 + 1] + 1 << " " << aElem[ie0 + 2] + 1 << std::endl;
+      fout << "f ";
+      fout << aElem[ie0 + 0] + 1 << " ";
+      fout << aElem[ie0 + 1] + 1 << " ";
+      fout << aElem[ie0 + 2] + 1 << std::endl;
     } else if (nnoel == 4) {
-      fout << "f " << aElem[ie0 + 0] + 1 << " " << aElem[ie0 + 1] + 1 << " " << aElem[ie0 + 2] + 1 << " "
-           << aElem[ie0 + 3] + 1 << std::endl;
+      fout << "f ";
+      fout << aElem[ie0 + 0] + 1 << " ";
+      fout << aElem[ie0 + 1] + 1 << " ";
+      fout << aElem[ie0 + 2] + 1 << " ";
+      fout << aElem[ie0 + 3] + 1 << std::endl;
     }
   }
 }
@@ -135,13 +154,19 @@ DFM2_INLINE void delfem2::Write_Obj_TriFlag(
   std::ofstream fout(pathf.c_str(), std::ofstream::out);
   const size_t np = aXYZ.size() / 3;
   for (unsigned int ip = 0; ip < np; ip++) {
-    fout << "v " << aXYZ[ip * 3 + 0] << " " << aXYZ[ip * 3 + 1] << " " << aXYZ[ip * 3 + 2] << std::endl;
+    fout << "v ";
+    fout << aXYZ[ip * 3 + 0] << " ";
+    fout << aXYZ[ip * 3 + 1] << " ";
+    fout << aXYZ[ip * 3 + 2] << std::endl;
   }
   for (unsigned int iflg = 0; iflg < flgmax + 1; ++iflg) {
     fout << "g flag" << std::to_string(iflg) << std::endl;
     for (unsigned int it = 0; it < aTri.size() / 3; ++it) {
       if (aFlgTri[it] != iflg) { continue; }
-      fout << "f " << aTri[it * 3 + 0] + 1 << " " << aTri[it * 3 + 1] + 1 << " " << aTri[it * 3 + 2] + 1 << std::endl;
+      fout << "f ";
+      fout << aTri[it * 3 + 0] + 1 << " ";
+      fout << aTri[it * 3 + 1] + 1 << " ";
+      fout << aTri[it * 3 + 2] + 1 << std::endl;
     }
   }
 }
@@ -160,15 +185,69 @@ DFM2_INLINE void delfem2::Write_Obj(
       fout << "g " << im << std::endl;
     }
     for (int ip = 0; ip < np; ip++) {
-      fout << "v " << aXYZ[ip * 3 + 0] << " " << aXYZ[ip * 3 + 1] << " " << aXYZ[ip * 3 + 2] << std::endl;
+      fout << "v ";
+      fout << aXYZ[ip * 3 + 0] << " ";
+      fout << aXYZ[ip * 3 + 1] << " ";
+      fout << aXYZ[ip * 3 + 2] << std::endl;
     }
     for (int itri = 0; itri < nt; itri++) {
-      fout << "f " << aTri[itri * 3 + 0] + 1 + ipsum << " " << aTri[itri * 3 + 1] + 1 + ipsum << " "
-           << aTri[itri * 3 + 2] + 1 + ipsum << std::endl;
+      fout << "f ";
+      fout << aTri[itri * 3 + 0] + 1 + ipsum << " ";
+      fout << aTri[itri * 3 + 1] + 1 + ipsum << " ";
+      fout << aTri[itri * 3 + 2] + 1 + ipsum << std::endl;
     }
     ipsum += np;
   }
 }
+
+DFM2_INLINE void delfem2::Write_WavefrontObj(
+    const std::filesystem::path &path_file,
+    const std::vector<double> &vtx_xyz,
+    const std::vector<double> &vtx_tex,
+    const std::vector<double> &vtx_nrm,
+    const std::vector<unsigned int> &tri_vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx_tex,
+    const std::vector<unsigned int> &tri_vtx_nrm,
+    const std::vector<std::string> &group_names,
+    const std::vector<unsigned int> &group_elem_index) {
+  std::ofstream fout(path_file, std::ofstream::out);
+  for (size_t ip = 0; ip < vtx_xyz.size() / 3; ip++) {
+    fout << "v ";
+    fout << vtx_xyz[ip * 3 + 0] << " ";
+    fout << vtx_xyz[ip * 3 + 1] << " ";
+    fout << vtx_xyz[ip * 3 + 2] << std::endl;
+  }
+  for (size_t ip = 0; ip < vtx_tex.size() / 2; ip++) {
+    fout << "vt ";
+    fout << vtx_tex[ip * 2 + 0] << " ";
+    fout << vtx_tex[ip * 2 + 1] << std::endl;
+  }
+  for (size_t ip = 0; ip < vtx_nrm.size() / 3; ip++) {
+    fout << "vn ";
+    fout << vtx_nrm[ip * 3 + 0] << " ";
+    fout << vtx_nrm[ip * 3 + 1] << " ";
+    fout << vtx_nrm[ip * 3 + 2] << std::endl;
+  }
+  for (size_t ig = 0; ig < group_elem_index.size() - 1; ++ig) {
+    if (ig < group_names.size()) {
+      fout << "g " << group_names[ig] << std::endl;
+    }
+    for (size_t itri = group_elem_index[ig]; itri < group_elem_index[ig + 1]; itri++) {
+      fout << "f ";
+      for (int i = 0; i < 3; ++i) {
+        fout << tri_vtx_xyz[itri * 3 + i] + 1 << "/";
+        fout << tri_vtx_tex[itri * 3 + i] + 1 << "/";
+        fout << tri_vtx_nrm[itri * 3 + i] + 1 << " ";
+      }
+      fout << std::endl;
+    }
+  }
+}
+
+
+// above: write
+// ===========================================================
+// below: read
 
 DFM2_INLINE void delfem2::Read_Obj(
     std::vector<double> &vtx_xyz,
@@ -381,7 +460,7 @@ DFM2_INLINE void delfem2::Read_Obj3(
   }
 }
 
-template <typename T>
+template<typename T>
 DFM2_INLINE bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
     std::string &fname_mtl,
     std::vector<T> &vtx_xyz,
@@ -391,8 +470,8 @@ DFM2_INLINE bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
     std::vector<unsigned int> &elem_vtx_xyz,
     std::vector<unsigned int> &elem_vtx_tex,
     std::vector<unsigned int> &elem_vtx_nrm,
-    std::vector<std::string>& group_names,
-    std::vector<unsigned int>& group_elem_index,
+    std::vector<std::string> &group_names,
+    std::vector<unsigned int> &group_elem_index,
     const std::filesystem::path &file_path) {
   std::ifstream fin;
   fin.open(file_path);
@@ -472,11 +551,14 @@ DFM2_INLINE bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
         std::string s;
         bool is_init = true;
         while (iss >> s) {
-          if( is_init ){ is_init = false; continue; }
+          if (is_init) {
+            is_init = false;
+            continue;
+          }
           vec_str.push_back(s);
         }
       }
-      for(const auto& str0 : vec_str){
+      for (const auto &str0: vec_str) {
         char buff1[256];
         std::strncpy(buff1, str0.c_str(), str0.size());
         buff1[str0.size()] = '\0';
