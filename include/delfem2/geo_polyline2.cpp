@@ -124,17 +124,15 @@ DFM2_INLINE void Rotate(std::vector<CVec2d> &aP, double dt) {
 
 // ----------------------------
 
-template<typename T>
-std::vector< delfem2::CVec2<T> >
-delfem2::Polyline_Resample_Polyline(
-    const std::vector< CVec2<T> >& stroke0,
+template<class VEC>
+std::vector<VEC> delfem2::Polyline_Resample_Polyline(
+    const std::vector<VEC>& stroke0,
     double l)
 {
   if (stroke0.empty()) {
-    std::vector<CVec2<T>> a;
-    return a;
+    return std::vector<VEC>{};
   }
-  std::vector<CVec2 < T>> stroke;
+  std::vector<VEC> stroke;
   stroke.push_back( stroke0[0] );
   int jcur = 0;
   double rcur = 0;
@@ -154,7 +152,6 @@ delfem2::Polyline_Resample_Polyline(
       jcur++;
     }
   }
-//  stroke.push_back( stroke0.back() );
   return stroke;
 }
 #ifdef DFM2_STATIC_LIBRARY

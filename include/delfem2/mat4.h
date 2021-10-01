@@ -408,6 +408,13 @@ class CMat4 {
   }
 
   CMat4<REAL> MatMat(const CMat4<REAL> &mat0) const;
+
+  std::array<REAL,3> MultVec3AffineProjection(const REAL* v) const {
+    std::array<REAL,3> r;
+    Vec3_Mat4Vec3_AffineProjection(r.data(), mat, v);
+    return r;
+  }
+
   /**
  * @details named same as Eigen
  */

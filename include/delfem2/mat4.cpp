@@ -340,7 +340,11 @@ DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection(
     T0 y0[3],
     const T1 a[16],
     const T2 x0[3]) {
-  const T1 x1[4] = {(T1) x0[0], (T1) x0[1], (T1) x0[2], (T1) 1};
+  const T1 x1[4] = {
+      (T1) x0[0],
+      (T1) x0[1],
+      (T1) x0[2],
+      1};
   T1 y1[4];
   MatVec4(y1, a, x1);
   y0[0] = y1[0] / y1[3];
