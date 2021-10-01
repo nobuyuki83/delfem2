@@ -233,6 +233,9 @@ DFM2_INLINE void delfem2::Write_WavefrontObj(
       fout << "g " << group_names[ig] << std::endl;
     }
     for (size_t itri = group_elem_index[ig]; itri < group_elem_index[ig + 1]; itri++) {
+      assert(itri<tri_vtx_xyz.size()/3);
+      assert(itri<tri_vtx_tex.size()/3);
+      assert(itri<tri_vtx_nrm.size()/3);
       fout << "f ";
       for (int i = 0; i < 3; ++i) {
         fout << tri_vtx_xyz[itri * 3 + i] + 1 << "/";
@@ -534,7 +537,7 @@ DFM2_INLINE bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
       std::string str0, str1;
       ss >> str0 >> str1;
       group_names.push_back(str1);
-      group_elem_index.push_back(elem_vtx_index.size());
+      group_elem_index.push_back(elem_vtx_index.size()-1);  // number of elements
       continue;
     }
     if (buff[0] == 'u') { // usemtl
@@ -568,10 +571,10 @@ DFM2_INLINE bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
         elem_vtx_tex.push_back(it0);
         elem_vtx_nrm.push_back(in0);
       }
-      elem_vtx_index.push_back(elem_vtx_nrm.size());
+      elem_vtx_index.push_back(elem_vtx_xyz.size());
     }
   }
-  group_elem_index.push_back(elem_vtx_index.size());
+  group_elem_index.push_back(elem_vtx_index.size()-1); // number of elements
   return true;
 }
 #ifdef DFM2_STATIC_LIBRARY

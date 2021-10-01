@@ -59,9 +59,9 @@ void Polyline_BezierQuadratic(
     const CVec2<T> &p2,
     const CVec2<T> &p3);
 
-template<typename T>
-std::vector<CVec2<T> > Polyline_Resample_Polyline(
-    const std::vector<CVec2<T> > &stroke0,
+template<class VEC>
+std::vector<VEC> Polyline_Resample_Polyline(
+    const std::vector<VEC> &stroke0,
     double l);
 
 /**
