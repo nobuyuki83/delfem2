@@ -85,7 +85,7 @@ Currently DelFEM support binding to the following C++ open source projects.
 One can download **all** the dependent C++ repositories with
 
 ```bash
-git submodle update --init
+git submodule update --init
 ```
 
 This command downloads all the external third party codes into the directory ```delfem2/3rd_party``` (This operation might take few minutes).  Or, one can download a specific dependent repository one-by-one with command
