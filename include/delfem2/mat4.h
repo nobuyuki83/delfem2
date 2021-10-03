@@ -304,6 +304,10 @@ DFM2_INLINE void Mat4_ScaleRotTrans(
 template<typename T>
 class CMat4;
 
+/**
+ * matrix-matrix product
+ * @tparam T float and double is defined for the static library
+ */
 template<typename T>
 CMat4<T> operator*(const CMat4<T> &lhs, const CMat4<T> &rhs);
 
@@ -407,7 +411,7 @@ class CMat4 {
         mat[12],mat[13],mat[14],mat[15]};
   }
 
-  CMat4<REAL> MatMat(const CMat4<REAL> &mat0) const;
+  CMat4<REAL> Multiply(const CMat4<REAL> &matrix) const;
 
   std::array<REAL,3> MultVec3AffineProjection(const REAL* v) const {
     std::array<REAL,3> r;

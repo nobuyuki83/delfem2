@@ -32,6 +32,7 @@
 CMakeFiles
 cmake-build-debug
 cmake-build-release
+cmake-build-*
 CMakeCache.txt
 .idea
 .vscode

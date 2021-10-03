@@ -207,7 +207,7 @@ DFM2_INLINE void InitBones_JointPosition(
 
 DFM2_INLINE void Rig_SkinReferncePositionsBoneWeighted(
     std::vector<double> &aRefPosAff,
-    const std::vector<CRigBone> aBone1,
+    const std::vector<CRigBone>& aBone1,
     const std::vector<double> &aXYZ0,
     const std::vector<double> &aW);
 

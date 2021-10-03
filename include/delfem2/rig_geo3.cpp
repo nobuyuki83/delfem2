@@ -20,8 +20,7 @@
 
 // ------------------------------------------------------------
 
-namespace delfem2 {
-namespace rig_v3q {
+namespace delfem2::rig_v3q {
 
 DFM2_INLINE double myStod(const std::string& str){
   char* e;
@@ -148,7 +147,6 @@ DFM2_INLINE void MyMatMatTX(
   }
 }
 
-}
 }
 
 
@@ -623,12 +621,12 @@ delfem2::InitBones_JointPosition(
 {
   aBone.resize(nBone);
   for(unsigned int ib=0;ib<nBone;++ib){
-    int ibp = aIndBoneParent[ib];
+    unsigned int ibp = aIndBoneParent[ib];
     aBone[ib].ibone_parent = ibp;
     aBone[ib].invBindMat[ 3] = -aJntPos0[ib*3+0];
     aBone[ib].invBindMat[ 7] = -aJntPos0[ib*3+1];
     aBone[ib].invBindMat[11] = -aJntPos0[ib*3+2];
-    if( ibp != -1 ){
+    if( ibp != UINT_MAX ){
       aBone[ib].transRelative[0] = +aJntPos0[ib*3+0] - aJntPos0[ibp*3+0];
       aBone[ib].transRelative[1] = +aJntPos0[ib*3+1] - aJntPos0[ibp*3+1];
       aBone[ib].transRelative[2] = +aJntPos0[ib*3+2] - aJntPos0[ibp*3+2];
@@ -661,24 +659,26 @@ delfem2::SetMat4AffineBone_FromJointRelativeRotation(
     int ibp = aIndBoneParent[ibone];
     assert( ibp >= 0 && ibp < (int)nBone );
     // inv binding mat
-    double p1[3] = {aJntPos0[ibone*3+0], aJntPos0[ibone*3+1], aJntPos0[ibone*3+2]};
+    const double p1[3] = {
+        aJntPos0[ibone*3+0],
+        aJntPos0[ibone*3+1],
+        aJntPos0[ibone*3+2]};
     CMat4<double> M0, M1, M2;
     M0.SetAffineTranslate(-p1[0], -p1[1], -p1[2]);
     Mat4_AffineQuaternion(M1.mat,
                           aQuatRelativeRot.data() + ibone * 4);
     M2.SetAffineTranslate(+p1[0], +p1[1], +p1[2]);
-    CMat4<double> M3 = M1.MatMat(M0);
-    CMat4<double> M4 = M2.MatMat(M3);
+    const CMat4<double> M4 = M2 * M1 * M0;
     MatMat4(aMat4AffineBone.data()+ibone*16,
-                  aMat4AffineBone.data()+ibp*16,
-                  M4.mat);
+            aMat4AffineBone.data()+ibp*16,
+            M4.mat);
   }
 }
 
 
 DFM2_INLINE void delfem2::Rig_SkinReferncePositionsBoneWeighted(
     std::vector<double>& aRefPosAff,  // [ np, nBone*4 ]
-    const std::vector<delfem2::CRigBone> aBone1,
+    const std::vector<delfem2::CRigBone>& aBone1,
     const std::vector<double>& aXYZ0,
     const std::vector<double>& aW)
 {

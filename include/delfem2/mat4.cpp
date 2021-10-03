@@ -783,16 +783,18 @@ template void delfem2::Inverse_Mat4(double minv[], const double m[]);
 // ------------------------------------------------------------------
 
 template<typename T>
-delfem2::CMat4<T> delfem2::CMat4<T>::MatMat(const CMat4<T> &mat0) const {
+delfem2::CMat4<T> delfem2::CMat4<T>::Multiply(
+    const CMat4<T> &matrix) const {
   CMat4 m;
-  ::delfem2::MatMat4(m.mat,
-                     this->mat, mat0.mat);
+  ::delfem2::MatMat4(
+      m.mat,
+      this->mat, matrix.mat);
   return m;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template delfem2::CMat4<float> delfem2::CMat4<float>::MatMat(
+template delfem2::CMat4<float> delfem2::CMat4<float>::Multiply(
     const CMat4<float> &mat0) const;
-template delfem2::CMat4<double> delfem2::CMat4<double>::MatMat(
+template delfem2::CMat4<double> delfem2::CMat4<double>::Multiply(
     const CMat4<double> &mat0) const;
 #endif
 

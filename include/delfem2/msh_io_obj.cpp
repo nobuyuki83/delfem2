@@ -419,42 +419,41 @@ DFM2_INLINE void delfem2::Read_Obj3(
       vtx_xyz.push_back(z);
     }
     if (buff[0] == 'f') {
-      int nv = 0;
-      char *aPtr[4] = {nullptr, nullptr, nullptr, nullptr};
-      for (int i = 0; i < BUFF_SIZE; ++i) {
-        if (buff[i] == '\0') { break; }
-        if (buff[i] == ' ') {
-          aPtr[nv] = buff + i + 1;
-          nv++;
+      std::vector<std::string> vec_str;
+      {
+        std::istringstream iss(buff);
+        std::string s;
+        bool is_init = true;
+        while (iss >> s) {
+          if (is_init) {
+            is_init = false;
+            continue;
+          }
+          vec_str.push_back(s);
         }
       }
-      int aI[4] = {-1, -1, -1, -1};
-      for (int iv = 0; iv < nv; ++iv) {
-        for (int i = 0; i < BUFF_SIZE; ++i) {
-          if (aPtr[iv][i] == '/') {
-            aPtr[iv][i] = '\0';
-            break;
-          }
-          if (aPtr[iv][i] == ' ') {
+      std::vector<int> aI;
+      aI.reserve(4);
+      for (auto str : vec_str) {
+        for (size_t i=0;i<str.size();++i) {
+          if (str[i] == '/') {
+            str[i] = '\0';
             break;
           }
         }
-        const int i0 = std::stoi(aPtr[iv]);
-//        std::istringstream is(aPtr[iv]);
-//        is >> i0;
-//        sscanf(aPtr[iv],"%d",&i0);
-        aI[iv] = i0 - 1;
+        int i0 = std::stoi(str);
+        aI.push_back(i0-1);
       }
-      if (nv == 3) {
+      if (aI.size() == 3) {
         tri_vtx.push_back(aI[0]);
         tri_vtx.push_back(aI[1]);
         tri_vtx.push_back(aI[2]);
       }
-      if (nv == 4) {
+      if (aI.size() == 4) {
         tri_vtx.push_back(aI[0]);
         tri_vtx.push_back(aI[1]);
         tri_vtx.push_back(aI[2]);
-        ///
+        //
         tri_vtx.push_back(aI[0]);
         tri_vtx.push_back(aI[2]);
         tri_vtx.push_back(aI[3]);
