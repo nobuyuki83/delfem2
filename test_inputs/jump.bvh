@@ -81,7 +81,7 @@ ROOT Hips
 					{
 						OFFSET -0.05417 1.74624 0.17202
 						CHANNELS 3 Zrotation Yrotation Xrotation
-						JOINT Head
+						JOINT HeadMesh
 						{
 							OFFSET 0.10407 1.76136 -0.12397
 							CHANNELS 3 Zrotation Yrotation Xrotation

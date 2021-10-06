@@ -33,7 +33,7 @@ DFM2_INLINE void delfem2::opengl::GL4_VAO_Pos(
   glBindBuffer(GL_ARRAY_BUFFER, VBO); // gl24
   glBufferData(GL_ARRAY_BUFFER, sizeof(float)*nP*nDim, aP, GL_STATIC_DRAW); // gl24
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, nDim, GL_FLOAT, GL_FALSE, nDim*sizeof(float), (void*)0); // gl24
+  glVertexAttribPointer(0, nDim, GL_FLOAT, GL_FALSE, nDim*sizeof(float), (void*)nullptr); // gl24
   
   glBindBuffer(GL_ARRAY_BUFFER, 0); // gl24
   
@@ -60,13 +60,13 @@ DFM2_INLINE void delfem2::opengl::GL4_VAO_PosNrm(
   glBindBuffer(GL_ARRAY_BUFFER, VBO_pos); // gl24
   glBufferData(GL_ARRAY_BUFFER, sizeof(float)*nP*nDim, aP, GL_STATIC_DRAW); // gl24
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0); // gl24
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)nullptr); // gl24
   
   glGenBuffers(1, &VBO_nrm);
   glBindBuffer(GL_ARRAY_BUFFER, VBO_nrm); // gl24
   glBufferData(GL_ARRAY_BUFFER, sizeof(float)*nP*nDim, aN, GL_STATIC_DRAW); // gl24
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0); // gl24
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)nullptr); // gl24
   
   glBindBuffer(GL_ARRAY_BUFFER, 0); // gl24
   
@@ -95,7 +95,7 @@ DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Draw(
   glDrawElements(aEBO[iel].GL_MODE,
                  aEBO[iel].size,
                  GL_UNSIGNED_INT,
-                 0);
+                 nullptr);
 }
 
 
