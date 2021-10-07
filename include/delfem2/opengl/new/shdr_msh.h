@@ -8,7 +8,7 @@
 #ifndef DFM2_OPENGL_NEW_SHDR_MSH_H
 #define DFM2_OPENGL_NEW_SHDR_MSH_H
 
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
@@ -17,8 +17,7 @@
 
 // -------------------------------------
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 class CShader_Mesh {
  public:
@@ -26,9 +25,9 @@ class CShader_Mesh {
 
   template<typename REAL>
   void Initialize(
-      std::vector<REAL> &aXYZd,
+      std::vector<REAL> &vtx_coords,
       unsigned int ndim,
-      std::vector<unsigned int> &aLine,
+      std::vector<unsigned int> &elem_vtx,
       int gl_primitive_type);
 
   template<typename REAL>
@@ -40,15 +39,14 @@ class CShader_Mesh {
   void Draw(float mP[16], float mMV[16]) const;
 
  public:
-  CGL4_VAO_Mesh vao; // gl4
+  VertexArrayObject vao; // gl4
   float color[3] = {0, 0, 0};
-  int shaderProgram;
-  int Loc_MatrixProjection;
-  int Loc_MatrixModelView;
-  int Loc_Color;
+  int shaderProgram = -1;
+  int Loc_MatrixProjection = -1;
+  int Loc_MatrixModelView = -1;
+  int Loc_Color = -1;
 };
 
-}
 }
 
 #ifndef DFM2_STATIC_LIBRARY

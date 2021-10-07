@@ -45,7 +45,7 @@ void draw() {
   mP = mP.transpose() * dfm2::CMat4f::ScaleXYZ(1,1,-1);
   dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
   mMV = mMV.transpose();
-  shdr_points.Draw(mP.data(), mMV.data());
+  shdr_points.Draw(GL_POINTS, mP.data(), mMV.data());
   shdr_trimsh.Draw(mP.data(), mMV.data());
   draw_r2t.Draw(r2t, mP.data(), mMV.data());
   viewer.SwapBuffers();

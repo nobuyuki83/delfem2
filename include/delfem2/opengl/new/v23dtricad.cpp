@@ -151,7 +151,7 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad)
       glGenBuffers(1, &EBO_Tri);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW);
-      CGL4_VAO_Mesh::CEBO e0;
+      VertexArrayObject::CEBO e0;
       e0.size = aTri.size();
       e0.GL_MODE = GL_TRIANGLES;
       e0.EBO = EBO_Tri;
@@ -193,7 +193,7 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad)
       glGenBuffers(1, &EBO_Tri);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*il.size(), il.data(), GL_STATIC_DRAW);
-      CGL4_VAO_Mesh::CEBO e0;
+      VertexArrayObject::CEBO e0;
       e0.size = il.size();
       e0.GL_MODE = GL_TRIANGLES;
       e0.EBO = EBO_Tri;
@@ -218,7 +218,7 @@ void dfm2::opengl::CShader_Cad2D::Compile_Face()
   "  vec4 v0 = matrixModelView * vec4(nrmIn.x, nrmIn.y, nrmIn.z, 0.0);\n"
   "  nrmPrj = v0.xyz;\n"
   "  if( length(nrmIn) < 1.e-30 ){ nrmPrj = vec3(0.f, 0.f, 1.f); }\n"
-  "}\0";
+  "}";
 
   const std::string glsl33frag =
   "uniform vec3 color;\n"
@@ -227,7 +227,7 @@ void dfm2::opengl::CShader_Cad2D::Compile_Face()
   "void main()\n"
   "{\n"
   "  FragColor = abs(nrmPrj.z)*vec4(color.x, color.y, color.z, 1.0f);\n"
-  "}\n\0";
+  "}";
   
   #ifdef EMSCRIPTEN
     shdr0_program = GL24_CompileShader((std::string("#version 300 es\n")+
@@ -267,7 +267,7 @@ void dfm2::opengl::CShader_Cad2D::Compile_Edge()
   "{\n"
   "  vec2 v0 = posIn + nrmIn*0.5*line_width;\n"
   "  gl_Position = matrixProjection * matrixModelView * vec4(v0.x, v0.y, line_width*0.01, 1.0);\n"
-  "}\0";
+  "}";
 
   const std::string glsl33frag =
   "uniform vec3 color;\n"
@@ -275,7 +275,7 @@ void dfm2::opengl::CShader_Cad2D::Compile_Edge()
   "void main()\n"
   "{\n"
   "  FragColor = vec4(color.x, color.y, color.z, 1.0f);\n"
-  "}\n\0";
+  "}";
   
   #ifdef EMSCRIPTEN
     shdr1_program = GL24_CompileShader((std::string("#version 300 es\n")+
@@ -395,7 +395,7 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
     glGenBuffers(1, &EBO_Tri);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW);
-    CGL4_VAO_Mesh::CEBO e0;
+    VertexArrayObject::CEBO e0;
     e0.size = aTri.size();
     e0.GL_MODE = GL_TRIANGLES;
     e0.EBO = EBO_Tri;
@@ -406,7 +406,7 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
     glGenBuffers(1, &EBO_Line);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Line);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aLine.size(), aLine.data(), GL_STATIC_DRAW);
-    CGL4_VAO_Mesh::CEBO e0;
+    VertexArrayObject::CEBO e0;
     e0.size = aLine.size();
     e0.GL_MODE = GL_LINES;
     e0.EBO = EBO_Line;
@@ -423,7 +423,7 @@ void dfm2::opengl::CShader_MeshDTri2D::Compile()
   "void main()\n"
   "{\n"
   "  gl_Position = matrixProjection * matrixModelView * vec4(posIn.x, posIn.y, 0.0, 1.0);\n"
-  "}\0";
+  "}";
 
   const std::string glsl33frag =
   "uniform vec3 color;\n"
@@ -431,7 +431,7 @@ void dfm2::opengl::CShader_MeshDTri2D::Compile()
   "void main()\n"
   "{\n"
   "  FragColor = vec4(color.x, color.y, color.z, 1.0f);\n"
-  "}\n\0";
+  "}";
   
   #ifdef EMSCRIPTEN
     shdr0_program = GL24_CompileShader((std::string("#version 300 es\n")+

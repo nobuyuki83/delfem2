@@ -46,7 +46,7 @@ public:
   void Draw(float mP[16], float mMV[16]);
   
 public:
-  CGL4_VAO_Mesh vao; // gl4
+  VertexArrayObject vao; // gl4
   int shaderProgram;
   int Loc_MatrixProjection;
   int Loc_MatrixModelView;
@@ -79,7 +79,7 @@ public:
   void Draw(float mP[16], float mMV[16]);
   
 public:
-  CGL4_VAO_Mesh vao; // gl4
+  VertexArrayObject vao; // gl4
   int shaderProgram;
   int Loc_MatrixProjection;
   int Loc_MatrixModelView;

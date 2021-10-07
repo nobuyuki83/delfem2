@@ -48,7 +48,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::SetDepth(
       aXYZ[ip*3+2] = q0[2];
     }
   }
-  shdr2.Initialize(aXYZ);
+  shdr2.SetCoords(aXYZ,3);
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
@@ -107,7 +107,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
     shdr1.setElement( aTri, GL_TRIANGLES);
   }
   {
-    shdr2.Compile();
+    shdr2.InitGL();
   }
 }
 
@@ -120,7 +120,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::Draw(
   double mMVPinv[16]; delfem2::Inverse_Mat4(mMVPinv,mMVP);
   float mMVP1[16]; delfem2::MatMat4(mMVP1,mMVPinv,mMV0);
   shdr0.Draw(mP0,mMVP1);
-  shdr2.Draw(mP0,mMVP1);
+  shdr2.Draw(GL_POINTS,mP0,mMVP1);
   glEnable(GL_TEXTURE_2D);
   glActiveTexture(0);
   glBindTexture(GL_TEXTURE_2D, r2t.id_tex_color);

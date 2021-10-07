@@ -45,7 +45,7 @@ public:
   int shdr0_Loc_MatrixProjection;
   int shdr0_Loc_MatrixModelView;
   int shdr0_Loc_Color;
-  ///
+  //
   int shdr1_program; // for edge, point
   int shdr1_Loc_MatrixProjection;
   int shdr1_Loc_MatrixModelView;
@@ -54,8 +54,8 @@ public:
   
   bool is_show_face;
   
-  CGL4_VAO_Mesh vao_face;
-  CGL4_VAO_Mesh vao_edge;
+  VertexArrayObject vao_face;
+  VertexArrayObject vao_edge;
 };
 
 
@@ -75,7 +75,7 @@ public:
   int shdr0_Loc_MatrixModelView;
   int shdr0_Loc_Color;
   
-  CGL4_VAO_Mesh vao;
+  VertexArrayObject vao;
 };
   
 } // namespace opnegl

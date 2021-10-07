@@ -11,40 +11,34 @@
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/color.h"
 #include "delfem2/dfm2_inline.h"
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 
 // -------------------------------------
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 class CShader_Points{
 public:
-  void Compile();
+  void InitGL();
 
   template <typename REAL>
-  void Initialize(
-      std::vector<REAL>& aXYZd);
-
-  template <typename REAL>
-  void UpdateVertex(
-      std::vector<REAL>& aXYZd);
+  void SetCoords(std::vector<REAL> &vtx_coords, unsigned int ndim);
 
   void Draw(
+      GLenum gl_primitive_type,
       float mP[16],
       float mMV[16]) const;
 public:
-  CGL4_VAO_Mesh vao; // gl4
-  int shaderProgram;
-  int Loc_MatrixProjection;
-  int Loc_MatrixModelView;
-  int Loc_Color;
-  unsigned int nPoint = 0;
+  VertexArrayObject vao; // gl4
+  int shaderProgram = -1;
+  int Loc_MatrixProjection = -1;
+  int Loc_MatrixModelView = -1;
+  int Loc_Color = -1;
+  unsigned int num_vtx = 0;
   delfem2::CColor color_face = delfem2::CColor(0.0,0.0,0.0,0.0);
 };
 
-}
 }
 
 #ifndef DFM2_STATIC_LIBRARY

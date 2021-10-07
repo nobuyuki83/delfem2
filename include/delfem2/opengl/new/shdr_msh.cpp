@@ -24,26 +24,26 @@
 
 template<typename REAL>
 void delfem2::opengl::CShader_Mesh::Initialize(
-    std::vector<REAL> &aXYZd,
+    std::vector<REAL> &vtx_coords,
     unsigned int ndim,
-    std::vector<unsigned int> &aLine,
+    std::vector<unsigned int> &elem_vtx,
     int gl_primitive_type) {
   if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
   vao.Delete_EBOs();
-  vao.Add_EBO(aLine, gl_primitive_type);
-  this->UpdateVertex(aXYZd, ndim, aLine);
+  vao.Add_EBO(elem_vtx, gl_primitive_type);
+  this->UpdateVertex(vtx_coords, ndim, elem_vtx);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_Mesh::Initialize(
-    std::vector<float>& aXYZd,
-    unsigned int ndim,
-    std::vector<unsigned int>& aLine,
-    int gl_primitive_type);
+    std::vector<float>&,
+    unsigned int,
+    std::vector<unsigned int>&,
+    int);
 template void delfem2::opengl::CShader_Mesh::Initialize(
-    std::vector<double>& aXYZd,
-    unsigned int ndim,
-    std::vector<unsigned int>& aLine,
-    int gl_primitive_type);
+    std::vector<double>&,
+    unsigned int,
+    std::vector<unsigned int>&,
+    int);
 #endif
 
 template<typename REAL>
@@ -81,7 +81,7 @@ void delfem2::opengl::CShader_Mesh::Compile() {
       "  vec4 v0 = matrixModelView * vec4(nrmIn.x, nrmIn.y, nrmIn.z, 0.0);\n"
       "  nrmPrj = v0.xyz;\n"
       "  if( length(nrmIn) < 1.e-30 ){ nrmPrj = vec3(0.f, 0.f, 1.f); }\n"
-      "}\0";
+      "}";
 
   const std::string glsl33frag =
       "uniform vec3 color;\n"
@@ -90,7 +90,7 @@ void delfem2::opengl::CShader_Mesh::Compile() {
       "void main()\n"
       "{\n"
       "  FragColor = abs(nrmPrj.z)*vec4(color.x, color.y, color.z, 1.0f);\n"
-      "}\n\0";
+      "}\n";
 
 #ifdef EMSCRIPTEN
   shaderProgram = GL24_CompileShader(

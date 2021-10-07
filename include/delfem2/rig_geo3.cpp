@@ -11,6 +11,7 @@
 #include <cassert>
 #include <sstream>
 #include <fstream>
+#include <climits>
 
 #include "delfem2/geo3_v23m34q.h"
 
