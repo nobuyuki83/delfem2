@@ -55,7 +55,7 @@ class CRender2Tex {
   /**
    * @param mMVPG affine transformation from device coordinate to hight field on grid where height is aZ
    */
-  std::array<double,16> GetAffineMatrix4_Global2DepthOnGrid() const {
+  [[nodiscard]] std::array<double,16> GetAffineMatrix4_Global2DepthOnGrid() const {
     double mMVP[16];
     MatMat4(mMVP, mat_projection, mat_modelview);
     const double tmp0 = width * 0.5;
@@ -66,7 +66,7 @@ class CRender2Tex {
         0, tmp1, 0, tmp1 - 0.5,
         0, 0, -0.5, 0.5,
         0, 0, 0, 1};
-    std::array<double,16> mat4_affine;
+    std::array<double,16> mat4_affine{};
     MatMat4(mat4_affine.data(),affine_device2depthongrid,mMVP);
     return mat4_affine;
   }
@@ -100,20 +100,20 @@ class CRender2Tex {
   void Start();
   void End();
   template<typename REAL>
-  std::vector<REAL> GetAffineMatrixModelViewAsColMajorStlVector() const {
+  std::vector<REAL> GetAffineMatrixModelViewStlVector() const {
     return std::vector<REAL>(mat_modelview, mat_modelview + 16);
   }
   template<typename REAL>
-  std::vector<REAL> GetAffineMatrixProjectionAsColMajorStlVector() const {
+  std::vector<REAL> GetAffineMatrixProjectionStlVector() const {
     return std::vector<REAL>(mat_projection, mat_projection + 16);
   }
   template<typename REAL>
-  void SetAffineMatrixModelViewAsColMajorStlVector(const std::vector<REAL>& a) {
+  void SetAffineMatrixModelViewStlVector(const std::vector<REAL>& a) {
     assert(a.size()==16);
     for(int i=0;i<16;++i){ mat_modelview[i] = a[i]; }
   }
   template<typename REAL>
-  void SetAffineMatrixProjectionAsColMajorStlVector(const std::vector<REAL>& a) {
+  void SetAffineMatrixProjectionStlVector(const std::vector<REAL>& a) {
     assert(a.size()==16);
     for(int i=0;i<16;++i){ mat_projection[i] = a[i]; }
   }
