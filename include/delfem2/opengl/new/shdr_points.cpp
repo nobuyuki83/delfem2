@@ -91,16 +91,16 @@ void delfem2::opengl::Drawer_Coords::InitGL()
 
 void delfem2::opengl::Drawer_Coords::Draw(
     GLenum gl_primitive_type,
-    const float mP[16],
-    const float mMV[16]) const
+    const float mat4_projection[16],
+    const float mat4_modelview[16]) const
 {
   ::glUseProgram(shaderProgram);
   ::glUniformMatrix4fv(
       Loc_MatrixProjection, 1, GL_FALSE,
-      TransposeMat4ForOpenGL(mP,true).data());
+      TransposeMat4ForOpenGL(mat4_projection, true).data());
   ::glUniformMatrix4fv(
       Loc_MatrixModelView, 1, GL_FALSE,
-      TransposeMat4ForOpenGL(mMV, false).data());
+      TransposeMat4ForOpenGL(mat4_modelview, false).data());
   ::glUniform3f(Loc_Color, color_face.r,color_face.g, color_face.b);
   ::glBindVertexArray(this->vao.VAO);
   ::glDrawArrays(

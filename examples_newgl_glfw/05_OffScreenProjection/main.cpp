@@ -40,11 +40,13 @@ void draw() {
   ::glEnable(GL_DEPTH_TEST);
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.1f, 4.0f);
-  shdr_trimsh.Draw(viewer.GetProjectionMatrix().data(),
-                   viewer.GetModelViewMatrix().data());
-  drawer_r2t.Draw(r2t,
-                  viewer.GetProjectionMatrix().data(),
-                  viewer.GetModelViewMatrix().data());
+  shdr_trimsh.Draw(
+      viewer.GetProjectionMatrix().data(),
+      viewer.GetModelViewMatrix().data());
+  drawer_r2t.Draw(
+      r2t,
+      viewer.GetProjectionMatrix().data(),
+      viewer.GetModelViewMatrix().data());
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -79,27 +81,25 @@ int main() {
 
   r2t.InitGL();
   drawer_r2t.InitGL();
+  shdr_trimsh.Compile();
 
   {
-    std::vector<double> aXYZ;
-    std::vector<unsigned int> aTri;
-    dfm2::MeshTri3_Torus(aXYZ, aTri, 0.8, 0.1, 8, 8);
-    dfm2::Rotate_Points3(aXYZ, 0.1, 0.2, 0.3);
-    shdr_trimsh.Compile();
-    shdr_trimsh.Initialize(aXYZ, 3, aTri);
+    std::vector<double> vtx_xyz;
+    std::vector<unsigned int> tri_vtx;
+    dfm2::MeshTri3_Torus(
+        vtx_xyz, tri_vtx,
+        0.8, 0.1, 8, 8);
+    dfm2::Rotate_Points3(vtx_xyz, 0.1, 0.2, 0.3);
+    shdr_trimsh.Initialize(vtx_xyz, 3, tri_vtx);
   }
   r2t.Start();
   ::glClearColor(1.0, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glDisable(GL_BLEND);
   ::glEnable(GL_DEPTH_TEST);
-  {
-    float mMVf[16];
-    dfm2::Copy_Mat4(mMVf, r2t.mat_modelview);
-    float mPf[16];
-    dfm2::Copy_Mat4(mPf, r2t.mat_projection);
-    shdr_trimsh.Draw(mMVf,mPf);
-  }
+  shdr_trimsh.Draw(
+      dfm2::CMat4f(r2t.mat_modelview).data(),
+      dfm2::CMat4f(r2t.mat_projection).data());
   r2t.End();
   drawer_r2t.SetDepth(r2t);
 

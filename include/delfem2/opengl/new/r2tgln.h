@@ -9,14 +9,15 @@
 #ifndef DFM2_OPENGL_NEW_R2TGLN_H
 #define DFM2_OPENGL_NEW_R2TGLN_H
 
+#include <stdio.h>
+#include <vector>
+
 #include "delfem2/opengl/new/mshcolor.h" // shader definitions
 #include "delfem2/opengl/new/shdr_msh.h"
 #include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/opengl/new/shdr_points.h"
 #include "delfem2/opengl/r2t.h"
 #include "delfem2/dfm2_inline.h"
-#include <stdio.h>
-#include <vector>
 
 namespace delfem2{
 namespace opengl{
@@ -32,15 +33,15 @@ public:
   // --------------
   void Draw(
       const ::delfem2::opengl::CRender2Tex& r2t,
-      float mP[16],
-      float mMV[16]) const;
+      const float mat4_projection[16],
+      const float mat4_modelview[16]) const;
   // ------------
   virtual void InitGL(); // override function
   virtual void SetDepth(const ::delfem2::opengl::CRender2Tex& r2t);
 public:
   bool isDrawTex;
   double draw_len_axis;
-  unsigned int pointSize;
+  float pointSize;
   CShader_Mesh drawer_view_frustrum;
   CShader_MeshTex drawer_projected_image;
   Drawer_Coords drawer_projected_points;
@@ -53,4 +54,4 @@ public:
 #  include "delfem2/opengl/new/r2tgln.cpp"
 #endif
 
-#endif /* depth_hpp */
+#endif /* DFM2_OPENGL_NEW_R2TGLN_H */

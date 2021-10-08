@@ -116,12 +116,16 @@ void delfem2::opengl::CShader_Mesh::Compile() {
   Loc_Color = glGetUniformLocation(shaderProgram, "color");
 }
 
-void delfem2::opengl::CShader_Mesh::Draw(const float mP[16], const float mMV[16]) const {
+void delfem2::opengl::CShader_Mesh::Draw(
+    const float mat4_projection[16],
+    const float mat4_modelview[16]) const {
   glUseProgram(shaderProgram);
-  glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE,
-                     TransposeMat4ForOpenGL(mP,true).data());
-  glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE,
-                     TransposeMat4ForOpenGL(mMV,false).data());
+  glUniformMatrix4fv(
+      Loc_MatrixProjection, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mat4_projection, true).data());
+  glUniformMatrix4fv(
+      Loc_MatrixModelView, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mat4_modelview, false).data());
   glUniform3f(Loc_Color, color[0], color[1], color[2]);
   vao.Draw(0); // draw line
 }

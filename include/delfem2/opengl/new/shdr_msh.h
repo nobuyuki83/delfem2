@@ -36,7 +36,7 @@ class CShader_Mesh {
       unsigned int ndim,
       std::vector<unsigned int> &aLine);
 
-  void Draw(const float mP[16], const float mMV[16]) const;
+  void Draw(const float mat4_projection[16], const float mat4_modelview[16]) const;
 
  public:
   VertexArrayObject vao; // gl4

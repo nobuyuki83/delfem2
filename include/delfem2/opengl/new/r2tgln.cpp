@@ -113,17 +113,18 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::Draw(
     const delfem2::opengl::CRender2Tex& r2t,
-    float mP0[16],
-    float mMV0[16]) const
+    const float mat4_projection[16],
+    const float mat4_modelview[16]) const
 {
+  namespace dfm2 = delfem2;
   const dfm2::CMat4d mvp0 = dfm2::CMat4d(r2t.mat_modelview) * dfm2::CMat4d(r2t.mat_projection);
-  const dfm2::CMat4f mv1 = (dfm2::CMat4d(mMV0) * mvp0.Inverse()).cast<float>();
-  drawer_view_frustrum.Draw(mP0,mv1.data());
+  const dfm2::CMat4f mv1 = (dfm2::CMat4d(mat4_modelview) * mvp0.Inverse()).cast<float>();
+  drawer_view_frustrum.Draw(mat4_projection, mv1.data());
   glPointSize(this->pointSize);
-  drawer_projected_points.Draw(GL_POINTS,mP0,mv1.data());
+  drawer_projected_points.Draw(GL_POINTS, mat4_projection, mv1.data());
   glEnable(GL_TEXTURE_2D);
   glActiveTexture(0);
   glBindTexture(GL_TEXTURE_2D, r2t.id_tex_color);
-  drawer_projected_image.Draw(mP0,mv1.data());
+  drawer_projected_image.Draw(mat4_projection, mv1.data());
   glBindTexture(GL_TEXTURE_2D, 0);
 }

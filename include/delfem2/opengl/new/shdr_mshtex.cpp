@@ -102,14 +102,16 @@ void delfem2::opengl::CShader_MeshTex::Compile()
 
 
 void delfem2::opengl::CShader_MeshTex::Draw(
-    const float mP[16],
-    const float mMV[16]) const
+    const float mat4_projection[16],
+    const float mat4_modelview[16]) const
 {
   glUseProgram(shaderProgram);
-  glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE,
-                     TransposeMat4ForOpenGL(mP,true).data());
-  glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE,
-                     TransposeMat4ForOpenGL(mMV,false).data());
+  glUniformMatrix4fv(
+      Loc_MatrixProjection, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mat4_projection, true).data());
+  glUniformMatrix4fv(
+      Loc_MatrixModelView, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mat4_modelview, false).data());
   glUniform1i(Loc_Texture, 0);
   vao.Draw(0); // draw face
 }

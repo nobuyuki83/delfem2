@@ -35,7 +35,7 @@ public:
       unsigned int ndim,
       std::vector<unsigned int>& aTri);
 
-  void Draw(float mP[16], float mMV[16]) const;
+  void Draw(const float mat4_projection[16], const float mat4_modelview[16]) const;
   
 public:
   VertexArrayObject vao; // gl4

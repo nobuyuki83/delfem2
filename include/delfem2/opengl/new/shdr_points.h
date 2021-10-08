@@ -42,8 +42,8 @@ public:
 
   void Draw(
       GLenum gl_primitive_type,
-      const float mP[16],
-      const float mMV[16]) const;
+      const float mat4_projection[16],
+      const float mat4_modelview[16]) const;
 public:
   VertexArrayObject vao; // gl4
   int shaderProgram = -1;

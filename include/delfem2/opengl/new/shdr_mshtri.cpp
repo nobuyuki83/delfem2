@@ -21,9 +21,6 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
 
-
-namespace dfm2 = delfem2;
-
 // ------------------------------------------
 
 template <typename REAL>
@@ -35,7 +32,7 @@ void delfem2::opengl::CShader_TriMesh::Initialize(
   std::vector<unsigned int> aLine;
   MeshLine_MeshElem(
       aLine,
-      aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI,
+      aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI,
       aXYZd.size()/ndim);
   // --------
   if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
@@ -71,11 +68,11 @@ void delfem2::opengl::CShader_TriMesh::UpdateVertex(
   
   vao.ADD_VBO(0,aXYZd);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)0); // gl24
+  glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)nullptr); // gl24
   
   vao.ADD_VBO(1,aNrmd);
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)0); // gl24
+  glVertexAttribPointer(1, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)nullptr); // gl24
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_TriMesh::UpdateVertex(
@@ -104,7 +101,7 @@ void delfem2::opengl::CShader_TriMesh::Compile()
   "  nrmPrj = v0.xyz;\n"
   "  if( length(nrmIn) < 1.e-30 ){ nrmPrj = vec3(0.f, 0.f, 1.f); }\n"
   "  nrmPrj = normalize(nrmPrj);\n"
-  "}\0";
+  "}";
   
   const std::string glsl33frag =
   "uniform vec3 color;\n"
@@ -115,19 +112,21 @@ void delfem2::opengl::CShader_TriMesh::Compile()
   "  FragColor = abs(nrmPrj.z)*vec4(color.x, color.y, color.z, 1.0f);\n"
 //  "  FragColor = vec4(color.x, color.y, color.z, 1.0f);\n"
 //  "  FragColor = vec4(1.f, 0.f, 0.f, 1.0f);\n"
-  "}\n\0";
+  "}";
   
 #ifdef EMSCRIPTEN
-  shaderProgram = GL24_CompileShader((std::string("#version 300 es\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 300 es\n")+
-                                      std::string("precision highp float;\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = GL24_CompileShader(
+      (std::string("#version 300 es\n")+
+      glsl33vert_projection).c_str(),
+      (std::string("#version 300 es\n")+
+      std::string("precision highp float;\n")+
+      glsl33frag).c_str());
 #else
-  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
-                                                    glsl33vert_projection).c_str(),
-                                                   (std::string("#version 330 core\n")+
-                                                    glsl33frag).c_str());
+  shaderProgram = delfem2::opengl::GL24_CompileShader(
+      (std::string("#version 330 core\n")+
+      glsl33vert_projection).c_str(),
+      (std::string("#version 330 core\n")+
+      glsl33frag).c_str());
 #endif
   
   if( !glIsProgram(shaderProgram) ){
@@ -140,14 +139,20 @@ void delfem2::opengl::CShader_TriMesh::Compile()
 }
 
 
-void delfem2::opengl::CShader_TriMesh::Draw(float mP[16], float mMV[16]) const
+void delfem2::opengl::CShader_TriMesh::Draw(
+    const float mat4_projection[16],
+    const float mat4_modelview[16]) const
 {
   glUseProgram(shaderProgram);
-  glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE,
-                     TransposeMat4ForOpenGL(mP,true).data());
-  glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE,
-                     TransposeMat4ForOpenGL(mMV,false).data());
-  glUniform3f(Loc_Color, this->color_face.r , this->color_face.g, this->color_face.b);
+  glUniformMatrix4fv(
+      Loc_MatrixProjection, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mat4_projection, true).data());
+  glUniformMatrix4fv(
+      Loc_MatrixModelView, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mat4_modelview, false).data());
+  glUniform3f(
+      Loc_Color,
+      this->color_face.r , this->color_face.g, this->color_face.b);
   glLineWidth(this->line_width);
   vao.Draw(0); // draw face
   glUniform3f(Loc_Color, 0,0,0);
