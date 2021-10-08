@@ -25,14 +25,14 @@
 #include "delfem2/opengl/new/r2tgln.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
+#include "delfem2/points.h"
 
 namespace dfm2 = delfem2;
 
 delfem2::glfw::CViewer3 viewer(2);
 dfm2::opengl::CRender2Tex r2t;
 dfm2::opengl::CShader_TriMesh shdr_trimsh;
-dfm2::opengl::CShader_Points shdr_points;
-dfm2::opengl::CRender2Tex_DrawNewGL draw_r2t;
+dfm2::opengl::CRender2Tex_DrawNewGL drawer_r2t;
 
 void draw() {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
@@ -40,14 +40,11 @@ void draw() {
   ::glEnable(GL_DEPTH_TEST);
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.1f, 4.0f);
-
-  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
-  mP = mP.transpose() * dfm2::CMat4f::ScaleXYZ(1,1,-1);
-  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
-  mMV = mMV.transpose();
-  shdr_points.Draw(GL_POINTS, mP.data(), mMV.data());
-  shdr_trimsh.Draw(mP.data(), mMV.data());
-  draw_r2t.Draw(r2t, mP.data(), mMV.data());
+  shdr_trimsh.Draw(viewer.GetProjectionMatrix().data(),
+                   viewer.GetModelViewMatrix().data());
+  drawer_r2t.Draw(r2t,
+                  viewer.GetProjectionMatrix().data(),
+                  viewer.GetModelViewMatrix().data());
   viewer.SwapBuffers();
   glfwPollEvents();
 }
@@ -57,13 +54,17 @@ int main() {
     int nres = 200;
     double elen = 0.01;
     r2t.SetTextureProperty(nres, nres, true);
+    dfm2::Mat4_Identity(r2t.mat_modelview);
+    dfm2::Mat4_Identity(r2t.mat_projection);
+    /*
     dfm2::Mat4_OrthongoalProjection_AffineTrans(
         r2t.mat_modelview_colmajor, r2t.mat_projection_colmajor,
         dfm2::CVec3d(-nres * elen * 0.5, nres * elen * 0.5, -2).p,
         dfm2::CVec3d(0, 0, -1).p,
         dfm2::CVec3d(1, 0, 0).p,
         nres, nres, elen, 4.0);
-    draw_r2t.draw_len_axis = 1.0;
+     */
+    drawer_r2t.draw_len_axis = 1.0;
   }
 
   dfm2::glfw::InitGLNew();
@@ -77,12 +78,13 @@ int main() {
 #endif
 
   r2t.InitGL();
-  draw_r2t.InitGL();
+  drawer_r2t.InitGL();
 
   {
     std::vector<double> aXYZ;
     std::vector<unsigned int> aTri;
     dfm2::MeshTri3_Torus(aXYZ, aTri, 0.8, 0.1, 8, 8);
+    dfm2::Rotate_Points3(aXYZ, 0.1, 0.2, 0.3);
     shdr_trimsh.Compile();
     shdr_trimsh.Initialize(aXYZ, 3, aTri);
   }
@@ -93,13 +95,13 @@ int main() {
   ::glEnable(GL_DEPTH_TEST);
   {
     float mMVf[16];
-    dfm2::Copy_Mat4(mMVf, r2t.mat_modelview_colmajor);
+    dfm2::Copy_Mat4(mMVf, r2t.mat_modelview);
     float mPf[16];
-    dfm2::Copy_Mat4(mPf, r2t.mat_projection_colmajor);
-    shdr_trimsh.Draw(mPf, mMVf);
+    dfm2::Copy_Mat4(mPf, r2t.mat_projection);
+    shdr_trimsh.Draw(mMVf,mPf);
   }
   r2t.End();
-  draw_r2t.SetDepth(r2t);
+  drawer_r2t.SetDepth(r2t);
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

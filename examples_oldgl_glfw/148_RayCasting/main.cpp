@@ -46,12 +46,12 @@ void ShadingImageRayLambertian(
   aRGB.resize(nheight * nwidth * 3);
   for (unsigned int ih = 0; ih < nheight; ++ih) {
     for (unsigned int iw = 0; iw < nwidth; ++iw) {
-      const double ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
-      const double pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
+      const double ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
+      const double pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
       double qs[3];
-      dfm2::Vec3_Vec3Mat4_AffineProjection(qs, ps, mMVPd_inv);
+      dfm2::Vec3_Mat4Vec3_AffineProjection(qs, mMVPd_inv, ps);
       double qe[3];
-      dfm2::Vec3_Vec3Mat4_AffineProjection(qe, pe, mMVPd_inv);
+      dfm2::Vec3_Mat4Vec3_AffineProjection(qe, mMVPd_inv, pe);
       const dfm2::CVec3d src1(qs);
       const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
       //
@@ -125,17 +125,16 @@ int main() {
     }
     for (unsigned int i = 0; i < 10; ++i) {
       const dfm2::CMat4f mP = viewer.GetProjectionMatrix();
-      const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
       const dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
-      const dfm2::CMat4f mMVP_transpose = mMV.transpose() * mP.transpose() * mZ;
+      const dfm2::CMat4f mMVP = mP * mMV;
       std::vector<delfem2::PointOnSurfaceMeshd> vec_point_on_tri;
       Intersection_ImageRay_TriMesh3(
           vec_point_on_tri,
-          tex.height, tex.width, mMVP_transpose.data(),
+          tex.height, tex.width, mMVP.data(),
           bvh_nodes, bvh_volumes, vec_xyz, vec_tri);
       ShadingImageRayLambertian(
           tex.pixel_color,
-          tex.height, tex.width, mMVP_transpose.data(),
+          tex.height, tex.width, mMVP.data(),
           vec_point_on_tri, vec_xyz, vec_tri);
       tex.InitGL();
       //

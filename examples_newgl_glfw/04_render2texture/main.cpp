@@ -59,9 +59,8 @@ void draw(GLFWwindow *window) {
     glBindTexture(GL_TEXTURE_2D, idTexColor);
     delfem2::CMat4f mP, mMV;
     viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
-    delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1.f,1.f,-1.f);
     mMV(0,3) -= 0.5;
-    shdr_mshtex.Draw((mZ*mP).transpose().data(), mMV.transpose().data());
+    shdr_mshtex.Draw(mP.data(), mMV.data());
   }
 
   {
@@ -69,9 +68,8 @@ void draw(GLFWwindow *window) {
     glBindTexture(GL_TEXTURE_2D, idTexDepth);
     delfem2::CMat4f mP, mMV;
     viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
-    delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1.f,1.f,-1.f);
     mMV(0,3) += 0.5;
-    shdr_mshtex.Draw((mZ*mP).transpose().data(), mMV.transpose().data());
+    shdr_mshtex.Draw(mP.data(), mMV.data());
   }
 
   viewer.SwapBuffers();

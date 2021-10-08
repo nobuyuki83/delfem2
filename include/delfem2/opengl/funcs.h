@@ -16,17 +16,22 @@
 
 #include <string>
 #include <vector>
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 
-namespace delfem2 {
-
-namespace opengl {
+namespace delfem2::opengl {
 
 DFM2_INLINE int GL24_CompileShader(
     const char *vert,
     const char* frag);
 
+/**
+ *
+ * @param str_glsl_vert
+ * @param shaderType either GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+ * @return index of shader
+ */
 DFM2_INLINE int compileShader(
     const std::string& str_glsl_vert,
     int shaderType);
@@ -39,6 +44,7 @@ DFM2_INLINE int setUpGLSL(
     const std::string& str_glsl_vert,
     const std::string& str_glsl_frag);
 
+// -------------
 
 template <typename REAL>
 constexpr int convertToGlType(){ return 0; }
@@ -49,7 +55,27 @@ constexpr int convertToGlType<float>(){ return GL_FLOAT; }
 template <>
 constexpr int convertToGlType<double>(){ return GL_DOUBLE; }
 
+// -------------
+
+template <typename T>
+std::array<T,16> TransposeMat4ForOpenGL(const T* A, bool is_zflip)
+{
+  if( is_zflip ){
+    return {
+        A[0], A[4], -A[8], A[12],
+        A[1], A[5], -A[9], A[13],
+        A[2], A[6], -A[10], A[14],
+        A[3], A[7], -A[11], A[15] };
+  }
+  else{
+    return {
+      A[0], A[4], A[8], A[12],
+      A[1], A[5], A[9], A[13],
+      A[2], A[6], A[10], A[14],
+      A[3], A[7], A[11], A[15] };
+  }
 }
+
 }
 
 #ifndef DFM2_STATIC_LIBRARY
@@ -57,4 +83,4 @@ constexpr int convertToGlType<double>(){ return GL_DOUBLE; }
 #endif
 
 
-#endif
+#endif  // DFM2_OPENGL_FUNCS_H

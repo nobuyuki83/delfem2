@@ -23,28 +23,29 @@
 // ------------------------------------------
 
 template <typename REAL>
-void delfem2::opengl::CShader_Points::SetCoords(
-    std::vector<REAL> &vtx_coords,
+void delfem2::opengl::Drawer_Coords::SetRawArray(
+    REAL *vtx_coords,
+    size_t num_vtx_,
     unsigned int ndim)
 {
+  this->num_vtx = num_vtx_;
   if( !::glIsVertexArray(vao.VAO) ){ ::glGenVertexArrays(1, &vao.VAO); }  // opengl ver >= 3.0
   assert(vao.aEBO.empty());
   ::glBindVertexArray(vao.VAO); // opengl ver >= 3.0
-  vao.ADD_VBO(0, vtx_coords);
+  vao.Add_VBO(0, vtx_coords, num_vtx*ndim);
   ::glEnableVertexAttribArray(0);
   ::glVertexAttribPointer(
       0, ndim, convertToGlType<REAL>(), GL_FALSE,
       ndim*sizeof(REAL), (void*)nullptr); // add this for
-  num_vtx = vtx_coords.size()/ndim;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::opengl::CShader_Points::SetCoords(std::vector<float>& aXYZd, unsigned int ndim);
-template void delfem2::opengl::CShader_Points::SetCoords(std::vector<double>& aXYZd, unsigned int ndim);
+template void delfem2::opengl::Drawer_Coords::SetRawArray(float*, size_t, unsigned int);
+template void delfem2::opengl::Drawer_Coords::SetRawArray(double*, size_t, unsigned int);
 #endif
 
 // -------------------------
 
-void delfem2::opengl::CShader_Points::InitGL()
+void delfem2::opengl::Drawer_Coords::InitGL()
 {
   const std::string glsl33vert_projection =
       "uniform mat4 matrixProjection;\n"
@@ -88,14 +89,18 @@ void delfem2::opengl::CShader_Points::InitGL()
 }
 
 
-void delfem2::opengl::CShader_Points::Draw(
+void delfem2::opengl::Drawer_Coords::Draw(
     GLenum gl_primitive_type,
-    float mP[16],
-    float mMV[16]) const
+    const float mP[16],
+    const float mMV[16]) const
 {
   ::glUseProgram(shaderProgram);
-  ::glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
-  ::glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
+  ::glUniformMatrix4fv(
+      Loc_MatrixProjection, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mP,true).data());
+  ::glUniformMatrix4fv(
+      Loc_MatrixModelView, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mMV, false).data());
   ::glUniform3f(Loc_Color, color_face.r,color_face.g, color_face.b);
   ::glBindVertexArray(this->vao.VAO);
   ::glDrawArrays(

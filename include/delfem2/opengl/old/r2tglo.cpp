@@ -18,6 +18,7 @@
 
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/r2tglo.h"
+#include "delfem2/opengl/funcs.h"
 #include "delfem2/vec3.h"
 
 // ------------------
@@ -25,13 +26,12 @@
 DFM2_INLINE void delfem2::opengl::SetView(const CRender2Tex &r2t) {
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
-  ::glMultMatrixd(r2t.mat_modelview_colmajor);
+  ::glMultMatrixd(TransposeMat4ForOpenGL(r2t.mat_modelview,false).data());
   ::glMatrixMode(GL_PROJECTION);
   ::glLoadIdentity();
-  ::glMultMatrixd(r2t.mat_projection_colmajor);
+  ::glMultMatrixd(TransposeMat4ForOpenGL(r2t.mat_projection,true).data());
   ::glMatrixMode(GL_MODELVIEW);
 }
-
 
 // --------------------------------------------
 
@@ -45,26 +45,26 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Texture(const CRender2Tex &r
   double mMVP[16];
   MatMat4(
       mMVP,
-      r2t.mat_modelview_colmajor,
-      r2t.mat_projection_colmajor);
+      r2t.mat_projection,
+      r2t.mat_modelview);
   double mMVPinv[16];
   Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
-  ::glMultMatrixd(mMVPinv);
+  ::glMultMatrixd(TransposeMat4ForOpenGL(mMVPinv,false).data());
   //
   ::glEnable(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1, 1, 1);
   ::glBegin(GL_QUADS);
   ::glTexCoord2d(0.0, 0.0);
-  ::glVertex3d(-1, -1, -1);
+  ::glVertex3d(-1, -1, +1);
   ::glTexCoord2d(1.0, 0.0);
-  ::glVertex3d(+1, -1, -1);
+  ::glVertex3d(+1, -1, +1);
   ::glTexCoord2d(1.0, 1.0);
-  ::glVertex3d(+1, +1, -1);
+  ::glVertex3d(+1, +1, +1);
   ::glTexCoord2d(0.0, 1.0);
-  ::glVertex3d(-1, +1, -1);
+  ::glVertex3d(-1, +1, +1);
   ::glEnd();
   ::glBindTexture(GL_TEXTURE_2D, 0);
   ::glDisable(GL_TEXTURE_2D);
@@ -97,13 +97,13 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Axis(const CRender2Tex &r2t)
   double mMVP[16];
   MatMat4(
       mMVP,
-      r2t.mat_modelview_colmajor,
-      r2t.mat_projection_colmajor);
+      r2t.mat_projection,
+      r2t.mat_modelview);
   double mMVPinv[16];
   Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
-  ::glMultMatrixd(mMVPinv);
+  ::glMultMatrixd(TransposeMat4ForOpenGL(mMVPinv,false).data());
   ::glTranslated(-1.01, -1.01, -1.01);
   delfem2::opengl::DrawAxis(draw_len_axis);
   ::glPopMatrix();
@@ -113,13 +113,13 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_BoundingBox(const CRender2Te
   double mMVP[16];
   MatMat4(
       mMVP,
-      r2t.mat_modelview_colmajor,
-      r2t.mat_projection_colmajor);
+      r2t.mat_projection,
+      r2t.mat_modelview);
   double mMVPinv[16];
   Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
-  ::glMultMatrixd(mMVPinv);
+  ::glMultMatrixd(TransposeMat4ForOpenGL(mMVPinv,false).data());
   ::glLineWidth(3);
   ::glDisable(GL_LIGHTING);
   const double pmin[3] = {-1., -1., -1.};
@@ -132,7 +132,7 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_BoundingBox(const CRender2Te
 void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Point(const CRender2Tex &r2t) const {
   const unsigned int nResX = r2t.width;
   const unsigned int nResY = r2t.height;
-  if (r2t.aZ.size() != nResX * nResY) {
+  if (r2t.aDepth.size() != nResX * nResY) {
     glPopMatrix();
     return;
   }
@@ -140,13 +140,13 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Point(const CRender2Tex &r2t
   double mMVP[16];
   MatMat4(
       mMVP,
-      r2t.mat_modelview_colmajor,
-      r2t.mat_projection_colmajor);
+      r2t.mat_projection,
+      r2t.mat_modelview);
   double mMVPinv[16];
   Inverse_Mat4(mMVPinv, mMVP);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
-  ::glMultMatrixd(mMVPinv);
+  ::glMultMatrixd(TransposeMat4ForOpenGL(mMVPinv,false).data());
   ::glDisable(GL_LIGHTING);
 
   if (colorPoint.size() == 3) { ::glColor3dv(colorPoint.data()); }
@@ -156,8 +156,8 @@ void delfem2::opengl::CDrawerOldGL_Render2Tex::Draw_Point(const CRender2Tex &r2t
     for (unsigned int ix = 0; ix < nResX; ++ix) {
       const double x0 = -1 + 2.0 / nResX * ix;
       const double y0 = -1 + 2.0 / nResY * iy;
-      const double z0 = -1 + 2.0 * r2t.aZ[iy * nResX + ix];
-      if (z0 > 0.9 && isDrawOnlyHitPoints) { continue; } // ray is shooted from -1 to +1
+      const double z0 = 1 - 2.0 * r2t.aDepth[iy * nResX + ix];
+      if (z0 < -0.9 && isDrawOnlyHitPoints) { continue; } // ray is shooted from -1 to +1
       ::glVertex3d(x0, y0, z0);
     }
   }
@@ -182,8 +182,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresY_, nresZ_, true); // +x
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview_colmajor,
-        smplr.mat_projection_colmajor,
+        smplr.mat_modelview,
+        smplr.mat_projection,
         CVec3d(+0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
         CVec3d(+1, 0, 0).p,
         CVec3d(0, +1, 0).p,
@@ -194,8 +194,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresY_, nresZ_, true); // -x
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview_colmajor,
-        smplr.mat_projection_colmajor,
+        smplr.mat_modelview,
+        smplr.mat_projection,
         CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
         CVec3d(-1, 0, 0).p,
         CVec3d(0, +1, 0).p,
@@ -207,8 +207,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresZ_, true); // +y
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview_colmajor,
-        smplr.mat_projection_colmajor,
+        smplr.mat_modelview,
+        smplr.mat_projection,
         CVec3d(-0.5 * elen_ * nresX_, +0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
         CVec3d(0, +1, 0).p,
         CVec3d(1, +0, 0).p,
@@ -219,8 +219,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresZ_, true); // -y
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview_colmajor,
-        smplr.mat_projection_colmajor,
+        smplr.mat_modelview,
+        smplr.mat_projection,
         CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
         CVec3d(0, -1, 0).p,
         CVec3d(1, +0, 0).p,
@@ -231,8 +231,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresY_, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview_colmajor,
-        smplr.mat_projection_colmajor,
+        smplr.mat_modelview,
+        smplr.mat_projection,
         CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
         CVec3d(0, 0, +1).p,
         CVec3d(1, 0, 0).p,
@@ -243,8 +243,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresY_, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview_colmajor,
-        smplr.mat_projection_colmajor,
+        smplr.mat_modelview,
+        smplr.mat_projection,
         CVec3d(-0.5 * elen_ * nresX_, +0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
         CVec3d(0, 0, -1).p,
         CVec3d(1, 0, 0).p,
@@ -277,7 +277,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   aVal.assign(nz * ny * nx, 1);
   for (unsigned int iy = 0; iy < ny; ++iy) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
-      double d0 = sampler_box.aSampler[0].aZ[iz * ny + iy];
+      double d0 = sampler_box.aSampler[0].aDepth[iz * ny + iy];
       const unsigned int nd = static_cast<unsigned int>(d0 * nx);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = nx - id - 1;
@@ -289,7 +289,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   }
   for (unsigned int iy = 0; iy < ny; ++iy) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
-      double d0 = sampler_box.aSampler[1].aZ[iz * ny + iy];
+      double d0 = sampler_box.aSampler[1].aDepth[iz * ny + iy];
       const unsigned int nd = static_cast<unsigned int>(d0 * nx);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = id;
@@ -302,7 +302,7 @@ void delfem2::opengl::CarveVoxelByDepth(
 
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
-      double d0 = sampler_box.aSampler[2].aZ[iz * nx + ix];
+      double d0 = sampler_box.aSampler[2].aDepth[iz * nx + ix];
       const unsigned int nd = static_cast<unsigned int>(d0 * ny);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
@@ -314,7 +314,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   }
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iz = 0; iz < nz; ++iz) {
-      double d0 = sampler_box.aSampler[3].aZ[iz * nx + ix];
+      double d0 = sampler_box.aSampler[3].aDepth[iz * nx + ix];
       const unsigned int nd = static_cast<unsigned int>(d0 * ny);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
@@ -326,7 +326,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   }
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iy = 0; iy < ny; ++iy) {
-      double d0 = sampler_box.aSampler[4].aZ[iy * nx + ix];
+      double d0 = sampler_box.aSampler[4].aDepth[iy * nx + ix];
       const unsigned int nd = static_cast<unsigned int>(d0 * nz);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;
@@ -338,7 +338,7 @@ void delfem2::opengl::CarveVoxelByDepth(
   }
   for (unsigned int ix = 0; ix < nx; ++ix) {
     for (unsigned int iy = 0; iy < ny; ++iy) {
-      double d0 = sampler_box.aSampler[5].aZ[iy * nx + ix];
+      double d0 = sampler_box.aSampler[5].aDepth[iy * nx + ix];
       const unsigned int nd = static_cast<unsigned int>(d0 * nz);
       for (unsigned int id = 0; id < nd; id++) {
         const unsigned int ix0 = ix;

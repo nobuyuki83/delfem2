@@ -8,7 +8,7 @@
 #ifndef DFM2_OPENGL_NEW_SHDR_POINTS_H
 #define DFM2_OPENGL_NEW_SHDR_POINTS_H
 
-#include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
+#include "delfem2/opengl/new/funcs.h"
 #include "delfem2/color.h"
 #include "delfem2/dfm2_inline.h"
 #include <cstdio>
@@ -18,17 +18,32 @@
 
 namespace delfem2::opengl {
 
-class CShader_Points{
+class Drawer_Coords{
 public:
   void InitGL();
 
   template <typename REAL>
-  void SetCoords(std::vector<REAL> &vtx_coords, unsigned int ndim);
+  void SetRawArray(
+      REAL *vtx_coords,
+      size_t num_vtx_,
+      unsigned int ndim);
+
+  template <typename T, unsigned int ndim, class VEC>
+  void SetVectors(const std::vector<VEC> &vectors){
+    std::vector<T> vtx_coords;
+    vtx_coords.reserve(vectors.size()*ndim);
+    for(const auto& vec : vectors){
+      for(unsigned int idim=0;idim<ndim;++idim){
+        vtx_coords.push_back(vec[idim]);
+      }
+    }
+    this->template SetRawArray(vtx_coords.data(), vectors.size(), ndim);
+  }
 
   void Draw(
       GLenum gl_primitive_type,
-      float mP[16],
-      float mMV[16]) const;
+      const float mP[16],
+      const float mMV[16]) const;
 public:
   VertexArrayObject vao; // gl4
   int shaderProgram = -1;

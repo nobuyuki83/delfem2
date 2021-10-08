@@ -74,9 +74,17 @@ public:
   void Draw(unsigned int iel) const;
 
   template <typename REAL>
+  void Add_VBO(
+      unsigned int idx_vbo,
+      const REAL *vtx_coords,
+      size_t num_dof);
+
+  template <typename REAL>
   void ADD_VBO(
       unsigned int idx_vbo,
-      const std::vector<REAL>& vtx_coords);
+      const std::vector<REAL>& vtx_coords){
+    this->Add_VBO(idx_vbo, vtx_coords.data(), vtx_coords.size());
+  }
 
   void Add_EBO(
       const std::vector<unsigned int>& elem_vtx,

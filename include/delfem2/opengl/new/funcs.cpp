@@ -117,11 +117,13 @@ DFM2_INLINE void delfem2::opengl::VertexArrayObject::Draw(
 }
 
 
+// ------------------------------------
+
 template <typename REAL>
-DFM2_INLINE void delfem2::opengl::VertexArrayObject::ADD_VBO(
+void delfem2::opengl::VertexArrayObject::Add_VBO(
     unsigned int idx_vbo,
-    const std::vector<REAL>& vtx_coords)
-{
+    const REAL *vtx_coords,
+    size_t num_dof){
   glBindVertexArray(this->VAO); // opengl4
   assert( glIsVertexArray(this->VAO) );
   if( idx_vbo >= aVBO.size() ){ aVBO.resize(idx_vbo+1); }
@@ -129,19 +131,22 @@ DFM2_INLINE void delfem2::opengl::VertexArrayObject::ADD_VBO(
   glBindBuffer(GL_ARRAY_BUFFER, aVBO[idx_vbo].VBO); // gl24
   glBufferData(
       GL_ARRAY_BUFFER,
-      sizeof(REAL)*vtx_coords.size(),
-      vtx_coords.data(),
+      sizeof(REAL)*num_dof,
+      vtx_coords,
       GL_STATIC_DRAW); // gl24
 }
 #ifdef DFM2_STATIC_LIBRARY
-template DFM2_INLINE void delfem2::opengl::VertexArrayObject::ADD_VBO(
-    unsigned int ivbo,
-    const std::vector<float>& aXY0f);
-template DFM2_INLINE void delfem2::opengl::VertexArrayObject::ADD_VBO(
-    unsigned int ivbo,
-    const std::vector<double>& aXY0f);
+template void delfem2::opengl::VertexArrayObject::Add_VBO(
+    unsigned int idx_vbo,
+    const float *vtx_coords,
+    size_t num_dof);
+template void delfem2::opengl::VertexArrayObject::Add_VBO(
+    unsigned int idx_vbo,
+    const double *vtx_coords,
+    size_t num_dof);
 #endif
 
+// ------------------------------------
 
 DFM2_INLINE void delfem2::opengl::VertexArrayObject::Add_EBO(
     const std::vector<unsigned int>& elem_vtx,

@@ -86,20 +86,20 @@ DFM2_INLINE void delfem2::Mat4_OrthongoalProjection_AffineTrans(
     lcl::MyCross3(ay, az, ax);
     const double o[3] = {lcl::MyDot3(ax, origin), lcl::MyDot3(ay, origin), lcl::MyDot3(az, origin)};
     mMV[0] = ax[0];
-    mMV[4] = ax[1];
-    mMV[8] = ax[2];
-    mMV[12] = -o[0];
-    mMV[1] = ay[0];
+    mMV[1] = ax[1];
+    mMV[2] = ax[2];
+    mMV[3] = -o[0];
+    mMV[4] = ay[0];
     mMV[5] = ay[1];
-    mMV[9] = ay[2];
-    mMV[13] = -o[1];
-    mMV[2] = az[0];
-    mMV[6] = az[1];
+    mMV[6] = ay[2];
+    mMV[7] = -o[1];
+    mMV[8] = az[0];
+    mMV[9] = az[1];
     mMV[10] = az[2];
-    mMV[14] = -o[2];
-    mMV[3] = 0;
-    mMV[7] = 0;
-    mMV[11] = 0;
+    mMV[11] = -o[2];
+    mMV[12] = 0;
+    mMV[13] = 0;
+    mMV[14] = 0;
     mMV[15] = 1;
   }
   { //
@@ -110,20 +110,20 @@ DFM2_INLINE void delfem2::Mat4_OrthongoalProjection_AffineTrans(
     double n = -z_range;
     double f = 0;
     mP[0 * 4 + 0] = 2.0 / (r - l);
-    mP[1 * 4 + 0] = 0.0;
-    mP[2 * 4 + 0] = 0.0;
-    mP[3 * 4 + 0] = -(l + r) / (r - l);
     mP[0 * 4 + 1] = 0.0;
-    mP[1 * 4 + 1] = 2.0 / (t - b);
-    mP[2 * 4 + 1] = 0.0;
-    mP[3 * 4 + 1] = -(t + b) / (t - b);
     mP[0 * 4 + 2] = 0.0;
+    mP[0 * 4 + 3] = -(l + r) / (r - l);
+    mP[1 * 4 + 0] = 0.0;
+    mP[1 * 4 + 1] = 2.0 / (t - b);
     mP[1 * 4 + 2] = 0.0;
-    mP[2 * 4 + 2] = 2.0 / (n - f);
-    mP[3 * 4 + 2] = -(n + f) / (n - f);
-    mP[0 * 4 + 3] = 0.0;
-    mP[1 * 4 + 3] = 0.0;
-    mP[2 * 4 + 3] = 0.0;
+    mP[1 * 4 + 3] = -(t + b) / (t - b);
+    mP[2 * 4 + 0] = 0.0;
+    mP[2 * 4 + 1] = 0.0;
+    mP[2 * 4 + 2] = - 2.0 / (n - f);
+    mP[2 * 4 + 3] = + (n + f) / (n - f);
+    mP[3 * 4 + 0] = 0.0;
+    mP[3 * 4 + 1] = 0.0;
+    mP[3 * 4 + 2] = 0.0;
     mP[3 * 4 + 3] = 1.0;
   }
 }
@@ -155,12 +155,12 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::CopyToCPU_Depth() {
   return;
 #endif
   //
-  aZ.resize(width * height);
+  aDepth.resize(width * height);
   ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
   ::glBindTexture(GL_TEXTURE_2D, id_tex_depth);
   ::glGetTexImage(GL_TEXTURE_2D, 0,
                   GL_DEPTH_COMPONENT, GL_FLOAT,
-                  (void *) aZ.data());
+                  (void *) aDepth.data());
   ::glBindTexture(GL_TEXTURE_2D, 0);
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -319,12 +319,9 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
     CVec3d &n0,
     const CVec3d &ps,
     const CRender2Tex &smplr) {
-  double mMVPG[16];
-  smplr.GetMVPG(mMVPG);
-  double mMVPGinv[16];
-  Inverse_Mat4(mMVPGinv, mMVPG);
+  const CMat4d global2depthfield = smplr.GetAffineMatrix4_Global2DepthOnGrid();
   double pg[3];
-  Vec3_Vec3Mat4_AffineProjection(pg, ps.p, mMVPG);
+  Vec3_Mat4Vec3_AffineProjection(pg, global2depthfield.data(), ps.p);
   const unsigned int nx = smplr.width;
   const unsigned int ny = smplr.height;
   const int ix0 = (int) floor(pg[0]);
@@ -335,14 +332,14 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
   if (ix1 < 0 || ix1 >= (int) nx) { return false; }
   if (iy0 < 0 || iy0 >= (int) ny) { return false; }
   if (iy1 < 0 || iy1 >= (int) ny) { return false; }
-  if (smplr.aZ[iy0 * nx + ix0] > 0.99) return false;
-  if (smplr.aZ[iy0 * nx + ix1] > 0.99) return false;
-  if (smplr.aZ[iy1 * nx + ix0] > 0.99) return false;
-  if (smplr.aZ[iy1 * nx + ix1] > 0.99) return false;
-  const CVec3d p00(ix0, iy0, smplr.aZ[iy0 * nx + ix0]);
-  const CVec3d p01(ix0, iy1, smplr.aZ[iy1 * nx + ix0]);
-  const CVec3d p10(ix1, iy0, smplr.aZ[iy0 * nx + ix1]);
-  const CVec3d p11(ix1, iy1, smplr.aZ[iy1 * nx + ix1]);
+  if (smplr.aDepth[iy0 * nx + ix0] > 0.99) return false;
+  if (smplr.aDepth[iy0 * nx + ix1] > 0.99) return false;
+  if (smplr.aDepth[iy1 * nx + ix0] > 0.99) return false;
+  if (smplr.aDepth[iy1 * nx + ix1] > 0.99) return false;
+  const CVec3d p00(ix0, iy0, smplr.aDepth[iy0 * nx + ix0]);
+  const CVec3d p01(ix0, iy1, smplr.aDepth[iy1 * nx + ix0]);
+  const CVec3d p10(ix1, iy0, smplr.aDepth[iy0 * nx + ix1]);
+  const CVec3d p11(ix1, iy1, smplr.aDepth[iy1 * nx + ix1]);
   const double rx = pg[0] - ix0;
   const double ry = pg[1] - iy0;
   CVec3d p3 = (1 - rx) * (1 - ry) * p00 + rx * (1 - ry) * p10 + (1 - rx) * ry * p01 + rx * ry * p11;
@@ -350,9 +347,10 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
   CVec3d dpy = (rx - 1) * p00 - rx * p10 + (1 - rx) * p01 + rx * p11;
   CVec3d n3 = Cross(dpx, dpy);
   //
-  Vec3_Vec3Mat4_AffineProjection(p0.p, p3.p, mMVPGinv);
+  const CMat4d depthfield2global = global2depthfield.Inverse();
+  Vec3_Mat4Vec3_AffineProjection(p0.p, depthfield2global.data(), p3.p);
   CVec3d p4;
-  Vec3_Vec3Mat4_AffineProjection(p4.p, (p3 + n3).p, mMVPGinv);
+  Vec3_Mat4Vec3_AffineProjection(p4.p, depthfield2global.data(), (p3 + n3).p);
   n0 = (p4 - p0).normalized();
   return true;
 }

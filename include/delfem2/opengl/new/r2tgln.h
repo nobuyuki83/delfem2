@@ -41,9 +41,9 @@ public:
   bool isDrawTex;
   double draw_len_axis;
   unsigned int pointSize;
-  CShader_Mesh shdr0;
-  CShader_MeshTex shdr1;
-  CShader_Points shdr2;
+  CShader_Mesh drawer_view_frustrum;
+  CShader_MeshTex drawer_projected_image;
+  Drawer_Coords drawer_projected_points;
 };
   
 }

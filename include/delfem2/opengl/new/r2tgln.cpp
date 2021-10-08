@@ -31,7 +31,7 @@
 DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::SetDepth(
     const delfem2::opengl::CRender2Tex& r2t)
 {
-  if( r2t.aZ.size() != r2t.width*r2t.height ){ return; }
+  if( r2t.aDepth.size() != r2t.width*r2t.height ){ return; }
   //
   unsigned int nx = r2t.width;
   unsigned int ny = r2t.height;
@@ -42,20 +42,20 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::SetDepth(
       double q0[3] = {
           (ix+0.5)/nx*2.0-1.0,
           (iy+0.5)/ny*2.0-1.0,
-          r2t.aZ[ip]*2.0-1.0 };
+          1.-r2t.aDepth[ip]*2.0 };
       aXYZ[ip*3+0] = q0[0];
       aXYZ[ip*3+1] = q0[1];
       aXYZ[ip*3+2] = q0[2];
     }
   }
-  shdr2.SetCoords(aXYZ,3);
+  drawer_projected_points.SetRawArray(aXYZ.data(),aXYZ.size()/3, 3);
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
 {
   //
   { // draw grid
-    this->shdr0.Compile();
+    this->drawer_view_frustrum.Compile();
     std::vector<double> aPos3d = {
         -1, -1, -1,
         -1, -1, +1,
@@ -80,17 +80,17 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
         2,  6,
         3,  7,
     };
-    shdr0.Initialize(aPos3d, 3, aLine, GL_LINES);
+    drawer_view_frustrum.Initialize(aPos3d, 3, aLine, GL_LINES);
   }
   // -----
   { // draw texture
-    shdr1.Compile();
+    drawer_projected_image.Compile();
     // --------------
     std::vector<double> aPos3d = {
-        -1, -1, -1,
-        +1, -1, -1,
-        +1, +1, -1,
-        -1, +1, -1
+        -1, -1, +1,
+        +1, -1, +1,
+        +1, +1, +1,
+        -1, +1, +1
     };
     std::vector<unsigned int> aTri = {
         0, 1, 2,
@@ -102,12 +102,12 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
         1.0, 1.0,
         0.0, 1.0
     };
-    shdr1.setCoords(aPos3d,3);
-    shdr1.setTexCoords(aTex2d);
-    shdr1.setElement( aTri, GL_TRIANGLES);
+    drawer_projected_image.setCoords(aPos3d,3);
+    drawer_projected_image.setTexCoords(aTex2d);
+    drawer_projected_image.setElement( aTri, GL_TRIANGLES);
   }
   {
-    shdr2.InitGL();
+    drawer_projected_points.InitGL();
   }
 }
 
@@ -116,14 +116,14 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::Draw(
     float mP0[16],
     float mMV0[16]) const
 {
-  double mMVP[16]; delfem2::MatMat4(mMVP,r2t.mat_modelview_colmajor,r2t.mat_projection_colmajor);
-  double mMVPinv[16]; delfem2::Inverse_Mat4(mMVPinv,mMVP);
-  float mMVP1[16]; delfem2::MatMat4(mMVP1,mMVPinv,mMV0);
-  shdr0.Draw(mP0,mMVP1);
-  shdr2.Draw(GL_POINTS,mP0,mMVP1);
+  const dfm2::CMat4d mvp0 = dfm2::CMat4d(r2t.mat_modelview) * dfm2::CMat4d(r2t.mat_projection);
+  const dfm2::CMat4f mv1 = (dfm2::CMat4d(mMV0) * mvp0.Inverse()).cast<float>();
+  drawer_view_frustrum.Draw(mP0,mv1.data());
+  glPointSize(this->pointSize);
+  drawer_projected_points.Draw(GL_POINTS,mP0,mv1.data());
   glEnable(GL_TEXTURE_2D);
   glActiveTexture(0);
   glBindTexture(GL_TEXTURE_2D, r2t.id_tex_color);
-  shdr1.Draw(mP0,mMVP1);
+  drawer_projected_image.Draw(mP0,mv1.data());
   glBindTexture(GL_TEXTURE_2D, 0);
 }

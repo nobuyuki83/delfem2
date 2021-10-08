@@ -28,7 +28,8 @@ public:
 
   void Compile();
 
-  void Draw(float mP[16], float mMV[16]) const;
+  void Draw(const float mP[16],
+            const float mMV[16]) const;
 
 public:
   VertexArrayObject vao; // gl4

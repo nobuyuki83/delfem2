@@ -52,8 +52,8 @@ int main() {
     //
     render2texture.SetTextureProperty(nresX, nresZ, true);
     ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        render2texture.mat_modelview_colmajor,
-        render2texture.mat_projection_colmajor,
+        render2texture.mat_modelview,
+        render2texture.mat_projection,
         origin.p, ez.p, ex.p,
         nresX, nresZ, elen, elen * nresY);
     drawer_r2t.SetPointColor(0.0, 1.0, 0.0);
@@ -93,23 +93,20 @@ int main() {
 
     std::vector<double> aXYZ1;
     {
-      dfm2::CMat4d mat4_mvp;
-      render2texture.GetMVPG(mat4_mvp.data());
-      const dfm2::CMat4d mMVPGinv = mat4_mvp.Inverse();
-      dfm2::CVec3d p0;
-      dfm2::Vec3_Vec3Mat4_AffineProjection(p0.data(), src.data(), mat4_mvp.data());
-      dfm2::CVec3d p1;
-      dfm2::Vec3Mat4(p1.data(), dir.data(), mat4_mvp.data());
+      dfm2::CMat4d mat4_mvp = render2texture.GetAffineMatrix4_Global2DepthOnGrid();
+      dfm2::CVec3d p0 = mat4_mvp.MultVec3AffineProjection(src.data());
+      dfm2::CVec3d p1 = mat4_mvp.MultVec3(dir.data());
       std::vector<dfm2::PointOnSurfaceMesh<double>> vec_point_on_triangle;
       dfm2::IntersectionLine_Hightfield(
           vec_point_on_triangle,
           p0.data(), p1.normalized().data(),
           render2texture.width, render2texture.height,
-          render2texture.aZ);
+          render2texture.aDepth);
       for (const auto &pes : vec_point_on_triangle) {
-        dfm2::CVec3d lpos = pes.PositionOnGrid2(render2texture.width, render2texture.height, 1.0, render2texture.aZ);
-        dfm2::CVec3d q2;
-        dfm2::Vec3_Vec3Mat4_AffineProjection(q2.p, lpos.p, mMVPGinv.data());
+        dfm2::CVec3d lpos = pes.PositionOnGrid2(
+            render2texture.width, render2texture.height,
+            1.0, render2texture.aDepth);
+        dfm2::CVec3d q2 = mat4_mvp.Inverse().MultVec3AffineProjection(lpos.p);
         aXYZ1.push_back(q2.x);
         aXYZ1.push_back(q2.y);
         aXYZ1.push_back(q2.z);

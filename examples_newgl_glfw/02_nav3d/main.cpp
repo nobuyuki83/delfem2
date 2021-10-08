@@ -36,11 +36,8 @@ void draw()
   ::glDepthFunc(GL_LESS);
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-
-  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
-  mP = mP.transpose() * dfm2::CMat4f::ScaleXYZ(1,1,-1);
-  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
-  shdr.Draw(mP.data(), mMV.transpose().data());
+  shdr.Draw(viewer.GetProjectionMatrix().data(),
+            viewer.GetModelViewMatrix().data());
   viewer.SwapBuffers();
   glfwPollEvents();
 }

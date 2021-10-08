@@ -46,10 +46,10 @@ void ShadingImageRayLambertian(
   vec_rgb.resize(height*width*3);
   for(unsigned int ih=0;ih<height;++ih){
     for(unsigned int iw=0;iw<width;++iw) {
-      const double ps[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), -1., 1. };
-      const double pe[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), +1., 1. };
-      double qs[3]; dfm2::Vec3_Vec3Mat4_AffineProjection(qs, ps,mat_mvp_colmajor_inverse);
-      double qe[3]; dfm2::Vec3_Vec3Mat4_AffineProjection(qe, pe,mat_mvp_colmajor_inverse);
+      const double ps[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), +1., 1. };
+      const double pe[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), -1., 1. };
+      double qs[3]; dfm2::Vec3_Mat4Vec3_AffineProjection(qs, mat_mvp_colmajor_inverse, ps);
+      double qe[3]; dfm2::Vec3_Mat4Vec3_AffineProjection(qe, mat_mvp_colmajor_inverse, pe);
       const dfm2::CVec3d src1(qs);
       const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
       //
@@ -143,20 +143,18 @@ int main()
 
   while (!glfwWindowShouldClose(viewer.window))
   {
-    float mMVP[16];
     {
       delfem2::CMat4f mP = viewer.GetProjectionMatrix();
-      delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1, 1, -1);
       delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
-      dfm2::MatMat4(mMVP, mMV.transpose().data(), (mZ*mP).transpose().data());
+      delfem2::CMat4f mMVP = mP * mMV;
+      std::vector< delfem2::PointOnSurfaceMesh<double> > aPointElemSurf;
+      Intersection_ImageRay_TriMesh3(aPointElemSurf,
+           tex.height,tex.width, mMVP.data(),
+           aNodeBVH,aAABB,aXYZ,aTri);
+      ShadingImageRayLambertian(tex.pixel_color,
+          tex.height, tex.width, mMVP.data(),
+          aPointElemSurf, aXYZ, aTri);
     }
-    std::vector< delfem2::PointOnSurfaceMesh<double> > aPointElemSurf;
-    Intersection_ImageRay_TriMesh3(aPointElemSurf,
-         tex.height,tex.width, mMVP,
-         aNodeBVH,aAABB,aXYZ,aTri);
-    ShadingImageRayLambertian(tex.pixel_color,
-        tex.height, tex.width, mMVP,
-        aPointElemSurf, aXYZ, aTri);
     tex.InitGL();
     //
     ::glfwMakeContextCurrent(viewer.window);

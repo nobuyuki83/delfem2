@@ -56,25 +56,16 @@ int main() {
   dfm2::opengl::CRender2Tex smpl;
   smpl.SetTextureProperty(nres, nres, true);
 
-/*
-  dfm2::Mat4_OrthongoalProjection_AffineTrans(
-      sampler.mMV, sampler.mP,
-      dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).p,
-      dfm2::CVec3d(0,0,-1).p,
-      dfm2::CVec3d(1,0,0).p,
-      nres, nres, elen, 4);
-      */
-
   ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-      smpl.mat_modelview_colmajor, smpl.mat_projection_colmajor,
+      smpl.mat_modelview, smpl.mat_projection,
       dfm2::CVec3d(+0.5 * elen * nres, -0.5 * elen * nres, -0.5 * elen * nres).p,
       dfm2::CVec3d(+1, 0, 0).p,
       dfm2::CVec3d(0, +1, 0).p,
       nres, nres, elen, 2);
 
-  dfm2::opengl::CDrawerOldGL_Render2Tex draw_smpl;
-  draw_smpl.SetPointColor(1, 0, 0);
-  draw_smpl.draw_len_axis = 1.0;
+  dfm2::opengl::CDrawerOldGL_Render2Tex drawer_r2t;
+  drawer_r2t.SetPointColor(1, 0, 0);
+  drawer_r2t.draw_len_axis = 1.0;
   // ---------------------------------------
   dfm2::glfw::CViewer3 viewer(2.0);
   dfm2::glfw::InitGLOld();
@@ -107,20 +98,20 @@ int main() {
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
-    glUseProgram(shaderProgram);
+    ::glUseProgram(shaderProgram);
     DrawObject(cur_time, vtx_xyz, tri_vtx);
     smpl.End();
     cur_time += 1.0;
     // ----
     viewer.DrawBegin_oldGL();
-    glUseProgram(0);
+    ::glUseProgram(0);
     dfm2::opengl::DrawBackground(dfm2::CColor(0.2f, 0.7f, 0.7f));
     ::glEnable(GL_LIGHTING);
     ::glColor3d(1, 1, 1);
-    glUseProgram(shaderProgram);
+    ::glUseProgram(shaderProgram);
     DrawObject(cur_time, vtx_xyz, tri_vtx);
-    glUseProgram(0);
-    draw_smpl.Draw(smpl);
+    ::glUseProgram(0);
+    drawer_r2t.Draw(smpl);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

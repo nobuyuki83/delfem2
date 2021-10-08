@@ -216,59 +216,75 @@ template DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed(
 
 // ------------------------
 
+template <typename T>
 DFM2_INLINE void delfem2::MeshTri3D_Sphere(
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri,
-    double radius,
-    int nlong,
-    int nlat) {
-  aXYZ.clear();
-  aTri.clear();
-  if (nlong <= 1 || nlat <= 2) { return; }
-  const double pi = 3.1415926535;
-  double dl = pi / nlong;
-  double dr = 2.0 * pi / nlat;
-  aXYZ.reserve((nlat * (nlong - 1) + 2) * 3);
-  for (int ila = 0; ila < nlong + 1; ila++) {
-    double y0 = cos(dl * ila);
-    double r0 = sin(dl * ila);
-    for (int ilo = 0; ilo < nlat; ilo++) {
-      double x0 = r0 * sin(dr * ilo);
-      double z0 = r0 * cos(dr * ilo);
-      aXYZ.push_back(radius * x0);
-      aXYZ.push_back(radius * y0);
-      aXYZ.push_back(radius * z0);
-      if (ila == 0 || ila == nlong) { break; }
+    std::vector<T> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    T radius,
+    unsigned int n_longitude,
+    unsigned int n_latitude) {
+  vtx_xyz.clear();
+  tri_vtx.clear();
+  if (n_longitude <= 1 || n_latitude <= 2) { return; }
+  const T pi = 3.1415926535;
+  const T dl = pi / n_longitude;
+  const T dr = 2 * pi / n_latitude;
+  vtx_xyz.reserve((n_latitude * (n_longitude - 1) + 2) * 3);
+  for (unsigned int ila = 0; ila < n_longitude + 1; ila++) {
+    const T y0 = std::cos(dl * ila);
+    const T r0 = std::sin(dl * ila);
+    for (unsigned int ilo = 0; ilo < n_latitude; ilo++) {
+      const T x0 = r0 * std::sin(dr * ilo);
+      const T z0 = r0 * std::cos(dr * ilo);
+      vtx_xyz.push_back(radius * x0);
+      vtx_xyz.push_back(radius * y0);
+      vtx_xyz.push_back(radius * z0);
+      if (ila == 0 || ila == n_longitude) { break; }
     }
   }
   //
-  int ntri = nlat * (nlong - 1) * 2 + nlat * 2;
-  aTri.reserve(ntri * 3);
-  for (int ilo = 0; ilo < nlat; ilo++) {
-    aTri.push_back(0);
-    aTri.push_back((ilo + 0) % nlat + 1);
-    aTri.push_back((ilo + 1) % nlat + 1);
+  unsigned int ntri = n_latitude * (n_longitude - 1) * 2 + n_latitude * 2;
+  tri_vtx.reserve(ntri * 3);
+  for (unsigned int ilo = 0; ilo < n_latitude; ilo++) {
+    tri_vtx.push_back(0);
+    tri_vtx.push_back((ilo + 0) % n_latitude + 1);
+    tri_vtx.push_back((ilo + 1) % n_latitude + 1);
   }
-  for (int ila = 0; ila < nlong - 2; ila++) {
-    for (int ilo = 0; ilo < nlat; ilo++) {
-      int i1 = (ila + 0) * nlat + 1 + (ilo + 0) % nlat;
-      int i2 = (ila + 0) * nlat + 1 + (ilo + 1) % nlat;
-      int i3 = (ila + 1) * nlat + 1 + (ilo + 1) % nlat;
-      int i4 = (ila + 1) * nlat + 1 + (ilo + 0) % nlat;
-      aTri.push_back(i3);
-      aTri.push_back(i2);
-      aTri.push_back(i1);
-      aTri.push_back(i4);
-      aTri.push_back(i3);
-      aTri.push_back(i1);
+  for (unsigned int ila = 0; ila < n_longitude - 2; ila++) {
+    for (unsigned int ilo = 0; ilo < n_latitude; ilo++) {
+      const unsigned int i1 = (ila + 0) * n_latitude + 1 + (ilo + 0) % n_latitude;
+      const unsigned int i2 = (ila + 0) * n_latitude + 1 + (ilo + 1) % n_latitude;
+      const unsigned int i3 = (ila + 1) * n_latitude + 1 + (ilo + 1) % n_latitude;
+      const unsigned int i4 = (ila + 1) * n_latitude + 1 + (ilo + 0) % n_latitude;
+      tri_vtx.push_back(i3);
+      tri_vtx.push_back(i2);
+      tri_vtx.push_back(i1);
+      tri_vtx.push_back(i4);
+      tri_vtx.push_back(i3);
+      tri_vtx.push_back(i1);
     }
   }
-  for (int ilo = 0; ilo < nlat; ilo++) {
-    aTri.push_back(nlat * (nlong - 1) + 1);
-    aTri.push_back((nlong - 2) * nlat + 1 + (ilo + 1) % nlat);
-    aTri.push_back((nlong - 2) * nlat + 1 + (ilo + 0) % nlat);
+  for (unsigned int ilo = 0; ilo < n_latitude; ilo++) {
+    tri_vtx.push_back(n_latitude * (n_longitude - 1) + 1);
+    tri_vtx.push_back((n_longitude - 2) * n_latitude + 1 + (ilo + 1) % n_latitude);
+    tri_vtx.push_back((n_longitude - 2) * n_latitude + 1 + (ilo + 0) % n_latitude);
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::MeshTri3D_Sphere(std::vector<double> &vtx_xyz,
+                                        std::vector<unsigned int> &tri_vtx,
+                                        double radius,
+                                        unsigned int n_longitude,
+                                        unsigned int n_latitude);
+template void delfem2::MeshTri3D_Sphere(std::vector<float> &vtx_xyz,
+                                        std::vector<unsigned int> &tri_vtx,
+                                        float radius,
+                                        unsigned int n_longitude,
+                                        unsigned int n_latitude);
+#endif
+
+
+// --------------------------
 
 template<typename T>
 DFM2_INLINE void delfem2::MeshTri3D_Cube(

@@ -67,7 +67,7 @@ int main() {
   sampler.SetTextureProperty(nres, nres, true);
   {
     dfm2::Mat4_OrthongoalProjection_AffineTrans(
-        sampler.mat_modelview_colmajor, sampler.mat_projection_colmajor,
+        sampler.mat_modelview, sampler.mat_projection,
         dfm2::CVec3d(-elen * 0.5 * nres, -elen * 0.5 * nres, +elen * nres * 0.5).p,
         dfm2::CVec3d(0, 0, +1).p,
         dfm2::CVec3d(1, 0, 0).p,

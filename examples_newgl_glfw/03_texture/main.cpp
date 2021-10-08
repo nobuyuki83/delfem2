@@ -56,8 +56,7 @@ void draw(GLFWwindow* window)
   const float asp = static_cast<float>(nw)/static_cast<float>(nh);
   dfm2::CMat4f mP, mMV;
   viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
-  const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1, 1, -1);
-  shdr.Draw((mZ*mP).transpose().data(), mMV.transpose().data());
+  shdr.Draw(mP.data(),mMV.data());
   
   viewer.SwapBuffers();
   glfwPollEvents();

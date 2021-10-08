@@ -227,9 +227,9 @@ void delfem2::glfw::CViewer3::DrawBegin_oldGL() const {
     ::glMultMatrixf((mZ * mP).transpose().data());
   }
   {
-    const CMat4f mMV = this->GetModelViewMatrix();
     ::glMatrixMode(GL_MODELVIEW);
     ::glLoadIdentity();
+    const CMat4f mMV = this->GetModelViewMatrix();
     ::glMultMatrixf(mMV.transpose().data());
   }
 #endif

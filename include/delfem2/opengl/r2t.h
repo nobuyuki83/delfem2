@@ -12,6 +12,7 @@
 
 #include <cstdio>
 #include <vector>
+#include <array>
 
 #include "delfem2/mat4.h"
 #include "delfem2/vec3.h"
@@ -39,8 +40,8 @@ namespace opengl {
 class CRender2Tex {
  public:
   CRender2Tex() :
-      mat_modelview_colmajor{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-      mat_projection_colmajor{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1} {
+      mat_modelview{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+      mat_projection{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1} {
     width = 128;
     height = 128;
     is_rgba_8ui = true;
@@ -50,18 +51,24 @@ class CRender2Tex {
   }
   // --------------------------
   void InitGL();
-  void SetZeroToDepth() { for (float &i : aZ) { i = 0.0; }}
-  void GetMVPG(double mMVPG[16]) const {
+  void SetZeroToDepth() { for (float &i : aDepth) { i = 0.0; }}
+  /**
+   * @param mMVPG affine transformation from device coordinate to hight field on grid where height is aZ
+   */
+  std::array<double,16> GetAffineMatrix4_Global2DepthOnGrid() const {
     double mMVP[16];
-    MatMat4(mMVP, mat_modelview_colmajor, mat_projection_colmajor);
+    MatMat4(mMVP, mat_projection, mat_modelview);
     const double tmp0 = width * 0.5;
     const double tmp1 = height * 0.5;
-    double mG[16] = {
-        tmp0, 0, 0, 0,
-        0, tmp1, 0, 0,
-        0, 0, 0.5, 0,
-        tmp0 - 0.5, tmp1 - 0.5, 0.5, 1};
-    MatMat4(mMVPG, mMVP, mG);
+    // z=1 should map to d=0 (near end), z=-1 should map to d=1 (far end)
+    double affine_device2depthongrid[16] = {
+        tmp0, 0, 0, tmp0 - 0.5,
+        0, tmp1, 0, tmp1 - 0.5,
+        0, 0, -0.5, 0.5,
+        0, 0, 0, 1};
+    std::array<double,16> mat4_affine;
+    MatMat4(mat4_affine.data(),affine_device2depthongrid,mMVP);
+    return mat4_affine;
   }
   /**
   * @brief update the bounding box by adding points
@@ -94,21 +101,21 @@ class CRender2Tex {
   void End();
   template<typename REAL>
   std::vector<REAL> GetAffineMatrixModelViewAsColMajorStlVector() const {
-    return std::vector<REAL>(mat_modelview_colmajor, mat_modelview_colmajor + 16);
+    return std::vector<REAL>(mat_modelview, mat_modelview + 16);
   }
   template<typename REAL>
   std::vector<REAL> GetAffineMatrixProjectionAsColMajorStlVector() const {
-    return std::vector<REAL>(mat_projection_colmajor, mat_projection_colmajor + 16);
+    return std::vector<REAL>(mat_projection, mat_projection + 16);
   }
   template<typename REAL>
   void SetAffineMatrixModelViewAsColMajorStlVector(const std::vector<REAL>& a) {
     assert(a.size()==16);
-    for(int i=0;i<16;++i){ mat_modelview_colmajor[i] = a[i]; }
+    for(int i=0;i<16;++i){ mat_modelview[i] = a[i]; }
   }
   template<typename REAL>
   void SetAffineMatrixProjectionAsColMajorStlVector(const std::vector<REAL>& a) {
     assert(a.size()==16);
-    for(int i=0;i<16;++i){ mat_projection_colmajor[i] = a[i]; }
+    for(int i=0;i<16;++i){ mat_projection[i] = a[i]; }
   }
  private:
   void CopyToCPU_Depth();
@@ -122,13 +129,13 @@ class CRender2Tex {
   unsigned int id_tex_depth;
   unsigned int id_framebuffer;
   // --------
-  std::vector<float> aZ;
+  std::vector<float> aDepth;  // depth. near-end is 0 far-end (no hit) is 1
   bool is_rgba_8ui;
   std::vector<unsigned char> aRGBA_8ui;
   std::vector<float> aRGBA_32f;
   //
-  double mat_modelview_colmajor[16];  // affine matrix
-  double mat_projection_colmajor[16];  // affine matrix
+  double mat_modelview[16];  // affine matrix
+  double mat_projection[16];  // affine matrix
 //protected:
   int view[4]{}; // viewport information
 };

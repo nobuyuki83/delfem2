@@ -111,4 +111,4 @@ void CarveVoxelByDepth(
 #  include "delfem2/opengl/old/r2tglo.cpp"
 #endif
 
-#endif /* depth_hpp */
+#endif /* DFM2_OPENGL_OLD_R2TGLO_H */

@@ -129,12 +129,8 @@ void draw()
   
   StepTime();
   shdr_trimsh.UpdateVertex(aXYZ, 3, aTri);
-
-  delfem2::CMat4f mP = viewer.GetProjectionMatrix();
-  delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1.f, 1.f, -1.f);
-  delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
-  shdr_trimsh.Draw((mP.transpose() * mZ).data(),
-                   mMV.transpose().data());
+  shdr_trimsh.Draw(viewer.GetProjectionMatrix().data(),
+                   viewer.GetModelViewMatrix().data());
   
   viewer.SwapBuffers();
   glfwPollEvents();

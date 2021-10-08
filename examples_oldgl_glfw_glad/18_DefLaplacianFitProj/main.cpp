@@ -109,11 +109,10 @@ void Project(
       dfm2::CVec3d p0, n0;
       bool res = GetProjectedPoint(p0, n0, ps, smplr);
       if( !res ){ continue; }
-//      std::cout << ip << " " << p0 << " " << n0 << std::endl;
-      dfm2::CVec3d z0(0,0,1);
-      double mMVP[16]; dfm2::MatMat4(mMVP, smplr.mat_modelview_colmajor, smplr.mat_projection_colmajor);
+      dfm2::CVec3d z0(0,0,-1);
+      double mMVP[16]; dfm2::MatMat4(mMVP, smplr.mat_projection, smplr.mat_modelview);
       double mMVinv[16]; dfm2::Inverse_Mat4(mMVinv, mMVP);
-      dfm2::CVec3d z1; dfm2::Vec3_Vec3Mat4_AffineProjection(z1.p,z0.p,mMVinv);
+      dfm2::CVec3d z1; dfm2::Vec3_Mat4Vec3_AffineProjection(z1.p,mMVinv,z0.p);
       double ct = n0.dot(z1.normalized());
       if( ct <= 0.0 ){ continue; }
       if( (p0-ps).norm() > 0.1 ){ continue; }
@@ -153,20 +152,6 @@ void Draw(
     ::glLineWidth(1);
     dfm2::opengl::DrawMeshTri3D_Edge(trg.aXYZ1, trg.aElm);
   }
-  /*
-   {
-   ::glColor3d(1,1,1);
-   ::glBegin(GL_LINES);
-   for(const auto& idpnrm : def.aIdpNrm ){
-   unsigned int ip0 = idpnrm.first;
-   dfm2::CVec3d p(aXYZ1.data()+ip0*3);
-   ::glVertex3dv(p.data());
-   dfm2::CVec3d n(idpnrm.second);
-   ::glVertex3dv((p+0.02*n).data());
-   }
-   ::glEnd();
-   }
-   */
 }
 
 void LaplacianLinear(

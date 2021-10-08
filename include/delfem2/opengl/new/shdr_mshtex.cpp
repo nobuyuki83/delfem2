@@ -64,7 +64,7 @@ void delfem2::opengl::CShader_MeshTex::Compile()
       "{\n"
       "  gl_Position = matrixProjection * matrixModelView * vec4(posIn.x, posIn.y, posIn.z, 1.0);\n"
       "  texPrj = texIn;\n"
-      "}\0";
+      "}";
 
   const std::string glsl33frag =
       "in vec2 texPrj;\n"
@@ -74,7 +74,7 @@ void delfem2::opengl::CShader_MeshTex::Compile()
       "{\n"
       "  FragColor = texture(myTextureSampler,texPrj);\n"
 //      "  FragColor = vec4(texPrj.x, texPrj.y, 1.0, 0.0);\n"
-      "}\0";
+      "}";
 
 #ifdef EMSCRIPTEN
   shaderProgram = GL24_CompileShader((std::string("#version 300 es\n")+
@@ -102,12 +102,14 @@ void delfem2::opengl::CShader_MeshTex::Compile()
 
 
 void delfem2::opengl::CShader_MeshTex::Draw(
-    float mP[16],
-    float mMV[16]) const
+    const float mP[16],
+    const float mMV[16]) const
 {
   glUseProgram(shaderProgram);
-  glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
-  glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
+  glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE,
+                     TransposeMat4ForOpenGL(mP,true).data());
+  glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE,
+                     TransposeMat4ForOpenGL(mMV,false).data());
   glUniform1i(Loc_Texture, 0);
   vao.Draw(0); // draw face
 }

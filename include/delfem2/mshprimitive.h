@@ -28,14 +28,16 @@ namespace delfem2 {
 /**
  * @brief a function to make a triangle mesh of sphere. The y axis is the pole.
  * @param radius  radius of  a sphere
- * @param nlong  number of subdivision in y-axis (longtitude)
- * @param nlat numbef of subdivision around the cross section of XZ plane (latitude)
+ * @param n_longitude  number of subdivision in y-axis (longtitude)
+ * @param n_latitude numbef of subdivision around the cross section of XZ plane (latitude)
  */
+template <typename T>
 DFM2_INLINE void MeshTri3D_Sphere(
-    std::vector<double> &aXYZ,
-    std::vector<unsigned int> &aTri,
-    double radius,
-    int nlong, int nlat);
+    std::vector<T> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    T radius,
+    unsigned int n_longitude,
+    unsigned int n_latitude);
 
 /**
  * @details y axis is the axis of cylinder

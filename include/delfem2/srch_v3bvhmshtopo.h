@@ -436,12 +436,12 @@ void Intersection_ImageRay_TriMesh3(
   for (unsigned int ih = 0; ih < nheight; ++ih) {
     for (unsigned int iw = 0; iw < nwidth; ++iw) {
       //
-      const double ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
-      const double pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
+      const double ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
+      const double pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
       double qs[3];
-      Vec3_Vec3Mat4_AffineProjection(qs, ps, mMVPd_inv);
+      Vec3_Mat4Vec3_AffineProjection(qs, mMVPd_inv, ps);
       double qe[3];
-      Vec3_Vec3Mat4_AffineProjection(qe, pe, mMVPd_inv);
+      Vec3_Mat4Vec3_AffineProjection(qe, mMVPd_inv, pe);
       const CVec3d src1(qs);
       const CVec3d dir1 = CVec3d(qe) - src1;
       //

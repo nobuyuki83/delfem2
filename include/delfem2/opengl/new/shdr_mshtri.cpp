@@ -143,8 +143,10 @@ void delfem2::opengl::CShader_TriMesh::Compile()
 void delfem2::opengl::CShader_TriMesh::Draw(float mP[16], float mMV[16]) const
 {
   glUseProgram(shaderProgram);
-  glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
-  glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
+  glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE,
+                     TransposeMat4ForOpenGL(mP,true).data());
+  glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE,
+                     TransposeMat4ForOpenGL(mMV,false).data());
   glUniform3f(Loc_Color, this->color_face.r , this->color_face.g, this->color_face.b);
   glLineWidth(this->line_width);
   vao.Draw(0); // draw face
