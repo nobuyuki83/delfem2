@@ -177,15 +177,15 @@ public:
       ::glLoadIdentity();
       double asp = (double)win_w/win_h;
       const delfem2::CMat4f mP = projection.GetMatrix(asp);
-      const delfem2::CMat4f mS = delfem2::CMat4f::Scale(scale);
-      // const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
-      ::glMultMatrixf((mS * mP.transpose()).data());
+      const delfem2::CMat4f mS = delfem2::CMat4f::AffineScale(scale);
+      const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
+      ::glMultMatrixf((mZ * mS * mP.transpose()).data());
     }
     {
       ::glMatrixMode(GL_MODELVIEW);
       ::glLoadIdentity();
       const delfem2::CMat4f mMV = modelview.GetMatrix();
-      const delfem2::CMat4f mT = delfem2::CMat4f::Translate(trans[0], trans[1], trans[2]);
+      const delfem2::CMat4f mT = delfem2::CMat4f::Translation({(float)trans[0], (float)trans[1], (float)trans[2]});
       ::glMultMatrixf((mT*mMV).transpose().data());
     }
   }

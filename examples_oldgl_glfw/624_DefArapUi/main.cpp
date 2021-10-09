@@ -105,7 +105,7 @@ int main() {
             aXYZ1[ip * 3 + 2] = aXYZ0[ip * 3 + 2];
           }
           if (aBCFlag[ip * 3 + 0] == 2) {
-            dfm2::Vec3_Mat4Vec3_AffineProjection(
+            dfm2::Vec3_Mat4Vec3_Homography(
                 aXYZ1.data() + ip * 3,
                 aff1.mat,
                 aXYZ0.data() + ip * 3);

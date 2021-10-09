@@ -110,9 +110,9 @@ void Project(
       bool res = GetProjectedPoint(p0, n0, ps, smplr);
       if( !res ){ continue; }
       dfm2::CVec3d z0(0,0,-1);
-      double mMVP[16]; dfm2::MatMat4(mMVP, smplr.mat_projection, smplr.mat_modelview);
-      double mMVinv[16]; dfm2::Inverse_Mat4(mMVinv, mMVP);
-      dfm2::CVec3d z1; dfm2::Vec3_Mat4Vec3_AffineProjection(z1.p,mMVinv,z0.p);
+      dfm2::CMat4d mMVP = dfm2::CMat4d(smplr.mat_projection) * dfm2::CMat4d(smplr.mat_modelview);
+      dfm2::CMat4d mMVPinv = mMVP.Inverse();
+      dfm2::CVec3d z1 = mMVPinv.MultVec3_Homography(z0.p);
       double ct = n0.dot(z1.normalized());
       if( ct <= 0.0 ){ continue; }
       if( (p0-ps).norm() > 0.1 ){ continue; }

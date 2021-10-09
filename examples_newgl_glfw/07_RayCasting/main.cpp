@@ -48,8 +48,8 @@ void ShadingImageRayLambertian(
     for(unsigned int iw=0;iw<width;++iw) {
       const double ps[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), +1., 1. };
       const double pe[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), -1., 1. };
-      double qs[3]; dfm2::Vec3_Mat4Vec3_AffineProjection(qs, mat_mvp_colmajor_inverse, ps);
-      double qe[3]; dfm2::Vec3_Mat4Vec3_AffineProjection(qe, mat_mvp_colmajor_inverse, pe);
+      double qs[3]; dfm2::Vec3_Mat4Vec3_Homography(qs, mat_mvp_colmajor_inverse, ps);
+      double qe[3]; dfm2::Vec3_Mat4Vec3_Homography(qe, mat_mvp_colmajor_inverse, pe);
       const dfm2::CVec3d src1(qs);
       const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
       //

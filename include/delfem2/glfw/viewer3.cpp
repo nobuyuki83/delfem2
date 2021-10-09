@@ -125,7 +125,7 @@ static void glfw_callback_scroll(
 std::array<float,16> delfem2::glfw::CViewer3::GetProjectionMatrix() const {
   int w0, h0;
   glfwGetWindowSize(window, &w0, &h0);
-  const CMat4f mS = CMat4f::Scale((float)scale);
+  const CMat4f mS = CMat4f::AffineScale((float)scale);
   const float asp = static_cast<float>(w0) / static_cast<float>(h0);
   const CMat4f mP = projection->GetMatrix(asp);
   return (mP * mS).GetStlArray();

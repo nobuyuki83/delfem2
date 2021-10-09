@@ -164,9 +164,9 @@ public:
     }
   }
   CMat4<REAL> Affine() const {
-    CMat4<REAL> m0 = delfem2::CMat4<REAL>::Translate((-pivot0).p);
+    CMat4<REAL> m0 = delfem2::CMat4<REAL>::Translation((-pivot0).p);
     CMat4<REAL> m1 = delfem2::CMat4<REAL>::Quat(gizmo_rot.quat);
-    CMat4<REAL> m2 = delfem2::CMat4<REAL>::Translate(gizmo_trnsl.pos.p);
+    CMat4<REAL> m2 = delfem2::CMat4<REAL>::Translation(gizmo_trnsl.pos.p);
     return m2*m1*m0;
   }
 public:

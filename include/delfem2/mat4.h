@@ -245,18 +245,18 @@ void Translate_Mat4Affine(
     const REAL v[3]);
 
 template<typename T0, typename T1, typename T2>
-void Vec3_Mat4Vec3_AffineProjection(
+void Vec3_Mat4Vec3_Homography(
     T0 y0[3],
     const T1 a[16],
     const T2 x0[3]);
 
 template<typename T>
-DFM2_INLINE std::array<T, 2> Vec2_Mat4Vec3_AffineProjection(
+DFM2_INLINE std::array<T, 2> Vec2_Mat4Vec3_Homography(
     const T a[16],
     const T x0[3]);
 
 template<typename T0, typename T1, typename T2>
-void Vec3_Vec3Mat4_AffineProjection(
+void Vec3_Vec3Mat4_Homography(
     T0 y0[3],
     const T1 x0[3],
     const T2 a[16]);
@@ -345,8 +345,8 @@ class CMat4 {
       v00, v01, v02, v03,
       v10, v11, v12, v13,
       v20, v21, v22, v23,
-      v30, v31, v32, v33} {
-  }
+      v30, v31, v32, v33} {}
+   
   REAL *data() { return mat; }
   const REAL *data() const { return mat; }
  public:
@@ -411,11 +411,9 @@ class CMat4 {
         mat[12],mat[13],mat[14],mat[15]};
   }
 
-  CMat4<REAL> Multiply(const CMat4<REAL> &matrix) const;
-
-  std::array<REAL,3> MultVec3AffineProjection(const REAL* v) const {
+  std::array<REAL,3> MultVec3_Homography(const REAL* v) const {
     std::array<REAL,3> r;
-    Vec3_Mat4Vec3_AffineProjection(r.data(), mat, v);
+    Vec3_Mat4Vec3_Homography(r.data(), mat, v);
     return r;
   }
   
@@ -468,7 +466,7 @@ class CMat4 {
         0, 0, 1, 0,
         0, 0, 0, 1};
   }
-  [[nodiscard]] static CMat4<REAL> Scale(REAL s) {
+  [[nodiscard]] static CMat4<REAL> AffineScale(REAL s) {
     return CMat4<REAL>{
         s, 0, 0, 0,
         0, s, 0, 0,
@@ -491,17 +489,16 @@ class CMat4 {
   }
   [[nodiscard]] static CMat4<REAL> Quat(const REAL *q);
 
-  template<typename S>
-  [[nodiscard]] static CMat4<REAL> Translate(S v0, S v1, S v2) {
+  [[nodiscard]] static CMat4<REAL> Translation(const std::array<REAL,3>&& v) {
     return CMat4<REAL>{
-        1, 0, 0, static_cast<REAL>(v0),
-        0, 1, 0, static_cast<REAL>(v1),
-        0, 0, 1, static_cast<REAL>(v2),
+        1, 0, 0, static_cast<REAL>(v[0]),
+        0, 1, 0, static_cast<REAL>(v[1]),
+        0, 0, 1, static_cast<REAL>(v[2]),
         0, 0, 0, 1 };
   }
 
   template<typename S>
-  [[nodiscard]] static CMat4<REAL> Translate(const S v[3]) {
+  [[nodiscard]] static CMat4<REAL> Translation(const S *v) {
     return CMat4<REAL>{
         1, 0, 0, static_cast<REAL>(v[0]),
         0, 1, 0, static_cast<REAL>(v[1]),
@@ -516,6 +513,27 @@ class CMat4 {
         v[1 * 3 + 0], v[1 * 3 + 1], v[1 * 3 + 2], 0,
         v[2 * 3 + 0], v[2 * 3 + 1], v[2 * 3 + 2], 0,
         0, 0, 0, 1};
+  }
+
+  [[nodiscard]] static CMat4<REAL> AffineOrthogonalProjection(
+      REAL xmin, REAL xmax,
+      REAL ymin, REAL ymax,
+      REAL zmin, REAL zmax){
+    CMat4<REAL> m;
+    Mat4_AffineProjectionOrtho(m.data(), xmin, xmax, ymin, ymax, zmin, zmax);
+    return m;
+  }
+
+  [[nodiscard]] static CMat4<REAL> AffineAxisTransform(
+      const std::array<REAL,3> &&x_axis,
+      const std::array<REAL,3> &&y_axis,
+      const std::array<REAL,3> &&z_axis){
+    return CMat4<REAL>{
+      x_axis[0], y_axis[0], z_axis[0], 0,
+      x_axis[1], y_axis[1], z_axis[1], 0,
+      x_axis[2], y_axis[2], z_axis[2], 0,
+      0, 0, 0, 1
+    };
   }
 
  public:

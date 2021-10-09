@@ -64,7 +64,7 @@ class ModelView_Trackball : public ModelView {
    * @detail column major
    */
   [[nodiscard]] std::array<float, 16> GetMatrix() const override {
-    const CMat4f mT = CMat4f::Translate(-anchor[0], -anchor[1], -anchor[2]);
+    const CMat4f mT = CMat4f::Translation({-(float)anchor[0], -(float)anchor[1], -(float)anchor[2]});
     const CMat4f mR = CMat4f::Quat(quaternion);
     std::array<float, 16> mMV{};
     (mR*mT).CopyTo(mMV.data());

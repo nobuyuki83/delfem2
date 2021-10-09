@@ -8,11 +8,12 @@
 #ifndef DFM2_OPENGL_NEW_SHDR_POINTS_H
 #define DFM2_OPENGL_NEW_SHDR_POINTS_H
 
+#include <cstdio>
+#include <vector>
+
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/color.h"
 #include "delfem2/dfm2_inline.h"
-#include <cstdio>
-#include <vector>
 
 // -------------------------------------
 

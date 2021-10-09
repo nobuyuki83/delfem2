@@ -20,6 +20,7 @@
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/vec3.h"
+#include "delfem2/mat3.h"
 
 // ------------------
 
@@ -173,6 +174,7 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     unsigned int nresY_,
     unsigned int nresZ_,
     double elen_) {
+  namespace dfm2 = delfem2;
   this->lengrid = elen_;
   //
   aSampler.resize(0);
@@ -181,74 +183,92 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(
     aSampler.resize(aSampler.size() + 1);
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresY_, nresZ_, true); // +x
-    ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview,
-        smplr.mat_projection,
-        CVec3d(+0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
-        CVec3d(+1, 0, 0).p,
-        CVec3d(0, +1, 0).p,
-        nresY_, nresZ_, elen_, elen_ * nresX_);
+    dfm2::CMat4d::AffineAxisTransform(
+        {0,0,1},
+        {1,0,0},
+        {0,1,0}
+    ).CopyTo(smplr.mat_modelview);
+    dfm2::CMat4d::AffineOrthogonalProjection(
+        -elen_*nresY_*0.5, elen_*nresY_*0.5,
+        -elen_*nresZ_*0.5, elen_*nresZ_*0.5,
+        -elen_*nresX_*0.5, elen_*nresX_*0.5
+    ).CopyTo(smplr.mat_projection);
   }
   {
     aSampler.resize(aSampler.size() + 1);
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresY_, nresZ_, true); // -x
-    ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview,
-        smplr.mat_projection,
-        CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
-        CVec3d(-1, 0, 0).p,
-        CVec3d(0, +1, 0).p,
-        nresY_, nresZ_, elen_, elen_ * nresX_);
+    dfm2::CMat4d::AffineAxisTransform(
+        {0,0,-1},
+        {1,0,0},
+        {0,-1,0}
+    ).CopyTo(smplr.mat_modelview);
+    dfm2::CMat4d::AffineOrthogonalProjection(
+        -elen_*nresY_*0.5, elen_*nresY_*0.5,
+        -elen_*nresZ_*0.5, elen_*nresZ_*0.5,
+        -elen_*nresX_*0.5, elen_*nresX_*0.5
+    ).CopyTo(smplr.mat_projection);
   }
   //
   {
     aSampler.resize(aSampler.size() + 1);
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresZ_, true); // +y
-    ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview,
-        smplr.mat_projection,
-        CVec3d(-0.5 * elen_ * nresX_, +0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
-        CVec3d(0, +1, 0).p,
-        CVec3d(1, +0, 0).p,
-        nresX_, nresZ_, elen_, elen_ * nresY_);
+    dfm2::CMat4d::AffineAxisTransform(
+        {1,0,0},
+        {0,0,1},
+        {0,-1,0}
+    ).CopyTo(smplr.mat_modelview);
+    dfm2::CMat4d::AffineOrthogonalProjection(
+        -elen_*nresX_*0.5, elen_*nresX_*0.5,
+        -elen_*nresZ_*0.5, elen_*nresZ_*0.5,
+        -elen_*nresY_*0.5, elen_*nresY_*0.5
+    ).CopyTo(smplr.mat_projection);
   }
   {
     aSampler.resize(aSampler.size() + 1);
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresZ_, true); // -y
-    ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview,
-        smplr.mat_projection,
-        CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
-        CVec3d(0, -1, 0).p,
-        CVec3d(1, +0, 0).p,
-        nresX_, nresZ_, elen_, elen_ * nresY_);
+    dfm2::CMat4d::AffineAxisTransform(
+        {1,0,0},
+        {0,0,-1},
+        {0,1,0}
+    ).CopyTo(smplr.mat_modelview);
+    dfm2::CMat4d::AffineOrthogonalProjection(
+        -elen_*nresX_*0.5, elen_*nresX_*0.5,
+        -elen_*nresZ_*0.5, elen_*nresZ_*0.5,
+        -elen_*nresY_*0.5, elen_*nresY_*0.5
+    ).CopyTo(smplr.mat_projection);
   }
   {
     aSampler.resize(aSampler.size() + 1);
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresY_, true);
-    ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview,
-        smplr.mat_projection,
-        CVec3d(-0.5 * elen_ * nresX_, -0.5 * elen_ * nresY_, +0.5 * elen_ * nresZ_).p,
-        CVec3d(0, 0, +1).p,
-        CVec3d(1, 0, 0).p,
-        nresX_, nresY_, elen_, elen_ * nresZ_);
+    dfm2::CMat4d::AffineAxisTransform(
+        {1,0,0},
+        {0,1,0},
+        {0,0,1}
+    ).CopyTo(smplr.mat_modelview);
+    dfm2::CMat4d::AffineOrthogonalProjection(
+        -elen_*nresX_*0.5, elen_*nresX_*0.5,
+        -elen_*nresY_*0.5, elen_*nresY_*0.5,
+        -elen_*nresZ_*0.5, elen_*nresZ_*0.5
+    ).CopyTo(smplr.mat_projection);
   }
   {
     aSampler.resize(aSampler.size() + 1);
     auto &smplr = aSampler[aSampler.size() - 1];
     smplr.SetTextureProperty(nresX_, nresY_, true);
-    ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        smplr.mat_modelview,
-        smplr.mat_projection,
-        CVec3d(-0.5 * elen_ * nresX_, +0.5 * elen_ * nresY_, -0.5 * elen_ * nresZ_).p,
-        CVec3d(0, 0, -1).p,
-        CVec3d(1, 0, 0).p,
-        nresX_, nresY_, elen_, elen_ * nresZ_);
+    dfm2::CMat4d::AffineAxisTransform(
+        {1,0,0},
+        {0,-1,0},
+        {0,0,-1}
+    ).CopyTo(smplr.mat_modelview);
+    dfm2::CMat4d::AffineOrthogonalProjection(
+        -elen_*nresX_*0.5, elen_*nresX_*0.5,
+        -elen_*nresY_*0.5, elen_*nresY_*0.5,
+        -elen_*nresZ_*0.5, elen_*nresZ_*0.5
+    ).CopyTo(smplr.mat_projection);
   }
 
   // ------------------------

@@ -56,12 +56,16 @@ int main() {
   dfm2::opengl::CRender2Tex smpl;
   smpl.SetTextureProperty(nres, nres, true);
 
-  ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-      smpl.mat_modelview, smpl.mat_projection,
-      dfm2::CVec3d(+0.5 * elen * nres, -0.5 * elen * nres, -0.5 * elen * nres).p,
-      dfm2::CVec3d(+1, 0, 0).p,
-      dfm2::CVec3d(0, +1, 0).p,
-      nres, nres, elen, 2);
+  dfm2::CMat4d::AffineAxisTransform(
+      {0,0,1},
+      {1,0,0},
+      {0,1,0}
+      ).CopyTo(smpl.mat_modelview);
+  dfm2::CMat4d::AffineOrthogonalProjection(
+      -elen*nres*0.5, elen*nres*0.5,
+      -elen*nres*0.5, elen*nres*0.5,
+      -1, 1
+      ).CopyTo(smpl.mat_projection);
 
   dfm2::opengl::CDrawerOldGL_Render2Tex drawer_r2t;
   drawer_r2t.SetPointColor(1, 0, 0);

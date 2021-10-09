@@ -20,9 +20,9 @@ public:
     const float ps[3] = {(float) mouse_x, (float) mouse_y, +1.0};
     const float pe[3] = {(float) mouse_x, (float) mouse_y, -1.0};
     float qs[3];
-    ::delfem2::Vec3_Mat4Vec3_AffineProjection(qs, mMVP_inv, ps);
+    ::delfem2::Vec3_Mat4Vec3_Homography(qs, mMVP_inv, ps);
     float qe[3];
-    ::delfem2::Vec3_Mat4Vec3_AffineProjection(qe, mMVP_inv, pe);
+    ::delfem2::Vec3_Mat4Vec3_Homography(qe, mMVP_inv, pe);
     src[0] = qs[0];
     src[1] = qs[1];
     src[2] = qs[2];
@@ -44,13 +44,13 @@ public:
     const float p1s[3] = {(float) mouse_x, (float) mouse_y, +1.f};
     const float p1e[3] = {(float) mouse_x, (float) mouse_y, -1.f};
     float q0s[3];
-    ::delfem2::Vec3_Mat4Vec3_AffineProjection(q0s, mMVP_inv, p0s);
+    ::delfem2::Vec3_Mat4Vec3_Homography(q0s, mMVP_inv, p0s);
     float q0e[3];
-    ::delfem2::Vec3_Mat4Vec3_AffineProjection(q0e, mMVP_inv, p0e);
+    ::delfem2::Vec3_Mat4Vec3_Homography(q0e, mMVP_inv, p0e);
     float q1s[3];
-    ::delfem2::Vec3_Mat4Vec3_AffineProjection(q1s, mMVP_inv, p1s);
+    ::delfem2::Vec3_Mat4Vec3_Homography(q1s, mMVP_inv, p1s);
     float q1e[3];
-    ::delfem2::Vec3_Mat4Vec3_AffineProjection(q1e, mMVP_inv, p1e);
+    ::delfem2::Vec3_Mat4Vec3_Homography(q1e, mMVP_inv, p1e);
     //
     src0[0] = q0s[0];
     src0[1] = q0s[1];

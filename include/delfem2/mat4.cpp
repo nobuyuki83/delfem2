@@ -336,7 +336,7 @@ template void delfem2::VecMat4(
 // ---------------------------
 
 template<typename T0, typename T1, typename T2>
-DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection(
+DFM2_INLINE void delfem2::Vec3_Mat4Vec3_Homography(
     T0 y0[3],
     const T1 a[16],
     const T2 x0[3]) {
@@ -352,9 +352,9 @@ DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection(
   y0[2] = y1[2] / y1[3];
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Vec3_Mat4Vec3_AffineProjection(
+template void delfem2::Vec3_Mat4Vec3_Homography(
     float y0[3], const float a[16], const float x0[3]);
-template void delfem2::Vec3_Mat4Vec3_AffineProjection(
+template void delfem2::Vec3_Mat4Vec3_Homography(
     double y0[3], const double a[16], const double x0[3]);
 #endif
 
@@ -362,7 +362,7 @@ template void delfem2::Vec3_Mat4Vec3_AffineProjection(
 
 template<typename T>
 DFM2_INLINE
-std::array<T, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+std::array<T, 2> delfem2::Vec2_Mat4Vec3_Homography(
     const T a[16],
     const T x0[3]) {
   const T x1[4] = {x0[0], x0[1], x0[2], 1};
@@ -371,10 +371,10 @@ std::array<T, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
   return {y1[0] / y1[3], y1[1] / y1[3]};
 }
 #ifdef DFM2_STATIC_LIBRARY
-template std::array<float, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+template std::array<float, 2> delfem2::Vec2_Mat4Vec3_Homography(
     const float a[16],
     const float x0[3]);
-template std::array<double, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
+template std::array<double, 2> delfem2::Vec2_Mat4Vec3_Homography(
     const double a[16],
     const double x0[3]);
 #endif
@@ -382,7 +382,7 @@ template std::array<double, 2> delfem2::Vec2_Mat4Vec3_AffineProjection(
 // ----------------------------
 
 template<typename T0, typename T1, typename T2>
-DFM2_INLINE void delfem2::Vec3_Vec3Mat4_AffineProjection(
+DFM2_INLINE void delfem2::Vec3_Vec3Mat4_Homography(
     T0 y0[3],
     const T1 x0[3],
     const T2 a[16]) {
@@ -394,9 +394,9 @@ DFM2_INLINE void delfem2::Vec3_Vec3Mat4_AffineProjection(
   y0[2] = y1[2] / y1[3];
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Vec3_Vec3Mat4_AffineProjection(
+template void delfem2::Vec3_Vec3Mat4_Homography(
     float y0[3], const float x0[3], const float a[16]);
-template void delfem2::Vec3_Vec3Mat4_AffineProjection(
+template void delfem2::Vec3_Vec3Mat4_Homography(
     double y0[3], const double x0[3], const double a[16]);
 #endif
 
@@ -781,24 +781,6 @@ template void delfem2::Inverse_Mat4(double minv[], const double m[]);
 #endif
 
 // ------------------------------------------------------------------
-
-template<typename T>
-delfem2::CMat4<T> delfem2::CMat4<T>::Multiply(
-    const CMat4<T> &matrix) const {
-  CMat4 m;
-  ::delfem2::MatMat4(
-      m.mat,
-      this->mat, matrix.mat);
-  return m;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CMat4<float> delfem2::CMat4<float>::Multiply(
-    const CMat4<float> &mat0) const;
-template delfem2::CMat4<double> delfem2::CMat4<double>::Multiply(
-    const CMat4<double> &mat0) const;
-#endif
-
-// -----------------------------------
 
 template<typename REAL>
 delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL *q) {

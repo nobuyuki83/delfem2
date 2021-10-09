@@ -1,15 +1,15 @@
 #ifndef DFM2_OPENGL_NEW_SHDR_MSHTEX_H
 #define DFM2_OPENGL_NEW_SHDR_MSHTEX_H
 
+#include <cstdio>
+#include <vector>
+
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/dfm2_inline.h"
-#include <stdio.h>
-#include <vector>
 
 // -------------------------------------
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 class CShader_MeshTex {
 public:
@@ -39,7 +39,6 @@ public:
   int Loc_Texture;
 };
 
-}
 }
 
 

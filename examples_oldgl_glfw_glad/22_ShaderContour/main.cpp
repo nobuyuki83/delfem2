@@ -39,7 +39,7 @@ std::string LoadFile(
   std::ifstream inputFile1(fname.c_str());
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
   std::istreambuf_iterator<char> vdataEnd;
-  return std::string(vdataBegin, vdataEnd);
+  return {vdataBegin, vdataEnd};
 }
 
 // ------------------------------------------------------
@@ -65,14 +65,16 @@ int main() {
   double elen = 0.02;
   dfm2::opengl::CRender2Tex sampler;
   sampler.SetTextureProperty(nres, nres, true);
-  {
-    dfm2::Mat4_OrthongoalProjection_AffineTrans(
-        sampler.mat_modelview, sampler.mat_projection,
-        dfm2::CVec3d(-elen * 0.5 * nres, -elen * 0.5 * nres, +elen * nres * 0.5).p,
-        dfm2::CVec3d(0, 0, +1).p,
-        dfm2::CVec3d(1, 0, 0).p,
-        nres, nres, elen, elen * nres);
-  }
+  dfm2::CMat4d::AffineAxisTransform(
+      {1,0,0},
+      {0,1,0},
+      {0,0,1}
+  ).CopyTo(sampler.mat_modelview);
+  dfm2::CMat4d::AffineOrthogonalProjection(
+      -elen*nres*0.5, elen*nres*0.5,
+      -elen*nres*0.5, elen*nres*0.5,
+      -elen*nres*0.5, elen*nres*0.5
+  ).CopyTo(sampler.mat_projection);
   dfm2::opengl::CDrawerOldGL_Render2Tex draw_sampler;
   draw_sampler.SetPointColor(1, 0, 0);
   draw_sampler.draw_len_axis = 1.0;

@@ -70,6 +70,7 @@ template void MyCross3(double r[3], const double v1[3], const double v2[3]);
 }  // namespace opengl
 }  // namespace delfem2
 
+/*
 DFM2_INLINE void delfem2::Mat4_OrthongoalProjection_AffineTrans(
     double mMV[16],
     double mP[16],
@@ -127,6 +128,7 @@ DFM2_INLINE void delfem2::Mat4_OrthongoalProjection_AffineTrans(
     mP[3 * 4 + 3] = 1.0;
   }
 }
+ */
 
 // --------------------------------------------
 
@@ -321,7 +323,7 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
     const CRender2Tex &smplr) {
   const CMat4d global2depthfield = smplr.GetAffineMatrix4_Global2DepthOnGrid();
   double pg[3];
-  Vec3_Mat4Vec3_AffineProjection(pg, global2depthfield.data(), ps.p);
+  Vec3_Mat4Vec3_Homography(pg, global2depthfield.data(), ps.p);
   const unsigned int nx = smplr.width;
   const unsigned int ny = smplr.height;
   const int ix0 = (int) floor(pg[0]);
@@ -348,9 +350,9 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
   CVec3d n3 = Cross(dpx, dpy);
   //
   const CMat4d depthfield2global = global2depthfield.Inverse();
-  Vec3_Mat4Vec3_AffineProjection(p0.p, depthfield2global.data(), p3.p);
+  Vec3_Mat4Vec3_Homography(p0.p, depthfield2global.data(), p3.p);
   CVec3d p4;
-  Vec3_Mat4Vec3_AffineProjection(p4.p, depthfield2global.data(), (p3 + n3).p);
+  Vec3_Mat4Vec3_Homography(p4.p, depthfield2global.data(), (p3 + n3).p);
   n0 = (p4 - p0).normalized();
   return true;
 }

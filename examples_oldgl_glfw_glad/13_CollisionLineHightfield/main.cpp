@@ -43,19 +43,17 @@ int main() {
     const unsigned int nresY = 128;
     const unsigned int nresZ = 256;
     double elen = 0.02;
-    dfm2::CVec3d origin = dfm2::CVec3d(
-        -0.5 * elen * nresX,
-        +0.5 * elen * nresY,
-        +0.5 * elen * nresZ);
-    dfm2::CVec3d ez = dfm2::CVec3d(0, +1, 0);
-    dfm2::CVec3d ex = dfm2::CVec3d(1, +0, 0);
-    //
     render2texture.SetTextureProperty(nresX, nresZ, true);
-    ::delfem2::Mat4_OrthongoalProjection_AffineTrans(
-        render2texture.mat_modelview,
-        render2texture.mat_projection,
-        origin.p, ez.p, ex.p,
-        nresX, nresZ, elen, elen * nresY);
+    dfm2::CMat4d::AffineAxisTransform(
+        {1,0,0},
+        {0,0,1},
+        {0,1,0}
+    ).CopyTo(render2texture.mat_modelview);
+    dfm2::CMat4d::AffineOrthogonalProjection(
+        -elen*nresX*0.5, elen*nresX*0.5,
+        -elen*nresZ*0.5, elen*nresZ*0.5,
+        -elen*nresY*0.5, elen*nresY*0.5
+    ).CopyTo(render2texture.mat_projection);
     drawer_r2t.SetPointColor(0.0, 1.0, 0.0);
     drawer_r2t.draw_len_axis = 0.2;
     drawer_r2t.isDrawTex = false;
@@ -93,9 +91,9 @@ int main() {
 
     std::vector<double> aXYZ1;
     {
-      dfm2::CMat4d mat4_mvp = render2texture.GetAffineMatrix4_Global2DepthOnGrid();
-      dfm2::CVec3d p0 = mat4_mvp.MultVec3AffineProjection(src.data());
-      dfm2::CVec3d p1 = mat4_mvp.MultVec3(dir.data());
+      const dfm2::CMat4d mat4_mvp = render2texture.GetAffineMatrix4_Global2DepthOnGrid();
+      const dfm2::CVec3d p0 = mat4_mvp.MultVec3_Homography(src.data());
+      const dfm2::CVec3d p1 = mat4_mvp.MultVec3(dir.data());
       std::vector<dfm2::PointOnSurfaceMesh<double>> vec_point_on_triangle;
       dfm2::IntersectionLine_Hightfield(
           vec_point_on_triangle,
@@ -106,7 +104,7 @@ int main() {
         dfm2::CVec3d lpos = pes.PositionOnGrid2(
             render2texture.width, render2texture.height,
             1.0, render2texture.aDepth);
-        dfm2::CVec3d q2 = mat4_mvp.Inverse().MultVec3AffineProjection(lpos.p);
+        const dfm2::CVec3d q2 = mat4_mvp.Inverse().MultVec3_Homography(lpos.data());
         aXYZ1.push_back(q2.x);
         aXYZ1.push_back(q2.y);
         aXYZ1.push_back(q2.z);

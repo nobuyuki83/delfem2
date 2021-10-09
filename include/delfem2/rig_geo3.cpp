@@ -279,9 +279,9 @@ delfem2::UpdateBoneRotTrans(
     std::vector<CRigBone>& aBone)
 {
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
-    CMat4d m01 = CMat4d::Translate(aBone[ibone].transRelative);
+    CMat4d m01 = CMat4d::Translation(aBone[ibone].transRelative);
     m01 = m01 * CMat4d::Quat(aBone[ibone].quatRelativeRot);
-    m01 = m01 * CMat4d::Scale(aBone[ibone].scale);
+    m01 = m01 * CMat4d::AffineScale(aBone[ibone].scale);
     // m01 = T*Q*S
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone

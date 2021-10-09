@@ -20,6 +20,7 @@
 
 namespace delfem2 {
 
+/*
 DFM2_INLINE void Mat4_OrthongoalProjection_AffineTrans(
     double mMV[16],
     double mP[16],
@@ -30,6 +31,7 @@ DFM2_INLINE void Mat4_OrthongoalProjection_AffineTrans(
     unsigned int nResY,
     double lengrid,
     double z_range);
+    */
 
 namespace opengl {
 
