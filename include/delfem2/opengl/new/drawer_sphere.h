@@ -28,7 +28,9 @@ class Drawer_Sphere {
       const float mat_projection[16],
       const float mat_modelview[16]) const {
     namespace dfm2 = ::delfem2;
-    dfm2::CMat4f mmv = dfm2::CMat4f(mat_modelview) * dfm2::CMat4f::Translate(trans) * dfm2::CMat4f::Scale(radius);
+    const dfm2::CMat4f mmv = dfm2::CMat4f(mat_modelview)
+        * dfm2::CMat4f::Translation({trans[0],trans[1],trans[2]})
+        * dfm2::CMat4f::AffineScale(radius);
     drawer_mesh.Draw(mat_projection, mmv.data());
   }
  public:
