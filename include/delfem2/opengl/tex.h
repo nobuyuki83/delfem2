@@ -18,8 +18,7 @@
 
 #include "delfem2/dfm2_inline.h"
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 void SaveViewportAsImagePpm(const std::string &path);
 
@@ -45,7 +44,7 @@ class CTexRGB {
   unsigned int height =0, width=0, channels=0;
 
  public:
-  CTexRGB() {}
+  CTexRGB() = default;
 
   virtual void Initialize(
       unsigned int w0,
@@ -84,7 +83,7 @@ class CTexRGB_Rect2D :
     this->max_y = (double) h;
   }
 
-  std::vector<double> MinMaxAABB() const {
+  [[nodiscard]] std::vector<double> MinMaxAABB() const {
     return {this->min_x, this->min_y, z,
             this->max_x, this->max_y, z};
   }
@@ -129,9 +128,9 @@ class CTexManager {
     texinfo.id_tex_gl = id_tex_gl;
     /////
     bool is_new = true;
-    for (int itex = 0; itex < (int) aTexInfo.size(); ++itex) {
-      if (aTexInfo[itex].full_path != path) continue;
-      aTexInfo[itex] = texinfo;
+    for (auto & itex : aTexInfo) {
+      if (itex.full_path != path) continue;
+      itex = texinfo;
       is_new = false;
     }
     if (is_new) {
@@ -155,7 +154,6 @@ class CTexManager {
   std::vector<CTextureInfo> aTexInfo;
 };
 
-}
 }
 
 #ifndef DFM2_STATIC_LIBRARY

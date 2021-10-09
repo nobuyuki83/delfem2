@@ -25,6 +25,37 @@ void SetRgbToTex(
   stbi_image_free(img);
 }
 
+void LoadImageFileSetToTexture(const char* file_path)
+{
+  int width, height, channels;
+  stbi_set_flip_vertically_on_load(true);
+  unsigned char *img = stbi_load(
+      file_path,
+      &width, &height, &channels, 0);
+  assert(width > 0 && height > 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  if( channels == 3 ) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 static_cast<int>(width),
+                 static_cast<int>(height),
+                 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 img);
+  }
+  if( channels == 4 ){
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 static_cast<int>(width),
+                 static_cast<int>(height),
+                 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 img);
+  }
+  glBindTexture(GL_TEXTURE_2D, 0);
+  stbi_image_free(img);
+}
+
 }
 
 #endif /* DFM2_IMG2TEX_H */

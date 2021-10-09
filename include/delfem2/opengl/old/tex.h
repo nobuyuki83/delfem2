@@ -5,8 +5,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/mat3.h"
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 void DrawTexMaxSize(
     const delfem2::opengl::CTexRGB &tex0) {
@@ -25,6 +24,34 @@ void DrawTexMaxSize(
   glEnd();
 }
 
+void DrawTextureBackground()
+{
+  ::glEnable(GL_TEXTURE_2D);
+  ::glMatrixMode(GL_PROJECTION);
+  ::glPushMatrix();
+  ::glLoadIdentity();
+  ::glMatrixMode(GL_MODELVIEW);
+  ::glPushMatrix();
+  ::glLoadIdentity();
+  ::glDisable(GL_LIGHTING);
+  ::glColor3d(1,1,1);
+  ::glBegin(GL_QUADS);
+  ::glTexCoord2d(0,+1);
+  ::glVertex2d(-1,+1);
+  ::glTexCoord2d(+1,+1);
+  ::glVertex2d(+1,+1);
+  ::glTexCoord2d(+1,0);
+  ::glVertex2d(+1,-1);
+  ::glTexCoord2d(0,0);
+  ::glVertex2d(-1,-1);
+  ::glEnd();
+  ::glDisable(GL_TEXTURE_2D);
+  ::glMatrixMode(GL_PROJECTION);
+  ::glPopMatrix();
+  ::glMatrixMode(GL_MODELVIEW);
+  ::glPopMatrix();
+}
+
 
 void DrawCamInteriorMatrixWithTexture(
     const delfem2::opengl::CTexRGB &tex0,
@@ -33,9 +60,9 @@ void DrawCamInteriorMatrixWithTexture(
   ::glEnable(GL_TEXTURE_2D);
   const float ax[4][3] = {
       {0.f,           0.f,           1.f},
-      {float(tex0.w), 0.f,           1.f},
-      {float(tex0.w), float(tex0.h), 1.f},
-      {0.f,           float(tex0.h), 1.f}};
+      {float(tex0.width), 0.f,           1.f},
+      {float(tex0.width), float(tex0.height), 1.f},
+      {0.f,           float(tex0.height), 1.f}};
   float aX[4][3];
   for (unsigned int i = 0; i < 4; ++i) {
     delfem2::MatVec3(aX[i], Kinv, ax[i]);
@@ -97,8 +124,8 @@ void DrawTex_CvNormDist(
     const float *t,
     const float *K)
 {
-  const unsigned int nw = tex0.w;
-  const unsigned int nh = tex0.h;
+  const unsigned int nw = tex0.width;
+  const unsigned int nh = tex0.height;
   assert(aNormDist.size()==nw*nh*4);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
@@ -110,7 +137,7 @@ void DrawTex_CvNormDist(
   //
   double Kinv[9];
   delfem2::Inverse_Mat3(Kinv, K);
-  double ratio0 = 1. / Kinv[8];
+  // double ratio0 = 1. / Kinv[8];
 
   float B[16];
   delfem2::Mat4_Mat3(B, Kinv);
@@ -157,7 +184,6 @@ void DrawTex_CvNormDist(
   ::glPopMatrix();
 }
 
-}
 }
 
 #endif
