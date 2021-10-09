@@ -38,7 +38,7 @@ public:
         vtx_coords.push_back(vec[idim]);
       }
     }
-    this->template SetRawArray(vtx_coords.data(), vectors.size(), ndim);
+    this->SetRawArray(vtx_coords.data(), vectors.size(), ndim);
   }
 
   void Draw(
