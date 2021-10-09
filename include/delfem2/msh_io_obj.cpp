@@ -229,8 +229,8 @@ DFM2_INLINE void delfem2::Write_WavefrontObj(
     fout << vtx_nrm[ip * 3 + 2] << std::endl;
   }
   for (size_t ig = 0; ig < group_elem_index.size() - 1; ++ig) {
-    if (ig < group_names.size() && ig != 0) {
-      fout << "g " << group_names[ig] << std::endl;
+    if (ig-1 < group_names.size() && ig != 0) {
+      fout << "g " << group_names[ig-1] << std::endl;
     }
     for (size_t itri = group_elem_index[ig]; itri < group_elem_index[ig + 1]; itri++) {
       assert(itri<tri_vtx_xyz.size()/3);
