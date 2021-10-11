@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "delfem2/opengl/new/funcs.h"
-#include "delfem2/color.h"
 #include "delfem2/dfm2_inline.h"
 
 // -------------------------------------
@@ -52,7 +51,7 @@ public:
   int Loc_MatrixModelView = -1;
   int Loc_Color = -1;
   unsigned int num_vtx = 0;
-  delfem2::CColor color_face = delfem2::CColor(0.0,0.0,0.0,0.0);
+  std::array<float,4> color = {0.0,0.0,0.0,1.0};
 };
 
 }

@@ -13,8 +13,8 @@ namespace delfem2::opengl {
 
 class CShader_MeshTex {
 public:
-  void setElement(
-      std::vector<unsigned int> &aTri,
+  void SetElement(
+      std::vector<unsigned int> &elem_vtx,
       int gl_primitive_type);
 
   template <typename REAL>
@@ -26,17 +26,17 @@ public:
   void setTexCoords(
       std::vector<REAL> &aTex);
 
-  void Compile();
+  void InitGL();
 
   void Draw(const float mat4_projection[16],
             const float mat4_modelview[16]) const;
 
 public:
   VertexArrayObject vao; // gl4
-  int shaderProgram;
-  int Loc_MatrixProjection;
-  int Loc_MatrixModelView;
-  int Loc_Texture;
+  int shaderProgram = -1;
+  int Loc_MatrixProjection = -1;
+  int Loc_MatrixModelView = -1;
+  int Loc_Texture = -1;
 };
 
 }

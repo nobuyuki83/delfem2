@@ -75,7 +75,7 @@ int main()
   }
 #endif
 
-  shdr.Compile();
+  shdr.InitGL();
   {
     std::vector<double> aPos3d = {
         -0.5, -0.5,
@@ -95,7 +95,7 @@ int main()
     };
     shdr.setCoords(aPos3d,2);
     shdr.setTexCoords(aTex2d);
-    shdr.setElement( aTri, GL_TRIANGLES);
+    shdr.SetElement( aTri, GL_TRIANGLES);
   }
 
   {

@@ -118,7 +118,7 @@ int main()
     return -1;
   }
   tex.InitGL();
-  shdr.Compile();
+  shdr.InitGL();
   {
     std::vector<float> aPos3d = {
         -1, -1,
@@ -138,7 +138,7 @@ int main()
     };
     shdr.setCoords(aPos3d,2);
     shdr.setTexCoords(aTex2d);
-    shdr.setElement( aTri0, GL_TRIANGLES);
+    shdr.SetElement( aTri0, GL_TRIANGLES);
   }
 
   while (!glfwWindowShouldClose(viewer.window))

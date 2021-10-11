@@ -101,7 +101,7 @@ void delfem2::opengl::Drawer_Coords::Draw(
   ::glUniformMatrix4fv(
       Loc_MatrixModelView, 1, GL_FALSE,
       TransposeMat4ForOpenGL(mat4_modelview, false).data());
-  ::glUniform3f(Loc_Color, color_face.r,color_face.g, color_face.b);
+  ::glUniform3f(Loc_Color, color[0],color[1],color[2]);
   ::glBindVertexArray(this->vao.VAO);
   ::glDrawArrays(
       gl_primitive_type, 0,

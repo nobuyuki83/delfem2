@@ -11,16 +11,16 @@
 
 namespace delfem2::opengl {
 
-class Drawer_Sphere {
+class Drawer_Sphere : public CShader_Mesh {
  public:
   void InitGL() {
-    drawer_mesh.Compile();
+    CShader_Mesh::Compile();
     std::vector<float> vtx_xyz;
     std::vector<unsigned int> tri_vtx;
     delfem2::MeshTri3D_Sphere(
         vtx_xyz, tri_vtx,
         1.f, 32, 32);
-    drawer_mesh.Initialize(vtx_xyz, 3, tri_vtx, GL_TRIANGLES);
+    CShader_Mesh::Initialize(vtx_xyz, 3, tri_vtx, GL_TRIANGLES);
   }
   void Draw(
       float radius,
@@ -31,10 +31,8 @@ class Drawer_Sphere {
     const dfm2::CMat4f mmv = dfm2::CMat4f(mat_modelview)
         * dfm2::CMat4f::Translation({trans[0],trans[1],trans[2]})
         * dfm2::CMat4f::AffineScale(radius);
-    drawer_mesh.Draw(mat_projection, mmv.data());
+    CShader_Mesh::Draw(mat_projection, mmv.data());
   }
- public:
-  delfem2::opengl::CShader_Mesh drawer_mesh;
 };
 
 }

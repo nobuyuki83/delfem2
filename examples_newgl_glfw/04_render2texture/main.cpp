@@ -95,7 +95,7 @@ int main() {
     shdr0.Initialize(vtx_xyz, 3, tri_vtx);
   }
 
-  shdr_mshtex.Compile();
+  shdr_mshtex.InitGL();
   {
     std::vector<float> vtx_xy = {
         -0.5, -0.5,
@@ -115,7 +115,7 @@ int main() {
     };
     shdr_mshtex.setCoords(vtx_xy, 2);
     shdr_mshtex.setTexCoords(vtx_uv);
-    shdr_mshtex.setElement(tri_vtx, GL_TRIANGLES);
+    shdr_mshtex.SetElement(tri_vtx, GL_TRIANGLES);
   }
 
   const unsigned int targetTextureWidth = 256;

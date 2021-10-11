@@ -7,13 +7,13 @@
 #include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/opengl/funcs.h"
 
-void delfem2::opengl::CShader_MeshTex::setElement(
-    std::vector<unsigned int>& aElem,
+void delfem2::opengl::CShader_MeshTex::SetElement(
+    std::vector<unsigned int>& elem_vtx,
     int gl_primitive_type)
 {
   if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
   vao.Delete_EBOs();
-  vao.Add_EBO(aElem,gl_primitive_type);
+  vao.Add_EBO(elem_vtx, gl_primitive_type);
 }
 
 template <typename REAL>
@@ -24,7 +24,10 @@ void delfem2::opengl::CShader_MeshTex::setCoords(
   if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
   vao.ADD_VBO(0, aXYZd);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim * sizeof(REAL), (void *) 0); // gl24
+  glVertexAttribPointer(
+      0,
+      ndim, convertToGlType<REAL>(), GL_FALSE,
+      ndim * sizeof(REAL), (void *) nullptr); // gl24
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_MeshTex::setCoords(
@@ -43,7 +46,10 @@ void delfem2::opengl::CShader_MeshTex::setTexCoords(
   if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
   vao.ADD_VBO(1,aTex);
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, convertToGlType<REAL>(), GL_FALSE, 2*sizeof(REAL), (void*)0); // gl24
+  glVertexAttribPointer(
+      1,
+      2, convertToGlType<REAL>(), GL_FALSE,
+      2*sizeof(REAL), (void*)nullptr); // gl24
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_MeshTex::setTexCoords(
@@ -52,7 +58,7 @@ template void delfem2::opengl::CShader_MeshTex::setTexCoords(
     std::vector<double>& aTex);
 #endif
 
-void delfem2::opengl::CShader_MeshTex::Compile()
+void delfem2::opengl::CShader_MeshTex::InitGL()
 {
   const std::string glsl33vert_projection =
       "uniform mat4 matrixProjection;\n"

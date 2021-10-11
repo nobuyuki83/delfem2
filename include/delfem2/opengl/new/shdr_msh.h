@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <vector>
+#include <array>
 
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/color.h"
@@ -40,7 +41,7 @@ class CShader_Mesh {
 
  public:
   VertexArrayObject vao; // gl4
-  float color[3] = {0, 0, 0};
+  std::array<float,4> color = {0, 0, 0, 0};
   int shaderProgram = -1;
   int Loc_MatrixProjection = -1;
   int Loc_MatrixModelView = -1;
