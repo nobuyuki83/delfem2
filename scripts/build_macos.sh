@@ -93,7 +93,13 @@ cd ../../
 cd examples_newgl_glfw || exit
 mkdir buildXcodeStatic
 cd buildXcodeStatic || exit
-cmake .. -G Xcode -DUSE_STATIC_LIB=OFF
+cmake .. -G Xcode -DUSE_STATIC_LIB=ON
+cd ../../
+
+cd examples_newgl_glfw || exit
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly || exit
+cmake .. -G Xcode
 cd ../../
 
 echo "################################"

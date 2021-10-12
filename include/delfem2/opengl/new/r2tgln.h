@@ -43,7 +43,7 @@ public:
   double draw_len_axis;
   float pointSize;
   CShader_Mesh drawer_view_frustrum;
-  CShader_MeshTex drawer_projected_image;
+  Drawer_RectangleTex drawer_projected_image{-1,+1,-1,+1,+1};
   Drawer_Coords drawer_projected_points;
 };
   

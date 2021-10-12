@@ -29,7 +29,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------
 dfm2::opengl::CShader_TriMesh shdr0;
-dfm2::opengl::CShader_MeshTex shdr_mshtex;
+dfm2::opengl::Drawer_RectangleTex shdr_mshtex(0.5);
 delfem2::glfw::CViewer2 viewer;
 unsigned int idTexColor = 0;
 unsigned int idTexDepth = 0;
@@ -96,28 +96,6 @@ int main() {
   }
 
   shdr_mshtex.InitGL();
-  {
-    std::vector<float> vtx_xy = {
-        -0.5, -0.5,
-        +0.5, -0.5,
-        +0.5, +0.5,
-        -0.5, +0.5,
-    };
-    std::vector<unsigned int> tri_vtx = {
-        0, 1, 2,
-        0, 2, 3,
-    };
-    std::vector<float> vtx_uv = {
-        0.0, 0.0,
-        1.0, 0.0,
-        1.0, 1.0,
-        0.0, 1.0
-    };
-    shdr_mshtex.setCoords(vtx_xy, 2);
-    shdr_mshtex.setTexCoords(vtx_uv);
-    shdr_mshtex.SetElement(tri_vtx, GL_TRIANGLES);
-  }
-
   const unsigned int targetTextureWidth = 256;
   const unsigned int targetTextureHeight = 256;
 

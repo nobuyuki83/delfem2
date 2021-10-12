@@ -7,7 +7,7 @@
 #include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/opengl/funcs.h"
 
-void delfem2::opengl::CShader_MeshTex::SetElement(
+void delfem2::opengl::Drawer_MeshTex::SetElement(
     std::vector<unsigned int>& elem_vtx,
     int gl_primitive_type)
 {
@@ -17,12 +17,12 @@ void delfem2::opengl::CShader_MeshTex::SetElement(
 }
 
 template <typename REAL>
-void delfem2::opengl::CShader_MeshTex::setCoords(
-    std::vector<REAL>& aXYZd,
+void delfem2::opengl::Drawer_MeshTex::SetCoords(
+    std::vector<REAL>& vtx_coords,
     unsigned int ndim)
 {
   if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
-  vao.ADD_VBO(0, aXYZd);
+  vao.ADD_VBO(0, vtx_coords);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(
       0,
@@ -30,17 +30,17 @@ void delfem2::opengl::CShader_MeshTex::setCoords(
       ndim * sizeof(REAL), (void *) nullptr); // gl24
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::opengl::CShader_MeshTex::setCoords(
+template void delfem2::opengl::Drawer_MeshTex::SetCoords(
     std::vector<float>& aXYZd,
     unsigned int ndim);
-template void delfem2::opengl::CShader_MeshTex::setCoords(
+template void delfem2::opengl::Drawer_MeshTex::SetCoords(
     std::vector<double>& aXYZd,
     unsigned int ndim);
 #endif
 
 
 template <typename REAL>
-void delfem2::opengl::CShader_MeshTex::setTexCoords(
+void delfem2::opengl::Drawer_MeshTex::SetTexUV(
     std::vector<REAL>& aTex)
 {
   if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
@@ -52,13 +52,13 @@ void delfem2::opengl::CShader_MeshTex::setTexCoords(
       2*sizeof(REAL), (void*)nullptr); // gl24
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::opengl::CShader_MeshTex::setTexCoords(
+template void delfem2::opengl::Drawer_MeshTex::SetTexUV(
     std::vector<float>& aTex);
-template void delfem2::opengl::CShader_MeshTex::setTexCoords(
+template void delfem2::opengl::Drawer_MeshTex::SetTexUV(
     std::vector<double>& aTex);
 #endif
 
-void delfem2::opengl::CShader_MeshTex::InitGL()
+void delfem2::opengl::Drawer_MeshTex::InitGL()
 {
   const std::string glsl33vert_projection =
       "uniform mat4 matrixProjection;\n"
@@ -107,7 +107,7 @@ void delfem2::opengl::CShader_MeshTex::InitGL()
 }
 
 
-void delfem2::opengl::CShader_MeshTex::Draw(
+void delfem2::opengl::Drawer_MeshTex::Draw(
     const float mat4_projection[16],
     const float mat4_modelview[16]) const
 {

@@ -8,16 +8,16 @@
 #ifndef DFM2_OPENGL_NEW_SHDR_MSHTRI_H
 #define DFM2_OPENGL_NEW_SHDR_MSHTRI_H
 
+#include <cstdio>
+#include <vector>
+
+#include "delfem2/dfm2_inline.h"
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/color.h"
-#include "delfem2/dfm2_inline.h"
-#include <stdio.h>
-#include <vector>
 
 // -------------------------------------
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 class CShader_TriMesh{
 public:
@@ -47,8 +47,6 @@ public:
   float line_width = 1.0;
 };
 
-
-}
 }
 
 #ifndef DFM2_STATIC_LIBRARY

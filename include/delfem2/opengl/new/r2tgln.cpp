@@ -83,32 +83,9 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
     drawer_view_frustrum.Initialize(aPos3d, 3, aLine, GL_LINES);
   }
   // -----
-  { // draw texture
-    drawer_projected_image.InitGL();
-    // --------------
-    std::vector<double> aPos3d = {
-        -1, -1, +1,
-        +1, -1, +1,
-        +1, +1, +1,
-        -1, +1, +1
-    };
-    std::vector<unsigned int> aTri = {
-        0, 1, 2,
-        0, 2, 3,
-    };
-    std::vector<double> aTex2d = {
-        0.0, 0.0,
-        1.0, 0.0,
-        1.0, 1.0,
-        0.0, 1.0
-    };
-    drawer_projected_image.setCoords(aPos3d,3);
-    drawer_projected_image.setTexCoords(aTex2d);
-    drawer_projected_image.SetElement( aTri, GL_TRIANGLES);
-  }
-  {
-    drawer_projected_points.InitGL();
-  }
+  // draw texture
+  drawer_projected_image.InitGL();
+  drawer_projected_points.InitGL();
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::Draw(

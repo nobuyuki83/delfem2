@@ -103,7 +103,7 @@ int main()
     tex.pixel_color.resize(tex.width*tex.height*tex.channels);
   }
 
-  dfm2::opengl::CShader_MeshTex shdr;
+  dfm2::opengl::Drawer_RectangleTex drawer;
 
   dfm2::glfw::CViewer3 viewer(2);
   viewer.width = 400;
@@ -118,28 +118,7 @@ int main()
     return -1;
   }
   tex.InitGL();
-  shdr.InitGL();
-  {
-    std::vector<float> aPos3d = {
-        -1, -1,
-        +1, -1,
-        +1, +1,
-        -1, +1,
-    };
-    std::vector<unsigned int> aTri0 = {
-        0,1,2,
-        0,2,3,
-    };
-    std::vector<float> aTex2d = {
-        0.0, 0.0,
-        1.0, 0.0,
-        1.0, 1.0,
-        0.0, 1.0
-    };
-    shdr.setCoords(aPos3d,2);
-    shdr.setTexCoords(aTex2d);
-    shdr.SetElement( aTri0, GL_TRIANGLES);
-  }
+  drawer.InitGL();
 
   while (!glfwWindowShouldClose(viewer.window))
   {
@@ -168,9 +147,8 @@ int main()
     glEnable(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D , tex.id_tex);
-    float mP[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-    float mMV[16]  = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-    shdr.Draw(mP, mMV);
+    drawer.Draw(dfm2::CMat4f::Identity().data(),
+                dfm2::CMat4f::Identity().data());
     viewer.SwapBuffers();
     glfwPollEvents();
   }

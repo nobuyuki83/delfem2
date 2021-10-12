@@ -54,18 +54,9 @@ void draw() {
 int main() {
   {
     int nres = 200;
-    double elen = 0.01;
     r2t.SetTextureProperty(nres, nres, true);
     dfm2::Mat4_Identity(r2t.mat_modelview);
     dfm2::Mat4_Identity(r2t.mat_projection);
-    /*
-    dfm2::Mat4_OrthongoalProjection_AffineTrans(
-        r2t.mat_modelview_colmajor, r2t.mat_projection_colmajor,
-        dfm2::CVec3d(-nres * elen * 0.5, nres * elen * 0.5, -2).p,
-        dfm2::CVec3d(0, 0, -1).p,
-        dfm2::CVec3d(1, 0, 0).p,
-        nres, nres, elen, 4.0);
-     */
     drawer_r2t.draw_len_axis = 1.0;
   }
 
@@ -74,7 +65,7 @@ int main() {
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
+    std::cerr << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
 #endif

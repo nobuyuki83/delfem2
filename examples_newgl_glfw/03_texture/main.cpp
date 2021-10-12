@@ -29,7 +29,7 @@
 namespace dfm2 = delfem2;
 
 // ---------------------------
-dfm2::opengl::CShader_MeshTex shdr;
+dfm2::opengl::Drawer_RectangleTex shdr(0.5);
 delfem2::glfw::CViewer2 viewer;
 GLuint m_texName = -1;
 
@@ -76,28 +76,7 @@ int main()
 #endif
 
   shdr.InitGL();
-  {
-    std::vector<double> aPos3d = {
-        -0.5, -0.5,
-        +0.5, -0.5,
-        +0.5, +0.5,
-        -0.5, +0.5,
-    };
-    std::vector<unsigned int> aTri = {
-        0,1,2,
-        0,2,3,
-    };
-    std::vector<double> aTex2d = {
-        0.0, 0.0,
-        1.0, 0.0,
-        1.0, 1.0,
-        0.0, 1.0
-    };
-    shdr.setCoords(aPos3d,2);
-    shdr.setTexCoords(aTex2d);
-    shdr.SetElement( aTri, GL_TRIANGLES);
-  }
-
+  
   {
    const int nSize = 256;
     std::vector<double> aV;
