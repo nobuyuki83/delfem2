@@ -4,6 +4,7 @@
 #include "delfem2/opengl/tex.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/mat3.h"
+#include "delfem2/mat4.h"
 
 namespace delfem2::opengl {
 

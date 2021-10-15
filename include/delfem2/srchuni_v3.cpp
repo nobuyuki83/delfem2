@@ -174,10 +174,10 @@ void delfem2::IntersectionRay_MeshTri3DPart(
   mapDepthPES.clear();
   for (unsigned int itri: aIndTri) {
     const unsigned int ip0 = aTri_[itri * 3 + 0];
-    assert(ip0 < aXYZ_.size() / 3);
     const unsigned int ip1 = aTri_[itri * 3 + 1];
-    assert(ip1 < aXYZ_.size() / 3);
     const unsigned int ip2 = aTri_[itri * 3 + 2];
+    assert(ip0 < aXYZ_.size() / 3);
+    assert(ip1 < aXYZ_.size() / 3);
     assert(ip2 < aXYZ_.size() / 3);
     const CVec3<T> p0(aXYZ_[ip0 * 3 + 0], aXYZ_[ip0 * 3 + 1], aXYZ_[ip0 * 3 + 2]);
     const CVec3<T> p1(aXYZ_[ip1 * 3 + 0], aXYZ_[ip1 * 3 + 1], aXYZ_[ip1 * 3 + 2]);
@@ -227,15 +227,17 @@ DFM2_INLINE void delfem2::IntersectionLine_Hightfield(
       const double p01[3] = {double(iex + 0), double(iey + 1), h01};
       const double p11[3] = {double(iex + 1), double(iey + 1), h11};
       double r0 = 1.0, r1 = 1.0;
-      if (IntersectRay_Tri3(r0, r1,
-                            CVec3d(src), CVec3d(dir),
-                            CVec3d(p00), CVec3d(p10), CVec3d(p11), 1.0e-3)) {
+      if (IntersectRay_Tri3(
+          r0, r1,
+          CVec3d(src), CVec3d(dir),
+          CVec3d(p00), CVec3d(p10), CVec3d(p11), 1.0e-3)) {
         aPes.emplace_back((iey * nx + iex) * 2 + 0, r0, r1);
       }
       // ---------------------
-      if (IntersectRay_Tri3(r0, r1,
-                            CVec3d(src), CVec3d(dir),
-                            CVec3d(p00), CVec3d(p11), CVec3d(p01), 1.0e-3)) {
+      if (IntersectRay_Tri3(
+          r0, r1,
+          CVec3d(src), CVec3d(dir),
+          CVec3d(p00), CVec3d(p11), CVec3d(p01), 1.0e-3)) {
         aPes.emplace_back((iey * nx + iex) * 2 + 1, r0, r1);
       }
     } // iex

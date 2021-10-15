@@ -61,7 +61,8 @@ class PointInSolidMesh {
 
 template<typename REAL>
 std::vector<PointOnSurfaceMesh<REAL>> IntersectionLine_MeshTri3(
-    const delfem2::CVec3<REAL> &org, const delfem2::CVec3<REAL> &dir,
+    const delfem2::CVec3<REAL> &org,
+    const delfem2::CVec3<REAL> &dir,
     const std::vector<unsigned int> &aTri,
     const std::vector<REAL> &aXYZ,
     REAL eps);
