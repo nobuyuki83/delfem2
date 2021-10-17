@@ -129,18 +129,15 @@ void CdC_DifferenceScreenCoordinate(
     T c[2],
     T dc[2][3],
     const T mat[16],
-    const T pos[3],
-    const T trg[2]) {
+    const T pos[3]) {
   delfem2::CVec3<T> vx(mat), vy(mat + 4), vw(mat + 12), vp(pos);
   const auto qx = vx.dot(vp) + mat[3];
   const auto qy = vy.dot(vp) + mat[7];
   const auto qw = vw.dot(vp) + mat[15];
-  const auto s = qx/qw;
-  const auto t = qy/qw;
   const auto v0 = vx / qw - qx / (qw * qw) * vw;
   const auto v1 = vy / qw - qy / (qw * qw) * vw;
-  c[0] = s - trg[0];
-  c[1] = t - trg[1];
+  c[0] = qx/qw;
+  c[1] = qy/qw;
   dc[0][0] = v0.x;
   dc[0][1] = v0.y;
   dc[0][2] = v0.z;

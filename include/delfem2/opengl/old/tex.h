@@ -8,6 +8,13 @@
 
 namespace delfem2::opengl {
 
+namespace tex {
+  template <typename T>
+  T Dot3(const T *p0, const T *p1){
+    return p0[0]*p1[0] + p0[1]*p1[1] + p0[2]*p1[2];
+  }
+}
+
 void DrawTexMaxSize(
     const delfem2::opengl::CTexRGB &tex0) {
   ::glEnable(GL_TEXTURE_2D);
@@ -125,6 +132,7 @@ void DrawTex_CvNormDist(
     const float *t,
     const float *K)
 {
+  namespace lcl = ::delfem2::opengl::tex;
   const unsigned int nw = tex0.width;
   const unsigned int nh = tex0.height;
   assert(aNormDist.size()==nw*nh*4);
@@ -161,10 +169,10 @@ void DrawTex_CvNormDist(
       float Kix1[3]; MatVec3(Kix1, Kinv, x1);
       float Kix2[3]; MatVec3(Kix2, Kinv, x2);
       float Kix3[3]; MatVec3(Kix3, Kinv, x3);
-      float ntKix0 = Dot3(aNormDist.data()+((ih + 0) * nw + (iw + 0))*4, Kix0);
-      float ntKix1 = Dot3(aNormDist.data()+((ih + 0) * nw + (iw + 1))*4, Kix1);
-      float ntKix2 = Dot3(aNormDist.data()+((ih + 1) * nw + (iw + 1))*4, Kix2);
-      float ntKix3 = Dot3(aNormDist.data()+((ih + 1) * nw + (iw + 0))*4, Kix3);
+      float ntKix0 = lcl::Dot3(aNormDist.data()+((ih + 0) * nw + (iw + 0))*4, Kix0);
+      float ntKix1 = lcl::Dot3(aNormDist.data()+((ih + 0) * nw + (iw + 1))*4, Kix1);
+      float ntKix2 = lcl::Dot3(aNormDist.data()+((ih + 1) * nw + (iw + 1))*4, Kix2);
+      float ntKix3 = lcl::Dot3(aNormDist.data()+((ih + 1) * nw + (iw + 0))*4, Kix3);
 //      std::cout << ntKix0 << " " << ntKix1 << " " << ntKix2 << " " << ntKix3 << std::endl;
       double z0 = -aNormDist[((ih + 0) * nw + (iw + 0))*4+3] / ntKix0;
       double z1 = -aNormDist[((ih + 0) * nw + (iw + 1))*4+3] / ntKix1;

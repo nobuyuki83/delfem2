@@ -46,11 +46,11 @@ DFM2_INLINE void delfem2::CdC_SquareLengthLineseg3D(
   const T vx = pos_xyz[0][0] - pos_xyz[1][0];
   const T vy = pos_xyz[0][1] - pos_xyz[1][1];
   const T vz = pos_xyz[0][2] - pos_xyz[1][2];
-  const T l = sqrt(vx * vx + vy * vy + vz * vz);
-  c = length_ini - l;
-  dc_dpos[0][0] = (-vx / l);
-  dc_dpos[0][1] = (-vy / l);
-  dc_dpos[0][2] = (-vz / l);
+  const T l = std::sqrt(vx * vx + vy * vy + vz * vz);
+  c = l - length_ini;
+  dc_dpos[0][0] = vx / l;
+  dc_dpos[0][1] = vy / l;
+  dc_dpos[0][2] = vz / l;
   dc_dpos[1][0] = -dc_dpos[0][0];
   dc_dpos[1][1] = -dc_dpos[0][1];
   dc_dpos[1][2] = -dc_dpos[0][2];
