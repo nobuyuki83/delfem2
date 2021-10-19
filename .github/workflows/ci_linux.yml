@@ -231,6 +231,12 @@ jobs:
         cmake --build .
         cd ../../
 
+        git submodule update --init --3rd_party/ImGuiFileDialog
+        cd 3rd_party/imgui
+        git checkout Lib_Only
+        git pull origin Lib_Only
+        cd ../../
+
     - name: GitHub dispatch event
       env: 
         MY_GITHUB_TOKEN: ${{ secrets.TOKEN0 }}

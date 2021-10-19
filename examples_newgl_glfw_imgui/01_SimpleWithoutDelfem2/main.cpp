@@ -1,4 +1,8 @@
 
+
+#include <cstdio>
+#include <iostream>
+#include <vector>
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
@@ -11,15 +15,12 @@
 #else
   #include <glad/glad.h>
 #endif
-//
+#include <GLFW/glfw3.h>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "delfem2/opengl/funcs.h"
-#include <cstdio>
-#include <iostream>
-#include <vector>
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -36,7 +37,7 @@ public:
     "{\n"
     "  gl_Position = vec4(posIn.x, posIn.y, posIn.z, 1.0);\n"
     "  color = colorIn;\n"
-    "}\0";
+    "}";
     
     const std::string glsl33frag =
     "out vec4 FragColor;\n"
@@ -44,7 +45,7 @@ public:
     "void main()\n"
     "{\n"
     "  FragColor = vec4(color.x, color.y, color.z, 1.0f);\n"
-    "}\n\0";
+    "}";
     
 #ifdef EMSCRIPTEN
     shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 300 es\n")+
@@ -53,10 +54,11 @@ public:
                                                       std::string("precision highp float;\n")+
                                                       glsl33frag).c_str());
 #else
-    shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
-                                                      glsl33vert_projection).c_str(),
-                                                     (std::string("#version 330 core\n")+
-                                                      glsl33frag).c_str());
+    shaderProgram = dfm2::opengl::GL24_CompileShader(
+        (std::string("#version 330 core\n")+
+        glsl33vert_projection).c_str(),
+        (std::string("#version 330 core\n")+
+        glsl33frag).c_str());
 #endif
 
     if( !glIsProgram(shaderProgram) ){
@@ -85,17 +87,17 @@ public:
     glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), triangle_vertices, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangle_indices), triangle_indices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)nullptr);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
   }
-  void Draw(){ // rendering our geometries
+  void Draw() const{ // rendering our geometries
     glUseProgram( shaderProgram );
     glBindVertexArray( vao );
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
   }
 public:
@@ -111,9 +113,9 @@ static void callback_error(int error, const char* description)
     fputs(description, stderr);
 }
 
-static GLFWwindow* myGLFW_OpenWindow
-        (const unsigned int SCR_WIDTH,
-         const unsigned int SCR_HEIGHT)
+static GLFWwindow* myGLFW_OpenWindow(
+    const unsigned int SCR_WIDTH,
+    const unsigned int SCR_HEIGHT)
 {
     glfwSetErrorCallback(callback_error);
     if (!glfwInit()){
@@ -146,16 +148,16 @@ static GLFWwindow* myGLFW_OpenWindow
 */
 // glfw window creation
 // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH,
-                                          SCR_HEIGHT,
-                                          "LearnOpenGL",
-                                          NULL,
-                                          NULL);
-    if (window == NULL)
+    GLFWwindow* window = glfwCreateWindow(
+        SCR_WIDTH, SCR_HEIGHT,
+        "LearnOpenGL",
+        nullptr,
+        nullptr);
+    if (window == nullptr)
     {
 //    std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
-        return 0;
+        return nullptr;
     }
     return window;
 }

@@ -2,5 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(examples_newgl_glfw_imgui)
 
-add_subdirectory(00_imgui_sampledemo)
-add_subdirectory(10_imgui_basic)
+add_subdirectory(00_SampleDemo)
+add_subdirectory(01_SimpleWithoutDelfem2)
+add_subdirectory(10_ObjViewer)

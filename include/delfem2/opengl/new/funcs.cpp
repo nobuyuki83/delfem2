@@ -104,10 +104,7 @@ DFM2_INLINE void delfem2::opengl::GL4_VAO_PosNrm(
 DFM2_INLINE void delfem2::opengl::VertexArrayObject::Draw(
     unsigned int iel) const
 {
-  if( iel >= aEBO.size() ){
-    assert(0);
-    return;
-  }
+  if( iel >= aEBO.size() ){ return; }
   glBindVertexArray(VAO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aEBO[iel].EBO);
   glDrawElements(aEBO[iel].GL_MODE,

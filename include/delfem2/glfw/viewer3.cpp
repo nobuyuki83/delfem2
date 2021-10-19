@@ -60,6 +60,9 @@ static void glfw_callback_mouse_button(
     int button,
     int action,
     int mods) {
+#ifdef  IMGUI_VERSION
+  if( ImGui::GetIO().WantCaptureMouse ){ return; }
+#endif
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
 //  std::cout << window << " key" << " " << pViewer3 << std::endl;
   assert(pViewer3 != nullptr);
@@ -112,6 +115,9 @@ static void glfw_callback_scroll(
     GLFWwindow *window,
     [[maybe_unused]] double xoffset,
     double yoffset) {
+#ifdef  IMGUI_VERSION
+  if( ImGui::GetIO().WantCaptureMouse ){ return; }
+#endif
   auto pViewer3 = static_cast<delfem2::glfw::CViewer3 *>(glfwGetWindowUserPointer(window));
   assert(pViewer3 != nullptr);
   pViewer3->scale *= pow(1.01, yoffset);

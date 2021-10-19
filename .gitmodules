@@ -28,3 +28,6 @@
 [submodule "3rd_party/Imath"]
 	path = 3rd_party/Imath
 	url = https://github.com/AcademySoftwareFoundation/Imath.git
+[submodule "3rd_party/ImGuiFileDialog"]
+	path = 3rd_party/ImGuiFileDialog
+	url = https://github.com/aiekick/ImGuiFileDialog.git
