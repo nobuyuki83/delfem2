@@ -134,9 +134,8 @@ DFM2_INLINE void delfem2::FlipElement_Tri(
 DFM2_INLINE void delfem2::JArray_ElSuP_MeshTri(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
-    // --
     const std::vector<unsigned int> &tri_vtx,
-    int num_vtx) {
+    size_t num_vtx) {
   JArray_ElSuP_MeshElem(
       elsup_ind, elsup,
       tri_vtx.data(), tri_vtx.size() / 3, 3,

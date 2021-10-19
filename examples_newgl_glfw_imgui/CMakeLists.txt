@@ -4,4 +4,5 @@ project(examples_newgl_glfw_imgui)
 
 add_subdirectory(00_SampleDemo)
 add_subdirectory(01_SimpleWithoutDelfem2)
-add_subdirectory(10_ObjViewer)
+add_subdirectory(10_TriMeshViewer)
+add_subdirectory(11_ObjTexViewer)

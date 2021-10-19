@@ -1,6 +1,10 @@
 
-#ifndef DFM2_IMG2TEX_H
-#define DFM2_IMG2TEX_H
+#ifndef DFM2_OPENGLSTB_IMG2TEX_H
+#define DFM2_OPENGLSTB_IMG2TEX_H
+
+/*
+ * please define "STB_IMAGE_IMPLEMENTATION" in only one source file (probably in the main.cpp).
+ */
 
 #include "delfem2/opengl/tex.h"
 #include "stb/stb_image.h"
@@ -58,4 +62,4 @@ void LoadImageFileSetToTexture(const char* file_path)
 
 }
 
-#endif /* DFM2_IMG2TEX_H */
+#endif /* DFM2_OPENGLSTB_IMG2TEX_H */

@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <iostream>
 #include <vector>
+#include <set>
 #if defined(_MSC_VER)
 #include <windows.h>
 #endif
@@ -22,16 +23,21 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "delfem2/msh_io_obj.h"
+#include "delfem2/msh_io_ply.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/points.h"
-#include "delfem2/opengl/new/shdr_mshtri.h"
+#include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
+#define  STB_IMAGE_IMPLEMENTATION
+#include "delfem2/openglstb/img2tex.h"
 
 namespace dfm2 = delfem2;
 // ---------------------------------------------------------------
 
 delfem2::glfw::CViewer3 viewer;
-dfm2::opengl::CShader_TriMesh drawer_mesh_edge;
+dfm2::opengl::Drawer_MeshTexSeparateIndexing drawer_tritex;
+unsigned int id_tex;
 
 void draw(GLFWwindow *window) {
   glfwPollEvents();
@@ -46,7 +52,7 @@ void draw(GLFWwindow *window) {
   ImGui::NewFrame();
 
   { // render your GUI
-    ImGui::Begin("Obj Loader");
+    ImGui::Begin("Triangle Mesh");
     // open Dialog Simple
     if (ImGui::Button("Open File Dialog")) {
       ImGuiFileDialog::Instance()->OpenDialog(
@@ -58,18 +64,42 @@ void draw(GLFWwindow *window) {
     if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
       if (ImGuiFileDialog::Instance()->IsOk()) {
         std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-        std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-        std::cout << filePath << std::endl;
         std::cout << filePathName << std::endl;
-        std::vector<double> vtx_xyz;
-        std::vector<unsigned int> tri_vtx;
-        delfem2::Read_Obj3(
-            filePathName,
-            vtx_xyz, tri_vtx);
+        std::string fname_mtl;
+        std::vector<double> vtx_xyz, vtx_tex, vtx_nrm;
+        std::vector<unsigned int> elem_vtx_index;
+        std::vector<unsigned int> elem_vtx_xyz, elem_vtx_tex, elem_vtx_nrm;
+        std::vector<std::string> group_names;
+        std::vector<unsigned int> group_elem_index;
+        const std::filesystem::path file_path;
+        delfem2::Read_WavefrontObjWithMaterialMixedElem(
+            fname_mtl,
+            vtx_xyz, vtx_tex, vtx_nrm,
+            elem_vtx_index,
+            elem_vtx_xyz, elem_vtx_tex, elem_vtx_nrm,
+            group_names, group_elem_index, filePathName);
         delfem2::Normalize_Points3(
             vtx_xyz,
             1.);
-        drawer_mesh_edge.Initialize(vtx_xyz, 3, tri_vtx);
+        drawer_tritex.SetMesh(vtx_xyz, vtx_tex, elem_vtx_xyz, elem_vtx_tex);
+        // ------------
+        auto mtlFilePathName = std::filesystem::path(filePathName).parent_path() / fname_mtl;
+        std::cout << mtlFilePathName << std::endl;
+        std::vector<delfem2::MaterialWavefrontObj> materials;
+        delfem2::Read_WavefrontMaterial(
+            mtlFilePathName,
+            materials);
+        std::cout << materials.size() << std::endl;
+        for(const auto& mat : materials ) {
+          auto texPath = std::filesystem::path(filePathName).parent_path() / mat.map_Kd;
+          if( !std::filesystem::exists(texPath) ){ continue; }
+          if( ::glIsTexture(id_tex) ) {
+            ::glGenTextures(1, &id_tex);
+          }
+          ::glBindTexture(GL_TEXTURE_2D, id_tex);
+          delfem2::openglstb::LoadImageFileSetToTexture(
+              texPath.string().c_str());
+        }
       }
       ImGuiFileDialog::Instance()->Close();
     }
@@ -78,7 +108,11 @@ void draw(GLFWwindow *window) {
 
   {
     ::glEnable(GL_DEPTH_TEST);
-    drawer_mesh_edge.Draw(
+    ::glEnable(GL_TEXTURE_2D);
+    if( glIsTexture(id_tex) ) {
+      ::glad_glBindTexture(GL_TEXTURE_2D, id_tex);
+    }
+    drawer_tritex.Draw(
         viewer.GetProjectionMatrix().data(),
         viewer.GetModelViewMatrix().data());
   }
@@ -104,7 +138,7 @@ int main(int, char **) {
     return -1;
   }
 #endif
-  drawer_mesh_edge.Compile();
+  drawer_tritex.InitGL();
 
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();

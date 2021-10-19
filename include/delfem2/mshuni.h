@@ -74,9 +74,8 @@ DFM2_INLINE void JArray_ElSuP_MeshElem(
 DFM2_INLINE void JArray_ElSuP_MeshTri(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
-    //
     const std::vector<unsigned int> &tri_vtx,
-    int num_vtx);
+    size_t num_vtx);
 
 
 
