@@ -224,17 +224,21 @@ jobs:
         echo ## build imgui examples
 
         git submodule update --init -- 3rd_party/imgui
+        cd 3rd_party/imgui
+        git checkout master
+        git pull origin master
+        cd ../../
+
+        git submodule update --init -- 3rd_party/ImGuiFileDialog
+        cd 3rd_party/ImGuiFileDialog
+        git checkout Lib_Only
+        git pull origin Lib_Only
+        cd ../../
 
         cd examples_newgl_glfw_imgui
         mkdir buildMakeHdronly && cd buildMakeHdronly
         cmake ..
         cmake --build .
-        cd ../../
-
-        git submodule update --init --3rd_party/ImGuiFileDialog
-        cd 3rd_party/imgui
-        git checkout Lib_Only
-        git pull origin Lib_Only
         cd ../../
 
     - name: GitHub dispatch event

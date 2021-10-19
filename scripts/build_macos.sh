@@ -124,8 +124,8 @@ git checkout master
 git pull origin master
 cd ../../
 
-git submodule update --init --3rd_party/ImGuiFileDialog
-cd 3rd_party/imgui || exit
+git submodule update --init -- 3rd_party/ImGuiFileDialog
+cd 3rd_party/imguiFileDialog  || exit
 git checkout Lib_Only
 git pull origin Lib_Only
 cd ../../
