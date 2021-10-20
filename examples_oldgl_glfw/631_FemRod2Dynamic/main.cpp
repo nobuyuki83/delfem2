@@ -146,7 +146,7 @@ int main() {
     viewer.trans[1] = +0.3f;
     viewer.title = "dynamic 2D rod demo";
   }
-  viewer.InitGL();  // opengl start here
+  viewer.CreateWindow();  // opengl start here
 
   int iframe = 0;
   bool isNormalFix = false;

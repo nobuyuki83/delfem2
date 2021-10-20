@@ -115,11 +115,8 @@ void draw(GLFWwindow *window) {
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.1f, 4.0f);
 
-  int nw, nh;
-  glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = static_cast<float>(nw) / static_cast<float>(nh);
-  dfm2::CMat4f mMV, mP;
-  viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
+  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
   const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
   viewer.shdr_cad.Draw((mZ*mP).transpose().data(), mMV.transpose().data(), viewer.cad);
   viewer.shdr_dmsh.Draw((mZ*mP).transpose().data(), mMV.transpose().data());
@@ -141,7 +138,7 @@ void callback_resize(GLFWwindow *window, int width, int height) {
 
 int main() {
   dfm2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.CreateWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {

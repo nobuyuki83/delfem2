@@ -54,14 +54,21 @@ void draw(GLFWwindow *window) {
   { // render your GUI
     ImGui::Begin("Triangle Mesh");
     // open Dialog Simple
-    if (ImGui::Button("Open File Dialog")) {
+    if (ImGui::Button("Load Mesh")) {
       ImGuiFileDialog::Instance()->OpenDialog(
-          "ChooseFileDlgKey",
+          "ChooseMeshFileDlgKey",
           "Choose File",
           ".obj",
           ".");
     }
-    if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
+    if (ImGui::Button("Load Texture")) {
+      ImGuiFileDialog::Instance()->OpenDialog(
+          "ChooseTexFileDlgKey",
+          "Choose File",
+          "{.png,.jpg}",
+          ".");
+    }
+    if (ImGuiFileDialog::Instance()->Display("ChooseMeshFileDlgKey")) {
       if (ImGuiFileDialog::Instance()->IsOk()) {
         std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
         std::cout << filePathName << std::endl;
@@ -84,7 +91,7 @@ void draw(GLFWwindow *window) {
         drawer_tritex.SetMesh(vtx_xyz, vtx_tex, elem_vtx_xyz, elem_vtx_tex);
         // ------------
         auto mtlFilePathName = std::filesystem::path(filePathName).parent_path() / fname_mtl;
-        std::cout << mtlFilePathName << std::endl;
+        std::cout << "material name: " << mtlFilePathName << std::endl;
         std::vector<delfem2::MaterialWavefrontObj> materials;
         delfem2::Read_WavefrontMaterial(
             mtlFilePathName,
@@ -92,13 +99,25 @@ void draw(GLFWwindow *window) {
         std::cout << materials.size() << std::endl;
         for(const auto& mat : materials ) {
           auto texPath = std::filesystem::path(filePathName).parent_path() / mat.map_Kd;
+          std::cout << "texPath: " << texPath << std::endl;
           if( !std::filesystem::exists(texPath) ){ continue; }
-          if( ::glIsTexture(id_tex) ) {
-            ::glGenTextures(1, &id_tex);
-          }
+          if( !::glIsTexture(id_tex) ) { ::glGenTextures(1, &id_tex); }
           ::glBindTexture(GL_TEXTURE_2D, id_tex);
           delfem2::openglstb::LoadImageFileSetToTexture(
               texPath.string().c_str());
+        }
+      }
+      ImGuiFileDialog::Instance()->Close();
+    }
+    if (ImGuiFileDialog::Instance()->Display("ChooseTexFileDlgKey")) {
+      if (ImGuiFileDialog::Instance()->IsOk()) {
+        std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+        std::cout << "texPath: " << filePathName << std::endl;
+        if( std::filesystem::exists(filePathName) ) {
+          if (!::glIsTexture(id_tex)) { ::glGenTextures(1, &id_tex); }
+          ::glBindTexture(GL_TEXTURE_2D, id_tex);
+          delfem2::openglstb::LoadImageFileSetToTexture(
+              filePathName.c_str());
         }
       }
       ImGuiFileDialog::Instance()->Close();

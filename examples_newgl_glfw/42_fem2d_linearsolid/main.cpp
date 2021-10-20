@@ -345,9 +345,8 @@ void Draw(GLFWwindow *window) {
 
   int nw, nh;
   glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = static_cast<float>(nw) / static_cast<float>(nh);
-  dfm2::CMat4f mP, mMV;
-  viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
   const dfm2::CMat4f mZ = dfm2::CMat4f::ScaleXYZ(1,1,-1);
   shdr0.Draw((mZ*mP).transpose().data(), mMV.transpose().data());
 
@@ -364,7 +363,7 @@ int main() {
   }
 
   delfem2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.CreateWindow();
   viewer.view_height = 1.5;
 
 #ifndef EMSCRIPTEN

@@ -29,7 +29,7 @@ void SetRgbToTex(
   stbi_image_free(img);
 }
 
-void LoadImageFileSetToTexture(const char* file_path)
+std::tuple<int,int,int> LoadImageFileSetToTexture(const char* file_path)
 {
   int width, height, channels;
   stbi_set_flip_vertically_on_load(true);
@@ -58,6 +58,7 @@ void LoadImageFileSetToTexture(const char* file_path)
   }
   glBindTexture(GL_TEXTURE_2D, 0);
   stbi_image_free(img);
+  return {width, height, channels};
 }
 
 }

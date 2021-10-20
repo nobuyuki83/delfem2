@@ -24,7 +24,7 @@ namespace glfw {
 
 class CViewer2 {
 public:
-  void InitGL();
+  void CreateWindow();
 
   void DrawBegin_oldGL() const;
 
@@ -53,10 +53,11 @@ public:
 	  [[maybe_unused]] int key, 
 	  [[maybe_unused]] int mods) {}
 
-  void Mat4_ModelView_Projection(
-	  [[maybe_unused]] float mMV[16], 
-	  [[maybe_unused]] float mP[16], 
-	  [[maybe_unused]] float asp) const;
+  std::array<float,16> GetProjectionMatrix() const;
+
+  std::array<float,16> GetModelViewMatrix() const;
+
+
 
 public:
   GLFWwindow *window = nullptr;
@@ -78,4 +79,4 @@ public:
   #include "delfem2/glfw/viewer2.cpp"
 #endif
 
-#endif /* viewer2_hpp */
+#endif /* DFM2_GLFW_VIEWER2_H */

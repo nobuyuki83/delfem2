@@ -52,10 +52,8 @@ void draw(GLFWwindow* window)
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
-  int nw, nh; glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = static_cast<float>(nw)/static_cast<float>(nh);
-  dfm2::CMat4f mP, mMV;
-  viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
+  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
   shdr.Draw(mP.data(),mMV.data());
   
   viewer.SwapBuffers();
@@ -66,7 +64,7 @@ int main()
 {
   dfm2::glfw::InitGLNew();
   viewer.view_height = 1.0;
-  viewer.InitGL();
+  viewer.CreateWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){

@@ -88,6 +88,12 @@ private:
 
 class Drawer_MeshTexSeparateIndexing : public Drawer_MeshTex {
  public:
+  void Clear(){
+    tri_uni.clear();
+    uni_xyz.clear();
+    uni_tex.clear();
+  }
+
   template <typename REAL>
   void SetMesh(
       const std::vector<REAL> &vtx_xyz,
@@ -95,6 +101,7 @@ class Drawer_MeshTexSeparateIndexing : public Drawer_MeshTex {
       const std::vector<unsigned int> &elem_vtx_xyz,
       const std::vector<unsigned int> &elem_vtx_tex)
   {
+    this->Clear();
     namespace dfm2 = delfem2;
     const unsigned int nxyz = vtx_xyz.size()/3;
     // const unsigned int ntex = vtx_tex.size()/2;

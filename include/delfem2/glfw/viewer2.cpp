@@ -55,10 +55,13 @@ static void glfw_callback_mouse_button(
     int button,
     int action,
     int mods) {
+#ifdef  IMGUI_VERSION
+  if( ImGui::GetIO().WantCaptureMouse ){ return; }
+#endif
   assert(pViewer2 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  const float asp = static_cast<float>(width) / static_cast<float>(height);
+  //const float asp = static_cast<float>(width) / static_cast<float>(height);
   {
     ::delfem2::CMouseInput &nav = pViewer2->nav;
     nav.imodifier = mods;
@@ -75,8 +78,8 @@ static void glfw_callback_mouse_button(
     }
   }
   if (action == GLFW_PRESS) {
-    CMat4f mMV, mP;
-    pViewer2->Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+    const CMat4f mMV = pViewer2->GetModelViewMatrix();
+    const CMat4f mP = pViewer2->GetProjectionMatrix();
     float src[3], dir[3];
     pViewer2->nav.MouseRay(
         src, dir,
@@ -89,6 +92,9 @@ static void glfw_callback_cursor_position(
     GLFWwindow *window,
     double xpos,
     double ypos) {
+#ifdef  IMGUI_VERSION
+  if( ImGui::GetIO().WantCaptureMouse ){ return; }
+#endif
   assert(pViewer2 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
@@ -109,9 +115,8 @@ static void glfw_callback_cursor_position(
     pViewer2->trans[1] += static_cast<float>(nav.dy) * si;
   }
   if (pViewer2->nav.ibutton == 0) {
-    CMat4f mMV, mP;
-    pViewer2->Mat4_ModelView_Projection(
-        mMV.data(), mP.data(), asp);
+    const CMat4f mMV = pViewer2->GetModelViewMatrix();
+    const CMat4f mP = pViewer2->GetProjectionMatrix();
     float src0[3], src1[3], dir0[3], dir1[3];
     pViewer2->nav.RayMouseMove(
         src0, src1, dir0, dir1,
@@ -124,13 +129,16 @@ static void glfw_callback_scroll(
     [[maybe_unused]] GLFWwindow *window,
     [[maybe_unused]] double xoffset,
     double yoffset) {
+#ifdef  IMGUI_VERSION
+  if( ImGui::GetIO().WantCaptureMouse ){ return; }
+#endif
   assert(pViewer2 != nullptr);
   pViewer2->scale *= powf(1.01f, float(yoffset));
 }
 
 }  // namespace delfem2::viewer2
 
-void delfem2::glfw::CViewer2::InitGL() {
+void delfem2::glfw::CViewer2::CreateWindow() {
   delfem2::viewer2::pViewer2 = this;
   // glfw window creation
   // --------------------
@@ -182,13 +190,8 @@ void delfem2::glfw::CViewer2::DrawBegin_oldGL() const {
     assert(n0 == 1 && n1 == 1);
   }
 
-  CMat4f mMV, mP;
-  {
-    int width0, height0;
-    glfwGetFramebufferSize(window, &width0, &height0);
-    const float asp = static_cast<float>(width0) / static_cast<float>(height0);
-    this->Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
-  }
+  const CMat4f mMV = this->GetModelViewMatrix();
+  const CMat4f mP = this->GetProjectionMatrix();
   {
     const CMat4f mZ = CMat4f::ScaleXYZ(1, 1, -1);
     ::glMatrixMode(GL_PROJECTION);
@@ -216,21 +219,24 @@ void delfem2::glfw::CViewer2::ExitIfClosed() const {
   exit(EXIT_SUCCESS);
 }
 
-void delfem2::glfw::CViewer2::Mat4_ModelView_Projection(
-    float mMV[16],
-    float mP[16],
-    float asp) const {
-  delfem2::Mat4_Identity(mMV);
-  mMV[0 * 4 + 3] += this->trans[0];
-  mMV[1 * 4 + 3] += this->trans[1];
-  //
+std::array<float,16> delfem2::glfw::CViewer2::GetProjectionMatrix() const {
+  int w0, h0;
+  glfwGetWindowSize(window, &w0, &h0);
+  float asp = static_cast<float>(w0)/h0;
+  std::array<float,16> m;
   const float si = view_height / scale;
-  CMat4f mPZ;
   delfem2::Mat4_AffineProjectionOrtho(
-      mPZ.data(),
+      m.data(),
       -asp * si, +asp * si,
       -1.f * si, +1.f * si,
       -1.f, +1.f);
-  CMat4f mZ = CMat4f::ScaleXYZ(1, 1, -1);
-  (mZ * mPZ).CopyTo(mP);
+  return m;
+}
+
+std::array<float,16> delfem2::glfw::CViewer2::GetModelViewMatrix() const {
+  std::array<float,16> m;
+  delfem2::Mat4_Identity(m.data());
+  m[0 * 4 + 3] += this->trans[0];
+  m[1 * 4 + 3] += this->trans[1];
+  return m;
 }

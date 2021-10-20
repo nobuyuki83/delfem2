@@ -50,15 +50,11 @@ void draw(GLFWwindow *window) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  int nw, nh;
-  glfwGetFramebufferSize(window, &nw, &nh);
-  const float asp = (float) nw / (float)nh;
-
   {
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexColor);
-    delfem2::CMat4f mP, mMV;
-    viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+    const delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+    delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
     mMV(0,3) -= 0.5;
     shdr_mshtex.Draw(mP.data(), mMV.data());
   }
@@ -66,8 +62,8 @@ void draw(GLFWwindow *window) {
   {
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexDepth);
-    delfem2::CMat4f mP, mMV;
-    viewer.Mat4_ModelView_Projection(mMV.data(), mP.data(), asp);
+    const delfem2::CMat4f mP = viewer.GetProjectionMatrix();
+    delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
     mMV(0,3) += 0.5;
     shdr_mshtex.Draw(mP.data(), mMV.data());
   }
@@ -78,7 +74,7 @@ void draw(GLFWwindow *window) {
 
 int main() {
   dfm2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.CreateWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
