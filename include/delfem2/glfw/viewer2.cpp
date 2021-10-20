@@ -29,7 +29,7 @@
 // ---------------
 namespace delfem2::viewer2 {
 
-static delfem2::glfw::CViewer2 *pViewer2 = nullptr;
+// static delfem2::glfw::CViewer2 *pViewer2 = nullptr;
 
 static void glfw_callback_key(
     GLFWwindow *window,
@@ -40,6 +40,7 @@ static void glfw_callback_key(
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
+  auto pViewer2 = static_cast<delfem2::glfw::CViewer2 *>(glfwGetWindowUserPointer(window));
   if (action == GLFW_PRESS) { pViewer2->key_press(key, mods); }
   else if (action == GLFW_RELEASE) { pViewer2->key_release(key, mods); }
   else {}
@@ -58,6 +59,7 @@ static void glfw_callback_mouse_button(
 #ifdef  IMGUI_VERSION
   if( ImGui::GetIO().WantCaptureMouse ){ return; }
 #endif
+  auto pViewer2 = static_cast<delfem2::glfw::CViewer2 *>(glfwGetWindowUserPointer(window));
   assert(pViewer2 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
@@ -95,6 +97,7 @@ static void glfw_callback_cursor_position(
 #ifdef  IMGUI_VERSION
   if( ImGui::GetIO().WantCaptureMouse ){ return; }
 #endif
+  auto pViewer2 = static_cast<delfem2::glfw::CViewer2 *>(glfwGetWindowUserPointer(window));
   assert(pViewer2 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
@@ -132,6 +135,7 @@ static void glfw_callback_scroll(
 #ifdef  IMGUI_VERSION
   if( ImGui::GetIO().WantCaptureMouse ){ return; }
 #endif
+  auto pViewer2 = static_cast<delfem2::glfw::CViewer2 *>(glfwGetWindowUserPointer(window));
   assert(pViewer2 != nullptr);
   pViewer2->scale *= powf(1.01f, float(yoffset));
 }
@@ -139,7 +143,6 @@ static void glfw_callback_scroll(
 }  // namespace delfem2::viewer2
 
 void delfem2::glfw::CViewer2::CreateWindow() {
-  delfem2::viewer2::pViewer2 = this;
   // glfw window creation
   // --------------------
   this->window = glfwCreateWindow(int(width),
@@ -153,6 +156,8 @@ void delfem2::glfw::CViewer2::CreateWindow() {
 
   glfwMakeContextCurrent(
       this->window);
+  glfwSetWindowUserPointer(
+      this->window, this);
   glfwSetFramebufferSizeCallback(
       this->window, delfem2::viewer2::glfw_callback_resize);
   glfwSetKeyCallback(

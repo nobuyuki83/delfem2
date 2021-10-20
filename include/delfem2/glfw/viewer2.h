@@ -18,9 +18,7 @@
 
 struct GLFWwindow;
 
-namespace delfem2{
-
-namespace glfw {
+namespace delfem2::glfw {
 
 class CViewer2 {
 public:
@@ -72,8 +70,7 @@ public:
   float trans[2] = {0.f, 0.f};
 };
 
-} // opengl
-} // delfem2
+} // delfem2::opengl
 
 #ifndef DFM2_STATIC_LIBRARY
   #include "delfem2/glfw/viewer2.cpp"

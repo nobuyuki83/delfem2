@@ -1,4 +1,7 @@
 
+#include <iostream>
+#include <cmath>
+
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
@@ -6,18 +9,15 @@
   #include <glad/glad.h>
 #endif
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/shdr_mshtri.h"
-#include "delfem2/mshprimitive.h"
-
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-#include <cmath>
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/new/shdr_mshtri.h"
+#include "delfem2/mshprimitive.h"
 
 namespace dfm2 = delfem2;
 
