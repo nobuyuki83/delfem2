@@ -138,7 +138,7 @@ void callback_resize(GLFWwindow *window, int width, int height) {
 
 int main() {
   dfm2::glfw::InitGLNew();
-  viewer.CreateWindow();
+  viewer.CreateGlfwWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {

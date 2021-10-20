@@ -104,7 +104,7 @@ int main() {
     viewer.trans[1] = -5.0;
   }
   delfem2::glfw::InitGLOld();
-  viewer.CreateWindow();
+  viewer.CreateGlfwWindow();
 
   const double dt = 1.0 / 60.0; // frame-rate is fixed to 60FPS.
   double time_last_update = 0.0;

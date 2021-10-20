@@ -40,7 +40,7 @@ int main() {
   // --------------------
   delfem2::glfw::CViewer2 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.CreateWindow();
+  viewer.CreateGlfwWindow();
   glyph.InitGL();
   delfem2::opengl::setSomeLighting();
   unsigned int iframe = 0;

@@ -142,7 +142,7 @@ static void glfw_callback_scroll(
 
 }  // namespace delfem2::viewer2
 
-void delfem2::glfw::CViewer2::CreateWindow() {
+void delfem2::glfw::CViewer2::CreateGlfwWindow() {
   // glfw window creation
   // --------------------
   this->window = glfwCreateWindow(int(width),

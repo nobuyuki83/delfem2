@@ -74,7 +74,7 @@ void draw(GLFWwindow *window) {
 
 int main() {
   dfm2::glfw::InitGLNew();
-  viewer.CreateWindow();
+  viewer.CreateGlfwWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {

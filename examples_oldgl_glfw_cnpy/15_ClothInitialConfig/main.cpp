@@ -192,7 +192,7 @@ int main()
   viewer3.InitGL();
   // viewer3.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   dfm2::opengl::setSomeLighting();
-  viewer2.CreateWindow();
+  viewer2.CreateGlfwWindow();
   
   ::glfwMakeContextCurrent(viewer2.window);
   glyph.InitGL();

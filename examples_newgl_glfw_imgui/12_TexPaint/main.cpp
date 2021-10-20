@@ -141,7 +141,8 @@ void draw(GLFWwindow *window) {
 int main(int, char **) {
 
   delfem2::glfw::InitGLNew();
-  viewer.CreateWindow();
+  viewer.CreateGlfwWindow();
+  
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cout << "Failed to initialize GLAD" << std::endl;

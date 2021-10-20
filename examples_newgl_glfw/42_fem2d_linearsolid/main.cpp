@@ -363,7 +363,7 @@ int main() {
   }
 
   delfem2::glfw::InitGLNew();
-  viewer.CreateWindow();
+  viewer.CreateGlfwWindow();
   viewer.view_height = 1.5;
 
 #ifndef EMSCRIPTEN

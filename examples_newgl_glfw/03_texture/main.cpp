@@ -64,7 +64,7 @@ int main()
 {
   dfm2::glfw::InitGLNew();
   viewer.view_height = 1.0;
-  viewer.CreateWindow();
+  viewer.CreateGlfwWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
