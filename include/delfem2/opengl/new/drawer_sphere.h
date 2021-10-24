@@ -9,6 +9,9 @@
 #include "delfem2/mat4.h"
 #include "delfem2/opengl/new/shdr_msh.h"
 
+#include "delfem2/vec3.h"
+#include "delfem2/geo3_v23m34q.h"
+
 namespace delfem2::opengl {
 
 class Drawer_Sphere : public CShader_Mesh {

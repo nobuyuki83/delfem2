@@ -42,11 +42,14 @@ DFM2_INLINE void MeshTri3D_Sphere(
 /**
  * @details y axis is the axis of cylinder
  */
+template <typename T>
 DFM2_INLINE void MeshTri3D_CylinderOpen(
-    std::vector<double> &aXYZ,
+    std::vector<T> &aXYZ,
     std::vector<unsigned int> &aTri,
-    double r, double l,
-    int nr, int nl);
+    T r,
+    T l,
+    unsigned int nr,
+    unsigned int nl);
 
 /**
  * @brief makae a mesh of 3D cylinder with closed ends

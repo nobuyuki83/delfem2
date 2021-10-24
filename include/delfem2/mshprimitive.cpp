@@ -86,22 +86,24 @@ DFM2_INLINE void delfem2::MeshTri3D_Disk(
   }
 }
 
+template <typename T>
 DFM2_INLINE void delfem2::MeshTri3D_CylinderOpen(
-    std::vector<double> &aXYZ,
+    std::vector<T> &aXYZ,
     std::vector<unsigned int> &aTri,
-    double r, double l,
-    int nr,
-    int nl) {
+    T r,
+    T l,
+    unsigned int nr,
+    unsigned int nl) {
   aXYZ.clear();
   aTri.clear();
   const double pi = 3.1415926535;
   double dl = l / nl;
   double dr = 2.0 * pi / nr;
-  const int npo = (nl + 1) * nr;
+  const unsigned int npo = (nl + 1) * nr;
   aXYZ.reserve(npo * 3);
-  for (int il = 0; il < nl + 1; il++) {
+  for (unsigned int il = 0; il < nl + 1; il++) {
     double y0 = -0.5 * l + il * dl;
-    for (int ir = 0; ir < nr; ir++) {
+    for (unsigned int ir = 0; ir < nr; ir++) {
       double x0 = r * cos(dr * ir);
       double z0 = r * sin(dr * ir);
       aXYZ.push_back(x0);
@@ -110,10 +112,10 @@ DFM2_INLINE void delfem2::MeshTri3D_CylinderOpen(
     }
   }
   // -------
-  const int ntri = nl * nr * 2;
+  const unsigned int ntri = nl * nr * 2;
   aTri.reserve(ntri * 3);
-  for (int il = 0; il < nl; il++) {
-    for (int ir = 0; ir < nr; ir++) {
+  for (unsigned int il = 0; il < nl; il++) {
+    for (unsigned int ir = 0; ir < nr; ir++) {
       const int i1 = (il + 0) * nr + (ir + 0) % nr;
       const int i2 = (il + 0) * nr + (ir + 1) % nr;
       const int i3 = (il + 1) * nr + (ir + 1) % nr;
