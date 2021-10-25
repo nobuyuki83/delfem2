@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <vector>
+#include <climits>
 
 #include "delfem2/ls_tridiagonal.h"
 
