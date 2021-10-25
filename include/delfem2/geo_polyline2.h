@@ -134,10 +134,10 @@ VEC NormalInPolyline(
  * @return
  */
 template<typename VEC>
-std::pair<unsigned int, float> FindNearestPointInPolyline(
+[[nodiscard]] std::pair<unsigned int, float> FindNearestPointInPolyline(
     const std::vector<VEC>& polyline,
     const VEC& scr){
-  assert(polyline.size()>1);
+  if( polyline.empty() ){ return {UINT_MAX,0.f}; }
   unsigned int ie_min;
   float ratio_min;
   float dist_min = -1;

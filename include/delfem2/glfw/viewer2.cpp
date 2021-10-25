@@ -71,9 +71,9 @@ static void glfw_callback_mouse_button(
     glfwGetCursorPos(window, &x, &y);
     nav.mouse_x = (2.0 * x - width) / width;
     nav.mouse_y = (height - 2.0 * y) / height;
-    if (action == 0) {  // mouse up
+    if (action == GLFW_RELEASE) {  // mouse up
       nav.ibutton = -1;
-    } else if (action == 1) {  // mouse down
+    } else if (action == GLFW_PRESS) {  // mouse down
       nav.ibutton = button;
       nav.mouse_x_down = nav.mouse_x;
       nav.mouse_y_down = nav.mouse_y;
@@ -87,6 +87,9 @@ static void glfw_callback_mouse_button(
         src, dir,
         (mP * mMV).data());
     pViewer2->mouse_press(src);
+  }
+  if( action == GLFW_RELEASE ){
+    pViewer2->mouse_release();
   }
 }
 

@@ -43,6 +43,8 @@ public:
 	  [[maybe_unused]] const float src0[2], 
 	  [[maybe_unused]] const float src1[2]) {}
 
+  virtual void mouse_release() {}
+
   virtual void key_press(
 	  [[maybe_unused]] int key, 
 	  [[maybe_unused]] int mods) {}

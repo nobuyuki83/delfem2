@@ -86,6 +86,8 @@ DFM2_INLINE void delfem2::MeshTri3D_Disk(
   }
 }
 
+// -------------------------------------
+
 template <typename T>
 DFM2_INLINE void delfem2::MeshTri3D_CylinderOpen(
     std::vector<T> &aXYZ,
@@ -130,6 +132,24 @@ DFM2_INLINE void delfem2::MeshTri3D_CylinderOpen(
     }
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
+template DFM2_INLINE void delfem2::MeshTri3D_CylinderOpen(
+  std::vector<float> &aXYZ,
+  std::vector<unsigned int> &aTri,
+  float r,
+  float l,
+  unsigned int nr,
+  unsigned int nl);
+template DFM2_INLINE void delfem2::MeshTri3D_CylinderOpen(
+  std::vector<double> &aXYZ,
+  std::vector<unsigned int> &aTri,
+  double r,
+  double l,
+  unsigned int nr,
+  unsigned int nl);
+#endif
+
+// -------------------------------
 
 template<typename T>
 DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed(
