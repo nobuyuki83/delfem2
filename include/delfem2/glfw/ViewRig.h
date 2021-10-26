@@ -38,7 +38,7 @@ public:
       ipicked_bone = -1;
       for (unsigned int ib = 0; ib < aBone.size(); ++ib) {
         CVec3d p0 = aBone[ib].Pos();
-        CVec3d p1 = nearest_Line_Point(p0, s0, d0);
+        CVec3d p1 = Nearest_Line_Point<CVec3d,double>(p0, s0, d0);
         double len01 = (p0 - p1).norm();
         if (len01 < 0.03) {
           ipicked_bone = ib;

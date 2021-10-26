@@ -191,6 +191,7 @@ float ArcLengthPointInPolyline(
   return alen;
 }
 
+
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY

@@ -1319,7 +1319,7 @@ void delfem2::CCad3D::Pick(
     ivtx_picked = UINT_MAX;
     for(unsigned int icp=0;icp<aVertex.size();++icp){
       const CVec3d& pos = aVertex[icp].pos;
-      CVec3d pn = nearest_Line_Point(pos, src_pick, dir_pick);
+      CVec3d pn = Nearest_Line_Point<CVec3d,double>(pos, src_pick, dir_pick);
       if( (pn-pos).norm() < 0.05 ){
         ivtx_picked = icp;
         ielem_vtx_picked = 0;

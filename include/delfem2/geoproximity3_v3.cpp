@@ -31,7 +31,7 @@ DFM2_INLINE REAL EvaluateCubic(
   return k0 + k1 * x + k2 * x * x + k3 * x * x * x;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template float EvaluateCubic(float r2, float k0, float k1, float k2, float k3);
+template float EvaluateCubic(float r2, float k0, float k1, float k2, float k3);
 template double EvaluateCubic(double r2, double k0, double k1, double k2, double k3);
 #endif
 
@@ -243,11 +243,13 @@ bool delfem2::IntersectRay_Tri3(
   return (r0 >= -eps && r1 >= -eps && r2 >= -eps);
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template bool delfem2::IntersectRay_Tri3(double& r0, double& r1,
+template bool delfem2::IntersectRay_Tri3(
+    double& r0, double& r1,
     const CVec3d& org, const CVec3d& dir,
     const CVec3d& p0,  const CVec3d& p1, const CVec3d& p2,
     double eps);
-template bool delfem2::IntersectRay_Tri3(float& r0, float& r1,
+template bool delfem2::IntersectRay_Tri3(
+    float& r0, float& r1,
     const CVec3f& org, const CVec3f& dir,
     const CVec3f& p0,  const CVec3f& p1, const CVec3f& p2,
     float eps);
@@ -255,38 +257,38 @@ template bool delfem2::IntersectRay_Tri3(float& r0, float& r1,
 
 // --------------------------------------------------------
 
-template<typename T>
-delfem2::CVec3<T> delfem2::nearest_Line_Point(
-    const CVec3<T> &p, // point
-    const CVec3<T> &s, // source
-    const CVec3<T> &d) // direction
+template<class VEC, typename T>
+VEC delfem2::Nearest_Line_Point(
+    const VEC &point, // point
+    const VEC &line_src, // source
+    const VEC &line_dir) // direction
 {
-  assert(Dot(d, d) > 1.0e-20);
-  const CVec3<T> ps = s - p;
-  T a = Dot(d, d);
-  T b = Dot(d, s - p);
-  T t = -b / a;
-  return s + t * d;
+  assert(line_dir.dot(line_dir) > 1.0e-20);
+  const VEC ps = line_src - point;
+  const T a = line_dir.dot(line_dir);
+  const T b = line_dir.dot(line_src - point);
+  const T t = -b / a;
+  return line_src + t * line_dir;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template delfem2::CVec3d delfem2::nearest_Line_Point(
-    const CVec3d& p, // point
-    const CVec3d& s, // source
-    const CVec3d& d); // direction
-template delfem2::CVec3f delfem2::nearest_Line_Point(
-    const CVec3f& p, // point
-    const CVec3f& s, // source
-    const CVec3f& d); // direction
+template delfem2::CVec3d delfem2::Nearest_Line_Point<delfem2::CVec3d,double>(
+    const CVec3d& p,
+    const CVec3d& s,
+    const CVec3d& d);
+template delfem2::CVec3f delfem2::Nearest_Line_Point<delfem2::CVec3f,float>(
+    const CVec3f& p,
+    const CVec3f& s,
+    const CVec3f& d);
 #endif
 
 // -------------------------------------------------------
 
 template<typename T>
-delfem2::CVec3<T> delfem2::nearest_Line_Point
-    (double &t,
-     const CVec3<T> &p, // point
-     const CVec3<T> &s, // source
-     const CVec3<T> &d) // direction
+delfem2::CVec3<T> delfem2::nearest_Line_Point(
+    double &t,
+    const CVec3<T> &p, // point
+    const CVec3<T> &s, // source
+    const CVec3<T> &d) // direction
 {
   if (Dot(d, d) < 1.0e-20) {
     t = 0;
@@ -377,52 +379,53 @@ delfem2::CVec3<T> delfem2::nearest_LineSeg_Point
 
 // ---------------------------------------------
 
-template<typename T>
-void delfem2::nearest_LineSeg_Line(
-    CVec3<T> &a,
-    CVec3<T> &b,
-    const CVec3<T> &ps,
-    const CVec3<T> &pe,
-    const CVec3<T> &pb_,
-    const CVec3<T> &vb) {
+template<class VEC, typename T>
+void delfem2::Nearest_LineSeg_Line(
+    VEC &nearest_lineseg,
+    VEC &nearest_line,
+    const VEC &lineseg_start,
+    const VEC &lineseg_end,
+    const VEC &line_origin,
+    const VEC &line_direction) {
   T D0, Dta0, Dtb0;
-  CVec3<T> Da0, Db0;
-  nearest_Line_Line(D0, Da0, Db0, Dta0, Dtb0,
-                    ps, pe - ps,
-                    pb_, vb);
+  VEC Da0, Db0;
+  Nearest_Line_Line(
+      D0, Da0, Db0, Dta0, Dtb0,
+      lineseg_start, lineseg_end - lineseg_start, line_origin, line_direction);
   if (abs(D0) < 1.0e-10) { // pararell
-    a = (ps + pe) * (T) 0.5;
-    b = ::delfem2::nearest_Line_Point(a, pb_, vb);
+    nearest_lineseg = (lineseg_start + lineseg_end) * static_cast<T>(0.5);
+    nearest_line = ::delfem2::Nearest_Line_Point<VEC,T>(
+        nearest_lineseg, line_origin, line_direction);
     return;
   }
-  T ta = Dta0 / D0;
+  const T ta = Dta0 / D0;
   if (ta > 0 && ta < 1) { // nearst point is inside the segment
-    a = Da0 / D0;
-    b = Db0 / D0;
+    nearest_lineseg = Da0 / D0;
+    nearest_line = Db0 / D0;
     return;
   }
   //
-  CVec3<T> p1 = nearest_Line_Point(ps, pb_, vb);
-  CVec3<T> p2 = nearest_Line_Point(pe, pb_, vb);
-  T Dist1 = (p1 - ps).norm();
-  T Dist2 = (p2 - pe).norm();
+  const VEC p1 = Nearest_Line_Point<VEC,T>(lineseg_start, line_origin, line_direction);
+  const VEC p2 = Nearest_Line_Point<VEC,T>(lineseg_end, line_origin, line_direction);
+  const T Dist1 = (p1 - lineseg_start).norm();
+  const T Dist2 = (p2 - lineseg_end).norm();
   if (Dist1 < Dist2) {
-    a = ps;
-    b = p1;
+    nearest_lineseg = lineseg_start;
+    nearest_line = p1;
     return;
   }
-  a = pe;
-  b = p2;
+  nearest_lineseg = lineseg_end;
+  nearest_line = p2;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template void delfem2::nearest_LineSeg_Line
- (CVec3f& a, CVec3f& b,
- const CVec3f& ps, const CVec3f& pe,
-  const CVec3f& pb_, const CVec3f& vb);
-template void delfem2::nearest_LineSeg_Line
-(CVec3d& a, CVec3d& b,
- const CVec3d& ps, const CVec3d& pe,
- const CVec3d& pb_, const CVec3d& vb);
+template void delfem2::Nearest_LineSeg_Line<delfem2::CVec3f,float>(
+    CVec3f& , CVec3f& ,
+    const CVec3f& , const CVec3f& ,
+    const CVec3f& , const CVec3f& );
+template void delfem2::Nearest_LineSeg_Line<delfem2::CVec3d,double>(
+    CVec3d& , CVec3d& ,
+    const CVec3d& , const CVec3d& ,
+    const CVec3d& , const CVec3d& );
 #endif
 
 // ---------------------------------------------
@@ -480,51 +483,50 @@ DFM2_INLINE double delfem2::Nearest_LineSeg_LineSeg_CCD_Iteration(
 
 // ---------------------------------------------
 
-template<typename T>
-void delfem2::nearest_Line_Line(
-    T &D,
-    CVec3<T> &Da,
-    CVec3<T> &Db,
-    const CVec3<T> &pa_,
-    const CVec3<T> &va,
-    const CVec3<T> &pb_,
-    const CVec3<T> &vb) {
-  T xaa = va.dot(va);
-  T xab = vb.dot(va);
-  T xbb = vb.dot(vb);
-  D = (xaa * xbb - xab * xab);
-  T xac = va.dot(pb_ - pa_);
-  T xbc = vb.dot(pb_ - pa_);
-  T da = xbb * xac - xab * xbc;
-  T db = xab * xac - xaa * xbc;
-  Da = D * pa_ + da * va;
-  Db = D * pb_ + db * vb;
+template<typename VEC, typename T>
+void delfem2::Nearest_Line_Line(
+    T &scale,
+    VEC &scaled_neraest_a,
+    VEC &scaled_nearest_b,
+    const VEC &line_org_a,
+    const VEC &line_dir_a,
+    const VEC &line_org_b,
+    const VEC &line_dir_b) {
+  const T xaa = line_dir_a.dot(line_dir_a);
+  const T xab = line_dir_b.dot(line_dir_a);
+  const T xbb = line_dir_b.dot(line_dir_b);
+  scale = (xaa * xbb - xab * xab);
+  const T xac = line_dir_a.dot(line_org_b - line_org_a);
+  const T xbc = line_dir_b.dot(line_org_b - line_org_a);
+  const T da = xbb * xac - xab * xbc;
+  const T db = xab * xac - xaa * xbc;
+  scaled_neraest_a = scale * line_org_a + da * line_dir_a;
+  scaled_nearest_b = scale * line_org_b + db * line_dir_b;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template void delfem2::nearest_Line_Line
- (float& D, CVec3f& Da, CVec3f& Db,
-  const CVec3f& pa_, const CVec3f& va,
-  const CVec3f& pb_, const CVec3f& vb);
-template void delfem2::nearest_Line_Line
- (double& D, CVec3d& Da, CVec3d& Db,
-  const CVec3d& pa_, const CVec3d& va,
-  const CVec3d& pb_, const CVec3d& vb);
+template void delfem2::Nearest_Line_Line(
+    float& , CVec3f& , CVec3f& ,
+    const CVec3f& , const CVec3f& ,
+    const CVec3f& , const CVec3f& );
+template void delfem2::Nearest_Line_Line(
+    double& , CVec3d& , CVec3d& ,
+    const CVec3d& , const CVec3d& ,
+    const CVec3d& , const CVec3d& );
 #endif
 
 // ---------------------------------------------
 
-template<typename T>
-void delfem2::nearest_Line_Line(
+template<class VEC, typename T>
+void delfem2::Nearest_Line_Line(
     T &D,
-    CVec3<T> &Da,
-    CVec3<T> &Db,
+    VEC &Da,
+    VEC &Db,
     T &Dta,
     T &Dtb,
-    //
-    const CVec3<T> &pa_,
-    const CVec3<T> &va,
-    const CVec3<T> &pb_,
-    const CVec3<T> &vb) {
+    const VEC &pa_,
+    const VEC &va,
+    const VEC &pb_,
+    const VEC &vb) {
   T xaa = va.dot(va);
   T xab = vb.dot(va);
   T xbb = vb.dot(vb);
@@ -537,29 +539,31 @@ void delfem2::nearest_Line_Line(
   Db = D * pb_ + Dtb * vb;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template void delfem2::nearest_Line_Line
- (float& D, CVec3f& Da, CVec3f& Db,
-  float& Dta, float& Dtb,
-  const CVec3f& pa_, const CVec3f& va,
-  const CVec3f& pb_, const CVec3f& vb);
-template void delfem2::nearest_Line_Line
-(double& D, CVec3d& Da, CVec3d& Db,
- double& Dta, double& Dtb,
- const CVec3d& pa_, const CVec3d& va,
- const CVec3d& pb_, const CVec3d& vb);
+template void delfem2::Nearest_Line_Line(
+    float& D, CVec3f& Da, CVec3f& Db,
+    float& Dta, float& Dtb,
+    const CVec3f& pa_, const CVec3f& va,
+    const CVec3f& pb_, const CVec3f& vb);
+template void delfem2::Nearest_Line_Line(
+    double& D, CVec3d& Da, CVec3d& Db,
+    double& Dta, double& Dtb,
+    const CVec3d& pa_, const CVec3d& va,
+    const CVec3d& pb_, const CVec3d& vb);
 #endif
 
 // ------------------------------------------
 
 template<typename T>
-delfem2::CVec3<T> delfem2::nearest_Plane_Point
-    (const CVec3<T> &p, // point
-     const CVec3<T> &o, // origin
-     const CVec3<T> &n) // normal
+delfem2::CVec3<T> delfem2::nearest_Plane_Point(
+    const CVec3<T> &p, // point
+    const CVec3<T> &o, // origin
+    const CVec3<T> &n) // normal
 {
   const CVec3<T> n0 = n.normalized();
   return p + ((o - p) * n0) * n0;
 }
+
+// -------------------------------------
 
 template<typename T>
 delfem2::CVec3<T> delfem2::Nearest_Orgin_PlaneTri(
@@ -585,6 +589,8 @@ delfem2::CVec3<T> delfem2::Nearest_Orgin_PlaneTri(
   r2 = v2 * vt_inv;
   return q0 * r0 + q1 * r1 + q2 * r2;
 }
+
+// -----------------------------
 
 template<typename T>
 delfem2::CVec3<T> delfem2::Nearest_Origin_Tri(
@@ -638,9 +644,9 @@ delfem2::CVec3<T> delfem2::Nearest_Origin_Tri(
   return p_min;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template delfem2::CVec3d delfem2::Nearest_Origin_Tri
-  (double& r0, double& r1,
-   const CVec3d& q0, const CVec3d& q1, const CVec3d& q2);
+template delfem2::CVec3d delfem2::Nearest_Origin_Tri(
+    double& r0, double& r1,
+    const CVec3d& q0, const CVec3d& q1, const CVec3d& q2);
 #endif
 
 // -------------------------------------------
@@ -851,162 +857,27 @@ void delfem2::Nearest_Line_Circle
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template void delfem2::Nearest_Line_Circle(CVec3f& p0,
-                                           CVec3f& q0,
-                                           const CVec3f& src,
-                                           const CVec3f& dir,
-                                           const CVec3f& org, // center of the circle
-                                           const CVec3f& normal, // normal of the circle
-                                           float rad);
-template void delfem2::Nearest_Line_Circle(CVec3d& p0,
-                                           CVec3d& q0,
-                                           const CVec3d& src,
-                                           const CVec3d& dir,
-                                           const CVec3d& org, // center of the circle
-                                           const CVec3d& normal, // normal of the circle
-                                           double rad);
+template void delfem2::Nearest_Line_Circle(
+    CVec3f& p0,
+    CVec3f& q0,
+    const CVec3f& src,
+    const CVec3f& dir,
+    const CVec3f& org, // center of the circle
+    const CVec3f& normal, // normal of the circle
+    float rad);
+template void delfem2::Nearest_Line_Circle(
+    CVec3d& p0,
+    CVec3d& q0,
+    const CVec3d& src,
+    const CVec3d& dir,
+    const CVec3d& org, // center of the circle
+    const CVec3d& normal, // normal of the circle
+    double rad);
 #endif
 
 // -----------------------------------------------------
 
-template<typename T>
-bool delfem2::intersection_Plane_Line(
-    CVec3<T> &p0,
-    double &r0,
-    double &r1,
-    double &r2,
-    double eps,
-    const CVec3<T> &src,
-    const CVec3<T> &dir,
-    const CVec3<T> &q0,
-    const CVec3<T> &q1,
-    const CVec3<T> &q2) {
-  namespace lcl = delfem2::proximity3;
-  r0 = lcl::Volume_Tet(src, src + dir, q1, q2);
-  r1 = lcl::Volume_Tet(src, src + dir, q2, q0);
-  r2 = lcl::Volume_Tet(src, src + dir, q0, q1);
-  double v012 = (r0 + r1 + r2);
-  double v012_inv = 1.0 / v012;
-  r0 *= v012_inv;
-  r1 *= v012_inv;
-  r2 *= v012_inv;
-  p0 = r0 * q0 + r1 * q1 + r2 * q2;
-  return r0 > eps && r1 > eps && r2 > eps;
-}
-#ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template bool delfem2::intersection_Plane_Line(CVec3d& p0, double& r0, double& r1, double& r2,
-                                            double eps,
-                                            const CVec3d& src, const CVec3d& dir,
-                                            const CVec3d& q0, const CVec3d& q1, const CVec3d& q2);
-#endif
 
-template<typename T>
-delfem2::CVec3<T> delfem2::intersection_Plane_Line
-    (const CVec3<T> &o, // one point on plane
-     const CVec3<T> &n, // plane normal
-     const CVec3<T> &s, // one point on line
-     const CVec3<T> &d) // direction of line
-{
-  double t = ((o - s).dot(n)) / (d.dot(n));
-  return s + t * d;
-}
-#ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template delfem2::CVec3d delfem2::intersection_Plane_Line(const CVec3d& o, // one point on plane
-                                                    const CVec3d& n, // plane normal
-                                                    const CVec3d& s, // one point on line
-                                                    const CVec3d& d); // direction of line
-#endif
-
-template<typename T>
-void delfem2::iteration_intersection_Line_Quad
-    (double &t0, double &t1,
-     const CVec3<T> &src,
-     const CVec3<T> &u,
-     const CVec3<T> &v,
-     const CVec3<T> &q0,
-     const CVec3<T> &q1,
-     const CVec3<T> &q2,
-     const CVec3<T> &q3) {
-  CVec3<T> q = (1 - t0) * (1 - t1) * q0 + t0 * (1 - t1) * q1 + t0 * t1 * q2 + (1 - t0) * t1 * q3;
-  CVec3<T> pq = q - src;
-  CVec3<T> dqt0 = -(1 - t1) * q0 + (1 - t1) * q1 + t1 * q2 - t1 * q3;
-  CVec3<T> dqt1 = -(1 - t0) * q0 - t0 * q1 + t0 * q2 + (1 - t0) * q3;
-  CVec3<T> ddqt0t1 = q0 - q1 + q2 - q3;
-  double f0 = -u * pq;
-  double f1 = -v * pq;
-  double A00 = u * dqt0;
-  double A01 = u * dqt1;
-  double A10 = v * dqt0;
-  double A11 = v * dqt1;
-  double det = A00 * A11 - A01 * A10;
-  double detinv = 1.0 / det;
-  double B00 = +A11 * detinv;
-  double B01 = -A01 * detinv;
-  double B10 = -A10 * detinv;
-  double B11 = +A00 * detinv;
-  double d0 = B00 * f0 + B01 * f1;
-  double d1 = B10 * f0 + B11 * f1;
-  t0 += d0;
-  t1 += d1;
-}
-
-template<typename T>
-bool delfem2::intersection_Point_Quad
-    (CVec3<T> &psec, double &s0, double &s1,
-     const CVec3<T> &src, const CVec3<T> &dir,
-     const CVec3<T> &q0, const CVec3<T> &q1, const CVec3<T> &q2, const CVec3<T> &q3) {
-  CVec3<T> u, v;
-  GetVertical2Vector(dir, u, v);
-  //
-  double dist_min = -1;
-  CVec3<T> q_min;
-  for (int ip = 0; ip < 5; ++ip) {
-    double t0 = 0, t1 = 0;
-    if (ip == 0) {
-      t0 = 0.0;
-      t1 = 0.0;
-    }
-    else if (ip == 1) {
-      t0 = 1.0;
-      t1 = 0.0;
-    }
-    else if (ip == 2) {
-      t0 = 1.0;
-      t1 = 1.0;
-    }
-    else if (ip == 3) {
-      t0 = 0.0;
-      t1 = 1.0;
-    }
-    else if (ip == 4) {
-      t0 = 0.5;
-      t1 = 0.5;
-    }
-    for (int itr = 0; itr < 4; ++itr) {
-      iteration_intersection_Line_Quad(t0, t1,
-                                       src, u, v,
-                                       q0, q1, q2, q3);
-    }
-    CVec3<T> q = (1 - t0) * (1 - t1) * q0 + t0 * (1 - t1) * q1 + t0 * t1 * q2 + (1 - t0) * t1 * q3;
-    double tol = 1.0e-4;
-//    std::cout << t0 << " " << t1 << std::endl;
-    if (t0 > -tol && t0 < 1.0 + tol && t1 > -tol && t1 < 1.0 + tol) {
-      double d0 = (q - src).Length();
-      if (dist_min < 0 || d0 < dist_min) {
-        dist_min = d0;
-        s0 = t0;
-        s1 = t1;
-        q_min = q;
-      }
-    }
-  }
-//  std::cout << dist_min << std::endl;
-  if (dist_min > 0) {
-    psec = q_min;
-    return true;
-  }
-  return false;
-}
 
 // ------------------------------------------------------------------------------
 
@@ -1083,11 +954,13 @@ double delfem2::DistanceFaceVertex
   return (pw - p3).norm();
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template double delfem2::DistanceFaceVertex
-  (const CVec3d& p0, const CVec3d& p1,
-   const CVec3d& p2, const CVec3d& p3,
-   double& w0, double& w1);
+template double delfem2::DistanceFaceVertex(
+    const CVec3d& p0, const CVec3d& p1,
+    const CVec3d& p2, const CVec3d& p3,
+    double& w0, double& w1);
 #endif
+
+// ---------------------------------------------------------
 
 //　distance EE
 template<typename T>
@@ -1134,24 +1007,169 @@ double delfem2::DistanceEdgeEdge
   return (pc - qc).norm();
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template double delfem2::DistanceEdgeEdge
-  (const CVec3d& p0, const CVec3d& p1,
-   const CVec3d& q0, const CVec3d& q1,
-   double& ratio_p, double& ratio_q);
+template double delfem2::DistanceEdgeEdge(
+    const CVec3d& p0, const CVec3d& p1,
+    const CVec3d& q0, const CVec3d& q1,
+    double& ratio_p, double& ratio_q);
 #endif
+
+// ----------------
+
+template<typename T>
+bool delfem2::intersection_Plane_Line(
+                                      CVec3<T> &p0,
+                                      double &r0,
+                                      double &r1,
+                                      double &r2,
+                                      double eps,
+                                      const CVec3<T> &src,
+                                      const CVec3<T> &dir,
+                                      const CVec3<T> &q0,
+                                      const CVec3<T> &q1,
+                                      const CVec3<T> &q2) {
+  namespace lcl = delfem2::proximity3;
+  r0 = lcl::Volume_Tet(src, src + dir, q1, q2);
+  r1 = lcl::Volume_Tet(src, src + dir, q2, q0);
+  r2 = lcl::Volume_Tet(src, src + dir, q0, q1);
+  double v012 = (r0 + r1 + r2);
+  double v012_inv = 1.0 / v012;
+  r0 *= v012_inv;
+  r1 *= v012_inv;
+  r2 *= v012_inv;
+  p0 = r0 * q0 + r1 * q1 + r2 * q2;
+  return r0 > eps && r1 > eps && r2 > eps;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template bool delfem2::intersection_Plane_Line(
+                                               CVec3d& p0, double& r0, double& r1, double& r2,
+                                               double eps,
+                                               const CVec3d& src, const CVec3d& dir,
+                                               const CVec3d& q0, const CVec3d& q1, const CVec3d& q2);
+#endif
+
+// -------------------
+
+template<typename T>
+delfem2::CVec3<T> delfem2::intersection_Plane_Line
+(const CVec3<T> &o, // one point on plane
+ const CVec3<T> &n, // plane normal
+ const CVec3<T> &s, // one point on line
+ const CVec3<T> &d) // direction of line
+{
+  double t = ((o - s).dot(n)) / (d.dot(n));
+  return s + t * d;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template delfem2::CVec3d delfem2::intersection_Plane_Line(
+                                                          const CVec3d& o, // one point on plane
+                                                          const CVec3d& n, // plane normal
+                                                          const CVec3d& s, // one point on line
+                                                          const CVec3d& d); // direction of line
+#endif
+
+template<typename T>
+void delfem2::iteration_intersection_Line_Quad
+(double &t0, double &t1,
+ const CVec3<T> &src,
+ const CVec3<T> &u,
+ const CVec3<T> &v,
+ const CVec3<T> &q0,
+ const CVec3<T> &q1,
+ const CVec3<T> &q2,
+ const CVec3<T> &q3) {
+  CVec3<T> q = (1 - t0) * (1 - t1) * q0 + t0 * (1 - t1) * q1 + t0 * t1 * q2 + (1 - t0) * t1 * q3;
+  CVec3<T> pq = q - src;
+  CVec3<T> dqt0 = -(1 - t1) * q0 + (1 - t1) * q1 + t1 * q2 - t1 * q3;
+  CVec3<T> dqt1 = -(1 - t0) * q0 - t0 * q1 + t0 * q2 + (1 - t0) * q3;
+  CVec3<T> ddqt0t1 = q0 - q1 + q2 - q3;
+  double f0 = -u * pq;
+  double f1 = -v * pq;
+  double A00 = u * dqt0;
+  double A01 = u * dqt1;
+  double A10 = v * dqt0;
+  double A11 = v * dqt1;
+  double det = A00 * A11 - A01 * A10;
+  double detinv = 1.0 / det;
+  double B00 = +A11 * detinv;
+  double B01 = -A01 * detinv;
+  double B10 = -A10 * detinv;
+  double B11 = +A00 * detinv;
+  double d0 = B00 * f0 + B01 * f1;
+  double d1 = B10 * f0 + B11 * f1;
+  t0 += d0;
+  t1 += d1;
+}
+
+template<typename T>
+bool delfem2::intersection_Point_Quad(
+                                      CVec3<T> &psec, double &s0, double &s1,
+                                      const CVec3<T> &src, const CVec3<T> &dir,
+                                      const CVec3<T> &q0, const CVec3<T> &q1, const CVec3<T> &q2, const CVec3<T> &q3) {
+  CVec3<T> u, v;
+  GetVertical2Vector(dir, u, v);
+  //
+  double dist_min = -1;
+  CVec3<T> q_min;
+  for (int ip = 0; ip < 5; ++ip) {
+    double t0 = 0, t1 = 0;
+    if (ip == 0) {
+      t0 = 0.0;
+      t1 = 0.0;
+    }
+    else if (ip == 1) {
+      t0 = 1.0;
+      t1 = 0.0;
+    }
+    else if (ip == 2) {
+      t0 = 1.0;
+      t1 = 1.0;
+    }
+    else if (ip == 3) {
+      t0 = 0.0;
+      t1 = 1.0;
+    }
+    else if (ip == 4) {
+      t0 = 0.5;
+      t1 = 0.5;
+    }
+    for (int itr = 0; itr < 4; ++itr) {
+      iteration_intersection_Line_Quad(t0, t1,
+                                       src, u, v,
+                                       q0, q1, q2, q3);
+    }
+    CVec3<T> q = (1 - t0) * (1 - t1) * q0 + t0 * (1 - t1) * q1 + t0 * t1 * q2 + (1 - t0) * t1 * q3;
+    double tol = 1.0e-4;
+    //    std::cout << t0 << " " << t1 << std::endl;
+    if (t0 > -tol && t0 < 1.0 + tol && t1 > -tol && t1 < 1.0 + tol) {
+      double d0 = (q - src).Length();
+      if (dist_min < 0 || d0 < dist_min) {
+        dist_min = d0;
+        s0 = t0;
+        s1 = t1;
+        q_min = q;
+      }
+    }
+  }
+  //  std::cout << dist_min << std::endl;
+  if (dist_min > 0) {
+    psec = q_min;
+    return true;
+  }
+  return false;
+}
 
 // EEの距離が所定の距離以下にあるかどうか
 template<typename T>
-bool delfem2::IsContact_EE_Proximity
-    (int ino0,
-     int ino1,
-     int jno0,
-     int jno1,
-     const CVec3<T> &p0,
-     const CVec3<T> &p1,
-     const CVec3<T> &q0,
-     const CVec3<T> &q1,
-     const double delta) {
+bool delfem2::IsContact_EE_Proximity(
+    int ino0,
+    int ino1,
+    int jno0,
+    int jno1,
+    const CVec3<T> &p0,
+    const CVec3<T> &p1,
+    const CVec3<T> &q0,
+    const CVec3<T> &q1,
+    const double delta) {
   if (ino0 == jno0 || ino0 == jno1 || ino1 == jno0 || ino1 == jno1) return false;
   if (q0.p[0] + delta < p0.p[0] && q0.p[0] + delta < p1.p[0] && q1.p[0] + delta < p0.p[0]
       && q1.p[0] + delta < p1.p[0])
@@ -1183,17 +1201,15 @@ bool delfem2::IsContact_EE_Proximity
   return (pm - qm).norm() <= delta;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template bool delfem2::IsContact_EE_Proximity
-  (int ino0,
-   int ino1,
-   int jno0,
-   int jno1,
-   const CVec3d& p0,
-   const CVec3d& p1,
-   const CVec3d& q0,
-   const CVec3d& q1,
-   const double delta);
+template bool delfem2::IsContact_EE_Proximity(
+    int ino0, int ino1,
+    int jno0, int jno1,
+    const CVec3d& p0, const CVec3d& p1,
+    const CVec3d& q0, const CVec3d& q1,
+    const double delta);
 #endif
+
+// ------------------
 
 // compute time where four points gets coplaner
 template<typename T>
@@ -1335,7 +1351,7 @@ bool delfem2::IsContact_FV_CCD2(
   return true;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template bool delfem2::IsContact_FV_CCD2(
+template bool delfem2::IsContact_FV_CCD2(
     int ino0,
     int ino1,
     int ino2,
@@ -1349,6 +1365,8 @@ bool delfem2::IsContact_FV_CCD2(
     const CVec3d& q2,
     const CVec3d& q3);
 #endif
+
+// ----------------------------------
 
 template<typename T>
 bool delfem2::isIntersectTriPair(
@@ -1459,7 +1477,7 @@ bool delfem2::isIntersectTriPair(
   return true;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template bool delfem2::isIntersectTriPair(
+template bool delfem2::isIntersectTriPair(
     CVec3d& P0, CVec3d& P1,
     int itri, int jtri,
     const std::vector<unsigned int>& aTri,
@@ -1512,10 +1530,10 @@ bool delfem2::isRayIntersectingTriangle
   return true;
 }
 #ifdef DFM2_STATIC_LIBRARY
-                                                                                                                        template bool delfem2::isRayIntersectingTriangle
-  (const CVec3d &line0, const CVec3d &line1,
-   const CVec3d &tri0, const CVec3d &tri1, const CVec3d &tri2,
-   CVec3d &intersectionPoint);
+template bool delfem2::isRayIntersectingTriangle(
+    const CVec3d &line0, const CVec3d &line1,
+    const CVec3d &tri0, const CVec3d &tri1, const CVec3d &tri2,
+    CVec3d &intersectionPoint);
 #endif
 
 // ----------------------------------------

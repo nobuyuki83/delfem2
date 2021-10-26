@@ -102,6 +102,10 @@ class CVec2 {
     this->p[0] = arr[0];
     this->p[1] = arr[1];
   }
+  CVec2(const T *arr) {
+    this->p[0] = arr[0];
+    this->p[1] = arr[1];
+  }
   explicit CVec2(T x) {
     this->p[0] = x;
     this->p[1] = x;

@@ -171,7 +171,7 @@ void FindRodHairContactCCD(
       {
         double D;
         dfm2::CVec3d Da,Db;
-        dfm2::nearest_Line_Line(D, Da, Db, p0s, p1s-p0s, q0s, q1s-q0s);
+        dfm2::Nearest_Line_Line(D, Da, Db, p0s, p1s-p0s, q0s, q1s-q0s);
         Da /= D;
         Db /= D;
         p[0] = (Da-p0s).dot(p1s-p0s)/(p1s-p0s).squaredNorm();

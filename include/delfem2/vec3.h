@@ -135,10 +135,13 @@ class CVec3 {
   CVec3(const std::array<S,3>&& v) : p{v[0], v[1], v[2]} {}
 
   template<typename S>
-  explicit CVec3(const S *v) : p{v[0], v[1], v[2]} {}
+  explicit CVec3(const S *v) : p{
+    static_cast<T>(v[0]),
+    static_cast<T>(v[1]),
+    static_cast<T>(v[2]) } {}
 
   template<typename S>
-  explicit CVec3(const std::vector<S> &v)  : p(v[0], v[1], v[2]) {}
+  explicit CVec3(const std::vector<S> &v)  : p{v[0], v[1], v[2]} {}
 
   virtual ~CVec3() = default;
 

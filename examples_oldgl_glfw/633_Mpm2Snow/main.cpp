@@ -26,7 +26,7 @@ class CParticle {
  public:
   CParticle(const delfem2::CVec2f &x,
             int c)
-      : pos(x), velo(0), F(1), C(0), Jp(1), icolor(c) {}
+      : pos(x), velo(0.f), F(1), C(0), Jp(1), icolor(c) {}
  public:
   delfem2::CVec2f pos;   //! position
   delfem2::CVec2f velo;  //! velocity
