@@ -20,12 +20,12 @@
 
 #include "delfem2/mshprimitive.h"
 #include "delfem2/vec3.h"
+#include "delfem2/points.h"
 #include "delfem2/opengl/new/shdr_points.h"
 #include "delfem2/opengl/new/shdr_mshtri.h"
 #include "delfem2/opengl/new/r2tgln.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/points.h"
 
 namespace dfm2 = delfem2;
 

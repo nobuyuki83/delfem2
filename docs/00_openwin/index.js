@@ -5199,10 +5199,7 @@ var ASM_CONSTS = {
           }
         }
       }};
-  function _glClear(x0) { GLctx['clear'](x0) }
-
-  function _glClearColor(x0, x1, x2, x3) { GLctx['clearColor'](x0, x1, x2, x3) }
-
+  
   /** @constructor */
   function GLFW_Window(id, width, height, title, monitor, share) {
         this.id = id;
@@ -6527,8 +6524,6 @@ var asmLibraryArg = {
   "fd_read": _fd_read,
   "fd_seek": _fd_seek,
   "fd_write": _fd_write,
-  "glClear": _glClear,
-  "glClearColor": _glClearColor,
   "glfwCreateWindow": _glfwCreateWindow,
   "glfwGetFramebufferSize": _glfwGetFramebufferSize,
   "glfwInit": _glfwInit,

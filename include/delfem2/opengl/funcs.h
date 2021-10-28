@@ -18,9 +18,38 @@
 #include <vector>
 #include <array>
 
+
+// following OpenGL relted headers need to be defined here because of "convertToGlType"
+#ifdef EMSCRIPTEN
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
+#  include <GLFW/glfw3.h>
+#else
+#  include <glad/glad.h>
+#endif
+
+#if defined(_WIN32) // windows
+#  include <windows.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+#  include <OpenGL/gl.h>
+#else
+#  include <GL/gl.h>
+#endif
+
 #include "delfem2/dfm2_inline.h"
 
 namespace delfem2::opengl {
+
+template <typename REAL>
+constexpr int convertToGlType(){ return 0; }
+
+template <>
+constexpr int convertToGlType<float>(){ return GL_FLOAT; }
+
+template <>
+constexpr int convertToGlType<double>(){ return GL_DOUBLE; }
 
 DFM2_INLINE int GL24_CompileShader(
     const char *vert,
@@ -43,17 +72,6 @@ DFM2_INLINE int compileShader(
 DFM2_INLINE int setUpGLSL(
     const std::string& str_glsl_vert,
     const std::string& str_glsl_frag);
-
-// -------------
-
-template <typename REAL>
-constexpr int convertToGlType(){ return 0; }
-
-template <>
-constexpr int convertToGlType<float>(){ return GL_FLOAT; }
-
-template <>
-constexpr int convertToGlType<double>(){ return GL_DOUBLE; }
 
 // -------------
 

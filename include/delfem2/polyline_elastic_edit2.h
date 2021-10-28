@@ -60,7 +60,7 @@ class PolylineElasticEdit2
  public:
   std::vector<double> dut;
   std::vector<double> Res;
-  CTriDiaMat3 m_mat;
+  BlockTriDiagonalMatrix m_mat;
 };
 
 
@@ -296,7 +296,7 @@ void PolylineElasticEdit2::SolveLinearStatic()
     for(unsigned int i=0;i<nno*3;i++){ nres += Res[i]*Res[i]; }
     //		std::cout << "itr : " << itr << "    Norm res : " << nres << std::endl;
   }
-  m_mat.ILU_Frac();
+  m_mat.Decompose();
   {
     for(unsigned int i=0;i<nno*3;i++){ dut[i] = Res[i]; }
     m_mat.Solve(dut);

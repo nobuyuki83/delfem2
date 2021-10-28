@@ -1,9 +1,5 @@
-
-
-#include <cstdio>
 #include <iostream>
 #include <vector>
-#include <set>
 #if defined(_MSC_VER)
 #include <windows.h>
 #endif
@@ -22,11 +18,10 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "delfem2/polyline_elastic_edit2.h"
-#include "delfem2/ls_tridiagonal.h"
+#include "delfem2/geo_polyline2.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/drawer_polyline.h"
-#include "delfem2/geo_polyline2.h"
 
 namespace dfm2 = delfem2;
 

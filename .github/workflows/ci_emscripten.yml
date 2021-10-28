@@ -25,4 +25,7 @@ jobs:
     - name: Setup Emscripten toolchain
       uses: mymindstorm/setup-emsdk@v8
 
+    - name: print version
+      run: |
+        em++ --version
 

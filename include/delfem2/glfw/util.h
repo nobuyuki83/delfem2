@@ -2,8 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-namespace delfem2{
-namespace glfw{
+namespace delfem2::glfw{
 
 static void callback_error(
     [[maybe_unused]] int error,
@@ -56,5 +55,4 @@ void InitGLNew(){
    */
 }
 
-}
 }

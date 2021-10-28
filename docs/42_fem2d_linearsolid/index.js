@@ -6414,6 +6414,12 @@ var ASM_CONSTS = {
       GLFW.getWindowSize(winid, width, height);
     }
 
+  function _glfwGetWindowUserPointer(winid) {
+      var win = GLFW.WindowFromId(winid);
+      if (!win) return 0;
+      return win.userptr;
+    }
+
   function _glfwInit() {
       if (GLFW.windows) return 1; // GL_TRUE
   
@@ -6486,6 +6492,12 @@ var ASM_CONSTS = {
       var win = GLFW.WindowFromId(winid);
       if (!win) return;
       win.shouldClose = value;
+    }
+
+  function _glfwSetWindowUserPointer(winid, ptr) {
+      var win = GLFW.WindowFromId(winid);
+      if (!win) return;
+      win.userptr = ptr;
     }
 
   function _glfwSwapBuffers(winid) {
@@ -7030,6 +7042,7 @@ var asmLibraryArg = {
   "glfwGetCursorPos": _glfwGetCursorPos,
   "glfwGetFramebufferSize": _glfwGetFramebufferSize,
   "glfwGetWindowSize": _glfwGetWindowSize,
+  "glfwGetWindowUserPointer": _glfwGetWindowUserPointer,
   "glfwInit": _glfwInit,
   "glfwMakeContextCurrent": _glfwMakeContextCurrent,
   "glfwPollEvents": _glfwPollEvents,
@@ -7040,6 +7053,7 @@ var asmLibraryArg = {
   "glfwSetMouseButtonCallback": _glfwSetMouseButtonCallback,
   "glfwSetScrollCallback": _glfwSetScrollCallback,
   "glfwSetWindowShouldClose": _glfwSetWindowShouldClose,
+  "glfwSetWindowUserPointer": _glfwSetWindowUserPointer,
   "glfwSwapBuffers": _glfwSwapBuffers,
   "glfwTerminate": _glfwTerminate,
   "glfwWindowHint": _glfwWindowHint,

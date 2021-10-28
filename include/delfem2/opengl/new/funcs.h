@@ -90,13 +90,8 @@ public:
       const std::vector<unsigned int>& elem_vtx,
       int gl_primitive_type);
 
-  void Delete_EBOs(){
-    for(auto & ie : aEBO){
-       unsigned int ebo = ie.EBO;
-       if( glIsBuffer(ebo) ){ glDeleteBuffers(1,&ebo); }
-     }
-     aEBO.clear();
-  }
+  void Delete_EBOs();
+  
 public:
   unsigned int VAO;
   std::vector<CEBO> aEBO;

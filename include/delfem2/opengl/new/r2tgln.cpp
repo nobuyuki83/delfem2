@@ -97,7 +97,9 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::Draw(
   const dfm2::CMat4d mvp0 = dfm2::CMat4d(r2t.mat_modelview) * dfm2::CMat4d(r2t.mat_projection);
   const dfm2::CMat4f mv1 = (dfm2::CMat4d(mat4_modelview) * mvp0.Inverse()).cast<float>();
   drawer_view_frustrum.Draw(mat4_projection, mv1.data());
+#ifndef EMSCRIPTEN
   glPointSize(this->pointSize);
+#endif
   drawer_projected_points.Draw(GL_POINTS, mat4_projection, mv1.data());
   glEnable(GL_TEXTURE_2D);
   glActiveTexture(0);

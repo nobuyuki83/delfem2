@@ -167,3 +167,12 @@ DFM2_INLINE void delfem2::opengl::VertexArrayObject::Add_EBO(
     idEBO};
   this->aEBO.push_back(e0);
 }
+
+
+void delfem2::opengl::VertexArrayObject::Delete_EBOs(){
+  for(auto & ie : aEBO){
+    unsigned int ebo = ie.EBO;
+    if( glIsBuffer(ebo) ){ glDeleteBuffers(1,&ebo); }
+  }
+  aEBO.clear();
+}

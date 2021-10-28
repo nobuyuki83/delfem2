@@ -5466,6 +5466,14 @@ var ASM_CONSTS = {
       }
     }
 
+  function _glDeleteVertexArrays(n, vaos) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((vaos)+(i*4))>>2)];
+        GLctx['deleteVertexArray'](GL.vaos[id]);
+        GL.vaos[id] = null;
+      }
+    }
+
   function _glDetachShader(program, shader) {
       GLctx.detachShader(GL.programs[program],
                               GL.shaders[shader]);
@@ -6833,6 +6841,14 @@ var ASM_CONSTS = {
 
   function _glfwSetCursor(winid, cursor) {}
 
+  function _glfwSetCursorEnterCallback(winid, cbfun) {
+      var win = GLFW.WindowFromId(winid);
+      if (!win) return null;
+      var prevcbfun = win.cursorEnterFunc;
+      win.cursorEnterFunc = cbfun;
+      return prevcbfun;
+    }
+
   function _glfwSetCursorPos(winid, x, y) {
       GLFW.setCursorPos(winid, x, y);
     }
@@ -6851,12 +6867,26 @@ var ASM_CONSTS = {
       return GLFW.setKeyCallback(winid, cbfun);
     }
 
+  function _glfwSetMonitorCallback(cbfun) {
+      var prevcbfun = GLFW.monitorFunc;
+      GLFW.monitorFunc = cbfun;
+      return prevcbfun;
+    }
+
   function _glfwSetMouseButtonCallback(winid, cbfun) {
       return GLFW.setMouseButtonCallback(winid, cbfun);
     }
 
   function _glfwSetScrollCallback(winid, cbfun) {
       return GLFW.setScrollCallback(winid, cbfun);
+    }
+
+  function _glfwSetWindowFocusCallback(winid, cbfun) {
+      var win = GLFW.WindowFromId(winid);
+      if (!win) return null;
+      var prevcbfun = win.windowFocusFunc;
+      win.windowFocusFunc = cbfun;
+      return prevcbfun;
     }
 
   function _glfwSwapBuffers(winid) {
@@ -7388,6 +7418,7 @@ var asmLibraryArg = {
   "glDeleteProgram": _glDeleteProgram,
   "glDeleteShader": _glDeleteShader,
   "glDeleteTextures": _glDeleteTextures,
+  "glDeleteVertexArrays": _glDeleteVertexArrays,
   "glDetachShader": _glDetachShader,
   "glDisable": _glDisable,
   "glDrawElements": _glDrawElements,
@@ -7434,12 +7465,15 @@ var asmLibraryArg = {
   "glfwSetCharCallback": _glfwSetCharCallback,
   "glfwSetClipboardString": _glfwSetClipboardString,
   "glfwSetCursor": _glfwSetCursor,
+  "glfwSetCursorEnterCallback": _glfwSetCursorEnterCallback,
   "glfwSetCursorPos": _glfwSetCursorPos,
   "glfwSetErrorCallback": _glfwSetErrorCallback,
   "glfwSetInputMode": _glfwSetInputMode,
   "glfwSetKeyCallback": _glfwSetKeyCallback,
+  "glfwSetMonitorCallback": _glfwSetMonitorCallback,
   "glfwSetMouseButtonCallback": _glfwSetMouseButtonCallback,
   "glfwSetScrollCallback": _glfwSetScrollCallback,
+  "glfwSetWindowFocusCallback": _glfwSetWindowFocusCallback,
   "glfwSwapBuffers": _glfwSwapBuffers,
   "glfwSwapInterval": _glfwSwapInterval,
   "glfwTerminate": _glfwTerminate,
