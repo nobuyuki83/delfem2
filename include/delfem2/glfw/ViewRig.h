@@ -37,7 +37,7 @@ public:
       }
       ipicked_bone = -1;
       for (unsigned int ib = 0; ib < aBone.size(); ++ib) {
-        CVec3d p0 = aBone[ib].Pos();
+        CVec3d p0 = aBone[ib].RootPosition();
         CVec3d p1 = Nearest_Line_Point<CVec3d,double>(p0, s0, d0);
         double len01 = (p0 - p1).norm();
         if (len01 < 0.03) {
@@ -61,7 +61,7 @@ public:
     if (mode_edit == ROT) {
       if (ipicked_bone == -1) { return false; }
       assert(ipicked_bone >= 0 && ipicked_bone < (int) aBone.size());
-      const delfem2::CVec3d hoge = aBone[ipicked_bone].Pos();
+      const delfem2::CVec3d hoge = aBone[ipicked_bone].RootPosition();
       gizmo_rot.pos = hoge.cast<float>();
       gizmo_rot.Drag(src0, src1, dir);
       {
@@ -118,7 +118,8 @@ DFM2_INLINE void Draw(
   else if( giz.mode_edit == CGizmo_Rig<float>::MODE_EDIT::ROT ){ // translation
     if( giz.ipicked_bone != -1 ){
       assert( giz.ipicked_bone >= 0 && giz.ipicked_bone < (int)aBone.size() );
-      giz.gizmo_rot.pos = aBone[giz.ipicked_bone].Pos().cast<float>();
+      ::delfem2::CVec3d pos0 = aBone[giz.ipicked_bone].RootPosition();
+      giz.gizmo_rot.pos = pos0.cast<float>();
       { // set quaternion
         CMat3<double> m3;
         m3.SetMat4(aBone[giz.ipicked_bone].affmat3Global);

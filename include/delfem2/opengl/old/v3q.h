@@ -9,6 +9,7 @@
 #define DFM2_OPENGL_OLD_V3Q_H
 
 #include <vector>
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/vec3.h"
@@ -23,6 +24,9 @@ namespace opengl {
 
 template<typename REAL>
 DFM2_INLINE void myGlVertex(const CVec3<REAL> &v);
+
+template<typename REAL>
+DFM2_INLINE void myGlVertex(const std::array<REAL,3> &v);
 
 template<typename REAL>
 DFM2_INLINE void myGlTranslate(const CVec3<REAL> &v);

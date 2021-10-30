@@ -8,6 +8,7 @@
 #include "delfem2/opengl/old/v3q.h"
 
 #include <cassert>
+#include <array>
 
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
@@ -38,6 +39,13 @@ DFM2_INLINE void myGlVertex(const CVec3d &v) { ::glVertex3d(v.x, v.y, v.z); }
 
 template<>
 DFM2_INLINE void myGlVertex(const CVec3f &v) { ::glVertex3f(v.x, v.y, v.z); }
+
+template<>
+DFM2_INLINE void myGlVertex(const std::array<double,3> &v) { ::glVertex3d(v[0], v[1], v[2]); }
+
+template<>
+DFM2_INLINE void myGlVertex(const std::array<float,3> &v) { ::glVertex3f(v[0], v[1], v[2]); }
+
 
 }
 }

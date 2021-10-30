@@ -38,7 +38,7 @@ DFM2_INLINE void delfem2::opengl::Draw_RigBone(
   { // draw point
     if (is_selected) { ::glColor3d(0, 1, 1); }
     else { ::glColor3d(1, 0, 0); }
-    const CVec3d pos = aBone[ibone].Pos();
+    const CVec3d pos = aBone[ibone].RootPosition();
     delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x, pos.y, pos.z);
   }
   /*
@@ -78,8 +78,8 @@ DFM2_INLINE void delfem2::opengl::DrawBone_Line(
     if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); } // white if selected
     else{              ::glColor3d(0.0,0.0,0.0); } // black if not selected
     ::glBegin(GL_LINES);
-    opengl::myGlVertex(bone.Pos());
-    opengl::myGlVertex(bone_p.Pos());
+    opengl::myGlVertex(bone.RootPosition());
+    opengl::myGlVertex(bone_p.RootPosition());
     ::glEnd();
   }
 }

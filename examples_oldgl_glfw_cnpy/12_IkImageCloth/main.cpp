@@ -201,7 +201,7 @@ int main()
   std::vector< std::pair<dfm2::CVec3d,dfm2::CVec3d> > aTargetOriginPos;
   for(auto & target : aTarget){
     unsigned int ib = target.ib;
-    aTargetOriginPos.emplace_back(target.pos, projector.aBone[ib].Pos() );
+    aTargetOriginPos.emplace_back(target.pos, projector.aBone[ib].RootPosition() );
   }
   dfm2::CKineticDamper damper;
   dfm2::glfw::CViewer3 viewer;

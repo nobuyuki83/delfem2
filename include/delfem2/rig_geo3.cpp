@@ -21,20 +21,8 @@
 
 // ------------------------------------------------------------
 
+/*
 namespace delfem2::rig_v3q {
-
-DFM2_INLINE double myStod(const std::string& str){
-  char* e;
-  double d = std::strtod(str.c_str(),&e);
-  return d;
-}
-
-// probably std::stroi is safer to use but it is only for C++11
-DFM2_INLINE int myStoi(const std::string& str){
-  char* e;
-  long d = std::strtol(str.c_str(),&e,0);
-  return (int)d;
-}
 
 DFM2_INLINE bool isActive_AABB(const double aabb[6]){
     return aabb[0] <= aabb[1];
@@ -56,67 +44,6 @@ DFM2_INLINE void myAdd_AABB(double aabb[6], const double aabb0[6], const double 
   aabb[3] = ( aabb0[3] > aabb1[3] ) ? aabb0[3] : aabb1[3];
   aabb[4] = ( aabb0[4] < aabb1[4] ) ? aabb0[4] : aabb1[4];
   aabb[5] = ( aabb0[5] > aabb1[5] ) ? aabb0[5] : aabb1[5];
-}
-
-DFM2_INLINE void CalcInvMat(double* a, const int n, int& info )
-{
-  double tmp1;
-  
-  info = 0;
-  int i,j,k;
-  for(i=0;i<n;i++){
-    if( fabs(a[i*n+i]) < 1.0e-30 ){
-      info = 1;
-      return;
-    }
-    if( a[i*n+i] < 0.0 ){
-      info--;
-    }
-    tmp1 = 1.0 / a[i*n+i];
-    a[i*n+i] = 1.0;
-    for(k=0;k<n;k++){
-      a[i*n+k] *= tmp1;
-    }
-    for(j=0;j<n;j++){
-      if( j!=i ){
-        tmp1 = a[j*n+i];
-        a[j*n+i] = 0.0;
-        for(k=0;k<n;k++){
-          a[j*n+k] -= tmp1*a[i*n+k];
-        }
-      }
-    }
-  }
-}
-
-DFM2_INLINE  std::string MyReplace
- (const std::string& str,
-  const char cf,
-  const char ct)
-{
-  const size_t n = str.size();
-  //
-  std::string ss(str);
-  for(unsigned int i=0;i<n;++i){
-    if( ss[i] != cf ){ continue; }
-    ss[i] = ct;
-  }
-  return ss;
-}
-
-DFM2_INLINE std::vector<std::string> MySplit
- (const std::string& str,
-  char delimiter)
-{
-  std::vector<std::string> aToken;
-  aToken.clear();
-  std::stringstream data(str);
-  std::string line;
-  while(std::getline(data,line,delimiter)){
-    if( line.empty() ){ continue; }
-    aToken.push_back(line);
-  }
-  return aToken;
 }
 
 DFM2_INLINE double MyDotX(
@@ -149,7 +76,7 @@ DFM2_INLINE void MyMatMatTX(
 }
 
 }
-
+*/
 
 void delfem2::SparsifyMatrixRow(
     std::vector<double>& aWBone_RigSparse,
@@ -331,8 +258,7 @@ void delfem2::SetCurrentBoneRotationAsDefault(
   UpdateBoneRotTrans(aBone);
 }
 
-DFM2_INLINE void
-delfem2::Skinning_LBS(
+DFM2_INLINE void delfem2::Skinning_LBS(
     std::vector<double>& aXYZ1,
     const std::vector<double>& aXYZ0,
     const std::vector<CRigBone>& aBone,
@@ -388,8 +314,7 @@ DFM2_INLINE void delfem2::SkinningSparse_LBS(
 
 
 
-DFM2_INLINE void
-delfem2::Skinning_LBS_LocalWeight(
+DFM2_INLINE void delfem2::Skinning_LBS_LocalWeight(
     double* aXYZ,
     const double* aXYZ0,
     size_t nXYZ,
@@ -421,194 +346,6 @@ delfem2::Skinning_LBS_LocalWeight(
     aXYZ[ip*3+1] = pos1[1];
     aXYZ[ip*3+2] = pos1[2];
   }
-}
-
-// ------------------------------------
-// from here BioVisionHierarchy
-
-DFM2_INLINE void
-delfem2::Read_BioVisionHierarchy(
-    std::vector<CRigBone>& aBone,
-    std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
-    int& nframe,
-    std::vector<double>& aValueRotTransBone,
-    const std::string& path_bvh)
-{
-  std::ifstream fin;
-  fin.open(path_bvh.c_str());
-  if( !fin.is_open() ){
-    std::cout << "cannot open file" << std::endl;
-    return;
-  }
-  aBone.clear();
-  aChannelRotTransBone.clear();
-  //
-  std::string line;
-  std::vector<int> stackIndBone;
-  while(std::getline(fin,line)){
-    if (line[line.size()-1] == '\n') line.erase(line.size()-1); // remove the newline code
-    if (line[line.size()-1] == '\r') line.erase(line.size()-1); // remove the newline code
-    line = rig_v3q::MyReplace(line, '\t', ' ');
-    std::vector<std::string> aToken = rig_v3q::MySplit(line,' ');
-//    std::cout << aToken[0] << std::endl;
-    if( aToken[0] == "HIERARCHY" ){
-      assert(aBone.empty());
-    }
-    else if( aToken[0] == "ROOT" ){
-      assert(aBone.empty());
-      CRigBone br;
-      assert( aToken.size() == 2 );
-      br.name = aToken[1];
-      aBone.push_back(br);
-    }
-    else if( aToken[0] == "{" ){
-      stackIndBone.push_back(static_cast<unsigned int>(aBone.size()-1));
-      if( stackIndBone.size() > 1 ){
-        int ibp = stackIndBone[stackIndBone.size()-2];
-        auto ib = static_cast<unsigned int>(aBone.size()-1);
-        aBone[ib].ibone_parent  = ibp;
-      }
-    }
-    else if( aToken[0] == "}" ){
-      stackIndBone.resize(stackIndBone.size()-1);
-    }
-    else if( aToken[0] == "OFFSET"){
-      assert( aToken.size()==4 );
-      size_t ib = aBone.size()-1;
-      double org_x = rig_v3q::myStod(aToken[1]);
-      double org_y = rig_v3q::myStod(aToken[2]);
-      double org_z = rig_v3q::myStod(aToken[3]);
-      aBone[ib].invBindMat[ 3] = -org_x;
-      aBone[ib].invBindMat[ 7] = -org_y;
-      aBone[ib].invBindMat[11] = -org_z;
-      if( stackIndBone.size() > 1 ){
-        const int ibp = stackIndBone[stackIndBone.size()-2];
-        assert(ibp<(int)aBone.size());
-        aBone[ib].invBindMat[ 3] += aBone[ibp].invBindMat[ 3];
-        aBone[ib].invBindMat[ 7] += aBone[ibp].invBindMat[ 7];
-        aBone[ib].invBindMat[11] += aBone[ibp].invBindMat[11];
-      }
-    }
-    else if( aToken[0] == "CHANNELS" ){
-      assert(aToken.size()>=2);
-      int nch = rig_v3q::myStoi(aToken[1]);
-      assert((int)aToken.size()==nch+2);
-      assert( !aBone.empty() );
-      const auto ib = static_cast<unsigned int>(aBone.size()-1);
-      for(int ich=0;ich<nch;++ich){
-        const std::string& type_ch = aToken[ich+2];
-        if(      type_ch == "Xposition" ){ aChannelRotTransBone.emplace_back(ib,0,false ); }
-        else if( type_ch == "Yposition" ){ aChannelRotTransBone.emplace_back(ib,1,false ); }
-        else if( type_ch == "Zposition" ){ aChannelRotTransBone.emplace_back(ib,2,false ); }
-        else if( type_ch == "Xrotation" ){ aChannelRotTransBone.emplace_back(ib,0,true ); }
-        else if( type_ch == "Yrotation" ){ aChannelRotTransBone.emplace_back(ib,1,true ); }
-        else if( type_ch == "Zrotation" ){ aChannelRotTransBone.emplace_back(ib,2,true ); }
-        else{
-          std::cout << "ERROR-->undefiend type" << std::endl;
-        }
-      }
-    }
-    else if( aToken[0] == "JOINT" ){
-      CRigBone br;
-      assert( aToken.size() == 2 );
-      br.name = aToken[1];
-      aBone.push_back(br);
-    }
-    else if( aToken[0] == "End" ){
-      assert(aToken[1] == "Site");
-      CRigBone br;
-      assert( aToken.size() == 2 );
-      br.name = aToken[1];
-      aBone.push_back(br);
-    }
-    else if( aToken[0] == "MOTION"){
-      break;
-    }
-  }
-  nframe = 0;
-  {
-    std::string stmp0;
-    {
-      std::getline(fin,line);
-      std::stringstream ss(line);
-      ss >> stmp0 >> nframe;
-//      std::cout << "frame: " << nframe << std::endl;
-    }
-    std::getline(fin,line);
-//    std::cout << "frametime: " << line << std::endl;
-  }
-  const size_t nchannel = aChannelRotTransBone.size();
-  aValueRotTransBone.resize(nframe*nchannel);
-  for(int iframe=0;iframe<nframe;++iframe){
-    std::getline(fin,line);
-    line = rig_v3q::MyReplace(line, '\t', ' ');
-    if (line[line.size()-1] == '\n') line.erase(line.size()-1); // remove the newline code
-    if (line[line.size()-1] == '\r') line.erase(line.size()-1); // remove the newline code
-    std::vector<std::string> aToken = rig_v3q::MySplit(line,' ');
-//    std::cout << aToken.size() << " " << aChannelRotTransBone.size() << std::endl;
-    assert(aToken.size()==aChannelRotTransBone.size());
-    for(unsigned int ich=0;ich<nchannel;++ich){
-      aValueRotTransBone[iframe*nchannel+ich] = rig_v3q::myStod(aToken[ich]);
-    }
-  }
-  // ---------------
-  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
-    CRigBone& bone = aBone[ibone];
-    bone.scale = 1.0;
-    bone.quatRelativeRot[0] = 0.0;
-    bone.quatRelativeRot[1] = 0.0;
-    bone.quatRelativeRot[2] = 0.0;
-    bone.quatRelativeRot[3] = 1.0;
-    bone.transRelative[0] = 0.0;
-    bone.transRelative[1] = 0.0;
-    bone.transRelative[2] = 0.0;
-    if( bone.ibone_parent != -1 ){
-      const CRigBone& bone_p = aBone[bone.ibone_parent];
-      bone.transRelative[0] = (-bone.invBindMat[ 3])-(-bone_p.invBindMat[ 3]);
-      bone.transRelative[1] = (-bone.invBindMat[ 7])-(-bone_p.invBindMat[ 7]);
-      bone.transRelative[2] = (-bone.invBindMat[11])-(-bone_p.invBindMat[11]);
-    }
-  }
-  for(auto & bone : aBone){
-    for(int i=0;i<16;++i){ bone.affmat3Global[i] = bone.invBindMat[i]; }
-    int info; rig_v3q::CalcInvMat(bone.affmat3Global, 4, info);
-  }
-}
-
-
-DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy(
-    std::vector<CRigBone>& aBone,
-    const std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
-    const double *aVal)
-{
-  for(auto & bone : aBone){
-    bone.quatRelativeRot[0] = 0.0;
-    bone.quatRelativeRot[1] = 0.0;
-    bone.quatRelativeRot[2] = 0.0;
-    bone.quatRelativeRot[3] = 1.0;
-  }
-  const size_t nch = aChannelRotTransBone.size();
-  for(unsigned int ich=0;ich<nch;++ich){
-    const int ibone = aChannelRotTransBone[ich].ibone;
-    const int iaxis = aChannelRotTransBone[ich].iaxis;
-    const bool isrot = aChannelRotTransBone[ich].isrot;
-    const double val = aVal[ich];
-    assert(ibone<(int)aBone.size());
-    assert(iaxis>=0&&iaxis<3);
-    if( !isrot ){
-      aBone[ibone].transRelative[iaxis] = val;
-    }
-    else{
-      const double ar = val*M_PI/180.0;
-      double v0[3] = {0,0,0};
-      v0[iaxis] = 1.0;
-      double dq[4] = { v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5), cos(ar*0.5) };
-      double qtmp[4]; QuatQuat(qtmp,
-          aBone[ibone].quatRelativeRot, dq);
-      Copy_Quat(aBone[ibone].quatRelativeRot,qtmp);
-    }
-  }
-  UpdateBoneRotTrans(aBone);
 }
 
 // ----------------------------------

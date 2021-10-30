@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <cassert>
+#include <array>
 
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dfm2_inline.h"
@@ -87,10 +88,10 @@ class CRigBone {
   }
 
   // TODO: rename this function PosRoot
-  delfem2::CVec3d Pos() const {
+  [[nodiscard]] std::array<double,3> RootPosition() const {
     // invBindMat will map the global position to the origin.
     // the translation component of affmat3Global represent the root position after skeletal deformation
-    return delfem2::CVec3d(affmat3Global[3], affmat3Global[7], affmat3Global[11]);
+    return {affmat3Global[3], affmat3Global[7], affmat3Global[11]};
   }
 
   void DeformSkin(double pos2[3],
@@ -151,6 +152,7 @@ DFM2_INLINE void UpdateBoneRotTrans(
 DFM2_INLINE void SetCurrentBoneRotationAsDefault(
     std::vector<CRigBone> &aBone);
 
+/*
 DFM2_INLINE void PickBone(
     int &ibone_selected,
     int &ielem_selected,
@@ -159,7 +161,7 @@ DFM2_INLINE void PickBone(
     const delfem2::CVec3d &dir,
     double rad_hndlr,
     double tol);
-
+*/
 
 // ----------------------------------
 
@@ -213,34 +215,6 @@ DFM2_INLINE void Rig_SkinReferncePositionsBoneWeighted(
 
 // ------------------------------------
 
-class CChannel_BioVisionHierarchy {
- public:
-  CChannel_BioVisionHierarchy(unsigned int ib, int ia, bool br) {
-    this->ibone = ib;
-    this->iaxis = ia;
-    this->isrot = br;
-  }
-
- public:
-  unsigned int ibone;
-  int iaxis;
-  bool isrot;
-};
-
-DFM2_INLINE void Read_BioVisionHierarchy(
-    std::vector<CRigBone> &aBone,
-    std::vector<CChannel_BioVisionHierarchy> &aChannelInfo,
-    int &nframe,
-    std::vector<double> &aChannelValue,
-    const std::string &path_bvh);
-
-/**
- * @brief set value to CRigBone.rot (bone rotation from parent bone)
- */
-DFM2_INLINE void SetPose_BioVisionHierarchy(
-    std::vector<CRigBone> &aBone,
-    const std::vector<CChannel_BioVisionHierarchy> &aChannelInfo,
-    const double *aVal);
 
 } // namespace delfem2
 

@@ -49,7 +49,7 @@ void Draw(
     for(const auto & it : aTarget){
       const unsigned int ib = it.ib;
       ::glColor3d(1,0,0);
-      dfm2::opengl::myGlVertex(aBone[ib].Pos());
+      dfm2::opengl::myGlVertex(aBone[ib].RootPosition());
       ::glColor3d(1,0,0);
       dfm2::opengl::myGlVertex(it.pos);
     }
@@ -112,13 +112,13 @@ int main()
     {
       dfm2::CTarget t;
       t.ib = 20;
-      t.pos = bones[t.ib].Pos();
+      t.pos = bones[t.ib].RootPosition();
       aTarget.push_back(t);
     }
     {
       dfm2::CTarget t;
       t.ib = 10;
-      t.pos = bones[t.ib].Pos();
+      t.pos = bones[t.ib].RootPosition();
       aTarget.push_back(t);
     }
   }

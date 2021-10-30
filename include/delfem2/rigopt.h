@@ -142,7 +142,7 @@ DFM2_INLINE void Rig_WdW_Target(
   unsigned int ib = target.ib;
   const CVec3d pos = target.pos;
   // ---------------
-  const CVec3d p0 = aBone[ib].Pos();
+  const CVec3d p0 = aBone[ib].RootPosition();
   const unsigned int ncnst = 2;
   {
     double sqx = pos.x-p0.x;

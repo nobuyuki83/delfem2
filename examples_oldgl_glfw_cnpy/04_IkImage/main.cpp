@@ -52,7 +52,7 @@ void Draw(
   for (const auto &it : aTarget) {
     const unsigned int ib = it.ib;
     ::glColor3d(1, 0, 0);
-    dfm2::opengl::myGlVertex(aBone[ib].Pos());
+    dfm2::opengl::myGlVertex(aBone[ib].RootPosition());
   }
   ::glEnd();
   // ------
@@ -150,7 +150,7 @@ int main() {
   for (auto &it : aTarget) {
     unsigned int ib = it.ib;
     aTargetOriginPos.emplace_back(it.pos,
-                                  aBone[ib].Pos());
+                                  aBone[ib].RootPosition());
   }
 
   // -----------

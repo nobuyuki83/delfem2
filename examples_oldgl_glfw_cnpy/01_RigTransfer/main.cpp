@@ -25,6 +25,7 @@
 #include "delfem2/mat3.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/rig_geo3.h"
+#include "delfem2/rig_bvh.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -143,7 +144,7 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
       if( jb == -1 ) continue;
       assert( jb < (int)aBone_MotionSrc.size() );
       int jbp = aBone_MotionSrc[jb].ibone_parent;
-      dfm2::CVec3d vj = aBone_MotionSrc[jb].Pos() - aBone_MotionSrc[jbp].Pos();
+      const dfm2::CVec3d vj = dfm2::CVec3d(aBone_MotionSrc[jb].RootPosition()) - aBone_MotionSrc[jbp].RootPosition();
       int ibp = aBone[ib].ibone_parent;
       if( ibp == -1 ) continue;
       dfm2::CVec3d vi(aBone[ib].transRelative);
@@ -240,8 +241,8 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
       ::glLineWidth(3);
       ::glColor3d(1,1,1);
       ::glBegin(GL_LINES);
-      dfm2::CVec3d ps = aBone[ibs].Pos();
-      dfm2::CVec3d pt = aBone_MotionSrc[ibt].Pos();
+      dfm2::CVec3d ps = aBone[ibs].RootPosition();
+      dfm2::CVec3d pt = aBone_MotionSrc[ibt].RootPosition();
       ::glVertex3d(pt.x,pt.y,pt.z);
       ::glVertex3d(ps.x,ps.y,ps.z);
       ::glEnd();
