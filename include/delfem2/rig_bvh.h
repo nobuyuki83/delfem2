@@ -23,7 +23,7 @@ class CChannel_BioVisionHierarchy {
 DFM2_INLINE void Read_BioVisionHierarchy(
     std::vector<CRigBone> &bones,
     std::vector<CChannel_BioVisionHierarchy> &channels,
-    int &nframe,
+    size_t &nframe,
     std::vector<double> &frame_channel,
     const std::string &path_bvh);
 
@@ -39,6 +39,10 @@ class BioVisionHierarchy {
  public:
   BioVisionHierarchy() = default;
 
+  explicit BioVisionHierarchy(const std::string& path) {
+    this->Open(path);
+  }
+
   void Open(const std::string &file_path) {
     delfem2::Read_BioVisionHierarchy(
         bones, channels, nframe, frame_channel,
@@ -46,8 +50,8 @@ class BioVisionHierarchy {
     assert(frame_channel.size() == nframe * channels.size());
   }
 
-  void SetFrame(int iframe) {
-    if (iframe < 0 || iframe >= nframe) { return; }
+  void SetFrame(unsigned int iframe) {
+    if (iframe >= nframe) { return; }
     const size_t nch = channels.size();
     delfem2::SetPose_BioVisionHierarchy(
         bones, channels,
@@ -93,7 +97,7 @@ class BioVisionHierarchy {
  public:
   std::vector<delfem2::CRigBone> bones;
   std::vector<delfem2::CChannel_BioVisionHierarchy> channels;
-  int nframe = 0;
+  std::size_t nframe = 0;
   std::vector<double> frame_channel;
 };
 

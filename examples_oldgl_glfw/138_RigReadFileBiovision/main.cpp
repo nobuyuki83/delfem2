@@ -28,7 +28,7 @@ namespace dfm2 = delfem2;
 int main() {
   std::vector<dfm2::CRigBone> aBone;
   std::vector<dfm2::CChannel_BioVisionHierarchy> aChannelRotTransBone;
-  int nframe = 0;
+  size_t nframe = 0;
   std::vector<double> aValRotTransBone;
 
   std::string path_bvh = std::string(PATH_INPUT_DIR) + "/jump.bvh";

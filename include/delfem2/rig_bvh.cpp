@@ -92,7 +92,7 @@ DFM2_INLINE void CalcInvMat(double* a, const int n, int& info )
 DFM2_INLINE void delfem2::Read_BioVisionHierarchy(
     std::vector<CRigBone>& bones,
     std::vector<CChannel_BioVisionHierarchy>& channels,
-    int& nframe,
+    size_t& nframe,
     std::vector<double>& frame_channel,
     const std::string& path_bvh)
 {
@@ -201,7 +201,7 @@ DFM2_INLINE void delfem2::Read_BioVisionHierarchy(
   }
   const size_t nchannel = channels.size();
   frame_channel.resize(nframe*nchannel);
-  for(int iframe=0;iframe<nframe;++iframe){
+  for(unsigned int iframe=0;iframe<nframe;++iframe){
     std::getline(fin,line);
     line = rig_bvh::MyReplace(line, '\t', ' ');
     if (line[line.size()-1] == '\n') line.erase(line.size()-1); // remove the newline code
