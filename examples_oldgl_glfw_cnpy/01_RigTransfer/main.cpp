@@ -76,7 +76,7 @@ int main()
   // ---------------------------------
   std::vector<dfm2::CRigBone> aBone_MotionSrc;
   std::vector<dfm2::CChannel_BioVisionHierarchy> aChannelRotTransBone;
-  int nframe = 0;
+  size_t nframe = 0;
   std::vector<double> aValueChanelHistoryRotTrans;
   Read_BioVisionHierarchy(
       aBone_MotionSrc,aChannelRotTransBone,nframe,aValueChanelHistoryRotTrans,
