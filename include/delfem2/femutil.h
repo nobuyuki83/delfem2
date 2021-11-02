@@ -289,11 +289,11 @@ T DetInv_Mat3(
   return p3C;
 }
 
-template<int nno, int ndim>
+template<int nno, int ndim, typename T0>
 DFM2_INLINE void FetchData(
     double val_to[nno][ndim],
     const unsigned int *aIP,
-    const double *val_from,
+    const T0 *val_from,
     int nstride = -1) {
   if (nstride == -1) { nstride = ndim; }
   assert(nstride >= ndim);

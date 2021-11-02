@@ -89,17 +89,17 @@ DFM2_INLINE void EMat_Diffusion_Newmark_Tet3D(
 // --------------------------------------------
 
 
-template <class MAT>
+template <class MAT, typename T0, typename T1>
 void MergeLinSys_Poission_MeshTri2D(
     MAT& mat_A,
     double* vec_b,
     const double alpha,
     const double source,
-    const double* aXY1,
+    const T0* aXY1,
     size_t np,
     const unsigned int* aTri1,
     size_t nTri,
-    const double* aVal)
+    const T1* aVal)
 {
   const size_t nDoF = np;
   //

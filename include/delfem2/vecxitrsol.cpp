@@ -223,18 +223,45 @@ delfem2::MultSumX(
 
 namespace delfem2 {
 
-template<>
+template<typename T0, typename T1>
 DFM2_INLINE void XPlusAY(
-    std::vector<double> &X,
+    std::vector<T0> &X,
     const size_t nDoF,
     const std::vector<int> &aBCFlag,
-    double alpha,
-    const std::vector<double> &Y) {
+    T1 alpha,
+    const std::vector<T1> &Y) {
   for (unsigned int i = 0; i < nDoF; ++i) {
     if (aBCFlag[i] != 0) continue;
     X[i] += alpha * Y[i];
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
+template DFM2_INLINE void XPlusAY(
+    std::vector<float> &X,
+    const size_t nDoF,
+    const std::vector<int> &aBCFlag,
+    float alpha,
+    const std::vector<float> &Y);
+template DFM2_INLINE void XPlusAY(
+    std::vector<double> &X,
+    const size_t nDoF,
+    const std::vector<int> &aBCFlag,
+    double alpha,
+    const std::vector<double> &Y);
+template DFM2_INLINE void XPlusAY(
+    std::vector<double> &X,
+    const size_t nDoF,
+    const std::vector<int> &aBCFlag,
+    float alpha,
+    const std::vector<float> &Y);
+template DFM2_INLINE void XPlusAY(
+    std::vector<float> &X,
+    const size_t nDoF,
+    const std::vector<int> &aBCFlag,
+    double alpha,
+    const std::vector<double> &Y);
+#endif
+
 
 template<>
 DFM2_INLINE void

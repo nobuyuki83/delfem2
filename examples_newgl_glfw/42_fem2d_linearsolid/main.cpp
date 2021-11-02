@@ -161,10 +161,10 @@ void drawCurve
 
 double len = 1.1;
 std::vector<unsigned int> aTri1;
-std::vector<double> aXY1;
+std::vector<float> aXY1;
 std::vector<int> loopIP_ind, loopIP; // vtx on loop
 
-std::vector<double> aVal;
+std::vector<float> aVal;
 std::vector<int> aBCFlag; // master slave flag
 
 dfm2::CMatrixSparse<double> mat_A;

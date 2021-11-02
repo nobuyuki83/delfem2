@@ -86,4 +86,4 @@ public:
 #  include "delfem2/opengl/new/v23dtricad.cpp"
 #endif
 
-#endif /* gl4_v23dtricad_h */
+#endif /* DFM2_OPENGL_NEW_V23DTRICAD_H */

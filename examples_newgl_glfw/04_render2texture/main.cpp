@@ -84,9 +84,11 @@ int main() {
 #endif
 
   {
-    std::vector<double> vtx_xyz;
+    std::vector<float> vtx_xyz;
     std::vector<unsigned int> tri_vtx;
-    dfm2::MeshTri3_Torus(vtx_xyz, tri_vtx, 0.5, 0.5, 10, 12);
+    dfm2::MeshTri3_Torus(
+        vtx_xyz, tri_vtx,
+        0.5f, 0.5f, 10, 12);
     shdr0.Compile();
     shdr0.Initialize(vtx_xyz, 3, tri_vtx);
   }

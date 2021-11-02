@@ -73,11 +73,12 @@ void AddWdW_Cloth(
  * @param gravity gravitational accerelation in xyz directions stored in a native array
  * @param mass_point mass of a point
  */
-double AddWdW_Gravity
-(std::vector<double>& dW,
- const std::vector<double>& aXYZ,
- const double gravity[3],
- double mass_point)
+ template <typename T0>
+double AddWdW_Gravity(
+    std::vector<double>& dW,
+    const std::vector<T0>& aXYZ,
+    const double gravity[3],
+    double mass_point)
 {
   double W = 0;
   for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
@@ -174,8 +175,9 @@ void StepTime_InternalDynamics(
   for(unsigned int i=0;i<nDof;i++){ aUVW[i] = vec_x[i]/dt; }
 }
 
+template <typename T0>
 void StepTime_InternalDynamicsILU(
-    std::vector<double>& aXYZ, // (in,out) deformed vertex positions
+    std::vector<T0>& aXYZ, // (in,out) deformed vertex positions
     std::vector<double>& aUVW, // (in,out) deformed vertex velocity
     delfem2::CMatrixSparse<double>& mat_A,
     delfem2::CPreconditionerILU<double>& ilu_A,

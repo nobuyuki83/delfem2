@@ -75,7 +75,7 @@ dfm2::glfw::CViewer3 viewer(1.5);
 dfm2::opengl::CShader_TriMesh shdr_trimsh;
 
 std::vector<double> aXYZ0; // (out) undeformed vertex positions
-std::vector<double> aXYZ; // deformed vertex positions
+std::vector<float> aXYZ; // deformed vertex positions
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag; // (out) boundary condition flag (0:free 1:fixed)
 std::vector<unsigned int> aTri; // (out) index of triangles
@@ -145,7 +145,7 @@ int main()
     double total_area = cloth_size*cloth_size;
     mass_point = total_area*areal_density / (double)np;
       // initialize deformation
-    aXYZ = aXYZ0;
+    aXYZ.assign(aXYZ0.begin(), aXYZ0.end());
     aUVW.assign(np*3,0.0);
       //    MakeNormal(aNormal, aXYZ, aTri);
     mat_A.Initialize(np,3,true);

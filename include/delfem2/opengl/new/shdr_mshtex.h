@@ -58,7 +58,7 @@ public:
   
   void InitGL() override {
     Drawer_MeshTex::InitGL();
-    std::vector<double> aPos3d = {
+    std::vector<float> aPos3d = {
       xmin, ymin, z,
       xmax, ymin, z,
       xmax, ymax, z,
@@ -68,7 +68,7 @@ public:
       0,1,2,
       0,2,3,
     };
-    std::vector<double> aTex2d = {
+    std::vector<float> aTex2d = {
       0.0, 0.0,
       1.0, 0.0,
       1.0, 1.0,

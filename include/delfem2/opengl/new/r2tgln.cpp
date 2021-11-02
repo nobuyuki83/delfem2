@@ -35,20 +35,21 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::SetDepth(
   //
   unsigned int nx = r2t.width;
   unsigned int ny = r2t.height;
-  std::vector<double> aXYZ(nx*ny*3);
+  std::vector<float> aXYZ(nx*ny*3);
   for(unsigned int iy=0;iy<ny;++iy){
     for(unsigned int ix=0;ix<nx;++ix){
       const int ip = iy*nx+ix;
-      double q0[3] = {
-          (ix+0.5)/nx*2.0-1.0,
-          (iy+0.5)/ny*2.0-1.0,
-          1.-r2t.aDepth[ip]*2.0 };
+      float q0[3] = {
+          (ix+0.5f)/nx*2.f-1.f,
+          (iy+0.5f)/ny*2.f-1.f,
+          1.f-r2t.aDepth[ip]*2.f };
       aXYZ[ip*3+0] = q0[0];
       aXYZ[ip*3+1] = q0[1];
       aXYZ[ip*3+2] = q0[2];
     }
   }
-  drawer_projected_points.SetRawArray(aXYZ.data(),aXYZ.size()/3, 3);
+  drawer_projected_points.SetRawArray(
+      aXYZ.data(),aXYZ.size()/3, 3);
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
@@ -56,7 +57,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex_DrawNewGL::InitGL()
   //
   { // draw grid
     this->drawer_view_frustrum.Compile();
-    std::vector<double> aPos3d = {
+    std::vector<float> aPos3d = {
         -1, -1, -1,
         -1, -1, +1,
         -1, +1, -1,

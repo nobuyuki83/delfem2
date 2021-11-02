@@ -44,8 +44,9 @@ DFM2_INLINE void DelaunayAroundPoint(
     std::vector<CDynTri> &aTri,
     const std::vector<CVec2d> &aVec2);
 
+template <typename T0>
 DFM2_INLINE void MeshTri2D_Export(
-    std::vector<double> &aXY_out,
+    std::vector<T0> &aXY_out,
     std::vector<unsigned int> &aTri_out,
     const std::vector<CVec2d> &aVec2,
     const std::vector<CDynTri> &aTri_in);

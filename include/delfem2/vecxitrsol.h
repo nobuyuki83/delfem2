@@ -51,13 +51,13 @@ void ScaleX(
     T s,
     size_t n);
 
-template<typename T>
+template<typename T0, typename T1>
 void XPlusAY(
-    std::vector<T> &X,
+    std::vector<T0> &X,
     size_t nDoF,
     const std::vector<int> &aBCFlag,
-    T alpha,
-    const std::vector<T> &Y);
+    T1 alpha,
+    const std::vector<T1> &Y);
 
 template<typename T>
 void AXPY(
@@ -654,4 +654,4 @@ std::vector<double> Solve_PCOCG(
 #  include "delfem2/vecxitrsol.cpp"
 #endif
   
-#endif // MATDIA_CRS_H
+#endif // DFM2_VECXITRSOL_H

@@ -707,11 +707,12 @@ DFM2_INLINE void delfem2::Meshing_Initialize(
  }
  */
 
-DFM2_INLINE void delfem2::MeshTri2D_Export
-    (std::vector<double> &aXY_out,
-     std::vector<unsigned int> &aTri_out,
-     const std::vector<CVec2d> &aVec2,
-     const std::vector<CDynTri> &aTri_in) {
+template <typename T0>
+DFM2_INLINE void delfem2::MeshTri2D_Export(
+    std::vector<T0> &aXY_out,
+    std::vector<unsigned int> &aTri_out,
+    const std::vector<CVec2d> &aVec2,
+    const std::vector<CDynTri> &aTri_in) {
   aTri_out.clear();
   aXY_out.clear();
   const size_t ntri = aTri_in.size();
@@ -728,6 +729,19 @@ DFM2_INLINE void delfem2::MeshTri2D_Export
     aXY_out[ixy * 2 + 1] = aVec2[ixy].y;
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
+template DFM2_INLINE void delfem2::MeshTri2D_Export(
+    std::vector<float> &aXY_out,
+    std::vector<unsigned int> &aTri_out,
+    const std::vector<CVec2d> &aVec2,
+    const std::vector<CDynTri> &aTri_in);
+template DFM2_INLINE void delfem2::MeshTri2D_Export(
+    std::vector<double> &aXY_out,
+    std::vector<unsigned int> &aTri_out,
+    const std::vector<CVec2d> &aVec2,
+    const std::vector<CDynTri> &aTri_in);
+#endif
+
 
 // -------------------------------------------------------
 

@@ -59,10 +59,10 @@ int main()
 
   shdr.Compile();
   {
-    std::vector<double> aXYZd;
+    std::vector<float> aXYZd;
     std::vector<unsigned int> aTri;
     delfem2::MeshTri3_Torus(aXYZd, aTri,
-                            1.0, 0.2,
+                            1.f, 0.2f,
                             32,18);
     shdr.Initialize(aXYZd, 3, aTri);
   }

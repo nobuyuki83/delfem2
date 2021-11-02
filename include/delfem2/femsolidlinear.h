@@ -152,7 +152,7 @@ void SetEmat_LinearSolid3(
   }
 }
 
-template <class MAT>
+template <class MAT, typename T0, typename T1>
 void MergeLinSys_SolidLinear_Static_MeshTri2D(
     MAT& mat_A,
     double* vec_b,
@@ -161,11 +161,11 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
     const double rho,
     const double g_x,
     const double g_y,
-    const double* aXY1,
+    const T0* aXY1,
     size_t nXY,
     const unsigned int* aTri1,
     size_t nTri,
-    const double* aVal)
+    const T1* aVal)
 {
   const size_t np = nXY;
   std::vector<unsigned int> tmp_buffer(np, UINT_MAX);

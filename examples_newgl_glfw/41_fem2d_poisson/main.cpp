@@ -162,10 +162,10 @@ void drawCurve
 
 double len = 1.1;
 std::vector<unsigned int> aTri1;
-std::vector<double> aXY1;
+std::vector<float> aXY1;
 std::vector<int> loopIP_ind, loopIP; // vtx on loop
 
-std::vector<double> aVal;
+std::vector<float> aVal;
 std::vector<int> aBCFlag; // master slave flag
 
 dfm2::CMatrixSparse<double> mat_A;
@@ -261,11 +261,12 @@ void SolveProblem_Poisson()
   const double source = 1.0;
   mat_A.setZero();
   vec_b.assign(nDoF, 0.0);
-  dfm2::MergeLinSys_Poission_MeshTri2D(mat_A,vec_b.data(),
-                                       alpha,source,
-                                       aXY1.data(),aXY1.size()/2,
-                                       aTri1.data(),aTri1.size()/3,
-                                       aVal.data());
+  dfm2::MergeLinSys_Poission_MeshTri2D(
+      mat_A,vec_b.data(),
+      alpha,source,
+      aXY1.data(),aXY1.size()/2,
+      aTri1.data(),aTri1.size()/3,
+      aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // -----------------------

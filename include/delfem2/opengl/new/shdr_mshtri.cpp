@@ -68,11 +68,17 @@ void delfem2::opengl::CShader_TriMesh::UpdateVertex(
   
   vao.ADD_VBO(0,aXYZd);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)nullptr); // gl24
+  glVertexAttribPointer(
+      0,
+      ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL),
+      (void*)nullptr);
   
   vao.ADD_VBO(1,aNrmd);
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL), (void*)nullptr); // gl24
+  glVertexAttribPointer(
+      1,
+      ndim, convertToGlType<REAL>(), GL_FALSE, ndim*sizeof(REAL),
+      (void*)nullptr);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::opengl::CShader_TriMesh::UpdateVertex(

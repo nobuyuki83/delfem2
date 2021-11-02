@@ -75,13 +75,17 @@ int main() {
   shdr_trimsh.Compile();
 
   {
-    std::vector<double> vtx_xyz;
+    std::vector<float> vtx_xyz;
     std::vector<unsigned int> tri_vtx;
     dfm2::MeshTri3_Torus(
         vtx_xyz, tri_vtx,
-        0.8, 0.1, 8, 8);
-    dfm2::Rotate_Points3(vtx_xyz, 0.1, 0.2, 0.3);
-    shdr_trimsh.Initialize(vtx_xyz, 3, tri_vtx);
+        0.8f, 0.1f,
+        8, 8);
+    dfm2::Rotate_Points3(
+        vtx_xyz,
+        0.1f, 0.2f, 0.3f);
+    shdr_trimsh.Initialize(
+        vtx_xyz, 3, tri_vtx);
   }
   r2t.Start();
   ::glClearColor(1.0, 1.0, 1.0, 1.0);

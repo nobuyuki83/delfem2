@@ -70,7 +70,7 @@ void WdWddW_Contact(
 
 
 // compute total energy and its first and second derivatives
-template <class MAT>
+template <class MAT, typename T0>
 double MergeLinSys_Cloth(
     MAT& ddW, // (out) second derivative of energy
     double* dW, // (out) first derivative of energy
@@ -85,7 +85,7 @@ double MergeLinSys_Cloth(
     unsigned int nTri, // (in) triangle index
     const unsigned int* aQuad,
     unsigned int nQuad, // (in) index of 4 vertices required for bending
-    const double* aXYZ)
+    const T0* aXYZ)
 {
   assert( ndim == 2 || ndim == 3 );
   double W = 0;
@@ -138,7 +138,7 @@ double MergeLinSys_Cloth(
   return W;
 }
 
-template <class MAT>
+template <class MAT, typename T0>
 double MergeLinSys_Contact(
     MAT& ddW,
     double* dW,
@@ -146,7 +146,7 @@ double MergeLinSys_Contact(
     double stiff_contact,
     double contact_clearance,
     const CInput_Contact& input,
-    const double* aXYZ,
+    const T0* aXYZ,
     int nXYZ)
 {
   const unsigned int np = nXYZ;
