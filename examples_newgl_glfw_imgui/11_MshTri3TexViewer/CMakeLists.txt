@@ -14,7 +14,7 @@ ENDIF()
 
 #####################################
 
-project(11_ObjTexViewer)
+project(11_3dMshTexViewer)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

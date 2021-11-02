@@ -177,6 +177,20 @@ class Drawer_MeshTexSeparateIndexing : public Drawer_MeshTex {
   std::vector<unsigned int> uni_xyz, uni_tex;
 };
 
+class Drawer_MeshTexSeparateIndexingMixTwoTexture
+    : public Drawer_MeshTexSeparateIndexing{
+ public:
+  void CompileShader();
+  void Draw(
+      const float mat4_projection[16],
+      const float mat4_modelview[16],
+      float ratio) const;
+ public:
+  unsigned int loc_ratio;
+  unsigned int loc_tex0;
+  unsigned int loc_tex1;
+};
+
 
 }  // delfem2::opengl
 

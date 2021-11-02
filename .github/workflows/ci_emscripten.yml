@@ -31,10 +31,10 @@ jobs:
 
     - name: build
       run: |
-      echo "00_openwin"
-      cd docs/00_openwin
-      em++ ../../examples_newgl_glfw/00_openwin/main.cpp -o index.js \
-        -std=c++17 \
-        -s USE_WEBGL2=1 -s USE_GLFW=3 -s WASM=1 
-      cd ../../
+        echo "00_openwin"
+        cd docs/00_openwin
+        em++ ../../examples_newgl_glfw/00_openwin/main.cpp -o index.js \
+          -std=c++17 \
+          -s USE_WEBGL2=1 -s USE_GLFW=3 -s WASM=1 
+        cd ../../
 

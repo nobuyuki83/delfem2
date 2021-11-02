@@ -83,11 +83,12 @@ void delfem2::opengl::Drawer_MeshTex::InitGL()
       "}";
 
 #ifdef EMSCRIPTEN
-  shaderProgram = GL24_CompileShader((std::string("#version 300 es\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 300 es\n")+
-                                      std::string("precision highp float;\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = GL24_CompileShader(
+      (std::string("#version 300 es\n")+
+      glsl33vert_projection).c_str(),
+      (std::string("#version 300 es\n")+
+      std::string("precision highp float;\n")+
+      glsl33frag).c_str());
 #else
   shaderProgram = ::delfem2::opengl::GL24_CompileShader(
       (std::string("#version 330 core\n")+
@@ -119,5 +120,75 @@ void delfem2::opengl::Drawer_MeshTex::Draw(
       Loc_MatrixModelView, 1, GL_FALSE,
       TransposeMat4ForOpenGL(mat4_modelview, false).data());
   glUniform1i(Loc_Texture, 0);
+  vao.Draw(0); // draw face
+}
+
+
+void delfem2::opengl::Drawer_MeshTexSeparateIndexingMixTwoTexture::CompileShader() {
+
+  const std::string glsl33vert_projection =
+      "uniform mat4 matrixProjection;\n"
+      "uniform mat4 matrixModelView;\n"
+      "layout (location = 0) in vec3 posIn;\n"
+      "layout (location = 1) in vec2 texIn;\n"
+      "out vec2 texPrj;\n"
+      "void main()\n"
+      "{\n"
+      "  gl_Position = matrixProjection * matrixModelView * vec4(posIn.x, posIn.y, posIn.z, 1.0);\n"
+      "  texPrj = texIn;\n"
+      "}";
+
+  const std::string glsl33frag =
+      "in vec2 texPrj;\n"
+      "out vec4 FragColor;\n"
+      "uniform float ratio;\n"
+      "uniform sampler2D tex0;\n"
+      "uniform sampler2D tex1;\n"
+      "void main()\n"
+      "{\n"
+      "  FragColor = (1-ratio)*texture(tex0,texPrj) + ratio*texture(tex1,texPrj);\n"
+      "}";
+#ifdef EMSCRIPTEN
+  shaderProgram = GL24_CompileShader(
+      (std::string("#version 300 es\n")+
+      glsl33vert_projection).c_str(),
+      (std::string("#version 300 es\n")+
+      std::string("precision highp float;\n")+
+      glsl33frag).c_str());
+#else
+  shaderProgram = ::delfem2::opengl::GL24_CompileShader(
+      (std::string("#version 330 core\n")+
+          glsl33vert_projection).c_str(),
+      (std::string("#version 330 core\n")+
+          glsl33frag).c_str());
+#endif
+
+  if( !glIsProgram(shaderProgram) ){
+    std::cout << "shader doesnot exist" << std::endl;
+  }
+  glUseProgram(shaderProgram);
+  Loc_MatrixProjection = glGetUniformLocation(shaderProgram,  "matrixProjection");
+  Loc_MatrixModelView  = glGetUniformLocation(shaderProgram,  "matrixModelView");
+  loc_ratio = glGetUniformLocation(shaderProgram, "ratio");
+  loc_tex0 = glGetUniformLocation(shaderProgram, "tex0");
+  loc_tex1 = glGetUniformLocation(shaderProgram, "tex1");
+  std::cout << "Loc_Texture: " << loc_tex0 << " " << loc_tex1 << std::endl;
+}
+
+void delfem2::opengl::Drawer_MeshTexSeparateIndexingMixTwoTexture::Draw(
+    const float mat4_projection[16],
+    const float mat4_modelview[16],
+    float ratio) const
+{
+  glUseProgram(shaderProgram);
+  glUniformMatrix4fv(
+      Loc_MatrixProjection, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mat4_projection, true).data());
+  glUniformMatrix4fv(
+      Loc_MatrixModelView, 1, GL_FALSE,
+      TransposeMat4ForOpenGL(mat4_modelview, false).data());
+  glUniform1i(loc_tex0, 0);
+  glUniform1i(loc_tex1, 1);
+  glUniform1f(loc_ratio, ratio);
   vao.Draw(0); // draw face
 }
