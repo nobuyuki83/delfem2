@@ -65,7 +65,7 @@ void ShowEigen_SolidLinear_MeshQuad2(
   //
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   std::vector<double> aDisp(np*2,0.0);
 
@@ -115,7 +115,7 @@ void ShowEigen_SolidLinear_MeshTri2(
   //
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   for(unsigned int iframe=0;iframe<10;++iframe){
     std::cout << s.eigenvalues()(iframe) << std::endl;
     for(unsigned int i=0;i<np*2;++i){

@@ -191,7 +191,7 @@ int main() {
 
   delfem2::glfw::CViewer3 viewer(0.8);
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 //  viewer.modelview.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
 //  viewer.modelview.psi = 0.2;
 //  viewer.modelview.theta = 0.2;

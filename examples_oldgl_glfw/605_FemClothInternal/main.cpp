@@ -215,7 +215,7 @@ int main() {
 
   delfem2::glfw::CViewer3 viewer(2.0);
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
   delfem2::opengl::setSomeLighting();

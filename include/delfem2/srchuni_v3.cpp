@@ -21,11 +21,11 @@ T Volume_Tet(
     const CVec3<T> &v1,
     const CVec3<T> &v2,
     const CVec3<T> &v3) {
-  const double v =
-      (v1.p[0] - v0.p[0]) * ((v2.p[1] - v0.p[1]) * (v3.p[2] - v0.p[2]) - (v3.p[1] - v0.p[1]) * (v2.p[2] - v0.p[2])) +
-          (v1.p[1] - v0.p[1]) * ((v2.p[2] - v0.p[2]) * (v3.p[0] - v0.p[0]) - (v3.p[2] - v0.p[2]) * (v2.p[0] - v0.p[0])) +
-              (v1.p[2] - v0.p[2]) * ((v2.p[0] - v0.p[0]) * (v3.p[1] - v0.p[1]) - (v3.p[0] - v0.p[0]) * (v2.p[1] - v0.p[1]));
-  return v * 0.16666666666666666666666666666667;
+  const T x0 = (v2.p[1] - v0.p[1]) * (v3.p[2] - v0.p[2]) - (v3.p[1] - v0.p[1]) * (v2.p[2] - v0.p[2]);
+  const T y0 = (v2.p[2] - v0.p[2]) * (v3.p[0] - v0.p[0]) - (v3.p[2] - v0.p[2]) * (v2.p[0] - v0.p[0]);
+  const T z0 = (v2.p[0] - v0.p[0]) * (v3.p[1] - v0.p[1]) - (v3.p[0] - v0.p[0]) * (v2.p[1] - v0.p[1]);
+  const T v = (v1.p[0] - v0.p[0]) * x0 + (v1.p[1] - v0.p[1]) * y0 + (v1.p[2] - v0.p[2]) * z0;
+  return v * static_cast<T>(0.16666666666666666666666666666667);
 }
 
 }
@@ -258,9 +258,9 @@ delfem2::PointOnSurfaceMesh<T> delfem2::Nearest_Point_MeshTri3D(
     const unsigned int i0 = tri_vtx[it * 3 + 0];
     const unsigned int i1 = tri_vtx[it * 3 + 1];
     const unsigned int i2 = tri_vtx[it * 3 + 2];
-    const CVec3<T> p0 = CVec3<T>(vtx_xyz.data()+i0 * 3) - point;
-    const CVec3<T> p1 = CVec3<T>(vtx_xyz.data()+i1 * 3) - point;
-    const CVec3<T> p2 = CVec3<T>(vtx_xyz.data()+i2 * 3) - point;
+    const CVec3<T> p0 = CVec3<T>(vtx_xyz.data() + i0 * 3) - point;
+    const CVec3<T> p1 = CVec3<T>(vtx_xyz.data() + i1 * 3) - point;
+    const CVec3<T> p2 = CVec3<T>(vtx_xyz.data() + i2 * 3) - point;
     double r0, r1;
     CVec3<T> p_min = Nearest_Origin_Tri(r0, r1, p0, p1, p2);
     double dist = p_min.squaredNorm();

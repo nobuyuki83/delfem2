@@ -195,7 +195,7 @@ int main() {
   viewer.width = 400;
   viewer.height = 400;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   tex.InitGL();
 
   const unsigned int nh = tex.height;

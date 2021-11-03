@@ -133,7 +133,7 @@ void draw(GLFWwindow *window) {
 int main(int, char **) {
 
   delfem2::glfw::InitGLNew();
-  viewer.CreateGlfwWindow();
+  viewer.OpenWindow();
   
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {

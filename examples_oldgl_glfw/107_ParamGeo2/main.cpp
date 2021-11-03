@@ -76,7 +76,7 @@ void myGlutDisplay() {
 int main() {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   // -----------
 

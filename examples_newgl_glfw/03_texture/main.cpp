@@ -16,7 +16,7 @@
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/noise.h"
-#include "delfem2/opengl/new/shdr_mshtex.h"
+#include "delfem2/opengl/new/drawer_mshtex.h"
 
 #if defined(_MSC_VER)
   #include <windows.h>
@@ -64,7 +64,7 @@ int main()
 {
   dfm2::glfw::InitGLNew();
   viewer.view_height = 1.0;
-  viewer.CreateGlfwWindow();
+  viewer.OpenWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){

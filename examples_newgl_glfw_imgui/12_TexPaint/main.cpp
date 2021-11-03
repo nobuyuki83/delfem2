@@ -23,7 +23,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "delfem2/msh_io_ply.h"
-#include "delfem2/opengl/new/shdr_mshtex.h"
+#include "delfem2/opengl/new/drawer_mshtex.h"
 #include "delfem2/opengl/new/drawer_sphere.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
@@ -141,7 +141,7 @@ void draw(GLFWwindow *window) {
 int main(int, char **) {
 
   delfem2::glfw::InitGLNew();
-  viewer.CreateGlfwWindow();
+  viewer.OpenWindow();
   
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {

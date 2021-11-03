@@ -2,15 +2,14 @@
 // Created by Nobuyuki Umetani on 2021-10-08.
 //
 
-#ifndef DRAWER_SPHERE_H_
-#define DRAWER_SPHERE_H_
-
-#include "delfem2/mshprimitive.h"
-#include "delfem2/mat4.h"
-#include "delfem2/opengl/new/shdr_msh.h"
+#ifndef DFM2_OPENGL_NEW_DRAWER_SPHERE_H_
+#define DFM2_OPENGL_NEW_DRAWER_SPHERE_H_
 
 #include "delfem2/vec3.h"
 #include "delfem2/geo3_v23m34q.h"
+#include "delfem2/mshprimitive.h"
+#include "delfem2/mat4.h"
+#include "delfem2/opengl/new/drawer_msh.h"
 
 namespace delfem2::opengl {
 
@@ -41,4 +40,4 @@ class Drawer_Sphere : public CShader_Mesh {
 }
 
 
-#endif //DRAWER_SPHERE_H_
+#endif // DFM2_OPENGL_NEW_DRAWER_SPHERE_H_

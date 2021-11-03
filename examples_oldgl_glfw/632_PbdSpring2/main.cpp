@@ -181,7 +181,7 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   // ------
-  viewer.CreateGlfwWindow();
+  viewer.OpenWindow();
 
   while (!glfwWindowShouldClose(viewer.window)) {
     StepTimePbdSpring2(

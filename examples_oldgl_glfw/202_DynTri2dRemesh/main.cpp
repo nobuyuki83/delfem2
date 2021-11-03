@@ -148,7 +148,7 @@ int main()
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   std::mt19937 random_engine(std::random_device{}());
   std::uniform_real_distribution<double> dist_m05p05(-0.5, +0.5);

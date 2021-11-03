@@ -254,7 +254,7 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   // ------
   delfem2::glfw::InitGLOld();
-  viewer.CreateGlfwWindow();
+  viewer.OpenWindow();
 
   while (!glfwWindowShouldClose(viewer.window)) {
     StepTime_Mpm2Snow(aParticles, aVeloGrid,

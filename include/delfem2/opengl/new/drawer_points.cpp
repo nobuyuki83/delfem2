@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/opengl/new/drawer_points.h"
+
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
@@ -17,7 +19,6 @@
 //
 #include "delfem2/opengl/funcs.h" // compile shader
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
-#include "delfem2/opengl/new/shdr_points.h"
 #include "delfem2/mshmisc.h"
 
 // ------------------------------------------

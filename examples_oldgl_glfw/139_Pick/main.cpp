@@ -141,7 +141,7 @@ int main() {
       aFlagElem,
       vtx_xyz, tri_vtx);
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   const std::vector<std::pair<int, delfem2::CColor> > aColor = {
       {2, delfem2::CColor::White()},

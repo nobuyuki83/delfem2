@@ -22,7 +22,7 @@ namespace delfem2::glfw {
 
 class CViewer2 {
 public:
-  void CreateGlfwWindow();
+  void OpenWindow();
 
   void DrawBegin_oldGL() const;
 

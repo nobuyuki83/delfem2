@@ -70,7 +70,7 @@ void draw(GLFWwindow *window) {
 int main() {
   delfem2::glfw::InitGLNew();
   viewer.view_height = 2.0;
-  viewer.CreateGlfwWindow();
+  viewer.OpenWindow();
   
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {

@@ -13,10 +13,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/shdr_mshtex.h"
-#include "delfem2/opengl/tex.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/points.h"
@@ -25,6 +21,10 @@
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbvh.h"
 #include "delfem2/mat4.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/new/drawer_mshtex.h"
+#include "delfem2/opengl/tex.h"
 
 namespace dfm2 = delfem2;
 
@@ -112,7 +112,7 @@ int main()
   // -----------------------
   // opengl starts from here
   delfem2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.OpenWindow();
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;

@@ -311,7 +311,7 @@ int main() {
   // -------------
   CCAD3DViewer viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window)) {
     viewer.Draw();

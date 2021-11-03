@@ -48,7 +48,7 @@ int main() {
   // ---------------------------------------
   dfm2::glfw::CViewer3 viewer(2.0);
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 //  viewer.camera.Rot_Camera(+0.2, -0.2);
   if (!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");

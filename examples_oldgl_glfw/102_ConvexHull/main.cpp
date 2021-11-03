@@ -38,7 +38,7 @@ static void myGlVertex3d(
 int main() {
   delfem2::glfw::CViewer3 viewer(1.5);
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   std::vector<dfm2::CVec3d> vtx_xyz(100);
   std::vector<unsigned int> tri_vtx;

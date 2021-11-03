@@ -109,7 +109,7 @@ int main() {
   viewer.height = 400;
   //
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   tex.InitGL();
 

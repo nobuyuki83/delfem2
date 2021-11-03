@@ -109,7 +109,7 @@ int main() {
   dfm2::glfw::CViewer3 viewer(1.5);
   //
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
 
   while (!glfwWindowShouldClose(viewer.window)) {

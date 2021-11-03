@@ -61,7 +61,7 @@ int main()
   = std::make_unique<delfem2::Projection_LookOriginFromZplus>(1.0, true, 45.0);
   //
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);

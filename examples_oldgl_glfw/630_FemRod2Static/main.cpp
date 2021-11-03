@@ -113,7 +113,7 @@ int main() {
     viewer.view_height = 0.5;
     viewer.trans[0] = -0.5;
   }
-  viewer.CreateGlfwWindow();
+  viewer.OpenWindow();
 
   int iframe = 0;
   while (true) {

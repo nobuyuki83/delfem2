@@ -97,7 +97,7 @@ int main() {
       32);
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   // ---------------------
   double time0 = glfwGetTime();
   glfwSetWindowTitle(viewer.window, "rbf without linear");

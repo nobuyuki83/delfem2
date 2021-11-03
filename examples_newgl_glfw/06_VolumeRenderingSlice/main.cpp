@@ -127,7 +127,7 @@ int main()
 {
   delfem2::glfw::CViewer3 viewer(0.5);
   delfem2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;

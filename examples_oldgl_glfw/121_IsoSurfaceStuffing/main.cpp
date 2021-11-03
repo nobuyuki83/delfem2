@@ -241,7 +241,7 @@ void myGlutDisplay() {
 int main() {
   delfem2::glfw::CViewer3 viewer(2);
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   //
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_LIGHT0);

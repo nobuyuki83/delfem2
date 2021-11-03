@@ -21,9 +21,9 @@
 #include "delfem2/mshprimitive.h"
 #include "delfem2/vec3.h"
 #include "delfem2/points.h"
-#include "delfem2/opengl/new/shdr_points.h"
-#include "delfem2/opengl/new/shdr_mshtri.h"
-#include "delfem2/opengl/new/r2tgln.h"
+#include "delfem2/opengl/new/drawer_points.h"
+#include "delfem2/opengl/new/drawer_mshtri.h"
+#include "delfem2/opengl/new/drawer_render2tex.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 
@@ -61,8 +61,7 @@ int main() {
   }
 
   dfm2::glfw::InitGLNew();
-  viewer.InitGL();
-
+  viewer.OpenWindow();
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cerr << "Failed to initialize GLAD" << std::endl;
@@ -72,7 +71,7 @@ int main() {
 
   r2t.InitGL();
   drawer_r2t.InitGL();
-  shdr_trimsh.Compile();
+  shdr_trimsh.InitGL();
 
   {
     std::vector<float> vtx_xyz;

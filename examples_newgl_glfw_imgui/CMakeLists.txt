@@ -4,7 +4,7 @@ project(examples_newgl_glfw_imgui)
 
 add_subdirectory(00_SampleDemo)
 add_subdirectory(01_SimpleWithoutDelfem2)
-add_subdirectory(10_TriMeshViewer)
+add_subdirectory(10_MeshTri3Viewer)
 add_subdirectory(11_MshTri3TexViewer)
 add_subdirectory(12_TexPaint)
 add_subdirectory(13_PolylineEdit)

@@ -17,7 +17,7 @@
 
 #include "delfem2/opengl/funcs.h" // compile shader
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
-#include "delfem2/opengl/new/shdr_msh.h"
+#include "delfem2/opengl/new/drawer_msh.h"
 #include "delfem2/mshmisc.h"
 
 // ------------------------------------------

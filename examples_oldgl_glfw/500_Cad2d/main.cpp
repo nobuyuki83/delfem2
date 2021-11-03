@@ -33,7 +33,7 @@ int main()
   // --------------------
   delfem2::glfw::CViewer3 viewer(2);
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   int iframe = 0;
   while(true){

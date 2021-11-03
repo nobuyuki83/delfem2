@@ -11,7 +11,7 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/shdr_mshtri.h"
+#include "delfem2/opengl/new/drawer_mshtri.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshuni.h"
@@ -159,7 +159,7 @@ int main()
   }
 
   delfem2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.OpenWindow();
       
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -168,7 +168,7 @@ int main()
   }
 #endif
   
-  shdr_trimsh.Compile();
+  shdr_trimsh.InitGL();
   shdr_trimsh.Initialize(aXYZ, 3, aTri);
 
 

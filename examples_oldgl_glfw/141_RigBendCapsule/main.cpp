@@ -81,7 +81,7 @@ int main() {
   dfm2::glfw::CViewer3 viewer;
   //
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   dfm2::opengl::setSomeLighting();
 
   int iframe = 0;

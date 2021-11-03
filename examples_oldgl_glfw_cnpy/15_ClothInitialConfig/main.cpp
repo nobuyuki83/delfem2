@@ -189,10 +189,10 @@ int main()
   dfm2::glfw::CViewer3 viewer3;
   dfm2::glfw::CViewer2 viewer2;
   dfm2::glfw::InitGLOld();
-  viewer3.InitGL();
+  viewer3.OpenWindow();
   // viewer3.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   dfm2::opengl::setSomeLighting();
-  viewer2.CreateGlfwWindow();
+  viewer2.OpenWindow();
   
   ::glfwMakeContextCurrent(viewer2.window);
   glyph.InitGL();

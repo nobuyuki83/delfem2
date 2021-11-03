@@ -37,7 +37,7 @@ class CViewer3 {
 
   void SwapBuffers() const;
 
-  virtual void InitGL();
+  virtual void OpenWindow();
 
   void ExitIfClosed() const;
 

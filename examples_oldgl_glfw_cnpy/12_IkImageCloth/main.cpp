@@ -208,7 +208,7 @@ int main()
   // -------------------
   // below: opengl starts
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   // viewer.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   dfm2::opengl::setSomeLighting();
   tex.InitGL();

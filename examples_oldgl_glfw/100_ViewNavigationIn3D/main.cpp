@@ -33,7 +33,7 @@ int main()
     viewer.keypress_callbacks.push_back(rr);
   }
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   while (!glfwWindowShouldClose(viewer.window))
   {

@@ -122,7 +122,7 @@ int main()
 
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   viewer.trans[0] = -0.5;
   viewer.trans[1] = -0.5;
   while (!glfwWindowShouldClose(viewer.window))

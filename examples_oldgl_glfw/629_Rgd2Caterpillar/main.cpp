@@ -55,7 +55,7 @@ int main() {
   dfm2::glfw::CViewer3 viewer(1.5);
   //
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   std::vector<dfm2::CRigidState2> aRS(2);
   {
     dfm2::CRigidState2 &rs = aRS[0];

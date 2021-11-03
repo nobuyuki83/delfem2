@@ -90,7 +90,7 @@ int main() {
   // -------------------------
   // below: opengl window open
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   tex.InitGL();
   dfm2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window)) {

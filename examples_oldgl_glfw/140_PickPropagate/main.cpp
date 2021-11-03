@@ -138,7 +138,7 @@ int main()
       vtx_xyz,tri_idx);
 
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
 //  const std::vector< std::pair<int,delfem2::CColor> > aColor = ;
 

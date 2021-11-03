@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include <glad/glad.h>
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/shdr_msh.h"
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/new/drawer_msh.h"
 
 // ----------------------------------------------
 
@@ -33,7 +33,7 @@ int main()
   shdr.color[0] = 1;
   //
   delfem2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.OpenWindow();
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;

@@ -4,16 +4,16 @@
 #include <iostream>
 #include <vector>
 #if defined(_MSC_VER)
-#include <windows.h>
+#  include <windows.h>
 #endif
 //
 #ifdef EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#define GLFW_INCLUDE_ES3
-#define GL_GLEXT_PROTOTYPES
-#define EGL_EGLEXT_PROTOTYPES
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
+#  define GL_GLEXT_PROTOTYPES
+#  define EGL_EGLEXT_PROTOTYPES
 #else
-#include <glad/glad.h>
+#  include <glad/glad.h>
 #endif
 #include <GLFW/glfw3.h>
 
@@ -24,7 +24,7 @@
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/points.h"
-#include "delfem2/opengl/new/shdr_mshtri.h"
+#include "delfem2/opengl/new/drawer_mshtri.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 
@@ -103,14 +103,14 @@ void draw(GLFWwindow *window) {
 int main(int, char **) {
 
   delfem2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.OpenWindow();
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
 #endif
-  drawer_mesh_edge.Compile();
+  drawer_mesh_edge.InitGL();
 
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();

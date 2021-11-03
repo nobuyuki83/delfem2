@@ -4,8 +4,8 @@
 ### [01_SimpleWithoutDelfem2](01_SimpleWithoutDelfem2)
 <img src="01_SimpleWithoutDelfem2/thumbnail.png" width=200px>
 
-### [10_TriMeshViewer](10_TriMeshViewer)
-<img src="10_TriMeshViewer/thumbnail.png" width=200px>
+### [10_MeshTri3Viewer](10_MeshTri3Viewer)
+<img src="10_MeshTri3Viewer/thumbnail.png" width=200px>****
 
 ### [11_MshTri3TexViewer](11_MshTri3TexViewer)
 <img src="11_MshTri3TexViewer/thumbnail.png" width=200px>

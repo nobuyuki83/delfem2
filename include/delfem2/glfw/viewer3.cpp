@@ -177,7 +177,7 @@ void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {
   }
 }
 
-void delfem2::glfw::CViewer3::InitGL() {
+void delfem2::glfw::CViewer3::OpenWindow() {
   namespace lcl = delfem2::glfw::viewer3;
   this->window = glfwCreateWindow(
       static_cast<int>(width),

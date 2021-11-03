@@ -75,7 +75,7 @@ void Example1(
   delfem2::glfw::CViewer3 viewer;
   //
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   std::vector<double> vtx_xyz = vtx_xyz0;
   std::vector<double> vtx_xyz_cage_def = vec_xyz_cage;
@@ -152,7 +152,7 @@ void Example2(
   delfem2::glfw::CViewer3 viewer;
   //
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   std::vector<double> vec_xyz;
   std::vector<double> vec_xyz_cage0_def = vtx_xyz_cage0;

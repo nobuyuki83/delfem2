@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/opengl/new/drawer_mshtri.h"
+
 #ifdef EMSCRIPTEN
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
@@ -17,7 +19,6 @@
 //
 #include "delfem2/opengl/funcs.h" // compile shader
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
-#include "delfem2/opengl/new/shdr_mshtri.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
 
@@ -92,7 +93,7 @@ template void delfem2::opengl::CShader_TriMesh::UpdateVertex(
 #endif
 
 
-void delfem2::opengl::CShader_TriMesh::Compile()
+void delfem2::opengl::CShader_TriMesh::InitGL()
 {
   const std::string glsl33vert_projection =
   "uniform mat4 matrixProjection;\n"

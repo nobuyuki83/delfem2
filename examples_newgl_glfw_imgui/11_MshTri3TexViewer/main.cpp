@@ -5,16 +5,16 @@
 #include <vector>
 #include <set>
 #if defined(_MSC_VER)
-#include <windows.h>
+#  include <windows.h>
 #endif
 //
 #ifdef EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#define GLFW_INCLUDE_ES3
-#define GL_GLEXT_PROTOTYPES
-#define EGL_EGLEXT_PROTOTYPES
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
+#  define GL_GLEXT_PROTOTYPES
+#  define EGL_EGLEXT_PROTOTYPES
 #else
-#include <glad/glad.h>
+#  include <glad/glad.h>
 #endif
 #include <GLFW/glfw3.h>
 
@@ -26,7 +26,7 @@
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/points.h"
-#include "delfem2/opengl/new/shdr_mshtex.h"
+#include "delfem2/opengl/new/drawer_mshtex.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #define  STB_IMAGE_IMPLEMENTATION
@@ -36,8 +36,57 @@ namespace dfm2 = delfem2;
 // ---------------------------------------------------------------
 
 delfem2::glfw::CViewer3 viewer;
-dfm2::opengl::Drawer_MeshTexSeparateIndexing drawer_tritex;
+dfm2::opengl::Drawer_MeshTex drawer_tritex;
 unsigned int id_tex;
+
+void OpenFile(const std::string& filePathName){
+  std::cout << filePathName << std::endl;
+  std::string fname_mtl;
+  {
+    std::vector<double> vtx_xyz, vtx_tex, vtx_nrm;
+    std::vector<unsigned int> elem_vtx_index;
+    std::vector<unsigned int> elem_vtx_xyz, elem_vtx_tex, elem_vtx_nrm;
+    std::vector<std::string> group_names;
+    std::vector<unsigned int> group_elem_index;
+    delfem2::Read_WavefrontObjWithMaterialMixedElem(
+        fname_mtl,
+        vtx_xyz, vtx_tex, vtx_nrm,
+        elem_vtx_index,
+        elem_vtx_xyz, elem_vtx_tex, elem_vtx_nrm,
+        group_names, group_elem_index, filePathName);
+    delfem2::Normalize_Points3(
+        vtx_xyz,
+        1.);
+    std::vector<double> uni_xyz0,uni_tex0;
+    std::vector<unsigned int> tri_uni, uni_xyz, uni_tex;
+    delfem2::UnifySeparateIndexing_PosTex(
+        uni_xyz0, uni_tex0,
+        tri_uni, uni_xyz, uni_tex,
+        vtx_xyz, vtx_tex,
+        elem_vtx_xyz, elem_vtx_tex);
+    drawer_tritex.SetElement(tri_uni, GL_TRIANGLES);
+    drawer_tritex.SetCoords(uni_xyz0, 3);
+    drawer_tritex.SetTexUV(uni_tex0);
+  }
+  // ------------
+  auto mtlFilePathName = std::filesystem::path(filePathName).parent_path() / fname_mtl;
+  std::cout << "material name: " << mtlFilePathName << std::endl;
+  std::vector<delfem2::MaterialWavefrontObj> materials;
+  delfem2::Read_WavefrontMaterial(
+      mtlFilePathName,
+      materials);
+  std::cout << materials.size() << std::endl;
+  for(const auto& mat : materials ) {
+    auto texPath = std::filesystem::path(filePathName).parent_path() / mat.map_Kd;
+    std::cout << "texPath: " << texPath << std::endl;
+    if( !std::filesystem::exists(texPath) ){ continue; }
+    if( !::glIsTexture(id_tex) ) { ::glGenTextures(1, &id_tex); }
+    ::glBindTexture(GL_TEXTURE_2D, id_tex);
+    delfem2::openglstb::LoadImageFileSetToTexture(
+        texPath.string().c_str());
+  }
+  // -------------------
+}
 
 void draw(GLFWwindow *window) {
   glfwPollEvents();
@@ -71,41 +120,7 @@ void draw(GLFWwindow *window) {
     if (ImGuiFileDialog::Instance()->Display("ChooseMeshFileDlgKey")) {
       if (ImGuiFileDialog::Instance()->IsOk()) {
         std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-        std::cout << filePathName << std::endl;
-        std::string fname_mtl;
-        std::vector<double> vtx_xyz, vtx_tex, vtx_nrm;
-        std::vector<unsigned int> elem_vtx_index;
-        std::vector<unsigned int> elem_vtx_xyz, elem_vtx_tex, elem_vtx_nrm;
-        std::vector<std::string> group_names;
-        std::vector<unsigned int> group_elem_index;
-        const std::filesystem::path file_path;
-        delfem2::Read_WavefrontObjWithMaterialMixedElem(
-            fname_mtl,
-            vtx_xyz, vtx_tex, vtx_nrm,
-            elem_vtx_index,
-            elem_vtx_xyz, elem_vtx_tex, elem_vtx_nrm,
-            group_names, group_elem_index, filePathName);
-        delfem2::Normalize_Points3(
-            vtx_xyz,
-            1.);
-        drawer_tritex.SetMesh(vtx_xyz, vtx_tex, elem_vtx_xyz, elem_vtx_tex);
-        // ------------
-        auto mtlFilePathName = std::filesystem::path(filePathName).parent_path() / fname_mtl;
-        std::cout << "material name: " << mtlFilePathName << std::endl;
-        std::vector<delfem2::MaterialWavefrontObj> materials;
-        delfem2::Read_WavefrontMaterial(
-            mtlFilePathName,
-            materials);
-        std::cout << materials.size() << std::endl;
-        for(const auto& mat : materials ) {
-          auto texPath = std::filesystem::path(filePathName).parent_path() / mat.map_Kd;
-          std::cout << "texPath: " << texPath << std::endl;
-          if( !std::filesystem::exists(texPath) ){ continue; }
-          if( !::glIsTexture(id_tex) ) { ::glGenTextures(1, &id_tex); }
-          ::glBindTexture(GL_TEXTURE_2D, id_tex);
-          delfem2::openglstb::LoadImageFileSetToTexture(
-              texPath.string().c_str());
-        }
+        OpenFile(filePathName);
       }
       ImGuiFileDialog::Instance()->Close();
     }
@@ -150,7 +165,7 @@ void draw(GLFWwindow *window) {
 int main(int, char **) {
 
   delfem2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.OpenWindow();
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cout << "Failed to initialize GLAD" << std::endl;
@@ -164,6 +179,10 @@ int main(int, char **) {
   ImGui::CreateContext();
   ImGui_ImplGlfw_InitForOpenGL(viewer.window, true);// Setup Platform/Renderer bindings
   ImGui::StyleColorsClassic(); // Setup Dear ImGui style
+
+  OpenFile(
+      std::filesystem::path(PATH_SRC_DIR)
+          / ".." / ".." / "test_inputs" / "Babi" / "Babi.obj");
 
 #ifdef EMSCRIPTEN
   ImGui_ImplOpenGL3_Init("#version 100");

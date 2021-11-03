@@ -5,26 +5,26 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// ----------------
+
+#include "delfem2/opengl/new/drawer_render2tex.h"
+
+#include <stack>
+
 #ifdef EMSCRIPTEN
   #include <GLFW/glfw3.h>
 #else
   #include "glad/glad.h" // gl3.0+
 #endif
-// ----------------
 #ifdef _WIN32
   #include <windows.h>
 #endif
-// ----------------
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
 #else
   #include <GL/gl.h>
 #endif
-// ----------------
+
 #include "delfem2/mat4.h"
-#include "delfem2/opengl/new/r2tgln.h"
-#include <stack>
 
 // --------------------------------------------
 

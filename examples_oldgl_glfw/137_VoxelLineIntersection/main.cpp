@@ -110,7 +110,7 @@ int main()
   dfm2::glfw::CViewer3 viewer(1.0);
   //
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   dfm2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);  
   dfm2::CGrid3<int> grid;

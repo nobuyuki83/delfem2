@@ -274,7 +274,7 @@ int main()
 {
   delfem2::glfw::CViewer3 viewer(2.5);
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   std::random_device rd;
   std::mt19937 mt(rd());

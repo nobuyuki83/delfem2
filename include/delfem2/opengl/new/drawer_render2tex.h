@@ -6,21 +6,20 @@
  */
 
 
-#ifndef DFM2_OPENGL_NEW_R2TGLN_H
-#define DFM2_OPENGL_NEW_R2TGLN_H
+#ifndef DFM2_OPENGL_NEW_DRAWER_RENDER2TEX_H
+#define DFM2_OPENGL_NEW_DRAWER_RENDER2TEX_H
 
 #include <stdio.h>
 #include <vector>
 
-#include "delfem2/opengl/new/mshcolor.h" // shader definitions
-#include "delfem2/opengl/new/shdr_msh.h"
-#include "delfem2/opengl/new/shdr_mshtex.h"
-#include "delfem2/opengl/new/shdr_points.h"
-#include "delfem2/opengl/r2t.h"
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/opengl/new/mshcolor.h" // shader definitions
+#include "delfem2/opengl/new/drawer_msh.h"
+#include "delfem2/opengl/new/drawer_mshtex.h"
+#include "delfem2/opengl/new/drawer_points.h"
+#include "delfem2/opengl/r2t.h"
 
-namespace delfem2{
-namespace opengl{
+namespace delfem2::opengl{
 
 class CRender2Tex_DrawNewGL
 {
@@ -48,10 +47,9 @@ public:
 };
   
 }
-}
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/opengl/new/r2tgln.cpp"
+#  include "delfem2/opengl/new/drawer_render2tex.cpp"
 #endif
 
 #endif /* DFM2_OPENGL_NEW_R2TGLN_H */

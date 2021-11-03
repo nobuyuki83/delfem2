@@ -114,7 +114,7 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
   delfem2::glfw::CViewer3 viewer;
   // -----------
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   dfm2::opengl::setSomeLighting();
   
   std::vector<CRigMap> aMapBoneTrg2Src(aBone.size());

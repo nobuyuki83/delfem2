@@ -20,8 +20,8 @@
 
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/shdr_mshtex.h"
-#include "delfem2/opengl/new/shdr_mshtri.h"
+#include "delfem2/opengl/new/drawer_mshtex.h"
+#include "delfem2/opengl/new/drawer_mshtri.h"
 #include "delfem2/noise.h"
 #include "delfem2/mshprimitive.h"
 
@@ -74,7 +74,7 @@ void draw(GLFWwindow *window) {
 
 int main() {
   dfm2::glfw::InitGLNew();
-  viewer.CreateGlfwWindow();
+  viewer.OpenWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
@@ -89,7 +89,7 @@ int main() {
     dfm2::MeshTri3_Torus(
         vtx_xyz, tri_vtx,
         0.5f, 0.5f, 10, 12);
-    shdr0.Compile();
+    shdr0.InitGL();
     shdr0.Initialize(vtx_xyz, 3, tri_vtx);
   }
 

@@ -278,7 +278,7 @@ int main() {
 
   dfm2::glfw::CViewer3 viewer(0.2);
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   // --------------------------------
   // viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
   // viewer.camera.Rot_Camera(0.5, 0.5);

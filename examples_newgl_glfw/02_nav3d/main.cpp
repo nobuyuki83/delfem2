@@ -16,7 +16,7 @@
 
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/new/shdr_mshtri.h"
+#include "delfem2/opengl/new/drawer_mshtri.h"
 #include "delfem2/mshprimitive.h"
 
 namespace dfm2 = delfem2;
@@ -45,7 +45,7 @@ void draw()
 int main()
 {
   dfm2::glfw::InitGLNew();
-  viewer.InitGL();
+  viewer.OpenWindow();
   
   // glad: load all OpenGL function pointers
   // ---------------------------------------
@@ -57,7 +57,7 @@ int main()
   }
 #endif
 
-  shdr.Compile();
+  shdr.InitGL();
   {
     std::vector<float> aXYZd;
     std::vector<unsigned int> aTri;

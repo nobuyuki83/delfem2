@@ -420,7 +420,7 @@ int main() {
   //viewer.camera.psi = 3.1415 * 0.2;
   //viewer.camera.theta = 3.1415 * 0.1;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window)) {
     StepTime();

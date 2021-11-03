@@ -70,7 +70,7 @@ int main() {
   // ------------------
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   dfm2::opengl::setSomeLighting();
   unsigned int iframe = 0;
   while (true) {

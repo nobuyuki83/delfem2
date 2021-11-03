@@ -196,7 +196,7 @@ int main()
   viewer.trans[0] = -0.5;
   viewer.trans[1] = -0.5;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   while (!glfwWindowShouldClose(viewer.window) )
   {
     for(const auto& pd: aPointData) {

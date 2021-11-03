@@ -211,7 +211,7 @@ int main() {
   delfem2::glfw::CViewer3 viewer(2.0);
   //
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
 
   double time_last_update = -3;

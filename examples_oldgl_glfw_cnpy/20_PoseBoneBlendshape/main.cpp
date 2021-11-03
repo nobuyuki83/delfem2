@@ -100,7 +100,7 @@ int main()
   // -----------
   delfem2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   dfm2::opengl::setSomeLighting();
   //
   std::random_device rnd_dev;

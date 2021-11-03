@@ -26,7 +26,7 @@ namespace dfm2 = delfem2;
 int main() {
   dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   unsigned int image_size = 256;
   std::vector<double> value_image;

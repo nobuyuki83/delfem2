@@ -34,7 +34,7 @@ int main()
   
   dfm2::glfw::CViewer3 viewer(2.0);
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
 
   std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<'\n';

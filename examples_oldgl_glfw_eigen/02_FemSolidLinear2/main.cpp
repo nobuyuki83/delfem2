@@ -150,7 +150,7 @@ int main()
   // --------
   dfm2::glfw::CViewer3 viewer(1.5);
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   // ---------
   while(!::glfwWindowShouldClose(viewer.window)){
     viewer.DrawBegin_oldGL();

@@ -34,7 +34,7 @@ namespace dfm2 = delfem2;
 int main() {
   delfem2::glfw::CViewer3 viewer(2.0);
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
 
   for (unsigned itr = 0;; ++itr) {

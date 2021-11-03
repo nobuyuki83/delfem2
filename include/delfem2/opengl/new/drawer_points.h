@@ -5,11 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_OPENGL_NEW_SHDR_POINTS_H
-#define DFM2_OPENGL_NEW_SHDR_POINTS_H
+#ifndef DFM2_OPENGL_NEW_DRAWER_POINTS_H
+#define DFM2_OPENGL_NEW_DRAWER_POINTS_H
 
 #include <cstdio>
 #include <vector>
+#include <array>
 
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/dfm2_inline.h"
@@ -51,13 +52,13 @@ public:
   int Loc_MatrixModelView = -1;
   int Loc_Color = -1;
   unsigned int num_vtx = 0;
-  std::array<float,4> color = {0.0,0.0,0.0,1.0};
+  std::array<float,4> color = {0.f, 0.f, 0.f, 1.f};
 };
 
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/opengl/new/shdr_points.cpp"
+#  include "delfem2/opengl/new/drawer_points.cpp"
 #endif
 
 #endif /* gl4_msh_hpp */

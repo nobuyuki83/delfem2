@@ -14,7 +14,7 @@ ENDIF()
 
 #####################################
 
-project(10_TriMeshViewer)
+project(10_MeshTri3Viewer)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

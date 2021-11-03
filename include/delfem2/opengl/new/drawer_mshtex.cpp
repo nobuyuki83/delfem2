@@ -1,10 +1,11 @@
+#include "delfem2/opengl/new/drawer_mshtex.h"
+
 #ifdef EMSCRIPTEN
   #include <GLFW/glfw3.h>
 #else
   #include "glad/glad.h" // gl3.0+
 #endif
 
-#include "delfem2/opengl/new/shdr_mshtex.h"
 #include "delfem2/opengl/funcs.h"
 
 void delfem2::opengl::Drawer_MeshTex::SetElement(
@@ -98,13 +99,13 @@ void delfem2::opengl::Drawer_MeshTex::InitGL()
 #endif
 
   if( !glIsProgram(shaderProgram) ){
-    std::cout << "shader doesnot exist" << std::endl;
+    std::cerr << "shader doesnot exist" << std::endl;
   }
   glUseProgram(shaderProgram);
-  Loc_MatrixProjection = glGetUniformLocation(shaderProgram,  "matrixProjection");
-  Loc_MatrixModelView  = glGetUniformLocation(shaderProgram,  "matrixModelView");
-  Loc_Texture = glGetUniformLocation(shaderProgram, "myTextureSampler");
-  std::cout << "Loc_Texture: " << Loc_Texture << std::endl;
+  loc_projection_matrix = glGetUniformLocation(shaderProgram,  "matrixProjection");
+  loc_modelview_matrix  = glGetUniformLocation(shaderProgram,  "matrixModelView");
+  loc_texture = glGetUniformLocation(shaderProgram, "myTextureSampler");
+  // std::cout << "Loc_Texture: " << loc_texture << std::endl;
 }
 
 
@@ -114,17 +115,18 @@ void delfem2::opengl::Drawer_MeshTex::Draw(
 {
   glUseProgram(shaderProgram);
   glUniformMatrix4fv(
-      Loc_MatrixProjection, 1, GL_FALSE,
+      loc_projection_matrix, 1, GL_FALSE,
       TransposeMat4ForOpenGL(mat4_projection, true).data());
   glUniformMatrix4fv(
-      Loc_MatrixModelView, 1, GL_FALSE,
+      loc_modelview_matrix, 1, GL_FALSE,
       TransposeMat4ForOpenGL(mat4_modelview, false).data());
-  glUniform1i(Loc_Texture, 0);
+  glUniform1i(loc_texture, 0);
   vao.Draw(0); // draw face
 }
 
+// ====================================================
 
-void delfem2::opengl::Drawer_MeshTexSeparateIndexingMixTwoTexture::CompileShader() {
+void delfem2::opengl::Drawer_MeshMixTwoTextures::InitGL() {
 
   const std::string glsl33vert_projection =
       "uniform mat4 matrixProjection;\n"
@@ -167,28 +169,28 @@ void delfem2::opengl::Drawer_MeshTexSeparateIndexingMixTwoTexture::CompileShader
     std::cout << "shader doesnot exist" << std::endl;
   }
   glUseProgram(shaderProgram);
-  Loc_MatrixProjection = glGetUniformLocation(shaderProgram,  "matrixProjection");
-  Loc_MatrixModelView  = glGetUniformLocation(shaderProgram,  "matrixModelView");
+  loc_projection_matrix = glGetUniformLocation(shaderProgram,  "matrixProjection");
+  loc_modelview_matrix  = glGetUniformLocation(shaderProgram,  "matrixModelView");
   loc_ratio = glGetUniformLocation(shaderProgram, "ratio");
-  loc_tex0 = glGetUniformLocation(shaderProgram, "tex0");
-  loc_tex1 = glGetUniformLocation(shaderProgram, "tex1");
-  std::cout << "Loc_Texture: " << loc_tex0 << " " << loc_tex1 << std::endl;
+  this->loc_texture = glGetUniformLocation(shaderProgram, "tex0");
+  this->loc_overlaytex = glGetUniformLocation(shaderProgram, "tex1");
+  // std::cout << "Loc_Texture: " << loc_Texture << " " << loc_tex1 << std::endl;
 }
 
-void delfem2::opengl::Drawer_MeshTexSeparateIndexingMixTwoTexture::Draw(
+void delfem2::opengl::Drawer_MeshMixTwoTextures::Draw(
     const float mat4_projection[16],
     const float mat4_modelview[16],
     float ratio) const
 {
   glUseProgram(shaderProgram);
   glUniformMatrix4fv(
-      Loc_MatrixProjection, 1, GL_FALSE,
+      loc_projection_matrix, 1, GL_FALSE,
       TransposeMat4ForOpenGL(mat4_projection, true).data());
   glUniformMatrix4fv(
-      Loc_MatrixModelView, 1, GL_FALSE,
+      loc_modelview_matrix, 1, GL_FALSE,
       TransposeMat4ForOpenGL(mat4_modelview, false).data());
-  glUniform1i(loc_tex0, 0);
-  glUniform1i(loc_tex1, 1);
+  glUniform1i(loc_texture, 0);
+  glUniform1i(loc_overlaytex, 1);
   glUniform1f(loc_ratio, ratio);
   vao.Draw(0); // draw face
 }

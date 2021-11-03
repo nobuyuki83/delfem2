@@ -194,6 +194,39 @@ DFM2_INLINE void MeshLine_MeshElem(
 
 // ------------------------------------
 
+DFM2_INLINE unsigned int FindIndexTri(
+    const unsigned int *tri_vtx,
+    unsigned int ixyz);
+
+// ------------------------------------
+
+/**
+ *
+ * @tparam REAL float and double is supported for static_library
+ * @param uni_xyz0
+ * @param uni_tex0
+ * @param tri_uni
+ * @param uni_xyz
+ * @param uni_tex
+ * @param vtx_xyz
+ * @param vtx_tex
+ * @param elem_vtx_xyz
+ * @param elem_vtx_tex
+ */
+template <typename REAL>
+void UnifySeparateIndexing_PosTex(
+    std::vector<REAL> &uni_xyz0,
+    std::vector<REAL> &uni_tex0,
+    std::vector<unsigned int>& tri_uni,
+    std::vector<unsigned int>& uni_xyz,
+    std::vector<unsigned int>& uni_tex,
+    const std::vector<REAL> &vtx_xyz,
+    const std::vector<REAL> &vtx_tex,
+    const std::vector<unsigned int> &elem_vtx_xyz,
+    const std::vector<unsigned int> &elem_vtx_tex);
+
+// ------------------------------------
+
 DFM2_INLINE void MarkConnectedElements(
     std::vector<unsigned int> &elem_flag,
     unsigned int ielem_kernel,

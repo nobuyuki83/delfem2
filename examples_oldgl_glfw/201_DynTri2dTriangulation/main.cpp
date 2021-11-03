@@ -262,7 +262,7 @@ int main()
 {
   delfem2::glfw::CViewer3 viewer;
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   while (!glfwWindowShouldClose(viewer.window))
   {
     GenMesh();

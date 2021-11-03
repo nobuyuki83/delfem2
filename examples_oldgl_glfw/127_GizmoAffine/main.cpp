@@ -83,7 +83,7 @@ int main() {
   } viewer;
   // ------------------------
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   // --------------------
   while (!glfwWindowShouldClose(viewer.window)) {

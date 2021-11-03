@@ -100,7 +100,7 @@ int main()
   dfm2::glfw::CViewer3 viewer;
   //
   dfm2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   //
   std::vector<unsigned int> aTri;

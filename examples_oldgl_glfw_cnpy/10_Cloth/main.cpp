@@ -117,7 +117,7 @@ int main()
   delfem2::glfw::CViewer3 viewer;
   //
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
 
   for(int iproblem=0;iproblem<4;++iproblem)

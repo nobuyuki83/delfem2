@@ -50,7 +50,7 @@ int main()
   // opengl starts here
   delfem2::glfw::CViewer3 viewer(2);
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   int iframe = 0;
   while(!glfwWindowShouldClose(viewer.window)){

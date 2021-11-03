@@ -44,7 +44,7 @@ void Draw(
 int main() {
   dfm2::glfw::InitGLOld();
   dfm2::glfw::CViewer3 viewer(1.5);
-  viewer.InitGL();
+  viewer.OpenWindow();
 
   std::vector<dfm2::CRigidState2> aRS(4);
   {

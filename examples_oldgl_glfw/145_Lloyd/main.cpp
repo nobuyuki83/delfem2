@@ -93,7 +93,7 @@ int main()
   viewer.trans[1] = -0.5;
   //
   delfem2::glfw::InitGLOld();
-  viewer.InitGL();
+  viewer.OpenWindow();
   while ( true )
   {
     for(unsigned int imode=0;imode<3;++imode){
