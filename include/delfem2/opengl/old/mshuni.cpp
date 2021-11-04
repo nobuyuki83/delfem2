@@ -831,6 +831,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Face(
     const unsigned int i0 = tri_vtx_idx[itri * 3 + 0];
     const unsigned int i1 = tri_vtx_idx[itri * 3 + 1];
     const unsigned int i2 = tri_vtx_idx[itri * 3 + 2];
+    assert( i0 < vtx_xy.size()/2 );
+    assert( i1 < vtx_xy.size()/2 );
+    assert( i2 < vtx_xy.size()/2 );
     const double p0[2] = {vtx_xy[i0 * 2 + 0], vtx_xy[i0 * 2 + 1]};
     const double p1[2] = {vtx_xy[i1 * 2 + 0], vtx_xy[i1 * 2 + 1]};
     const double p2[2] = {vtx_xy[i2 * 2 + 0], vtx_xy[i2 * 2 + 1]};
@@ -887,15 +890,18 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge(
   ::glColor3d(0, 0, 0);
   ::glBegin(GL_LINES);
   for (unsigned int itri = 0; itri < num_tri; itri++) {
-    const unsigned int ino0 = tri_vtx_idx[itri * 3 + 0];
-    const unsigned int ino1 = tri_vtx_idx[itri * 3 + 1];
-    const unsigned int ino2 = tri_vtx_idx[itri * 3 + 2];
-    ::glVertex2d(vtx_xy[ino0 * 2 + 0], vtx_xy[ino0 * 2 + 1]);
-    ::glVertex2d(vtx_xy[ino1 * 2 + 0], vtx_xy[ino1 * 2 + 1]);
-    ::glVertex2d(vtx_xy[ino1 * 2 + 0], vtx_xy[ino1 * 2 + 1]);
-    ::glVertex2d(vtx_xy[ino2 * 2 + 0], vtx_xy[ino2 * 2 + 1]);
-    ::glVertex2d(vtx_xy[ino2 * 2 + 0], vtx_xy[ino2 * 2 + 1]);
-    ::glVertex2d(vtx_xy[ino0 * 2 + 0], vtx_xy[ino0 * 2 + 1]);
+    const unsigned int i0 = tri_vtx_idx[itri * 3 + 0];
+    const unsigned int i1 = tri_vtx_idx[itri * 3 + 1];
+    const unsigned int i2 = tri_vtx_idx[itri * 3 + 2];
+    assert(i0<num_vtx);
+    assert(i1<num_vtx);
+    assert(i2<num_vtx);
+    ::glVertex2d(vtx_xy[i0 * 2 + 0], vtx_xy[i0 * 2 + 1]);
+    ::glVertex2d(vtx_xy[i1 * 2 + 0], vtx_xy[i1 * 2 + 1]);
+    ::glVertex2d(vtx_xy[i1 * 2 + 0], vtx_xy[i1 * 2 + 1]);
+    ::glVertex2d(vtx_xy[i2 * 2 + 0], vtx_xy[i2 * 2 + 1]);
+    ::glVertex2d(vtx_xy[i2 * 2 + 0], vtx_xy[i2 * 2 + 1]);
+    ::glVertex2d(vtx_xy[i0 * 2 + 0], vtx_xy[i0 * 2 + 1]);
   }
   ::glEnd();
 }

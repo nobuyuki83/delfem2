@@ -352,8 +352,8 @@ void dfm2::opengl::CShader_Cad2D::Draw(
 // ------------------------------------------------------------------------------
 
 
-void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
- (const std::vector<CVec2d>& aVec2,
+void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer (
+  const std::vector<CVec2d>& aVec2,
   const std::vector<CDynTri>& aETri)
 {
   std::vector<float> aXYf;
@@ -384,7 +384,7 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
   // ----------
   if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
   glBindVertexArray(vao.VAO);
-  
+
   vao.ADD_VBO(0,aXYf);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24

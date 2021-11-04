@@ -32,11 +32,10 @@ namespace dfm2 = delfem2;
 class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
  public:
   CCadDtri_Viewer() {
-    {
-      std::vector<double> aXY = {-1, -1, +1, -1, +1, +1, -1, +1};
-      cad.AddPolygon(aXY);
-    }
+    std::vector<double> aXY = {-1, -1, +1, -1, +1, +1, -1, +1};
+    cad.AddPolygon(aXY);
   }
+  
   void InitShader() {
     shdr_cad.Compile();
     shdr_dmsh.Compile();
@@ -63,7 +62,7 @@ class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
           for (unsigned int iv = 0; iv < nv; ++iv) {
             sum += aW[nv * ixy + iv];
           }
-          assert(fabs(sum - 1) < 1.0e-10);
+//          assert(fabs(sum - 1) < 1.0e-10);
         }
       }
     }
