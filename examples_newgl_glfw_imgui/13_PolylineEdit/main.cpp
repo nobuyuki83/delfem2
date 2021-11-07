@@ -94,7 +94,7 @@ class MyViewer : public delfem2::glfw::CViewer2 {
     MODE_SMOOTHING,
     MODE_DRAG,
   };
-  PolylineElasticEdit2 drag;
+  delfem2::PolylineElasticEdit2 drag;
 } viewer;
 
 void draw(GLFWwindow *window) {

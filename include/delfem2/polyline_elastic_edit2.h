@@ -7,6 +7,9 @@
 #include <climits>
 
 #include "delfem2/ls_tridiagonal.h"
+#include "delfem2/fem_beam2.h"
+
+namespace delfem2 {
 
 class PolylineElasticEdit2 {
  public:
@@ -66,17 +69,19 @@ class PolylineElasticEdit2 {
  public:
   std::vector<double> dut;
   std::vector<double> Res;
-  BlockTriDiagonalMatrix m_mat;
+  BlockTriDiagonalMatrix<3> m_mat;
 };
 
-PolylineElasticEdit2::PolylineElasticEdit2() {
+}
+
+delfem2::PolylineElasticEdit2::PolylineElasticEdit2() {
   this->EI = 30.0;
   this->ARho = 1;
   this->AE = 100000.0;
 }
 
 template<class ARRAY2D>
-void PolylineElasticEdit2::Initialize(
+void delfem2::PolylineElasticEdit2::Initialize(
     const ARRAY2D &v2s,
     unsigned int ip_drag,
     double X,
@@ -112,7 +117,7 @@ void PolylineElasticEdit2::Initialize(
 }
 
 template<class ARRAY2D>
-void PolylineElasticEdit2::Drag(
+void delfem2::PolylineElasticEdit2::Drag(
     ARRAY2D &v2s,
     double x,
     double y) {
@@ -141,7 +146,7 @@ void PolylineElasticEdit2::Drag(
    */
 }
 
-void PolylineElasticEdit2::ClearMemory() {
+void delfem2::PolylineElasticEdit2::ClearMemory() {
   ini_x.clear();
   ut.clear();
   bc_flag.clear();
@@ -150,11 +155,11 @@ void PolylineElasticEdit2::ClearMemory() {
   m_mat.Clear();
 }
 
-PolylineElasticEdit2::~PolylineElasticEdit2() {
+delfem2::PolylineElasticEdit2::~PolylineElasticEdit2() {
   this->ClearMemory();
 }
 
-void PolylineElasticEdit2::ProjectPoint(
+void delfem2::PolylineElasticEdit2::ProjectPoint(
     double x_in, double y_in, int &idiv_min,
     double &alpha, double &ndist, double &norm_x, double &norm_y) {
   const size_t nno = ut.size() / 3;
@@ -185,73 +190,7 @@ void PolylineElasticEdit2::ProjectPoint(
   }
 }
 
-void dWddW_Beam2(
-    double dW[2][3],
-    double ddW[2][2][3][3],
-    //
-    double EI,
-    double AE,
-    const double x[2][2],
-    const double u[2][3]) {
-  const double eLen = sqrt((x[1][0] - x[0][0]) * (x[1][0] - x[0][0]) + (x[1][1] - x[0][1]) * (x[1][1] - x[0][1]));
-
-  double eC[2][2][3][3];
-  {
-    std::fill_n(&eC[0][0][0][0], 36, 0.0);
-    const double tmp1 = EI / (eLen * eLen * eLen);  // bending stiffness
-    const double tmp2 = AE / eLen;  // axal stiffness x direction
-    /*
-    eC[0][0] = eC[3][3] =  tmp2;
-    eC[3][0] = eC[0][3] = -tmp2;
-    eC[1][1] = eC[4][4] =  tmp1*12;
-    eC[4][1] = eC[1][4] = -tmp1*12;
-    eC[1][2] = eC[2][1] =  eC[5][1] = eC[1][5] =  tmp1*eLen*6;
-    eC[2][4] = eC[4][2] =  eC[4][5] = eC[5][4] = -tmp1*eLen*6;
-    eC[2][2] = eC[5][5] =  tmp1*eLen*eLen*4;
-    eC[5][2] = eC[2][5] =  tmp1*eLen*eLen*2;
-     */
-    eC[0][0][0][0] = eC[1][1][0][0] = tmp2;
-    eC[1][0][0][0] = eC[0][1][0][0] = -tmp2;
-    eC[0][0][1][1] = eC[1][1][1][1] = tmp1 * 12;
-    eC[1][0][1][1] = eC[0][1][1][1] = -tmp1 * 12;
-    eC[0][0][1][2] = eC[0][0][2][1] = eC[1][0][2][1] = eC[0][1][1][2] = tmp1 * eLen * 6;
-    eC[0][1][2][1] = eC[1][0][1][2] = eC[1][1][1][2] = eC[1][1][2][1] = -tmp1 * eLen * 6;
-    eC[0][0][2][2] = eC[1][1][2][2] = tmp1 * eLen * eLen * 4;
-    eC[1][0][2][2] = eC[0][1][2][2] = tmp1 * eLen * eLen * 2;
-  }
-
-  const double inv_eLen = 1.0 / eLen;
-  const double T[2] = {
-      (x[1][0] - x[0][0]) * inv_eLen,
-      (x[1][1] - x[0][1]) * inv_eLen};  // cosine and sine
-  // rotation for the of the stiffness matrix
-  const double eR[3][3] = {
-      {T[0], -T[1], 0},
-      {T[1], T[0], 0},
-      {0, 0, 1} };
-  std::fill_n(&ddW[0][0][0][0], 36, 0.0);
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
-      for (unsigned int n = 0; n < 3; n++) {
-        for (unsigned int m = 0; m < 3; m++) {
-          ddW[0][0][i][j] += eR[i][n] * eC[0][0][n][m] * eR[j][m];
-          ddW[0][1][i][j] += eR[i][n] * eC[0][1][n][m] * eR[j][m];
-          ddW[1][0][i][j] += eR[i][n] * eC[1][0][n][m] * eR[j][m];
-          ddW[1][1][i][j] += eR[i][n] * eC[1][1][n][m] * eR[j][m];
-        }
-      }
-    }
-  }
-  for (unsigned int n = 0; n < 2; n++) {
-    for (unsigned int i = 0; i < 3; i++) {
-      dW[n][i]
-          = ddW[n][0][i][0] * u[0][0] + ddW[n][0][i][1] * u[0][1] + ddW[n][0][i][2] * u[0][2]
-          + ddW[n][1][i][0] * u[1][0] + ddW[n][1][i][1] * u[1][1] + ddW[n][1][i][2] * u[1][2];
-    }
-  }
-}
-
-void PolylineElasticEdit2::SolveLinearStatic() {
+void delfem2::PolylineElasticEdit2::SolveLinearStatic() {
   const size_t nno = ut.size() / 3;
   for (unsigned int i = 0; i < nno * 3; i++) { Res[i] = 0; }
   m_mat.SetZero();
@@ -265,7 +204,7 @@ void PolylineElasticEdit2::SolveLinearStatic() {
         {ut[idiv * 3 + 0], ut[idiv * 3 + 1], ut[idiv * 3 + 2]},
         {ut[idiv * 3 + 3], ut[idiv * 3 + 4], ut[idiv * 3 + 5]}};
     double ddW[2][2][3][3], dW[2][3];
-    dWddW_Beam2(
+    delfem2::dWddW_Beam2<double>(
         dW, ddW,
         EI, AE,
         x1, u1);
