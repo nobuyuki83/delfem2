@@ -47,11 +47,15 @@ class CCad2D_EdgeGeo {
     this->aP = e.aP;
     this->ip0 = e.ip0;
   }
-  void GenMeshNDiv(unsigned int ndiv);
-  void GenMeshLength(double elen);
+
+  std::vector<double> GenMesh(unsigned int ndiv) const;
+
   double Distance(double x, double y) const;
+
   double LengthMesh() const;
+
   double LengthNDiv(unsigned int ndiv) const;
+
   CBoundingBox2<double> BB() const {
     CBoundingBox2<double> bb;
     bb.Add(p0.x, p0.y);
@@ -59,6 +63,7 @@ class CCad2D_EdgeGeo {
     for (unsigned int ip = 0; ip < aP.size(); ++ip) { bb.Add(aP[ip].x, aP[ip].y); }
     return bb;
   }
+
  public:
   CVec2d p0, p1;
   EDGE_TYPE type_edge; // 0: line, 1:Cubic Bezier 2: Quadratic Bezier
@@ -157,41 +162,58 @@ class CCad2D {
   std::vector<double> XY_VtxCtrl_Face(int iface) const;
   std::vector<double> XY_Vtx(int ivtx) const;
   std::vector<std::pair<int, bool> > Ind_Edge_Face(int iface) const;
-  std::vector<int> Ind_Vtx_Face(int iface) const;
+  std::vector<unsigned int> Ind_Vtx_Face(int iface) const;
   std::vector<int> Ind_Vtx_Edge(int iedge) const;
+
   /**
    * @brief add index to aIdP if a point in aXY is on the edge
    */
-  void GetPointsEdge(std::vector<int> &aIdP,
-                     const double *pXY, int np,
-                     const std::vector<int> &aIE,
-                     double tolerance) const;
-  void MeshForVisualization(std::vector<float> &aXYf,
-                            std::vector<std::vector<unsigned int> > &aaLine,
-                            std::vector<unsigned int> &aTri) const;
+  void GetPointsEdge(
+      std::vector<int> &aIdP,
+      const double *pXY, int np,
+      const std::vector<int> &aIE,
+      double tolerance) const;
+
+  void MeshForVisualization(
+      std::vector<float> &aXYf,
+      std::vector<std::vector<unsigned int> > &aaLine,
+      std::vector<unsigned int> &aTri) const;
 
   // ----------------------------------
   // geometric operations from here
-  void AddPolygon(const std::vector<double> &aXY);
-  void AddFace(const std::vector<CCad2D_EdgeGeo> &aEdge);
-  void AddVtxFace(double x0, double y0, unsigned int ifc_add);
-  void AddVtxEdge(double x, double y, unsigned int ie_add);
-  void SetEdgeType(int iedge, CCad2D_EdgeGeo::EDGE_TYPE itype, std::vector<double> &param) {
-    assert(iedge >= 0 && iedge < (int) aEdge.size());
+  void AddPolygon(
+      const std::vector<double> &aXY);
+
+  void AddFace(
+      const std::vector<CCad2D_EdgeGeo> &aEdge);
+
+  void AddVtxFace(
+      double x0, double y0, unsigned int ifc_add);
+
+  void AddVtxEdge(
+      double x, double y, unsigned int ie_add);
+
+  void SetEdgeType(
+      unsigned int iedge,
+      CCad2D_EdgeGeo::EDGE_TYPE itype,
+      const std::vector<double> &param) {
+    assert(iedge < aEdge.size());
     aEdge[iedge].type_edge = itype;
     aEdge[iedge].param = param;
     this->Tessellation();
   }
+
+
  public:
-  CCadTopo topo;
+  CadTopo topo;
   //
   std::vector<CCad2D_VtxGeo> aVtx;
   std::vector<CCad2D_EdgeGeo> aEdge;
   std::vector<CCad2D_FaceGeo> aFace;
   std::vector<CVec2d> aVec2_Tessellation;
 
-  int ivtx_picked;
-  int iedge_picked;
+  unsigned int ivtx_picked;
+  unsigned int iedge_picked;
   int iface_picked;
   int ipicked_elem;
 
@@ -209,14 +231,18 @@ class CMesher_Cad2D {
     nedge = 0;
     nface = 0;
   }
-  void Meshing(CMeshDynTri2D &dmesh,
-               const CCad2D &cad2d);
+  void Meshing(
+      CMeshDynTri2D &dmesh,
+      const CCad2D &cad2d);
+
   std::vector<unsigned int> IndPoint_IndEdgeArray(
       const std::vector<int> &aIndEd,
       const CCad2D &cad2d);
+
   std::vector<int> IndPoint_IndFaceArray(
       const std::vector<int> &aIndFc,
       const CCad2D &cad2d);
+
   std::vector<unsigned int> IndPoint_IndEdge(
       const unsigned int ie,
       bool is_end_point,
@@ -236,13 +262,19 @@ class CMesher_Cad2D {
   size_t nvtx;
   size_t nedge;
   size_t nface;
-  std::vector<int> aFlgPnt;
+
+  /**
+   * map point to the index to vertex, edge, and face
+   */
+  std::vector<unsigned int> aFlgPnt;
 
   /**
    * @brief map triangle index to cad face index
    * @details after calling "this->Meshing()", the size of "this->aFlgTri" should be equal to the number of all the triangles
    */
   std::vector<unsigned int> aFlgTri;
+
+  std::vector< std::vector<std::pair<unsigned int, double> > > edge_point;
 };
 
 } // namespace delfem2

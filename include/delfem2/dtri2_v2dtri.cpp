@@ -164,8 +164,8 @@ DFM2_INLINE void delfem2::CheckTri(
     assert(i2 < aPo3D.size());
     const double area = Area_Tri(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
     if (area < 1.0e-10) {  // very small volume
-      assert(0);
-      abort();
+//      assert(0);
+//      abort();
     }
   }
 #endif
@@ -244,7 +244,7 @@ DFM2_INLINE void delfem2::MeshingInside(
     std::vector<CDynPntSur> &aPo2D,
     std::vector<CDynTri> &aTri,
     std::vector<CVec2d> &aVec2,
-    std::vector<int> &aFlagPnt,
+    std::vector<unsigned int> &aFlagPnt,
     std::vector<unsigned int> &aFlagTri,
     const size_t nPointFix,
     const unsigned int nflgpnt_offset,
@@ -1092,26 +1092,30 @@ DFM2_INLINE void delfem2::GenMesh(
     double resolution_face) {
   std::vector<int> loopIP_ind, loopIP;
   {
-    JArray_FromVecVec_XY(loopIP_ind, loopIP, aVec2,
-                         aaXY);
+    JArray_FromVecVec_XY(
+        loopIP_ind, loopIP, aVec2,
+        aaXY);
     if (!CheckInputBoundaryForTriangulation(loopIP_ind, aVec2)) {
       return;
     }
-    FixLoopOrientation(loopIP,
-                       loopIP_ind, aVec2);
+    FixLoopOrientation(
+        loopIP,
+        loopIP_ind, aVec2);
     if (resolution_edge > 10e-10) {
       ResamplingLoop(loopIP_ind, loopIP, aVec2,
                      resolution_edge);
     }
   }
   // -----------------------
-  Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                 loopIP_ind, loopIP);
+  Meshing_SingleConnectedShape2D(
+      aPo2D, aVec2, aETri,
+      loopIP_ind, loopIP);
   if (resolution_face > 1.0e-10) {
     CInputTriangulation_Uniform param(1.0);
-    std::vector<int> flg_pnt(aVec2.size());
+    std::vector<unsigned int> flg_pnt(aVec2.size());
     std::vector<unsigned int> flg_tri(aETri.size(), 0);
-    MeshingInside(aPo2D, aETri, aVec2, flg_pnt, flg_tri,
-                  aVec2.size(), 0, resolution_face, param);
+    MeshingInside(
+        aPo2D, aETri, aVec2, flg_pnt, flg_tri,
+        aVec2.size(), 0, resolution_face, param);
   }
 }

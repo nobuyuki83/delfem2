@@ -41,22 +41,31 @@ int main()
       const int nframe_interval = 10;
       if( iframe == nframe_interval*0 ){
         cad.Clear();
-        cad.AddPolygon(std::vector<double>{-1,-1, +1,-1, +1,+1, -1,+1});
+        cad.AddPolygon(std::vector<double>{
+          -1,-1,
+          +1,-1,
+          +1,+1,
+          -1,+1});
       }
       else if( iframe == nframe_interval*1 ){
         cad.AddVtxFace(0.0, 0.1, 0);
       }
       else if( iframe == nframe_interval*2 ){
-        std::vector<double> vparam{0.2, 0.3, 0.8, 0.3};
-        cad.SetEdgeType( 0, dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam );
+        cad.SetEdgeType(
+            0,
+            dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC,
+            std::vector<double>{0.5, -0.5, -0.5, -0.5} );
       }
       else if( iframe == nframe_interval*3 ){
         cad.AddVtxEdge(-0.0, +0.8, 2);
       }
       else if( iframe == nframe_interval*4 ){
         double x0 = 2.1, y0 = 0.0;
-        const double poly[8] = {x0-1,y0-1, x0+1,y0-1, x0+1,y0+1, x0-1,y0+1};
-        cad.AddPolygon(std::vector<double>(poly,poly+8) );
+        cad.AddPolygon(std::vector<double>{
+          x0-1, y0-1,
+          x0+1, y0-1,
+          x0+1, y0+1,
+          x0-1, y0+1} );
         cad.AddVtxEdge(x0, -0.2, 5);
       }
       if( iframe % nframe_interval == 0 ){
@@ -64,7 +73,6 @@ int main()
         viewer.trans[0] = -(bb.x_min+bb.x_max)*0.5;
         viewer.trans[1] = -(bb.y_min+bb.y_max)*0.5;
         viewer.trans[2] = 0.0;
-        //viewer.projection.view_height = 0.5*bb.LengthDiagonal();
         viewer.scale = 1.0;
       }
       iframe = (iframe+1)%(nframe_interval*5);

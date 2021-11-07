@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <vector>
+#include <array>
 #include <cassert>
 
 namespace delfem2::cagedef {
@@ -247,6 +248,31 @@ void MeanValueCoordinate_Polygon2(
   for (int iv = 0; iv < nv; ++iv) {
     aW[iv] /= sum;
   }
+}
+
+template<class VEC>
+double MeanValueCoordinate_Polygon2(
+    const std::vector<double> &xyw,
+    const std::array<double,2> &&p) {
+  const size_t nv = xyw.size() / 3;
+  double weight = 0.0;
+  double sum = 0;
+  for (unsigned int ie = 0; ie < nv; ++ie) {
+    unsigned int iv0 = (ie + 0) % nv;
+    unsigned int iv1 = (ie + 1) % nv;
+    unsigned int iv2 = (ie + 2) % nv;
+    const VEC v0(xyw[iv0*3+0] - p[0], xyw[iv0*3+1] - p[1]);
+    const VEC v1(xyw[iv1*3+0] - p[0], xyw[iv1*3+1] - p[1]);
+    const VEC v2(xyw[iv2*3+0] - p[0], xyw[iv2*3+1] - p[1]);
+    double c01 = v0.dot(v1) / (v0.norm() * v1.norm());
+    double c12 = v1.dot(v2) / (v1.norm() * v2.norm());
+    double t01 = std::sqrt((1 - c01) / (1 + c01));
+    double t12 = std::sqrt((1 - c12) / (1 + c12));
+    double w1 = (t01 + t12) / v1.norm();
+    weight += w1*xyw[iv1*3+2];
+    sum += w1;
+  }
+  return weight / sum;
 }
 
 }

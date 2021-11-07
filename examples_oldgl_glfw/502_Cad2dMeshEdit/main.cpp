@@ -14,9 +14,10 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
+#include "delfem2/cad2_mesh_deformation.h"
 #include "delfem2/cagedef.h"
 #include "delfem2/cad2_dtri2.h"
-#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
@@ -31,90 +32,130 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------------
 
-int main()
-{
-  class CCadMesh2DVeiwer : public delfem2::glfw::CViewer3
-  {
-  public:
-    CCadMesh2DVeiwer() : CViewer3(1.5) {
-      cad.AddPolygon( {-1,-1, +1,-1, +1,+1, -1,+1} );
-      
-      cad.is_draw_face = false;
-      {
-        std::vector<int> aFlgPnt, aFlgTri;
-        delfem2::CMeshDynTri2D dmsh;
-        delfem2::CMesher_Cad2D mesher;
-        mesher.edge_length = 0.1;
-        mesher.Meshing(dmsh, cad);
-        dmsh.Export_StlVectors(aXY, aTri);
-      }
-      
-      std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
-      const int nv = aXY_bound.size()/2;
-      const auto nXY = static_cast<unsigned int>(aXY.size()/2);
-      aW.resize(nXY*nv);
-      for(unsigned int ip=0;ip<nXY;++ip){
-        dfm2::MeanValueCoordinate_Polygon2<dfm2::CVec2d>(
-            aW.data()+nv*ip,
-            aXY[ip*2+0], aXY[ip*2+1],
-            aXY_bound.data(), aXY_bound.size()/2);
-        double sum = 0.0;
-        for(unsigned int ipb=0;ipb<aXY_bound.size()/2;++ipb){
-          sum += aW[nv*ip+ipb];
-        }
-//        assert( fabs(sum-1)<1.0e-10 );
-      }
+class CCadMesh2DVeiwer : public delfem2::glfw::CViewer2 {
+ public:
+  explicit CCadMesh2DVeiwer(delfem2::CCad2D &cad)
+      : CViewer2(), cad(cad) {
+    {
+      delfem2::CBoundingBox2<double> bb = cad.BB();
+      this->view_height = static_cast<float>(bb.LengthDiagonal());
     }
-    void mouse_press(
-		const float src[3], 
-		[[maybe_unused]] const float dir[3]) override{
-      cad.Pick(src[0], src[1], 1.5);
+    cad.is_draw_face = false;
+    {
+      delfem2::CMeshDynTri2D dmsh;
+      mesher.edge_length = 0.1;
+      mesher.Meshing(dmsh, cad);
+      dmsh.Export_StlVectors(vtx_xy, tri_vtx);
     }
-    void mouse_drag(
-        const float src0[3],
-        const float src1[3],
-		[[maybe_unused]] const float dir[3]) override{
-      cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
-      std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
-      auto npb = static_cast<unsigned int>(aXY_bound.size()/2);
-      auto np = static_cast<unsigned int>(aXY.size()/2);
-      for(unsigned int ip=0;ip<np;++ip){
-        aXY[ip*2+0] = 0.0;
-        aXY[ip*2+1] = 0.0;
-        for(unsigned int ipb=0;ipb<npb;++ipb){
-          aXY[ip*+2+0] += aW[ip*npb+ipb]*aXY_bound[ipb*2+0];
-          aXY[ip*+2+1] += aW[ip*npb+ipb]*aXY_bound[ipb*2+1];
-        }
-      }
-    }
-    void Draw(){
-      this->DrawBegin_oldGL();
-      delfem2::opengl::Draw_CCad2D(cad);
-      ::glDisable(GL_LIGHTING);
-      ::glColor3d(0.8, 0.8, 0.8);
-      delfem2::opengl::DrawMeshTri2D_Face(aTri,aXY);
-      ::glLineWidth(1);
-      delfem2::opengl::DrawMeshTri2D_Edge(aTri,aXY);
-      this->SwapBuffers();
-    }
-  public:
-    std::vector<double> aXY;
-    std::vector<unsigned int> aTri;
-    std::vector<double> aW;
-    delfem2::CCad2D cad;
-  };
-  
-  // ----------------------------------
-  CCadMesh2DVeiwer viewer;
-  delfem2::glfw::InitGLOld();
-  viewer.OpenWindow();
-  //viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
-  delfem2::opengl::setSomeLighting();
-  while(!glfwWindowShouldClose(viewer.window)){
-    viewer.Draw();
-    glfwPollEvents();
+    vtx_w.resize(vtx_xy.size() / 2, 0.0);
   }
-  glfwDestroyWindow(viewer.window);
+  void mouse_press(
+      const float src[2]) override {
+    picked_pos = {src[0], src[1]};
+    vtx_xy_when_picked = vtx_xy;
+    cad.Pick(src[0], src[1], view_height);
+    if (cad.ivtx_picked != UINT_MAX) { // vertex is picked
+      picked_pos = {
+          static_cast<float>(cad.aVtx[cad.ivtx_picked].pos.x),
+          static_cast<float>(cad.aVtx[cad.ivtx_picked].pos.y)};
+    }
+    SetCadMeshDeformationWeight(
+        vtx_w,
+        cad, mesher, vtx_xy);
+  }
+  void mouse_drag(
+      const float src0[2],
+      const float src1[2]) override {
+    cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
+    for (unsigned int ip = 0; ip < vtx_xy.size() / 2; ++ip) {
+      vtx_xy[ip * 2 + 0] = vtx_xy_when_picked[ip * 2 + 0] + vtx_w[ip] * (src1[0] - picked_pos[0]);
+      vtx_xy[ip * 2 + 1] = vtx_xy_when_picked[ip * 2 + 1] + vtx_w[ip] * (src1[1] - picked_pos[1]);
+    }
+  }
+  void Draw() {
+    this->DrawBegin_oldGL();
+    delfem2::opengl::Draw_CCad2D(cad);
+    ::glDisable(GL_LIGHTING);
+    ::glColor3d(0.8, 0.8, 0.8);
+    delfem2::opengl::DrawMeshTri2D_Face(tri_vtx, vtx_xy);
+    ::glLineWidth(1);
+    delfem2::opengl::DrawMeshTri2D_Edge(tri_vtx, vtx_xy);
+    this->SwapBuffers();
+  }
+ public:
+  delfem2::CCad2D &cad;
+  delfem2::CMesher_Cad2D mesher;
+  std::vector<double> vtx_xy;
+  std::vector<unsigned int> tri_vtx;
+  std::vector<double> vtx_xy_when_picked;
+  std::vector<double> vtx_w;
+  std::array<float, 2> picked_pos{0.f, 0.f};
+};
+
+int main() {
+  delfem2::glfw::InitGLOld();
+  // ----------------------------------
+  { // case 0
+    delfem2::CCad2D cad;
+    cad.AddPolygon({-1, -1, +1, -1, +1, +1, -1, +1});
+    CCadMesh2DVeiwer viewer(cad);
+    viewer.OpenWindow();
+    while (!glfwWindowShouldClose(viewer.window)) {
+      viewer.Draw();
+      glfwPollEvents();
+    }
+    glfwDestroyWindow(viewer.window);
+  }
+  { // case 1
+    delfem2::CCad2D cad;
+    cad.AddPolygon({
+      -1, -1,
+      +1, -1,
+      +1, +1,
+      -1, +1});
+    cad.SetEdgeType(
+        0, dfm2::CCad2D_EdgeGeo::EDGE_TYPE::BEZIER_QUADRATIC,
+        std::vector<double>{1.0, +0.5});
+    cad.SetEdgeType(
+        2, dfm2::CCad2D_EdgeGeo::EDGE_TYPE::BEZIER_CUBIC,
+        std::vector<double>{-0.5, +0.5, 0.5, 0.5});
+    CCadMesh2DVeiwer viewer(cad);
+    viewer.OpenWindow();
+    while (!glfwWindowShouldClose(viewer.window)) {
+      viewer.Draw();
+      glfwPollEvents();
+    }
+    glfwDestroyWindow(viewer.window);
+  }
+  { // case 2
+    delfem2::CCad2D cad;
+    cad.AddPolygon({
+      -0.84, +1.20,
+      -1.00, +0.25,
+      -1.00, -1.40,
+      +1.00, -1.40,
+      +1.00, +0.25,
+      +0.84, +1.20,
+      +0.30, +1.40,
+      -0.30, +1.40});
+    //
+    cad.SetEdgeType(
+        0,
+        delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ +0.1, -0.2, +0.3, 0.2 });
+    cad.SetEdgeType(
+        4,
+        delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ -0.3, 0.2, -0.1, -0.2 });
+    cad.SetEdgeType(
+        6,
+        delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ -0.2, -0.2, 0.2, -0.2 });
+    CCadMesh2DVeiwer viewer(cad);
+    viewer.OpenWindow();
+    while (!glfwWindowShouldClose(viewer.window)) {
+      viewer.Draw();
+      glfwPollEvents();
+    }
+    glfwDestroyWindow(viewer.window);
+  }
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }

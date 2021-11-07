@@ -52,14 +52,14 @@ DFM2_INLINE bool delfem2::WriteCAD_DXF(
   fprintf(fp,"  0\nSECTION\n");
   fprintf(fp,"  2\nENTITIES\n");
   for(size_t ifc=0;ifc<cad.aFace.size();++ifc){
-    const std::vector<int>& aIL = cad.topo.aFace[ifc].aIL;
-    for(int il0 : aIL){
-      const std::vector< std::pair<int,bool> >& aIE = cad.topo.aLoop[il0].aIE;
+    const std::vector<unsigned int>& aIL = cad.topo.faces[ifc].aIL;
+    for(unsigned int il0 : aIL){
+      const std::vector< std::pair<unsigned int,bool> >& aIE = cad.topo.loops[il0].aIE;
       for(const auto & iie : aIE){
         unsigned int ie0 = iie.first;
 //        bool dir0 = aIE[iie].second;
-        unsigned int id_vs = cad.topo.aEdge[ie0].iv0;
-        unsigned int id_ve = cad.topo.aEdge[ie0].iv1;
+        unsigned int id_vs = cad.topo.edges[ie0].iv0;
+        unsigned int id_ve = cad.topo.edges[ie0].iv1;
         const CVec2d& ps = cad.aVtx[id_vs].pos;
         const CVec2d& pe = cad.aVtx[id_ve].pos;
         if( cad.aEdge[ie0].type_edge == 0 ){

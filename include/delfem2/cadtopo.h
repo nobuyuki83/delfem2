@@ -8,163 +8,215 @@
 #ifndef DFM2_CADTOPO_H
 #define DFM2_CADTOPO_H
 
+#include <vector>
+#include <climits>
+
 namespace delfem2 {
 
-class CCadTopo {
+/**
+ * edge is directed
+ */
+class CadTopo_Edge {
+ public:
+  unsigned int IndexVertex(bool is_root) const { return is_root ? iv0 : iv1; }
+ public:
+  unsigned int iv0, iv1;
+};
+
+// --------------------
+
+class CadTopo_Loop {
+ public:
+  CadTopo_Loop() = default;
+
+  std::vector<unsigned int> GetArray_IdVertex(
+      const std::vector<CadTopo_Edge> &edges) const {
+    std::vector<unsigned int> res;
+    for ( auto [ie0,dir] : aIE ) {
+      assert( ie0 < edges.size() );
+      res.push_back( edges[ie0].IndexVertex(dir) );
+    }
+    return res;
+  }
+
+  void Assert(
+      const std::vector<CadTopo_Edge> &edges) const {
+    assert( iv == UINT_MAX || aIE.empty() );
+    const size_t ne = aIE.size();
+    for (unsigned int iie = 0; iie < ne; ++iie) {
+      const unsigned int ie0 = aIE[(iie + 0) % ne].first;
+      const unsigned int ie1 = aIE[(iie + 1) % ne].first;
+      assert( ie0 < edges.size() && ie1 < edges.size());
+      const bool flg0 = aIE[(iie + 0) % ne].second;
+      const bool flg1 = aIE[(iie + 1) % ne].second;
+      // (root of ie1) == (end of ie0)
+      assert( edges[ie0].IndexVertex(!flg0) == edges[ie1].IndexVertex(flg1) );
+    }
+  }
+
+  bool IsIncludeVertex(
+      unsigned int ivtx,
+      const std::vector<CadTopo_Edge> &edges) const {
+    if( iv != UINT_MAX ){
+      assert( aIE.empty() );
+      return true;
+    }
+    for (auto [ie0,dir] : aIE) {
+      assert( ie0 < edges.size() );
+      if( ivtx == edges[ie0].IndexVertex(dir) ){ return true; }
+    }
+    return false;
+  }
+
+  bool IsIncludeEdge(
+      unsigned int iedge) const {
+    for (auto [ie0,dir] : aIE) {
+      if( ie0 == iedge ){ return true; }
+    }
+    return false;
+  }
+
+ public:
+  unsigned int iv = UINT_MAX;
+  std::vector<std::pair<unsigned int, bool> > aIE; // index of edge, is this edge ccw or not
+};
+
+// ---------------------------
+
+class CadTopo_Face {
+ public:
+  bool IsIncludeVertex(
+      unsigned int ivtx,
+      const std::vector<CadTopo_Edge> &edges,
+      const std::vector<CadTopo_Loop> &loops) const {
+    for(unsigned int il : aIL ){
+      assert( il < loops.size() );
+      if( loops[il].IsIncludeVertex(ivtx, edges) ){ return true; }
+    }
+    return false;
+  }
+
+  bool IsIncludeEdge(
+    unsigned int iedge,
+    const std::vector<CadTopo_Loop> &loops) const {
+      for(unsigned int il : aIL ){
+        assert( il < loops.size() );
+        if( loops[il].IsIncludeEdge(iedge) ){ return true; }
+      }
+      return false;
+  }
+ public:
+  std::vector<unsigned int> aIL;  // island loop indeces
+};
+
+// ---------------------------
+
+class CadTopo {
 public:
-  CCadTopo() {
-    nVertex = 0;
+  CadTopo() {
+    num_vertex = 0;
   }
 
   void Clear() {
-    nVertex = 0;
-    aEdge.clear();
-    aLoop.clear();
-    aFace.clear();
+    num_vertex = 0;
+    edges.clear();
+    loops.clear();
+    faces.clear();
   }
 
   void AddPolygon(unsigned int np) {
-    const int iv0 = nVertex;
-    nVertex += np;
-    const unsigned int ie0 = static_cast<unsigned int>(aEdge.size());
+    const unsigned int iv0 = num_vertex;
+    num_vertex += np;
+    const unsigned int ie0 = static_cast<unsigned int>(edges.size());
     for (unsigned int iie = 0; iie < np; ++iie) {
-      CEdge edge0;
-      edge0.iv0 = iv0 + (iie + 0) % np;
-      edge0.iv1 = iv0 + (iie + 1) % np;
-      aEdge.push_back(edge0);
+      edges.emplace_back( CadTopo_Edge{
+          iv0 + (iie + 0) % np,
+          iv0 + (iie + 1) % np } );
     }
     { // loop
-      CLoop loop0;
+      CadTopo_Loop loop0;
       for (unsigned int iie = 0; iie < np; ++iie) {
         loop0.aIE.push_back(std::make_pair(ie0 + iie, true));
       }
-      aLoop.push_back(loop0);
+      loops.push_back(loop0);
     }
-    { // face
-      const unsigned int il0 = static_cast<unsigned int>(aLoop.size() - 1);
-      CFace face0;
-      face0.aIL.push_back(il0);
-      aFace.push_back(face0);
-    }
+    faces.emplace_back( CadTopo_Face{
+      {static_cast<unsigned int>(loops.size() - 1)} } );
   }
 
   bool AddVtx_Face(unsigned int ifc) {
-    if (ifc >= aFace.size()) { return false; }
-    const int ivn = nVertex;
-    nVertex += 1;
-    CLoop loop0;
+    if (ifc >= faces.size()) { return false; }
+    const unsigned int ivn = num_vertex;
+    num_vertex += 1;
+    CadTopo_Loop loop0;
     loop0.iv = ivn;
-    aLoop.push_back(loop0);
-    const unsigned int il0 = static_cast<unsigned int>(aLoop.size() - 1);
-    aFace[ifc].aIL.push_back(il0);
+    loops.push_back(loop0);
+    const unsigned int il0 = static_cast<unsigned int>(loops.size() - 1);
+    faces[ifc].aIL.push_back(il0);
     return true;
   }
 
   bool AddVtx_Edge(unsigned int ieo) {
-    if (ieo >= aEdge.size()) { return false; }
-    const int ivn = nVertex;
-    nVertex += 1;
-    const int iv0 = aEdge[ieo].iv0;
-    const int iv1 = aEdge[ieo].iv1;
-    const unsigned int ien = static_cast<unsigned int>(aEdge.size());
-    aEdge.resize(aEdge.size() + 1);
-    aEdge[ieo].iv0 = iv0;
-    aEdge[ieo].iv1 = ivn;
-    aEdge[ien].iv0 = ivn;
-    aEdge[ien].iv1 = iv1;
-    for (unsigned int il = 0; il < aLoop.size(); ++il) {
-      const size_t ne = aLoop[il].aIE.size();
+    if (ieo >= edges.size()) { return false; }
+    const unsigned int ivn = num_vertex;
+    num_vertex += 1;
+    const unsigned int iv0 = edges[ieo].iv0;
+    const unsigned int iv1 = edges[ieo].iv1;
+    const unsigned int ien = static_cast<unsigned int>(edges.size());
+    edges.resize(edges.size() + 1);
+    edges[ieo].iv0 = iv0;
+    edges[ieo].iv1 = ivn;
+    edges[ien].iv0 = ivn;
+    edges[ien].iv1 = iv1;
+    for (unsigned int il = 0; il < loops.size(); ++il) {
+      const size_t ne = loops[il].aIE.size();
       unsigned int iie = 0;
       for (; iie < ne; ++iie) {
-        if (aLoop[il].aIE[iie].first == (int) ieo) { break; }
+        if (loops[il].aIE[iie].first == ieo) { break; }
       }
       if (iie == ne) { continue; }
-      if (aLoop[il].aIE[iie].second) {
-        aLoop[il].aIE.insert(aLoop[il].aIE.begin() + iie + 1, std::make_pair(ien, true));
+      if (loops[il].aIE[iie].second) {
+        loops[il].aIE.insert(
+            loops[il].aIE.begin() + iie + 1,
+            std::make_pair(ien, true));
       } else {
-        std::cout << "TODO: implement this" << std::endl;
+        std::cerr << "TODO: implement this" << std::endl;
       }
     }
     return true;
   }
 
-  bool Check() const {
-    for (unsigned int il = 0; il < aLoop.size(); ++il) {
-      if (!aLoop[il].Check(aEdge)) {
-        assert(0);
-        return false;
-      }
+  void Assert() const {
+    for (const auto& l : loops) {
+      l.Assert(edges);
     }
-    return true;
+  }
+
+  std::vector<unsigned int> FindFaceIndexes_IncludeVeretx(unsigned int ivtx) const {
+    assert(ivtx < num_vertex);
+    std::vector<unsigned int> res;
+    for (unsigned int ifc = 0; ifc < faces.size(); ++ifc) {
+      if( !faces[ifc].IsIncludeVertex(ivtx,edges,loops) ){ continue; }
+      res.push_back(ifc);
+    }
+    return res;
+  }
+
+  std::vector<unsigned int> FindFaceIndexes_IncludeEdge(unsigned int iedge) const {
+    assert(iedge < edges.size());
+    std::vector<unsigned int> res;
+    for (unsigned int ifc = 0; ifc < faces.size(); ++ifc) {
+      if( !faces[ifc].IsIncludeEdge(iedge,loops) ){ continue; }
+      res.push_back(ifc);
+    }
+    return res;
   }
 
 public:
-  class CEdge {
-  public:
-    int iv0, iv1;
-  };
-
-  class CLoop {
-  public:
-    CLoop() {
-      iv = -1;
-    }
-
-    std::vector<int> GetArray_IdVertex(const std::vector<CEdge> &aEdge) const {
-      std::vector<int> res;
-      for (unsigned int ie = 0; ie < aIE.size(); ++ie) {
-        const int ie0 = aIE[ie].first;
-        const bool dir = aIE[ie].second;
-        const int iv0 = dir ? aEdge[ie0].iv0 : aEdge[ie0].iv1;
-        res.push_back(iv0);
-      }
-      return res;
-    }
-
-    bool Check(const std::vector<CEdge> &aEdge) const {
-      if (iv == -1 && aIE.empty()) {
-        assert(0);
-        return false;
-      }
-      if (iv != -1 && !aIE.empty()) {
-        assert(0);
-        return false;
-      }
-      if (iv == -1 && aIE.empty()) {
-        assert(0);
-        return false;
-      }
-      const size_t ne = aIE.size();
-      for (unsigned int iie = 0; iie < ne; ++iie) {
-        const int ie0 = aIE[(iie + 0) % ne].first;
-        const int ie1 = aIE[(iie + 1) % ne].first;
-        const bool flg0 = aIE[(iie + 0) % ne].second;
-        const bool flg1 = aIE[(iie + 1) % ne].second;
-        if (ie0 < 0 || ie0 >= (int) aEdge.size()) { return false; }
-        if (ie1 < 0 || ie1 >= (int) aEdge.size()) { return false; }
-        int iv0a = (flg0) ? aEdge[ie0].iv1 : aEdge[ie0].iv0;
-        int iv0b = (flg1) ? aEdge[ie1].iv0 : aEdge[ie1].iv1;
-        assert(iv0a == iv0b);
-        if (iv0a != iv0b) return false;
-      }
-      return true;
-    }
-
-  public:
-    int iv;
-    std::vector<std::pair<int, bool> > aIE; // index of edge, is this edge ccw?
-  };
-
-  class CFace {
-  public:
-    std::vector<int> aIL;
-  };
-
-public:
-  int nVertex;
-  std::vector<CEdge> aEdge;
-  std::vector<CLoop> aLoop;
-  std::vector<CFace> aFace;
+  unsigned int num_vertex;
+  std::vector<CadTopo_Edge> edges;
+  std::vector<CadTopo_Loop> loops;
+  std::vector<CadTopo_Face> faces;
 };
 
 } // namespace delfem2

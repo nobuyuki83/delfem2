@@ -15,8 +15,7 @@
 
 // ---------------------------
 
-namespace delfem2{
-namespace opengl{
+namespace delfem2::opengl{
 
 DFM2_INLINE void DrawMeshDynTri_FaceNorm(
     const std::vector<CDynTri>& aSTri,
@@ -40,7 +39,6 @@ DFM2_INLINE void Draw_CCad2DEdge(
 DFM2_INLINE void Draw_CCad2D(
     const delfem2::CCad2D& cad2d);
   
-}
 }
 
 #ifndef DFM2_STATIC_LIBRARY

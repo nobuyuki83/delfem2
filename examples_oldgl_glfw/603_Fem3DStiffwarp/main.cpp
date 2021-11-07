@@ -64,10 +64,11 @@ void GenMesh(
                                  loopIP_ind, loopIP);
   if (elen > 1.0e-10) {
     dfm2::CInputTriangulation_Uniform param(1.0);
-    std::vector<int> aFlgPnt(aVec2.size());
+    std::vector<unsigned int> aFlgPnt(aVec2.size());
     std::vector<unsigned int> aFlgTri(aETri.size(), 0);
-    MeshingInside(aPo2D, aETri, aVec2, aFlgPnt, aFlgTri,
-                  aVec2.size(), 0, elen, param);
+    MeshingInside(
+        aPo2D, aETri, aVec2, aFlgPnt, aFlgTri,
+        aVec2.size(), 0, elen, param);
   }
 }
 
@@ -77,7 +78,7 @@ void RotationAtMeshPoints(
     const std::vector<double> &aDisp,
     const std::vector<unsigned int> &psup_ind,
     const std::vector<unsigned int> &psup) {
-  const unsigned int np = static_cast<unsigned int>(aXYZ.size() / 3);
+  const size_t np = aXYZ.size() / 3;
   aR.resize(np * 9);
   for (unsigned int ip = 0; ip < np; ++ip) {
     dfm2::CVec3d Pi(aXYZ[ip * 3 + 0], aXYZ[ip * 3 + 1], aXYZ[ip * 3 + 2]);

@@ -179,7 +179,7 @@ void MeshingInside(
     std::vector<CDynPntSur> &aPo2D,
     std::vector<CDynTri> &aTri,
     std::vector<CVec2d> &aVec2,
-    std::vector<int> &aFlagPnt,
+    std::vector<unsigned int> &aFlagPnt,
     std::vector<unsigned int> &aFlagTri,
     //
     size_t nPointFix,
@@ -328,10 +328,11 @@ class CMeshDynTri2D {
                                    loopIP_ind, loopIP);
     if (edge_length > 1.0e-10) {
       CInputTriangulation_Uniform param(1.0);
-      std::vector<int> aFlgPnt(aVec2.size(), 0);
+      std::vector<unsigned int> aFlgPnt(aVec2.size(), 0);
       std::vector<unsigned int> aFlgTri(aETri.size(), 0);
-      MeshingInside(aEPo, aETri, aVec2, aFlgPnt, aFlgTri,
-                    aVec2.size(), 0, edge_length, param);
+      MeshingInside(
+          aEPo, aETri, aVec2, aFlgPnt, aFlgTri,
+          aVec2.size(), 0, edge_length, param);
     }
   }
   void RefinementPlan_EdgeLongerThan_InsideCircle(CCmdRefineMesh &aCmd,
@@ -343,7 +344,9 @@ class CMeshDynTri2D {
     RefineMesh(aEPo, aETri, aVec2, aCmd);
     assert(aEPo.size() == aVec2.size());
   }
-  void Export_StlVectors(std::vector<double> &aXY, std::vector<unsigned int> &aTri) const {
+  void Export_StlVectors(
+      std::vector<double> &aXY,
+      std::vector<unsigned int> &aTri) const {
     MeshTri2D_Export(aXY, aTri, aVec2, aETri);
   }
   void Clear() {
@@ -353,7 +356,9 @@ class CMeshDynTri2D {
   }
   size_t nTri() const { return aETri.size(); }
   size_t nPoint() const { return aEPo.size(); }
-  void DeleteTriEdge(int itri, int iedge) { CollapseEdge_MeshDTri(itri, iedge, aEPo, aETri); }
+  void DeleteTriEdge(int itri, int iedge) {
+    CollapseEdge_MeshDTri(itri, iedge, aEPo, aETri);
+  }
  public:
   std::vector<CDynPntSur> aEPo;
   std::vector<CDynTri> aETri;

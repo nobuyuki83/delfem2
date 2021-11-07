@@ -94,7 +94,7 @@ void GenMesh(const std::vector< std::vector<double> >& aaXY)
 	  loopIP_ind,loopIP);
   if constexpr( elen > 1.0e-10 ){
     dfm2::CInputTriangulation_Uniform param(1.0);
-    std::vector<int> aFlgPnt(aPo2D.size());
+    std::vector<unsigned int> aFlgPnt(aPo2D.size());
     std::vector<unsigned int> aFlgTri(aETri.size(),0);
     MeshingInside(
 		aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,                

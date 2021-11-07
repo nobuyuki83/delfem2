@@ -478,7 +478,7 @@ void delfem2::CCad3D_Face::Initialize(
                                      loopIP_ind,loopIP);
       if( elen0 > 1.0e-10 ){
         CInputTriangulation_Uniform param(1.0);
-        std::vector<int> aFlgPnt(aVec2.size());
+        std::vector<unsigned int> aFlgPnt(aVec2.size());
         std::vector<unsigned int> aFlgTri(aETri.size());
         MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                       aVec2.size(), 0, elen0, param);

@@ -48,7 +48,7 @@ std::vector<dfm2::CInfoNearest<double>> aInfoNearest;
 
 std::vector<double> aXYZ_Contact;
 std::vector<unsigned int> aTri_Contact;
-std::vector<double> aNorm_Contact(aXYZ.size());
+std::vector<double> aNorm_Contact;
 dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
 
 const double dt = 0.01;
@@ -63,16 +63,16 @@ void StepTime() {
       dt, gravity, aXYZ, aUVW, aBCFlag);
   dfm2::PBD_TriStrain(
       aXYZt.data(),
-      static_cast<unsigned int>(aXYZt.size() / 3), 
+      aXYZt.size() / 3,
 	  aETri, aVec2);
   dfm2::PBD_Bend(
       aXYZt.data(),
-      static_cast<unsigned int>(aXYZt.size() / 3), aETri, aVec2, 1.0);
+      aXYZt.size() / 3, aETri, aVec2, 1.0);
   dfm2::PBD_Seam(
       aXYZt.data(),
-      static_cast<unsigned int>(aXYZt.size() / 3), 
+      aXYZt.size() / 3,
 	  aLine.data(), 
-	  static_cast<unsigned int>(aLine.size() / 2) );
+	  aLine.size() / 2 );
   dfm2::Project_PointsIncludedInBVH_Outside_Cache(
       aXYZt.data(), aInfoNearest,
       static_cast<unsigned int>(aXYZt.size() / 3),

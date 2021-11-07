@@ -10,11 +10,11 @@
 #include <glad/glad.h>
 #endif
 
+#include "delfem2/cad2_dtri2.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/funcs.h"
-#include "delfem2/opengl/new/v23dtricad.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/opengl/new/drawer_cad2.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 

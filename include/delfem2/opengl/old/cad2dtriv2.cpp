@@ -97,10 +97,8 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge(
   if( is_selected ){
     if( edge.type_edge == CCad2D_EdgeGeo::BEZIER_CUBIC ){
       assert( edge.param.size() == 4 );
-      const CVec2d lx = (edge.p1 - edge.p0);
-      const CVec2d ly = CVec2d(lx.y,-lx.x);
-      const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
-      const CVec2d q1 = edge.p0 + edge.param[2]*lx + edge.param[3]*ly;
+      const CVec2d q0 = edge.p0 + CVec2d(edge.param[0], edge.param[1]);
+      const CVec2d q1 = edge.p1 + CVec2d(edge.param[2], edge.param[3]);
       ::glColor3d(0,1,0);
       ::glBegin(GL_LINES);
       myGlVertex(edge.p0);
@@ -121,9 +119,7 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge(
     }
     else if( edge.type_edge == CCad2D_EdgeGeo::BEZIER_QUADRATIC ){
       assert( edge.param.size() == 2 );
-      const CVec2d lx = (edge.p1 - edge.p0);
-      const CVec2d ly = CVec2d(lx.y,-lx.x);
-      const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
+      const CVec2d q0 = edge.p0 + CVec2d(edge.param[0],edge.param[1]);
       ::glColor3d(0,1,0);
       ::glBegin(GL_LINES);
       myGlVertex(edge.p0);
@@ -150,7 +146,7 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
   int iface_picked = cad2d.iface_picked;
   int ipicked_elem = cad2d.ipicked_elem;
   bool is_draw_face = cad2d.is_draw_face;
-  ///
+  //
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_TEXTURE_2D);
   ::glPointSize(6);
