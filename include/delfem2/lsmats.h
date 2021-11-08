@@ -373,4 +373,4 @@ DFM2_INLINE void MatSparse_ScaleBlkLen_LeftRight(
 #  include "delfem2/lsmats.cpp"
 #endif
 
-#endif // MATDIA_CRS_H
+#endif // DFM2_LSMATS_H

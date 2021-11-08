@@ -15,14 +15,13 @@
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsvecx.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/fem_distance3.h"
 #include "delfem2/fem_rod3_straight.h"
-#include "delfem2/femrod.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
 
 // -------------------------------------
 
@@ -149,8 +148,7 @@ void Draw(const std::vector<dfm2::CVec3d> &vec_pos) {
 }
 
 int main() {
-  std::random_device rd;
-  std::mt19937 reng(rd());
+  std::mt19937 reng(std::random_device{}());
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
   //
   std::vector<dfm2::CVec3d> vec_pos;
@@ -169,15 +167,22 @@ int main() {
     vec_pos[ip].y += dist01(reng) * 0.01;
     vec_pos[ip].z += dist01(reng) * 0.01;
   }
-  std::vector<unsigned int> vec_point_index_root = {
+  const std::vector<unsigned int> vec_point_index_root = {
       0,
       static_cast<unsigned int>(vec_pos_ini.size())};
   const double stiff_stretch = 10.0;
   //
   dfm2::CMatrixSparse<double> mats;
-  dfm2::MakeSparseMatrix_RodHair(
-      mats,
-      vec_point_index_root, 3);
+  {
+    std::vector<unsigned int> psup_ind, psup;
+    delfem2::JArray_PSuP_Hair(
+        psup_ind,psup,
+        vec_point_index_root);
+    mats.Initialize(vec_pos_ini.size(),3,true);
+    mats.SetPattern(
+        psup_ind.data(), psup_ind.size(),
+        psup.data(), psup.size());
+  }
   std::vector<double> vec_r(vec_pos.size() * 3);
   std::vector<unsigned int> tmp_buffer;
   // -----

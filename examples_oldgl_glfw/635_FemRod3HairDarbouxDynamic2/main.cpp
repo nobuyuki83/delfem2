@@ -14,9 +14,9 @@
 
 #include "delfem2/hair_darboux.h"
 #include "delfem2/hair_sparse.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/mshuni.h"
+#include "delfem2/ls_pentadiagonal.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v3q.h"
@@ -24,12 +24,12 @@
 
 namespace dfm2 = delfem2;
 
-// -------------------------------------
+// -------------------------------------t
 
 void myGlutDisplay(
     const std::vector<dfm2::CVec3d> &aP,
     const std::vector<dfm2::CVec3d> &aS,
-    std::vector<unsigned int> &aIP_HairRoot) {
+    const std::vector<unsigned int> &aIP_HairRoot) {
   assert(!aIP_HairRoot.empty());
   const unsigned int nhair = static_cast<unsigned int>(aIP_HairRoot.size()) - 1;
   for (unsigned int ihair = 0; ihair < nhair; ++ihair) {
@@ -58,7 +58,7 @@ void myGlutDisplay(
       ::glVertex3d(aP[ip1].x, aP[ip1].y, aP[ip1].z);
     }
     ::glEnd();
-    // ------------
+    // --------------
     ::glBegin(GL_LINES);
     for (unsigned int is = 0; is < ns; ++is) {
       const unsigned int ip0 = ips + is + 0;
@@ -75,83 +75,85 @@ void myGlutDisplay(
 }
 
 int main() {
+  std::mt19937 reng(std::random_device{}());
+  std::uniform_real_distribution<double> dist01(0.0, 1.0);
   dfm2::glfw::CViewer3 viewer(1.5);
-  //
+  // -----------------------
   dfm2::glfw::InitGLOld();
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
-  // ---------------
-  std::random_device rd;
-  std::mt19937 reng(rd());
-  std::uniform_real_distribution<double> dist01(0.0, 1.0);
-  // --------------
+  // -------
   while (true) {
-    std::vector<dfm2::CVec3d> aP0, aS0;
-    std::vector<unsigned int> aIP_HairRoot;
-    {
-      std::vector<delfem2::CHairShape> aHairShape;
-      double rad0 = dist01(reng);
-      double dangle = dist01(reng);
-      for (int ihair = 0; ihair < 10; ++ihair) {
-        delfem2::CHairShape hs{30, 0.1, rad0, dangle,
-                      {-1.0,
-                       (dist01(reng) - 0.5) * 2.0,
-                       (dist01(reng) - 0.5) * 2.0}};
-        aHairShape.push_back(hs);
-      }
-      MakeProblemSetting_Spiral(aP0, aS0, aIP_HairRoot,
-                                aHairShape); // dangle
+    std::vector<dfm2::CVec3d> aP0; // initial position
+    std::vector<dfm2::CVec3d> aS0; // initial director vector
+    { // make the un-deformed shape of hair
+      const delfem2::CHairShape hs{
+        10, 0.1, dist01(reng), dist01(reng),
+        {-1., 0., 0.} };
+      std::vector<unsigned int> aIP;
+      MakeProblemSetting_Spiral(
+          aP0, aS0, aIP,
+          {hs});
       assert(aS0.size() == aP0.size());
     }
-    for (int itr = 0; itr < 10; ++itr) {
-      dfm2::ParallelTransport_RodHair(aP0, aS0, aIP_HairRoot);
+    for (int itr = 0; itr < 10; ++itr) { // relax director vectors
+      ParallelTransport_RodHair(
+          aP0, aS0,
+          {0,static_cast<unsigned int>(aP0.size())});
     }
-    std::vector<int> aBCFlag;
-    dfm2::MakeBCFlag_RodHair(
+    std::vector<int> aBCFlag; // boundary condition
+    dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
         aBCFlag,
-        aIP_HairRoot);
-    dfm2::CMatrixSparse<double> mats;
+        {0,static_cast<unsigned int>(aP0.size())});
+    assert(aBCFlag.size() == aP0.size() * 4);
+
+    dfm2::CMatrixSparse<double> mats; // sparse matrix
     {
       std::vector<unsigned int> psup_ind, psup;
       delfem2::JArray_PSuP_Hair(
           psup_ind,psup,
-          aIP_HairRoot);
+          {0,static_cast<unsigned int>(aP0.size())});
       mats.Initialize(aP0.size(),4,true);
       mats.SetPattern(
           psup_ind.data(), psup_ind.size(),
           psup.data(), psup.size());
     }
+    dfm2::BlockPentaDiagonalMatrix<4> pdiamat;
+    std::cout << aP0.size() << std::endl;
+    pdiamat.Initialize(aP0.size());
     // -----------------
-    std::vector<dfm2::CVec3d> aS = aS0, aP = aP0;
-    // apply random perturbation
-    for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-      aP[ip] = aP0[ip];
-      auto rnd = dfm2::CVec3d::Random(dist01, reng) * 0.1;
-      if (aBCFlag[ip * 4 + 0] == 0) { aP[ip].p[0] += rnd.x; }
-      if (aBCFlag[ip * 4 + 1] == 0) { aP[ip].p[1] += rnd.y; }
-      if (aBCFlag[ip * 4 + 2] == 0) { aP[ip].p[2] += rnd.z; }
-      if (aBCFlag[ip * 4 + 3] == 0) {
-        assert(ip != aP.size() - 1);
-        aS[ip] += dfm2::CVec3d::Random(dist01, reng) * 0.1;
-      }
-    }
-    dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
-    const double stiff_stretch = dist01(reng) + 1.0;
+    std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
+    std::vector<dfm2::CVec3d> aPV(aP0.size(), dfm2::CVec3d(0, 0, 0)); // velocity
+    std::vector<dfm2::CVec3d> aPt = aP; // temporally positions
+    double dt = 0.01;
+    double mass = 1.0e-2;
+    dfm2::CVec3d gravity(0, -10, 0);
+    const double stiff_stretch = 10000 * (dist01(reng) + 1.);
     const double stiff_bendtwist[3] = {
-        dist01(reng) + 1.0,
-        dist01(reng) + 1.0,
-        dist01(reng) + 1.0};
-    // --------------
+        1000 * (dist01(reng) + 1.),
+        1000 * (dist01(reng) + 1.),
+        1000 * (dist01(reng) + 1.)};
     for (int iframe = 0; iframe < 100; ++iframe) {
-      // static minimization of the rod deformation
-      dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
+      for (unsigned int ip = 0; ip < aP.size(); ++ip) {
+        if (aBCFlag[ip * 4 + 0] == 0) {
+          aPt[ip] = aP[ip] + dt * aPV[ip] + (dt * dt / mass) * gravity;
+        }
+      }
+      dfm2::MakeDirectorOrthogonal_RodHair(aS, aPt);
       Solve_RodHair(
-          aP, aS, mats,
-          stiff_stretch, stiff_bendtwist, 0.0,
-          aP0, aS0, aBCFlag, aIP_HairRoot);
-      // ----------
+          aPt, aS, mats,
+          stiff_stretch, stiff_bendtwist, mass / (dt * dt),
+          aP0, aS0, aBCFlag, {0,static_cast<unsigned int>(aP.size())});
+      for (unsigned int ip = 0; ip < aP.size(); ++ip) {
+        if (aBCFlag[ip * 4 + 0] != 0) { continue; }
+        aPV[ip] = (aPt[ip] - aP[ip]) / dt;
+        aP[ip] = aPt[ip];
+      }
+      // -------------
       viewer.DrawBegin_oldGL();
-      myGlutDisplay(aP, aS, aIP_HairRoot);
+      myGlutDisplay(
+          aP, aS,
+          {0,static_cast<unsigned int>(aP.size())});
       viewer.SwapBuffers();
       glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }

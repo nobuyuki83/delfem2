@@ -563,3 +563,25 @@ void delfem2::UnifySeparateIndexing_PosTex(
     }
   }
 }
+
+
+DFM2_INLINE void delfem2::JArray_PSuP_Hair(
+    std::vector<unsigned int> &psup_ind,
+    std::vector<unsigned int> &psup,
+    const std::vector<unsigned int> &aIP_HairRoot) {
+  assert(!aIP_HairRoot.empty() && aIP_HairRoot[0] == 0);
+  const unsigned int np = aIP_HairRoot[aIP_HairRoot.size() - 1];
+  std::vector<unsigned int> aElemRod;
+  for (unsigned int ihair = 0; ihair < aIP_HairRoot.size() - 1; ++ihair) {
+    unsigned int ip0 = aIP_HairRoot[ihair];
+    unsigned int nr = aIP_HairRoot[ihair + 1] - ip0 - 2; // number of rod elements
+    for (unsigned int ir = 0; ir < nr; ++ir) {
+      aElemRod.push_back(ip0 + ir + 0);
+      aElemRod.push_back(ip0 + ir + 1);
+      aElemRod.push_back(ip0 + ir + 2);
+    }
+  }
+  JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aElemRod.data(), aElemRod.size() / 3, 3, np);
+}

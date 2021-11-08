@@ -193,7 +193,7 @@ void delfem2::PolylineElasticEdit2::ProjectPoint(
 void delfem2::PolylineElasticEdit2::SolveLinearStatic() {
   const size_t nno = ut.size() / 3;
   for (unsigned int i = 0; i < nno * 3; i++) { Res[i] = 0; }
-  m_mat.SetZero();
+  m_mat.setZero();
   //
   const unsigned int ndiv = nno - 1;
   for (unsigned int idiv = 0; idiv < ndiv; idiv++) {

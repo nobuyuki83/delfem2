@@ -14,9 +14,10 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/vec2.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/femutil.h"
 #include "delfem2/fem_rod2.h"
-#include "delfem2/femrod.h"
+#include "delfem2/lsmats.h"
 #include "delfem2/lsvecx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/glfw/util.h"
@@ -104,8 +105,16 @@ int main() {
   const std::vector<double> aXY0 = aXY;
   std::mt19937 rndeng(std::random_device{}());
   dfm2::CMatrixSparse<double> mats;
-  dfm2::MakeSparseMatrix_RodHair(
-      mats, {0, (unsigned int) (aXY.size() / 2)}, 2);
+  {
+    std::vector<unsigned int> psup_ind, psup;
+    delfem2::JArray_PSuP_Hair(
+        psup_ind,psup,
+        {0,(unsigned int) (aXY.size() / 2)});
+    mats.Initialize(aXY.size() / 2,2,true);
+    mats.SetPattern(
+        psup_ind.data(), psup_ind.size(),
+        psup.data(), psup.size());
+  }
 
   dfm2::glfw::InitGLOld();
   dfm2::glfw::CViewer2 viewer;

@@ -12,7 +12,9 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/femrod.h"
+#include "delfem2/hair_darboux.h"
+#include "delfem2/hair_sparse.h"
+#include "delfem2/mshuni.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
@@ -71,48 +73,6 @@ void myGlutDisplay(
   }
 }
 
-class CHairShape {
- public:
-  unsigned int np;
-  double pitch;
-  double rad0;
-  double dangle;
-  double p0[3];
-};
-
-void MakeProblemSetting_Spiral
-    (std::vector<dfm2::CVec3d> &aP0,
-     std::vector<dfm2::CVec3d> &aS0,
-     std::vector<unsigned int> &aIP_HairRoot,
-     const std::vector<CHairShape> &aHairShape) {
-  aIP_HairRoot.assign(1, 0);
-  aP0.clear();
-  aS0.clear();
-  for (unsigned int ihair = 0; ihair < aHairShape.size(); ++ihair) {
-    const unsigned int np = aHairShape[ihair].np;
-    const double pitch = aHairShape[ihair].pitch;
-    const double dangle = aHairShape[ihair].dangle;
-    const double rad0 = aHairShape[ihair].rad0;
-    const double *p0 = aHairShape[ihair].p0;
-    for (unsigned int ip = 0; ip < np; ++ip) {
-      dfm2::CVec3d p = dfm2::CVec3d(
-          p0[0] + ip * pitch,
-          p0[1] + rad0 * cos(dangle * ip),
-          p0[2] + rad0 * sin(dangle * ip));
-      aP0.push_back(p);
-    }
-    const unsigned int np0 = aIP_HairRoot[ihair];
-    for (unsigned int is = 0; is < np - 1; ++is) {
-      const dfm2::CVec3d v = (aP0[np0 + is + 1] - aP0[np0 + is + 0]).normalized();
-      dfm2::CVec3d s(1.3, 1.5, 1.7);
-      s = (s - (s.dot(v)) * v).normalized();
-      aS0.push_back(s);
-    }
-    aS0.emplace_back(1, 0, 0);
-    aIP_HairRoot.push_back(static_cast<unsigned int>(aP0.size()));
-  }
-}
-
 int main() {
   dfm2::glfw::CViewer3 viewer(1.5);
   dfm2::glfw::InitGLOld();
@@ -129,7 +89,7 @@ int main() {
     std::vector<dfm2::CVec3d> aS0; // initial director vector
     std::vector<unsigned int> aIP_HairRoot; // indexes of root point
     { // make the un-deformed shape of hair
-      std::vector<CHairShape> aHairShape;
+      std::vector<delfem2::CHairShape> aHairShape;
       double rad0 = dist01(reng);
       double dangle = dist01(reng);
       const int nhair = 10;
@@ -137,12 +97,14 @@ int main() {
         const double px = -1.;
         const double py = (dist01(reng) - 0.5) * 2.0;
         const double pz = (dist01(reng) - 0.5) * 2.0;
-        const CHairShape hs{30, 0.1, rad0, dangle,
-                            {px, py, pz}};
+        const delfem2::CHairShape hs{
+          30, 0.1, rad0, dangle,
+          {px, py, pz}};
         aHairShape.push_back(hs);
       }
-      MakeProblemSetting_Spiral(aP0, aS0, aIP_HairRoot,
-                                aHairShape);
+      MakeProblemSetting_Spiral(
+          aP0, aS0, aIP_HairRoot,
+          aHairShape);
       assert(aS0.size() == aP0.size());
     }
     for (int itr = 0; itr < 10; ++itr) { // relax director vectors
@@ -154,9 +116,14 @@ int main() {
         aIP_HairRoot);
     assert(aBCFlag.size() == aP0.size() * 4);
     dfm2::CMatrixSparse<double> mats; // sparse matrix
-    dfm2::MakeSparseMatrix_RodHair( // make sparse matrix pattern
-        mats,
-        aIP_HairRoot, 4);
+    {
+      std::vector<unsigned int> psup_ind, psup;
+      delfem2::JArray_PSuP_Hair(
+          psup_ind, psup,
+          aIP_HairRoot);
+      mats.Initialize(aP0.size(), 4, true);
+      mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(), psup.size());
+    }
     // -----------------
     std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
     std::vector<dfm2::CVec3d> aPV(aP0.size(), dfm2::CVec3d(0, 0, 0)); // velocity

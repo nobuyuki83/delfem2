@@ -90,4 +90,4 @@ DFM2_INLINE double WdWddW_Rod(
 #  include "delfem2/fem_rod3_darboux.cpp"
 #endif
 
-#endif  /* DFM2_FEM_ROD3_ENERGY_DARBOUX_H */
+#endif  /* DFM2_FEM_ROD3_DARBOUX_H */

@@ -1,5 +1,5 @@
-#ifndef DFM2_LS_TRIDIAGONAL_H
-#define DFM2_LS_TRIDIAGONAL_H
+#ifndef DFM2_LS_PENTADIAGONAL_H
+#define DFM2_LS_PENTADIAGONAL_H
 
 #include "delfem2/matn.h"
 
@@ -10,15 +10,16 @@ namespace delfem2 {
  * @tparam ndim size of block
  */
 template<unsigned int ndim>
-class BlockTriDiagonalMatrix {
+class BlockPentaDiagonalMatrix {
  public:
   // initialize with block size n
-  BlockTriDiagonalMatrix() { nblk = 0; }
-  ~BlockTriDiagonalMatrix() {}
+  BlockPentaDiagonalMatrix() { nblk = 0; }
+  ~BlockPentaDiagonalMatrix() {}
 
   void Initialize(size_t n) {
     this->nblk = n;
-    const unsigned int nblks = 2 + 3 * (nblk-2) + 2;
+    assert(nblk >= 4);
+    const unsigned int nblks = 3 + 4 + 5 * (nblk - 4) + 4 + 3;
     v.resize(nblks * ndim * ndim);
   }
 
@@ -28,31 +29,40 @@ class BlockTriDiagonalMatrix {
   }
 
   /**
-   * 0  1  #  #  #
-   * 2  3  4  #  #
-   * #  5  6  7  #
-   * #  #  8  9 10
-   * #  #  # 11 12
+   * 0  1  2  #  #  #
+   * 3  4  5  6  #  #
+   * 7  8  9 10 11  #
+   * # 12 13 14 15 16
+   * #  # 17 18 19 20
+   * #  #  # 21 22 23
    */
   double *GetValuePointer(int iblk, int jblk) {
     constexpr unsigned int blksize = ndim * ndim;
     if (iblk < 0 || iblk >= nblk) { return nullptr; }
     if (jblk < 0 || jblk >= nblk) { return nullptr; }
-    if (iblk - jblk < -1 || iblk - jblk > +1) { return nullptr; }
-    return v.data() + (iblk * 2 + jblk) * blksize;
+    if (iblk - jblk < -2 || iblk - jblk > +2) { return nullptr; }
+    if (iblk < 2) { return v.data() + (iblk * 3 + jblk) * blksize; }
+    if (iblk == nblk - 1) { return v.data() + (iblk * 4 - 2 + jblk) * blksize; }
+    return v.data() + (iblk * 4 - 1 + jblk) * blksize;
   }
 
   /**
    * named after Eigen library
    */
-  void setZero() {
-    v.assign(v.size(), 0.0);
-  }
+  void setZero() { v.assign(v.size(), 0.0); }
 
-  //! marge element stiffness matrix to the position (idiv,idiv+1)
-  void Merge(unsigned int idiv, double eM[][2][ndim][ndim]) {
-    for (unsigned int i = 0; i < 4 * ndim * ndim; i++) {
-      v[idiv * ndim * ndim * 3 + i] += (&eM[0][0][0][0])[i];
+  /**
+   * marge element stiffness matrix to the position (idiv,idiv)
+   */
+  void Merge(unsigned int iblk, double eM[][3][ndim][ndim]) {
+    assert(iblk < nblk - 2);
+    for (unsigned int i = 0; i < 3; ++i) {
+      for (unsigned int j = 0; j < 3; ++j) {
+        double *p = GetValuePointer(iblk + i, iblk + j);
+        if (p == nullptr) { continue; }
+        const double *q = (&eM[i][j][0][0]);
+        for (unsigned int k = 0; k < ndim * ndim; ++k) { p[k] += q[k]; }
+      }
     }
   }
 
@@ -72,19 +82,19 @@ class BlockTriDiagonalMatrix {
 
 //! define fixed boudnary condition
 template<unsigned int ndim>
-void BlockTriDiagonalMatrix<ndim>::FixBC(
+void BlockPentaDiagonalMatrix<ndim>::FixBC(
     unsigned int iblk,
     unsigned int idim) {
   assert(idim < ndim && int(iblk) < nblk);
   const int iblk0 = static_cast<int>(iblk);
-  for (int jblk = iblk0 - 1; jblk <= iblk0 + 1; ++jblk) {
+  for (int jblk = iblk0 - 2; jblk <= iblk0 + 2; ++jblk) {
     double *p = this->GetValuePointer(iblk, jblk);
     if (p == nullptr) { continue; }
     for (unsigned int jdim = 0; jdim < ndim; ++jdim) {
       p[idim * ndim + jdim] = 0;
     }
   }
-  for (int jblk = iblk0 - 1; jblk <= iblk0 + 1; ++jblk) {
+  for (int jblk = iblk0 - 2; jblk <= iblk0 + 2; ++jblk) {
     double *p = this->GetValuePointer(jblk, iblk);
     if (p == nullptr) { continue; }
     for (unsigned int jdim = 0; jdim < ndim; ++jdim) {
@@ -95,7 +105,7 @@ void BlockTriDiagonalMatrix<ndim>::FixBC(
 }
 
 template<unsigned int ndim>
-void BlockTriDiagonalMatrix<ndim>::Decompose() {
+void BlockPentaDiagonalMatrix<ndim>::Decompose() {
   constexpr unsigned int blksize = ndim * ndim;
   double tmpBlk[blksize];
   for (int iblk = 0; iblk < nblk; iblk++) {
@@ -120,7 +130,7 @@ void BlockTriDiagonalMatrix<ndim>::Decompose() {
 }
 
 template<unsigned int ndim>
-void BlockTriDiagonalMatrix<ndim>::Solve(std::vector<double> &res) {
+void BlockPentaDiagonalMatrix<ndim>::Solve(std::vector<double> &res) {
   double pTmpVec[ndim];
   for (int iblk = 0; iblk < nblk; iblk++) {
     for (unsigned int idim = 0; idim < ndim; ++idim) {

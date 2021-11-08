@@ -227,6 +227,13 @@ void UnifySeparateIndexing_PosTex(
 
 // ------------------------------------
 
+DFM2_INLINE void JArray_PSuP_Hair(
+    std::vector<unsigned int> &psup_ind,
+    std::vector<unsigned int> &psup,
+    const std::vector<unsigned int> &aIP_HairRoot);
+
+// ------------------------------------
+
 DFM2_INLINE void MarkConnectedElements(
     std::vector<unsigned int> &elem_flag,
     unsigned int ielem_kernel,
