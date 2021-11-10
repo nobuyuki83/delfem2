@@ -12,7 +12,7 @@
 #include "delfem2/fem_rod3_darboux.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/lsitrsol.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/vecxitrsol.h"
 
 double delfem2::MergeLinSys_Hair(
@@ -167,7 +167,7 @@ DFM2_INLINE void delfem2::Solve_RodHair(
     const std::size_t n = vec_r.size();
     std::vector<double> tmp0(n), tmp1(n);
     auto aConvHist = Solve_CG(
-        CVecXd(vec_r), CVecXd(vec_x), CVecXd(tmp0), CVecXd(tmp1),
+        ViewAsVectorXd(vec_r), ViewAsVectorXd(vec_x), ViewAsVectorXd(tmp0), ViewAsVectorXd(tmp1),
         1.0e-4, 300, mats);
     if (aConvHist.size() > 0) {
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " "

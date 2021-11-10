@@ -11,8 +11,8 @@
  * DOONE(Dec. 25th 2020): splitting this file into "vecx.h" and "itersol.h" in the future
  */
 
-#ifndef DFM2_LSVECX_H
-#define DFM2_LSVECX_H
+#ifndef DFM2_VIEW_VECTORX_H
+#define DFM2_VIEW_VECTORX_H
 
 #include <vector>
 #include <cassert>
@@ -24,12 +24,12 @@
 namespace delfem2 {
 
 template<typename REAL>
-class CVecX {
+class ViewAsVectorX {
  public:
-  CVecX(REAL *p_, std::size_t n_) : p(p_), n(n_) {}
-  CVecX(std::vector<REAL> &v) : p(v.data()), n(v.size()) {}
+  ViewAsVectorX(REAL *p_, std::size_t n_) : p(p_), n(n_) {}
+  ViewAsVectorX(std::vector<REAL> &v) : p(v.data()), n(v.size()) {}
   //
-  REAL dot(const CVecX &rhs) const {
+  REAL dot(const ViewAsVectorX &rhs) const {
     assert(n == rhs.n);
     REAL d = 0;
     for (unsigned int i = 0; i < n; ++i) {
@@ -41,7 +41,7 @@ class CVecX {
    * deep copy (copying values not the pointer)
    * @param rhs
    */
-  void operator=(const CVecX &rhs) {
+  void operator=(const ViewAsVectorX &rhs) {
     assert(n == rhs.n);
     for (unsigned int i = 0; i < n; ++i) { p[i] = rhs.p[i]; }
   }
@@ -53,16 +53,16 @@ class CVecX {
   REAL *const p;
   const std::size_t n;
 };
-using CVecXd = CVecX<double>;
-using CVecXf = CVecX<float>;
-using CVecXcd = CVecX<std::complex<double> >;
-using CVecXcf = CVecX<std::complex<float> >;
+using ViewAsVectorXd = ViewAsVectorX<double>;
+using ViewAsVectorXf = ViewAsVectorX<float>;
+using ViewAsVectorXcd = ViewAsVectorX<std::complex<double> >;
+using ViewAsVectorXcf = ViewAsVectorX<std::complex<float> >;
 
 template<typename REAL>
 void AddScaledVec(
-    CVecX<REAL> &y,
+    ViewAsVectorX<REAL> &y,
     double alpha,
-    const CVecX<REAL> &x) {
+    const ViewAsVectorX<REAL> &x) {
   assert(y.n == x.n);
   const std::size_t n = x.n;
   for (unsigned int i = 0; i < n; i++) {
@@ -72,9 +72,9 @@ void AddScaledVec(
 
 template<typename REAL>
 void ScaleAndAddVec(
-    CVecX<REAL> &y,
+    ViewAsVectorX<REAL> &y,
     REAL beta,
-    const CVecX<REAL> &x) {
+    const ViewAsVectorX<REAL> &x) {
   assert(y.n == x.n);
   const std::size_t n = x.n;
   for (unsigned int i = 0; i < n; i++) {
@@ -84,11 +84,11 @@ void ScaleAndAddVec(
 
 template<typename REAL, class MAT>
 void AddMatVec(
-    CVecX<REAL> &lhs,
+    ViewAsVectorX<REAL> &lhs,
     REAL scale_lhs,
     REAL scale_rhs,
     const MAT &mat,
-    const CVecX<REAL> &rhs) {
+    const ViewAsVectorX<REAL> &rhs) {
   assert(lhs.n == rhs.n);
   mat.MatVec(lhs.p,
              scale_rhs, rhs.p, scale_lhs);
@@ -96,19 +96,19 @@ void AddMatVec(
 
 template<typename REAL, class PREC>
 void SolvePrecond(
-    CVecX<REAL> &Pr_vec,
+    ViewAsVectorX<REAL> &Pr_vec,
     const PREC &ilu) {
   ilu.SolvePrecond(Pr_vec.p);
 }
 
 template<typename REAL>
 REAL Dot(
-    const CVecX<REAL> &x,
-    const CVecX<REAL> &y) {
+    const ViewAsVectorX<REAL> &x,
+    const ViewAsVectorX<REAL> &y) {
   return x.dot(y);
 }
 
 } // delfem2
 
 
-#endif // LSVECX
+#endif // DFM2_LSVECX_H

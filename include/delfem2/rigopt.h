@@ -12,7 +12,7 @@
 #include "delfem2/quat.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsitrsol.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 
 namespace delfem2 {
 
@@ -235,10 +235,10 @@ Solve_MinRigging(
   {
     const std::size_t n = nsns;
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = delfem2::CVecXd(r);
-    auto vu = delfem2::CVecXd(u);
-    auto vs = delfem2::CVecXd(tmp0);
-    auto vt = delfem2::CVecXd(tmp1);
+    auto vr = delfem2::ViewAsVectorXd(r);
+    auto vu = delfem2::ViewAsVectorXd(u);
+    auto vs = delfem2::ViewAsVectorXd(tmp0);
+    auto vt = delfem2::ViewAsVectorXd(tmp1);
     reshist = Solve_CG(
         vr, vu, vs, vt,
         1.0e-3, 100, mat);

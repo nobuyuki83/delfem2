@@ -178,10 +178,10 @@ void Solve_MinEnergyArap(
   {
     const std::size_t n = nsns;
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(r);
-    auto vu = dfm2::CVecXd(u);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
+    auto vr = dfm2::ViewAsVectorXd(r);
+    auto vu = dfm2::ViewAsVectorXd(u);
+    auto vs = dfm2::ViewAsVectorXd(tmp0);
+    auto vt = dfm2::ViewAsVectorXd(tmp1);
     reshist = dfm2::Solve_CG(
         vr, vu, vs, vt,
         1.0e-3, 100, mat);

@@ -12,7 +12,7 @@
 
 #include "delfem2/geo3_v23m34q.h"  // update rotation by matching cluster
 #include "delfem2/mshuni.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/jagarray.h"
@@ -195,10 +195,10 @@ void delfem2::CDef_ArapEdgeLinearDisponly::Deform(
     const std::size_t n = np * 3;
     std::vector<double> tmp0(n), tmp1(n);
     std::vector<double> aRes = Solve_CG(
-        CVecXd(aRhs),
-        CVecXd(aUpd),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRhs),
+        ViewAsVectorXd(aUpd),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         1.0e-4, 300, *this);
   }
 //  std::cout << "iframe: " << iframe << "   nitr:" << aRes.size() << std::endl;
@@ -398,19 +398,19 @@ void delfem2::CDef_ArapEdge::Deform(
     std::vector<double> tmp0(n), tmp1(n);
     this->MakePreconditionerJacobi();
     aConvHist = Solve_PCG(
-        CVecXd(aRhs),
-        CVecXd(aUpd),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRhs),
+        ViewAsVectorXd(aUpd),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         1.0e-4, 400, *this, *this);
   } else {
     const std::size_t n = np * 6;
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_CG(
-        CVecXd(aRhs),
-        CVecXd(aUpd),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRhs),
+        ViewAsVectorXd(aUpd),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         1.0e-4, 400, *this);
   }
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -518,20 +518,20 @@ void delfem2::CDef_Arap::Deform(
     const std::size_t n = np * 3;
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_PCG(
-        CVecXd(aRes1),
-        CVecXd(aUpd1),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRes1),
+        ViewAsVectorXd(aUpd1),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         1.0e-7, 300, Mat, Prec);
   } else {
     const std::size_t n = np * 3;
     assert(aRes1.size() == n && aUpd1.size() == n);
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_CG(
-        CVecXd(aRes1),
-        CVecXd(aUpd1),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRes1),
+        ViewAsVectorXd(aUpd1),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         1.0e-7, 300, Mat);
   }
 

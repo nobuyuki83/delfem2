@@ -134,15 +134,10 @@ void BlockTriDiagonalMatrix<ndim>::Solve(std::vector<double> &res) {
     const double *pVal_ii = GetValuePointer(iblk, iblk);
     MatVec<double, ndim, ndim>(res.data() + iblk * ndim, pVal_ii, pTmpVec);
   }
-  for (int iblk = nblk - 1; iblk >= 0; iblk--) {
-    for (unsigned int idim = 0; idim < ndim; ++idim) {
-      pTmpVec[idim] = res[iblk * ndim + idim];
-    }
-    if (iblk != nblk - 1) {
-      const double *pVal_ij = GetValuePointer(iblk, iblk + 1);
-      const double *valj = res.data() + (iblk + 1) * ndim;
-      Sub_MatVec<double, ndim, ndim>(res.data() + iblk * ndim, pVal_ij, valj);
-    }
+  for (int iblk = nblk - 2; iblk >= 0; iblk--) {
+    const double *pVal_ij = GetValuePointer(iblk, iblk + 1);
+    const double *valj = res.data() + (iblk + 1) * ndim;
+    Sub_MatVec<double, ndim, ndim>(res.data() + iblk * ndim, pVal_ij, valj);
   }
 }
 

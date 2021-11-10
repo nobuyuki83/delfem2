@@ -29,7 +29,7 @@
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/femsolidlinear.h"
 #include "delfem2/opengl/new/mshcolor.h"
 #include "delfem2/glfw/viewer2.h"
@@ -322,10 +322,10 @@ void SolveProblem_LinearSolid_Static() {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
     Solve_PCG(
-        dfm2::CVecXd(vec_b),
-        dfm2::CVecXd(vec_x),
-        dfm2::CVecXd(tmp0),
-        dfm2::CVecXd(tmp1),
+        dfm2::ViewAsVectorXd(vec_b),
+        dfm2::ViewAsVectorXd(vec_x),
+        dfm2::ViewAsVectorXd(tmp0),
+        dfm2::ViewAsVectorXd(tmp1),
         conv_ratio, iteration, mat_A, ilu_A);
   }
   // --------------

@@ -5,8 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cmath>
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <Eigen/Core>
+
 #include "gtest/gtest.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/vecxitrsol.h"
@@ -18,11 +24,7 @@
 #include "delfem2/eigen/ls_sparse.h"
 #include "delfem2/eigen/ls_ilu_sparse.h"
 #include "delfem2/lsitrsol.h"
-#include <cmath>
-#include <iostream>
-#include <vector>
-#include <chrono>
-#include <Eigen/Core>
+
 
 // ------------------------------------------
 
@@ -135,10 +137,10 @@ TEST(ls,test1)
       std::vector<double> tmp0(n), tmp1(n), vx1(n), vB1(n);
       vB1 = Vstd;
       std::vector<double> aConv = Solve_CG(
-          dfm2::CVecXd(vB1),
-          dfm2::CVecXd(vx1),
-          dfm2::CVecXd(tmp0),
-          dfm2::CVecXd(tmp1),
+          dfm2::ViewAsVectorXd(vB1),
+          dfm2::ViewAsVectorXd(vx1),
+          dfm2::ViewAsVectorXd(tmp0),
+          dfm2::ViewAsVectorXd(tmp1),
           conv_ratio, iteration, Astd);
       nitr1 = aConv.size();
     }
@@ -209,7 +211,10 @@ TEST(ls,test1)
       std::vector<double> tmp0(n), tmp1(n), vx1(n), vB1(n);
       vB1 = Vstd;
       std::vector<double> aConv = Solve_PCG(
-          dfm2::CVecXd(vB1), dfm2::CVecXd(vx1), dfm2::CVecXd(tmp0), dfm2::CVecXd(tmp1),
+          dfm2::ViewAsVectorXd(vB1),
+          dfm2::ViewAsVectorXd(vx1),
+          dfm2::ViewAsVectorXd(tmp0),
+          dfm2::ViewAsVectorXd(tmp1),
           conv_ratio, iteration, Astd, ilu1);
       nitr1 = aConv.size();
     }

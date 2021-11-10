@@ -10,7 +10,7 @@
 #include <cstring> // memcpy
 
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/mshuni.h"
@@ -158,13 +158,13 @@ void delfem2::CDef_LaplacianLinearGram::Deform(
     const std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_PCG(
-        CVecXd(aRhs), CVecXd(aUpd), CVecXd(tmp0), CVecXd(tmp1),
+        ViewAsVectorXd(aRhs), ViewAsVectorXd(aUpd), ViewAsVectorXd(tmp0), ViewAsVectorXd(tmp1),
         1.0e-7, 300, *this, *this);
   } else {
     const std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_CG(
-        CVecXd(aRhs), CVecXd(aUpd), CVecXd(tmp0), CVecXd(tmp1),
+        ViewAsVectorXd(aRhs), ViewAsVectorXd(aUpd), ViewAsVectorXd(tmp0), ViewAsVectorXd(tmp1),
         1.0e-7, 300, *this);
   }
   for (unsigned int i = 0; i < aBCFlag.size(); ++i) { aXYZ1[i] += aUpd[i]; }
@@ -352,19 +352,19 @@ void delfem2::CDef_LaplacianLinear::Deform(
     std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_PCG(
-        CVecXd(aRhs),
-        CVecXd(aUpd),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRhs),
+        ViewAsVectorXd(aUpd),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         this->conv_tol, this->max_itr, *this, Prec);
   } else {
     std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_CG(
-        CVecXd(aRhs),
-        CVecXd(aUpd),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRhs),
+        ViewAsVectorXd(aUpd),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         this->conv_tol, this->max_itr, *this);
   }
   for (unsigned int i = 0; i < aBCFlag.size(); ++i) { vtx_xyz_def[i] += aUpd[i]; }
@@ -529,19 +529,19 @@ void delfem2::CDef_LaplacianLinearDegenerate::Deform(
     const std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_PCG(
-        CVecXd(aRhs),
-        CVecXd(aUpd),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRhs),
+        ViewAsVectorXd(aUpd),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         this->conv_tol, this->max_itr, *this, *this);
   } else {
     const std::size_t n = aRhs.size();
     std::vector<double> tmp0(n), tmp1(n);
     aConvHist = Solve_CG(
-        CVecXd(aRhs),
-        CVecXd(aUpd),
-        CVecXd(tmp0),
-        CVecXd(tmp1),
+        ViewAsVectorXd(aRhs),
+        ViewAsVectorXd(aUpd),
+        ViewAsVectorXd(tmp0),
+        ViewAsVectorXd(tmp1),
         this->conv_tol, this->max_itr, *this);
   }
   for (unsigned int i = 0; i < aBCFlag.size(); ++i) { aXYZ1[i] += aUpd[i]; }

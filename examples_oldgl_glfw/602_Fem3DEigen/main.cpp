@@ -17,7 +17,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsilu_mats.h"
@@ -229,10 +229,10 @@ void Solve() {
   {
     const std::size_t n = aTmp1.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(aTmp1);
-    auto vu = dfm2::CVecXd(aMode);
-    auto vs = dfm2::CVecXd(tmp1);
-    auto vt = dfm2::CVecXd(tmp0);
+    auto vr = dfm2::ViewAsVectorXd(aTmp1);
+    auto vu = dfm2::ViewAsVectorXd(aMode);
+    auto vs = dfm2::ViewAsVectorXd(tmp1);
+    auto vt = dfm2::ViewAsVectorXd(tmp0);
     aConv = dfm2::Solve_PCG(
         vr, vu, vs, vt,
         conv_ratio, iteration, mat_A, ilu_A);

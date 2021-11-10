@@ -18,7 +18,7 @@
 #include "delfem2/lsmats.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsitrsol.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/glfw/viewer3.h"
@@ -251,10 +251,10 @@ DFM2_INLINE void Solve_DispRotSeparate(
   {
     const std::size_t n = vec_r.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = delfem2::CVecXd(vec_r);
-    auto vu = delfem2::CVecXd(vec_x);
-    auto vs = delfem2::CVecXd(tmp0);
-    auto vt = delfem2::CVecXd(tmp1);
+    auto vr = delfem2::ViewAsVectorXd(vec_r);
+    auto vu = delfem2::ViewAsVectorXd(vec_x);
+    auto vs = delfem2::ViewAsVectorXd(tmp0);
+    auto vt = delfem2::ViewAsVectorXd(tmp1);
     auto aConvHist = delfem2::Solve_CG(
         vr, vu, vs, vt,
         1.0e-4, 300, mats);

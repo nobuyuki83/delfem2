@@ -310,6 +310,12 @@ cmake --build . --config Release
 ./runUnitTests
 cd ../../
 
+cd test_eigen || exit
+mkdir buildXcode
+cd buildXcode || exit
+cmake .. -G Xcode 
+cmake --build . 
+cd ../../
 
 echo "################################"
 echo "build Imath"

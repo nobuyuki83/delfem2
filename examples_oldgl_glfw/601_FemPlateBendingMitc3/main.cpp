@@ -11,7 +11,7 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/femmitc3.h"
@@ -98,10 +98,10 @@ void SolveProblem_PlateBendingMITC3(
     {
       const std::size_t n = vec_b.size();
       std::vector<double> tmp0(n), tmp1(n);
-      auto vr = dfm2::CVecXd(vec_b);
-      auto vu = dfm2::CVecXd(vec_x);
-      auto vt = dfm2::CVecXd(tmp0);
-      auto vs = dfm2::CVecXd(tmp1);
+      auto vr = dfm2::ViewAsVectorXd(vec_b);
+      auto vu = dfm2::ViewAsVectorXd(vec_x);
+      auto vt = dfm2::ViewAsVectorXd(tmp0);
+      auto vs = dfm2::ViewAsVectorXd(tmp1);
       std::vector<double> conv = dfm2::Solve_PCG(
           vr, vu, vt, vs,
           1.0e-5, 1000, mat_A, ilu_A);

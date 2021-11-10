@@ -13,8 +13,8 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/hair_darboux.h"
-#include "delfem2/hair_sparse.h"
 #include "delfem2/lsmats.h"
+#include "delfem2/hair_sparse.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/ls_pentadiagonal.h"
 #include "delfem2/glfw/viewer3.h"

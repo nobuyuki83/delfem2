@@ -15,7 +15,7 @@
 
 namespace delfem2 {
 
-template <typename REAL, unsigned int n>
+template<typename REAL, unsigned int n>
 bool Inverse_Matrix(
     REAL *a) {
   for (unsigned i = 0; i < n; i++) {
@@ -40,13 +40,13 @@ bool Inverse_Matrix(
   }
 }
 
-template <>
-bool Inverse_Matrix<double,3>(double *a) {
+template<>
+bool Inverse_Matrix<double, 3>(double *a) {
   const double det =
       +a[0] * a[4] * a[8] + a[3] * a[7] * a[2] + a[6] * a[1] * a[5]
           - a[0] * a[7] * a[5] - a[6] * a[4] * a[2] - a[3] * a[1] * a[8];
   const double inv_det = 1.0 / det;
-  const double t[9] = {a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8]};
+  const double t[9] = {a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]};
   a[0] = inv_det * (t[4] * t[8] - t[5] * t[7]);
   a[1] = inv_det * (t[2] * t[7] - t[1] * t[8]);
   a[2] = inv_det * (t[1] * t[5] - t[2] * t[4]);
@@ -64,13 +64,13 @@ bool Inverse_Matrix<double,3>(double *a) {
  * @return
  * @details partial function template specification is not allowed. so I define the case for "float"
  */
-template <>
-bool Inverse_Matrix<float,3>(float *a) {
+template<>
+bool Inverse_Matrix<float, 3>(float *a) {
   const float det =
       +a[0] * a[4] * a[8] + a[3] * a[7] * a[2] + a[6] * a[1] * a[5]
           - a[0] * a[7] * a[5] - a[6] * a[4] * a[2] - a[3] * a[1] * a[8];
   const float inv_det = 1.f / det;
-  const float t[9] = {a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8]};
+  const float t[9] = {a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]};
   a[0] = inv_det * (t[4] * t[8] - t[5] * t[7]);
   a[1] = inv_det * (t[2] * t[7] - t[1] * t[8]);
   a[2] = inv_det * (t[1] * t[5] - t[2] * t[4]);
@@ -80,6 +80,25 @@ bool Inverse_Matrix<float,3>(float *a) {
   a[6] = inv_det * (t[3] * t[7] - t[4] * t[6]);
   a[7] = inv_det * (t[1] * t[6] - t[0] * t[7]);
   a[8] = inv_det * (t[0] * t[4] - t[1] * t[3]);
+  return true;
+}
+
+template<>
+bool Inverse_Matrix<double, 2>(double *B) {
+  const double det = B[0] * B[3] - B[1] * B[2];
+  if (fabs(det) < 1.0e-10) return false;
+  const double invdet = 1.0 / det;
+  const double t[4] = {B[0], B[1], B[2], B[3]};
+  B[0] = +invdet * t[3];
+  B[1] = -invdet * t[1];
+  B[2] = -invdet * t[2];
+  B[3] = +invdet * t[0];
+  return true;
+}
+
+template<>
+bool Inverse_Matrix<double, 1>(double *B) {
+  B[0] = 1.0 / B[0];
   return true;
 }
 
@@ -107,10 +126,9 @@ void Sub_MatMat(
     const REAL *pVal_kj) {
   for (unsigned int i = 0; i < N; i++) {
     for (unsigned int j = 0; j < N; ++j) {
-      const REAL v0 = pVal_ik[i * N + 0] * pVal_kj[0 * N + j] +
-          pVal_ik[i * N + 1] * pVal_kj[1 * N + j] +
-          pVal_ik[i * N + 2] * pVal_kj[2 * N + j];
-      pVal_ij[i * N + j] -= v0;
+      for (unsigned int k = 0; k < N; ++k) {
+        pVal_ij[i * N + j] -= pVal_ik[i * N + k] * pVal_kj[k * N + j];
+      }
     }
   }
 }
@@ -137,7 +155,7 @@ void Sub_MatVec(
     const double *pVal_ij,
     const double *valj) {
   for (unsigned int i = 0; i < nrow; ++i) {
-    for (unsigned int j=0;j<ncol;++j) {
+    for (unsigned int j = 0; j < ncol; ++j) {
       pTmpVec[i] -= pVal_ij[i * ncol + j] * valj[j];
     }
   }

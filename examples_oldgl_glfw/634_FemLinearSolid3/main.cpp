@@ -19,7 +19,7 @@
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/femsolidlinear.h"
 #include "delfem2/mshuni.h"
@@ -94,8 +94,8 @@ void Simulation(
   }
   std::vector<double> vecb(nDoF, 0.0);
   { // comput rhs vectors
-    auto vb = dfm2::CVecXd(vecb);
-    auto vd = dfm2::CVecXd(aDisp);
+    auto vb = dfm2::ViewAsVectorXd(vecb);
+    auto vd = dfm2::ViewAsVectorXd(aDisp);
     AddMatVec(vb, 0.0, -1.0, smat, vd);
     std::cout << "energy" << vb.dot(vd) << std::endl;
   }
@@ -116,7 +116,7 @@ void Simulation(
     const std::size_t n = vecb.size();
     std::vector<double> tmp0(n), tmp1(n);
     std::vector<double> aHist = Solve_PCG(
-        dfm2::CVecXd(vecb),dfm2::CVecXd(vecx),dfm2::CVecXd(tmp0),dfm2::CVecXd(tmp1),
+        dfm2::ViewAsVectorXd(vecb),dfm2::ViewAsVectorXd(vecx),dfm2::ViewAsVectorXd(tmp0),dfm2::ViewAsVectorXd(tmp1),
         conv_ratio, iteration,
         smat, silu);
     std::cout << "nconv:" << aHist.size() << std::endl;

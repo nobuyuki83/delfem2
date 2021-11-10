@@ -14,7 +14,7 @@
 
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/fem_distance3.h"
@@ -107,10 +107,10 @@ void OptimizeRod(
     const std::size_t n = vec_r.size();
     std::vector<double> tmp0(n), tmp1(n);
     auto aConvHist = dfm2::Solve_CG(
-        dfm2::CVecXd(vec_r),
-        dfm2::CVecXd(vec_x),
-        dfm2::CVecXd(tmp0),
-        dfm2::CVecXd(tmp1),
+        dfm2::ViewAsVectorXd(vec_r),
+        dfm2::ViewAsVectorXd(vec_x),
+        dfm2::ViewAsVectorXd(tmp0),
+        dfm2::ViewAsVectorXd(tmp1),
         1.0e-4, 300, mats);
     if (!aConvHist.empty()) {
       std::cout << "            conv: ";

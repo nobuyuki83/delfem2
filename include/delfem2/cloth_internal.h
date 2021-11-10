@@ -4,7 +4,7 @@
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/lsitrsol.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/femcloth.h"
 
 namespace dfm2 = delfem2;
@@ -160,10 +160,10 @@ void StepTime_InternalDynamics(
     std::size_t n = vec_b.size();
     vec_x.resize(n);
     std::vector<double> tmp0(n), tmp1(n);
-    auto vb = delfem2::CVecXd(vec_b);
-    auto vx = delfem2::CVecXd(vec_x);
-    auto vs = delfem2::CVecXd(tmp0);
-    auto vt = delfem2::CVecXd(tmp1);
+    auto vb = delfem2::ViewAsVectorXd(vec_b);
+    auto vx = delfem2::ViewAsVectorXd(vec_x);
+    auto vs = delfem2::ViewAsVectorXd(tmp0);
+    auto vt = delfem2::ViewAsVectorXd(tmp1);
     Solve_CG(
         vx,vb,vs,vt,
         conv_ratio, iteration, mat_A);
@@ -244,10 +244,10 @@ void StepTime_InternalDynamicsILU(
   {
     const std::size_t n = vec_b.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(vec_b);
-    auto vu = dfm2::CVecXd(vec_x);
-    auto vt = dfm2::CVecXd(tmp0);
-    auto vs = dfm2::CVecXd(tmp1);
+    auto vr = dfm2::ViewAsVectorXd(vec_b);
+    auto vu = dfm2::ViewAsVectorXd(vec_x);
+    auto vt = dfm2::ViewAsVectorXd(tmp0);
+    auto vs = dfm2::ViewAsVectorXd(tmp1);
     Solve_PCG(
         vr, vu, vt, vs,
         conv_ratio, iteration, mat_A, ilu_A);

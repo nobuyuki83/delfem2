@@ -20,7 +20,7 @@
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/lsmats.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/mshuni.h"
@@ -131,10 +131,10 @@ void Simulation(
     const std::size_t n = vecb.size();
     std::vector<double> tmp0(n), tmp1(n);
     std::vector<double> aHist = Solve_PCG(
-        dfm2::CVecXd(vecb),
-        dfm2::CVecXd(vecx),
-        dfm2::CVecXd(tmp0),
-        dfm2::CVecXd(tmp1),
+        dfm2::ViewAsVectorXd(vecb),
+        dfm2::ViewAsVectorXd(vecx),
+        dfm2::ViewAsVectorXd(tmp0),
+        dfm2::ViewAsVectorXd(tmp1),
         conv_ratio, iteration,
         smat, silu);
 //    std::cout << "nconv:" << aHist.size() << std::endl;

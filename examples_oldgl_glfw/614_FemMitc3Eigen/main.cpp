@@ -17,7 +17,7 @@
 
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsitrsol.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/femmitc3.h"
@@ -206,10 +206,10 @@ void Solve() {
   {
     const std::size_t n = aTmp1.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = dfm2::CVecXd(aTmp1);
-    auto vu = dfm2::CVecXd(aMode);
-    auto vs = dfm2::CVecXd(tmp0);
-    auto vt = dfm2::CVecXd(tmp1);
+    auto vr = dfm2::ViewAsVectorXd(aTmp1);
+    auto vu = dfm2::ViewAsVectorXd(aMode);
+    auto vs = dfm2::ViewAsVectorXd(tmp0);
+    auto vt = dfm2::ViewAsVectorXd(tmp1);
     aConv = dfm2::Solve_PCG(
         vr, vu, vs, vt,
         conv_ratio, iteration, mat_A, ilu_A);

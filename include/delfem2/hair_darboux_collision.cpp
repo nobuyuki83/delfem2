@@ -12,7 +12,7 @@
 #include "delfem2/hair_sparse.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/lsitrsol.h"
-#include "delfem2/lsvecx.h"
+#include "delfem2/view_vectorx.h"
 #include "delfem2/mat3.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/mshuni.h"
@@ -128,10 +128,10 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
   {
     const std::size_t n = vec_r.size();
     std::vector<double> tmp0(n), tmp1(n);
-    auto vr = CVecXd(vec_r);
-    auto vu = CVecXd(vec_x);
-    auto vs = CVecXd(tmp0);
-    auto vt = CVecXd(tmp1);
+    auto vr = ViewAsVectorXd(vec_r);
+    auto vu = ViewAsVectorXd(vec_x);
+    auto vs = ViewAsVectorXd(tmp0);
+    auto vt = ViewAsVectorXd(tmp1);
     auto aConvHist = Solve_CG(
         vr, vu, vs, vt,
         1.0e-6, 3000, mc);
