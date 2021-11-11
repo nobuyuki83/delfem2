@@ -12,11 +12,9 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/lsitrsol.h"
-#include "delfem2/lsmats.h"
-#include "delfem2/view_vectorx.h"
+#include "delfem2/ls_solver_block_sparse.h"
+#include "delfem2/ls_pentadiagonal.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/vecxitrsol.h"
 #include "delfem2/fem_distance3.h"
 #include "delfem2/fem_rod3_straight.h"
 #include "delfem2/geo3_v23m34q.h"
@@ -25,28 +23,24 @@
 
 // -------------------------------------
 
+template <class BLOCK_LINEAR_SOLVER>
 void OptimizeRod(
-    std::vector<delfem2::CVec3d> &vec_pos,
-    delfem2::CMatrixSparse<double> &mats,
-    std::vector<double> &vec_r,
-    std::vector<unsigned int> &tmp_buffer,
+    std::vector<delfem2::CVec3d> &vtx_pos_deformed,
     double stiff_stretch,
-    const std::vector<delfem2::CVec3d> &vec_pos_ini,
-    const std::vector<unsigned int> &vec_point_index_root,
-    const std::vector<int> &vec_flag_dof) {
+    const std::vector<delfem2::CVec3d> &vtx_pos_initial,
+    const std::vector<unsigned int> &hair_rootidx,
+    BLOCK_LINEAR_SOLVER &mats) {
   namespace dfm2 = delfem2;
-  mats.setZero();
-  vec_r.assign(vec_pos.size() * 3, 0.);
+  mats.BeginMerge();
   double W = 0;
-  for (unsigned int ihair = 0; ihair < vec_point_index_root.size() - 1; ++ihair) {
-    const unsigned int ips = vec_point_index_root[ihair];  // index of point at the root
-    // number of line segments
-    const unsigned int ns = vec_point_index_root[ihair + 1] - vec_point_index_root[ihair] - 1;
+  for (unsigned int ihair = 0; ihair < hair_rootidx.size() - 1; ++ihair) {
+    const unsigned int ips = hair_rootidx[ihair];  // index of point at the root
+    const unsigned int ns = hair_rootidx[ihair + 1] - hair_rootidx[ihair] - 1;
     for (unsigned int is = 0; is < ns; ++is) {
       const unsigned int ip0 = ips + is + 0;
       const unsigned int ip1 = ips + is + 1;
-      const double L0 = (vec_pos_ini[ip0] - vec_pos_ini[ip1]).norm();
-      const dfm2::CVec3d aPE[2] = {vec_pos[ip0], vec_pos[ip1]};
+      const double L0 = (vtx_pos_initial[ip0] - vtx_pos_initial[ip1]).norm();
+      const dfm2::CVec3d aPE[2] = {vtx_pos_deformed[ip0], vtx_pos_deformed[ip1]};
       // --------------
       dfm2::CVec3d dW_dP[2];
       dfm2::CMat3d ddW_ddP[2][2];
@@ -60,21 +54,19 @@ void OptimizeRod(
         }
       }
       const unsigned int aINoel[2] = {ip0, ip1};
-      dfm2::Merge<2, 2, 3, 3, double>(
-          mats,
-          aINoel, aINoel, ddW_ddP0, tmp_buffer);
+      mats.template Merge<2, 2, 3, 3>(aINoel, aINoel, ddW_ddP0);
       for (int in = 0; in < 2; in++) {
         const unsigned int ip = aINoel[in];
-        vec_r[ip * 3 + 0] -= dW_dP[in].x;
-        vec_r[ip * 3 + 1] -= dW_dP[in].y;
-        vec_r[ip * 3 + 2] -= dW_dP[in].z;
+        mats.vec_r[ip * 3 + 0] -= dW_dP[in].x;
+        mats.vec_r[ip * 3 + 1] -= dW_dP[in].y;
+        mats.vec_r[ip * 3 + 2] -= dW_dP[in].z;
       }
     }
     for (unsigned int is = 0; is < ns - 1; ++is) {
       const unsigned int ip0 = ips + is + 0;
       const unsigned int ip1 = ips + is + 1;
       const unsigned int ip2 = ips + is + 2;
-      const dfm2::CVec3d aPE[3] = {vec_pos[ip0], vec_pos[ip1], vec_pos[ip2]};
+      const dfm2::CVec3d aPE[3] = {vtx_pos_deformed[ip0], vtx_pos_deformed[ip1], vtx_pos_deformed[ip2]};
       // --------------
       dfm2::CVec3d dW_dP[3];
       dfm2::CMat3d ddW_ddP[3][3];
@@ -88,41 +80,22 @@ void OptimizeRod(
         }
       }
       const unsigned int aINoel[3] = {ip0, ip1, ip2};
-      dfm2::Merge<3, 3, 3, 3, double>(
-          mats,
-          aINoel, aINoel, ddW_ddP0, tmp_buffer);
+      mats.template Merge<3, 3, 3, 3>(aINoel, aINoel, ddW_ddP0);
       for (int in = 0; in < 3; in++) {
         const unsigned int ip = aINoel[in];
-        vec_r[ip * 3 + 0] -= dW_dP[in].x;
-        vec_r[ip * 3 + 1] -= dW_dP[in].y;
-        vec_r[ip * 3 + 2] -= dW_dP[in].z;
+        mats.vec_r[ip * 3 + 0] -= dW_dP[in].x;
+        mats.vec_r[ip * 3 + 1] -= dW_dP[in].y;
+        mats.vec_r[ip * 3 + 2] -= dW_dP[in].z;
       }
     }
   }
-  mats.SetFixedBC(vec_flag_dof.data());
-  dfm2::setRHS_Zero(vec_r, vec_flag_dof, 0);
-  std::vector<double> vec_x;
-  vec_x.assign(vec_pos.size() * 3, 0.0);
-  {
-    const std::size_t n = vec_r.size();
-    std::vector<double> tmp0(n), tmp1(n);
-    auto aConvHist = dfm2::Solve_CG(
-        dfm2::ViewAsVectorXd(vec_r),
-        dfm2::ViewAsVectorXd(vec_x),
-        dfm2::ViewAsVectorXd(tmp0),
-        dfm2::ViewAsVectorXd(tmp1),
-        1.0e-4, 300, mats);
-    if (!aConvHist.empty()) {
-      std::cout << "            conv: ";
-      std::cout << aConvHist.size() << " ";
-      std::cout << aConvHist[0] << " ";
-      std::cout << aConvHist[aConvHist.size() - 1] << std::endl;
-    }
-  }
-  for (unsigned int ip = 0; ip < vec_pos.size(); ++ip) {
-    vec_pos[ip].x += vec_x[ip * 3 + 0];
-    vec_pos[ip].y += vec_x[ip * 3 + 1];
-    vec_pos[ip].z += vec_x[ip * 3 + 2];
+  std::cout << W << std::endl;
+  if( W < 1.0e-10 ){ return; }
+  mats.Solve();
+  for (unsigned int ip = 0; ip < vtx_pos_deformed.size(); ++ip) {
+    vtx_pos_deformed[ip].x += mats.vec_x[ip * 3 + 0];
+    vtx_pos_deformed[ip].y += mats.vec_x[ip * 3 + 1];
+    vtx_pos_deformed[ip].z += mats.vec_x[ip * 3 + 2];
   }
 }
 
@@ -151,40 +124,15 @@ int main() {
   std::mt19937 reng(std::random_device{}());
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
   //
-  std::vector<dfm2::CVec3d> vec_pos;
-  vec_pos.reserve(10);
+  std::vector<dfm2::CVec3d> vtx_pos_ini;
+  vtx_pos_ini.reserve(10);
   for (int ip = 0; ip < 10; ++ip) {
-    vec_pos.emplace_back(ip * 0.1, 0., 0.);
-  }
-  const std::vector<dfm2::CVec3d> vec_pos_ini = vec_pos;
-  std::vector<int> vec_flag_dof(vec_pos.size() * 3, 0);
-  vec_flag_dof[0] = 1;
-  vec_flag_dof[1] = 1;
-  vec_flag_dof[2] = 1;
-  for (unsigned int ip = 0; ip < vec_pos.size(); ++ip) {
-    if (vec_flag_dof[ip * 3 + 0] != 0) continue;
-    vec_pos[ip].x += dist01(reng) * 0.01;
-    vec_pos[ip].y += dist01(reng) * 0.01;
-    vec_pos[ip].z += dist01(reng) * 0.01;
+    vtx_pos_ini.emplace_back(ip * 0.1, 0., 0.);
   }
   const std::vector<unsigned int> vec_point_index_root = {
       0,
-      static_cast<unsigned int>(vec_pos_ini.size())};
+      static_cast<unsigned int>(vtx_pos_ini.size())};
   const double stiff_stretch = 10.0;
-  //
-  dfm2::CMatrixSparse<double> mats;
-  {
-    std::vector<unsigned int> psup_ind, psup;
-    delfem2::JArray_PSuP_Hair(
-        psup_ind,psup,
-        vec_point_index_root);
-    mats.Initialize(vec_pos_ini.size(),3,true);
-    mats.SetPattern(
-        psup_ind.data(), psup_ind.size(),
-        psup.data(), psup.size());
-  }
-  std::vector<double> vec_r(vec_pos.size() * 3);
-  std::vector<unsigned int> tmp_buffer;
   // -----
   dfm2::glfw::CViewer3 viewer(1.5);
   //
@@ -192,28 +140,56 @@ int main() {
   viewer.OpenWindow();
   //
   while (!glfwWindowShouldClose(viewer.window)) {
-    {
-      OptimizeRod(
-          vec_pos, mats, vec_r, tmp_buffer,
-          stiff_stretch,
-          vec_pos_ini, vec_point_index_root, vec_flag_dof);
-      static int iframe = 0;
-      iframe += 1;
-      if( iframe >= 100 ){
-        for (unsigned int ip = 0; ip < vec_pos.size(); ++ip) {
-          if (vec_flag_dof[ip * 3 + 0] != 0) continue;
-          vec_pos[ip].x += dist01(reng) * 0.01;
-          vec_pos[ip].y += dist01(reng) * 0.01;
-          vec_pos[ip].z += dist01(reng) * 0.01;
-        }
-        iframe = 0;
+    {  // solve using sparse linear solver
+      dfm2::LinearSystemSolver_BlockSparse ls_solver;
+      {
+        std::vector<unsigned int> psup_ind, psup;
+        delfem2::JArray_PSuP_Hair(
+            psup_ind,psup,
+            vec_point_index_root);
+        ls_solver.Initialize(
+            vtx_pos_ini.size(),3,
+            psup_ind,psup);
+      }
+      std::vector<dfm2::CVec3d> vtx_pos = vtx_pos_ini;
+      for (auto & vtx_po : vtx_pos) {
+        vtx_po.x += dist01(reng) * 0.01;
+        vtx_po.y += dist01(reng) * 0.01;
+        vtx_po.z += dist01(reng) * 0.01;
+      }
+      for(unsigned int iframe=0;iframe<100;++iframe) {
+        OptimizeRod(
+            vtx_pos,
+            stiff_stretch,
+            vtx_pos_ini, vec_point_index_root,
+            ls_solver);
+        viewer.DrawBegin_oldGL();
+        Draw(vtx_pos);
+        viewer.SwapBuffers();
+        glfwPollEvents();
       }
     }
-    // --------
-    viewer.DrawBegin_oldGL();
-    Draw(vec_pos);
-    viewer.SwapBuffers();
-    glfwPollEvents();
+    {  // solve using penta-diagonal linear solver
+      dfm2::LinearSystemSolver_BlockPentaDiagonal<3> ls_solver;
+      ls_solver.Initialize(vtx_pos_ini.size());
+      std::vector<dfm2::CVec3d> vtx_pos = vtx_pos_ini;
+      for (auto & vtx_po : vtx_pos) {
+        vtx_po.x += dist01(reng) * 0.01;
+        vtx_po.y += dist01(reng) * 0.01;
+        vtx_po.z += dist01(reng) * 0.01;
+      }
+      for(unsigned int iframe=0;iframe<100;++iframe) {
+        OptimizeRod(
+            vtx_pos,
+            stiff_stretch,
+            vtx_pos_ini, vec_point_index_root,
+            ls_solver);
+        viewer.DrawBegin_oldGL();
+        Draw(vtx_pos);
+        viewer.SwapBuffers();
+        glfwPollEvents();
+      }
+    }
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

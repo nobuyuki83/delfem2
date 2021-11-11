@@ -12,7 +12,8 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/hair_darboux.h"
+#include "delfem2/ls_solver_block_sparse.h"
+#include "delfem2/hair_darboux_util.h"
 #include "delfem2/hair_darboux_collision.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/srchbi_v3bvh.h"
@@ -146,8 +147,9 @@ void FindRodHairContactCCD(
       double pt0 = p[1];
       // space time collision
       {
-        double len0 = dfm2::Nearest_LineSeg_LineSeg_CCD_Iteration(p,
-                                                                  p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 10);
+        double len0 = dfm2::Nearest_LineSeg_LineSeg_CCD_Iteration(
+            p,
+            p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 10);
         bool is_near = false;
         if( len0 < clearance ){ is_near = true; }
         if( !is_near ){ continue; }
@@ -172,10 +174,17 @@ void FindRodHairContactCCD(
 
 int main()
 {
+  double dt = 0.02;
+  double mass = 1.0e-1;
+  dfm2::CVec3d gravity(0,-10,0);
+  const double stiff_stretch = 1000;
+  const double stiff_bendtwist[3] = { 300, 300, 300 };
+  const double stiff_contact = 1.0e+4;
+  const double clearance = 0.02;
+  //
   class CViewerDemo : public dfm2::glfw::CViewer3 {
   public:
     CViewerDemo() : CViewer3(1.5) {}
-    
     void  key_press(int key, 
 		[[maybe_unused]] int mods) override {
       if( key == GLFW_KEY_A ){
@@ -193,11 +202,7 @@ int main()
   //
   dfm2::glfw::InitGLOld();
   viewer.OpenWindow();
-  //viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
-//  viewer.camera.Rot_Camera(-0.4, -0.1);
-  // viewer.camera.Rot_Camera(-3.1415*0.5,0);
   delfem2::opengl::setSomeLighting();
-  
   // -------
   std::vector<dfm2::CVec3d> aP0; // initial position
   std::vector<dfm2::CVec3d> aS0; // initial director vector
@@ -223,34 +228,25 @@ int main()
   for(int itr=0;itr<10;++itr){ // relax director vectors
     ParallelTransport_RodHair(aP0, aS0, aIP_HairRoot);
   }
-  std::vector<int> aBCFlag; // boundary condition
-  dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
-      aBCFlag,
-      aIP_HairRoot);
-  assert( aBCFlag.size() == aP0.size()*4 );
-  dfm2::CMatrixSparse<double> mats; // sparse matrix
+  dfm2::LinearSystemSolver_BlockSparse ls_solver; // sparse matrix
   {
     std::vector<unsigned int> psup_ind, psup;
     delfem2::JArray_PSuP_Hair(
         psup_ind,psup,
         aIP_HairRoot);
-    mats.Initialize(aP0.size(),4,true);
-    mats.SetPattern(
-        psup_ind.data(), psup_ind.size(),
-        psup.data(), psup.size());
+    ls_solver.Initialize(
+        aP0.size(),4,
+        psup_ind, psup);
+    dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
+        ls_solver.dof_bcflag,
+        aIP_HairRoot);
+    assert(ls_solver.dof_bcflag.size() == aP0.size()*4 );
   }
   // -----------------
   std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
   std::vector<dfm2::CVec3d> aPV (aP0.size(), dfm2::CVec3d(0,0,0)); // velocity
   std::vector<dfm2::CVec3d> aPt = aP; // temporally positions
   std::vector<dfm2::CContactHair> aContact; // collision in the previous time-step
-  double dt = 0.02;
-  double mass = 1.0e-1;
-  dfm2::CVec3d gravity(0,-10,0);
-  const double stiff_stretch = 1000;
-  const double stiff_bendtwist[3] = { 300, 300, 300 };
-  const double stiff_contact = 1.0e+4;
-  const double clearance = 0.02;
   double time_cur = 0.0;
   //
 //  dfm2::CContactHair ch0 = {2,3,0.5, 40,41,0.5, dfm2::CVec3d(0,0,1)};
@@ -265,48 +261,27 @@ int main()
         aPt[ip0].p[2] = aPt[ip0+1].p[2] = z0;
       }
       for(unsigned int ip=0;ip<aP.size();++ip){
-        if( aBCFlag[ip*4+0] !=0 ) { continue; } // this is not fixed boundary
+        if( ls_solver.dof_bcflag[ip*4+0] !=0 ) { continue; } // this is not fixed boundary
         aPt[ip] = aP[ip] + dt * aPV[ip] + dt * dt * gravity;
       }
       const std::vector<dfm2::CVec3d> aPt0 = aPt; // initial temporal positions
       // -----------
       aContact.clear();
       for(int itr=0;itr<1;++itr){
-//        std::cout << " " << itr << " " << time_cur << std::endl;
-        FindRodHairContactCCD(aContact,
-                              clearance,
-                              aP, aIP_HairRoot,aPt);
-        /*
-        for(const auto& ch : aContactNew) {
-          std::cout << " pre: " << ch.ip0 << " " << ch.iq0 << " " << ch.norm*ch.Direction(aP) << " " << ch.norm*ch.Direction(aPt) << std::endl;
-        }
-         */
+        FindRodHairContactCCD(
+            aContact,
+            clearance,
+            aP, aIP_HairRoot,aPt);
         dfm2::MakeDirectorOrthogonal_RodHair(aS,aPt);
-        Solve_RodHairContact(aPt, aS, mats,
-                             stiff_stretch, stiff_bendtwist, mass/(dt*dt),
-                             aPt0, aP0, aS0, aBCFlag, aIP_HairRoot,
-                             clearance, stiff_contact, aContact);
-        /*
-        for(const auto& ch : aContactNew) {
-          std::cout << " pos: " << ch.ip0 << " " << ch.iq0 << " " << ch.norm*ch.Direction(aP) << " " << ch.norm*ch.Direction(aPt) << std::endl;
-        }
-         */
+        Solve_RodHairContact(
+            aPt, aS, ls_solver,
+            stiff_stretch, stiff_bendtwist, mass/(dt*dt),
+            aPt0, aP0, aS0, aIP_HairRoot,
+            clearance, stiff_contact, aContact);
       }
-  //    aContact.clear();
-  //    std::vector<dfm2::CContactHair> aContactOld = aContact;
-      /*
-      aContact.clear();
-      FindRodHairContactCCD(aContact,
-                            clearance,
-                            aP, aIP_HairRoot,aPt);
-      for(const auto& ch : aContact) {
-        std::cout << " pos: " << ch.ip0 << " " << ch.iq0 << " " << ch.norm*ch.Direction(aP) << " " << ch.norm*ch.Direction(aPt) << std::endl;
-      }
-       */
-
       // --------------
       for(unsigned int ip=0;ip<aP.size();++ip){
-        if( aBCFlag[ip*4+0] != 0 ){ continue; }
+        if( ls_solver.dof_bcflag[ip*4+0] != 0 ){ continue; }
         aPV[ip] = (aPt[ip] - aP[ip])/dt;
         aP[ip] = aPt[ip];
       }

@@ -9,6 +9,8 @@
 #define DFM2_HAIR_DARBOUX_COLLISION_H
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/hair_darboux_solver.h"
+#include "delfem2/ls_solver_block_sparse.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/lsmats.h"
@@ -32,14 +34,13 @@ class CContactHair {
 DFM2_INLINE void Solve_RodHairContact(
     std::vector<CVec3d> &aP,
     std::vector<CVec3d> &aS,
-    CMatrixSparse<double> &mats,
+    delfem2::LinearSystemSolver_BlockSparse &mats,
     double stiff_stretch,
     const double stiff_bendtwist[3],
     double mdtt,
     const std::vector<CVec3d> &aPt0,
     const std::vector<CVec3d> &aP0,
     const std::vector<CVec3d> &aS0,
-    const std::vector<int> &aBCFlag,
     const std::vector<unsigned int> &aIP_HairRoot,
     double clearance,
     double stiff_contact,

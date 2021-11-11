@@ -38,13 +38,18 @@ bool Inverse_Matrix(
       }
     }
   }
+  return true;
 }
 
 template<>
 bool Inverse_Matrix<double, 3>(double *a) {
   const double det =
-      +a[0] * a[4] * a[8] + a[3] * a[7] * a[2] + a[6] * a[1] * a[5]
-          - a[0] * a[7] * a[5] - a[6] * a[4] * a[2] - a[3] * a[1] * a[8];
+      + a[0] * a[4] * a[8]
+      + a[3] * a[7] * a[2]
+      + a[6] * a[1] * a[5]
+      - a[0] * a[7] * a[5]
+      - a[6] * a[4] * a[2]
+      - a[3] * a[1] * a[8];
   const double inv_det = 1.0 / det;
   const double t[9] = {a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]};
   a[0] = inv_det * (t[4] * t[8] - t[5] * t[7]);

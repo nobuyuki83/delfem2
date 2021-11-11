@@ -64,7 +64,7 @@ void MakeProblemSetting_Spiral(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/hair_darboux.cpp"
+#  include "delfem2/hair_darboux_util.cpp"
 #endif
 
 #endif  /* DFM2_HAIR_DARBOUX_H */

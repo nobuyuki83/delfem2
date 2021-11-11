@@ -183,7 +183,7 @@ class LinearSystemSolver_BlockPentaDiagonal {
         Sub_MatVec<double, ndim_, ndim_>(tmp, p, vec_x.data() + jblk*ndim_);
       }
       for(unsigned int idim=0;idim<ndim_;++idim) {
-        std::cout << iblk << " " << idim << " " << tmp[idim] << " " << vec_r[iblk * ndim_ + idim] << std::endl;
+        std::cout << iblk << " " << idim << " " << tmp[idim] << " " << tmp[idim] + vec_r[iblk * ndim_ + idim] << std::endl;
       }
     }
      */

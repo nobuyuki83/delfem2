@@ -12,10 +12,10 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/hair_darboux.h"
-#include "delfem2/hair_sparse.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/lsmats.h"
+#include "delfem2/ls_solver_block_sparse.h"
+#include "delfem2/ls_pentadiagonal.h"
+#include "delfem2/hair_darboux_solver.h"
+#include "delfem2/hair_darboux_util.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
@@ -75,15 +75,12 @@ void myGlutDisplay(
 }
 
 int main() {
+  std::mt19937 reng(std::random_device{}());
+  std::uniform_real_distribution<double> dist01(0.0, 1.0);
   dfm2::glfw::CViewer3 viewer(1.5);
-  //
   dfm2::glfw::InitGLOld();
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
-  // ---------------
-  std::random_device rd;
-  std::mt19937 reng(rd());
-  std::uniform_real_distribution<double> dist01(0.0, 1.0);
   // --------------
   while (true) {
     std::vector<dfm2::CVec3d> aP0, aS0;
@@ -106,55 +103,79 @@ int main() {
     for (int itr = 0; itr < 10; ++itr) {
       dfm2::ParallelTransport_RodHair(aP0, aS0, aIP_HairRoot);
     }
-    std::vector<int> aBCFlag;
-    dfm2::MakeBCFlag_RodHair(
-        aBCFlag,
-        aIP_HairRoot);
-    dfm2::CMatrixSparse<double> mats;
-    {
-      std::vector<unsigned int> psup_ind, psup;
-      delfem2::JArray_PSuP_Hair(
-          psup_ind,psup,
-          aIP_HairRoot);
-      mats.Initialize(aP0.size(),4,true);
-      mats.SetPattern(
-          psup_ind.data(), psup_ind.size(),
-          psup.data(), psup.size());
-    }
     // -----------------
-    std::vector<dfm2::CVec3d> aS = aS0, aP = aP0;
-    // apply random perturbation
-    for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-      aP[ip] = aP0[ip];
-      auto rnd = dfm2::CVec3d::Random(dist01, reng) * 0.1;
-      if (aBCFlag[ip * 4 + 0] == 0) { aP[ip].p[0] += rnd.x; }
-      if (aBCFlag[ip * 4 + 1] == 0) { aP[ip].p[1] += rnd.y; }
-      if (aBCFlag[ip * 4 + 2] == 0) { aP[ip].p[2] += rnd.z; }
-      if (aBCFlag[ip * 4 + 3] == 0) {
-        assert(ip != aP.size() - 1);
-        aS[ip] += dfm2::CVec3d::Random(dist01, reng) * 0.1;
-      }
-    }
-    dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
     const double stiff_stretch = dist01(reng) + 1.0;
     const double stiff_bendtwist[3] = {
         dist01(reng) + 1.0,
         dist01(reng) + 1.0,
         dist01(reng) + 1.0};
-    // --------------
-    for (int iframe = 0; iframe < 100; ++iframe) {
-      // static minimization of the rod deformation
+    {
+      dfm2::LinearSystemSolver_BlockSparse ls_solver;
+      {
+        std::vector<unsigned int> psup_ind, psup;
+        delfem2::JArray_PSuP_Hair(
+            psup_ind, psup,
+            aIP_HairRoot);
+        ls_solver.Initialize(aP0.size(), 4, psup_ind, psup);
+        dfm2::MakeBCFlag_RodHair(
+            ls_solver.dof_bcflag,
+            aIP_HairRoot);
+      }
+      std::vector<dfm2::CVec3d> aS = aS0, aP = aP0;
+      for (unsigned int ip = 0; ip < aP.size(); ++ip) {
+        auto rnd = dfm2::CVec3d::Random(dist01, reng) * 0.1;
+        if (ls_solver.dof_bcflag[ip * 4 + 0] == 0) { aP[ip].p[0] += rnd.x; }
+        if (ls_solver.dof_bcflag[ip * 4 + 1] == 0) { aP[ip].p[1] += rnd.y; }
+        if (ls_solver.dof_bcflag[ip * 4 + 2] == 0) { aP[ip].p[2] += rnd.z; }
+        if (ls_solver.dof_bcflag[ip * 4 + 3] == 0) {
+          assert(ip != aP.size() - 1);
+          aS[ip] += dfm2::CVec3d::Random(dist01, reng) * 0.1;
+        }
+      }
       dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
-      Solve_RodHair(
-          aP, aS, mats,
-          stiff_stretch, stiff_bendtwist, 0.0,
-          aP0, aS0, aBCFlag, aIP_HairRoot);
-      // ----------
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(aP, aS, aIP_HairRoot);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
+      for (int iframe = 0; iframe < 100; ++iframe) {
+        dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
+        Solve_RodHair(
+            aP, aS, ls_solver,
+            stiff_stretch, stiff_bendtwist, 0.0,
+            aP0, aS0, aIP_HairRoot);
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(aP, aS, aIP_HairRoot);
+        viewer.SwapBuffers();
+        glfwPollEvents();
+        if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
+      }
+    }
+    {
+      dfm2::LinearSystemSolver_BlockPentaDiagonal<4> ls_solver;
+      ls_solver.Initialize(aP0.size());
+      dfm2::MakeBCFlag_RodHair(
+          ls_solver.dof_bcflag,
+          aIP_HairRoot);
+      std::vector<dfm2::CVec3d> aS = aS0, aP = aP0;
+      for (unsigned int ip = 0; ip < aP.size(); ++ip) {
+        auto rnd = dfm2::CVec3d::Random(dist01, reng) * 0.1;
+        if (ls_solver.dof_bcflag[ip * 4 + 0] == 0) { aP[ip].p[0] += rnd.x; }
+        if (ls_solver.dof_bcflag[ip * 4 + 1] == 0) { aP[ip].p[1] += rnd.y; }
+        if (ls_solver.dof_bcflag[ip * 4 + 2] == 0) { aP[ip].p[2] += rnd.z; }
+        if (ls_solver.dof_bcflag[ip * 4 + 3] == 0) {
+          assert(ip != aP.size() - 1);
+          aS[ip] += dfm2::CVec3d::Random(dist01, reng) * 0.1;
+        }
+      }
+      dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
+      for (int iframe = 0; iframe < 100; ++iframe) {
+        dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
+        Solve_RodHair(
+            aP, aS, ls_solver,
+            stiff_stretch, stiff_bendtwist, 0.0,
+            aP0, aS0, aIP_HairRoot);
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(aP, aS, aIP_HairRoot);
+        viewer.SwapBuffers();
+        glfwPollEvents();
+        if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
+      }
     }
   }
   EXIT:

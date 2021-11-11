@@ -8,8 +8,8 @@
 
 #include "delfem2/hair_darboux_collision.h"
 
-#include "delfem2/hair_darboux.h"
-#include "delfem2/hair_sparse.h"
+#include "delfem2/hair_darboux_util.h"
+#include "delfem2/hair_darboux_solver.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/view_vectorx.h"
@@ -17,8 +17,7 @@
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/mshuni.h"
 
-namespace delfem2 {
-namespace hair_darboux_collision {
+namespace delfem2::hair_darboux_collision {
 
 class CMatContact {
  public:
@@ -58,101 +57,78 @@ class CMatContact {
   const std::vector<CContactHair> &aContact;
   const double stiffness;
 };
-}
+
 }
 
 DFM2_INLINE void delfem2::Solve_RodHairContact(
     std::vector<CVec3d> &aP,
     std::vector<CVec3d> &aS,
-    CMatrixSparse<double> &mats,
-    const double stiff_stretch,
+    delfem2::LinearSystemSolver_BlockSparse &mats,
+    double stiff_stretch,
     const double stiff_bendtwist[3],
     double mdtt,
     const std::vector<CVec3d> &aPt0,
     const std::vector<CVec3d> &aP0,
     const std::vector<CVec3d> &aS0,
-    const std::vector<int> &aBCFlag,
     const std::vector<unsigned int> &aIP_HairRoot,
-    const double clearance,
-    const double stiff_contact,
-    const std::vector<CContactHair> &aContact) {
-  namespace lcl = ::delfem2::hair_darboux_collision;
-  assert(mats.nrowdim_ == 4);
-  assert(mats.ncoldim_ == 4);
+    double clearance,
+    double stiff_contact,
+    const std::vector<CContactHair> &aContact){
+  namespace lcl = delfem2::hair_darboux_collision;
+  assert(mats.ndim() == 4);
   const size_t np = aP.size();
   assert(aP0.size() == np);
   assert(aS0.size() == np);
   assert(aP.size() == np);
   assert(aS.size() == np);
-  mats.setZero();
-  std::vector<double> vec_r;
-  vec_r.assign(np * 4, 0.0);
+  mats.BeginMerge();
   double W = MergeLinSys_Hair(
-      vec_r, mats,
+      mats,
       stiff_stretch, stiff_bendtwist,
       aIP_HairRoot, aP, aS, aP0, aS0);
   for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-    mats.val_dia_[ip * 16 + 0 * 4 + 0] += mdtt;
-    mats.val_dia_[ip * 16 + 1 * 4 + 1] += mdtt;
-    mats.val_dia_[ip * 16 + 2 * 4 + 2] += mdtt;
+    mats.AddValueToDiagonal(ip,0,mdtt);
+    mats.AddValueToDiagonal(ip,1,mdtt);
+    mats.AddValueToDiagonal(ip,2,mdtt);
   }
   for (unsigned int ip = 0; ip < aP.size(); ++ip) { // this term has effect only in the second nonliear iteration
     const CVec3d dp = aPt0[ip] - aP[ip];
-    vec_r[ip * 4 + 0] += dp.x * mdtt;
-    vec_r[ip * 4 + 1] += dp.y * mdtt;
-    vec_r[ip * 4 + 2] += dp.z * mdtt;
+    mats.vec_r[ip*4+0] += dp.x * mdtt;
+    mats.vec_r[ip*4+1] += dp.y * mdtt;
+    mats.vec_r[ip*4+2] += dp.z * mdtt;
   }
-//  std::cout << "energy:" << W << std::endl;
-  //    std::cout << "sym: " << CheckSymmetry(mats) << std::endl;
   for (const auto &ch : aContact) {
     const unsigned int aIP[4] = {ch.ip0, ch.ip1, ch.iq0, ch.iq1};
     const double aW[4] = {1 - ch.s, ch.s, -(1 - ch.t), -ch.t};
     CVec3d a = aW[0] * aP[aIP[0]] + aW[1] * aP[aIP[1]] + aW[2] * aP[aIP[2]] + aW[3] * aP[aIP[3]];
     double r0 = a.dot(ch.norm) - clearance;
-//    std::cout << "    contact: " << r0 << std::endl;
     for (int iip = 0; iip < 4; ++iip) {
       const unsigned int ip0 = aIP[iip];
-      vec_r[ip0 * 4 + 0] -= stiff_contact * r0 * aW[iip] * ch.norm.x;
-      vec_r[ip0 * 4 + 1] -= stiff_contact * r0 * aW[iip] * ch.norm.y;
-      vec_r[ip0 * 4 + 2] -= stiff_contact * r0 * aW[iip] * ch.norm.z;
+      mats.vec_r[ip0*4+0] -= stiff_contact * r0 * aW[iip] * ch.norm.x;
+      mats.vec_r[ip0*4+1] -= stiff_contact * r0 * aW[iip] * ch.norm.y;
+      mats.vec_r[ip0*4+2] -= stiff_contact * r0 * aW[iip] * ch.norm.z;
     }
   }
   // --------------
   W = 0.0; // to remove warning
-  assert(aBCFlag.size() == np * 4);
-  mats.SetFixedBC(aBCFlag.data());
-  std::vector<double> vec_x;
-  vec_x.assign(np * 4, 0.0);
-  setRHS_Zero(vec_r, aBCFlag, 0);
-  lcl::CMatContact mc(mats, aContact, stiff_contact);
+  assert(mats.dof_bcflag.size() == np * 4);
+  mats.matrix.SetFixedBC(mats.dof_bcflag.data());
+  setRHS_Zero(mats.vec_r, mats.dof_bcflag, 0);
+  lcl::CMatContact mc(mats.matrix, aContact, stiff_contact);
   {
-    const std::size_t n = vec_r.size();
-    std::vector<double> tmp0(n), tmp1(n);
-    auto vr = ViewAsVectorXd(vec_r);
-    auto vu = ViewAsVectorXd(vec_x);
-    auto vs = ViewAsVectorXd(tmp0);
-    auto vt = ViewAsVectorXd(tmp1);
+    const std::size_t n = mats.ndof();
+    mats.vec_x.assign(n, 0.0);
+    mats.tmp0.resize(n);
+    mats.tmp1.resize(n);
+    auto vr = ViewAsVectorXd(mats.vec_r);
+    auto vu = ViewAsVectorXd(mats.vec_x);
+    auto vs = ViewAsVectorXd(mats.tmp0);
+    auto vt = ViewAsVectorXd(mats.tmp1);
     auto aConvHist = Solve_CG(
         vr, vu, vs, vt,
         1.0e-6, 3000, mc);
-    /*
-    if( aConvHist.size() > 0 ){
-      std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
-    }
-     */
-//    std::cout << "  updates: " << DotX(vec_x.data(), vec_x.data(), vec_x.size()) << std::endl;
   }
-  UpdateSolutionHair(aP, aS,
-                     vec_x, aIP_HairRoot, aBCFlag);
-  /*
-  std::cout << "hogehoge " << aContact.size() << std::endl;
-  for(const auto& ch : aContact){
-    const unsigned int aIP[4] = {ch.ip0, ch.ip1, ch.iq0, ch.iq1};
-    const double aW[4] = {1-ch.s, ch.s, -(1-ch.t), -ch.t};
-    CVec3d a = aW[0]*aP[aIP[0]] + aW[1]*aP[aIP[1]] + aW[2]*aP[aIP[2]] + aW[3]*aP[aIP[3]];
-    double r0 = a*ch.norm - clearance;
-    std::cout << "       contact: " << r0 << " " << clearance << std::endl;
-  }
-   */
+  UpdateSolutionHair(
+      aP, aS,
+      mats.vec_x, aIP_HairRoot, mats.dof_bcflag);
 }
-

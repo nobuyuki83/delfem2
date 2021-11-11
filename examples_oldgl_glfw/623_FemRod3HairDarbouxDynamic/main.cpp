@@ -12,8 +12,10 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/hair_darboux.h"
-#include "delfem2/hair_sparse.h"
+#include "delfem2/ls_solver_block_sparse.h"
+#include "delfem2/ls_pentadiagonal.h"
+#include "delfem2/hair_darboux_util.h"
+#include "delfem2/hair_darboux_solver.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/glfw/viewer3.h"
@@ -74,17 +76,22 @@ void myGlutDisplay(
 }
 
 int main() {
+  std::mt19937 reng(std::random_device{}());
+  std::uniform_real_distribution<double> dist01(0.0, 1.0);
   dfm2::glfw::CViewer3 viewer(1.5);
   dfm2::glfw::InitGLOld();
   viewer.OpenWindow();
-  // viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
-  // -----
-  std::random_device rd;
-  std::mt19937 reng(rd());
-  std::uniform_real_distribution<double> dist01(0.0, 1.0);
   // -------
   while (true) {
+    double dt = 0.01;
+    double mass = 1.0e-2;
+    const dfm2::CVec3d gravity(0, -10, 0);
+    const double stiff_stretch = 10000 * (dist01(reng) + 1.);
+    const double stiff_bendtwist[3] = {
+        1000 * (dist01(reng) + 1.),
+        1000 * (dist01(reng) + 1.),
+        1000 * (dist01(reng) + 1.)};
     std::vector<dfm2::CVec3d> aP0; // initial position
     std::vector<dfm2::CVec3d> aS0; // initial director vector
     std::vector<unsigned int> aIP_HairRoot; // indexes of root point
@@ -110,44 +117,37 @@ int main() {
     for (int itr = 0; itr < 10; ++itr) { // relax director vectors
       ParallelTransport_RodHair(aP0, aS0, aIP_HairRoot);
     }
-    std::vector<int> aBCFlag; // boundary condition
-    dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
-        aBCFlag,
-        aIP_HairRoot);
-    assert(aBCFlag.size() == aP0.size() * 4);
-    dfm2::CMatrixSparse<double> mats; // sparse matrix
+    dfm2::LinearSystemSolver_BlockSparse ls_solver; // sparse matrix
     {
       std::vector<unsigned int> psup_ind, psup;
       delfem2::JArray_PSuP_Hair(
           psup_ind, psup,
           aIP_HairRoot);
-      mats.Initialize(aP0.size(), 4, true);
-      mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(), psup.size());
+      ls_solver.Initialize(
+          aP0.size(), 4,
+          psup_ind, psup);
+      dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
+          ls_solver.dof_bcflag,
+          aIP_HairRoot);
+      assert(ls_solver.dof_bcflag.size() == aP0.size() * 4);
     }
     // -----------------
     std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
     std::vector<dfm2::CVec3d> aPV(aP0.size(), dfm2::CVec3d(0, 0, 0)); // velocity
     std::vector<dfm2::CVec3d> aPt = aP; // temporally positions
-    double dt = 0.01;
-    double mass = 1.0e-2;
-    dfm2::CVec3d gravity(0, -10, 0);
-    const double stiff_stretch = 10000 * (dist01(reng) + 1.);
-    const double stiff_bendtwist[3] = {
-        1000 * (dist01(reng) + 1.),
-        1000 * (dist01(reng) + 1.),
-        1000 * (dist01(reng) + 1.)};
     for (int iframe = 0; iframe < 100; ++iframe) {
       for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-        if (aBCFlag[ip * 4 + 0] == 0) {
+        if (ls_solver.dof_bcflag[ip * 4 + 0] == 0) {
           aPt[ip] = aP[ip] + dt * aPV[ip] + (dt * dt / mass) * gravity;
         }
       }
       dfm2::MakeDirectorOrthogonal_RodHair(aS, aPt);
-      Solve_RodHair(aPt, aS, mats,
-                    stiff_stretch, stiff_bendtwist, mass / (dt * dt),
-                    aP0, aS0, aBCFlag, aIP_HairRoot);
+      Solve_RodHair(
+          aPt, aS, ls_solver,
+          stiff_stretch, stiff_bendtwist, mass / (dt * dt),
+          aP0, aS0, aIP_HairRoot);
       for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-        if (aBCFlag[ip * 4 + 0] != 0) { continue; }
+        if (ls_solver.dof_bcflag[ip * 4 + 0] != 0) { continue; }
         aPV[ip] = (aPt[ip] - aP[ip]) / dt;
         aP[ip] = aPt[ip];
       }

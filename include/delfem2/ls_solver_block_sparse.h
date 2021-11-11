@@ -44,7 +44,9 @@ class LinearSystemSolver_BlockSparse {
   }
 
   void AddValueToDiagonal(unsigned int iblk, unsigned int idim, double val) {
+    assert(iblk<nblk());
     const unsigned int n = ndim();
+    assert(idim<n);
     matrix.val_dia_[iblk * n * n + idim * n + idim] += val;
   }
 
@@ -56,17 +58,12 @@ class LinearSystemSolver_BlockSparse {
     {
       tmp0.resize(ndof());
       tmp1.resize(ndof());
-      auto aConvHist = Solve_CG(
+      conv_hist = Solve_CG(
           ViewAsVectorXd(vec_r),
           ViewAsVectorXd(vec_x),
           ViewAsVectorXd(tmp0),
           ViewAsVectorXd(tmp1),
           1.0e-4, 300, matrix);
-      if (!aConvHist.empty()) {
-        std::cout << "            conv: " << aConvHist.size();
-        std::cout << " " << aConvHist[0];
-        std::cout << " " << aConvHist[aConvHist.size() - 1] << std::endl;
-      }
     }
   }
 
@@ -74,7 +71,7 @@ class LinearSystemSolver_BlockSparse {
   std::vector<double> vec_r;
   std::vector<double> vec_x;
   std::vector<int> dof_bcflag;
- private:
+  std::vector<double> conv_hist;
   std::vector<unsigned int> merge_buffer;
   std::vector<double> tmp0, tmp1;
   CMatrixSparse<double> matrix;
