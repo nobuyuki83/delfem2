@@ -100,10 +100,10 @@ int main()
 
   // -----------------------------
 
-  std::vector<dfm2::CDynTri> aETri_Cloth;
-  std::vector<dfm2::CVec2d> aVec2_Cloth;
-  std::vector<double> aXYZ_Cloth; // deformed vertex positions
-  std::vector<unsigned int> aLine_Cloth;
+  std::vector<dfm2::CDynTri> tri_vtx_cloth;
+  std::vector<dfm2::CVec2d> vtx_xy_cloth;
+  std::vector<double> vtx_xyz_pattern; // deformed vertex positions
+  std::vector<unsigned int> line_vtx_cloth;
   delfem2::CCad2D cad;
   { // prepare clothing input data
     dfm2::CMesher_Cad2D mesher;
@@ -124,12 +124,12 @@ int main()
     dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
     // -------
     dfm2::MeshingPattern(
-        aETri_Cloth,aVec2_Cloth,aXYZ_Cloth,aLine_Cloth,mesher,
-        aRT23,cad,aIESeam,mesher_edge_length);
+        tri_vtx_cloth, vtx_xy_cloth, vtx_xyz_pattern, line_vtx_cloth, mesher,
+        aRT23, cad, aIESeam, mesher_edge_length);
   }
-  std::vector<double> aXYZt_Cloth = aXYZ_Cloth;
-  std::vector<double> aUVW_Cloth(aXYZ_Cloth.size(), 0.0);
-  const std::vector<int> aBCFlag_Cloth(aXYZ_Cloth.size()/3, 0);
+  std::vector<double> aXYZt_Cloth = vtx_xyz_pattern;
+  std::vector<double> vtx_uvw_cloth(vtx_xyz_pattern.size(), 0.0);
+  const std::vector<int> dof_bcflag_cloth(vtx_xyz_pattern.size()/3, 0);
 
   // ----------
   dfm2::CProjector_RigMesh body_smpl;
@@ -190,28 +190,29 @@ int main()
   dfm2::glfw::CViewer2 viewer2;
   dfm2::glfw::InitGLOld();
   viewer3.OpenWindow();
-  // viewer3.camera.camera_rot_mode = dfm2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::YTOP;
   dfm2::opengl::setSomeLighting();
   viewer2.OpenWindow();
   
   ::glfwMakeContextCurrent(viewer2.window);
   glyph.InitGL();
 
-  for(;;) {
+  while( !glfwWindowShouldClose(viewer2.window) && !glfwWindowShouldClose(viewer3.window) ) {
     ::glfwMakeContextCurrent(viewer3.window);
-    Draw(aETri_Cloth, aLine_Cloth, aXYZ_Cloth, aVec2_Cloth, body_smpl, viewer3);
+    Draw(
+        tri_vtx_cloth, line_vtx_cloth, vtx_xyz_pattern, vtx_xy_cloth,
+        body_smpl, viewer3);
 
     viewer2.DrawBegin_oldGL();
     delfem2::opengl::Draw_CCad2D(cad);
     {
-      ::glTranslated(0,0,-0.9);
+      ::glTranslated(0,0,+0.9);
       for(unsigned int ie=0;ie<cad.topo.edges.size();++ie){
         unsigned int iv0 = cad.topo.edges[ie].iv0;
         unsigned int iv1 = cad.topo.edges[ie].iv1;
         dfm2::CVec2d p = (cad.aVtx[iv0].pos+cad.aVtx[iv1].pos)*0.5;
         glyph.DrawStringAt(std::to_string(ie),0.001, p.x, p.y);
       }
-      ::glTranslated(0,0,+0.9);
+      ::glTranslated(0,0,-0.9);
     }
     glfwSwapBuffers(viewer2.window);
 

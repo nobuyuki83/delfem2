@@ -45,16 +45,10 @@ class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
       +0.84, +1.20,
       +0.30, +1.40,
       -0.30, +1.40});
-    //
-    cad.SetEdgeType(
-                    0,
-                    delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ +0.1, -0.2, +0.3, 0.2 });
-    cad.SetEdgeType(
-                    4,
-                    delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ -0.3, 0.2, -0.1, -0.2 });
-    cad.SetEdgeType(
-                    6,
-                    delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ -0.2, -0.2, 0.2, -0.2 });
+    cad.aEdge[0].SetCubicBezierCurve({-0.74,+1.0}, {-0.7, +0.45});
+    cad.aEdge[4].SetCubicBezierCurve({+0.7,+0.45},{0.74,+1.0});
+    cad.aEdge[6].SetCubicBezierCurve({+0.1,+1.2},{-0.1,+1.2});
+    cad.Tessellation();    
   }
   
   void InitShader() {

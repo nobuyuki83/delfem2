@@ -174,6 +174,7 @@ int main()
       dfm2::MeshingPattern(
           aETri,aVec2,aXYZ,aLine,mesher,
           aRT23,cad,aIESeam,mesher_edge_length);
+      std::cout << "meshing finished" << std::endl;
     }
     dfm2::CKineticDamper damper;
 

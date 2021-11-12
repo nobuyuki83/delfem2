@@ -19,9 +19,7 @@
 #include "delfem2/cad2_dtri2.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/opengl/old/v2.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
 
 #ifndef M_PI
@@ -113,12 +111,9 @@ int main() {
       +1, -1,
       +1, +1,
       -1, +1});
-    cad.SetEdgeType(
-        0, dfm2::CCad2D_EdgeGeo::EDGE_TYPE::BEZIER_QUADRATIC,
-        std::vector<double>{1.0, +0.5});
-    cad.SetEdgeType(
-        2, dfm2::CCad2D_EdgeGeo::EDGE_TYPE::BEZIER_CUBIC,
-        std::vector<double>{-0.5, +0.5, 0.5, 0.5});
+    cad.aEdge[0].SetQuadraticBezierCurve({0,-0.5});
+    cad.aEdge[2].SetCubicBezierCurve({0.5, 1.5}, {-0.5, 1.5});
+    cad.Tessellation();
     CCadMesh2DVeiwer viewer(cad);
     viewer.OpenWindow();
     while (!glfwWindowShouldClose(viewer.window)) {
@@ -138,16 +133,10 @@ int main() {
       +0.84, +1.20,
       +0.30, +1.40,
       -0.30, +1.40});
-    //
-    cad.SetEdgeType(
-        0,
-        delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ +0.1, -0.2, +0.3, 0.2 });
-    cad.SetEdgeType(
-        4,
-        delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ -0.3, 0.2, -0.1, -0.2 });
-    cad.SetEdgeType(
-        6,
-        delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, std::vector<double>{ -0.2, -0.2, 0.2, -0.2 });
+    cad.aEdge[0].SetCubicBezierCurve({-0.74,+1.0}, {-0.7, +0.45});
+    cad.aEdge[4].SetCubicBezierCurve({+0.7,+0.45},{0.74,+1.0});
+    cad.aEdge[6].SetCubicBezierCurve({+0.1,+1.2},{-0.1,+1.2});
+    cad.Tessellation();
     CCadMesh2DVeiwer viewer(cad);
     viewer.OpenWindow();
     while (!glfwWindowShouldClose(viewer.window)) {

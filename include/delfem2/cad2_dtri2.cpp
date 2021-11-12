@@ -891,29 +891,3 @@ DFM2_INLINE std::vector<int> delfem2::CMesher_Cad2D::IndPoint_IndFaceArray(
   }
   return res;
 }
-
-DFM2_INLINE void delfem2::Transform_LoopEdgeCad2D(
-    std::vector<CCad2D_EdgeGeo>& aEdge,
-    bool is_flip_holizontal,
-    bool is_flip_vertical,
-    double scale_x,
-    double scale_y)
-{
-  double A[4] = {scale_x,0,0,scale_y};
-  if( is_flip_holizontal ){ A[0] *= -1; }
-  if( is_flip_vertical ){ A[3] *= -1; }
-  bool is_det_inv = (is_flip_holizontal != is_flip_vertical );
-  for(auto & ie : aEdge){
-    ie.p0 = Mat2Vec(A, ie.p0);
-    ie.p1 = Mat2Vec(A, ie.p1);
-    if( ie.type_edge == CCad2D_EdgeGeo::BEZIER_CUBIC && is_det_inv ){
-      assert( ie.param.size() == 4);
-      ie.param[1] *= -1;
-      ie.param[3] *= -1;
-    }
-    if( ie.type_edge == CCad2D_EdgeGeo::BEZIER_QUADRATIC && is_det_inv ){
-      assert( ie.param.size() == 2);
-      ie.param[1] *= -1;
-    }
-  }
-}

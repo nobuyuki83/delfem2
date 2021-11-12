@@ -51,10 +51,8 @@ int main()
         cad.AddVtxFace(0.0, 0.1, 0);
       }
       else if( iframe == nframe_interval*2 ){
-        cad.SetEdgeType(
-            0,
-            dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC,
-            std::vector<double>{0.5, -0.5, -0.5, -0.5} );
+        cad.aEdge[0].SetCubicBezierCurve({-0.5,-1.5}, {+0.5, -1.5});
+        cad.Tessellation();
       }
       else if( iframe == nframe_interval*3 ){
         cad.AddVtxEdge(-0.0, +0.8, 2);

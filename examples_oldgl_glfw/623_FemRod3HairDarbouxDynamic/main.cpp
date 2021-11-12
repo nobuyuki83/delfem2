@@ -75,6 +75,47 @@ void myGlutDisplay(
   }
 }
 
+template <class BLOCK_LINEAR_SOLVER>
+void Simulation(
+    BLOCK_LINEAR_SOLVER &ls_solver,
+    dfm2::glfw::CViewer3 &viewer,
+    const std::vector<dfm2::CVec3d> &aP0,
+    const std::vector<dfm2::CVec3d> &aS0,
+    double dt,
+    double mass,
+    const dfm2::CVec3d &gravity,
+    const double stiff_stretch,
+    const double stiff_bendtwist[3],
+    std::vector<unsigned int> &aIP_HairRoot){
+  // -----------------
+  std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
+  std::vector<dfm2::CVec3d> aPV(aP0.size(), dfm2::CVec3d(0, 0, 0)); // velocity
+  std::vector<dfm2::CVec3d> aPt = aP; // temporally positions
+  for (int iframe = 0; iframe < 100; ++iframe) {
+    for (unsigned int ip = 0; ip < aP.size(); ++ip) {
+      if (ls_solver.dof_bcflag[ip * 4 + 0] == 0) {
+        aPt[ip] = aP[ip] + dt * aPV[ip] + (dt * dt / mass) * gravity;
+      }
+    }
+    dfm2::MakeDirectorOrthogonal_RodHair(aS, aPt);
+    Solve_RodHair(
+        aPt, aS, ls_solver,
+        stiff_stretch, stiff_bendtwist, mass / (dt * dt),
+        aP0, aS0, aIP_HairRoot);
+    for (unsigned int ip = 0; ip < aP.size(); ++ip) {
+      if (ls_solver.dof_bcflag[ip * 4 + 0] != 0) { continue; }
+      aPV[ip] = (aPt[ip] - aP[ip]) / dt;
+      aP[ip] = aPt[ip];
+    }
+    // -------------
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(aP, aS, aIP_HairRoot);
+    viewer.SwapBuffers();
+    glfwPollEvents();
+    if (glfwWindowShouldClose(viewer.window)) { return; }
+  }
+}
+
 int main() {
   std::mt19937 reng(std::random_device{}());
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
@@ -117,49 +158,46 @@ int main() {
     for (int itr = 0; itr < 10; ++itr) { // relax director vectors
       ParallelTransport_RodHair(aP0, aS0, aIP_HairRoot);
     }
-    dfm2::LinearSystemSolver_BlockSparse ls_solver; // sparse matrix
     {
-      std::vector<unsigned int> psup_ind, psup;
-      delfem2::JArray_PSuP_Hair(
-          psup_ind, psup,
+      dfm2::LinearSystemSolver_BlockSparse ls_solver; // sparse matrix
+      {
+        std::vector<unsigned int> psup_ind, psup;
+        delfem2::JArray_PSuP_Hair(
+            psup_ind, psup,
+            aIP_HairRoot);
+        ls_solver.Initialize(
+            aP0.size(), 4,
+            psup_ind, psup);
+        dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
+            ls_solver.dof_bcflag,
+            aIP_HairRoot);
+        assert(ls_solver.dof_bcflag.size() == aP0.size() * 4);
+      }
+      Simulation(
+          ls_solver, viewer,
+          aP0, aS0,
+          dt, mass, gravity, stiff_stretch, stiff_bendtwist,
           aIP_HairRoot);
-      ls_solver.Initialize(
-          aP0.size(), 4,
-          psup_ind, psup);
-      dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
-          ls_solver.dof_bcflag,
-          aIP_HairRoot);
-      assert(ls_solver.dof_bcflag.size() == aP0.size() * 4);
+      if( glfwWindowShouldClose(viewer.window)){ break; }
     }
-    // -----------------
-    std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
-    std::vector<dfm2::CVec3d> aPV(aP0.size(), dfm2::CVec3d(0, 0, 0)); // velocity
-    std::vector<dfm2::CVec3d> aPt = aP; // temporally positions
-    for (int iframe = 0; iframe < 100; ++iframe) {
-      for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-        if (ls_solver.dof_bcflag[ip * 4 + 0] == 0) {
-          aPt[ip] = aP[ip] + dt * aPV[ip] + (dt * dt / mass) * gravity;
-        }
+    {
+      dfm2::LinearSystemSolver_BlockPentaDiagonal<4> ls_solver; // sparse matrix
+      {
+        ls_solver.Initialize(
+            aP0.size());
+        dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
+            ls_solver.dof_bcflag,
+            aIP_HairRoot);
+        assert(ls_solver.dof_bcflag.size() == aP0.size() * 4);
       }
-      dfm2::MakeDirectorOrthogonal_RodHair(aS, aPt);
-      Solve_RodHair(
-          aPt, aS, ls_solver,
-          stiff_stretch, stiff_bendtwist, mass / (dt * dt),
-          aP0, aS0, aIP_HairRoot);
-      for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-        if (ls_solver.dof_bcflag[ip * 4 + 0] != 0) { continue; }
-        aPV[ip] = (aPt[ip] - aP[ip]) / dt;
-        aP[ip] = aPt[ip];
-      }
-      // -------------
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(aP, aS, aIP_HairRoot);
-      viewer.SwapBuffers();
-      glfwPollEvents();
-      if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
+      Simulation(
+          ls_solver, viewer,
+          aP0, aS0,
+          dt, mass, gravity, stiff_stretch, stiff_bendtwist,
+          aIP_HairRoot);
+      if( glfwWindowShouldClose(viewer.window)){ break; }
     }
   }
-  EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

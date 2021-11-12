@@ -70,14 +70,14 @@ int main() {
     viewer.DrawBegin_oldGL();
     delfem2::opengl::Draw_CCad2D(cad);
     {
-      ::glTranslated(0, 0, -0.9);
+      ::glTranslated(0, 0, +0.9);
       for (unsigned int ie = 0; ie < cad.topo.edges.size(); ++ie) {
         unsigned int iv0 = cad.topo.edges[ie].iv0;
         unsigned int iv1 = cad.topo.edges[ie].iv1;
         dfm2::CVec2d p = (cad.aVtx[iv0].pos + cad.aVtx[iv1].pos) * 0.5;
         glyph.DrawStringAt(std::to_string(ie), 0.8, p.x, p.y);
       }
-      ::glTranslated(0, 0, +0.9);
+      ::glTranslated(0, 0, -0.9);
     }
     viewer.SwapBuffers();
     glfwPollEvents();

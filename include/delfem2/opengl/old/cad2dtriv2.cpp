@@ -175,7 +175,7 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
       else{ ::glColor3d(0.8,0.8,0.8); }
       Draw_MeshTri(cad2d.aVec2_Tessellation, face.aTri);
       ::glColor3d(0.0,0.0,0.0);
-      Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
+      // Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
     }
     glTranslated(0,0,+0.2);
   }

@@ -4,10 +4,10 @@
 #endif
 
 #ifdef EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#define GLFW_INCLUDE_ES3
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
 #else
-#include <glad/glad.h>
+#  include <glad/glad.h>
 #endif
 
 #include "delfem2/cad2_dtri2.h"
@@ -26,11 +26,7 @@ class CCAD2D_Viewer : public delfem2::glfw::CViewer2 {
   CCAD2D_Viewer() {
     std::vector<double> aXY = {-1, -1, +1, -1, +1, +1, -1, +1};
     cad.AddPolygon(aXY);
-    {
-      double param[4] = {0.2, 0.3, 0.8, +0.3};
-      std::vector<double> vparam(param, param + 4);
-      cad.SetEdgeType(0, delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam);
-    }
+    cad.aEdge[0].SetCubicBezierCurve({-0.8,-0.7}, {+0.8,-0.7});
   }
   void mouse_press(const float src[2]) override {
     cad.Pick(src[0], src[1], 1.0);

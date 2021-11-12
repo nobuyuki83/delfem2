@@ -48,6 +48,27 @@ class CCad2D_EdgeGeo {
     this->ip0 = e.ip0;
   }
 
+  void SetLine(){
+    this->type_edge = EDGE_TYPE::LINE;
+    this->param.clear();
+  }
+
+  void SetQuadraticBezierCurve(const CVec2d& pos0){
+    this->type_edge = EDGE_TYPE::BEZIER_QUADRATIC;
+    this->param = {
+        pos0.x - p0.x,
+        pos0.y - p0.y };
+  }
+
+  void SetCubicBezierCurve(const CVec2d& pos0, const CVec2d& pos1){
+    this->type_edge = EDGE_TYPE::BEZIER_CUBIC;
+    this->param = {
+        pos0.x - p0.x,
+        pos0.y - p0.y,
+        pos1.x - p1.x,
+        pos1.y - p1.y };
+  }
+
   std::vector<double> GenMesh(unsigned int ndiv) const;
 
   double Distance(double x, double y) const;
@@ -64,6 +85,20 @@ class CCad2D_EdgeGeo {
     return bb;
   }
 
+  void Transform(double A[4]){
+    this->MatVec2(p0.x,p0.y, A, p0.x, p0.y);
+    this->MatVec2(p1.x,p1.y, A, p1.x, p1.y);
+    if( type_edge == CCad2D_EdgeGeo::BEZIER_CUBIC ){
+      assert( param.size() == 4);
+      this->MatVec2(param[0],param[1],A,param[0],param[1]);
+      this->MatVec2(param[2],param[3],A, param[2],param[3]);
+    }
+    if( type_edge == CCad2D_EdgeGeo::BEZIER_QUADRATIC ){
+      assert( param.size() == 2);
+      this->MatVec2(param[0],param[1],A,param[0],param[1]);
+    }
+  }
+
  public:
   CVec2d p0, p1;
   EDGE_TYPE type_edge; // 0: line, 1:Cubic Bezier 2: Quadratic Bezier
@@ -71,6 +106,13 @@ class CCad2D_EdgeGeo {
   //
   std::vector<CVec2d> aP;
   int ip0; //!< ip0 is the p0's point index when mesh is generated
+ private:
+  void MatVec2(double& x1, double& y1,
+               const double A[4],
+               double x0, double y0){
+    x1 = A[0]*x0 + A[1]*y0;
+    y1 = A[2]*x0 + A[3]*y0;
+  }
 };
 
 double AreaLoop(
@@ -81,13 +123,6 @@ std::vector<CCad2D_EdgeGeo> InvertLoop(
 
 std::vector<CCad2D_EdgeGeo> RemoveEdgeWithZeroLength(
     const std::vector<CCad2D_EdgeGeo> &aEdge);
-
-void Transform_LoopEdgeCad2D(
-    std::vector<CCad2D_EdgeGeo> &aEdge,
-    bool is_flip_holizontal,
-    bool is_flip_vertical,
-    double scale_x,
-    double scale_y);
 
 CBoundingBox2<double> BB_LoopEdgeCad2D(
     const std::vector<CCad2D_EdgeGeo> &aEdge);
@@ -153,16 +188,24 @@ class CCad2D {
     assert(iedge >= 0 && iedge < (int) aEdge.size());
     return aEdge[iedge].type_edge;
   }
+
   size_t nFace() const { return aFace.size(); }
+
   size_t nVtx() const { return aVtx.size(); }
+
   size_t nEdge() const { return aEdge.size(); }
+
   /**
    * @brief return std::vector of XY that bounds the face with index iface
    */
   std::vector<double> XY_VtxCtrl_Face(int iface) const;
+
   std::vector<double> XY_Vtx(int ivtx) const;
+
   std::vector<std::pair<int, bool> > Ind_Edge_Face(int iface) const;
+
   std::vector<unsigned int> Ind_Vtx_Face(int iface) const;
+
   std::vector<int> Ind_Vtx_Edge(int iedge) const;
 
   /**
@@ -193,6 +236,7 @@ class CCad2D {
   void AddVtxEdge(
       double x, double y, unsigned int ie_add);
 
+  /*
   void SetEdgeType(
       unsigned int iedge,
       CCad2D_EdgeGeo::EDGE_TYPE itype,
@@ -202,6 +246,7 @@ class CCad2D {
     aEdge[iedge].param = param;
     this->Tessellation();
   }
+   */
 
 
  public:
