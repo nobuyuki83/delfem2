@@ -35,52 +35,57 @@ int main()
   delfem2::glfw::InitGLOld();
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
-  int iframe = 0;
-  while(true){
-    {
-      const int nframe_interval = 10;
-      if( iframe == nframe_interval*0 ){
-        cad.Clear();
-        cad.AddPolygon(std::vector<double>{
-          -1,-1,
-          +1,-1,
-          +1,+1,
-          -1,+1});
-      }
-      else if( iframe == nframe_interval*1 ){
-        cad.AddVtxFace(0.0, 0.1, 0);
-      }
-      else if( iframe == nframe_interval*2 ){
-        cad.aEdge[0].SetCubicBezierCurve({-0.5,-1.5}, {+0.5, -1.5});
-        cad.Tessellation();
-      }
-      else if( iframe == nframe_interval*3 ){
-        cad.AddVtxEdge(-0.0, +0.8, 2);
-      }
-      else if( iframe == nframe_interval*4 ){
-        double x0 = 2.1, y0 = 0.0;
-        cad.AddPolygon(std::vector<double>{
-          x0-1, y0-1,
-          x0+1, y0-1,
-          x0+1, y0+1,
-          x0-1, y0+1} );
-        cad.AddVtxEdge(x0, -0.2, 5);
-      }
-      if( iframe % nframe_interval == 0 ){
-        dfm2::CBoundingBox2<double> bb = cad.BB();
-        viewer.trans[0] = -(bb.x_min+bb.x_max)*0.5;
-        viewer.trans[1] = -(bb.y_min+bb.y_max)*0.5;
-        viewer.trans[2] = 0.0;
-        viewer.scale = 1.0;
-      }
-      iframe = (iframe+1)%(nframe_interval*5);
+  for(int iproblem=0;;iproblem=(iproblem+1)%5){
+    if( iproblem == 0 ){
+      cad.Clear();
+      cad.AddPolygon(std::vector<double>{
+        -1,-1,
+        +1,-1,
+        +1,+1,
+        -1,+1});
     }
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    else if( iproblem == 1 ){
+      cad.AddVtxFace(0.0, 0.1, 0);
+    }
+    else if( iproblem == 2 ){
+      cad.aEdge[0].SetCubicBezierCurve({-0.5,-1.5}, {+0.5, -1.5});
+    }
+    else if( iproblem == 3 ){
+      cad.AddVtxEdge(-0.0, +0.8, 2);
+    }
+    else if( iproblem == 4 ){
+      double x0 = 2.1, y0 = 0.0;
+      cad.AddPolygon(std::vector<double>{
+        x0-1, y0-1,
+        x0+1, y0-1,
+        x0+1, y0+1,
+        x0-1, y0+1} );
+      cad.AddVtxEdge(x0, -0.2, 5);
+    }
+    {
+      dfm2::CBoundingBox2<double> bb = cad.BB();
+      viewer.trans[0] = -(bb.x_min+bb.x_max)*0.5;
+      viewer.trans[1] = -(bb.y_min+bb.y_max)*0.5;
+      viewer.trans[2] = 0.0;
+      viewer.scale = 1.0;
+    }
     // --------------------
-    viewer.DrawBegin_oldGL();
-    delfem2::opengl::Draw_CCad2D(cad);
-    viewer.SwapBuffers();
-    glfwPollEvents();
+    delfem2::CMeshDynTri2D dmesh;
+    {
+      delfem2::CMesher_Cad2D mesher;
+      mesher.edge_length = -1;
+      mesher.Meshing(dmesh, cad);
+    }
+    for(unsigned int iframe=0;iframe<100;++iframe) {
+      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      viewer.DrawBegin_oldGL();
+      delfem2::opengl::Draw_CCad2D(cad);
+      delfem2::opengl::DrawMeshDynTri_Edge(dmesh.aETri,dmesh.aVec2);
+      ::glColor3d(0.8, 0.8, 0.8);
+      delfem2::opengl::DrawMeshDynTri_FaceNorm(dmesh.aETri,dmesh.aVec2);
+      viewer.SwapBuffers();
+      glfwPollEvents();
+    }
   }
 EXIT:
   glfwDestroyWindow(viewer.window);

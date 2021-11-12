@@ -117,7 +117,8 @@ void AddPoint
   }
 }
 
-void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad)
+void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad,
+                                             const CMeshDynTri2D &dmesh)
 {
   {
     vao_face.aEBO.clear();
@@ -127,7 +128,10 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad)
   std::vector<float> aXY0f;
   std::vector<std::vector<unsigned int> > aaLine;
   std::vector<unsigned int> aTri;
-  cad.MeshForVisualization(aXY0f,aaLine,aTri);
+  // cad.MeshForVisualization(aXY0f,aaLine,aTri);
+  {
+    dmesh.Export_StlVectors(aXY0f, aTri);
+  }
   { // triangles for faces
     if( !glIsVertexArray(vao_face.VAO) ){ glGenVertexArrays(1, &vao_face.VAO); }
     glBindVertexArray(vao_face.VAO);
@@ -316,6 +320,7 @@ void dfm2::opengl::CShader_Cad2D::Draw(
     vao_face.Draw(0);
   }
   
+  /*
   glUseProgram(shdr1_program);
   glUniformMatrix4fv(shdr1_Loc_MatrixProjection, 1, GL_FALSE, mP);
   glUniformMatrix4fv(shdr1_Loc_MatrixModelView, 1, GL_FALSE, mMV);
@@ -342,5 +347,6 @@ void dfm2::opengl::CShader_Cad2D::Draw(
     else{                   glUniform3f(shdr1_Loc_Color, 0.f,0.f,0.f); }
     vao_edge.Draw(nv+ie);
   }
+   */
 }
 

@@ -48,13 +48,13 @@ class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
     cad.aEdge[0].SetCubicBezierCurve({-0.74,+1.0}, {-0.7, +0.45});
     cad.aEdge[4].SetCubicBezierCurve({+0.7,+0.45},{0.74,+1.0});
     cad.aEdge[6].SetCubicBezierCurve({+0.1,+1.2},{-0.1,+1.2});
-    cad.Tessellation();    
+    // cad.Tessellation();
   }
   
   void InitShader() {
     shdr_cad.Compile();
     shdr_dmsh.Compile();
-    shdr_cad.MakeBuffer(cad);
+    shdr_cad.MakeBuffer(cad,dmsh);
     mesher.edge_length = 0.08;
     mesher.Meshing(dmsh, cad);
     shdr_dmsh.MakeBuffer(dmsh.aVec2, dmsh.aETri);
@@ -79,7 +79,7 @@ class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
   void mouse_drag(const float src0[2], const float src1[2]) override {
     if (nav.ibutton == 0) {
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
-      shdr_cad.MakeBuffer(cad);
+      shdr_cad.MakeBuffer(cad,dmsh);
       // --
       for (unsigned int ip = 0; ip < dmsh.aVec2.size(); ++ip) {
         dmsh.aVec2[ip].p[0] = vtx_xy_when_picked[ip * 2 + 0] + vtx_w[ip] * (src1[0] - picked_pos[0]);

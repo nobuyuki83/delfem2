@@ -27,17 +27,27 @@ class CCAD2D_Viewer : public delfem2::glfw::CViewer2 {
     std::vector<double> aXY = {-1, -1, +1, -1, +1, +1, -1, +1};
     cad.AddPolygon(aXY);
     cad.aEdge[0].SetCubicBezierCurve({-0.8,-0.7}, {+0.8,-0.7});
+    {
+      mesher.edge_length = -1;
+      mesher.Meshing(dmesh, cad);
+    }
   }
   void mouse_press(const float src[2]) override {
     cad.Pick(src[0], src[1], 1.0);
   }
   void mouse_drag(const float src0[2], const float src1[2]) override {
     cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
-    shdr_cad.MakeBuffer(cad);
+    {
+      mesher.edge_length = -1;
+      mesher.Meshing(dmesh, cad);
+    }
+    shdr_cad.MakeBuffer(cad,dmesh);
   }
  public:
   delfem2::CCad2D cad;
   delfem2::opengl::CShader_Cad2D shdr_cad;
+  delfem2::CMeshDynTri2D dmesh;
+  delfem2::CMesher_Cad2D mesher;
 };
 
 CCAD2D_Viewer viewer;
@@ -75,8 +85,8 @@ int main() {
   }
 #endif
   viewer.shdr_cad.Compile();
-  viewer.shdr_cad.MakeBuffer(viewer.cad);
-
+  viewer.shdr_cad.MakeBuffer(viewer.cad, viewer.dmesh);
+  
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else

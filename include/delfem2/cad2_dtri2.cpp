@@ -54,23 +54,25 @@ DFM2_INLINE void GetBound(
       if (p0.y < bound_2d[2]) { bound_2d[2] = p0.y; }
       if (p0.y > bound_2d[3]) { bound_2d[3] = p0.y; }
     }
+    /*
     for (const auto &p0 : aEdgeGeo[ie0].aP) {
       if (p0.x < bound_2d[0]) { bound_2d[0] = p0.x; }
       if (p0.x > bound_2d[1]) { bound_2d[1] = p0.x; }
       if (p0.y < bound_2d[2]) { bound_2d[2] = p0.y; }
       if (p0.y > bound_2d[3]) { bound_2d[3] = p0.y; }
     }
+     */
   }
 }
 
 DFM2_INLINE void GenMeshCadFace(
 	std::vector<CVec2d> &aVec2,
     std::vector<CDynTri> &aETri,
-    [[maybe_unused]] const CCad2D_FaceGeo &facegeo, 
 	unsigned int iface0,
     const CadTopo &topo,
     [[maybe_unused]] const std::vector<CCad2D_VtxGeo> &aVtxGeo,
-    [[maybe_unused]] const std::vector<CCad2D_EdgeGeo> &aEdgeGeo) {
+    [[maybe_unused]] const std::vector<CCad2D_EdgeGeo> &aEdgeGeo,
+    const std::vector< std::vector<std::pair<unsigned int, double> > >& edge_point){
   assert(iface0 < topo.faces.size());
   std::vector<CDynPntSur> aPo2D;
   {
@@ -101,8 +103,8 @@ DFM2_INLINE void GenMeshCadFace(
       for (const auto &iie : aIE) {
         const int ie = iie.first;
         aIP.push_back(topo.edges[ie].iv0);
-        for (unsigned int iip = 0; iip < aEdgeGeo[ie].aP.size(); ++iip) {
-          aIP.push_back(aEdgeGeo[ie].ip0 + iip);
+        for( const auto& pair : edge_point[ie] ) {
+          aIP.push_back( pair.first );
         }
       }
     }
@@ -122,11 +124,11 @@ DFM2_INLINE void GenMeshCadFace(
       const std::vector<std::pair<unsigned int, bool> > &aIE = topo.loops[il0].aIE;
       for (const auto &iie : aIE) {
         const int ie0 = iie.first;
-        const size_t np = aEdgeGeo[ie0].aP.size();
+        const size_t np = edge_point[ie0].size();
         const size_t nseg = np + 1;
         for (unsigned int iseg = 0; iseg < nseg; ++iseg) {
-          const int ip0 = (iseg == 0) ? topo.edges[ie0].iv0 : aEdgeGeo[ie0].ip0 + iseg - 1;
-          const int ip1 = (iseg == nseg - 1) ? topo.edges[ie0].iv1 : aEdgeGeo[ie0].ip0 + iseg;
+          const int ip0 = (iseg == 0) ? topo.edges[ie0].iv0 : edge_point[ie0][iseg-1].first;
+          const int ip1 = (iseg == nseg - 1) ? topo.edges[ie0].iv1 : edge_point[ie0][iseg].first;
           EnforceEdge(aPo2D, aETri,
                       ip0, ip1, aVec2);
         }
@@ -140,9 +142,9 @@ DFM2_INLINE void GenMeshCadFace(
       const int il0 = topo.faces[iface0].aIL[0];
       const std::vector<std::pair<unsigned int, bool> > &aIE = topo.loops[il0].aIE;
       unsigned int ie0 = aIE[0].first;
-      const size_t np = aEdgeGeo[ie0].aP.size();
+      const size_t np = edge_point[ie0].size();
       ip0 = topo.edges[ie0].iv0;
-      ip1 = (np == 0) ? topo.edges[ie0].iv1 : aEdgeGeo[ie0].ip0;
+      ip1 = (np == 0) ? topo.edges[ie0].iv1 : edge_point[ie0][0].first;
     }
     assert(ip0 != -1 && ip1 != -1);
     unsigned int itri0_ker=UINT_MAX, iedtri;
@@ -204,7 +206,8 @@ DFM2_INLINE void delfem2::CCad2D::Pick(
       return;
     }
   }
-  ////
+  //
+  /*
   for(unsigned int iface=0;iface<aFace.size();++iface){
     bool is_inside = aFace[iface].IsInside(x0, y0, aVec2_Tessellation);
     if( is_inside ){
@@ -212,6 +215,7 @@ DFM2_INLINE void delfem2::CCad2D::Pick(
       return;
     }
   }
+   */
 }
 
 
@@ -225,7 +229,7 @@ DFM2_INLINE void delfem2::CCad2D::DragPicked(
   if( ivtx_picked < aVtx.size() ){
     aVtx[ivtx_picked].pos.p[0] = p1x;
     aVtx[ivtx_picked].pos.p[1] = p1y;
-    Tessellation(); // tesselation for visualization
+    this->CopyVertexPositionsToEdges();
     return;
   }
   if( iedge_picked < aEdge.size() ){
@@ -253,16 +257,16 @@ DFM2_INLINE void delfem2::CCad2D::DragPicked(
         }
       }
     }
-    Tessellation(); // tesselation for visualization
+    this->CopyVertexPositionsToEdges();
     return;
   }
-  if( iface_picked >= 0 && iface_picked < (int)aFace.size() ){
+  if( iface_picked >= 0 && iface_picked < static_cast<int>(topo.faces.size()) ){
     std::vector<unsigned int> aIdV = topo.loops[iface_picked].GetArray_IdVertex(topo.edges);
     for(int iv1 : aIdV){
       aVtx[iv1].pos.p[0] += p1x-p0x;
       aVtx[iv1].pos.p[1] += p1y-p0y;
     }
-    Tessellation(); // tesselation for visualization
+    this->CopyVertexPositionsToEdges();
     return;
   }
 }
@@ -272,7 +276,6 @@ DFM2_INLINE bool delfem2::CCad2D::Check() const
   this->topo.Assert();
   if( aVtx.size() != topo.num_vertex ){ assert(0); return false; }
   if( aEdge.size() != topo.edges.size() ){ assert(0); return false; }
-  if( aFace.size() != topo.faces.size() ){ assert(0); return false; }
   return true;
 }
 
@@ -284,15 +287,11 @@ DFM2_INLINE void delfem2::CCad2D::AddPolygon(
   for(unsigned int ip=0;ip<np;++ip){
     aVtx.emplace_back(CVec2d(aXY[ip*2+0], aXY[ip*2+1]));
   }
-//  const unsigned int iedge0 = aEdge.size();
-//  const unsigned int iface0 = aFace.size();
   for(unsigned int ie=0;ie<np;++ie){
     aEdge.emplace_back();
   }
-  aFace.emplace_back();
-  ////
   assert( this->Check() );
-  Tessellation();
+  this->CopyVertexPositionsToEdges();
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddFace(
@@ -307,9 +306,9 @@ DFM2_INLINE void delfem2::CCad2D::AddFace(
   for(unsigned int ie=0;ie<np;++ie){
     aEdge.push_back(aEdgeIn[ie]);
   }
-  aFace.emplace_back();
   assert( this->Check() );
-  Tessellation();
+  this->CopyVertexPositionsToEdges();
+  // Tessellation();
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddVtxFace(
@@ -320,7 +319,8 @@ DFM2_INLINE void delfem2::CCad2D::AddVtxFace(
   topo.Assert();
   aVtx.emplace_back(CVec2d(x0,y0) );
   assert( this->Check() );
-  Tessellation();
+  this->CopyVertexPositionsToEdges();
+  // Tessellation();
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddVtxEdge(
@@ -330,8 +330,9 @@ DFM2_INLINE void delfem2::CCad2D::AddVtxEdge(
   topo.AddVtx_Edge(ie_add);
   topo.Assert();
   aVtx.emplace_back(CVec2d(x,y) );
-  aEdge.emplace_back( );
-  Tessellation();
+  aEdge.emplace_back();
+  this->CopyVertexPositionsToEdges();
+  // Tessellation();
 }
 
 DFM2_INLINE std::vector<double> delfem2::CCad2D::MinMaxXYZ() const
@@ -368,8 +369,8 @@ DFM2_INLINE void delfem2::CCad2D::GetPointsEdge(
   }
 }
 
-DFM2_INLINE std::vector<double> delfem2::CCad2D::XY_VtxCtrl_Face
-(int iface) const
+DFM2_INLINE std::vector<double> delfem2::CCad2D::XY_VtxCtrl_Face(
+    int iface) const
 {
   std::vector<double> aXY;
   for(const auto & iie : topo.loops[iface].aIE){
@@ -564,10 +565,11 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance(
     double x, double y) const
 {
   const CVec2d q(x,y);
-  if( type_edge == 0 ){
+//  if( type_edge == 0 ){
     const CVec2d pn = GetNearest_LineSeg_Point(q,p0,p1);
     return delfem2::Distance(pn,q);
-  }
+//  }
+  /*
   else if( type_edge == 1 ){
     assert( param.size() == 4 );
     double min_dist = -1;
@@ -580,9 +582,11 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance(
     return min_dist;
   }
   assert(0);
+   */
   return 0;
 }
 
+/*
 DFM2_INLINE void delfem2::CCad2D::MeshForVisualization(
 	std::vector<float>& aXYf,
 	std::vector<std::vector<unsigned int> >& aaLine,
@@ -595,6 +599,7 @@ DFM2_INLINE void delfem2::CCad2D::MeshForVisualization(
     aXYf.push_back(static_cast<float>(iv.y));
   }
   aaLine.resize(aEdge.size());
+
   for(size_t ie=0;ie<aEdge.size();++ie){
     std::vector<unsigned int>& aLine = aaLine[ie];
     aLine.clear();
@@ -604,13 +609,16 @@ DFM2_INLINE void delfem2::CCad2D::MeshForVisualization(
     }
     aLine.push_back(topo.edges[ie].iv1);
   }
+
   for(const auto & fc : aFace){
     aTri.insert(aTri.end(),fc.aTri.begin(),fc.aTri.end());
   }
 }
+ */
 
 DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthMesh() const
 {
+  /*
   double len0 = 0.0;
   for(size_t ie=0;ie<aP.size()+1;++ie){
     const CVec2d q0 = (ie==0) ? p0 : aP[ie-1];
@@ -619,6 +627,8 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthMesh() const
     len0 += dist0;
   }
   return len0;
+   */
+  return delfem2::Distance(p0,p1);
 }
 
 
@@ -628,6 +638,7 @@ DFM2_INLINE double delfem2::AreaLoop(
   double a0 = 0;
   CVec2d qo(0,0);
   for(const auto & ie : aEdge){
+    /*
     const std::vector<CVec2d>& aP = ie.aP;
     const size_t nseg = aP.size()+1;
     for(unsigned int iseg=0;iseg<nseg;++iseg){
@@ -635,6 +646,8 @@ DFM2_INLINE double delfem2::AreaLoop(
       const CVec2d q1 = (iseg==nseg-1) ?ie.p1 : aP[iseg];
       a0 += Area_Tri(qo, q0, q1);
     }
+     */
+    a0 += Area_Tri(qo, ie.p0, ie.p1);
   }
   return a0;
 }
@@ -682,17 +695,19 @@ DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo>
 
 // ---------------------------------------------------------------
 
+/*
 DFM2_INLINE void delfem2::CCad2D::Tessellation()
 {
+  std::vector< std::vector< std::pair<unsigned int, double> > > edge_point(aEdge.size());
+  std::vector< std::vector<double> > edge_xyw(aEdge.size());
   for(size_t ie=0;ie<topo.edges.size();++ie){
     const int iv0 = topo.edges[ie].iv0;
     const int iv1 = topo.edges[ie].iv1;
     aEdge[ie].p0 = aVtx[iv0].pos;
     aEdge[ie].p1 = aVtx[iv1].pos;
-    std::vector<double> xyw = aEdge[ie].GenMesh(20);
-    aEdge[ie].aP.clear();
-    for(size_t ip=0;ip<xyw.size()/3;++ip){
-      aEdge[ie].aP.emplace_back(xyw[ip*3+0], xyw[ip*3+1]);
+    edge_xyw[ie] = aEdge[ie].GenMesh(20);
+    for(size_t ip=0;ip<edge_xyw[ie].size()/3;++ip){
+      edge_point[ie].push_back(std::make_pair(UINT_MAX,edge_xyw[ie][ip*3+2]));
     }
   }
   std::vector<CVec2d>& aVec2 = this->aVec2_Tessellation;
@@ -700,10 +715,10 @@ DFM2_INLINE void delfem2::CCad2D::Tessellation()
   for(auto & iv : aVtx){
     aVec2.push_back( iv.pos );
   }
-  for(auto & ie : aEdge){
-    ie.ip0 = static_cast<unsigned int>(aVec2.size());
-    for(const auto & ip : ie.aP){
-      aVec2.push_back(ip);
+  for(unsigned int ie=0;ie<aEdge.size();++ie){
+    for(unsigned int ip=0;ip<edge_xyw[ie].size()/3;++ip){
+      edge_point[ie][ip].first = aVec2.size();
+      aVec2.push_back({edge_xyw[ie][ip*3+0],edge_xyw[ie][ip*3+1]});
     }
   }
   for(unsigned int ifc=0;ifc<topo.faces.size();++ifc){
@@ -711,7 +726,7 @@ DFM2_INLINE void delfem2::CCad2D::Tessellation()
     cad2::GenMeshCadFace(aVec2, aETri,
         aFace[ifc],ifc,
         topo,
-        aVtx,aEdge);
+        aVtx, aEdge, edge_point);
     std::vector<unsigned int>& aTri = aFace[ifc].aTri;
     aTri.clear();
     const int ntri = (int)aETri.size();
@@ -723,6 +738,7 @@ DFM2_INLINE void delfem2::CCad2D::Tessellation()
     }
   }
 }
+ */
 
 
 // above: CCad2
@@ -733,28 +749,21 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing(
 	CMeshDynTri2D& dmsh,
 	const CCad2D& cad)
 {
-  std::vector<CCad2D_EdgeGeo> aEdgeGeo = cad.aEdge;
-  std::vector< std::vector<double> > aaXYW(aEdgeGeo.size());
-  for(unsigned int ie=0;ie<aEdgeGeo.size();++ie){
-    const unsigned int iv0 = cad.topo.edges[ie].iv0;
-    const unsigned int iv1 = cad.topo.edges[ie].iv1;
-    aEdgeGeo[ie].p0 = cad.aVtx[iv0].pos;
-    aEdgeGeo[ie].p1 = cad.aVtx[iv1].pos;
+  std::vector< std::vector<double> > aaXYW(cad.nEdge());
+  for(unsigned int ie=0;ie<cad.aEdge.size();++ie){
     unsigned int ndiv = 1;
-    if( this->mapIdEd_NDiv.find(ie) == this->mapIdEd_NDiv.end() ){
-      const double len0 = aEdgeGeo[ie].LengthNDiv(20);
-      ndiv = static_cast<unsigned int>(len0/edge_length+1);
+    if( edge_length > 0 ) {
+      if (this->mapIdEd_NDiv.find(ie) == this->mapIdEd_NDiv.end()) {
+        const double len0 = cad.aEdge[ie].LengthNDiv(20);
+        ndiv = static_cast<unsigned int>(len0 / edge_length + 1);
+      } else {
+        ndiv = this->mapIdEd_NDiv.find(ie)->second;
+      }
     }
     else{
-      ndiv = this->mapIdEd_NDiv.find(ie)->second;
+      ndiv = 20;
     }
-    aaXYW[ie] = aEdgeGeo[ie].GenMesh(ndiv);
-    // TODO: remove below
-    aEdgeGeo[ie].aP.clear();
-    for(unsigned int ip=0;ip<aaXYW[ie].size()/3;++ip){
-      aEdgeGeo[ie].aP.emplace_back(aaXYW[ie][ip*3+0], aaXYW[ie][ip*3+1]);
-    }
-    // end TODO
+    aaXYW[ie] = cad.aEdge[ie].GenMesh(ndiv);
   }
   //
   this->edge_point.resize(cad.aEdge.size());
@@ -764,8 +773,7 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing(
     dmsh.aVec2.push_back( cad.aVtx[iv].pos );
     aFlgPnt.push_back(iv);
   }
-  for(unsigned int ie=0;ie<aEdgeGeo.size();++ie){
-    aEdgeGeo[ie].ip0 = static_cast<unsigned int>(dmsh.aVec2.size());
+  for(unsigned int ie=0;ie<cad.aEdge.size();++ie){
     edge_point[ie].clear();
     for(unsigned int ip=0;ip<aaXYW[ie].size()/3;++ip){
       const unsigned int iv = dmsh.aVec2.size();  //  id of mesh vtx
@@ -776,11 +784,11 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing(
   }
   //
   aFlgTri.clear();
-  for(unsigned int ifc=0;ifc<cad.aFace.size();++ifc){ // add face to dmsh
+  for(unsigned int ifc=0;ifc<cad.topo.faces.size();++ifc){ // add face to dmsh
     std::vector<CDynTri> aDTri;
     cad2::GenMeshCadFace(dmsh.aVec2, aDTri,
-        cad.aFace[ifc], ifc,
-        cad.topo,cad.aVtx,aEdgeGeo);
+        ifc,
+        cad.topo, cad.aVtx, cad.aEdge, edge_point);
     const unsigned int ntri0 = static_cast<unsigned int>(dmsh.aETri.size());
     for(auto & tri : aDTri){
       if( tri.s2[0]!=UINT_MAX ){ tri.s2[0] += ntri0; }
@@ -810,7 +818,6 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing(
   }
   nvtx = cad.aVtx.size();
   nedge = cad.aEdge.size();
-  nface = cad.aFace.size();
 }
 
 

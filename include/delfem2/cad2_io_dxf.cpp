@@ -51,7 +51,7 @@ DFM2_INLINE bool delfem2::WriteCAD_DXF(
   // entity section
   fprintf(fp,"  0\nSECTION\n");
   fprintf(fp,"  2\nENTITIES\n");
-  for(size_t ifc=0;ifc<cad.aFace.size();++ifc){
+  for(size_t ifc=0;ifc<cad.topo.faces.size();++ifc){
     const std::vector<unsigned int>& aIL = cad.topo.faces[ifc].aIL;
     for(unsigned int il0 : aIL){
       const std::vector< std::pair<unsigned int,bool> >& aIE = cad.topo.loops[il0].aIE;

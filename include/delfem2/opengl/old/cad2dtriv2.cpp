@@ -86,13 +86,16 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge(
 {
   if( is_selected ){ ::glColor3d(1,1,0); }
   else{ ::glColor3d(0,0,0); }
-  ::glBegin(GL_LINE_STRIP);
-  myGlVertex( edge.p0 );
-  for(const auto & ip : edge.aP){
-    myGlVertex( ip );
+  {
+    const std::vector<double> xyw = edge.GenMesh(20);
+    ::glBegin(GL_LINE_STRIP);
+    myGlVertex(edge.p0);
+    for (unsigned int ip = 0; ip < xyw.size() / 3; ++ip) {
+      ::glVertex2d(xyw[ip * 3 + 0], xyw[ip * 3 + 1]);
+    }
+    myGlVertex(edge.p1);
+    ::glEnd();
   }
-  myGlVertex( edge.p1 );
-  ::glEnd();
   //
   if( is_selected ){
     if( edge.type_edge == CCad2D_EdgeGeo::BEZIER_CUBIC ){
@@ -140,7 +143,6 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
 {
   const std::vector<CCad2D_VtxGeo>& aVtx = cad2d.aVtx;
   const std::vector<CCad2D_EdgeGeo>& aEdge = cad2d.aEdge;
-  const std::vector<CCad2D_FaceGeo>& aFace = cad2d.aFace;
   int ivtx_picked = cad2d.ivtx_picked;
   int iedge_picked = cad2d.iedge_picked;
   int iface_picked = cad2d.iface_picked;
@@ -165,7 +167,7 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
         (int)ie == iedge_picked,
         ipicked_elem);
   }
-  //
+  /*
   if( is_draw_face ){
     ::glLineWidth(1);
     glTranslated(0,0,-0.2);
@@ -175,9 +177,10 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
       else{ ::glColor3d(0.8,0.8,0.8); }
       Draw_MeshTri(cad2d.aVec2_Tessellation, face.aTri);
       ::glColor3d(0.0,0.0,0.0);
-      // Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
+      Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
     }
     glTranslated(0,0,+0.2);
   }
+   */
 }
 

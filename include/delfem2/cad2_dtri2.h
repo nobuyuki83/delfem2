@@ -37,15 +37,12 @@ class CCad2D_EdgeGeo {
   };
   CCad2D_EdgeGeo() {
     type_edge = LINE;
-    ip0 = -1;
   }
   CCad2D_EdgeGeo(const CCad2D_EdgeGeo &e) {
     this->p0 = e.p0;
     this->p1 = e.p1;
     this->type_edge = e.type_edge;
     this->param = e.param;
-    this->aP = e.aP;
-    this->ip0 = e.ip0;
   }
 
   void SetLine(){
@@ -81,7 +78,7 @@ class CCad2D_EdgeGeo {
     CBoundingBox2<double> bb;
     bb.Add(p0.x, p0.y);
     bb.Add(p1.x, p1.y);
-    for (unsigned int ip = 0; ip < aP.size(); ++ip) { bb.Add(aP[ip].x, aP[ip].y); }
+    // for (unsigned int ip = 0; ip < aP.size(); ++ip) { bb.Add(aP[ip].x, aP[ip].y); }
     return bb;
   }
 
@@ -103,9 +100,6 @@ class CCad2D_EdgeGeo {
   CVec2d p0, p1;
   EDGE_TYPE type_edge; // 0: line, 1:Cubic Bezier 2: Quadratic Bezier
   std::vector<double> param;
-  //
-  std::vector<CVec2d> aP;
-  int ip0; //!< ip0 is the p0's point index when mesh is generated
  private:
   void MatVec2(double& x1, double& y1,
                const double A[4],
@@ -127,34 +121,6 @@ std::vector<CCad2D_EdgeGeo> RemoveEdgeWithZeroLength(
 CBoundingBox2<double> BB_LoopEdgeCad2D(
     const std::vector<CCad2D_EdgeGeo> &aEdge);
 
-/**
- * @details this class should be independent from everything
- */
-class CCad2D_FaceGeo {
- public:
-  std::vector<unsigned int> aTri;
- public:
-  bool IsInside(
-      double x, double y,
-      const std::vector<CVec2d> &aVec2) const {
-    for (unsigned int it = 0; it < aTri.size() / 3; ++it) {
-      const CVec2d q0(x, y);
-      const int i0 = aTri[it * 3 + 0];
-      const int i1 = aTri[it * 3 + 1];
-      const int i2 = aTri[it * 3 + 2];
-      const CVec2d &p0 = aVec2[i0];
-      const CVec2d &p1 = aVec2[i1];
-      const CVec2d &p2 = aVec2[i2];
-      double a0 = Area_Tri(q0, p1, p2);
-      double a1 = Area_Tri(p0, q0, p2);
-      double a2 = Area_Tri(p0, p1, q0);
-      if (a0 > 0 && a1 > 0 && a2 > 0) { return true; }
-    }
-    return false;
-  }
-};
-
-
 // ---------------------------------------------------------------------------------
 
 /**
@@ -163,33 +129,37 @@ class CCad2D_FaceGeo {
 class CCad2D {
  public:
   CCad2D() {
-//    std::cout << "CCAD2D -- construct" << std::endl;
     ivtx_picked = -1;
     iedge_picked = -1;
     iface_picked = -1;
     is_draw_face = true;
   }
+
   void Clear() {
     aVtx.clear();
     aEdge.clear();
-    aFace.clear();
     topo.Clear();
   }
-  void Tessellation();
-  void Pick(double x0, double y0,
-            double view_height);
+
+  void Pick(
+      double x0, double y0,
+      double view_height);
+
   void DragPicked(double p1x, double p1y, double p0x, double p0y);
   // --------------------
   // const method here
   std::vector<double> MinMaxXYZ() const;
+
   CBoundingBox2<double> BB() const;
+
   bool Check() const;
+
   int GetEdgeType(int iedge) const {
     assert(iedge >= 0 && iedge < (int) aEdge.size());
     return aEdge[iedge].type_edge;
   }
 
-  size_t nFace() const { return aFace.size(); }
+  // size_t nFace() const { return aFace.size(); }
 
   size_t nVtx() const { return aVtx.size(); }
 
@@ -217,13 +187,9 @@ class CCad2D {
       const std::vector<int> &aIE,
       double tolerance) const;
 
-  void MeshForVisualization(
-      std::vector<float> &aXYf,
-      std::vector<std::vector<unsigned int> > &aaLine,
-      std::vector<unsigned int> &aTri) const;
-
   // ----------------------------------
   // geometric operations from here
+
   void AddPolygon(
       const std::vector<double> &aXY);
 
@@ -236,26 +202,11 @@ class CCad2D {
   void AddVtxEdge(
       double x, double y, unsigned int ie_add);
 
-  /*
-  void SetEdgeType(
-      unsigned int iedge,
-      CCad2D_EdgeGeo::EDGE_TYPE itype,
-      const std::vector<double> &param) {
-    assert(iedge < aEdge.size());
-    aEdge[iedge].type_edge = itype;
-    aEdge[iedge].param = param;
-    this->Tessellation();
-  }
-   */
-
-
  public:
   CadTopo topo;
   //
   std::vector<CCad2D_VtxGeo> aVtx;
   std::vector<CCad2D_EdgeGeo> aEdge;
-  std::vector<CCad2D_FaceGeo> aFace;
-  std::vector<CVec2d> aVec2_Tessellation;
 
   unsigned int ivtx_picked;
   unsigned int iedge_picked;
@@ -263,6 +214,15 @@ class CCad2D {
   int ipicked_elem;
 
   bool is_draw_face;
+ private:
+  void CopyVertexPositionsToEdges(){
+    for(size_t ie=0;ie<topo.edges.size();++ie) {
+      const int iv0 = topo.edges[ie].iv0;
+      const int iv1 = topo.edges[ie].iv1;
+      aEdge[ie].p0 = aVtx[iv0].pos;
+      aEdge[ie].p1 = aVtx[iv1].pos;
+    }
+  }
 };
 
 /**

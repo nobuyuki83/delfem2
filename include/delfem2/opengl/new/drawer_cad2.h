@@ -15,6 +15,7 @@
 #include "delfem2/opengl/new/funcs.h" // for CGL4_VAO_Mesh
 #include "delfem2/vec2.h"
 #include "delfem2/dtri.h"
+#include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
@@ -28,7 +29,7 @@ public:
   CShader_Cad2D(){
     is_show_face = true;
   }
-  void MakeBuffer(const CCad2D& cad);
+  void MakeBuffer(const CCad2D& cad, const CMeshDynTri2D &dmesh);
   void Compile(){
     this->Compile_Face();
     this->Compile_Edge();

@@ -378,10 +378,12 @@ DFM2_INLINE void delfem2::ReadSVG_Cad2D(
     aEdge = RemoveEdgeWithZeroLength(aEdge);
     for (auto &ie: aEdge) {
       std::vector<double> xyw = ie.GenMesh(20);
+      /*
       ie.aP.clear();
       for (size_t ip = 0; ip < xyw.size() / 3; ++ip) {
         ie.aP.emplace_back(xyw[ip * 3 + 0], xyw[ip * 3 + 1]);
       }
+       */
     }
     cad.AddFace(aEdge);
   }

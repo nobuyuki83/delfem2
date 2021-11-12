@@ -113,7 +113,6 @@ int main() {
       -1, +1});
     cad.aEdge[0].SetQuadraticBezierCurve({0,-0.5});
     cad.aEdge[2].SetCubicBezierCurve({0.5, 1.5}, {-0.5, 1.5});
-    cad.Tessellation();
     CCadMesh2DVeiwer viewer(cad);
     viewer.OpenWindow();
     while (!glfwWindowShouldClose(viewer.window)) {
@@ -136,7 +135,6 @@ int main() {
     cad.aEdge[0].SetCubicBezierCurve({-0.74,+1.0}, {-0.7, +0.45});
     cad.aEdge[4].SetCubicBezierCurve({+0.7,+0.45},{0.74,+1.0});
     cad.aEdge[6].SetCubicBezierCurve({+0.1,+1.2},{-0.1,+1.2});
-    cad.Tessellation();
     CCadMesh2DVeiwer viewer(cad);
     viewer.OpenWindow();
     while (!glfwWindowShouldClose(viewer.window)) {

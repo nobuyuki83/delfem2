@@ -31,6 +31,11 @@ int main() {
     CCAD2DViewer() : CViewer3(1.5) {
       const double poly[8] = {-1, -1, +1, -1, +1, +1, -1, +1};
       cad.AddPolygon(std::vector<double>(poly, poly + 8));
+      {
+        delfem2::CMesher_Cad2D mesher;
+        mesher.edge_length = -1;
+        mesher.Meshing(dmesh, cad);
+      }
     }
     //
     void mouse_press(const float src[3], [[maybe_unused]] const float dir[3]) override {
@@ -38,14 +43,24 @@ int main() {
     }
     void mouse_drag(const float src0[3], const float src1[3], [[maybe_unused]] const float dir[3]) override {
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
+      {
+        delfem2::CMesher_Cad2D mesher;
+        mesher.edge_length = -1;
+        mesher.Meshing(dmesh, cad);
+      }
     }
     //
     void Draw() {
       DrawBegin_oldGL();
       delfem2::opengl::Draw_CCad2D(cad);
+      delfem2::opengl::DrawMeshDynTri_Edge(dmesh.aETri,dmesh.aVec2);
+      ::glColor3d(0.8, 0.8, 0.8);
+      delfem2::opengl::DrawMeshDynTri_FaceNorm(dmesh.aETri,dmesh.aVec2);
       SwapBuffers();
     }
+   public:
     delfem2::CCad2D cad;
+    delfem2::CMeshDynTri2D dmesh;
   };
   // --------------------
   CCAD2DViewer viewer;

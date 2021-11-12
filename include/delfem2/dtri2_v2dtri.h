@@ -344,11 +344,15 @@ class CMeshDynTri2D {
     RefineMesh(aEPo, aETri, aVec2, aCmd);
     assert(aEPo.size() == aVec2.size());
   }
+  
+  
+  template <typename REAL>
   void Export_StlVectors(
-      std::vector<double> &aXY,
+      std::vector<REAL> &aXY,
       std::vector<unsigned int> &aTri) const {
     MeshTri2D_Export(aXY, aTri, aVec2, aETri);
   }
+  
   void Clear() {
     aEPo.clear();
     aETri.clear();
