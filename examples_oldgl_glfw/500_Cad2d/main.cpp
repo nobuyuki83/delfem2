@@ -13,7 +13,8 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -77,7 +78,7 @@ int main()
       mesher.Meshing(dmesh, cad);
     }
     for(unsigned int iframe=0;iframe<100;++iframe) {
-      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      if( glfwWindowShouldClose(viewer.window) ){ break; }
       viewer.DrawBegin_oldGL();
       delfem2::opengl::Draw_CCad2D(cad);
       delfem2::opengl::DrawMeshDynTri_Edge(dmesh.aETri,dmesh.aVec2);
@@ -86,8 +87,8 @@ int main()
       viewer.SwapBuffers();
       glfwPollEvents();
     }
+    if( glfwWindowShouldClose(viewer.window) ){ break; }
   }
-EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

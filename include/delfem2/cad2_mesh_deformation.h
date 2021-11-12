@@ -6,7 +6,8 @@
 #define CAD2_MESH_DEFORMATION_H_
 
 #include "delfem2/cagedef.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 
 void SetCadMeshDeformationWeight(
     std::vector<double>& vtx_w,

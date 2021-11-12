@@ -14,7 +14,8 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"

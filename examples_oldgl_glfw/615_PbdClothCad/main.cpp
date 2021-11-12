@@ -17,7 +17,8 @@
 
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 #include "delfem2/dtri.h"
 #include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/pbd_geo3.h"

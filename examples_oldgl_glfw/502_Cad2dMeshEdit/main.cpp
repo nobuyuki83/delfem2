@@ -16,7 +16,8 @@
 
 #include "delfem2/cad2_mesh_deformation.h"
 #include "delfem2/cagedef.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
 
 // ---------------------------
 

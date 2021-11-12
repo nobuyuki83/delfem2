@@ -18,7 +18,8 @@
 
 #include "delfem2/opengl/new/funcs.h"
 #include "delfem2/opengl/funcs.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 
 namespace dfm2 = delfem2;
 

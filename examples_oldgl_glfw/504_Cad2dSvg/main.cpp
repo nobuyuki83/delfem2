@@ -20,7 +20,8 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
 #include "delfem2/openglstb/glyph.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 #include "delfem2/cad2_io_svg.h"
 
 #ifndef M_PI

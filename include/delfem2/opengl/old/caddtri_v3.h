@@ -9,7 +9,8 @@
 #define DFM2_CADDTRI_V3_GLOLD_H
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 #include "delfem2/vec3.h"
 #include <stdio.h>
 #include <vector>

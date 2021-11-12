@@ -8,7 +8,8 @@
 #ifndef DFM2_GARMENT_H
 #define DFM2_GARMENT_H
 
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 #include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/rig_geo3.h"
@@ -92,7 +93,7 @@ void MeshingPattern
   // ---
   const unsigned int np = aVec2.size();
   aXYZ.resize(np*3);
-  for(unsigned int ifc=0;ifc<cad.aFace.size();++ifc){
+  for(unsigned int ifc=0;ifc<cad.topo.faces.size();++ifc){
     const CRigidTrans_2DTo3D& rt23 = aRT23[ifc];
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,ifc), cad);
     for(int ip : aIP){

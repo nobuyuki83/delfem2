@@ -25,7 +25,8 @@
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/opengl/new/drawer_cad2.h"
 #include "delfem2/opengl/new/drawer_dynmesh.h"
-#include "delfem2/cad2_dtri2.h"
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
 
 namespace dfm2 = delfem2;
 
