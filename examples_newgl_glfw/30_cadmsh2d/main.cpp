@@ -63,39 +63,41 @@ class CCadDtri_Viewer : public delfem2::glfw::CViewer2 {
     view_height = 1.5;
   }
   void mouse_press(const float src[2]) override {
-    cad.Pick(src[0], src[1], view_height);
-    picked_pos = {src[0], src[1]};
+    cad_ui.Pick(src[0], src[1], view_height, cad);
     {
       std::vector<unsigned int> tri_vtx;
       dmsh.Export_StlVectors(vtx_xy_when_picked, tri_vtx);
     }
-    if (cad.ivtx_picked != UINT_MAX) { // vertex is picked
-      picked_pos = {
-        static_cast<float>(cad.aVtx[cad.ivtx_picked].pos.x),
-        static_cast<float>(cad.aVtx[cad.ivtx_picked].pos.y)};
+    if( cad_ui.ivtx_picked != UINT_MAX ) {
+      SetCadMeshDeformationWeightVtx(
+          vtx_w,
+          cad_ui.ivtx_picked,
+          cad, mesher, vtx_xy_when_picked);
+    } else if (cad_ui.iedge_picked != UINT_MAX ) {
+      SetCadMeshDeformationWeightEdge(
+          vtx_w,
+          cad_ui.iedge_picked,
+          cad, mesher, vtx_xy_when_picked);
     }
-    SetCadMeshDeformationWeight(vtx_w,
-                                cad, mesher, vtx_xy_when_picked);
   }
   void mouse_drag(const float src0[2], const float src1[2]) override {
     if (nav.ibutton == 0) {
-      cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
+      cad_ui.DragPicked(cad, src1[0], src1[1], src0[0], src0[1]);
       shdr_cad.MakeBuffer(cad,dmsh);
-      // --
       for (unsigned int ip = 0; ip < dmsh.aVec2.size(); ++ip) {
-        dmsh.aVec2[ip].p[0] = vtx_xy_when_picked[ip * 2 + 0] + vtx_w[ip] * (src1[0] - picked_pos[0]);
-        dmsh.aVec2[ip].p[1] = vtx_xy_when_picked[ip * 2 + 1] + vtx_w[ip] * (src1[1] - picked_pos[1]);
+        dmsh.aVec2[ip].p[0] = vtx_xy_when_picked[ip * 2 + 0] + vtx_w[ip] * (src1[0] - cad_ui.picked_pos[0]);
+        dmsh.aVec2[ip].p[1] = vtx_xy_when_picked[ip * 2 + 1] + vtx_w[ip] * (src1[1] - cad_ui.picked_pos[1]);
       }
       shdr_dmsh.MakeBuffer(dmsh.aVec2, dmsh.aETri);
     }
   }
  public:
   delfem2::CCad2D cad;
+  delfem2::Cad2_Ui cad_ui;
   delfem2::CMeshDynTri2D dmsh;
   delfem2::CMesher_Cad2D mesher;
   std::vector<double> vtx_w;
   std::vector<double> vtx_xy_when_picked;
-  std::array<float, 2> picked_pos{0.f, 0.f};
   //
   delfem2::opengl::CShader_Cad2D shdr_cad;
   delfem2::opengl::CShader_MeshDTri2D shdr_dmsh;

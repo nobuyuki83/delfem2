@@ -31,13 +31,18 @@ DFM2_INLINE void DrawMeshDynTri_FaceNorm(
 
 // --------------------------------------------
 
-DFM2_INLINE void Draw_CCad2DEdge(
+DFM2_INLINE void DrawCCad2DEdge(
     const delfem2::CCad2D_EdgeGeo& edge,
     bool is_selected,
     int ipicked_elem);
 
-DFM2_INLINE void Draw_CCad2D(
-    const delfem2::CCad2D& cad2d);
+DFM2_INLINE void DrawCad2Vtxs(
+    const delfem2::CCad2D& cad2d,
+    unsigned int ivtx_picked);
+
+DFM2_INLINE void DrawCad2Edges(
+    const delfem2::CCad2D& cad2d,
+    unsigned int iedge_picked);
   
 }
 

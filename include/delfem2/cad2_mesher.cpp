@@ -253,19 +253,18 @@ DFM2_INLINE std::vector<unsigned int>
 {
   std::vector<unsigned int> res;
   if( iedge >= cad2d.aEdge.size() ){ return res; }
-  //    std::cout << nvtx << " " << nedge << " " << nface << std::endl;
   std::vector<int> aflg(nvtx+nedge+nface,0);
   {
     aflg[nvtx+iedge] = 1;
   }
-  std::vector<int> aIP_E = cad2d.Ind_Vtx_Edge(iedge);
-  if( is_end_point ){ res.push_back(aIP_E[0]); }
+  std::pair<unsigned int, unsigned int> aIP_E = cad2d.topo.VertexIndexs_EdgeEndPoints(iedge);
+  if( is_end_point ){ res.push_back(aIP_E.first); }
   for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
     if( iflg >= (int)(nvtx+nedge) ){ break; }
     if( aflg[iflg] == 1 ){ res.push_back(ip); }
   }
-  if( is_end_point ){ res.push_back(aIP_E[1]); }
+  if( is_end_point ){ res.push_back(aIP_E.second); }
   return res;
 }
 
@@ -281,10 +280,9 @@ DFM2_INLINE std::vector<unsigned int>
       assert(iedge<nedge);
       aflg[iedge+nvtx] = 1;
       {
-        const std::vector<int>& aIV = cad2d.Ind_Vtx_Edge(iedge);
-        for(int iv0 : aIV){
-          aflg[iv0] = 1;
-        }
+        const auto pair = cad2d.topo.VertexIndexs_EdgeEndPoints(iedge);
+        aflg[pair.first] = 1;
+        aflg[pair.second] = 1;
       }
     }
   }
@@ -304,14 +302,12 @@ DFM2_INLINE std::vector<int> delfem2::CMesher_Cad2D::IndPoint_IndFaceArray(
   std::vector<int> aflg(nvtx+nedge+nface,0);
   {
     for(unsigned int iface : aIndFc){
-      std::cout << iface << " " << nface << std::endl;
       assert(iface<nface);
       aflg[nvtx+nedge+iface] = 1;
-      for(const auto & iie : cad2d.Ind_Edge_Face(iface)){
-        const int ie0 = iie.first;
-        aflg[nvtx+ie0] = 1;
+      for(const auto & iie : cad2d.topo.EdgeIndexes_Face(iface)){
+        aflg[nvtx+iie.first] = 1;
       }
-      for(int iv0 : cad2d.Ind_Vtx_Face(iface)){
+      for(unsigned int iv0 : cad2d.topo.VertexIndexs_Face(iface)){
         aflg[iv0] = 1;
       }
     }

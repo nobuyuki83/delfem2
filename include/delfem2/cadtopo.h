@@ -192,6 +192,27 @@ public:
     }
   }
 
+  std::pair<unsigned int, unsigned int> VertexIndexs_EdgeEndPoints(unsigned int edge_idx) const {
+    assert(edge_idx < edges.size());
+    return { edges[edge_idx].iv0, edges[edge_idx].iv1 };
+  }
+
+  std::vector<unsigned int> VertexIndexs_Face(
+      unsigned int iface) const
+  {
+    assert(iface < faces.size());
+    return loops[iface].GetArray_IdVertex(this->edges);
+  }
+
+  std::vector<std::pair<unsigned int,bool> > EdgeIndexes_Face(unsigned int iface) const
+  {
+    std::vector<std::pair<unsigned int,bool> > aIdE;
+    for(unsigned int il : faces[iface].aIL) {
+      aIdE.insert( aIdE.end(), loops[il].aIE.begin(), loops[il].aIE.end() );
+    }
+    return aIdE;
+  }
+
   std::vector<unsigned int> FindFaceIndexes_IncludeVeretx(unsigned int ivtx) const {
     assert(ivtx < num_vertex);
     std::vector<unsigned int> res;

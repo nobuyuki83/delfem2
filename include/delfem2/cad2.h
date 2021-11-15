@@ -128,24 +128,13 @@ CBoundingBox2<double> BB_LoopEdgeCad2D(
  */
 class CCad2D {
  public:
-  CCad2D() {
-    ivtx_picked = -1;
-    iedge_picked = -1;
-    iface_picked = -1;
-    is_draw_face = true;
-  }
+  CCad2D() = default;
 
   void Clear() {
     aVtx.clear();
     aEdge.clear();
     topo.Clear();
   }
-
-  void Pick(
-      double x0, double y0,
-      double view_height);
-
-  void DragPicked(double p1x, double p1y, double p0x, double p0y);
   // --------------------
   // const method here
   std::vector<double> MinMaxXYZ() const;
@@ -154,38 +143,9 @@ class CCad2D {
 
   bool Check() const;
 
-  int GetEdgeType(int iedge) const {
-    assert(iedge >= 0 && iedge < (int) aEdge.size());
-    return aEdge[iedge].type_edge;
-  }
-
-  // size_t nFace() const { return aFace.size(); }
-
   size_t nVtx() const { return aVtx.size(); }
 
   size_t nEdge() const { return aEdge.size(); }
-
-  /**
-   * @brief return std::vector of XY that bounds the face with index iface
-   */
-  std::vector<double> XY_VtxCtrl_Face(int iface) const;
-
-  std::vector<double> XY_Vtx(int ivtx) const;
-
-  std::vector<std::pair<int, bool> > Ind_Edge_Face(int iface) const;
-
-  std::vector<unsigned int> Ind_Vtx_Face(int iface) const;
-
-  std::vector<int> Ind_Vtx_Edge(int iedge) const;
-
-  /**
-   * @brief add index to aIdP if a point in aXY is on the edge
-   */
-  void GetPointsEdge(
-      std::vector<int> &aIdP,
-      const double *pXY, int np,
-      const std::vector<int> &aIE,
-      double tolerance) const;
 
   // ----------------------------------
   // geometric operations from here
@@ -202,19 +162,6 @@ class CCad2D {
   void AddVtxEdge(
       double x, double y, unsigned int ie_add);
 
- public:
-  CadTopo topo;
-  //
-  std::vector<CCad2D_VtxGeo> aVtx;
-  std::vector<CCad2D_EdgeGeo> aEdge;
-
-  unsigned int ivtx_picked;
-  unsigned int iedge_picked;
-  int iface_picked;
-  int ipicked_elem;
-
-  bool is_draw_face;
- private:
   void CopyVertexPositionsToEdges(){
     for(size_t ie=0;ie<topo.edges.size();++ie) {
       const int iv0 = topo.edges[ie].iv0;
@@ -223,6 +170,33 @@ class CCad2D {
       aEdge[ie].p1 = aVtx[iv1].pos;
     }
   }
+
+ public:
+  CadTopo topo;
+  std::vector<CCad2D_VtxGeo> aVtx;
+  std::vector<CCad2D_EdgeGeo> aEdge;
+};
+
+// ---------------------------------------
+
+class Cad2_Ui{
+ public:
+  void Pick(
+      double x0, double y0,
+      double view_height,
+      const CCad2D& cad);
+
+  void DragPicked(
+      CCad2D& cad,
+      double p1x, double p1y,
+      double p0x, double p0y);
+
+ public:
+  unsigned int ivtx_picked = UINT_MAX;
+  unsigned int iedge_picked = UINT_MAX;
+  unsigned int iface_picked = UINT_MAX;
+  int ipicked_elem = 0;
+  std::array<float, 2> picked_pos{0.f, 0.f};
 };
 
 } // namespace delfem2

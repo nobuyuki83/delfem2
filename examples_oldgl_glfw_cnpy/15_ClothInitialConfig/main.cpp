@@ -203,7 +203,8 @@ int main()
         body_smpl, viewer3);
 
     viewer2.DrawBegin_oldGL();
-    delfem2::opengl::Draw_CCad2D(cad);
+    delfem2::opengl::DrawCad2Vtxs(cad, UINT_MAX);
+    delfem2::opengl::DrawCad2Edges(cad, UINT_MAX);
     {
       ::glTranslated(0,0,+0.9);
       for(unsigned int ie=0;ie<cad.topo.edges.size();++ie){

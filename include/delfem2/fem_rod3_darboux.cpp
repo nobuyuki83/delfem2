@@ -311,6 +311,17 @@ DFM2_INLINE delfem2::CVec3d delfem2::Darboux_Rod
   return CVec3d(X[0] / Y, X[1] / Y, X[2] / Y);
 }
 
+/*
+void delfem2::CdC_Rod(
+    double R[3],
+    double dR[3][4],
+    const CVec3d P[3],
+    const CVec3d S[2])
+{
+
+}
+ */
+
 // TODO: stiffness
 DFM2_INLINE double delfem2::WdWddW_Rod(
     CVec3d dW_dP[3],

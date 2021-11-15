@@ -80,7 +80,8 @@ int main()
     for(unsigned int iframe=0;iframe<100;++iframe) {
       if( glfwWindowShouldClose(viewer.window) ){ break; }
       viewer.DrawBegin_oldGL();
-      delfem2::opengl::Draw_CCad2D(cad);
+      delfem2::opengl::DrawCad2Vtxs(cad, UINT_MAX);
+      delfem2::opengl::DrawCad2Edges(cad, UINT_MAX);
       delfem2::opengl::DrawMeshDynTri_Edge(dmesh.aETri,dmesh.aVec2);
       ::glColor3d(0.8, 0.8, 0.8);
       delfem2::opengl::DrawMeshDynTri_FaceNorm(dmesh.aETri,dmesh.aVec2);

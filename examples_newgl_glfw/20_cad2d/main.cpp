@@ -34,10 +34,10 @@ class CCAD2D_Viewer : public delfem2::glfw::CViewer2 {
     }
   }
   void mouse_press(const float src[2]) override {
-    cad.Pick(src[0], src[1], 1.0);
+    cad_ui.Pick(src[0], src[1], 1.0, cad);
   }
   void mouse_drag(const float src0[2], const float src1[2]) override {
-    cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
+    cad_ui.DragPicked(cad, src1[0], src1[1], src0[0], src0[1]);
     {
       mesher.edge_length = -1;
       mesher.Meshing(dmesh, cad);
@@ -46,6 +46,7 @@ class CCAD2D_Viewer : public delfem2::glfw::CViewer2 {
   }
  public:
   delfem2::CCad2D cad;
+  delfem2::Cad2_Ui cad_ui;
   delfem2::opengl::CShader_Cad2D shdr_cad;
   delfem2::CMeshDynTri2D dmesh;
   delfem2::CMesher_Cad2D mesher;

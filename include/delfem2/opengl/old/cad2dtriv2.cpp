@@ -79,7 +79,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge(
 
 // -------------------------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge(
+DFM2_INLINE void delfem2::opengl::DrawCCad2DEdge(
     const CCad2D_EdgeGeo& edge,
     bool is_selected,
     int ipicked_elem)
@@ -139,33 +139,33 @@ DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge(
   }
 }
 
-DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
-{
-  const std::vector<CCad2D_VtxGeo>& aVtx = cad2d.aVtx;
-  const std::vector<CCad2D_EdgeGeo>& aEdge = cad2d.aEdge;
-  int ivtx_picked = cad2d.ivtx_picked;
-  int iedge_picked = cad2d.iedge_picked;
-  int iface_picked = cad2d.iface_picked;
-  int ipicked_elem = cad2d.ipicked_elem;
-  bool is_draw_face = cad2d.is_draw_face;
-  //
+DFM2_INLINE void delfem2::opengl::DrawCad2Vtxs(
+    const CCad2D& cad2d,
+    unsigned int ivtx_picked) {
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_TEXTURE_2D);
+  //
   ::glPointSize(6);
   ::glBegin(GL_POINTS);
-  for(size_t iv=0;iv<aVtx.size();++iv){
-    if( (int)iv == ivtx_picked ){ ::glColor3d(1,1,0); }
-    else{ ::glColor3d(1,0,0); }
-    ::glVertex3d( aVtx[iv].pos.x, aVtx[iv].pos.y, 0.0);
+  for (size_t iv = 0; iv < cad2d.aVtx.size(); ++iv) {
+    if( iv == ivtx_picked ){
+      ::glColor3d(1,1,0); }
+    else{
+      ::glColor3d(1,0,0); }
+    ::glVertex3d(cad2d.aVtx[iv].pos.x, cad2d.aVtx[iv].pos.y, 0.0);
   }
   ::glEnd();
-  //
+}
+
+DFM2_INLINE void delfem2::opengl::DrawCad2Edges(
+    const CCad2D& cad2d,
+    unsigned int iedge_picked) {
   ::glLineWidth(3);
-  for(size_t ie=0;ie<aEdge.size();++ie){
-    Draw_CCad2DEdge(
-        aEdge[ie],
-        (int)ie == iedge_picked,
-        ipicked_elem);
+  for(size_t ie=0;ie<cad2d.aEdge.size();++ie){
+    DrawCCad2DEdge(
+        cad2d.aEdge[ie],
+        ie == iedge_picked,
+        -1);
   }
   /*
   if( is_draw_face ){

@@ -61,7 +61,6 @@ int main() {
       viewer.trans[1] = static_cast<float>(-(bb.y_min + bb.y_max) * 0.5);
       viewer.view_height = static_cast<float>(0.5 * bb.LengthDiagonal());
       viewer.scale = 1.0;
-      cad.iedge_picked = -1;
     }
     if (glfwWindowShouldClose(viewer.window)) { break; }
     delfem2::CMeshDynTri2D dmesh;
@@ -72,7 +71,8 @@ int main() {
     }
     for(unsigned int iframe=0;iframe<30;++iframe) {
       viewer.DrawBegin_oldGL();
-      delfem2::opengl::Draw_CCad2D(cad);
+      delfem2::opengl::DrawCad2Vtxs(cad,UINT_MAX);
+      delfem2::opengl::DrawCad2Edges(cad,UINT_MAX);
       delfem2::opengl::DrawMeshDynTri_Edge(dmesh.aETri,dmesh.aVec2);
       ::glColor3d(0.8, 0.8, 0.8);
       delfem2::opengl::DrawMeshDynTri_FaceNorm(dmesh.aETri,dmesh.aVec2);

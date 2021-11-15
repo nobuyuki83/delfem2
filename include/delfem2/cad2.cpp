@@ -167,110 +167,6 @@ DFM2_INLINE void GenMeshCadFace(
 
 // =========================================================
 
-DFM2_INLINE void delfem2::CCad2D::Pick(
-    double x0,
-    double y0,
-    double view_height)
-{
-  CVec2d pin(x0,y0);
-  if( this->iedge_picked != UINT_MAX ){
-    const CCad2D_EdgeGeo& edge = aEdge[iedge_picked];
-    if( edge.type_edge == 1 ){
-      assert( edge.param.size() == 4 );
-      const CVec2d lx = (edge.p1 - edge.p0).normalized();
-      const CVec2d ly = CVec2d(lx.y, -lx.x);
-      const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
-      const CVec2d q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
-      if( Distance(pin, q0) < view_height*0.05 ){ this->ipicked_elem = 1; return; }
-      if( Distance(pin, q1) < view_height*0.05 ){ this->ipicked_elem = 2; return; }
-    }
-  }
-  this->ipicked_elem = 0;
-  this->ivtx_picked = -1;
-  this->iedge_picked = -1;
-  this->iface_picked = -1;
-  for(unsigned int ivtx=0;ivtx<aVtx.size();++ivtx){
-    double x1 = aVtx[ivtx].pos.x;
-    double y1 = aVtx[ivtx].pos.y;
-    double dist = sqrt( (x0-x1)*(x0-x1)+(y0-y1)*(y0-y1) );
-    if( dist < view_height*0.05 ){
-      this->ivtx_picked = ivtx;
-      return;
-    }
-  }
-  ////
-  for(unsigned int iedge=0;iedge<aEdge.size();++iedge){
-    double dist = aEdge[iedge].Distance(x0, y0);
-    if( dist < view_height*0.05 ){
-      this->iedge_picked = iedge;
-      return;
-    }
-  }
-  //
-  /*
-  for(unsigned int iface=0;iface<aFace.size();++iface){
-    bool is_inside = aFace[iface].IsInside(x0, y0, aVec2_Tessellation);
-    if( is_inside ){
-      this->iface_picked = iface;
-      return;
-    }
-  }
-   */
-}
-
-
-
-DFM2_INLINE void delfem2::CCad2D::DragPicked(
-    double p1x,
-    double p1y,
-    double p0x,
-    double p0y)
-{
-  if( ivtx_picked < aVtx.size() ){
-    aVtx[ivtx_picked].pos.p[0] = p1x;
-    aVtx[ivtx_picked].pos.p[1] = p1y;
-    this->CopyVertexPositionsToEdges();
-    return;
-  }
-  if( iedge_picked < aEdge.size() ){
-    if( ipicked_elem == 0 ){
-      int iv0 = topo.edges[iedge_picked].iv0;
-      int iv1 = topo.edges[iedge_picked].iv1;
-      aVtx[iv0].pos.p[0] += p1x-p0x;
-      aVtx[iv0].pos.p[1] += p1y-p0y;
-      aVtx[iv1].pos.p[0] += p1x-p0x;
-      aVtx[iv1].pos.p[1] += p1y-p0y;
-    }
-    else{
-      CCad2D_EdgeGeo& edge = aEdge[iedge_picked];
-      if( edge.type_edge == 1 ){
-        assert( edge.param.size() == 4 );
-        const CVec2d lx = (edge.p1 - edge.p0).normalized();
-        const CVec2d ly = CVec2d(lx.y,-lx.x);
-        if( ipicked_elem == 1 ){
-          edge.param[0] = (CVec2d(p1x,p1y)- edge.p0 ).dot(lx);
-          edge.param[1] = (CVec2d(p1x,p1y)- edge.p0 ).dot(ly);
-        }
-        else if( ipicked_elem == 2 ){
-          edge.param[2] = (CVec2d(p1x,p1y)- edge.p1 ).dot(lx);
-          edge.param[3] = (CVec2d(p1x,p1y)- edge.p1 ).dot(ly);
-        }
-      }
-    }
-    this->CopyVertexPositionsToEdges();
-    return;
-  }
-  if( iface_picked >= 0 && iface_picked < static_cast<int>(topo.faces.size()) ){
-    std::vector<unsigned int> aIdV = topo.loops[iface_picked].GetArray_IdVertex(topo.edges);
-    for(int iv1 : aIdV){
-      aVtx[iv1].pos.p[0] += p1x-p0x;
-      aVtx[iv1].pos.p[1] += p1y-p0y;
-    }
-    this->CopyVertexPositionsToEdges();
-    return;
-  }
-}
-
 DFM2_INLINE bool delfem2::CCad2D::Check() const
 {
   this->topo.Assert();
@@ -350,103 +246,7 @@ DFM2_INLINE delfem2::CBoundingBox2<double> delfem2::CCad2D::BB() const
   return bb;
 }
 
-DFM2_INLINE void delfem2::CCad2D::GetPointsEdge(
-    std::vector<int>& aIdP,
-    const double* pXY, int np,
-    const std::vector<int>& aIE,
-    double tolerance ) const
-{
-  aIdP.clear();
-  for(int ip=0;ip<np;++ip){
-    const double x = pXY[ip*2+0];
-    const double y = pXY[ip*2+1];
-    for(int ie0 : aIE){
-      const CCad2D_EdgeGeo& eg = this->aEdge[ie0];
-      const double dist = eg.Distance(x,y);
-      if( dist > tolerance ){ continue; }
-      aIdP.push_back(ip);
-    }
-  }
-}
-
-DFM2_INLINE std::vector<double> delfem2::CCad2D::XY_VtxCtrl_Face(
-    int iface) const
-{
-  std::vector<double> aXY;
-  for(const auto & iie : topo.loops[iface].aIE){
-    int ie0 = iie.first;
-    bool dir = iie.second;
-    if( dir ){
-      const int iv = topo.edges[ie0].iv0;
-      aXY.push_back( aVtx[iv].pos.x );
-      aXY.push_back( aVtx[iv].pos.y );
-      if( aEdge[ie0].type_edge == 1 ){
-        const CCad2D_EdgeGeo& edge = aEdge[ie0];
-        const CVec2d lx = (edge.p1 - edge.p0).normalized();
-        const CVec2d ly = CVec2d(lx.y,-lx.x);
-        const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
-        const CVec2d q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
-        aXY.push_back( q0.x );
-        aXY.push_back( q0.y );
-        aXY.push_back( q1.x );
-        aXY.push_back( q1.y );
-      }
-    }
-    else{
-      const int iv = topo.edges[ie0].iv1;
-      aXY.push_back( aVtx[iv].pos.x );
-      aXY.push_back( aVtx[iv].pos.y );
-    }
-  }
-  /*
-  std::vector<int> aIdV = topo.aFace[iface].GetArray_IdVertex(topo.aEdge);
-  for(unsigned int iiv=0;iiv<aIdV.size();++iiv){
-    const int iv = aIdV[iiv];
-    aXY.push_back( aVtx[iv].pos.x );
-    aXY.push_back( aVtx[iv].pos.y );
-  }
-   */
-  return aXY;
-}
-
-DFM2_INLINE std::vector<unsigned int> delfem2::CCad2D::Ind_Vtx_Face(
-    int iface) const
-{
-  return topo.loops[iface].GetArray_IdVertex(topo.edges);
-}
-
-DFM2_INLINE std::vector<double> delfem2::CCad2D::XY_Vtx(int ivtx) const
-{
-  std::vector<double> xy;
-  xy.push_back(aVtx[ivtx].pos.x);
-  xy.push_back(aVtx[ivtx].pos.y);
-  return xy;
-}
-
-DFM2_INLINE std::vector<int> delfem2::CCad2D::Ind_Vtx_Edge(int iedge) const
-{
-  std::vector<int> aRes;
-  if( iedge < 0 || iedge > (int)topo.edges.size() ){ return aRes; }
-  aRes.push_back(topo.edges[iedge].iv0);
-  aRes.push_back(topo.edges[iedge].iv1);
-  return aRes;
-}
-
-DFM2_INLINE std::vector<std::pair<int,bool> >
-    delfem2::CCad2D::Ind_Edge_Face(int iface) const
-{
-//  std::vector<int> aIdE;
-  std::vector<std::pair<int,bool> > aIdE;
-  for(const auto & iie : topo.loops[iface].aIE){
-    const int ie0 = iie.first;
-    const bool dir0 = iie.second;
-    aIdE.emplace_back(ie0,dir0 );
-  }
-  return aIdE;
-}
-
 // ----------------------------------------------
-
 
 DFM2_INLINE std::vector<double> delfem2::CCad2D_EdgeGeo::GenMesh(
     unsigned int ndiv) const
@@ -739,3 +539,114 @@ DFM2_INLINE void delfem2::CCad2D::Tessellation()
   }
 }
  */
+
+
+// ================================
+
+
+DFM2_INLINE void delfem2::Cad2_Ui::Pick(
+    double x0,
+    double y0,
+    double view_height,
+    const CCad2D& cad)
+{
+  CVec2d pin(x0,y0);
+  if( this->iedge_picked != UINT_MAX ){  // try to pick handles
+    const CCad2D_EdgeGeo& edge = cad.aEdge[iedge_picked];
+    if( edge.type_edge == CCad2D_EdgeGeo::BEZIER_CUBIC ){
+      const CVec2d q0 = edge.p0 + CVec2d(edge.param[0],edge.param[1]);
+      const CVec2d q1 = edge.p1 + CVec2d(edge.param[2], edge.param[3]);
+      if( Distance(pin, q0) < view_height*0.05 ){ this->ipicked_elem = 1; return; }
+      if( Distance(pin, q1) < view_height*0.05 ){ this->ipicked_elem = 2; return; }
+    }
+  }
+  this->ipicked_elem = 0;
+  this->ivtx_picked = -1;
+  this->iedge_picked = -1;
+  this->iface_picked = -1;
+  for(unsigned int ivtx=0;ivtx<cad.aVtx.size();++ivtx){
+    double x1 = cad.aVtx[ivtx].pos.x;
+    double y1 = cad.aVtx[ivtx].pos.y;
+    double dist = sqrt( (x0-x1)*(x0-x1)+(y0-y1)*(y0-y1) );
+    if( dist < view_height*0.05 ){
+      this->ivtx_picked = ivtx;
+      picked_pos = {
+          static_cast<float>(cad.aVtx[ivtx_picked].pos.x),
+          static_cast<float>(cad.aVtx[ivtx_picked].pos.y)};
+      return;
+    }
+  }
+  for(unsigned int iedge=0;iedge<cad.aEdge.size();++iedge){
+    double dist = cad.aEdge[iedge].Distance(x0, y0);
+    if( dist < view_height*0.05 ){
+      this->iedge_picked = iedge;
+      picked_pos = {
+          static_cast<float>(x0),
+          static_cast<float>(y0) };
+      return;
+    }
+  }
+  //
+  /*
+  for(unsigned int iface=0;iface<aFace.size();++iface){
+    bool is_inside = aFace[iface].IsInside(x0, y0, aVec2_Tessellation);
+    if( is_inside ){
+      this->iface_picked = iface;
+      return;
+    }
+  }
+   */
+}
+
+
+DFM2_INLINE void delfem2::Cad2_Ui::DragPicked(
+    CCad2D& cad,
+    double p1x,
+    double p1y,
+    double p0x,
+    double p0y)
+{
+  if( ivtx_picked < cad.aVtx.size() ){
+    cad.aVtx[ivtx_picked].pos.p[0] = p1x;
+    cad.aVtx[ivtx_picked].pos.p[1] = p1y;
+    cad.CopyVertexPositionsToEdges();
+    return;
+  }
+  if( iedge_picked < cad.aEdge.size() ){
+    if( ipicked_elem == 0 ){
+      const unsigned int iv0 = cad.topo.edges[iedge_picked].iv0;
+      const unsigned int iv1 = cad.topo.edges[iedge_picked].iv1;
+      cad.aVtx[iv0].pos.p[0] += p1x-p0x;
+      cad.aVtx[iv0].pos.p[1] += p1y-p0y;
+      cad.aVtx[iv1].pos.p[0] += p1x-p0x;
+      cad.aVtx[iv1].pos.p[1] += p1y-p0y;
+    }
+    else{
+      CCad2D_EdgeGeo& edge = cad.aEdge[iedge_picked];
+      if( edge.type_edge == 1 ){
+        assert( edge.param.size() == 4 );
+        const CVec2d lx = (edge.p1 - edge.p0).normalized();
+        const CVec2d ly = CVec2d(lx.y,-lx.x);
+        if( ipicked_elem == 1 ){
+          edge.param[0] = (CVec2d(p1x,p1y)- edge.p0 ).dot(lx);
+          edge.param[1] = (CVec2d(p1x,p1y)- edge.p0 ).dot(ly);
+        }
+        else if( ipicked_elem == 2 ){
+          edge.param[2] = (CVec2d(p1x,p1y)- edge.p1 ).dot(lx);
+          edge.param[3] = (CVec2d(p1x,p1y)- edge.p1 ).dot(ly);
+        }
+      }
+    }
+    cad.CopyVertexPositionsToEdges();
+    return;
+  }
+  if( iface_picked < cad.topo.faces.size() ){
+    std::vector<unsigned int> aIdV = cad.topo.loops[iface_picked].GetArray_IdVertex(cad.topo.edges);
+    for(unsigned int iv1 : aIdV){
+      cad.aVtx[iv1].pos.p[0] += p1x-p0x;
+      cad.aVtx[iv1].pos.p[1] += p1y-p0y;
+    }
+    cad.CopyVertexPositionsToEdges();
+    return;
+  }
+}

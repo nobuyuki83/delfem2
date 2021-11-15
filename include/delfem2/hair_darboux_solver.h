@@ -189,4 +189,4 @@ DFM2_INLINE void Solve_RodHair(
 
 } // namespace delfem2
 
-#endif  /* DFM2_HAIR_SPARSE_H */
+#endif  /* DFM2_HAIR_DARBOUX_SOLVER_H */
