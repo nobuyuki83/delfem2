@@ -53,19 +53,14 @@ ELSE()
   message("compile delfem2 as HEADER-ONLY library: ${PROJECT_NAME} ${USE_STATIC_LIB}}")
 ENDIF()
 
+file(GLOB
+    TEST_SRC
+    *.cpp)
 add_executable(${MY_BINARY_NAME}
   ${DFM2_SRC}
   ../include/delfem2/tinygltf/io_gltf.h
   ../include/delfem2/tinygltf/io_gltf.cpp
-  test_bvh.cpp
-  test_lp.cpp
-  test_gltf.cpp
-  test_fem.cpp
-  test_geo.cpp
-  test_cad.cpp
-  test_msh.cpp
-  main.cpp  
-)
+  ${TEST_SRC})
 
 target_link_libraries(${MY_BINARY_NAME}
   ${GTEST_LIBRARY}

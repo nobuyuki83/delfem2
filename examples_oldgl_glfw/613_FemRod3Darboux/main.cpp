@@ -200,10 +200,10 @@ DFM2_INLINE void Solve_DispRotSeparate(
     CMat3d ddW_ddP[3][3];
     CVec3d ddW_dtdP[2][3];
     double ddW_ddt[2][2];
-    W += WdWddW_Rod(
+    W += WdWddW_Rod3Approx(
         dW_dP, dW_dt, ddW_ddP, ddW_dtdP, ddW_ddt,
         stiff_bendtwist,
-        aPE, aSE, Darboux0, false);
+        aPE, aSE, Darboux0);
     {
       double eM[5][5][3][3];
       for (int i = 0; i < 5 * 5 * 3 * 3; ++i) { (&eM[0][0][0][0])[i] = 0.0; }

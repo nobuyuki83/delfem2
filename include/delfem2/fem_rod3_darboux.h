@@ -66,13 +66,20 @@ DFM2_INLINE CVec3d Darboux_Rod(
     const CVec3d P[3],
     const CVec3d S[2]);
 
+DFM2_INLINE  void CdC_Rod(
+    double C[3],
+    CVec3d dC_dp[3][3],
+    double dC_dt[3][2],
+    const CVec3d P[3],
+    const CVec3d S[2]);
+
 /**
  * @param[in] P points of rod
  * @param[in] S director vectors on the edges
  * @param[in] daboux0 Daboux vector in the rest shape
  * @param[in] is_eaxct whether the hessian is exact or not
  */
-DFM2_INLINE double WdWddW_Rod(
+DFM2_INLINE double WdWddW_Rod3Exact(
     CVec3d dW_dP[3],
     double dW_dt[2],
     CMat3d ddW_ddP[3][3],
@@ -81,8 +88,32 @@ DFM2_INLINE double WdWddW_Rod(
     const double stiff_bendtwist[3],
     const CVec3d P[3],
     const CVec3d S[2],
-    const CVec3d &darboux0,
-    bool is_exact);
+    const CVec3d &darboux0);
+
+/**
+ * @param[in] P points of rod
+ * @param[in] S director vectors on the edges
+ * @param[in] daboux0 Daboux vector in the rest shape
+ * @param[in] is_eaxct whether the hessian is exact or not
+ */
+DFM2_INLINE double WdWddW_Rod3Approx(
+    CVec3d dW_dP[3],
+    double dW_dt[2],
+    CMat3d ddW_ddP[3][3],
+    CVec3d ddW_dtdP[2][3],
+    double ddW_ddt[2][2],
+    const double stiff_bendtwist[3],
+    const CVec3d P[3],
+    const CVec3d S[2],
+    const CVec3d &darboux0);
+
+DFM2_INLINE double WdWddW_HairApprox(
+    double dW[3][4],
+    double ddW[3][3][4][4],
+    const double stiff_bendtwist[3],
+    const CVec3d P[3],
+    const CVec3d S[2],
+    const CVec3d &darboux0);
 
 } // namespace delfem2
 

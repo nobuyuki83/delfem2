@@ -82,10 +82,15 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
   assert(aP.size() == np);
   assert(aS.size() == np);
   mats.BeginMerge();
-  double W = MergeLinSys_Hair(
+  double W = 0.0;
+  W += Merge_HairDarboux(
       mats,
-      stiff_stretch, stiff_bendtwist,
+      stiff_bendtwist,
       aIP_HairRoot, aP, aS, aP0, aS0);
+  W += Merge_HairStretch(
+      mats,
+      stiff_stretch,
+      aIP_HairRoot, aP, aP0);
   for (unsigned int ip = 0; ip < aP.size(); ++ip) {
     mats.AddValueToDiagonal(ip,0,mdtt);
     mats.AddValueToDiagonal(ip,1,mdtt);
