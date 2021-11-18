@@ -7,8 +7,6 @@
 
 #include "delfem2/geo_polyline2.h"
 
-#include <cstdlib>
-
 // ----------------------------------------------------------------------------------
 // std::vector starts from here
 

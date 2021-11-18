@@ -30,7 +30,6 @@
 #include "delfem2/fem_distance3.h"
 #include "delfem2/fem_rod2.h"
 #include "delfem2/fem_rod3_straight.h"
-#include "delfem2/fem_rod3_darboux.h"
 
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"

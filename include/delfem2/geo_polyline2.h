@@ -94,13 +94,13 @@ unsigned int FindNearestPointInPoints(
  * @param scr
  * @return
  */
-template<typename VEC>
-float LengthPolyline(
+template<typename VEC, typename SCALAR>
+SCALAR LengthPolyline(
     const std::vector<VEC>& polyline) {
   if( polyline.size() < 2 ){
-    return 0.f;
+    return 0;
   }
-  float len =0;
+  SCALAR len = 0;
   for (unsigned int ip = 0; ip < polyline.size() - 1; ++ip) {
     len += (polyline[ip+1] - polyline[ip]).norm();
   }

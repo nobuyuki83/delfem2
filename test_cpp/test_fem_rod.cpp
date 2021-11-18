@@ -416,7 +416,7 @@ TEST(fem_rod, CdC_Rod) {
               + dC0_dP[i][0].dot(dP[0])
               + dC0_dP[i][1].dot(dP[1])
               + dC0_dP[i][2].dot(dP[2])) / eps;
-      EXPECT_NEAR(val0, val1, 1.0e-2 * (1 + fabs(val1)));
+      EXPECT_NEAR(val0, val1, 2.0e-2 * (1 + fabs(val1)));
     }
   }
 }

@@ -14,7 +14,233 @@
 
 #include "delfem2/dfm2_inline.h"
 
+namespace delfem2::pgeo{
+
+constexpr static unsigned int NIntLineGauss[4] = {
+    1, 2, 3, 4
+};
+
+template<typename T>
+constexpr static T LineGauss[4][4][2] =
+    {
+        {
+            {0.0, 2.0},
+            {0.0, 0.0},
+            {0.0, 0.0},
+            {0.0, 0.0},
+        },
+        {
+            {-0.577350269189626, 1.0},
+            {0.577350269189626, 1.0},
+            {0.0, 0.0},
+            {0.0, 0.0},
+        },
+        {
+            {-0.774596669241483, 0.555555555555556},
+            {0.0, 0.888888888888889},
+            {0.774596669241483, 0.555555555555556},
+            {0.0, 0.0},
+        },
+        {
+            {-0.861136311594053, 0.347854845137454},
+            {-0.339981043584856, 0.652145154862546},
+            {0.339981043584856, 0.652145154862546},
+            {0.861136311594053, 0.347854845137454},
+        }
+    };
+}
+
 namespace delfem2 {
+
+template <typename VEC>
+VEC PointOnQuadraticBezierCurve(
+    double t,
+    const VEC &p1,
+    const VEC &p2,
+    const VEC &p3) {
+  double tp = 1.0 - t;
+  return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
+}
+
+template <typename VEC, typename SCALAR>
+double Length_QuadraticBezierCurve_Quadrature(
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point
+    const VEC &p2,  // another end point
+    int gauss_order) // order of Gaussian quadrature to use
+{
+  assert(gauss_order < 4);
+
+  // derivative of quadratic Bezier
+  auto quadraticBezierdt = [](const VEC &q0, const VEC &q1, const VEC &q2, SCALAR t) {
+    return (2 * (1 - t) * (q1 - q0) + 2 * t * (q2 - q1)).norm();
+  };
+
+  SCALAR totalLength = 0;
+  for(unsigned int i = 0; i < pgeo::NIntLineGauss[gauss_order]; i++) {
+    const double t = (pgeo::LineGauss<double>[gauss_order][i][0] + 1) / 2;
+    const double w = pgeo::LineGauss<double>[gauss_order][i][1];
+    totalLength += quadraticBezierdt(p0, p1, p2, t) * w;
+  }
+  return totalLength / 2;
+}
+
+template <typename VEC, typename SCALAR>
+double Length_QuadraticBezierCurve_Analytic(
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point
+    const VEC &p2 )   // another end point
+{
+  // closed form solution from https://math.stackexchange.com/questions/12186/arc-length-of-b%c3%a9zier-curves
+  const SCALAR a = (p2 - 2 * p1 + p0).squaredNorm();
+  const SCALAR b = (p1 - p0).dot(p2 - p1 - p1 + p0);
+  const SCALAR c = (p1 - p0).squaredNorm();
+
+  if(a < 1.0e-5) {
+    return Length_QuadraticBezierCurve_Quadrature<VEC,SCALAR>(p0, p1, p2, 3);
+  }
+
+  const SCALAR tmp = 1 / std::pow(a, 1.5);
+  const SCALAR t1 = (std::sqrt(a * (c + 2 * b + a)) * (b + a)
+      + (-b * b + a * c) * std::log(b + a + std::sqrt(a * (c + 2 * b + a)))) * tmp;
+  const SCALAR t0 = (std::sqrt(a * c) * b
+      + (-b * b + a * c) * std::log(b + std::sqrt(a * c))) * tmp;
+
+  return t1 - t0;
+}
+
+/**
+ * @return the parameter of quadratic bezier curve nearest to q
+ */
+ /*
+template <typename VEC>
+double Nearest_QuadraticBezierCurve(
+    const VEC &q,
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point
+    const VEC &p2 ) {   // another end point
+
+}
+  */
+
+/**
+ * @return the parameter of cubic bezier curve nearest to q
+ */
+ /*
+template <typename VEC>
+double Nearest_CubicBezierCurve(
+    const VEC &q,
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point next to p0
+    const VEC &p2,  // the control point next to p3
+    const VEC &p3 ) {  // another end point
+}
+  */
+
+// quadratic Bezier
+// =====================
+// cubic Bezier
+
+template <typename VEC>
+VEC PointOnCubicBezierCurve(
+    double t,
+    const VEC& p1,
+    const VEC& p2,
+    const VEC& p3,
+    const VEC& p4)
+{
+  double tp = 1.0-t;
+  return t*t*t*p4
+      + 3*t*t*tp*p3
+      + 3*t*tp*tp*p2
+      + tp*tp*tp*p1;
+}
+
+template <typename T>
+T getTangentCubicBezierCurve(
+    double t,
+    const T& p1, const T& p2, const T& p3, const T& p4)
+{
+  double tp = 1.0-t;
+  return 3*t*t*p4
+      + 3*t*(2-3*t)*p3
+      + 3*tp*(1-3*t)*p2
+      - 3*tp*tp*p1;
+}
+
+template <typename T>
+bool getParameterCubicBezier_IntersectionWithPlane(
+    double& t,
+    const T& org,
+    const T& nrm,
+    const T& p1,
+    const T& p2,
+    const T& p3,
+    const T& p4)
+{
+  double h1 = (p1-org).dot(nrm);
+  double h2 = (p2-org).dot(nrm);
+  double h3 = (p3-org).dot(nrm);
+  double h4 = (p4-org).dot(nrm);
+  double ref = fabs(h1) + fabs(h2) + fabs(h3) + fabs(h4);
+  double eps = 1.0e-5;
+  if( fabs(h1)<ref*eps && fabs(h4)<ref*eps ) return false;
+  if( h1*h4>0 ) return false;
+  if( fabs(h1)<ref*eps ){ t = 0.0; return true; }
+  if( fabs(h4)<ref*eps ){ t = 1.0; return true; }
+  t = 0.5;
+  for(int itr=0;itr<10;++itr){
+    double tp = 1.0-t;
+    double h = t*t*t*h4 + 3*t*t*tp*h3 + 3*t*tp*tp*h2 + tp*tp*tp*h1;
+    if( fabs(h)<1.0e-6*ref  ) return true;
+    double dh = 3*t*t*h4 + 3*t*(2-3*t)*h3 + 3*tp*(1-3*t)*h2 - 3*tp*tp*h1;
+    t -= (h/dh);
+  }
+  return false;
+}
+
+template <typename T>
+void getCubicBezierCurve(
+    const int n,
+    std::vector<T>& aP,
+    const std::vector<T>& aCP)
+{
+  int ns = (int)(aCP.size()/3);
+  aP.resize(ns*n+1);
+  for (int is = 0; is<ns; is++){
+    for (int i = 0; i<n; i++){
+      double t = (double)i/n;
+      aP[is*n+i] = getPointCubicBezierCurve(t, aCP[is*3+0], aCP[is*3+1], aCP[is*3+2], aCP[is*3+3]);
+    }
+  }
+  aP[ns*n] = aCP[ns*3];
+}
+
+template <typename VEC, typename SCALAR>
+double Length_CubicBezierCurve_Quadrature(
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point next tp p0
+    const VEC &p2,  // the control point next to p1
+    const VEC &p3,  // another end point
+    int gauss_order)  // order of Gaussian quadrature to use
+{
+  // derivative of cubic Bezier
+  auto cubicBezierdt = [](const VEC &q0, const VEC &q1, const VEC &q2, const VEC &q3, SCALAR t) {
+    return (3 * (1 - t) * (1 - t) * (q1 - q0) + 6 * (1 - t) * t * (q2 - q1) + 3 * t * t * (q3 - q2)).norm();
+  };
+
+  SCALAR totalLength = 0;
+  for(unsigned int i = 0; i < pgeo::NIntLineGauss[gauss_order]; i++) {
+    double t = (pgeo::LineGauss<double>[gauss_order][i][0] + 1) / 2;
+    double w = pgeo::LineGauss<double>[gauss_order][i][1];
+    totalLength += cubicBezierdt(p0, p1, p2, p3, t) * w;
+  }
+  return totalLength / 2;
+}
+
+// cubic Bezier
+// ==========================
+// B-Spline
 
 inline void FlatKnot(
     std::vector<double>& aKnotFlat,
@@ -30,10 +256,72 @@ inline void FlatKnot(
   }
 }
 
+template <typename T>
+T DeBoorBSpline(
+    double u,
+    int ndegree,
+    const std::vector<T>& aCP,
+    const std::vector<double>& aKnot)
+{
+  assert( ndegree>0 );
+  assert( aKnot.size() == aCP.size()+ndegree+1 );
+  const double eps = 1.0e-10;
+  //
+  unsigned int iks;
+  {
+    for(iks=ndegree;iks<aKnot.size()-ndegree;++iks){
+      double u0 = aKnot[iks];
+      double u1 = aKnot[iks+1];
+      if( u >= u0-eps && u <= u1+eps ){ break; }
+    }
+  }
+  std::vector<T> aTmp;
+  {
+    aTmp.reserve(ndegree+1);
+    for(unsigned int ik=iks-ndegree;ik<iks+1;++ik){
+      assert(ik>=0);
+      aTmp.push_back(aCP[ik]);
+    }
+  }
+  for(int r=0;r<ndegree;++r){
+    for(int j=0;j<ndegree-r;++j){
+      double u0 = aKnot[j+iks-ndegree+1+r];
+      double u1 = aKnot[j+iks+1];
+//      assert(u>=u0-eps && u<u1+eps);
+      double a = (u-u0)/(u1-u0);
+      aTmp[j] = (1-a)*aTmp[j]+a*aTmp[j+1];
+    }
+  }
+  return aTmp[0];
+}
+
+template <typename T>
+void SampleBSpline(
+    std::vector<T>& polyline0,
+    const int nsmpl,
+    const int ndegree,
+    const std::vector<double>& aKnotFlat,
+    const std::vector<T>& aCtrlPoint)
+{
+  polyline0.clear();
+  double u0 = aKnotFlat[0];
+  double u1 = aKnotFlat[aKnotFlat.size()-1];
+  for(int i=0;i<nsmpl+1;++i){
+    double u = (double)i*(u1-u0)/nsmpl+u0;
+    T p = DeBoorBSpline(u, ndegree,aCtrlPoint,aKnotFlat);
+    polyline0.push_back(p);
+  }
+}
+
+// curve
+// ============================================
+// quad surface patch
  
 template <typename T>
 T QuadBilinear(
-    int iq, double r0, double r1,
+    int iq,
+    double r0,
+    double r1,
     std::vector<int>& aQuad,
     std::vector<T>& aPoint)
 {
@@ -41,7 +329,10 @@ T QuadBilinear(
   int i1 = aQuad[iq*4+1];
   int i2 = aQuad[iq*4+2];
   int i3 = aQuad[iq*4+3];
-  return (1-r0)*(1-r1)*aPoint[i0] + r0*(1-r1)*aPoint[i1] + r0*r1*aPoint[i2] + (1-r0)*r1*aPoint[i3];
+  return (1-r0)*(1-r1)*aPoint[i0]
+  + r0*(1-r1)*aPoint[i1]
+  + r0*r1*aPoint[i2]
+  + (1-r0)*r1*aPoint[i3];
 }
 
 template <typename T>
@@ -134,74 +425,6 @@ T getPointHermetianQuad(
   return p+q+r;
 }
 
-template <typename VEC>
-VEC PointOnCubicBezierCurve(
-    double t,
-    const VEC& p1,
-    const VEC& p2,
-    const VEC& p3,
-    const VEC& p4)
-{
-  double tp = 1.0-t;
-  return t*t*t*p4
-  + 3*t*t*tp*p3
-  + 3*t*tp*tp*p2
-  + tp*tp*tp*p1;
-}
-
-template <typename VEC>
-VEC PointOnQuadraticBezierCurve(
-    double t,
-    const VEC &p1,
-    const VEC &p2,
-    const VEC &p3) {
-  double tp = 1.0 - t;
-  return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
-}
-
-template <typename T>
-T getTangentCubicBezierCurve(
-    double t,
-    const T& p1, const T& p2, const T& p3, const T& p4)
-{
-  double tp = 1.0-t;
-  return 3*t*t*p4
-  + 3*t*(2-3*t)*p3
-  + 3*tp*(1-3*t)*p2
-  - 3*tp*tp*p1;
-}
-
-template <typename T>
-bool getParameterCubicBezier_IntersectionWithPlane(
-    double& t,
-    const T& org,
-    const T& nrm,
-    const T& p1,
-    const T& p2,
-    const T& p3,
-    const T& p4)
-{
-  double h1 = (p1-org).dot(nrm);
-  double h2 = (p2-org).dot(nrm);
-  double h3 = (p3-org).dot(nrm);
-  double h4 = (p4-org).dot(nrm);
-  double ref = fabs(h1) + fabs(h2) + fabs(h3) + fabs(h4);
-  double eps = 1.0e-5;
-  if( fabs(h1)<ref*eps && fabs(h4)<ref*eps ) return false;
-  if( h1*h4>0 ) return false;
-  if( fabs(h1)<ref*eps ){ t = 0.0; return true; }
-  if( fabs(h4)<ref*eps ){ t = 1.0; return true; }
-  t = 0.5;
-  for(int itr=0;itr<10;++itr){
-    double tp = 1.0-t;
-    double h = t*t*t*h4 + 3*t*t*tp*h3 + 3*t*tp*tp*h2 + tp*tp*tp*h1;
-    if( fabs(h)<1.0e-6*ref  ) return true;
-    double dh = 3*t*t*h4 + 3*t*(2-3*t)*h3 + 3*tp*(1-3*t)*h2 - 3*tp*tp*h1;
-    t -= (h/dh);
-  }
-  return false;
-}
-
 // Bezier
 // p00: u=0 v=0
 // p03: u=0 v=1
@@ -220,13 +443,13 @@ T getPointSurfaceBezierCubic(
   double u2 = 3*u*u*up;
   double u1 = 3*u*up*up;
   double u0 = up*up*up;
-  ////
+  //
   double vp = 1.0-v;
   double v3 = v*v*v;
   double v2 = 3*v*v*vp;
   double v1 = 3*v*vp*vp;
   double v0 = vp*vp*vp;
-  ////
+  //
   return
   + (u0*v0)*p00 + (u0*v1)*p01 + (u0*v2)*p02 + (u0*v3)*p03
   + (u1*v0)*p10 + (u1*v1)*p11 + (u1*v2)*p12 + (u1*v3)*p13
@@ -234,81 +457,6 @@ T getPointSurfaceBezierCubic(
   + (u3*v0)*p30 + (u3*v1)*p31 + (u3*v2)*p32 + (u3*v3)*p33;
 }
 
-template <typename T>
-void getCubicBezierCurve(
-    const int n,
-    std::vector<T>& aP,
-    const std::vector<T>& aCP)
-{
-  int ns = (int)(aCP.size()/3);
-  aP.resize(ns*n+1);
-  for (int is = 0; is<ns; is++){
-    for (int i = 0; i<n; i++){
-      double t = (double)i/n;
-      aP[is*n+i] = getPointCubicBezierCurve(t, aCP[is*3+0], aCP[is*3+1], aCP[is*3+2], aCP[is*3+3]);
-    }
-  }
-  aP[ns*n] = aCP[ns*3];
 }
 
-
-template <typename T>
-T DeBoorBSpline(
-    double u,
-    int ndegree,
-    const std::vector<T>& aCP,
-    const std::vector<double>& aKnot)
-{
-  assert( ndegree>0 );
-  assert( aKnot.size() == aCP.size()+ndegree+1 );
-  const double eps = 1.0e-10;
-  ////
-  unsigned int iks;
-  {
-    for(iks=ndegree;iks<aKnot.size()-ndegree;++iks){
-      double u0 = aKnot[iks];
-      double u1 = aKnot[iks+1];
-      if( u >= u0-eps && u <= u1+eps ){ break; }
-    }
-  }
-  std::vector<T> aTmp;
-  {
-    aTmp.reserve(ndegree+1);
-    for(unsigned int ik=iks-ndegree;ik<iks+1;++ik){
-      assert(ik>=0);
-      aTmp.push_back(aCP[ik]);
-    }
-  }
-  for(int r=0;r<ndegree;++r){
-    for(int j=0;j<ndegree-r;++j){
-      double u0 = aKnot[j+iks-ndegree+1+r];
-      double u1 = aKnot[j+iks+1];
-//      assert(u>=u0-eps && u<u1+eps);
-      double a = (u-u0)/(u1-u0);
-      aTmp[j] = (1-a)*aTmp[j]+a*aTmp[j+1];
-    }
-  }
-  return aTmp[0];
-}
-
-template <typename T>
-void SampleBSpline(
-    std::vector<T>& polyline0,
-    const int nsmpl,
-    const int ndegree,
-    const std::vector<double>& aKnotFlat,
-    const std::vector<T>& aCtrlPoint)
-{
-  polyline0.clear();
-  double u0 = aKnotFlat[0];
-  double u1 = aKnotFlat[aKnotFlat.size()-1];
-  for(int i=0;i<nsmpl+1;++i){
-    double u = (double)i*(u1-u0)/nsmpl+u0;
-    T p = DeBoorBSpline(u, ndegree,aCtrlPoint,aKnotFlat);
-    polyline0.push_back(p);
-  }
-}
-  
-}
-
-#endif /* paramgeo_vec23_hpp */
+#endif /* DFM2_PGEO_H */
