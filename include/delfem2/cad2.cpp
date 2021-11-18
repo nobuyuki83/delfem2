@@ -414,7 +414,7 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthMesh() const {
   } else if (this->type_edge == BEZIER_CUBIC) {
     return Length_CubicBezierCurve_Quadrature<CVec2d, double>(
         p0, p0 + CVec2d(param[0], param[1]),
-        p1 + CVec2d(param[2], param[3]), p1, 4);
+        p1 + CVec2d(param[2], param[3]), p1, 3);
   }
   /*
   double len0 = 0.0;
