@@ -12,6 +12,7 @@
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
+#include "delfem2/fem_quadratic_bending.h"
 
 #ifdef DFM2_STATIC_LIBRARY
 // Merge use explicitly use the template so for static library we need to include the template itself.
@@ -20,22 +21,6 @@
 
 namespace delfem2 {
 
-/**
- * @brief compute energy and its 1st and 2nd derivative for cloth bending
- * @param[out] W strain energy
- * @param[out] dW 1st derivative of energy
- * @param[out] ddW 2nd derivative of energy
- * @param[in] C undeformed quad vertex positions
- * @param[in] c deformed quad vertex positions
- */
-void WdWddW_Bend(
-    double& W,
-    double dW[4][3],
-    double ddW[4][4][3][3],
-    //
-    const double C[4][3],
-    const double c[4][3],
-    double stiff);
 
 void WdWddW_CST(
     double& W, // (out) energy

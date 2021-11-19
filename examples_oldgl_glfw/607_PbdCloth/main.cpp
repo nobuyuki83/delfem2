@@ -16,6 +16,7 @@
 
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/pbd_geo3dtri23.h"
+#include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri.h"
 #include "delfem2/glfw/viewer3.h"

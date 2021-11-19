@@ -450,43 +450,6 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTet(
   v23.CopyToScale(dCdp[5] + 3 * 3, -1.0);
 }
 
-DFM2_INLINE void delfem2::PBD_CdC_QuadBend(
-    double C[3],
-    double dCdp[3][12],
-    const double P[4][3],
-    const double p[4][3]) {
-  const double A0 = Area_Tri3(P[0], P[2], P[3]);
-  const double A1 = Area_Tri3(P[1], P[3], P[2]);
-  const double L = Distance3(P[2], P[3]);
-  const double H0 = 2.0 * A0 / L;
-  const double H1 = 2.0 * A1 / L;
-  const CVec3d e23(P[3][0] - P[2][0], P[3][1] - P[2][1], P[3][2] - P[2][2]);
-  const CVec3d e02(P[2][0] - P[0][0], P[2][1] - P[0][1], P[2][2] - P[0][2]);
-  const CVec3d e03(P[3][0] - P[0][0], P[3][1] - P[0][1], P[3][2] - P[0][2]);
-  const CVec3d e12(P[2][0] - P[1][0], P[2][1] - P[1][1], P[2][2] - P[1][2]);
-  const CVec3d e13(P[3][0] - P[1][0], P[3][1] - P[1][1], P[3][2] - P[1][2]);
-  const double cot023 = -(e02.dot(e23)) / H0;
-  const double cot032 = +(e03.dot(e23)) / H0;
-  const double cot123 = -(e12.dot(e23)) / H1;
-  const double cot132 = +(e13.dot(e23)) / H1;
-  const double tmp0 = sqrt(3.0) / (sqrt(A0 + A1) * L);
-  const double K[4] = {
-      (-cot023 - cot032) * tmp0,
-      (-cot123 - cot132) * tmp0,
-      (+cot032 + cot132) * tmp0,
-      (+cot023 + cot123) * tmp0};
-  C[0] = K[0] * p[0][0] + K[1] * p[1][0] + K[2] * p[2][0] + K[3] * p[3][0];
-  C[1] = K[0] * p[0][1] + K[1] * p[1][1] + K[2] * p[2][1] + K[3] * p[3][1];
-  C[2] = K[0] * p[0][2] + K[1] * p[1][2] + K[2] * p[2][2] + K[3] * p[3][2];
-  for (int i = 0; i < 36; ++i) { (&dCdp[0][0])[i] = 0.0; }
-  for (int idim = 0; idim < 3; ++idim) {
-    dCdp[idim][0 * 3 + idim] = K[0];
-    dCdp[idim][1 * 3 + idim] = K[1];
-    dCdp[idim][2 * 3 + idim] = K[2];
-    dCdp[idim][3 * 3 + idim] = K[3];
-  }
-}
-
 DFM2_INLINE void delfem2::PBD_Seam(
     double *aXYZt,
     [[maybe_unused]] size_t nXYZ,
@@ -525,7 +488,7 @@ DFM2_INLINE void delfem2::PBD_Seam(
 }
 
 template<typename T>
-DFM2_INLINE void delfem2::GetConstConstDiff_Bend(
+DFM2_INLINE void delfem2::CdC_DiscreteShell(
     double &C,
     CVec3<T> dC[4],
     const CVec3<T> &p0,
@@ -555,7 +518,7 @@ DFM2_INLINE void delfem2::GetConstConstDiff_Bend(
   dC[2] = (v03 ^ tmpBA) + (tmpAB ^ v13);
   dC[3] = (tmpBA ^ v02) + (v12 ^ tmpAB);
 }
-template void delfem2::GetConstConstDiff_Bend(
+template void delfem2::CdC_DiscreteShell(
     double &,
     CVec3d dC[4],
     const CVec3d &,

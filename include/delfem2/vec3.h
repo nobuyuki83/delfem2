@@ -76,15 +76,17 @@ void Cross3(
     const T2 v2[3]);
 
 template<typename T>
-T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
+T Area_Tri3(
+    const T v1[3], const T v2[3], const T v3[3]);
 
 template<typename T>
 T ScalarTripleProduct3(
     const T a[], const T b[], const T c[]);
 
 template<typename T>
-void NormalTri3(T n[3],
-                const T v1[3], const T v2[3], const T v3[3]);
+void NormalTri3(
+    T n[3],
+    const T v1[3], const T v2[3], const T v3[3]);
 
 template<typename REAL>
 void UnitNormalAreaTri3(

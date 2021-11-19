@@ -80,13 +80,13 @@ void delfem2::PBD_Bend(
           {aVec2[aIP[3]].x, aVec2[aIP[3]].y, 0.0}};
       double p[4][3];
       objfdtri::FetchData(&p[0][0], 4, 3, aIP, aXYZt, 3);
-      double C[3], dCdp[3][12];
-      PBD_CdC_QuadBend(C, dCdp,
-                       P, p);
+      double C[3], dCdp[3][4][3];
+      CdC_QuadBend(C, dCdp,
+                   P, p);
       const double mass[4] = {1, 1, 1, 1};
       PBD_Update_Const3(
           aXYZt,
-          4, 3, mass, C, &dCdp[0][0], aIP, ratio);
+          4, 3, mass, C, &dCdp[0][0][0], aIP, ratio);
     }
   }
 }

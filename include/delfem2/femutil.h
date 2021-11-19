@@ -384,4 +384,4 @@ void AddEmatEvecScale3(
 #  include "delfem2/femutil.cpp"
 #endif
 
-#endif /* fem_ematrix_h */
+#endif /* DFM2_FEMUTIL_H */

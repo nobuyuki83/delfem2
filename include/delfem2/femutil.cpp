@@ -113,10 +113,9 @@ DFM2_INLINE void delfem2::femutil::MatMatTrans3(
   }
 }
 
-namespace delfem2 {
-namespace femutil {
+namespace delfem2::femutil {
 
-void HexVox(
+DFM2_INLINE void HexVox(
     double &detjac,
     double dndx[][3],
     [[maybe_unused]] double an[],
@@ -167,8 +166,7 @@ void HexVox(
   }
 }
 
-}  // namespace femutil
-}  // namespace delfem2
+}  // namespace delfem2::femutil
 
 // =======================================================================
 // below: tri

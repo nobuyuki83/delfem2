@@ -20,6 +20,7 @@
 
 #include "inputs_garment.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
+#include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/garment.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/rig_geo3.h"

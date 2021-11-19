@@ -65,104 +65,6 @@ DFM2_INLINE void GetBound(
   }
 }
 
-DFM2_INLINE void GenMeshCadFace(
-    std::vector<CVec2d> &aVec2,
-    std::vector<CDynTri> &aETri,
-    unsigned int iface0,
-    const CadTopo &topo,
-    [[maybe_unused]] const std::vector<CCad2D_VtxGeo> &aVtxGeo,
-    [[maybe_unused]] const std::vector<CCad2D_EdgeGeo> &aEdgeGeo,
-    const std::vector<std::vector<std::pair<unsigned int, double> > > &edge_point) {
-  assert(iface0 < topo.faces.size());
-  std::vector<CDynPntSur> aPo2D;
-  {
-    aPo2D.resize(aVec2.size());
-    for (size_t ixys = 0; ixys < aVec2.size(); ixys++) {
-      aPo2D[ixys].e = UINT_MAX;
-      aPo2D[ixys].d = 0;
-    }
-  }
-  {
-    double bound_2d[4];
-    GetBound(
-        bound_2d,
-        iface0, topo, aEdgeGeo);
-    MakeSuperTriangle(
-        aVec2, aPo2D, aETri,
-        bound_2d);
-  }
-  std::vector<int> aIP;
-  { // make list of index of point involved this face
-    for (size_t iil = 0; iil < topo.faces[iface0].aIL.size(); ++iil) {
-      const int il0 = topo.faces[iface0].aIL[iil];
-      if (topo.loops[il0].iv != UINT_MAX) {
-        aIP.push_back(topo.loops[il0].iv);
-        continue;
-      }
-      const std::vector<std::pair<unsigned int, bool> > &aIE = topo.loops[il0].aIE;
-      for (const auto &iie: aIE) {
-        const int ie = iie.first;
-        aIP.push_back(topo.edges[ie].iv0);
-        for (const auto &pair: edge_point[ie]) {
-          aIP.push_back(pair.first);
-        }
-      }
-    }
-  }
-  {
-    const double MIN_TRI_AREA = 1.0e-10;
-    for (int ip: aIP) {
-      AddPointsMesh(aVec2, aPo2D, aETri,
-                    ip, MIN_TRI_AREA);
-      DelaunayAroundPoint(ip, aPo2D, aETri, aVec2);
-    }
-  }
-  {
-    for (size_t iil = 0; iil < topo.faces[iface0].aIL.size(); ++iil) {
-      const int il0 = topo.faces[iface0].aIL[iil];
-      if (topo.loops[il0].iv != UINT_MAX) { continue; }
-      const std::vector<std::pair<unsigned int, bool> > &aIE = topo.loops[il0].aIE;
-      for (const auto &iie: aIE) {
-        const int ie0 = iie.first;
-        const size_t np = edge_point[ie0].size();
-        const size_t nseg = np + 1;
-        for (unsigned int iseg = 0; iseg < nseg; ++iseg) {
-          const int ip0 = (iseg == 0) ? topo.edges[ie0].iv0 : edge_point[ie0][iseg - 1].first;
-          const int ip1 = (iseg == nseg - 1) ? topo.edges[ie0].iv1 : edge_point[ie0][iseg].first;
-          EnforceEdge(aPo2D, aETri,
-                      ip0, ip1, aVec2);
-        }
-      }
-    }
-  }
-  std::vector<int> aFlgTri(aETri.size(), -1);
-  {
-    int ip0 = -1, ip1 = -1;
-    {
-      const int il0 = topo.faces[iface0].aIL[0];
-      const std::vector<std::pair<unsigned int, bool> > &aIE = topo.loops[il0].aIE;
-      unsigned int ie0 = aIE[0].first;
-      const size_t np = edge_point[ie0].size();
-      ip0 = topo.edges[ie0].iv0;
-      ip1 = (np == 0) ? topo.edges[ie0].iv1 : edge_point[ie0][0].first;
-    }
-    assert(ip0 != -1 && ip1 != -1);
-    unsigned int itri0_ker = UINT_MAX, iedtri;
-    FindEdge_LookAllTriangles(itri0_ker, iedtri,
-                              ip0, ip1, aETri);
-    assert(itri0_ker < aETri.size());
-    FlagConnected(aFlgTri,
-                  aETri, itri0_ker, (int) iface0);
-  }
-  { // Delete Outer Triangles & Points
-    assert(aFlgTri.size() == aETri.size());
-    DeleteTriFlag(aETri, aFlgTri,
-                  -1);
-    aPo2D.resize(aPo2D.size() - 3);
-    aVec2.resize(aVec2.size() - 3);
-  }
-}
-
 } // delfem2::cad2
 
 // =========================================================
@@ -207,7 +109,6 @@ DFM2_INLINE void delfem2::CCad2D::AddFace(
   }
   assert(this->Check());
   this->CopyVertexPositionsToEdges();
-  // Tessellation();
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddVtxFace(
@@ -218,7 +119,6 @@ DFM2_INLINE void delfem2::CCad2D::AddVtxFace(
   aVtx.emplace_back(CVec2d(x0, y0));
   assert(this->Check());
   this->CopyVertexPositionsToEdges();
-  // Tessellation();
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddVtxEdge(
@@ -229,7 +129,6 @@ DFM2_INLINE void delfem2::CCad2D::AddVtxEdge(
   aVtx.emplace_back(CVec2d(x, y));
   aEdge.emplace_back();
   this->CopyVertexPositionsToEdges();
-  // Tessellation();
 }
 
 DFM2_INLINE std::vector<double> delfem2::CCad2D::MinMaxXYZ() const {
@@ -307,51 +206,6 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthNDiv(
   assert(0);
   return 0;
 }
-
-// for visualization
-/*
-DFM2_INLINE void delfem2::CCad2D_EdgeGeo::GenMeshLength(
-    double elen)
-{
-  if( elen <= 0 ){
-    this->GenMeshNDiv(1);
-    return;
-  }
-  const double len = LengthNDiv(20);
-  const unsigned int ndiv = static_cast<unsigned int>(len/elen+1);
-  this->GenMeshNDiv(ndiv);
-}
- */
-
-/*
-// for meshing
-void CCad2D_EdgeGeo::GetInternalPoints_ElemLen
-(std::vector<CVector2>& aV, double elen) const
-{
-  aV.clear();
-  const int nadd = (int)( this->Length() / elen);
-  if( nadd == 0 ) return;
-  /////
-  if( type_edge == 0 ){
-    for(int iadd=0;iadd<nadd;++iadd){
-      double r2 = (double)(iadd+1)/(nadd+1);
-      CVector2 v2 = (1-r2)*p0 + r2*p1;
-      aV.push_back(v2);
-    }
-  }
-  else if( type_edge == 1 ){
-    const CVector2 lx = (this->p1 - this->p0).Normalize();
-    const CVector2 ly = CVector2(lx.y,-lx.x);
-    const CVector2 q0 = p0 + param[0]*lx + param[1]*ly;
-    const CVector2 q1 = p1 + param[2]*lx + param[3]*ly;
-    for(int iadd=0;iadd<nadd;++iadd){
-      double t = (double)(iadd+1)/(nadd+1);
-      CVector2 pos = pointCurve_BezierCubic(t, p0, q0, q1, p1);
-      aV.push_back(pos);
-    }
-  }
-}
- */
 
 DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance(
     double x, double y) const {

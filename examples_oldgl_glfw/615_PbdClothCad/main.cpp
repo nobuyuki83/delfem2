@@ -22,6 +22,7 @@
 #include "delfem2/dtri.h"
 #include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/pbd_geo3.h"
+#include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/mshmisc.h"  // Rotate, NormalMeshTri3D
 #include "delfem2/points.h"  // Rotate, NormalMeshTri3D
 #include "delfem2/srch_v3bvhmshtopo.h"

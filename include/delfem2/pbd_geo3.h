@@ -122,9 +122,9 @@ DFM2_INLINE void PBD_ConstraintProjection_DistanceTet(
     const double P[4][3],
     const double p[4][3]);
 
-DFM2_INLINE void PBD_CdC_QuadBend(
+DFM2_INLINE void CdC_QuadBend(
     double C[3],
-    double dCdp[3][12],
+    double dCdp[3][4][3],
     const double P[4][3],
     const double p[4][3]);
 
@@ -135,7 +135,7 @@ DFM2_INLINE void PBD_Seam(
     size_t nline);
 
 template<typename T>
-DFM2_INLINE void GetConstConstDiff_Bend(
+DFM2_INLINE void CdC_DiscreteShell(
     double &C,
     CVec3<T> dC[4],
     // -----
@@ -149,4 +149,4 @@ DFM2_INLINE void GetConstConstDiff_Bend(
 #  include "delfem2/pbd_geo3.cpp"
 #endif
 
-#endif /* pbd_v23_h */
+#endif /* DFM2_PBD_GEO3_H */

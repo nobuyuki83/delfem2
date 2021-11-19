@@ -5,13 +5,12 @@
 #include "delfem2/fem_rod3_darboux.h"
 #include "delfem2/geo3_v23m34q.h"
 
-namespace dfm2 = delfem2;
-
 bool GenRandomConfigRod(
-    dfm2::CVec3d P0[3],
-    dfm2::CVec3d S0[2],
+    delfem2::CVec3d P0[3],
+    delfem2::CVec3d S0[2],
     std::mt19937 &randomEng,
     std::uniform_real_distribution<double> &dist_m1p1) {
+  namespace dfm2 = delfem2;
   P0[0] = dfm2::CVec3d::Random(dist_m1p1, randomEng);
   P0[1] = dfm2::CVec3d::Random(dist_m1p1, randomEng);
   P0[2] = dfm2::CVec3d::Random(dist_m1p1, randomEng);
@@ -35,8 +34,8 @@ bool GenRandomConfigRod(
 }
 
 TEST(fem_rod, dWddW_RodFrameTrans) {
-  std::random_device randomDevice;
-  std::mt19937 randomEng(randomDevice());
+  namespace dfm2 = delfem2;
+  std::mt19937 randomEng(std::random_device{}());
   std::uniform_real_distribution<double> dist_01(0.0, 1.0);
   std::uniform_real_distribution<double> dist_m1p1(-1.0, +1.0);
   const double eps = 1.0e-6;
@@ -125,8 +124,8 @@ TEST(fem_rod, dWddW_RodFrameTrans) {
 }
 
 TEST(fem_rod, WdWddW_DotFrame) {
-  std::random_device randomDevice;
-  std::mt19937 randomEng(randomDevice());
+  namespace dfm2 = delfem2;
+  std::mt19937 randomEng(std::random_device{}());
   std::uniform_real_distribution<double> dist_01(0, 1);
   std::uniform_real_distribution<double> dist_m1p1(-1, +1);
   const double eps = 1.0e-5;
@@ -249,8 +248,8 @@ TEST(fem_rod, WdWddW_DotFrame) {
 }
 
 TEST(fem_rod, WdWddW_Rod) {
-  std::random_device rd;
-  std::mt19937 randomEng(rd());
+  namespace dfm2 = delfem2;
+  std::mt19937 randomEng(std::random_device{}());
   std::uniform_real_distribution<double> dist_m1p1(-1, +1);
   std::uniform_real_distribution<double> dist_12(+1, +2);
   std::uniform_real_distribution<double> dist_01(+0, +1);
@@ -362,7 +361,8 @@ TEST(fem_rod, WdWddW_Rod) {
   }
 }
 
-TEST(fem_rod, CdC_Rod) {
+TEST(fem_rod, Check_CdC) {
+  namespace dfm2 = delfem2;
   std::mt19937 randomEng(std::random_device{}());
   std::uniform_real_distribution<double> dist_m1p1(-1, +1);
   const double eps = 1.0e-5;
@@ -421,7 +421,8 @@ TEST(fem_rod, CdC_Rod) {
   }
 }
 
-TEST(fem_rod, CW_Rod) {
+TEST(fem_rod, Comapre_CW) {
+  namespace dfm2 = delfem2;
   std::mt19937 randomEng(std::random_device{}());
   std::uniform_real_distribution<double> dist_m1p1(-1, +1);
   std::uniform_real_distribution<double> dist_12(+1, +2);
@@ -481,3 +482,4 @@ TEST(fem_rod, CW_Rod) {
     }
   }
 }
+

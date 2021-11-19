@@ -24,6 +24,7 @@
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/rig_geo3.h"
+#include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/garment.h"
 #include "delfem2/rigopt.h"
 #include "delfem2/srchbv3aabb.h"
