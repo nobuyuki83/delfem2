@@ -29,6 +29,15 @@ bool RandomTriangle(
   if (dfm2::Distance3(P[2], P[3]) < 0.1) { return false; }
   if (dfm2::Area_Tri3(P[0], P[2], P[3]) < 0.01) { return false; }
   if (dfm2::Area_Tri3(P[1], P[2], P[3]) < 0.01) { return false; }
+  double A0, UN0[3];
+  dfm2::UnitNormalAreaTri3(UN0, A0, P[0], P[2], P[3]);
+  double A1, UN1[3];
+  dfm2::UnitNormalAreaTri3(UN1, A1, P[1], P[3], P[2]);
+  const double L0 = dfm2::Distance3(P[2], P[3]);
+  const double H0 = A0 * 2.0 / L0;
+  const double H1 = A1 * 2.0 / L0;
+  if( H0 < 0.4 ){ return false; }
+  if( H1 < 0.4 ){ return false; }
   return true;
 }
 
@@ -66,11 +75,11 @@ TEST(fem_quadratic_bending, Check_CdC) {
 TEST(fem_quadratic_bending, Check_dRdC) {
   namespace dfm2 = delfem2;
   const double eps = 1.0e-5;
-  for (unsigned int itr = 0; itr < 100; ++itr) {
+  for (unsigned int itr = 0; itr < 10000; ++itr) {
     double P0[4][3];
     if (!RandomTriangle(P0, true)) { continue; }
     double p[4][3];
-    if (!RandomTriangle(p, false)) { continue; }
+    if (!RandomTriangle(p, true)) { continue; }
     double stiff = 1.;
     double Res0[4][3];
     double dRdC0[4][4][3][3];
@@ -93,7 +102,7 @@ TEST(fem_quadratic_bending, Check_dRdC) {
           for(unsigned int jdim=0;jdim<3;++jdim) {
             double v0 = (Res1[jp][jdim]  - Res0[jp][jdim]) / eps;
             double v1 = dRdC0[jp][ip][jdim][idim];
-            EXPECT_NEAR(v0,v1,1.0e-2*(1+fabs(v1)));
+            EXPECT_NEAR(v0,v1,4.0e-2*(1+fabs(v1)));
           }
         }
       }

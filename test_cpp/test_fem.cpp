@@ -268,15 +268,14 @@ TEST(objfunc_v23, arap) {
       dfm2::Quat_Identity(aQuat1.data() + 4 * ip);
     }
     for (int itr = 0; itr < 40; ++itr) {
-      dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat1,
-                                                    aXYZ0, aXYZ1, psup_ind, psup);
+      dfm2::UpdateRotationsByMatchingCluster_Linear(
+        aQuat1,
+        aXYZ0, aXYZ1, psup_ind, psup);
     }
   }
 
   // ------------------
-
-  std::random_device rd;
-  std::mt19937 rndeng(rd());
+  std::mt19937 rndeng(std::random_device{}());
   std::uniform_real_distribution<double> dist_m1p1(-1, +1);
   std::vector<double> dXYZ12(np * 3);
   for (unsigned int i = 0; i < np * 3; ++i) {
@@ -284,7 +283,8 @@ TEST(objfunc_v23, arap) {
   }
   assert(aXYZ1.size() == np * 3);
   assert(aQuat1.size() == np * 4);
-  double w1 = dfm2::W_ArapEnergy(aXYZ0, aXYZ1, aQuat1, psup_ind, psup);
+  double w1 = dfm2::W_ArapEnergy(
+    aXYZ0, aXYZ1, aQuat1, psup_ind, psup);
 
   const double eps = 1.0e-5;
   std::vector<double> aXYZ2 = aXYZ1;
@@ -305,8 +305,9 @@ TEST(objfunc_v23, arap) {
   // ---------------------------------
 
   std::vector<double> aRes1;
-  dfm2::dW_ArapEnergy(aRes1,
-                      aXYZ0, aXYZ1, aQuat1, psup_ind, psup);
+  dfm2::dW_ArapEnergy(
+    aRes1,
+    aXYZ0, aXYZ1, aQuat1, psup_ind, psup);
 
   {
     double dw = dfm2::DotX(aRes1.data(), dXYZ12.data(), aRes1.size());
