@@ -75,7 +75,7 @@ TEST(fem_quadratic_bending, Check_CdC) {
 TEST(fem_quadratic_bending, Check_dRdC) {
   namespace dfm2 = delfem2;
   const double eps = 1.0e-5;
-  for (unsigned int itr = 0; itr < 10000; ++itr) {
+  for (unsigned int itr = 0; itr < 1000; ++itr) {
     double P0[4][3];
     if (!RandomTriangle(P0, true)) { continue; }
     double p[4][3];
