@@ -68,7 +68,7 @@ TEST(fem_rod3_straight, check_CdC) {
     for (int ino = 0; ino < 3; ++ino) {
       for (int idim = 0; idim < 3; ++idim) {
         double vec_pos1[3][3];
-        std::memcpy(&vec_pos1[0][0], &vec_pos0[0][0], sizeof(double) * 9);
+        std::copy_n(&vec_pos0[0][0], 9, &vec_pos1[0][0]);
         vec_pos1[ino][idim] += eps;
         double c1[3], dc_dp1[3][3][3];
         dfm2::CdC_Rod3BendStraight<double>(c1, dc_dp1, vec_pos1);

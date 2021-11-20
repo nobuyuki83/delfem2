@@ -10,6 +10,8 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/pbd_geo3.h"
+#include "delfem2/fem_quadratic_bending.h"
+#include "delfem2/fem_stvk.h"
 
 // -------------------------------------
 
@@ -47,7 +49,7 @@ void delfem2::PBD_TriStrain(
     double p[3][3];
     objfdtri::FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
     double C[3], dCdp[3][9];
-    PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
+    CdC_StVK(C, dCdp, P, p);
     const double mass[3] = {1, 1, 1};
     PBD_Update_Const3(
         aXYZt,

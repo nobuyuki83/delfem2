@@ -53,41 +53,6 @@ TEST(femem2, poisson_quad) {
   }
 }
 
-TEST(objfunc_v23, Check_CdC_TriStrain) {
-  std::mt19937 randomEng(std::random_device{}());
-  std::uniform_real_distribution<double> dist_m5p5(-5, 5);
-  // -----
-  for (int itr = 0; itr < 200; ++itr) {
-    const double P[3][2] = {
-        {dist_m5p5(randomEng), dist_m5p5(randomEng)},
-        {dist_m5p5(randomEng), dist_m5p5(randomEng)},
-        {dist_m5p5(randomEng), dist_m5p5(randomEng)}};
-    if (dfm2::Distance2(P[0], P[1]) < 0.1) { continue; }
-    if (dfm2::Distance2(P[1], P[2]) < 0.1) { continue; }
-    if (dfm2::Distance2(P[0], P[2]) < 0.1) { continue; }
-    double a0 = dfm2::Area_Tri2(P[0], P[1], P[2]);
-    if (fabs(a0) < 0.2) continue;
-    const double p[3][3] = {
-        {dist_m5p5(randomEng), dist_m5p5(randomEng), dist_m5p5(randomEng)},
-        {dist_m5p5(randomEng), dist_m5p5(randomEng), dist_m5p5(randomEng)},
-        {dist_m5p5(randomEng), dist_m5p5(randomEng), dist_m5p5(randomEng)}};
-    const double eps = 1.0e-5;
-    double C[3], dCdp[3][9];
-    dfm2::PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
-    for (int ine = 0; ine < 3; ++ine) {
-      for (int idim = 0; idim < 3; ++idim) {
-        double p1[3][3];
-        for (int i = 0; i < 9; ++i) { (&p1[0][0])[i] = (&p[0][0])[i]; }
-        p1[ine][idim] += eps;
-        double C1[3], dCdp1[3][9];
-        dfm2::PBD_CdC_TriStrain2D3D(C1, dCdp1, P, p1);
-        EXPECT_NEAR((C1[0] - C[0]) / eps, dCdp[0][ine * 3 + idim], 1.0e-2);
-        EXPECT_NEAR((C1[1] - C[1]) / eps, dCdp[1][ine * 3 + idim], 1.0e-2);
-        EXPECT_NEAR((C1[2] - C[2]) / eps, dCdp[2][ine * 3 + idim], 1.0e-2);
-      }
-    }
-  }
-}
 
 TEST(pbd, Check_CdC_DiscreteShell) {
   std::mt19937 randomEng(std::random_device{}());
@@ -220,42 +185,7 @@ TEST(objfunc_v23, distancetri2d3d) {
   }
 }
 
-TEST(objfunc_v23, pbd_energy_stvk) {
-  std::random_device randomDevice;
-  std::mt19937 randomEng(randomDevice());
-  std::uniform_real_distribution<double> dist_01(0, 1);
-  std::uniform_real_distribution<double> dist_12(1, 2);
 
-  //
-  for (int itr = 0; itr < 1000; ++itr) {
-    const double P[3][2] = {  // undeformed triangle vertex positions
-        {dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng)}};
-    const double A0 = dfm2::Area_Tri2(P[0], P[1], P[2]);
-    if (A0 < 0.1) continue;
-    const double p[3][3] = { //  deformed triangle vertex positions)
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)}};
-    const double lambda = dist_12(randomEng);
-    const double myu = dist_12(randomEng);
-    // ---------------------
-    double C, dCdp[9];
-    dfm2::PBD_ConstraintProjection_EnergyStVK(C, dCdp, P, p, lambda, myu);
-    for (int ine = 0; ine < 3; ++ine) {
-      for (int idim = 0; idim < 3; ++idim) {
-        double eps = 1.0e-8;
-        double p1[3][3];
-        for (int i = 0; i < 9; ++i) { (&p1[0][0])[i] = (&p[0][0])[i]; }
-        p1[ine][idim] += eps;
-        double C1, dCdp1[9];
-        dfm2::PBD_ConstraintProjection_EnergyStVK(C1, dCdp1, P, p1, lambda, myu);
-        EXPECT_NEAR((C1 - C) / eps, dCdp[ine * 3 + idim], 1.0e-3 * (1 + fabs(dCdp[ine * 3 + idim])));
-      }
-    }
-  }
-}
 
 TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D) {
   std::random_device rd;

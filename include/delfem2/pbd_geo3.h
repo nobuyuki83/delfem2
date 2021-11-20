@@ -73,41 +73,12 @@ DFM2_INLINE void PBD_ConstProj_Rigid3D(
  * @param[in] P undeformed triangle vertex positions
  * @param[in] p deformed triangle vertex positions
  */
-DFM2_INLINE void PBD_CdC_TriStrain2D3D(
-    double C[3],
-    double dCdp[3][9],
-    const double P[3][2],
-    const double p[3][3]);
-
-/**
- *
- * @param C
- * @param dCdp
- * @param[in] P undeformed triangle vertex positions
- * @param[in] p deformed triangle vertex positions
- */
 DFM2_INLINE void PBD_ConstraintProjection_DistanceTri2D3D(
     double C[3],
     double dCdp[3][9],
     const double P[3][2],
     const double p[3][3]);
 
-/**
- *
- * @param C
- * @param dCdp
- * @param[in] P undeformed triangle vertex positions
- * @param[in] p deformed triangle vertex positions
- * @param lambda
- * @param myu
- */
-DFM2_INLINE void PBD_ConstraintProjection_EnergyStVK(
-    double &C,
-    double dCdp[9],
-    const double P[3][2],
-    const double p[3][3],
-    const double lambda,
-    const double myu);
 
 /**
  *
@@ -122,11 +93,6 @@ DFM2_INLINE void PBD_ConstraintProjection_DistanceTet(
     const double P[4][3],
     const double p[4][3]);
 
-DFM2_INLINE void CdC_QuadBend(
-    double C[3],
-    double dCdp[3][4][3],
-    const double P[4][3],
-    const double p[4][3]);
 
 DFM2_INLINE void PBD_Seam(
     double *aXYZt,

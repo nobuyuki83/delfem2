@@ -368,8 +368,7 @@ TEST(fem_rod, Check_CdC) {
   const double eps = 1.0e-5;
   for (int itr = 0; itr < 10000; ++itr) {
     dfm2::CVec3d P0[3], S0[2];
-    bool res = GenRandomConfigRod(P0, S0, randomEng, dist_m1p1);
-    if (!res) { continue; }
+    if ( !GenRandomConfigRod(P0, S0, randomEng, dist_m1p1) ) { continue; }
     //
     double C0[3];
     dfm2::CVec3d dC0_dP[3][3];
@@ -416,7 +415,7 @@ TEST(fem_rod, Check_CdC) {
               + dC0_dP[i][0].dot(dP[0])
               + dC0_dP[i][1].dot(dP[1])
               + dC0_dP[i][2].dot(dP[2])) / eps;
-      EXPECT_NEAR(val0, val1, 2.0e-2 * (1 + fabs(val1)));
+      EXPECT_NEAR(val0, val1, 3.0e-2 * (1 + fabs(val1)));
     }
   }
 }
