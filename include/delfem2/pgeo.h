@@ -123,7 +123,7 @@ double Nearest_QuadraticBezierCurve(
   const VEC c = p0;
 
   double t = 0, dist_min = (p0 - q).norm();
-  for (int i = 1; i < num_samples + 1; i++) {
+  for (unsigned int i = 1; i < num_samples + 1; i++) {
     double t0 = static_cast<double>(i) / static_cast<double>(num_samples);
     double dist0 = (a * (t0 * t0) + b * t0 + c - q).norm();
     if (dist0 < dist_min) {
@@ -267,7 +267,7 @@ double Nearest_CubicBezierCurve(
   const VEC d = p0;
 
   double t = 0, dist_min = (p0 - q).norm();
-  for (int i = 1; i < num_samples + 1; i++) {
+  for (unsigned int i = 1; i < num_samples + 1; i++) {
     double t0 = static_cast<double>(i) / static_cast<double>(num_samples);
     double dist0 = (a * (t0 * t0 * t0) + b * (t0*t0) + c * t0 + d - q).norm();
     if (dist0 < dist_min) {
