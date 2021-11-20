@@ -32,6 +32,15 @@ void WdWddW_Bend(
     const double c[4][3],
     double stiff);
 
+
+void WdWddW_QuadraticBending_Sensitivity(
+  double Kmat[4][4][3][3],
+  double Res[4][3],
+  double dRdC[4][4][3][3],
+  const double C[4][3],
+  const double c[4][3],
+  double stiff);
+
 }
 
 #ifndef DFM2_STATIC_LIBRARY
