@@ -132,19 +132,21 @@ double Nearest_QuadraticBezierCurve(
     }
   }
 
-  const double s0 = 2 * (b.dot(c) - b.dot(q));
-  const double s1 = 2 * b.squaredNorm() + 4 * (a.dot(c) - a.dot(q));
+  const double s0 = 2 * b.dot(c-q);
+  const double s1 = 2 * b.squaredNorm() + 4 * a.dot(c-q);
   const double s2 = 6 * a.dot(b);
   const double s3 = 4 * a.squaredNorm();
-  const double u0 = 2 * b.squaredNorm() + 4 * (a.dot(c) - a.dot(q));
+  const double u0 = 2 * b.squaredNorm() + 4 * a.dot(c-q);
   const double u1 = 12 * a.dot(b);
   const double u2 = 12 * a.squaredNorm();
 
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
     double dw = s0 + t * (s1 + t * (s2 + t * s3));
     double ddw = u0 + t * (u1 + t * u2);
-    t -= dw / (ddw+1.0e-10);
-    t = std::clamp(t, 0., 1.);
+    t -= dw / ddw;
+    t = (t < 0) ? 0 : t;
+    t = (t > 1) ? 1 : t;
+    // t = std::clamp(t, 0., 1.);
   }
   return t;
 }
@@ -291,8 +293,10 @@ double Nearest_CubicBezierCurve(
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
     double dw = s0 + t * (s1 + t * (s2 + t * (s3 + t * (s4 + t * s5))));
     double ddw = u0 + t * (u1 + t * (u2 + t * (u3 + t * u4)));
-    t -= dw / (ddw+1.0e-10);
-    t = std::clamp(t, 0., 1.);
+    t -= dw / ddw;
+    t = (t < 0) ? 0 : t;
+    t = (t > 1) ? 1 : t;
+    // t = std::clamp(t, 0., 1.);
   }
   return t;
 }
