@@ -132,11 +132,11 @@ double Nearest_QuadraticBezierCurve(
     }
   }
 
-  const double s0 = 2 * b.dot(c-q);
-  const double s1 = 2 * b.squaredNorm() + 4 * a.dot(c-q);
+  const double s0 = 2 * b.dot(c - q);
+  const double s1 = 2 * b.squaredNorm() + 4 * a.dot(c - q);
   const double s2 = 6 * a.dot(b);
   const double s3 = 4 * a.squaredNorm();
-  const double u0 = 2 * b.squaredNorm() + 4 * a.dot(c-q);
+  const double u0 = 2 * b.squaredNorm() + 4 * a.dot(c - q);
   const double u1 = 12 * a.dot(b);
   const double u2 = 12 * a.squaredNorm();
 
@@ -208,9 +208,15 @@ bool getParameterCubicBezier_IntersectionWithPlane(
   t = 0.5;
   for (int itr = 0; itr < 10; ++itr) {
     double tp = 1.0 - t;
-    double h = t * t * t * h4 + 3 * t * t * tp * h3 + 3 * t * tp * tp * h2 + tp * tp * tp * h1;
+    double h = t * t * t * h4
+      + 3 * t * t * tp * h3
+      + 3 * t * tp * tp * h2
+      + tp * tp * tp * h1;
     if (fabs(h) < 1.0e-6 * ref) return true;
-    double dh = 3 * t * t * h4 + 3 * t * (2 - 3 * t) * h3 + 3 * tp * (1 - 3 * t) * h2 - 3 * tp * tp * h1;
+    double dh = 3 * t * t * h4
+      + 3 * t * (2 - 3 * t) * h3
+      + 3 * tp * (1 - 3 * t) * h2
+      - 3 * tp * tp * h1;
     t -= (h / dh);
   }
   return false;
@@ -226,7 +232,12 @@ void getCubicBezierCurve(
   for (int is = 0; is < ns; is++) {
     for (int i = 0; i < n; i++) {
       double t = (double) i / n;
-      aP[is * n + i] = getPointCubicBezierCurve(t, aCP[is * 3 + 0], aCP[is * 3 + 1], aCP[is * 3 + 2], aCP[is * 3 + 3]);
+      aP[is * n + i] = getPointCubicBezierCurve(
+        t,
+        aCP[is * 3 + 0],
+        aCP[is * 3 + 1],
+        aCP[is * 3 + 2],
+        aCP[is * 3 + 3]);
     }
   }
   aP[ns * n] = aCP[ns * 3];
@@ -245,7 +256,9 @@ double Length_CubicBezierCurve_Quadrature(
   for (unsigned int i = 0; i < pgeo::NIntLineGauss[gauss_order]; i++) {
     double t = (pgeo::LineGauss<double>[gauss_order][i][0] + 1) / 2;
     double w = pgeo::LineGauss<double>[gauss_order][i][1];
-    const VEC dt = 3 * (1 - t) * (1 - t) * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * t * t * (p3 - p2);
+    const VEC dt = 3 * (1 - t) * (1 - t) * (p1 - p0)
+      + 6 * (1 - t) * t * (p2 - p1)
+      + 3 * t * t * (p3 - p2);
     totalLength += dt.norm() * w;
   }
   return totalLength / 2;
@@ -261,31 +274,29 @@ double Nearest_CubicBezierCurve(
   unsigned int num_samples,
   unsigned int num_newton_itr) {   // another end point
 
-  // Precompute coefficients
-  // p = at^2 + bt + c
-  const VEC a = 3 * p1 - 3 * p2 + p3;
-  const VEC b = p0 - 6 * p1 + 3 * p2;
-  const VEC c = -2 * p0 + 3 * p1;
-  const VEC d = p0;
+  const VEC a = -p0 + 3 * p1 - 3 * p2 + p3;
+  const VEC b = 3 * p0 - 6 * p1 + 3 * p2;
+  const VEC c = -3 * p0 + 3 * p1;
+  const VEC d = p0 - q;
 
   double t = 0, dist_min = (p0 - q).norm();
   for (unsigned int i = 1; i < num_samples + 1; i++) {
     double t0 = static_cast<double>(i) / static_cast<double>(num_samples);
-    double dist0 = (a * (t0 * t0 * t0) + b * (t0*t0) + c * t0 + d - q).norm();
+    double dist0 = (a * (t0 * t0 * t0) + b * (t0 * t0) + c * t0 + d).norm();
     if (dist0 < dist_min) {
       dist_min = dist0;
       t = t0;
     }
   }
 
-  const double s0 = 2 * c.dot(d-q);
-  const double s1 = 2 * c.squaredNorm() + 4 * b.dot(d-q);
-  const double s2 = 6 * b.dot(c) + 6 * a.dot(d-q);
+  const double s0 = 2 * c.dot(d);
+  const double s1 = 2 * c.squaredNorm() + 4 * b.dot(d);
+  const double s2 = 6 * b.dot(c) + 6 * a.dot(d);
   const double s3 = 4 * b.squaredNorm() + 8 * a.dot(c);
   const double s4 = 10 * a.dot(b);
   const double s5 = 6 * a.squaredNorm();
-  const double u0 = 2 * c.squaredNorm() + 4 * b.dot(d-q);
-  const double u1 = 12 * b.dot(c) + 12 * a.dot(d-q);
+  const double u0 = 2 * c.squaredNorm() + 4 * b.dot(d);
+  const double u1 = 12 * b.dot(c) + 12 * a.dot(d);
   const double u2 = 12 * b.squaredNorm() + 24 * a.dot(c);
   const double u3 = 40 * a.dot(b);
   const double u4 = 30 * a.squaredNorm();
@@ -293,6 +304,9 @@ double Nearest_CubicBezierCurve(
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
     double dw = s0 + t * (s1 + t * (s2 + t * (s3 + t * (s4 + t * s5))));
     double ddw = u0 + t * (u1 + t * (u2 + t * (u3 + t * u4)));
+    // VEC p = a * (t * t * t) + b * (t * t) + c * t + d;
+    // double dist0 = p.norm();
+    // std::cout << itr << " " << t << " " << p << " " << dist0 << std::endl;
     t -= dw / ddw;
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
@@ -406,7 +420,10 @@ T getPointCoonsQuad_CubicBezier(
   T q12v = getPointCubicBezierCurve(v, aP[3], aP[4], aP[5], aP[6]);
   T q = (1 - u) * q03v + u * q12v;
   //
-  T r = (1 - u) * (1 - v) * aP[0] + u * (1 - v) * aP[3] + u * v * aP[6] + (1 - u) * v * aP[9];
+  T r = (1 - u) * (1 - v) * aP[0]
+    + u * (1 - v) * aP[3]
+    + u * v * aP[6]
+    + (1 - u) * v * aP[9];
   return p + q - r;
 }
 
@@ -441,7 +458,10 @@ T getPointCoonsQuad_CubicBezierEdge(
   T q03v = getPointCubicBezierCurve(v, aP[0], aP[11], aP[10], aP[9]);
   T q12v = getPointCubicBezierCurve(v, aP[3], aP[4], aP[5], aP[6]);
   T q = (1 - u) * q03v + u * q12v;
-  T r = (1 - u) * (1 - v) * aP[0] + u * (1 - v) * aP[3] + u * v * aP[6] + (1 - u) * v * aP[9];
+  T r = (1 - u) * (1 - v) * aP[0]
+    + u * (1 - v) * aP[3]
+    + u * v * aP[6]
+    + (1 - u) * v * aP[9];
   return p + q - r;
 }
 
@@ -473,10 +493,17 @@ T getPointHermetianQuad(
   double dv0 = +1 * v * v * v - 2 * v * v + v;
   double dv1 = +1 * v * v * v - 1 * v * v;
   //
-  T p = aP[0] * u0 * v0 + aP[3] * u1 * v0 + aP[6] * u1 * v1 + aP[9] * u0 * v1;
-  T q = 3 * (aP[1] - aP[0]) * du0 * v0 + 3 * (aP[3] - aP[2]) * du1 * v0 + 3 * (aP[6] - aP[7]) * du1 * v1
+  T p = aP[0] * u0 * v0
+    + aP[3] * u1 * v0
+    + aP[6] * u1 * v1
+    + aP[9] * u0 * v1;
+  T q = 3 * (aP[1] - aP[0]) * du0 * v0
+    + 3 * (aP[3] - aP[2]) * du1 * v0
+    + 3 * (aP[6] - aP[7]) * du1 * v1
     + 3 * (aP[8] - aP[9]) * du0 * v1;
-  T r = 3 * (aP[11] - aP[0]) * u0 * dv0 + 3 * (aP[4] - aP[3]) * u1 * dv0 + 3 * (aP[6] - aP[5]) * u1 * dv1
+  T r = 3 * (aP[11] - aP[0]) * u0 * dv0
+    + 3 * (aP[4] - aP[3]) * u1 * dv0
+    + 3 * (aP[6] - aP[5]) * u1 * dv1
     + 3 * (aP[9] - aP[10]) * u0 * dv1;
   return p + q + r;
 }

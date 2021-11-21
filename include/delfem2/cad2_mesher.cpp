@@ -177,7 +177,7 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing(
     unsigned int ndiv = 1;
     if( edge_length > 0 ) {
       if (this->mapIdEd_NDiv.find(ie) == this->mapIdEd_NDiv.end()) {
-        const double len0 = cad.aEdge[ie].LengthNDiv(20);
+        const double len0 = cad.aEdge[ie].ArcLength();
         ndiv = static_cast<unsigned int>(len0 / edge_length + 1);
       } else {
         ndiv = this->mapIdEd_NDiv.find(ie)->second;

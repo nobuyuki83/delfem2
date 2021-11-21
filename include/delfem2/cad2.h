@@ -70,9 +70,7 @@ class CCad2D_EdgeGeo {
 
   double Distance(double x, double y) const;
 
-  double LengthMesh() const;
-
-  double LengthNDiv(unsigned int ndiv) const;
+  double ArcLength() const;
 
   CBoundingBox2<double> BB() const {
     CBoundingBox2<double> bb;

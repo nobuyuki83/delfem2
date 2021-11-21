@@ -20,7 +20,7 @@
 namespace delfem2::cad2 {
 
 DFM2_INLINE delfem2::CBoundingBox2<double> BB_LoopEdgeCad2D(
-    const std::vector<CCad2D_EdgeGeo> &aEdge) {
+  const std::vector<CCad2D_EdgeGeo> &aEdge) {
   CBoundingBox2<double> bb;
   for (const auto &ie: aEdge) {
     CBoundingBox2<double> bb0 = ie.BB();
@@ -30,10 +30,10 @@ DFM2_INLINE delfem2::CBoundingBox2<double> BB_LoopEdgeCad2D(
 }
 
 DFM2_INLINE void GetBound(
-    double bound_2d[4],
-    unsigned int ifc0,
-    const CadTopo &topo,
-    const std::vector<CCad2D_EdgeGeo> &aEdgeGeo) {
+  double bound_2d[4],
+  unsigned int ifc0,
+  const CadTopo &topo,
+  const std::vector<CCad2D_EdgeGeo> &aEdgeGeo) {
   assert(ifc0 < topo.faces.size());
   const int il0 = topo.faces[ifc0].aIL[0];
   const std::vector<std::pair<unsigned int, bool> > &aIE = topo.loops[il0].aIE;
@@ -83,7 +83,7 @@ DFM2_INLINE bool delfem2::CCad2D::Check() const {
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddPolygon(
-    const std::vector<double> &aXY) {
+  const std::vector<double> &aXY) {
   const size_t np = aXY.size() / 2;
   topo.AddPolygon(static_cast<unsigned int>(np));
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -97,7 +97,7 @@ DFM2_INLINE void delfem2::CCad2D::AddPolygon(
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddFace(
-    const std::vector<CCad2D_EdgeGeo> &aEdgeIn) {
+  const std::vector<CCad2D_EdgeGeo> &aEdgeIn) {
   if (aEdgeIn.empty()) { return; }
   const size_t np = aEdgeIn.size();
   topo.AddPolygon(static_cast<unsigned int>(np));
@@ -112,7 +112,7 @@ DFM2_INLINE void delfem2::CCad2D::AddFace(
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddVtxFace(
-    double x0, double y0, unsigned int ifc_add) {
+  double x0, double y0, unsigned int ifc_add) {
   if (ifc_add >= topo.faces.size()) { return; }
   topo.AddVtx_Face(ifc_add);
   topo.Assert();
@@ -122,7 +122,7 @@ DFM2_INLINE void delfem2::CCad2D::AddVtxFace(
 }
 
 DFM2_INLINE void delfem2::CCad2D::AddVtxEdge(
-    double x, double y, unsigned int ie_add) {
+  double x, double y, unsigned int ie_add) {
   if (ie_add >= topo.edges.size()) { return; }
   topo.AddVtx_Edge(ie_add);
   topo.Assert();
@@ -147,7 +147,7 @@ DFM2_INLINE delfem2::CBoundingBox2<double> delfem2::CCad2D::BB() const {
 // ----------------------------------------------
 
 DFM2_INLINE std::vector<double> delfem2::CCad2D_EdgeGeo::GenMesh(
-    unsigned int ndiv) const {
+  unsigned int ndiv) const {
   std::vector<double> xyw;
   assert(ndiv > 0);
   if (type_edge == LINE) {
@@ -181,53 +181,28 @@ DFM2_INLINE std::vector<double> delfem2::CCad2D_EdgeGeo::GenMesh(
   return xyw;
 }
 
-DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthNDiv(
-    unsigned int ndiv) const {
-  if (type_edge == LINE) {
-    return (this->p0 - this->p1).norm();
-  } else if (this->type_edge == BEZIER_QUADRATIC) {
-    const CVec2d lx = (this->p1 - this->p0);
-    const CVec2d ly = CVec2d(lx.y, -lx.x);
-    const CVec2d q0 = p0 + param[0] * lx + param[1] * ly;
-    std::vector<CVec2d> aP0;
-    Polyline_BezierQuadratic(aP0,
-                             ndiv, p0, q0, p1);
-    return Length_Polygon(aP0);
-  } else if (this->type_edge == BEZIER_CUBIC) {
-    const CVec2d lx = (this->p1 - this->p0);
-    const CVec2d ly = CVec2d(lx.y, -lx.x);
-    const CVec2d q0 = p0 + param[0] * lx + param[1] * ly;
-    const CVec2d q1 = p0 + param[2] * lx + param[3] * ly;
-    std::vector<CVec2d> aP0;
-    Polyline_BezierCubic(aP0,
-                         ndiv, p0, q0, q1, p1);
-    return Length_Polygon(aP0);
-  }
-  assert(0);
-  return 0;
-}
-
 DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance(
-    double x, double y) const {
+  double x, double y) const {
   const CVec2d q(x, y);
-//  if( type_edge == 0 ){
-  const CVec2d pn = GetNearest_LineSeg_Point(q, p0, p1);
-  return delfem2::Distance(pn, q);
-//  }
-  /*
-  else if( type_edge == 1 ){
-    assert( param.size() == 4 );
-    double min_dist = -1;
-    for(size_t ie=0;ie<aP.size()+1;++ie){
-      CVec2d q0 = (ie==0) ? p0 : aP[ie];
-      CVec2d q1 = (ie==aP.size()-1) ? p1 : aP[ie+1];
-      double dist = delfem2::Distance(q, GetNearest_LineSeg_Point(q,q0,q1));
-      if( min_dist < 0 || dist < min_dist ){ min_dist = dist; }
-    }
-    return min_dist;
+  if (type_edge == LINE) {
+    const CVec2d pn = GetNearest_LineSeg_Point(q, p0, p1);
+    return delfem2::Distance(pn, q);
+  } else if (type_edge == BEZIER_QUADRATIC) {
+    assert(param.size() == 2);
+    CVec2d p2 = CVec2d(param[0],param[1]) + p0;
+    double t = Nearest_QuadraticBezierCurve(q, p0,p2,p1, 5, 3);
+    CVec2d q0 = PointOnQuadraticBezierCurve(t, p0,p2,p1);
+    return (q0-q).norm();
+  } else if (type_edge == BEZIER_CUBIC) {
+    assert(param.size() == 4);
+    const CVec2d r0 = CVec2d(param[0],param[1]) + p0;
+    const CVec2d r1 = CVec2d(param[2],param[3]) + p1;
+    double t = Nearest_CubicBezierCurve(q, p0,r0,r1,p1, 5, 3);
+    CVec2d q0 = PointOnCubicBezierCurve(t, p0,r0,r1,p1);
+    // std::cout << t << " " << q0 << " " << (q0-q).norm() << std::endl;
+    return (q0-q).norm();
   }
   assert(0);
-   */
   return 0;
 }
 
@@ -261,14 +236,14 @@ DFM2_INLINE void delfem2::CCad2D::MeshForVisualization(
 }
  */
 
-DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthMesh() const {
+DFM2_INLINE double delfem2::CCad2D_EdgeGeo::ArcLength() const {
   if (this->type_edge == BEZIER_QUADRATIC) {
     return Length_QuadraticBezierCurve_Analytic<CVec2d, double>(
-        p0, CVec2d(param[0], param[1]) + p0, p1);
+      p0, CVec2d(param[0], param[1]) + p0, p1);
   } else if (this->type_edge == BEZIER_CUBIC) {
     return Length_CubicBezierCurve_Quadrature<CVec2d, double>(
-        p0, p0 + CVec2d(param[0], param[1]),
-        p1 + CVec2d(param[2], param[3]), p1, 3);
+      p0, p0 + CVec2d(param[0], param[1]),
+      p1 + CVec2d(param[2], param[3]), p1, 3);
   }
   /*
   double len0 = 0.0;
@@ -284,7 +259,7 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::LengthMesh() const {
 }
 
 DFM2_INLINE double delfem2::AreaLoop(
-    const std::vector<CCad2D_EdgeGeo> &aEdge) {
+  const std::vector<CCad2D_EdgeGeo> &aEdge) {
   double a0 = 0;
   CVec2d qo(0, 0);
   for (const auto &ie: aEdge) {
@@ -303,7 +278,7 @@ DFM2_INLINE double delfem2::AreaLoop(
 }
 
 DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::InvertLoop(
-    const std::vector<CCad2D_EdgeGeo> &aEdge) {
+  const std::vector<CCad2D_EdgeGeo> &aEdge) {
   const size_t ne = aEdge.size();
   std::vector<CCad2D_EdgeGeo> aEdgeOut(ne);
   for (unsigned int ie = 0; ie < ne; ++ie) {
@@ -327,12 +302,12 @@ DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo> delfem2::InvertLoop(
 
 DFM2_INLINE std::vector<delfem2::CCad2D_EdgeGeo>
 delfem2::RemoveEdgeWithZeroLength(
-    const std::vector<CCad2D_EdgeGeo> &aEdge) {
+  const std::vector<CCad2D_EdgeGeo> &aEdge) {
   const size_t ne = aEdge.size();
   std::vector<CCad2D_EdgeGeo> aEdgeOut;
   aEdgeOut.reserve(ne);
   for (unsigned int ie = 0; ie < ne; ++ie) {
-    if (aEdge[ie].LengthMesh() < 1.0e-10) continue;
+    if (aEdge[ie].ArcLength() < 1.0e-10) continue;
     aEdgeOut.push_back(aEdge[ie]);
   }
   return aEdgeOut;
@@ -391,10 +366,10 @@ DFM2_INLINE void delfem2::CCad2D::Tessellation()
 
 
 DFM2_INLINE void delfem2::Cad2_Ui::Pick(
-    double x0,
-    double y0,
-    double view_height,
-    const CCad2D &cad) {
+  double x0,
+  double y0,
+  double view_height,
+  const CCad2D &cad) {
   CVec2d pin(x0, y0);
   if (this->iedge_picked != UINT_MAX) {  // try to pick handles
     const CCad2D_EdgeGeo &edge = cad.aEdge[iedge_picked];
@@ -422,8 +397,8 @@ DFM2_INLINE void delfem2::Cad2_Ui::Pick(
     if (dist < view_height * 0.05) {
       this->ivtx_picked = ivtx;
       picked_pos = {
-          static_cast<float>(cad.aVtx[ivtx_picked].pos.x),
-          static_cast<float>(cad.aVtx[ivtx_picked].pos.y)};
+        static_cast<float>(cad.aVtx[ivtx_picked].pos.x),
+        static_cast<float>(cad.aVtx[ivtx_picked].pos.y)};
       return;
     }
   }
@@ -432,8 +407,8 @@ DFM2_INLINE void delfem2::Cad2_Ui::Pick(
     if (dist < view_height * 0.05) {
       this->iedge_picked = iedge;
       picked_pos = {
-          static_cast<float>(x0),
-          static_cast<float>(y0)};
+        static_cast<float>(x0),
+        static_cast<float>(y0)};
       return;
     }
   }
@@ -450,11 +425,11 @@ DFM2_INLINE void delfem2::Cad2_Ui::Pick(
 }
 
 DFM2_INLINE void delfem2::Cad2_Ui::DragPicked(
-    CCad2D &cad,
-    double p1x,
-    double p1y,
-    double p0x,
-    double p0y) {
+  CCad2D &cad,
+  double p1x,
+  double p1y,
+  double p0x,
+  double p0y) {
   if (ivtx_picked < cad.aVtx.size()) {
     cad.aVtx[ivtx_picked].pos.p[0] = p1x;
     cad.aVtx[ivtx_picked].pos.p[1] = p1y;
