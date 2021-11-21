@@ -78,8 +78,8 @@ void MeshingPattern
     const unsigned int ie0 = aIESeam[ie*2+0];
     const unsigned int ie1 = aIESeam[ie*2+1];
     if( ie0 >= cad.aEdge.size() || ie1 >= cad.aEdge.size() ) continue;
-    const double l0 = cad.aEdge[ie0].LengthMesh();
-    const double l1 = cad.aEdge[ie1].LengthMesh();
+    const double l0 = cad.aEdge[ie0].ArcLength();
+    const double l1 = cad.aEdge[ie1].ArcLength();
     const unsigned int ndiv = (int)(0.5*(l0+l1)/el+1);
     mesher.mapIdEd_NDiv[ie0] = ndiv;
     mesher.mapIdEd_NDiv[ie1] = ndiv;

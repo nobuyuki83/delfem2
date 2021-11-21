@@ -295,11 +295,11 @@ double Nearest_CubicBezierCurve(
   const double s3 = 4 * b.squaredNorm() + 8 * a.dot(c);
   const double s4 = 10 * a.dot(b);
   const double s5 = 6 * a.squaredNorm();
-  const double u0 = 2 * c.squaredNorm() + 4 * b.dot(d);
-  const double u1 = 12 * b.dot(c) + 12 * a.dot(d);
-  const double u2 = 12 * b.squaredNorm() + 24 * a.dot(c);
-  const double u3 = 40 * a.dot(b);
-  const double u4 = 30 * a.squaredNorm();
+  const double u0 = s1;
+  const double u1 = 2 * s2;
+  const double u2 = 3 * s3;
+  const double u3 = 4 * s4;
+  const double u4 = 5 * s5;
 
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
     double dw = s0 + t * (s1 + t * (s2 + t * (s3 + t * (s4 + t * s5))));
