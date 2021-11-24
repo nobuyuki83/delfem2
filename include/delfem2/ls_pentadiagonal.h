@@ -14,9 +14,9 @@ class BlockPentaDiagonalMatrix {
  public:
   // initialize with block size n
   BlockPentaDiagonalMatrix() = default;
-  ~BlockPentaDiagonalMatrix() {}
+  ~BlockPentaDiagonalMatrix() = default;
 
-  unsigned int nblk() const { return nblk_; }
+  [[nodiscard]] unsigned int nblk() const { return nblk_; }
 
   void Initialize(size_t n) {
     this->nblk_ = n;
@@ -66,6 +66,18 @@ class BlockPentaDiagonalMatrix {
         for (unsigned int k = 0; k < ndim * ndim; ++k) { p[k] += q[k]; }
       }
     }
+  }
+
+  /**
+ * marge element stiffness matrix to the position (idiv,idiv)
+ */
+  void MergeBlock(
+    unsigned int iblkrow,
+    unsigned int jblkcol,
+    const double *block) {
+    double *p = GetValuePointer(iblkrow, jblkcol);
+    assert(p!= nullptr);
+    for (unsigned int k = 0; k < ndim * ndim; ++k) { p[k] += block[k]; }
   }
 
   //! define fixed boudnary condition
