@@ -204,25 +204,24 @@ int main()
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   // -------
-  std::vector<dfm2::CVec3d> aP0; // initial position
-  std::vector<dfm2::CVec3d> aS0; // initial director vector
+  std::vector<dfm2::CVec3d> aP0, aS0; // initial director vector
   std::vector<unsigned int> aIP_HairRoot; // indexes of root point
   { // make the un-deformed shape of hair
-    std::vector<dfm2::CHairShape> aHairShape;
-    double rad0 = 0.2;
-    double dangle = 0.2;
-    const int nhair = 2;
-    for(int ihair=0;ihair<nhair;++ihair){
-      const double px = -1.0-ihair*0.2;
-      const double py = ihair;
-      const double pz = 0.0;
-      const dfm2::CHairShape hs{
-        30, 0.1, rad0, dangle,
-        {px, py, pz } };
-      aHairShape.push_back(hs);
+    dfm2::HairDarbouxShape hs{
+      30, 1, 0.2, 0.1};
+    std::vector<dfm2::CVec3d> ap, as;
+    hs.MakeConfigDaboux(ap, as);
+    for(int ihair=0;ihair<2;++ihair){
+      std::vector<dfm2::CVec3d> ap1 = ap;
+      for(auto& p : ap1){
+        p.y += ihair;
+        p.x += -0.2*ihair-1;
+      }
+      aIP_HairRoot.push_back(aP0.size());
+      aP0.insert(aP0.end(), ap1.begin(), ap1.end());
+      aS0.insert(aS0.end(), as.begin(), as.end());
     }
-    MakeProblemSetting_Spiral(aP0,aS0,aIP_HairRoot,
-                              aHairShape);
+    aIP_HairRoot.push_back(aP0.size());
     assert( aS0.size() == aP0.size() );
   }
   for(int itr=0;itr<10;++itr){ // relax director vectors

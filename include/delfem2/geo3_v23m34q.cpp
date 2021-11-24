@@ -46,11 +46,10 @@ DFM2_INLINE delfem2::CVec3d delfem2::GetCartesianRotationVector(
 DFM2_INLINE delfem2::CVec3d delfem2::GetSpinVector(
     const CMat3d &m) {
   const double *mat = m.p_;
-  CVec3d r;
-  r.p[0] = (mat[7] - mat[5]) * 0.5;
-  r.p[1] = (mat[2] - mat[6]) * 0.5;
-  r.p[2] = (mat[3] - mat[1]) * 0.5;
-  return r;
+  return CVec3d{
+    (mat[7] - mat[5]) * 0.5,
+    (mat[2] - mat[6]) * 0.5,
+    (mat[2] - mat[6]) * 0.5 };
 }
 
 template<typename T>

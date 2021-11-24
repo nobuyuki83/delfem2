@@ -14,10 +14,9 @@
 
 #include "delfem2/ls_solver_block_sparse.h"
 #include "delfem2/ls_pentadiagonal.h"
-#include "delfem2/hair_darboux_util.h"
 #include "delfem2/hair_darboux_solver.h"
+#include "delfem2/hair_darboux_util.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/lsmats.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v3q.h"
@@ -25,7 +24,7 @@
 
 namespace dfm2 = delfem2;
 
-// -------------------------------------t
+// -------------------------------------
 
 void myGlutDisplay(
     const std::vector<dfm2::CVec3d> &aP,
@@ -59,7 +58,7 @@ void myGlutDisplay(
       ::glVertex3d(aP[ip1].x, aP[ip1].y, aP[ip1].z);
     }
     ::glEnd();
-    // --------------
+    // ------------
     ::glBegin(GL_LINES);
     for (unsigned int is = 0; is < ns; ++is) {
       const unsigned int ip0 = ips + is + 0;
@@ -79,35 +78,31 @@ template <class BLOCK_LINEAR_SOLVER>
 void Simulation(
     BLOCK_LINEAR_SOLVER &ls_solver,
     dfm2::glfw::CViewer3 &viewer,
+    std::mt19937 &reng,
+    std::uniform_real_distribution<double>& dist01,
     const std::vector<dfm2::CVec3d> &aP0,
     const std::vector<dfm2::CVec3d> &aS0,
-    double dt,
-    double mass,
-    const dfm2::CVec3d &gravity,
     const double stiff_stretch,
     const double stiff_bendtwist[3],
     std::vector<unsigned int> &aIP_HairRoot){
-  // -----------------
-  std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
-  std::vector<dfm2::CVec3d> aPV(aP0.size(), dfm2::CVec3d(0, 0, 0)); // velocity
-  std::vector<dfm2::CVec3d> aPt = aP; // temporally positions
+  std::vector<dfm2::CVec3d> aS = aS0, aP = aP0;
+  for (unsigned int ip = 0; ip < aP.size(); ++ip) {
+    auto rnd = dfm2::CVec3d::Random(dist01, reng) * 0.1;
+    if (ls_solver.dof_bcflag[ip * 4 + 0] == 0) { aP[ip].p[0] += rnd.x; }
+    if (ls_solver.dof_bcflag[ip * 4 + 1] == 0) { aP[ip].p[1] += rnd.y; }
+    if (ls_solver.dof_bcflag[ip * 4 + 2] == 0) { aP[ip].p[2] += rnd.z; }
+    if (ls_solver.dof_bcflag[ip * 4 + 3] == 0) {
+      assert(ip != aP.size() - 1);
+      aS[ip] += dfm2::CVec3d::Random(dist01, reng) * 0.1;
+    }
+  }
+  dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
   for (int iframe = 0; iframe < 100; ++iframe) {
-    for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-      if (ls_solver.dof_bcflag[ip * 4 + 0] == 0) {
-        aPt[ip] = aP[ip] + dt * aPV[ip] + (dt * dt / mass) * gravity;
-      }
-    }
-    dfm2::MakeDirectorOrthogonal_RodHair(aS, aPt);
+    dfm2::MakeDirectorOrthogonal_RodHair(aS, aP);
     Solve_RodHair(
-        aPt, aS, ls_solver,
-        stiff_stretch, stiff_bendtwist, mass / (dt * dt),
+        aP, aS, ls_solver,
+        stiff_stretch, stiff_bendtwist, 0.0,
         aP0, aS0, aIP_HairRoot);
-    for (unsigned int ip = 0; ip < aP.size(); ++ip) {
-      if (ls_solver.dof_bcflag[ip * 4 + 0] != 0) { continue; }
-      aPV[ip] = (aPt[ip] - aP[ip]) / dt;
-      aP[ip] = aPt[ip];
-    }
-    // -------------
     viewer.DrawBegin_oldGL();
     myGlutDisplay(aP, aS, aIP_HairRoot);
     viewer.SwapBuffers();
@@ -123,77 +118,65 @@ int main() {
   dfm2::glfw::InitGLOld();
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
-  // -------
+  // --------------
   while (true) {
-    double dt = 0.01;
-    double mass = 1.0e-2;
-    const dfm2::CVec3d gravity(0, -10, 0);
-    const double stiff_stretch = 10000 * (dist01(reng) + 1.);
-    const double stiff_bendtwist[3] = {
-        1000 * (dist01(reng) + 1.),
-        1000 * (dist01(reng) + 1.),
-        1000 * (dist01(reng) + 1.)};
-    std::vector<dfm2::CVec3d> aP0; // initial position
-    std::vector<dfm2::CVec3d> aS0; // initial director vector
-    std::vector<unsigned int> aIP_HairRoot; // indexes of root point
-    { // make the un-deformed shape of hair
-      std::vector<delfem2::CHairShape> aHairShape;
-      double rad0 = dist01(reng);
-      double dangle = dist01(reng);
-      const int nhair = 10;
-      for (int ihair = 0; ihair < nhair; ++ihair) {
-        const double px = -1.;
-        const double py = (dist01(reng) - 0.5) * 2.0;
-        const double pz = (dist01(reng) - 0.5) * 2.0;
-        const delfem2::CHairShape hs{
-          30, 0.1, rad0, dangle,
-          {px, py, pz}};
-        aHairShape.push_back(hs);
-      }
-      MakeProblemSetting_Spiral(
-          aP0, aS0, aIP_HairRoot,
-          aHairShape);
-      assert(aS0.size() == aP0.size());
-    }
-    for (int itr = 0; itr < 10; ++itr) { // relax director vectors
-      ParallelTransport_RodHair(aP0, aS0, aIP_HairRoot);
-    }
+    std::vector<dfm2::CVec3d> aP0, aS0;
+    std::vector<unsigned int> aIP_HairRoot;
     {
-      dfm2::LinearSystemSolver_BlockSparse ls_solver; // sparse matrix
+      delfem2::HairDarbouxShape hs{
+        30,
+        0.2,
+        dist01(reng) * 0.3,
+        (dist01(reng)+1)*0.1 };
+      std::vector<dfm2::CVec3d> ap, as;
+      hs.MakeConfigDaboux(ap,as);
+      assert(as.size() == ap.size());
+      for(unsigned int itr=0;itr<10;++itr) {
+        aIP_HairRoot.push_back(aP0.size());
+        std::vector<dfm2::CVec3d> ap1 = ap;
+        for(auto& p : ap1){
+          p.z += itr*0.3;
+        }
+        aP0.insert(aP0.end(), ap1.begin(), ap1.end());
+        aS0.insert(aS0.end(), as.begin(), as.end());
+      }
+      aIP_HairRoot.push_back(aP0.size());
+    }
+    // -----------------
+    const double stiff_stretch = dist01(reng) + 1.0;
+    const double stiff_bendtwist[3] = {
+        dist01(reng) + 1.0,
+        dist01(reng) + 1.0,
+        dist01(reng) + 1.0};
+    {
+      dfm2::LinearSystemSolver_BlockSparse ls_solver;
       {
         std::vector<unsigned int> psup_ind, psup;
         delfem2::JArray_PSuP_Hair(
             psup_ind, psup,
             aIP_HairRoot);
-        ls_solver.Initialize(
-            aP0.size(), 4,
-            psup_ind, psup);
-        dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
+        ls_solver.Initialize(aP0.size(), 4, psup_ind, psup);
+        dfm2::MakeBCFlag_RodHair(
             ls_solver.dof_bcflag,
             aIP_HairRoot);
-        assert(ls_solver.dof_bcflag.size() == aP0.size() * 4);
       }
       Simulation(
-          ls_solver, viewer,
-          aP0, aS0,
-          dt, mass, gravity, stiff_stretch, stiff_bendtwist,
+          ls_solver, viewer, reng,
+          dist01,
+          aP0, aS0, stiff_stretch, stiff_bendtwist,
           aIP_HairRoot);
       if( glfwWindowShouldClose(viewer.window)){ break; }
     }
     {
-      dfm2::LinearSystemSolver_BlockPentaDiagonal<4> ls_solver; // sparse matrix
-      {
-        ls_solver.Initialize(
-            aP0.size());
-        dfm2::MakeBCFlag_RodHair( // set fixed boundary condition
-            ls_solver.dof_bcflag,
-            aIP_HairRoot);
-        assert(ls_solver.dof_bcflag.size() == aP0.size() * 4);
-      }
+      dfm2::LinearSystemSolver_BlockPentaDiagonal<4> ls_solver;
+      ls_solver.Initialize(aP0.size());
+      dfm2::MakeBCFlag_RodHair(
+          ls_solver.dof_bcflag,
+          aIP_HairRoot);
       Simulation(
-          ls_solver, viewer,
-          aP0, aS0,
-          dt, mass, gravity, stiff_stretch, stiff_bendtwist,
+          ls_solver, viewer, reng,
+          dist01,
+          aP0, aS0, stiff_stretch, stiff_bendtwist,
           aIP_HairRoot);
       if( glfwWindowShouldClose(viewer.window)){ break; }
     }

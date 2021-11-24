@@ -43,9 +43,10 @@ class CInput_ContactNothing : public dfm2::CInput_Contact {
 };
 
 class CInput_ContactPlane : public dfm2::CInput_Contact {
-  double penetrationNormal(double &nx, double &ny, double &nz,
-                           [[maybe_unused]] double px,
-                           [[maybe_unused]] double py, double pz) const override {
+  double penetrationNormal(
+    double &nx, double &ny, double &nz,
+    [[maybe_unused]] double px,
+    [[maybe_unused]] double py, double pz) const override {
     nx = 0.0;
     ny = 0.0;
     nz = 1.0; // normal of the plane
@@ -54,8 +55,9 @@ class CInput_ContactPlane : public dfm2::CInput_Contact {
 };
 
 class CInput_ContactSphere : public dfm2::CInput_Contact {
-  double penetrationNormal(double &nx, double &ny, double &nz,
-                           double px, double py, double pz) const override {
+  double penetrationNormal(
+    double &nx, double &ny, double &nz,
+    double px, double py, double pz) const override {
     const double center[3] = {0.1, 0.5, -0.8};
     const double radius = 0.3;
     nx = px - center[0];

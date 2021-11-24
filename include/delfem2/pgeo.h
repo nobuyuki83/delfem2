@@ -136,9 +136,9 @@ double Nearest_QuadraticBezierCurve(
   const double s1 = 2 * b.squaredNorm() + 4 * a.dot(c - q);
   const double s2 = 6 * a.dot(b);
   const double s3 = 4 * a.squaredNorm();
-  const double u0 = 2 * b.squaredNorm() + 4 * a.dot(c - q);
-  const double u1 = 12 * a.dot(b);
-  const double u2 = 12 * a.squaredNorm();
+  const double u0 = s1;
+  const double u1 = 2*s2;
+  const double u2 = 3*s3;
 
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
     double dw = s0 + t * (s1 + t * (s2 + t * s3));
@@ -304,13 +304,9 @@ double Nearest_CubicBezierCurve(
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
     double dw = s0 + t * (s1 + t * (s2 + t * (s3 + t * (s4 + t * s5))));
     double ddw = u0 + t * (u1 + t * (u2 + t * (u3 + t * u4)));
-    // VEC p = a * (t * t * t) + b * (t * t) + c * t + d;
-    // double dist0 = p.norm();
-    // std::cout << itr << " " << t << " " << p << " " << dist0 << std::endl;
     t -= dw / ddw;
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
-    // t = std::clamp(t, 0., 1.);
   }
   return t;
 }

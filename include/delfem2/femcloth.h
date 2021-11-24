@@ -13,6 +13,7 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/femutil.h"
 #include "delfem2/fem_quadratic_bending.h"
+#include "delfem2/fem_stvk.h"
 
 #ifdef DFM2_STATIC_LIBRARY
 // Merge use explicitly use the template so for static library we need to include the template itself.
@@ -20,17 +21,6 @@
 #endif
 
 namespace delfem2 {
-
-
-void WdWddW_CST(
-    double& W, // (out) energy
-    double dW[3][3], // (out) 1st derivative of energy
-    double ddW[3][3][3][3], // (out) 2nd derivative of energy
-    //
-    const double C[3][3], // (in) undeformed triangle vertex positions
-    const double c[3][3], // (in) deformed triangle vertex positions
-    const double lambda, // (in) Lame's 1st parameter
-    const double myu);   // (in) Lame's 2nd parameter
 
 /**
  * @brief compute energy and its 1st and 2nd derivative for contact against object
@@ -157,4 +147,4 @@ double MergeLinSys_Contact(
 #  include "delfem2/femcloth.cpp"
 #endif
   
-#endif /* fem_ematrix_h */
+#endif /* DFM2_FEMCLOTH_H */

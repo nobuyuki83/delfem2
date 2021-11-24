@@ -290,9 +290,9 @@ DFM2_INLINE double delfem2::WdWddW_DotFrame(
   return V;
 }
 
-DFM2_INLINE delfem2::CVec3d delfem2::Darboux_Rod
-    (const CVec3d P[3],
-     const CVec3d S[2]) {
+DFM2_INLINE delfem2::CVec3d delfem2::Darboux_Rod(
+  const CVec3d P[3],
+  const CVec3d S[2]) {
   assert(fabs(S[0].norm() - 1.0) < 1.0e-5);
   assert(fabs(S[0].dot((P[1] - P[0]).normalized())) < 1.0e-5);
   assert(fabs(S[1].norm() - 1.0) < 1.0e-5);

@@ -9,6 +9,7 @@
 #define DFM2_HAIR_DARBOUX_H
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 
@@ -37,29 +38,68 @@ DFM2_INLINE void UpdateSolutionHair(
     const std::vector<unsigned int> &aIP_HairRoot,
     const std::vector<int> &aBCFlag);
 
-class CHairShape {
+class HairDarbouxShape {
  public:
-  //! number of points
-  unsigned int np;
+  void MakeConfigDaboux(
+    std::vector<CVec3d> & aP,
+    std::vector<CVec3d> & aS) const {
+    const unsigned int np = num_points;
+    const double elen = edge_length;
+    const double rad0 = radius;
+    double dangle;
+    {
+      double tmp = pitch / (2 * M_PI);
+      double tmp2 = tmp * tmp;
+      dangle = elen / std::sqrt(rad0*rad0 + tmp2);
+      for (unsigned int itr = 0; itr < 10; ++itr) {
+        double elen0 = std::sqrt(2 * rad0 * rad0 * (1 - cos(dangle)) + tmp2 * dangle * dangle);
+        double df = (rad0 * rad0 * sin(dangle) + dangle * tmp2) / elen0;
+        double f = elen0 - elen;
+        dangle -= f / df;
+      }
+    }
+    aP.clear();
+    for (unsigned int ip = 0; ip < np; ++ip) {
+      const double angle = ip * dangle;
+      aP.emplace_back(
+        pitch * angle / (2*M_PI),
+        rad0 * cos(angle),
+        rad0 * sin(angle));
+    }
+    aS.resize(np);
+    {
+      const CVec3d v = (aP[1] - aP[0]).normalized();
+      CVec3d s(0, 1, 0);
+      s = (s - (s.dot(v)) * v).normalized();
+      aS[0] = s;
+    }
+    for(unsigned int ip=1;ip<np-1;++ip) {
+      const CMat3d R01 = Mat3_MinimumRotation(
+        (aP[ip] - aP[ip-1]).normalized(),
+        (aP[ip+1] - aP[ip]).normalized());
+      aS[ip] = R01 * aS[ip-1];
+    }
+    aS[np-1] = CVec3d(1,0,0);
+  }
 
-  //! axis position increment for the helix
+ public:
+  unsigned int num_points;
+
+  //! axial position increment for the helix
   double pitch;
 
-  //! radius of helix
-  double rad0;
+  double radius;
 
-  //! angle increment for the helix
-  double dangle;
-
-  //! root shape
-  double p0[3];
+  double edge_length;
 };
 
+/*
 void MakeProblemSetting_Spiral(
     std::vector<CVec3d> &aP0,
     std::vector<CVec3d> &aS0,
     std::vector<unsigned int> &aIP_HairRoot,
-    const std::vector<CHairShape> &aHairShape);
+    const std::vector<HairDarbouxShape> &aHairShape);
+*/
 
 } // namespace delfem2
 

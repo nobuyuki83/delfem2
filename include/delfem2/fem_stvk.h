@@ -39,6 +39,26 @@ DFM2_INLINE void CdC_EnergyStVK(
     const double lambda,
     const double myu);
 
+void WdWddW_CST(
+    double& W, // (out) energy
+    double dW[3][3], // (out) 1st derivative of energy
+    double ddW[3][3][3][3], // (out) 2nd derivative of energy
+    //
+    const double C[3][3], // (in) undeformed triangle vertex positions
+    const double c[3][3], // (in) deformed triangle vertex positions
+    const double lambda, // (in) Lame's 1st parameter
+    const double myu);   // (in) Lame's 2nd parameter
+
+void WdWddW_CST_Sensitivity(
+  double Kmat[3][3][3][3], 
+  double Res[3][3], 
+  double dRdC[3][3][3][3],
+  double lambda, 
+  double myu,
+  const double C[3][3], 
+  const double c[3][3]);
+
+
 }
 
 #ifndef DFM2_STATIC_LIBRARY

@@ -33,6 +33,7 @@ DFM2_INLINE void delfem2::ParallelTransport_RodHair(
       const CMat3d CMat3 = Mat3_MinimumRotation(aP0[ip1] - aP0[ip0], aP0[ip2] - aP0[ip1]);
       CVec3d s1 = CMat3 * aS0[is0] + aS0[is1];
       const CVec3d v = (aP0[ip2] - aP0[ip1]).normalized();
+      std::cout << ih << " " << ir << " " << (s1 - (s1.dot(v)) * v).normalized() << " " << aS0[is1] << std::endl;
       aS0[is1] = (s1 - (s1.dot(v)) * v).normalized();
     }
   }
@@ -122,27 +123,42 @@ DFM2_INLINE void delfem2::UpdateSolutionHair(
 }
 
 
+/*
 void delfem2::MakeProblemSetting_Spiral(
     std::vector<delfem2::CVec3d> &aP0,
     std::vector<delfem2::CVec3d> &aS0,
     std::vector<unsigned int> &aIP_HairRoot,
-    const std::vector<CHairShape> &aHairShape) {
+    const std::vector<HairDarbouxShape> &aHairShape) {
   aIP_HairRoot.assign(1, 0);
   aP0.clear();
   aS0.clear();
   for (unsigned int ihair = 0; ihair < aHairShape.size(); ++ihair) {
     const unsigned int np = aHairShape[ihair].np;
     const double pitch = aHairShape[ihair].pitch;
-    const double dangle = aHairShape[ihair].dangle;
+    const double elen = aHairShape[ihair].edge_length;
     const double rad0 = aHairShape[ihair].rad0;
     const double *p0 = aHairShape[ihair].p0;
+    double dangle;
+    {
+      double tmp = pitch / (2 * M_PI);
+      double tmp2 = tmp * tmp;
+      dangle = elen / std::sqrt(rad0*rad0 + tmp2);
+      for (unsigned int itr = 0; itr < 10; ++itr) {
+        double elen0 = std::sqrt(2 * rad0 * rad0 * (1 - cos(dangle)) + tmp2 * dangle * dangle);
+        double df = (rad0 * rad0 * sin(dangle) + dangle * tmp2) / elen0;
+        double f = elen0 - elen;
+        dangle -= f / df;
+        std::cout << itr << " " << dangle << " " << elen0 << " " << elen << std::endl;
+      }
+    }
     for (unsigned int ip = 0; ip < np; ++ip) {
       CVec3d p = CVec3d(
-          p0[0] + ip * pitch,
+          p0[0] + pitch * ip * dangle / (2*M_PI),
           p0[1] + rad0 * cos(dangle * ip),
           p0[2] + rad0 * sin(dangle * ip));
       aP0.push_back(p);
     }
+    // std::cout << Distance(aP0[0],aP0[1]) << " " << elen << std::endl;
     const unsigned int np0 = aIP_HairRoot[ihair];
     for (unsigned int is = 0; is < np - 1; ++is) {
       const CVec3d v = (aP0[np0 + is + 1] - aP0[np0 + is + 0]).normalized();
@@ -154,3 +170,4 @@ void delfem2::MakeProblemSetting_Spiral(
     aIP_HairRoot.push_back(static_cast<unsigned int>(aP0.size()));
   }
 }
+ */

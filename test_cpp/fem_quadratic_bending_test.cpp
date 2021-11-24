@@ -33,6 +33,7 @@ bool RandomTriangle(
   dfm2::UnitNormalAreaTri3(UN0, A0, P[0], P[2], P[3]);
   double A1, UN1[3];
   dfm2::UnitNormalAreaTri3(UN1, A1, P[1], P[3], P[2]);
+  if( dfm2::Dot3(UN0,UN1) < 0.3 ){ return false; }
   const double L0 = dfm2::Distance3(P[2], P[3]);
   const double H0 = A0 * 2.0 / L0;
   const double H1 = A1 * 2.0 / L0;
