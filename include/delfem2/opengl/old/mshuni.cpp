@@ -374,22 +374,6 @@ DFM2_INLINE void DrawMeshTri3DPart_FaceNorm(
   ::glEnd();
 }
 
-DFM2_INLINE void DrawMeshTri3D_FaceNorm_Flg(
-    const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aTri,
-    int iflg,
-    const std::vector<int> &aFlgTri) {
-  const int nTri = (int) aTri.size() / 3;
-  //  const int nXYZ = (int)aXYZ.size()/3;
-  ::glBegin(GL_TRIANGLES);
-  for (int itri = 0; itri < nTri; ++itri) {
-    const int iflg0 = aFlgTri[itri];
-    if (iflg0 != iflg) continue;
-    DrawSingleTri3D_FaceNorm(aXYZ.data(), aTri.data() + itri * 3, 0);
-  }
-  ::glEnd();
-}
-
 DFM2_INLINE void DrawMeshTri3D_FaceEdge(
     const std::vector<double> &vtx_xyz,
     const std::vector<int> &tri_vtx_idx) {
@@ -814,6 +798,21 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm(
       lcl::myGlVertex3d(iv2, aXYZ);
       lcl::myGlVertex3d(iv3, aXYZ);
     }
+  }
+  ::glEnd();
+}
+
+
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3Selective_FaceNorm(
+  const std::vector<double> &aXYZ,
+  const std::vector<unsigned int> &aTri,
+  const std::function<bool (unsigned int)> &fnc) {
+  const size_t nTri = aTri.size() / 3;
+  ::glBegin(GL_TRIANGLES);
+  for (unsigned int itri = 0; itri < nTri; ++itri) {
+    if( !fnc(itri) ){ continue; }
+    delfem2::opengl::old::mshuni::DrawSingleTri3D_FaceNorm(
+      aXYZ.data(), aTri.data() + itri * 3, 0);
   }
   ::glEnd();
 }

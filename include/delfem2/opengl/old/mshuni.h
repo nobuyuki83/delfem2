@@ -148,11 +148,10 @@ DFM2_INLINE void DrawMeshTri3DPart_FaceNorm(
     const std::vector<int> &aTri,
     const std::vector<int> &aIndTri);
 
-DFM2_INLINE void DrawMeshTri3D_FaceNorm_Flg(
+DFM2_INLINE void DrawMeshTri3Selective_FaceNorm(
     const std::vector<double> &aXYZ,
-    const std::vector<int> &aTri,
-    int iflg,
-    const std::vector<int> &aFlgTri);
+    const std::vector<unsigned int> &aTri,
+    const std::function<bool (unsigned int)> &fnc);
 
 DFM2_INLINE void DrawMeshTri3D_FaceNorm_XYsym(
     const std::vector<double> &vtx_xyz,
