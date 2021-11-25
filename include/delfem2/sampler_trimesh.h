@@ -6,6 +6,7 @@
 #define DFM2_SAMPLER_TRIMESH_H_
 
 #include <random>
+#include <functional>
 
 #include "delfem2/vec3.h"
 

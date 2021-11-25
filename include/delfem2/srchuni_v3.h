@@ -170,6 +170,14 @@ double DistanceToTri(
     const unsigned int *aTri,
     size_t nTri);
 
+std::vector<unsigned int> IndexesOfConnectedTriangleInSphere(
+  const std::array<double, 3> pos,
+  double rad,
+  unsigned int itri0,
+  const std::vector<double> &vtx_xyz,
+  const std::vector<unsigned int> &tri_vtx,
+  const std::vector<unsigned int> &tri_adjtri);
+
 }
 
 #ifndef DFM2_STATIC_LIBRARY

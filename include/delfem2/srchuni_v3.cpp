@@ -8,6 +8,8 @@
 #include "delfem2/srchuni_v3.h"
 
 #include <map>
+#include <set>
+#include <stack>
 
 #include "delfem2/geoproximity3_v3.h"
 #include "delfem2/vec3.h"
@@ -569,3 +571,40 @@ template double delfem2::DistanceToTri(
     size_t nTri);
 #endif
 
+// ---------------------------------
+
+std::vector<unsigned int> delfem2::IndexesOfConnectedTriangleInSphere(
+  const std::array<double, 3> pos,
+  double rad,
+  unsigned int itri0,
+  const std::vector<double> &vtx_xyz,
+  const std::vector<unsigned int> &tri_vtx,
+  const std::vector<unsigned int> &tri_adjtri) {
+  std::set<unsigned int> buff;
+  std::stack<unsigned int> st;
+  st.push(itri0);
+  while (!st.empty()) {
+    unsigned int iel0 = st.top();
+    st.pop();
+    if (buff.find(iel0) != buff.end()) { continue; } // already studied
+    double dist_min = -1;
+    {
+      double pn[3], r0, r1;
+      delfem2::GetNearest_TrianglePoint3D(
+        pn,r0,r1,
+        pos.data(),
+        vtx_xyz.data() + tri_vtx[iel0 * 3 + 0] * 3,
+        vtx_xyz.data() + tri_vtx[iel0 * 3 + 1] * 3,
+        vtx_xyz.data() + tri_vtx[iel0 * 3 + 2] * 3 );
+      dist_min = delfem2::Distance3(pn,pos.data());
+    }
+    if (dist_min > rad) { continue; }
+    buff.insert(iel0);
+    for (unsigned int ie = 0; ie < 3; ++ie) {
+      unsigned int iel1 = tri_adjtri[iel0 * 3 + ie];
+      if (iel1 == UINT_MAX) { continue; }
+      st.push(iel1);
+    }
+  }
+  return {buff.begin(), buff.end()};
+}
