@@ -66,6 +66,12 @@ cmake --build .
 ### [111_ExponentialMapElem](111_ExponentialMapElem)
 <img src="111_ExponentialMapElem/thumbnail.png" width=200px>
 
+
+
+### [112_SamplingMeshTri3](112_SamplingMeshTri3)
+
+<img src="112_SamplingMeshTri3/thumbnail.png" width=200px>
+
 ### [115_ExponentialMapPoint](115_ExponentialMapPoint)
 <img src="115_ExponentialMapPoint/thumbnail.png" width=200px>
 
@@ -263,11 +269,11 @@ cmake --build .
 ### [621_Fem2](621_Fem2)
 <img src="621_Fem2/thumbnail.png" width=200 alt="621_Fem2">
 
-### [622_FemRod3HairDarbouxStatic](622_FemRod3HairDarbouxStatic)
-<img src="622_FemRod3HairDarbouxStatic/thumbnail.png" width=200 alt="622_FemRodHairStatic">
+### [622_FemHairDarbouxStatic](622_FemHairDarbouxStatic)
+<img src="622_FemHairDarbouxStatic/thumbnail.png" width=200 alt="622_FemRodHairStatic">
 
-### [623_FemRod3HairDarbouxDynamic](623_FemRod3HairDarbouxDynamic)
-<img src="623_FemRod3HairDarbouxDynamic/thumbnail.png" width=200 alt="622_FemRodHairDynamic">
+### [623_FemHairDarbouxDynamic](623_FemHairDarbouxDynamic)
+<img src="623_FemHairDarbouxDynamic/thumbnail.png" width=200 alt="622_FemRodHairDynamic">
 
 ### [624_DefArapUi](624_DefArapUi)
 <img src="624_DefArapUi/thumbnail.png" width=200>
