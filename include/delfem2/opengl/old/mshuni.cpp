@@ -11,6 +11,7 @@
 #include <cmath>
 #include <vector>
 #include <climits>
+#include <functional>
 
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
