@@ -11,7 +11,6 @@
 #include <cmath>
 #include <vector>
 #include <climits>
-#include <functional>
 
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
@@ -805,15 +804,15 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm(
 
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri3Selective_FaceNorm(
-  const std::vector<double> &aXYZ,
-  const std::vector<unsigned int> &aTri,
-  const std::function<bool (unsigned int)> &fnc) {
-  const size_t nTri = aTri.size() / 3;
+  const std::vector<double> &vtx_xyz,
+  const std::vector<unsigned int> &tri_vtx,
+  const std::function<bool (unsigned int)> &tri_isshow) {
+  const size_t nTri = tri_vtx.size() / 3;
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri = 0; itri < nTri; ++itri) {
-    if( !fnc(itri) ){ continue; }
+    if( !tri_isshow(itri) ){ continue; }
     delfem2::opengl::old::mshuni::DrawSingleTri3D_FaceNorm(
-      aXYZ.data(), aTri.data() + itri * 3, 0);
+      vtx_xyz.data(), tri_vtx.data() + itri * 3, 0);
   }
   ::glEnd();
 }

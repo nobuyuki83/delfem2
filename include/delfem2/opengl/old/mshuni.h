@@ -17,6 +17,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -149,9 +150,9 @@ DFM2_INLINE void DrawMeshTri3DPart_FaceNorm(
     const std::vector<int> &aIndTri);
 
 DFM2_INLINE void DrawMeshTri3Selective_FaceNorm(
-    const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aTri,
-    const std::function<bool (unsigned int)> &fnc);
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx,
+    const std::function<bool (unsigned int)> &tri_isshow);
 
 DFM2_INLINE void DrawMeshTri3D_FaceNorm_XYsym(
     const std::vector<double> &vtx_xyz,

@@ -21,14 +21,14 @@
 
 namespace delfem2 {
 
-DFM2_INLINE void GetNearest_LineSegPoint3D(
-    double pn[3],
-    const double p[3], // point
-    const double s[3], // source
-    const double e[3]); // end
+DFM2_INLINE void Nearest_LineSeg3_Point3(
+    double nearest_position[3],
+    const double point_position[3], // point
+    const double lineseg_s[3], // source
+    const double lineseg_e[3]); // end
 
-DFM2_INLINE void GetNearest_TrianglePoint3D(
-    double pn[3],
+DFM2_INLINE void Nearest_Triangle3_Point3(
+    double nearest_position[3],
     double &r0,
     double &r1,
     const double ps[3], // origin point
@@ -36,53 +36,42 @@ DFM2_INLINE void GetNearest_TrianglePoint3D(
     const double q1[3],
     const double q2[3]);
 
-template<typename T>
-bool IntersectRay_Tri3(
-    T &r0,
-    T &r1,
-    const CVec3<T> &org,
-    const CVec3<T> &dir,
-    const CVec3<T> &p0,
-    const CVec3<T> &p1,
-    const CVec3<T> &p2,
-    T eps);
-
 // --------------------------------------------------------------
 
 template<class VEC, typename T>
-VEC Nearest_Line_Point(
+VEC Nearest_Line3_Point3(
     const VEC &point,
     const VEC &line_src,
     const VEC &line_dir);
 
 template<typename T>
-CVec3<T> nearest_Line_Point(
+CVec3<T> Nearest_Line3_Point3(
     double &t,
     const CVec3<T> &p, // point
     const CVec3<T> &s, // source
     const CVec3<T> &d); // direction
 
 template<typename T>
-CVec3<T> nearest_LineSeg_Point(
+CVec3<T> Nearest_LineSeg3_Point3(
     const CVec3<T> &p, // point
     const CVec3<T> &s, // source
     const CVec3<T> &e); // end
 
 template<typename T>
-CVec3<T> nearest_LineSeg_Point(
+CVec3<T> Nearest_LineSeg3_Point3(
     double &t,
     const CVec3<T> &p, // point
     const CVec3<T> &s,
     const CVec3<T> &e); // direction
 
 template<typename T>
-CVec3<T> nearest_Plane_Point(
+CVec3<T> Nearest_Plane3_Point3(
     const CVec3<T> &p, // point
     const CVec3<T> &o, // origin
     const CVec3<T> &n); // normal
 
 template<typename T>
-CVec3<T> Nearest_Origin_Tri(
+CVec3<T> Nearest_Origin3_Tri3(
     T &r0,
     T &r1,
     const CVec3<T> &q0,
@@ -101,7 +90,7 @@ CVec3<T> nearst_Origin_Quad(
 // --------------------------------
 
 template<class VEC, typename T>
-void Nearest_LineSeg_Line(
+void Nearest_LineSeg3_Line3(
     VEC &nearest_lineseg,
     VEC &nearest_line,
     const VEC &lineseg_start,
@@ -117,7 +106,7 @@ void Nearest_LineSeg_Line(
  *  @param[out] scaled_nearest_b nearest point scaled by D on line B
  */
 template<class VEC, typename T>
-void Nearest_Line_Line(
+void Nearest_Line3_Line3(
     T &scale,
     VEC &scaled_neraest_a,
     VEC &scaled_nearest_b,
@@ -150,7 +139,7 @@ DFM2_INLINE double Nearest_LineSeg_LineSeg_CCD_Iteration(
  *  @param Dtb (out) parameter for nearest pont one line B. Db = D*pb_ + Dtb*vb
  */
 template<class VEC, typename T>
-void Nearest_Line_Line(
+void Nearest_Line3_Line3(
     T &D,
     VEC &Da,
     VEC &Db,
@@ -178,7 +167,7 @@ void Nearest_Line_Circle(
     T rad);
 
 template<typename T>
-CVec3<T> nearst_Origin_Quad(
+CVec3<T> Nearst_Origin3_Quad3(
     double &s0,
     double &s1,
     const CVec3<T> &q0,
@@ -187,20 +176,20 @@ CVec3<T> nearst_Origin_Quad(
     const CVec3<T> &q3);
 
 template<typename T>
-CVec3<T> nearest_Origin_LineSeg(
+CVec3<T> Nearest_Origin3_LineSeg3(
     const CVec3<T> &s, // start
     const CVec3<T> &e); // end
 
 // r0==0 -> p0==org
 // r0==1 -> p1==org
 template<typename T>
-CVec3<T> nearest_Origin_LineSeg(
+CVec3<T> Nearest_Origin3_LineSeg3(
     double &r0,
     const CVec3<T> &p0, // start
     const CVec3<T> &p1); // end
 
 template<typename T>
-CVec3<T> Nearest_Orgin_PlaneTri(
+CVec3<T> Nearest_Orgin3_PlaneTri3(
     T &r0,
     T &r1,
     const CVec3<T> &q0,
@@ -210,6 +199,18 @@ CVec3<T> Nearest_Orgin_PlaneTri(
 // above: nearest
 // -----------------------------------------
 // below: intersection
+
+template<typename T>
+bool IntersectRay_Tri3(
+  T &r0,
+  T &r1,
+  const CVec3<T> &org,
+  const CVec3<T> &dir,
+  const CVec3<T> &p0,
+  const CVec3<T> &p1,
+  const CVec3<T> &p2,
+  T eps);
+
 
 template<typename T>
 bool intersection_Plane_Line(
@@ -353,4 +354,4 @@ bool isRayIntersectingTriangle(
 #  include "delfem2/geoproximity3_v3.cpp"
 #endif
 
-#endif // VEC3_H
+#endif // DFM2_GEOPROXIMITY3_V3_H

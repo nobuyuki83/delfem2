@@ -178,6 +178,15 @@ std::vector<unsigned int> IndexesOfConnectedTriangleInSphere(
   const std::vector<unsigned int> &tri_vtx,
   const std::vector<unsigned int> &tri_adjtri);
 
+bool IsTherePointOnMeshInsideSphere(
+  const std::tuple<unsigned int, double, double>& smpli,
+  double rad,
+  const std::vector<std::tuple<unsigned int, double, double> > &samples,
+  const std::multimap<unsigned int, unsigned int>& el_smpl,
+  const std::vector<double> &vtx_xyz,
+  const std::vector<unsigned int> &tri_vtx,
+  const std::vector<unsigned int> &tri_adjtri);
+
 }
 
 #ifndef DFM2_STATIC_LIBRARY

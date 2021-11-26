@@ -355,11 +355,11 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   }
   {
     CVec3<REAL> pls, pl;
-    ::delfem2::Nearest_LineSeg_Line<CVec3<REAL>, REAL>
-    (pls, pl,
-     pos - size * CVec3<REAL>::Axis(0),
-     pos + size * CVec3<REAL>::Axis(0),
-     CVec3<REAL>(src), CVec3<REAL>(dir));
+    ::delfem2::Nearest_LineSeg3_Line3<CVec3<REAL>, REAL>
+      (pls, pl,
+       pos - size * CVec3<REAL>::Axis(0),
+       pos + size * CVec3<REAL>::Axis(0),
+       CVec3<REAL>(src), CVec3<REAL>(dir));
     if ((pls - pl).norm() < tol) {
       ielem_picked = 0;
       return;
@@ -367,11 +367,11 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   }
   {
     CVec3<REAL> pls, pl;
-    ::delfem2::Nearest_LineSeg_Line<CVec3<REAL>, REAL>
-    (pls, pl,
-     pos - size * CVec3<REAL>::Axis(1),
-     pos + size * CVec3<REAL>::Axis(1),
-     CVec3<REAL>(src), CVec3<REAL>(dir));
+    ::delfem2::Nearest_LineSeg3_Line3<CVec3<REAL>, REAL>
+      (pls, pl,
+       pos - size * CVec3<REAL>::Axis(1),
+       pos + size * CVec3<REAL>::Axis(1),
+       CVec3<REAL>(src), CVec3<REAL>(dir));
     if ((pls - pl).norm() < tol) {
       ielem_picked = 1;
       return;
@@ -379,11 +379,11 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   }
   {
     CVec3<REAL> pls, pl;
-    ::delfem2::Nearest_LineSeg_Line<CVec3<REAL>, REAL>
-    (pls, pl,
-     pos - size * CVec3<REAL>::Axis(2),
-     pos + size * CVec3<REAL>::Axis(2),
-     CVec3<REAL>(src), CVec3<REAL>(dir));
+    ::delfem2::Nearest_LineSeg3_Line3<CVec3<REAL>, REAL>
+      (pls, pl,
+       pos - size * CVec3<REAL>::Axis(2),
+       pos + size * CVec3<REAL>::Axis(2),
+       CVec3<REAL>(src), CVec3<REAL>(dir));
     if ((pls - pl).norm() < tol) {
       ielem_picked = 2;
       return;
@@ -415,14 +415,14 @@ void delfem2::CGizmo_Transl<REAL>::Drag(
   using CV3 = CVec3<REAL>;
   REAL D0;
   CV3 Da0, Db0;
-  Nearest_Line_Line(D0, Da0, Db0,
-                    this->pos, CV3::Axis(ielem_picked),
-                    CV3(src0), CV3(dir));
+  Nearest_Line3_Line3(D0, Da0, Db0,
+                      this->pos, CV3::Axis(ielem_picked),
+                      CV3(src0), CV3(dir));
   REAL D1;
   CV3 Da1, Db1;
-  Nearest_Line_Line(D1, Da1, Db1,
-                    this->pos, CV3::Axis(ielem_picked),
-                    CV3(src1), CV3(dir));
+  Nearest_Line3_Line3(D1, Da1, Db1,
+                      this->pos, CV3::Axis(ielem_picked),
+                      CV3(src1), CV3(dir));
   if (fabs(D0) > 1.0e-10) {
     pos += (Da1 - Da0) / D0;
   }

@@ -264,7 +264,7 @@ delfem2::PointOnSurfaceMesh<T> delfem2::Nearest_Point_MeshTri3D(
     const CVec3<T> p1 = CVec3<T>(vtx_xyz.data() + i1 * 3) - point;
     const CVec3<T> p2 = CVec3<T>(vtx_xyz.data() + i2 * 3) - point;
     double r0, r1;
-    CVec3<T> p_min = Nearest_Origin_Tri(r0, r1, p0, p1, p2);
+    CVec3<T> p_min = Nearest_Origin3_Tri3(r0, r1, p0, p1, p2);
     double dist = p_min.squaredNorm();
     if (min_dist < 0 || dist < min_dist) {
       min_dist = dist;
@@ -300,7 +300,7 @@ delfem2::PointOnSurfaceMesh<T> delfem2::Nearest_Point_MeshTri3DPart(
     const CVec3<T> p1(aXYZ[i1 * 3 + 0] - q.x, aXYZ[i1 * 3 + 1] - q.y, aXYZ[i1 * 3 + 2] - q.z);
     const CVec3<T> p2(aXYZ[i2 * 3 + 0] - q.x, aXYZ[i2 * 3 + 1] - q.y, aXYZ[i2 * 3 + 2] - q.z);
     double r0, r1;
-    CVec3<T> p_min = Nearest_Origin_Tri(r0, r1, p0, p1, p2);
+    CVec3<T> p_min = Nearest_Origin3_Tri3(r0, r1, p0, p1, p2);
     assert(r0 > -1.0e-10 && r1 > -1.0e-10 && (1 - r0 - r1) > -1.0e-10);
     double dist = p_min.squaredNorm();
     if (min_dist < 0 || dist < min_dist) {
@@ -404,7 +404,7 @@ delfem2::PointOnSurfaceMesh<T> delfem2::Nearest_Point_MeshTetFace3D(
     CVec3<T> q1 = CVec3<T>(aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]) - p0;
     CVec3<T> q2 = CVec3<T>(aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]) - p0;
     double r0, r1;
-    CVec3<T> p2 = Nearest_Origin_Tri(r0, r1, q0, q1, q2);
+    CVec3<T> p2 = Nearest_Origin3_Tri3(r0, r1, q0, q1, q2);
     double dist = p2.norm();
     if (itf_min == -1 || dist < dist_min) {
       dist_min = dist;
@@ -519,7 +519,7 @@ double delfem2::DistanceToTri(
   const CVec3<T> p1(aXYZ_[i1 * 3 + 0] - p.p[0], aXYZ_[i1 * 3 + 1] - p.p[1], aXYZ_[i1 * 3 + 2] - p.p[2]);
   const CVec3<T> p2(aXYZ_[i2 * 3 + 0] - p.p[0], aXYZ_[i2 * 3 + 1] - p.p[1], aXYZ_[i2 * 3 + 2] - p.p[2]);
   double r0, r1;
-  CVec3<T> p_min = Nearest_Origin_Tri(r0, r1, p0, p1, p2);
+  CVec3<T> p_min = Nearest_Origin3_Tri3(r0, r1, p0, p1, p2);
   assert(r0 > -1.0e-10 && r1 > -1.0e-10 && (1 - r0 - r1) > -1.0e-10);
   pes.itri = itri0;
   pes.r0 = r0;
@@ -553,7 +553,7 @@ double delfem2::DistanceToTri(
   const CVec3<T> p1(aXYZ_[i1 * 3 + 0] - p.p[0], aXYZ_[i1 * 3 + 1] - p.p[1], aXYZ_[i1 * 3 + 2] - p.p[2]);
   const CVec3<T> p2(aXYZ_[i2 * 3 + 0] - p.p[0], aXYZ_[i2 * 3 + 1] - p.p[1], aXYZ_[i2 * 3 + 2] - p.p[2]);
   double r0, r1;
-  CVec3<T> p_min = Nearest_Origin_Tri(r0, r1, p0, p1, p2);
+  CVec3<T> p_min = Nearest_Origin3_Tri3(r0, r1, p0, p1, p2);
   assert(r0 > -1.0e-10 && r1 > -1.0e-10 && (1 - r0 - r1) > -1.0e-10);
   pes.itri = itri0;
   pes.r0 = r0;
@@ -590,12 +590,12 @@ std::vector<unsigned int> delfem2::IndexesOfConnectedTriangleInSphere(
     double dist_min = -1;
     {
       double pn[3], r0, r1;
-      delfem2::GetNearest_TrianglePoint3D(
-        pn,r0,r1,
+      delfem2::Nearest_Triangle3_Point3(
+        pn, r0, r1,
         pos.data(),
         vtx_xyz.data() + tri_vtx[iel0 * 3 + 0] * 3,
         vtx_xyz.data() + tri_vtx[iel0 * 3 + 1] * 3,
-        vtx_xyz.data() + tri_vtx[iel0 * 3 + 2] * 3 );
+        vtx_xyz.data() + tri_vtx[iel0 * 3 + 2] * 3);
       dist_min = delfem2::Distance3(pn,pos.data());
     }
     if (dist_min > rad) { continue; }
@@ -607,4 +607,34 @@ std::vector<unsigned int> delfem2::IndexesOfConnectedTriangleInSphere(
     }
   }
   return {buff.begin(), buff.end()};
+}
+
+bool delfem2::IsTherePointOnMeshInsideSphere(
+  const std::tuple<unsigned int, double, double> &smpli,
+  double rad,
+  const std::vector<std::tuple<unsigned int, double, double> > &samples,
+  const std::multimap<unsigned int, unsigned int> &el_smpl,
+  const std::vector<double> &vtx_xyz,
+  const std::vector<unsigned int> &tri_vtx,
+  const std::vector<unsigned int> &tri_adjtri){
+  namespace dfm2 = delfem2;
+  const auto posi = delfem2::PointOnSurfaceMesh<double>{
+    std::get<0>(smpli), std::get<1>(smpli), std::get<2>(smpli)
+  }.PositionOnMeshTri3(vtx_xyz, tri_vtx);
+  std::vector<unsigned int> aIE = dfm2::IndexesOfConnectedTriangleInSphere(
+    posi, rad,
+    std::get<0>(smpli), vtx_xyz, tri_vtx, tri_adjtri);
+  for (auto ie: aIE) {
+    const auto[il, iu] = el_smpl.equal_range(ie);
+    for (auto it = il; it != iu; ++it) {
+      const unsigned int jsmpl = it->second;
+      const auto smplj = samples[jsmpl];
+      const auto posj = delfem2::PointOnSurfaceMesh<double>{
+        std::get<0>(smplj), std::get<1>(smplj), std::get<2>(smplj)
+      }.PositionOnMeshTri3(vtx_xyz, tri_vtx);
+      const double dist = dfm2::Distance3(posi.data(), posj.data());
+      if (dist < rad) { return true; }
+    }
+  }
+  return false;
 }

@@ -27,7 +27,6 @@
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/point_on_surface_mesh.h"
-#include "delfem2/geoproximity3_v3.h"
 #include "delfem2/srchuni_v3.h"
 
 // ===========
@@ -61,7 +60,6 @@ int main() {
     tri_adjtri,
     tri_vtx.data(), tri_vtx.size() / 3,
     dfm2::MESHELEM_TRI, vtx_xyz.size() / 3);
-  dfm2::RandomSamplingOnMeshTri3 mapper(vtx_xyz, tri_vtx);
   delfem2::glfw::CViewer3 viewer(1.0);
   // ----------
   delfem2::glfw::InitGLOld();
@@ -92,30 +90,9 @@ int main() {
       double rad = 0.05;
       for (unsigned int itr = 0; itr < 10000; ++itr) {
         const auto smpli = mapper.Sample();
-        bool is_near = false;
-        // check neighbour
-        const auto posi = delfem2::PointOnSurfaceMesh<double>{
-          std::get<0>(smpli), std::get<1>(smpli), std::get<2>(smpli)
-        }.PositionOnMeshTri3(vtx_xyz, tri_vtx);
-        std::vector<unsigned int> aIE = dfm2::IndexesOfConnectedTriangleInSphere(
-          posi, rad,
-          std::get<0>(smpli), vtx_xyz, tri_vtx, tri_adjtri);
-        for (auto ie: aIE) {
-          const auto[il, iu] = el_smpl.equal_range(ie);
-          for (auto it = il; it != iu; ++it) {
-            const unsigned int jsmpl = it->second;
-            const auto smplj = samples[jsmpl];
-            const auto posj = delfem2::PointOnSurfaceMesh<double>{
-              std::get<0>(smplj), std::get<1>(smplj), std::get<2>(smplj)
-            }.PositionOnMeshTri3(vtx_xyz, tri_vtx);
-            const double dist = dfm2::Distance3(posi.data(), posj.data());
-            if (dist < rad) {
-              is_near = true;
-              break;
-            }
-          }
-          if (is_near) { break; }
-        }
+        const bool is_near = dfm2::IsTherePointOnMeshInsideSphere(
+          smpli, rad, samples, el_smpl,
+          vtx_xyz, tri_vtx, tri_adjtri);
         if (!is_near) {
           el_smpl.insert(std::make_pair(std::get<0>(smpli), samples.size()));
           samples.push_back(smpli);
@@ -132,29 +109,68 @@ int main() {
       }
     }
     {  // monte-carlo sampling on a triangle mesh
-      std::vector<int> tri_flg(tri_vtx.size()/3,0);
-      for(unsigned int it=0;it<tri_vtx.size()/3;++it){
-        const double* p0 = vtx_xyz.data() + tri_vtx[it * 3 + 0] * 3;
-        const double* p1 = vtx_xyz.data() + tri_vtx[it * 3 + 1] * 3;
-        const double* p2 = vtx_xyz.data() + tri_vtx[it * 3 + 2] * 3;
-        double y0 = (p0[1] + p1[1] + p2[1])/3.0;
-        if( y0 > 0 ){ tri_flg[it] = 1; }
+      std::vector<int> tri_flg(tri_vtx.size() / 3, 0);
+      for (unsigned int it = 0; it < tri_vtx.size() / 3; ++it) {
+        const double *p0 = vtx_xyz.data() + tri_vtx[it * 3 + 0] * 3;
+        const double *p1 = vtx_xyz.data() + tri_vtx[it * 3 + 1] * 3;
+        const double *p2 = vtx_xyz.data() + tri_vtx[it * 3 + 2] * 3;
+        double y0 = (p0[1] + p1[1] + p2[1]) / 3.0;
+        if (y0 > 0) { tri_flg[it] = 1; }
       }
       std::vector<std::tuple<unsigned int, double, double> > samples;
       dfm2::RandomSamplingOnMeshTri3Selective mapper(
         vtx_xyz, tri_vtx,
-        [&tri_flg](unsigned int itri){ return tri_flg[itri] == 0; });
+        [&tri_flg](unsigned int itri) { return tri_flg[itri] == 0; });
       for (unsigned int ismpl = 0; ismpl < 3000; ++ismpl) {
         samples.push_back(mapper.Sample());
         viewer.DrawBegin_oldGL();
         ::glEnable(GL_LIGHTING);
         delfem2::opengl::DrawMeshTri3Selective_FaceNorm(
           vtx_xyz, tri_vtx,
-          [&tri_flg](unsigned int itri){ return tri_flg[itri] == 0; });
+          [&tri_flg](unsigned int itri) { return tri_flg[itri] == 0; });
         ::glEnable(GL_LIGHTING);
-        ::glColor3d(0,0,0);
+        ::glColor3d(0, 0, 0);
         delfem2::opengl::DrawMeshTri3D_Edge(vtx_xyz, tri_vtx);
-        ::glColor3d(1, 0, 0);
+        ::glColor3d(1, 0, 1);
+        Draw(vtx_xyz, tri_vtx, samples);
+        glfwSwapBuffers(viewer.window);
+        glfwPollEvents();
+        if (glfwWindowShouldClose(viewer.window)) { break; }
+      }
+    }
+    {  // monte-carlo sampling on part of the triangle mesh
+      std::vector<int> tri_flg(tri_vtx.size() / 3, 0);
+      for (unsigned int it = 0; it < tri_vtx.size() / 3; ++it) {
+        const double *p0 = vtx_xyz.data() + tri_vtx[it * 3 + 0] * 3;
+        const double *p1 = vtx_xyz.data() + tri_vtx[it * 3 + 1] * 3;
+        const double *p2 = vtx_xyz.data() + tri_vtx[it * 3 + 2] * 3;
+        double y0 = (p0[1] + p1[1] + p2[1]) / 3.0;
+        if (y0 > 0) { tri_flg[it] = 1; }
+      }
+      std::vector<std::tuple<unsigned int, double, double> > samples;
+      std::multimap<unsigned int, unsigned int> el_smpl;
+      double rad = 0.05;
+      dfm2::RandomSamplingOnMeshTri3Selective mapper(
+        vtx_xyz, tri_vtx,
+        [&tri_flg](unsigned int itri) { return tri_flg[itri] == 0; });
+      for (unsigned int ismpl = 0; ismpl < 3000; ++ismpl) {
+        const auto smpli = mapper.Sample();
+        const bool is_near = dfm2::IsTherePointOnMeshInsideSphere(
+          smpli, rad, samples, el_smpl,
+          vtx_xyz, tri_vtx, tri_adjtri);
+        if (!is_near) {
+          el_smpl.insert(std::make_pair(std::get<0>(smpli), samples.size()));
+          samples.push_back(smpli);
+        }
+        viewer.DrawBegin_oldGL();
+        ::glEnable(GL_LIGHTING);
+        delfem2::opengl::DrawMeshTri3Selective_FaceNorm(
+          vtx_xyz, tri_vtx,
+          [&tri_flg](unsigned int itri) { return tri_flg[itri] == 0; });
+        ::glEnable(GL_LIGHTING);
+        ::glColor3d(0, 0, 0);
+        delfem2::opengl::DrawMeshTri3D_Edge(vtx_xyz, tri_vtx);
+        ::glColor3d(0, 1, 0);
         Draw(vtx_xyz, tri_vtx, samples);
         glfwSwapBuffers(viewer.window);
         glfwPollEvents();
