@@ -81,4 +81,4 @@ void AABB_CubeGrid(
 #  include "delfem2/gridcube.cpp"
 #endif
 
-#endif /* cubegrid_h */
+#endif /* DFM2_CUBEGRID_H */

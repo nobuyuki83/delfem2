@@ -9,6 +9,7 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/geoproximity3_v3.h"
+#include "delfem2/geo_nearest3.h"
 
 DFM2_INLINE bool delfem2::isPickCircle(
     const CVec3d &axis,

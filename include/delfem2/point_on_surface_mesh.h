@@ -104,4 +104,4 @@ std::istream &operator>>(
 #  include "delfem2/point_on_surface_mesh.cpp"
 #endif
 
-#endif /* search_mesh_hpp */
+#endif /* DFM2_POINT_ON_SURFACE_MESH_H */

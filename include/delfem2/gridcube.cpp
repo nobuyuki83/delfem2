@@ -5,11 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/vec3.h"
-#include "delfem2/geoproximity3_v3.h"
 #include "delfem2/gridcube.h"
+
 #include <cstdio>
 #include <climits>
+
+#include "delfem2/vec3.h"
+#include "delfem2/geoproximity3_v3.h"
+#include "delfem2/geo_nearest3.h"
 
 void delfem2::Pick_CubeGrid(
     unsigned int& icube_pic,

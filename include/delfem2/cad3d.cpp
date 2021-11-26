@@ -11,11 +11,11 @@
 #include <set>
 
 #include "delfem2/cagedef.h"
-#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/geoproximity3_v3.h"
+#include "delfem2/geo_nearest3.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/geo_polyline2.h"
 #include "delfem2/dtri2_v2dtri.h"
@@ -23,8 +23,7 @@
 
 // =========================================
 
-namespace delfem2{
-namespace cad3d{
+namespace delfem2::cad3d{
 
 DFM2_INLINE void FaceCenterNormal(
     CVec3d& cg,
@@ -351,8 +350,7 @@ DFM2_INLINE void AddCube(
 }
 
 
-} // cad3d
-} // delfem2
+} // delfem2::cad3d
 
 
 
