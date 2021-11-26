@@ -189,90 +189,63 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance(
     return delfem2::Distance(pn, q);
   } else if (type_edge == BEZIER_QUADRATIC) {
     assert(param.size() == 2);
-    CVec2d p2 = CVec2d(param[0],param[1]) + p0;
-    double t = Nearest_QuadraticBezierCurve(q, p0,p2,p1, 5, 3);
-    CVec2d q0 = PointOnQuadraticBezierCurve(t, p0,p2,p1);
-    return (q0-q).norm();
+    CVec2d p2 = CVec2d(param[0], param[1]) + p0;
+    double t = Nearest_QuadraticBezierCurve(q, p0, p2, p1, 5, 3);
+    CVec2d q0 = PointOnQuadraticBezierCurve(t, p0, p2, p1);
+    return (q0 - q).norm();
   } else if (type_edge == BEZIER_CUBIC) {
     assert(param.size() == 4);
-    const CVec2d r0 = CVec2d(param[0],param[1]) + p0;
-    const CVec2d r1 = CVec2d(param[2],param[3]) + p1;
-    double t = Nearest_CubicBezierCurve(q, p0,r0,r1,p1, 5, 3);
-    CVec2d q0 = PointOnCubicBezierCurve(t, p0,r0,r1,p1);
+    const CVec2d r0 = CVec2d(param[0], param[1]) + p0;
+    const CVec2d r1 = CVec2d(param[2], param[3]) + p1;
+    double t = Nearest_CubicBezierCurve(q, p0, r0, r1, p1, 5, 3);
+    CVec2d q0 = PointOnCubicBezierCurve(t, p0, r0, r1, p1);
     // std::cout << t << " " << q0 << " " << (q0-q).norm() << std::endl;
-    return (q0-q).norm();
+    return (q0 - q).norm();
   }
   assert(0);
   return 0;
 }
 
-/*
-DFM2_INLINE void delfem2::CCad2D::MeshForVisualization(
-	std::vector<float>& aXYf,
-	std::vector<std::vector<unsigned int> >& aaLine,
-	std::vector<unsigned int>& aTri) const
-{
-  const std::vector<CVec2d>& aVec2 = aVec2_Tessellation;
-  aXYf.reserve(aVec2.size()*2);
-  for(const auto & iv : aVec2){
-    aXYf.push_back(static_cast<float>(iv.x));
-    aXYf.push_back(static_cast<float>(iv.y));
-  }
-  aaLine.resize(aEdge.size());
-
-  for(size_t ie=0;ie<aEdge.size();++ie){
-    std::vector<unsigned int>& aLine = aaLine[ie];
-    aLine.clear();
-    aLine.push_back(topo.edges[ie].iv0);
-    for(unsigned int ip=0;ip<aEdge[ie].aP.size();++ip){
-      aLine.push_back(ip+aEdge[ie].ip0);
-    }
-    aLine.push_back(topo.edges[ie].iv1);
-  }
-
-  for(const auto & fc : aFace){
-    aTri.insert(aTri.end(),fc.aTri.begin(),fc.aTri.end());
-  }
-}
- */
-
 DFM2_INLINE double delfem2::CCad2D_EdgeGeo::ArcLength() const {
   if (this->type_edge == BEZIER_QUADRATIC) {
-    return Length_QuadraticBezierCurve_Analytic<CVec2d, double>(
-      p0, CVec2d(param[0], param[1]) + p0, p1);
+    return Length_QuadraticBezierCurve_Analytic<CVec2d>(
+      p0,
+      p0 + CVec2d(param[0], param[1]),
+      p1);
   } else if (this->type_edge == BEZIER_CUBIC) {
-    return Length_CubicBezierCurve_Quadrature<CVec2d, double>(
-      p0, p0 + CVec2d(param[0], param[1]),
-      p1 + CVec2d(param[2], param[3]), p1, 3);
+    return Length_CubicBezierCurve_Quadrature<CVec2d>(
+      p0,
+      p0 + CVec2d(param[0], param[1]),
+      p1 + CVec2d(param[2], param[3]),
+      p1, 3);
   }
-  /*
-  double len0 = 0.0;
-  for(size_t ie=0;ie<aP.size()+1;++ie){
-    const CVec2d q0 = (ie==0) ? p0 : aP[ie-1];
-    const CVec2d q1 = (ie==aP.size()) ? p1 : aP[ie];
-    double dist0 = delfem2::Distance(q0, q1);
-    len0 += dist0;
-  }
-  return len0;
-   */
+  assert(this->type_edge == LINE);
   return delfem2::Distance(p0, p1);
+}
+
+double delfem2::CCad2D_EdgeGeo::AreaEnclosingOrigin() const {
+  if (this->type_edge == BEZIER_QUADRATIC) {
+    return delfem2::Area_QuadraticBezierCurve<CVec2d>(
+      p0,
+      p0 + CVec2d(param[0], param[1]),
+      p1);
+  }
+  else if (this->type_edge == BEZIER_CUBIC ) {
+    return delfem2::Area_CubicBezierCurve<CVec2d>(
+      p0,
+      p0 + CVec2d(param[0], param[1]),
+      p1 + CVec2d(param[2], param[3]),
+      p1);
+  }
+  assert(this->type_edge == LINE);
+  return delfem2::Area_Tri(CVec2d(0,0), p0, p1);
 }
 
 DFM2_INLINE double delfem2::AreaLoop(
   const std::vector<CCad2D_EdgeGeo> &aEdge) {
   double a0 = 0;
-  CVec2d qo(0, 0);
   for (const auto &ie: aEdge) {
-    /*
-    const std::vector<CVec2d>& aP = ie.aP;
-    const size_t nseg = aP.size()+1;
-    for(unsigned int iseg=0;iseg<nseg;++iseg){
-      const CVec2d q0 = (iseg==0) ? ie.p0 : aP[iseg-1];
-      const CVec2d q1 = (iseg==nseg-1) ?ie.p1 : aP[iseg];
-      a0 += Area_Tri(qo, q0, q1);
-    }
-     */
-    a0 += Area_Tri(qo, ie.p0, ie.p1);
+    a0 += ie.AreaEnclosingOrigin();
   }
   return a0;
 }

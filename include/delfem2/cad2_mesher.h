@@ -81,4 +81,4 @@ class CMesher_Cad2D {
 #  include "delfem2/cad2_mesher.cpp"
 #endif
 
-#endif /* DFM2_CAD2_DTRI_H */
+#endif /* DFM2_CAD2_MESHER_H */

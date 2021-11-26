@@ -63,13 +63,15 @@ VEC PointOnQuadraticBezierCurve(
   return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
 }
 
-template<typename VEC, typename SCALAR>
+template<typename VEC>
 double Length_QuadraticBezierCurve_Quadrature(
   const VEC &p0,  // end point
   const VEC &p1,  // the control point
   const VEC &p2,  // another end point
   int gauss_order) // order of Gaussian quadrature to use
 {
+  using SCALAR = decltype(p0[0]);
+    
   assert(gauss_order < 4);
   SCALAR totalLength = 0;
   for (unsigned int i = 0; i < pgeo::NIntLineGauss[gauss_order]; i++) {
@@ -81,17 +83,19 @@ double Length_QuadraticBezierCurve_Quadrature(
   return totalLength / 2;
 }
 
-template<typename VEC, typename SCALAR>
+template<typename VEC>
 double Length_QuadraticBezierCurve_Analytic(
   const VEC &p0,  // end point
   const VEC &p1,  // the control point
   const VEC &p2)   // another end point
 {
+  using SCALAR = decltype(p0[0]);
+
   // closed form solution from https://math.stackexchange.com/questions/12186/arc-length-of-b%c3%a9zier-curves
   const SCALAR a = (p2 - 2 * p1 + p0).squaredNorm();
 
   if (a < 1.0e-5) {
-    return Length_QuadraticBezierCurve_Quadrature<VEC, SCALAR>(p0, p1, p2, 3);
+    return Length_QuadraticBezierCurve_Quadrature<VEC>(p0, p1, p2, 3);
   }
 
   const SCALAR b = (p1 - p0).dot(p2 - p1 - p1 + p0);
@@ -149,6 +153,18 @@ double Nearest_QuadraticBezierCurve(
     // t = std::clamp(t, 0., 1.);
   }
   return t;
+}
+
+template <typename VEC>
+double Area_QuadraticBezierCurve(
+  const VEC &p0,  // end point
+  const VEC &p1,  // the control point next tp p0
+  const VEC &p2)  // another end point
+{
+  using T = decltype(p0[0]);
+  const T tmp0 = p1[0] * (p2[1] - p0[1]) + p1[1] * (p0[0] - p2[0]);
+  const T tmp1 = p0[0] * p2[1] - p2[0] * p0[1];
+  return tmp0 / 3.0 +  tmp1 / 6.0;
 }
 
 // quadratic Bezier
@@ -243,7 +259,7 @@ void getCubicBezierCurve(
   aP[ns * n] = aCP[ns * 3];
 }
 
-template<typename VEC, typename SCALAR>
+template<typename VEC>
 double Length_CubicBezierCurve_Quadrature(
   const VEC &p0,  // end point
   const VEC &p1,  // the control point next tp p0
@@ -252,6 +268,7 @@ double Length_CubicBezierCurve_Quadrature(
   int gauss_order)  // order of Gaussian quadrature to use
 {
   assert(gauss_order < 4);
+  using SCALAR = decltype(p0[0]);
   SCALAR totalLength = 0;
   for (unsigned int i = 0; i < pgeo::NIntLineGauss[gauss_order]; i++) {
     double t = (pgeo::LineGauss<double>[gauss_order][i][0] + 1) / 2;
@@ -309,6 +326,25 @@ double Nearest_CubicBezierCurve(
     t = (t > 1) ? 1 : t;
   }
   return t;
+}
+
+template <typename VEC>
+double Area_CubicBezierCurve(
+  const VEC &p0,  // end point
+  const VEC &p1,  // the control point next tp p0
+  const VEC &p2,  // the control point next to p1
+  const VEC &p3)  // another end point
+{
+  using T = decltype(p0[0]);
+  const T tmp0 = -3 * p2[0] * p0[1] - p3[0] * p0[1]
+    - 3 * p2[0] * p1[1]
+    - 3 * p3[0] * p1[1]
+    - 6 * p3[0] * p2[1]
+    + 6 * p2[0] * p3[1]
+    + 10 * p3[0] * p3[1]
+    + 3 * p1[0] * (-2 * p0[1] + p2[1] + p3[1])
+    + p0[0] * (-10 * p0[1] + 6 * p1[1] + 3 * p2[1] + p3[1]);
+  return (p0[0] * p0[1]) / 2 - (p3[0] * p3[1]) / 2 + tmp0 / 20;
 }
 
 // cubic Bezier

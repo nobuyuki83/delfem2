@@ -72,6 +72,8 @@ class CCad2D_EdgeGeo {
 
   double ArcLength() const;
 
+  double AreaEnclosingOrigin() const;
+
   CBoundingBox2<double> BB() const {
     CBoundingBox2<double> bb;
     bb.Add(p0.x, p0.y);

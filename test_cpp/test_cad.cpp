@@ -65,10 +65,10 @@ TEST(cad,length_quadratic_bezier) {
     }
     std::vector<dfm2::CVec2d> aP;
     dfm2::Polyline_BezierQuadratic(aP, 100, p0, p1, p2);
-    double v1 = dfm2::Length_QuadraticBezierCurve_Analytic<dfm2::CVec2d, double>(
+    double v1 = dfm2::Length_QuadraticBezierCurve_Analytic<dfm2::CVec2d>(
       p0, p1, p2);
     double v0 = dfm2::LengthPolyline<dfm2::CVec2d,double>(aP);
-    double v2 = dfm2::Length_QuadraticBezierCurve_Quadrature<dfm2::CVec2d, double>(
+    double v2 = dfm2::Length_QuadraticBezierCurve_Quadrature<dfm2::CVec2d>(
       p0,p1,p2,3);
     EXPECT_NEAR(v1,v0,2.0e-4);
     EXPECT_NEAR(v1,v2,2.0e-4);
@@ -81,7 +81,7 @@ TEST(cad,length_cubic_bezier) {
     std::vector<dfm2::CVec2d> aP;
     dfm2::Polyline_BezierCubic(aP, 100, p0, p1, p2,p3);
     double v0 = dfm2::LengthPolyline<dfm2::CVec2d,double>(aP);
-    double v2 = dfm2::Length_CubicBezierCurve_Quadrature<dfm2::CVec2d, double>(p0,p1,p2,p3,3);
+    double v2 = dfm2::Length_CubicBezierCurve_Quadrature<dfm2::CVec2d>(p0,p1,p2,p3,3);
     EXPECT_NEAR(v0,v2,1.0e-3);
   }
 }
