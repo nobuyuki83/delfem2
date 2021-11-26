@@ -94,17 +94,36 @@ unsigned int FindNearestPointInPoints(
  * @param scr
  * @return
  */
-template<typename VEC, typename SCALAR>
-SCALAR LengthPolyline(
-    const std::vector<VEC>& polyline) {
+template<typename VEC>
+auto LengthPolyline(
+    const std::vector<VEC>& polyline) -> decltype(polyline[0][0])
+{
   if( polyline.size() < 2 ){
     return 0;
   }
+  using SCALAR = decltype(polyline[0][0]);
   SCALAR len = 0;
   for (unsigned int ip = 0; ip < polyline.size() - 1; ++ip) {
     len += (polyline[ip+1] - polyline[ip]).norm();
   }
   return len;
+}
+
+template<typename VEC>
+auto Area_Polyline(
+    const std::vector<VEC>& polyline) -> decltype(polyline[0][0])
+{
+  if( polyline.size() < 2 ){
+    return 0;
+  }
+  using SCALAR = decltype(polyline[0][0]);
+  SCALAR area = 0;
+  VEC p0;
+  p0.setZero();
+  for (unsigned int ip = 0; ip < polyline.size() - 1; ++ip) {
+    area += Area_Tri(p0, polyline[ip], polyline[ip+1]);
+  }
+  return area;
 }
 
 template<typename VEC>
@@ -134,21 +153,22 @@ VEC NormalInPolyline(
  * @return
  */
 template<typename VEC>
-[[nodiscard]] std::pair<unsigned int, float> FindNearestPointInPolyline(
+[[nodiscard]] auto FindNearestPointInPolyline(
     const std::vector<VEC>& polyline,
-    const VEC& scr){
-  if( polyline.empty() ){ return {UINT_MAX,0.f}; }
+    const VEC& scr) -> std::pair<unsigned int, decltype(scr[0])> {
+  using SCALAR = decltype(scr[0]);
+  if( polyline.empty() ){ return {UINT_MAX,0}; }
   unsigned int ie_min;
-  float ratio_min;
-  float dist_min = -1;
+  SCALAR ratio_min;
+  SCALAR dist_min = -1;
   for(unsigned int ip=0;ip<polyline.size()-1;++ip){
     const VEC &es = polyline[ip+1] - polyline[ip];
     const VEC &sc = polyline[ip] - scr;
-    const float a = es.squaredNorm();
-    const float b = es.dot(sc);
-    const float ratio = std::clamp(-b / a, 0.f, 1.f);
+    const SCALAR a = es.squaredNorm();
+    const SCALAR b = es.dot(sc);
+    const SCALAR ratio = std::clamp(-b / a, static_cast<SCALAR>(0), static_cast<SCALAR>(1));
     VEC p = (1-ratio)*polyline[ip] + ratio*polyline[ip+1];
-    float dist = (p-scr).norm();
+    SCALAR dist = (p-scr).norm();
     if( dist_min < 0 || dist < dist_min ){
       dist_min = dist;
       ie_min = ip;
@@ -166,11 +186,12 @@ template<typename VEC>
  * @return
  */
 template<typename VEC>
-float ArcLengthPointInPolyline(
+auto ArcLengthPointInPolyline(
     const std::vector<VEC>& polyline,
-    const VEC& scr){
-
-  if( polyline.size() < 2 ){ return 0.f; }
+    const VEC& scr) -> decltype(scr[0])
+{
+  using SCALAR = decltype(scr[0]);
+  if( polyline.size() < 2 ){ return 0; }
   float dist_min = -1;
   VEC p_min;
   unsigned int ip_min = -1;
@@ -183,7 +204,7 @@ float ArcLengthPointInPolyline(
       ip_min = ip;
     }
   }
-  float alen = 0;
+  SCALAR alen = 0;
   for(unsigned int ip=0;ip<ip_min;++ip){
     alen += (polyline[ip+1] - polyline[ip]).norm();
   }

@@ -156,15 +156,15 @@ double Nearest_QuadraticBezierCurve(
 }
 
 template <typename VEC>
-double Area_QuadraticBezierCurve(
-  const VEC &p0,  // end point
-  const VEC &p1,  // the control point next tp p0
-  const VEC &p2)  // another end point
+auto Area_QuadraticBezierCurve(
+  const VEC &p0,
+  const VEC &p1,
+  const VEC &p2)  -> decltype(p0[0])
 {
   using T = decltype(p0[0]);
   const T tmp0 = p1[0] * (p2[1] - p0[1]) + p1[1] * (p0[0] - p2[0]);
   const T tmp1 = p0[0] * p2[1] - p2[0] * p0[1];
-  return tmp0 / 3.0 +  tmp1 / 6.0;
+  return tmp0 / 3 +  tmp1 / 6;
 }
 
 // quadratic Bezier
@@ -329,11 +329,11 @@ double Nearest_CubicBezierCurve(
 }
 
 template <typename VEC>
-double Area_CubicBezierCurve(
-  const VEC &p0,  // end point
-  const VEC &p1,  // the control point next tp p0
-  const VEC &p2,  // the control point next to p1
-  const VEC &p3)  // another end point
+auto Area_CubicBezierCurve(
+  const VEC &p0,
+  const VEC &p1,
+  const VEC &p2,
+  const VEC &p3) -> decltype(p0[0])
 {
   using T = decltype(p0[0]);
   const T tmp0 = -3 * p2[0] * p0[1] - p3[0] * p0[1]
