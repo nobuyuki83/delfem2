@@ -77,7 +77,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::Nearst_Origin3_Quad3(
   }
   if (dist_min > 0) { return q_min; }
   //
-  const CVec3<T> q01 = Nearest_Origin3_LineSeg3(q0, q1);
+  const CVec3<T> q01 = Nearest_Origin3_Edge3(q0, q1);
   const double d01 = q01.norm();
   if (dist_min < 0 || d01 < dist_min) {
     dist_min = d01;
@@ -86,7 +86,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::Nearst_Origin3_Quad3(
     q_min = q01;
   }
   //
-  CVec3<T> q12 = Nearest_Origin3_LineSeg3(q1, q2);
+  CVec3<T> q12 = Nearest_Origin3_Edge3(q1, q2);
   const double d12 = q12.norm();
   if (dist_min < 0 || d12 < dist_min) {
     dist_min = d12;
@@ -95,7 +95,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::Nearst_Origin3_Quad3(
     q_min = q12;
   }
   //
-  CVec3<T> q23 = Nearest_Origin3_LineSeg3(q2, q3);
+  CVec3<T> q23 = Nearest_Origin3_Edge3(q2, q3);
   const double d23 = q23.norm();
   if (dist_min < 0 || d23 < dist_min) {
     dist_min = d23;
@@ -104,7 +104,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::Nearst_Origin3_Quad3(
     q_min = q23;
   }
   //
-  CVec3<T> q30 = Nearest_Origin3_LineSeg3(q3, q0);
+  CVec3<T> q30 = Nearest_Origin3_Edge3(q3, q0);
   const double d30 = q30.norm();
   if (dist_min < 0 || d30 < dist_min) {
     dist_min = d30;

@@ -11,7 +11,8 @@
 
 #include "delfem2/cad2.h"
 #include "delfem2/cad2_io_svg.h"
-#include "delfem2/pgeo.h"
+#include "delfem2/geo_curve_cubic_bezier.h"
+#include "delfem2/geo_curve_quadratic_bezier.h"
 #include "delfem2/geo_polyline2.h"
 
 namespace dfm2 = delfem2;

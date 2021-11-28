@@ -16,7 +16,7 @@
 #  define M_PI 3.14159265358979323846
 #endif
 
-DFM2_INLINE void delfem2::Nearest_LineSeg3_Point3(
+DFM2_INLINE void delfem2::Nearest_Edge3_Point3(
   double nearest_position[3],
   const double point_position[3], // point
   const double lineseg_s[3], // source
@@ -46,7 +46,7 @@ DFM2_INLINE void delfem2::Nearest_LineSeg3_Point3(
 // ---------------------------------------------------------------------------
 
 template<typename T>
-delfem2::CVec3<T> delfem2::Nearest_Origin3_LineSeg3(
+delfem2::CVec3<T> delfem2::Nearest_Origin3_Edge3(
   const CVec3<T> &s, // start
   const CVec3<T> &e) // end
 {
@@ -60,7 +60,7 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_LineSeg3(
   return s + t * d;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::Nearest_Origin3_LineSeg3(
+template delfem2::CVec3d delfem2::Nearest_Origin3_Edge3(
   const CVec3d &s,
   const CVec3d &e);
 #endif
@@ -70,7 +70,7 @@ template delfem2::CVec3d delfem2::Nearest_Origin3_LineSeg3(
 // r0==0 -> p0==org
 // r0==1 -> p1==org
 template<typename T>
-delfem2::CVec3<T> delfem2::Nearest_Origin3_LineSeg3(
+delfem2::CVec3<T> delfem2::Nearest_Origin3_Edge3(
   double &r0,
   const CVec3<T> &p0, // start
   const CVec3<T> &p1) // end
@@ -88,7 +88,7 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_LineSeg3(
   return (1.0 - r0) * p0 + r0 * p1;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::Nearest_Origin3_LineSeg3(
+template delfem2::CVec3d delfem2::Nearest_Origin3_Edge3(
   double &r0,
   const CVec3d &p0, // start
   const CVec3d &p1); // end
@@ -97,7 +97,7 @@ template delfem2::CVec3d delfem2::Nearest_Origin3_LineSeg3(
 // ---------------------------------------
 
 template<typename T>
-delfem2::CVec3<T> delfem2::Nearest_LineSeg3_Point3(
+delfem2::CVec3<T> delfem2::Nearest_Edge3_Point3(
   const CVec3<T> &p, // point
   const CVec3<T> &s, // start
   const CVec3<T> &e) // end
@@ -115,11 +115,11 @@ delfem2::CVec3<T> delfem2::Nearest_LineSeg3_Point3(
   return s + t * d;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::Nearest_LineSeg3_Point3(
+template delfem2::CVec3d delfem2::Nearest_Edge3_Point3(
   const CVec3d &p,
   const CVec3d &s,
   const CVec3d &e);
-template delfem2::CVec3f delfem2::Nearest_LineSeg3_Point3(
+template delfem2::CVec3f delfem2::Nearest_Edge3_Point3(
   const CVec3f &p,
   const CVec3f &s,
   const CVec3f &e);
@@ -128,7 +128,7 @@ template delfem2::CVec3f delfem2::Nearest_LineSeg3_Point3(
 // --------------------------------------
 
 template<typename T>
-delfem2::CVec3<T> delfem2::Nearest_LineSeg3_Point3(
+delfem2::CVec3<T> delfem2::Nearest_Edge3_Point3(
   T &t,
   const CVec3<T> &p, // point
   const CVec3<T> &s, // source
@@ -148,12 +148,12 @@ delfem2::CVec3<T> delfem2::Nearest_LineSeg3_Point3(
   return s + t * d;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::Nearest_LineSeg3_Point3(
+template delfem2::CVec3d delfem2::Nearest_Edge3_Point3(
   double &t,
   const CVec3d &p, // point
   const CVec3d &s, // source
   const CVec3d &e); // end
-template delfem2::CVec3f delfem2::Nearest_LineSeg3_Point3(
+template delfem2::CVec3f delfem2::Nearest_Edge3_Point3(
   float &t,
   const CVec3f &p, // point
   const CVec3f &s, // source
@@ -163,7 +163,7 @@ template delfem2::CVec3f delfem2::Nearest_LineSeg3_Point3(
 // ---------------------------------------------
 
 template<class VEC, typename T>
-void delfem2::Nearest_LineSeg3_Line3(
+void delfem2::Nearest_Edge3_Line3(
   VEC &nearest_lineseg,
   VEC &nearest_line,
   const VEC &lineseg_start,
@@ -201,11 +201,11 @@ void delfem2::Nearest_LineSeg3_Line3(
   nearest_line = p2;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Nearest_LineSeg3_Line3<delfem2::CVec3f, float>(
+template void delfem2::Nearest_Edge3_Line3<delfem2::CVec3f, float>(
   CVec3f &, CVec3f &,
   const CVec3f &, const CVec3f &,
   const CVec3f &, const CVec3f &);
-template void delfem2::Nearest_LineSeg3_Line3<delfem2::CVec3d, double>(
+template void delfem2::Nearest_Edge3_Line3<delfem2::CVec3d, double>(
   CVec3d &, CVec3d &,
   const CVec3d &, const CVec3d &,
   const CVec3d &, const CVec3d &);
@@ -219,7 +219,7 @@ template void delfem2::Nearest_LineSeg3_Line3<delfem2::CVec3d, double>(
 
 //　distance EE
 template<typename T>
-double delfem2::DistanceEdgeEdge(
+double delfem2::Distance_Edge3_Edge3(
   const CVec3<T> &p0,
   const CVec3<T> &p1,
   const CVec3<T> &q0,
@@ -265,7 +265,7 @@ double delfem2::DistanceEdgeEdge(
   return (pc - qc).norm();
 }
 #ifdef DFM2_STATIC_LIBRARY
-template double delfem2::DistanceEdgeEdge(
+template double delfem2::Distance_Edge3_Edge3(
   const CVec3d &p0, const CVec3d &p1,
   const CVec3d &q0, const CVec3d &q1,
   double &ratio_p, double &ratio_q);
@@ -273,9 +273,8 @@ template double delfem2::DistanceEdgeEdge(
 
 // =============
 
-// EEの距離が所定の距離以下にあるかどうか
 template<typename T>
-bool delfem2::IsContact_EE_Proximity(
+bool delfem2::IsContact_Edge3_Edge3_Proximity(
   int ino0,
   int ino1,
   int jno0,
@@ -305,7 +304,7 @@ bool delfem2::IsContact_EE_Proximity(
     && q1.p[2] - delta > p1.p[2])
     return false;
   double ratio_p, ratio_q;
-  double dist = DistanceEdgeEdge(p0, p1, q0, q1, ratio_p, ratio_q);
+  double dist = Distance_Edge3_Edge3(p0, p1, q0, q1, ratio_p, ratio_q);
   if (dist > delta) return false;
   if (ratio_p < 0) return false;
   if (ratio_p > 1) return false;
@@ -316,7 +315,7 @@ bool delfem2::IsContact_EE_Proximity(
   return (pm - qm).norm() <= delta;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template bool delfem2::IsContact_EE_Proximity(
+template bool delfem2::IsContact_Edge3_Edge3_Proximity(
   int ino0, int ino1,
   int jno0, int jno1,
   const CVec3d &p0, const CVec3d &p1,

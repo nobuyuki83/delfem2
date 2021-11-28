@@ -38,7 +38,7 @@ CVec3<T> Nearest_Origin3_PlaneTri3(
 
 
 template<typename T>
-bool intersection_Plane_Line(
+bool Intersection_Plane3_Line3(
     CVec3<T> &p0,
     double &r0,
     double &r1,
@@ -51,7 +51,7 @@ bool intersection_Plane_Line(
     const CVec3<T> &q2);
 
 template<typename T>
-CVec3<T> intersection_Plane_Line(
+CVec3<T> Intersection_Plane3_Line3(
     const CVec3<T> &o, // one point on plane
     const CVec3<T> &n, // plane normal
     const CVec3<T> &s, // one point on line

@@ -187,7 +187,7 @@ bool delfem2::IsContact_EE_CCD
   CVec3d q0m = (1-t)*q0s + t*q0e;
   CVec3d q1m = (1-t)*q1s + t*q1e;
   double w0,w1;
-  double dist = DistanceEdgeEdge(p0m, p1m, q0m, q1m, w0,w1);
+  double dist = Distance_Edge3_Edge3(p0m, p1m, q0m, q1m, w0,w1);
   if( w0 < 0 || w0 > 1 ) return false;
   if( w1 < 0 || w1 > 1 ) return false;
   if( dist > 1.0e-2 ) return false;
@@ -311,31 +311,31 @@ void delfem2::GetContactElement_Proximity
       aContactElem.insert( CContactElement(true,    jn0,jn1,jn2,in2) );
     }
     ////
-    if( IsContact_EE_Proximity(      in0,in1,jn0,jn1, p0,p1,q0,q1, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in0,in1,jn0,jn1, p0,p1,q0,q1, delta) ){
       aContactElem.insert( CContactElement(false,    in0,in1,jn0,jn1) );
     }
-    if( IsContact_EE_Proximity(      in0,in1,jn1,jn2, p0,p1,q1,q2, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in0,in1,jn1,jn2, p0,p1,q1,q2, delta) ){
       aContactElem.insert( CContactElement(false,    in0,in1,jn1,jn2) );
     }
-    if( IsContact_EE_Proximity(      in0,in1,jn2,jn0, p0,p1,q2,q0, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in0,in1,jn2,jn0, p0,p1,q2,q0, delta) ){
       aContactElem.insert( CContactElement(false,    in0,in1,jn2,jn0) );
     }
-    if( IsContact_EE_Proximity(      in1,in2,jn0,jn1, p1,p2,q0,q1, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in1,in2,jn0,jn1, p1,p2,q0,q1, delta) ){
       aContactElem.insert( CContactElement(false,    in1,in2,jn0,jn1) );
     }
-    if( IsContact_EE_Proximity(      in1,in2,jn1,jn2, p1,p2,q1,q2, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in1,in2,jn1,jn2, p1,p2,q1,q2, delta) ){
       aContactElem.insert( CContactElement(false,    in1,in2,jn1,jn2) );
     }
-    if( IsContact_EE_Proximity(      in1,in2,jn2,jn0, p1,p2,q2,q0, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in1,in2,jn2,jn0, p1,p2,q2,q0, delta) ){
       aContactElem.insert( CContactElement(false,    in1,in2,jn2,jn0) );
     }
-    if( IsContact_EE_Proximity(      in2,in0,jn0,jn1, p2,p0,q0,q1, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in2,in0,jn0,jn1, p2,p0,q0,q1, delta) ){
       aContactElem.insert( CContactElement(false,    in2,in0,jn0,jn1) );
     }
-    if( IsContact_EE_Proximity(      in2,in0,jn1,jn2, p2,p0,q1,q2, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in2,in0,jn1,jn2, p2,p0,q1,q2, delta) ){
       aContactElem.insert( CContactElement(false,    in2,in0,jn1,jn2) );
     }
-    if( IsContact_EE_Proximity(      in2,in0,jn2,jn0, p2,p0,q2,q0, delta) ){
+    if( IsContact_Edge3_Edge3_Proximity(      in2,in0,jn2,jn0, p2,p0,q2,q0, delta) ){
       aContactElem.insert( CContactElement(false,    in2,in0,jn2,jn0) );
     }
   }

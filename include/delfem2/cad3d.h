@@ -14,7 +14,8 @@
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
-#include "delfem2/pgeo.h"
+#include "delfem2/geo_curve_quadratic_bezier.h"
+#include "delfem2/geo_curve_cubic_bezier.h"
 
 // -------------------------------------
 

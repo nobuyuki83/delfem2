@@ -85,11 +85,11 @@ DFM2_INLINE void delfem2::Nearest_Triangle3_Point3(
     }
   }
   double r12[3];
-  Nearest_LineSeg3_Point3(r12, ps, q1, q2);
+  Nearest_Edge3_Point3(r12, ps, q1, q2);
   double r20[3];
-  Nearest_LineSeg3_Point3(r20, ps, q2, q0);
+  Nearest_Edge3_Point3(r20, ps, q2, q0);
   double r01[3];
-  Nearest_LineSeg3_Point3(r01, ps, q0, q1);
+  Nearest_Edge3_Point3(r01, ps, q0, q1);
   const double d12 = Distance3(r12, ps);
   const double d20 = Distance3(r20, ps);
   const double d01 = Distance3(r01, ps);
@@ -139,7 +139,7 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_Tri3(
   r1 = 0;
   {
     T s2;
-    CVec3<T> p12 = Nearest_Origin3_LineSeg3(s2, q1, q2);
+    CVec3<T> p12 = Nearest_Origin3_Edge3(s2, q1, q2);
     const T d12 = p12.norm();
     if (d12 < d_min) {
       d_min = d12;
@@ -150,7 +150,7 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_Tri3(
   }
   {
     T s0;
-    CVec3<T> p20 = Nearest_Origin3_LineSeg3(s0, q2, q0);
+    CVec3<T> p20 = Nearest_Origin3_Edge3(s0, q2, q0);
     const T d20 = p20.norm();
     if (d20 < d_min) {
       d_min = d20;
@@ -161,7 +161,7 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_Tri3(
   }
   {
     T s1;
-    CVec3<T> p01 = Nearest_Origin3_LineSeg3(s1, q0, q1);
+    CVec3<T> p01 = Nearest_Origin3_Edge3(s1, q0, q1);
     const T d01 = p01.norm();
     if (d01 < d_min) {
       d_min = d01;

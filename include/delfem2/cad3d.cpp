@@ -19,7 +19,9 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/geo_polyline2.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/pgeo.h"
+#include "delfem2/geo_curve_quadratic_bezier.h"
+#include "delfem2/geo_curve_cubic_bezier.h"
+#include "delfem2/geo_parametric.h"
 
 // =========================================
 
@@ -1021,7 +1023,7 @@ bool delfem2::MovePointsAlongSketch(
   for(const auto& sp0 : aStroke1){
     CVec3d src = screenUnProjection(CVec3d(sp0.x,sp0.y,0), mMV, mPj);
     CVec3d dir = screenUnProjection(CVec3d(0,0,1), mMV, mPj);
-    CVec3d p = intersection_Plane_Line(plane_org, plane_nrm, src,dir);
+    CVec3d p = Intersection_Plane3_Line3(plane_org, plane_nrm, src, dir);
     aP2D.emplace_back((p-plane_org).dot(plane_ex),(p-plane_org).dot(plane_ey));
   }
   bool is_moved = false;
@@ -1518,7 +1520,7 @@ bool delfem2::CCad3D::MouseMotion
     if( iedge_picked>=0 && iedge_picked<(int)aEdge.size() && (ielem_edge_picked==2 || ielem_edge_picked==3) ){ // moved edge ctrl point
       const int ie0 = iedge_picked;
       CVec3d axis = CVec3d::Axis(aEdge[ie0].inorm);
-      CVec3d qe = intersection_Plane_Line(plane_org, axis, src_pick, dir_pick);
+      CVec3d qe = Intersection_Plane3_Line3(plane_org, axis, src_pick, dir_pick);
       const int iv = (ielem_edge_picked==2) ? aEdge[ie0].iv0 : aEdge[ie0].iv1;
       CVec3d  qs = (ielem_edge_picked==2) ? aEdge[ie0].q0  : aEdge[ie0].q1;
       CVec3d  pv = (ielem_edge_picked==2) ? aEdge[ie0].p0  : aEdge[ie0].p1;

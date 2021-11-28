@@ -79,7 +79,7 @@ void SelfCollisionImpulse_Proximity(
     else{ // edge-edge
       double w01,w23;
       {
-        double dist = DistanceEdgeEdge(p0, p1, p2, p3, w01,w23);
+        double dist = Distance_Edge3_Edge3(p0, p1, p2, p3, w01, w23);
         if( w01 < 0 || w01 > 1 ) continue;
         if( w23 < 0 || w23 > 1 ) continue;
         if( dist > delta ) continue;
@@ -187,7 +187,7 @@ void SelfCollisionImpulse_CCD(
         dfm2::CVec3d p1m = p1 + t*v1;
         dfm2::CVec3d p2m = p2 + t*v2;
         dfm2::CVec3d p3m = p3 + t*v3;
-        double dist = DistanceEdgeEdge(p0m, p1m, p2m, p3m, w01,w23);
+        double dist = Distance_Edge3_Edge3(p0m, p1m, p2m, p3m, w01, w23);
         if( w01 < 0 || w01 > 1 ) continue;
         if( w23 < 0 || w23 > 1 ) continue;
         if( dist > delta ) continue;

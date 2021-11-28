@@ -17,7 +17,7 @@
 #include <algorithm>  // for std::clamp
 
 #include "delfem2/vec2.h"
-#include "delfem2/pgeo.h"
+#include "delfem2/geo_curve_cubic_bezier.h"
 #include "delfem2/dfm2_inline.h"
 
 // -----------------------------------------------------

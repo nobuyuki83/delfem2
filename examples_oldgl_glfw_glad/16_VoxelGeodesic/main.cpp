@@ -203,7 +203,7 @@ int main() {
           dfm2::CVec3d p0(ix0 + 0.5, iy0 + 0.5, iz0 + 0.5);
           dfm2::CVec3d p1;
           dfm2::Vec3_Mat4Vec3_Affine(p1.p, grid.am.mat, p0.p);
-          dfm2::CVec3d p2 = dfm2::Nearest_LineSeg3_Point3(p1, ps, pe);
+          dfm2::CVec3d p2 = dfm2::Nearest_Edge3_Point3(p1, ps, pe);
           double dist0 = (p2 - p1).norm();
           aIdvoxDist.emplace_back(ivox0, dist0);
         }
