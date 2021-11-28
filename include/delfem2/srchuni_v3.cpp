@@ -11,8 +11,9 @@
 #include <set>
 #include <stack>
 
-#include "delfem2/geoproximity3_v3.h"
-#include "delfem2/geo_nearest3.h"
+#include "delfem2/geo_plane.h"
+#include "delfem2/geo_edge.h"
+#include "delfem2/geo_tri.h"
 #include "delfem2/vec3.h"
 
 namespace delfem2::srchuni {

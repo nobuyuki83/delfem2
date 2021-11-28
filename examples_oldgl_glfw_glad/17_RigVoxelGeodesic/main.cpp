@@ -22,7 +22,7 @@
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/funcs.h"
-#include "delfem2/geoproximity3_v3.h"
+#include "delfem2/geo_plane.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshmisc.h"

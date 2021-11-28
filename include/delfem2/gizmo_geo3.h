@@ -183,4 +183,4 @@ public:
 #endif
 
 
-#endif /* gizmo_geo3_h */
+#endif /* DFM2_GIZMO_GEO3_H */

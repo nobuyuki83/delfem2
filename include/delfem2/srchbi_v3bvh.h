@@ -13,7 +13,10 @@
 #define DFM2_SRCHBI_V3BVH_H
 
 #include "delfem2/srchbvh.h"
-#include "delfem2/geoproximity3_v3.h"
+#include "delfem2/geo_plane.h"
+#include "delfem2/geo_tri.h"
+#include "delfem2/geo_ccd.h"
+#include "delfem2/geo_edge.h"
 #include "delfem2/geosolidelm_v3.h"
 #include "delfem2/vec3.h"
 #include <stdio.h>
@@ -173,8 +176,9 @@ bool delfem2::IsContact_EE_CCD
   //
   double t;
   {
-    const bool res = FindCoplanerInterp(t,
-                                        p0s,p1s,q0s,q1s, p0e,p1e,q0e,q1e);
+    const bool res = FindCoplanerInterp(
+      t,
+      p0s,p1s,q0s,q1s, p0e,p1e,q0e,q1e);
     if( !res ) return false;
     assert( t >= 0 && t <= 1 );
   }
@@ -559,8 +563,9 @@ void delfem2::GetIntersectTriPairs
     const int itri = ichild0_0;
     const int jtri = ichild1_0;
     CVec3d P0,P1;
-    bool res = isIntersectTriPair(P0,P1,
-                                  itri, jtri, aTri, aXYZ);
+    bool res = isIntersectTriPair(
+      P0,P1,
+      itri, jtri, aTri, aXYZ);
     if( !res ){ return; }
     delfem2::CIntersectTriPair<double> itp;
     itp.itri = itri;

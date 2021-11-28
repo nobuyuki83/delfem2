@@ -7,16 +7,14 @@
 
 #include <algorithm>
 #include <climits>
-#include "delfem2/geoproximity3_v3.h"
+#include "delfem2/geo_plane.h"
+#include "delfem2/geo_tri.h"
 #include "delfem2/geodelaunay3_v3.h"
 #include "delfem2/dtri3_v3dtri.h"
 
-//namespace dfm2 = delfem2;
-
 // ----------------------------------------
 
-namespace delfem2{
-namespace dtriv3{
+namespace delfem2::dtriv3{
 
 //! Volume of a tetrahedra
 template <typename T>
@@ -44,9 +42,9 @@ DFM2_INLINE int InsertPoint_Mesh(
   if (itri0==-1) return -1;
   CVec3d pos;
   {
-    const int i0 = aSTri[itri0].v[0];
-    const int i1 = aSTri[itri0].v[1];
-    const int i2 = aSTri[itri0].v[2];
+    const unsigned int i0 = aSTri[itri0].v[0];
+    const unsigned int i1 = aSTri[itri0].v[1];
+    const unsigned int i2 = aSTri[itri0].v[2];
     const CVec3d& p0 = aXYZ[i0];
     const CVec3d& p1 = aXYZ[i1];
     const CVec3d& p2 = aXYZ[i2];
@@ -204,7 +202,6 @@ DFM2_INLINE bool FindRayTriangleMeshIntersectionClosestToPoint
   return true;
 }
 
-} // namespace dtriv3
 } // namespace delfem2
 
 // static functions

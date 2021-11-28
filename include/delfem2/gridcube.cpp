@@ -7,12 +7,11 @@
 
 #include "delfem2/gridcube.h"
 
-#include <cstdio>
 #include <climits>
 
 #include "delfem2/vec3.h"
-#include "delfem2/geoproximity3_v3.h"
-#include "delfem2/geo_nearest3.h"
+#include "delfem2/geo_plane.h"
+#include "delfem2/geo_line.h"
 
 void delfem2::Pick_CubeGrid(
     unsigned int& icube_pic,
