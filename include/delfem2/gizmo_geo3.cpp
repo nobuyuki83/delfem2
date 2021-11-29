@@ -356,7 +356,7 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   }
   {
     CVec3<REAL> pls, pl;
-    ::delfem2::Nearest_Edge3_Line3<CVec3<REAL>, REAL>
+    ::delfem2::Nearest_Edge3_Line3<CVec3<REAL> >
       (pls, pl,
        pos - size * CVec3<REAL>::Axis(0),
        pos + size * CVec3<REAL>::Axis(0),
@@ -368,7 +368,7 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   }
   {
     CVec3<REAL> pls, pl;
-    ::delfem2::Nearest_Edge3_Line3<CVec3<REAL>, REAL>
+    ::delfem2::Nearest_Edge3_Line3<CVec3<REAL> >
       (pls, pl,
        pos - size * CVec3<REAL>::Axis(1),
        pos + size * CVec3<REAL>::Axis(1),
@@ -380,11 +380,11 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   }
   {
     CVec3<REAL> pls, pl;
-    ::delfem2::Nearest_Edge3_Line3<CVec3<REAL>, REAL>
-      (pls, pl,
-       pos - size * CVec3<REAL>::Axis(2),
-       pos + size * CVec3<REAL>::Axis(2),
-       CVec3<REAL>(src), CVec3<REAL>(dir));
+    ::delfem2::Nearest_Edge3_Line3<CVec3<REAL>>(
+      pls, pl,
+      pos - size * CVec3<REAL>::Axis(2),
+      pos + size * CVec3<REAL>::Axis(2),
+      CVec3<REAL>(src), CVec3<REAL>(dir));
     if ((pls - pl).norm() < tol) {
       ielem_picked = 2;
       return;

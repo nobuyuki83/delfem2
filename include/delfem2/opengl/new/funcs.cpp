@@ -113,6 +113,13 @@ DFM2_INLINE void delfem2::opengl::VertexArrayObject::Draw(
                  nullptr);
 }
 
+DFM2_INLINE void delfem2::opengl::VertexArrayObject::DrawArray(
+  int gl_primitive_type,
+  unsigned int np) const {
+  glBindVertexArray(VAO);
+  glDrawArrays(gl_primitive_type, 0, np);
+  glBindVertexArray(0);
+}
 
 // ------------------------------------
 

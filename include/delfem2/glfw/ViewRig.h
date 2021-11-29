@@ -8,10 +8,11 @@
 #ifndef DFM2_GLFW_VIEWRIG_H
 #define DFM2_GLFW_VIEWRIG_H
 
+#include "delfem2/geo_line.h"
+#include "delfem2/gizmo_geo3.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/gizmo_geo3.h"
 
 namespace delfem2 {
 
@@ -38,7 +39,7 @@ public:
       ipicked_bone = -1;
       for (unsigned int ib = 0; ib < aBone.size(); ++ib) {
         CVec3d p0 = aBone[ib].RootPosition();
-        CVec3d p1 = Nearest_Line3_Point3<CVec3d,double>(p0, s0, d0);
+        CVec3d p1 = Nearest_Line3_Point3<CVec3d>(p0, s0, d0);
         double len01 = (p0 - p1).norm();
         if (len01 < 0.03) {
           ipicked_bone = ib;

@@ -24,9 +24,9 @@ namespace delfem2 {
 
 DFM2_INLINE void Nearest_Edge3_Point3(
     double nearest_position[3],
-    const double point_position[3], // point
-    const double lineseg_s[3], // source
-    const double lineseg_e[3]); // end
+    const double point_pos[3], // point
+    const double edge_pos0[3], // source
+    const double edge_pos1[3]); // end
 
 template<typename T>
 CVec3<T> Nearest_Edge3_Point3(
@@ -41,7 +41,7 @@ CVec3<T> Nearest_Edge3_Point3(
   const CVec3<T> &s,
   const CVec3<T> &e); // direction
 
-template<class VEC, typename T>
+template<class VEC>
 void Nearest_Edge3_Line3(
   VEC &nearest_lineseg,
   VEC &nearest_line,
@@ -81,4 +81,4 @@ bool IsContact_Edge3_Edge3_Proximity(
 #  include "delfem2/geo_edge.cpp"
 #endif
 
-#endif // DFM2_GEO_NEAREST3_H
+#endif // DFM2_GEO_EDGE_H

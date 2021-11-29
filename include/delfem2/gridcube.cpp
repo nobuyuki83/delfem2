@@ -50,7 +50,7 @@ void delfem2::Pick_CubeGrid(
     int kh = aCube[ivox].ivz;
     CVec3d cnt =  org + elen*CVec3d(ih+0.5,jh+0.5,kh+0.5);
     {
-      CVec3d q = Nearest_Line3_Point3<CVec3d, double>(cnt, src_pic, dir_pic);
+      auto q = Nearest_Line3_Point3<CVec3d>(cnt, src_pic, dir_pic);
       if( (q-cnt).norm() > elen  ) continue;
     }
     CVec3d aP[8] = {

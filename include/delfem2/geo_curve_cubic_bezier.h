@@ -5,14 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_BEZIER_CUBIC_H
-#define DFM2_BEZIER_CUBIC_H
+#ifndef DFM2_CURVE_CUBIC_BEZIER_H
+#define DFM2_CURVE_CUBIC_BEZIER_H
 
 #include <cassert>
 #include <cstdio>
 #include <vector>
-
-#include "delfem2/dfm2_inline.h"
 
 namespace delfem2::geo_bezier_cubic {
 
@@ -229,6 +227,25 @@ auto Area_CubicBezierCurve(
     + 3 * p1[0] * (-2 * p0[1] + p2[1] + p3[1])
     + p0[0] * (-10 * p0[1] + 6 * p1[1] + 3 * p2[1] + p3[1]);
   return (p0[0] * p0[1]) / 2 - (p3[0] * p3[1]) / 2 + tmp0 / 20;
+}
+
+/**
+ * @tparam ndim dimension of the geometry
+ * @return min_x, min_y, (min_z), max_x, max_y, (max_z)
+ */
+template <int ndim, typename VEC>
+auto AABB_CubicBezierCurve(
+  const VEC &p0,
+  const VEC &p1,
+  const VEC &p2,
+  const VEC &p3) -> std::array<decltype(p0[0]),ndim*2>
+{
+    using SCALAR = decltype(p0[0]);
+    std::array<SCALAR, ndim*2> res;
+    /*
+     write something here
+     */
+    return res;
 }
 
 }

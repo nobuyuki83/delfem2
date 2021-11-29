@@ -89,4 +89,4 @@ bool IsInside_Orgin_BoundingBoxPoint6(
 #  include "delfem2/geo_plane.cpp"
 #endif
 
-#endif // DFM2_GEOPROXIMITY3_V3_H
+#endif // DFM2_PLANE_H

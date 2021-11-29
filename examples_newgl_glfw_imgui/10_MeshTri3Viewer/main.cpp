@@ -7,6 +7,7 @@
 #  include <windows.h>
 #endif
 //
+#define GL_SILENCE_DEPRECATION
 #ifdef EMSCRIPTEN
 #  include <emscripten/emscripten.h>
 #  define GLFW_INCLUDE_ES3

@@ -35,7 +35,8 @@ public:
       unsigned int ndim,
       std::vector<unsigned int>& aTri);
 
-  void Draw(const float mat4_projection[16], const float mat4_modelview[16]) const;
+  void Draw(const float mat4_projection[16],
+            const float mat4_modelview[16]) const;
   
 public:
   VertexArrayObject vao; // gl4
@@ -53,4 +54,4 @@ public:
   #include "delfem2/opengl/new/drawer_mshtri.cpp"
 #endif
 
-#endif /* gl4_msh_hpp */
+#endif /* DFM2_OPENGL_NEW_DRWER_MSHTRI_H */

@@ -91,6 +91,10 @@ public:
       int gl_primitive_type);
 
   void Delete_EBOs();
+
+  void DrawArray(
+    int gl_primitive_type,
+    unsigned int np) const;
   
 public:
   unsigned int VAO;

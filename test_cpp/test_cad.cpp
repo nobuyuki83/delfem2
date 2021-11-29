@@ -90,6 +90,9 @@ TEST(cad,quadratic_bezier0) {
       const dfm2::CVec2d v1 = dfm2::PointOnQuadraticBezierCurve(t1,p0,p1,p2);
       EXPECT_LT( (v0-v1).norm(), 1.0e-2 );
     }
+    {  // bb
+      auto bb = dfm2::AABB_CubicBezierCurve<2>(p0,p1,p2);
+    }
   }
 }
 
@@ -117,6 +120,8 @@ TEST(cad,cubic_bezier0) {
       p0,p1,p2,p3,10,5);
     const dfm2::CVec2d v1 = dfm2::PointOnCubicBezierCurve(t1,p0,p1,p2,p3);
     EXPECT_LT( (v0-v1).norm(), 1.0e-3 );
-    std::cout << (v0-v1).norm() << std::endl;
+  }
+  {  // bb
+      auto bb = dfm2::AABB_CubicBezierCurve<2>(p0,p1,p2,p3);
   }
 }

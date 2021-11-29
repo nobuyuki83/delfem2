@@ -25,10 +25,11 @@ namespace dfm2 = delfem2;
 
 // -----------------------------------
 
-dfm2::CVec3d GetPointSurf(double u, double v,
- int isurf,
- std::vector<int>& aIndCP,
- std::vector<dfm2::CVec3d>& aCP)
+dfm2::CVec3d GetPointSurf(
+  double u, double v,
+  int isurf,
+  std::vector<int>& aIndCP,
+  std::vector<dfm2::CVec3d>& aCP)
 {
   int i00 = aIndCP[isurf*16+ 0];
   int i01 = aIndCP[isurf*16+ 1];
@@ -46,19 +47,20 @@ dfm2::CVec3d GetPointSurf(double u, double v,
   int i13 = aIndCP[isurf*16+13];
   int i14 = aIndCP[isurf*16+14];
   int i15 = aIndCP[isurf*16+15];
-  return dfm2::getPointSurfaceBezierCubic(u,v,
-                                          aCP[i00], aCP[i01], aCP[i02], aCP[i03],
-                                          aCP[i04], aCP[i05], aCP[i06], aCP[i07],
-                                          aCP[i08], aCP[i09], aCP[i10], aCP[i11],
-                                          aCP[i12], aCP[i13], aCP[i14], aCP[i15]);
+  return dfm2::getPointSurfaceBezierCubic(
+    u,v,
+    aCP[i00], aCP[i01], aCP[i02], aCP[i03],
+    aCP[i04], aCP[i05], aCP[i06], aCP[i07],
+    aCP[i08], aCP[i09], aCP[i10], aCP[i11],
+    aCP[i12], aCP[i13], aCP[i14], aCP[i15]);
 }
 
-void AddQuads
-(std::vector<dfm2::CVec3d>& aPQuad,
- int n,
- int isurf,
- std::vector<int>& aIndCP,
- std::vector<dfm2::CVec3d>& aCP)
+void AddQuads(
+  std::vector<dfm2::CVec3d>& aPQuad,
+  int n,
+  int isurf,
+  std::vector<int>& aIndCP,
+  std::vector<dfm2::CVec3d>& aCP)
 {
   for (int i = 0; i<(n+1); i++){
     for (int j = 0; j<(n+1); j++){

@@ -131,30 +131,28 @@ T Volume_Tet3(
 
 }
 
-// ------------------------------------------
-
-
 // ---------------------------------------------------------------------------
 
-template<class VEC, typename T>
+template<class VEC>
 VEC delfem2::Nearest_Line3_Point3(
   const VEC &point, // point
   const VEC &line_src, // source
   const VEC &line_dir) // direction
 {
+  using SCALAR = decltype(point[0]);
   assert(line_dir.dot(line_dir) > 1.0e-20);
   const VEC ps = line_src - point;
-  const T a = line_dir.dot(line_dir);
-  const T b = line_dir.dot(line_src - point);
-  const T t = -b / a;
+  const SCALAR a = line_dir.dot(line_dir);
+  const SCALAR b = line_dir.dot(line_src - point);
+  const SCALAR t = -b / a;
   return line_src + t * line_dir;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::Nearest_Line3_Point3<delfem2::CVec3d, double>(
+template delfem2::CVec3d delfem2::Nearest_Line3_Point3<delfem2::CVec3d>(
   const CVec3d &p,
   const CVec3d &s,
   const CVec3d &d);
-template delfem2::CVec3f delfem2::Nearest_Line3_Point3<delfem2::CVec3f, float>(
+template delfem2::CVec3f delfem2::Nearest_Line3_Point3<delfem2::CVec3f>(
   const CVec3f &p,
   const CVec3f &s,
   const CVec3f &d);
@@ -251,9 +249,6 @@ template void delfem2::Nearest_Line3_Line3(
 #endif
 
 // ------------------------------------------
-
-
-// -------------------------------------------
 
 template<typename T>
 void delfem2::Nearest_Line_Circle(

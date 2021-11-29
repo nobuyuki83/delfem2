@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_BEZIER_QUADRATIC_H
-#define DFM2_BEZIER_QUADRATIC_H
+#ifndef DFM2_CURVE_QUADRATIC_BEZIER_H
+#define DFM2_CURVE_QUADRATIC_BEZIER_H
 
 #include <cassert>
 #include <cstdio>
@@ -166,6 +166,24 @@ auto Area_QuadraticBezierCurve(
   const T tmp0 = p1[0] * (p2[1] - p0[1]) + p1[1] * (p0[0] - p2[0]);
   const T tmp1 = p0[0] * p2[1] - p2[0] * p0[1];
   return tmp0 / 3 +  tmp1 / 6;
+}
+
+/**
+ * @tparam ndim dimension of the geometry
+ * @return min_x, min_y, (min_z), max_x, max_y, (max_z)
+ */
+template <int ndim, typename VEC>
+auto AABB_CubicBezierCurve(
+  const VEC &p0,
+  const VEC &p1,
+  const VEC &p2) -> std::array<decltype(p0[0]),ndim*2>
+{
+    using SCALAR = decltype(p0[0]);
+    std::array<SCALAR, ndim*2> res;
+    /*
+     write something here
+     */
+    return res;
 }
 
 }

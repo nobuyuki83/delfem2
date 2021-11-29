@@ -21,7 +21,7 @@
 
 namespace delfem2 {
 
-template<class VEC, typename T>
+template<class VEC>
 VEC Nearest_Line3_Point3(
   const VEC &point,
   const VEC &line_src,
