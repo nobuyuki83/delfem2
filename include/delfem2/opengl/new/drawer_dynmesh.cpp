@@ -56,8 +56,8 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer (
     }
   }
   // ----------
-  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
-  glBindVertexArray(vao.VAO);
+  if( !glIsVertexArray(vao.idx_vao) ){ glGenVertexArrays(1, &vao.idx_vao); }
+  glBindVertexArray(vao.idx_vao);
 
   vao.ADD_VBO(0,aXYf);
   glEnableVertexAttribArray(0);
@@ -72,8 +72,8 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer (
     VertexArrayObject::CEBO e0;
     e0.size = aTri.size();
     e0.GL_MODE = GL_TRIANGLES;
-    e0.EBO = EBO_Tri;
-    vao.aEBO.push_back(e0);
+    e0.ebo_idx = EBO_Tri;
+    vao.ebos.push_back(e0);
   }
   {
     unsigned int EBO_Line;
@@ -83,8 +83,8 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer (
     VertexArrayObject::CEBO e0;
     e0.size = aLine.size();
     e0.GL_MODE = GL_LINES;
-    e0.EBO = EBO_Line;
-    vao.aEBO.push_back(e0);
+    e0.ebo_idx = EBO_Line;
+    vao.ebos.push_back(e0);
   }
 }
 

@@ -170,9 +170,9 @@ TEST(ls,test1)
     const auto time3 = std::chrono::system_clock::now();
     EXPECT_NEAR(nitr0,nitr1,10);
     EXPECT_NEAR(nitr1,nitr2,10);
-    double elapsed01 = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
-    double elapsed12 = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1).count();
-    double elapsed23 = std::chrono::duration_cast<std::chrono::milliseconds>(time3 - time2).count();
+    long long elapsed01 = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
+    long long elapsed12 = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1).count();
+    long long elapsed23 = std::chrono::duration_cast<std::chrono::milliseconds>(time3 - time2).count();
     std::cout << "cg std::vector: " << elapsed01 << " " << nitr0 << std::endl;
     std::cout << "cg eigen vec: " << elapsed12 << " " << nitr1 << std::endl;
     std::cout << "cg eigen mat: " << elapsed23 << " " << nitr2 << std::endl;

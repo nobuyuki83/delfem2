@@ -233,6 +233,8 @@ class CVec2 {
     return r;
   }
 
+  using Scalar = T;
+
  public:
   union {
     T p[2];
@@ -254,14 +256,16 @@ CVec2<T> rotate90(const CVec2<T> &p0);
 // --------------------------------------------
 
 template<typename T>
-CVec2<T> Mat2Vec(const double A[4], const CVec2<T> &v);
+CVec2<T> Mat2Vec(
+  const double A[4],
+  const CVec2<T> &v);
 
 //! @brief Area of the Triangle
-template<typename T>
-double Area_Tri(
-    const CVec2<T> &v1,
-    const CVec2<T> &v2,
-    const CVec2<T> &v3);
+template<class VEC>
+typename VEC::Scalar Area_Tri2(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3);
 
 template<typename T>
 double Cross(
@@ -396,6 +400,6 @@ void MakeMassMatrixTri(
 #  include "delfem2/vec2.cpp"
 #endif
 
-#endif // VEC_2
+#endif // DFM2_VEC2_H
 
 

@@ -74,10 +74,10 @@ class Drawer_MeshUnIndexed{
 
     np = elem_xyz.size() / ndim;
 
-    if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+    if( !glIsVertexArray(vao.idx_vao) ){ glGenVertexArrays(1, &vao.idx_vao); }
     vao.Delete_EBOs();
 
-    glBindVertexArray(vao.VAO); // opengl4
+    glBindVertexArray(vao.idx_vao); // opengl4
     vao.ADD_VBO(0, elem_xyz);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(

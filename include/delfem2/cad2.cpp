@@ -224,20 +224,20 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::ArcLength() const {
 
 double delfem2::CCad2D_EdgeGeo::AreaEnclosingOrigin() const {
   if (this->type_edge == BEZIER_QUADRATIC) {
-    return delfem2::Area_QuadraticBezierCurve<CVec2d>(
+    return delfem2::Area_QuadraticBezierCurve2<CVec2d>(
       p0,
       p0 + CVec2d(param[0], param[1]),
       p1);
   }
   else if (this->type_edge == BEZIER_CUBIC ) {
-    return delfem2::Area_CubicBezierCurve<CVec2d>(
+    return delfem2::Area_CubicBezierCurve2<CVec2d>(
       p0,
       p0 + CVec2d(param[0], param[1]),
       p1 + CVec2d(param[2], param[3]),
       p1);
   }
   assert(this->type_edge == LINE);
-  return delfem2::Area_Tri(CVec2d(0,0), p0, p1);
+  return delfem2::Area_Tri2(CVec2d(0,0), p0, p1);
 }
 
 DFM2_INLINE double delfem2::AreaLoop(

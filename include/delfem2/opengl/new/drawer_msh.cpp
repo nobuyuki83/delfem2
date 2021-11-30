@@ -28,7 +28,7 @@ void delfem2::opengl::CShader_Mesh::Initialize(
     unsigned int ndim,
     std::vector<unsigned int> &elem_vtx,
     int gl_primitive_type) {
-  if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
+  if (!glIsVertexArray(vao.idx_vao)) { glGenVertexArrays(1, &vao.idx_vao); }
   vao.Delete_EBOs();
   vao.Add_EBO(elem_vtx, gl_primitive_type);
   this->UpdateVertex(vtx_coords, ndim, elem_vtx);
@@ -51,7 +51,7 @@ void delfem2::opengl::CShader_Mesh::UpdateVertex(
     std::vector<REAL> &aXYZd,
     unsigned int ndim,
     [[maybe_unused]] std::vector<unsigned int> &aLine) {
-  glBindVertexArray(vao.VAO); // opengl4
+  glBindVertexArray(vao.idx_vao); // opengl4
 
   vao.ADD_VBO(0, aXYZd);
   glEnableVertexAttribArray(0);

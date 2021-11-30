@@ -119,12 +119,13 @@ void AddPoint
   }
 }
 
-void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad,
-                                             const CMeshDynTri2D &dmesh)
+void dfm2::opengl::CShader_Cad2D::MakeBuffer(
+  const CCad2D& cad,
+  const CMeshDynTri2D &dmesh)
 {
   {
-    vao_face.aEBO.clear();
-    vao_edge.aEBO.clear();
+    vao_face.ebos.clear();
+    vao_edge.ebos.clear();
   }
   
   std::vector<float> aXY0f;
@@ -135,8 +136,8 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad,
     dmesh.Export_StlVectors(aXY0f, aTri);
   }
   { // triangles for faces
-    if( !glIsVertexArray(vao_face.VAO) ){ glGenVertexArrays(1, &vao_face.VAO); }
-    glBindVertexArray(vao_face.VAO);
+    if( !glIsVertexArray(vao_face.idx_vao) ){ glGenVertexArrays(1, &vao_face.idx_vao); }
+    glBindVertexArray(vao_face.idx_vao);
     
     vao_face.ADD_VBO(0,aXY0f);
     glEnableVertexAttribArray(0);
@@ -160,8 +161,8 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad,
       VertexArrayObject::CEBO e0;
       e0.size = aTri.size();
       e0.GL_MODE = GL_TRIANGLES;
-      e0.EBO = EBO_Tri;
-      vao_face.aEBO.push_back(e0);
+      e0.ebo_idx = EBO_Tri;
+      vao_face.ebos.push_back(e0);
     }
   }
   { // point and edges
@@ -177,8 +178,8 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad,
       AddLine(aPxyNxyf,aaTri,
               aXY0f,il);
     }
-    if( !glIsVertexArray(vao_edge.VAO) ){ glGenVertexArrays(1, &vao_edge.VAO); }
-    glBindVertexArray(vao_edge.VAO);
+    if( !glIsVertexArray(vao_edge.idx_vao) ){ glGenVertexArrays(1, &vao_edge.idx_vao); }
+    glBindVertexArray(vao_edge.idx_vao);
     
     vao_edge.ADD_VBO(0,aPxyNxyf);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)0); // gl24
@@ -202,8 +203,8 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad,
       VertexArrayObject::CEBO e0;
       e0.size = il.size();
       e0.GL_MODE = GL_TRIANGLES;
-      e0.EBO = EBO_Tri;
-      vao_edge.aEBO.push_back(e0);
+      e0.ebo_idx = EBO_Tri;
+      vao_edge.ebos.push_back(e0);
     }
   }
 }
@@ -247,7 +248,6 @@ void dfm2::opengl::CShader_Cad2D::Compile_Face()
                                        (std::string("#version 330 core\n")+
                                         glsl33frag).c_str());
   #endif
-    
     
   assert( glIsProgram(shdr0_program) );
   glUseProgram(shdr0_program);
@@ -295,8 +295,7 @@ void dfm2::opengl::CShader_Cad2D::Compile_Edge()
                                        (std::string("#version 330 core\n")+
                                         glsl33frag).c_str());
   #endif
-    
-    
+
   assert( glIsProgram(shdr1_program) );
   glUseProgram(shdr1_program);
   shdr1_Loc_MatrixProjection = glGetUniformLocation(shdr1_program,  "matrixProjection");

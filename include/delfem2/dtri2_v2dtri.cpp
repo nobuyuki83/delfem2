@@ -59,11 +59,11 @@ DFM2_INLINE bool FindEdgePoint_AcrossEdge(
     {
       const unsigned int inotri2 = (inotri_cur + 1) % 3;
       const unsigned int inotri3 = (inotri_cur + 2) % 3;
-      double area0 = Area_Tri(aVec2[ipo0],
+      double area0 = Area_Tri2(aVec2[ipo0],
                               aVec2[aDTri[itri_cur].v[inotri2]],
                               aVec2[ipo1]);
       if (area0 > -1.0e-20) {
-        double area1 = Area_Tri(aVec2[ipo0],
+        double area1 = Area_Tri2(aVec2[ipo0],
                                 aVec2[ipo1],
                                 aVec2[aDTri[itri_cur].v[inotri3]]);
         if (area1 > -1.0e-20) {
@@ -103,11 +103,11 @@ DFM2_INLINE bool FindEdgePoint_AcrossEdge(
     {
       const unsigned int inotri2 = (inotri_cur + 1) % 3; // indexRot3[1][inotri_cur];
       const unsigned int inotri3 = (inotri_cur + 2) % 3; // indexRot3[2][inotri_cur];
-      double area0 = Area_Tri(aVec2[ipo0],
+      double area0 = Area_Tri2(aVec2[ipo0],
                               aVec2[aDTri[itri_cur].v[inotri2]],
                               aVec2[ipo1]);
       if (area0 > -1.0e-20) {
-        double area1 = Area_Tri(aVec2[ipo0],
+        double area1 = Area_Tri2(aVec2[ipo0],
                                 aVec2[ipo1],
                                 aVec2[aDTri[itri_cur].v[inotri3]]);
         if (area1 > -1.0e-20) {
@@ -162,7 +162,7 @@ DFM2_INLINE void delfem2::CheckTri(
     assert(i1 < aPo3D.size());
     const unsigned int i2 = tri.v[2];
     assert(i2 < aPo3D.size());
-    const double area = Area_Tri(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
+    const double area = Area_Tri2(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
     if (area < 1.0e-10) {  // very small volume
 //      assert(0);
 //      abort();
@@ -258,7 +258,7 @@ DFM2_INLINE void delfem2::MeshingInside(
   for (;;) {
     int nadd = 0;
     for (unsigned int itri = 0; itri < aTri.size(); itri++) {
-      const double area = Area_Tri(aVec2[aTri[itri].v[0]],
+      const double area = Area_Tri2(aVec2[aTri[itri].v[0]],
                                    aVec2[aTri[itri].v[1]],
                                    aVec2[aTri[itri].v[2]]);
       const double pcnt[2] = {
@@ -358,15 +358,15 @@ DFM2_INLINE void delfem2::AddPointsMesh
   for (unsigned int itri = 0; itri < aTri.size(); itri++) {
     iflg1 = 0;
     iflg2 = 0;
-    if (Area_Tri(po_add, aVec2[aTri[itri].v[1]], aVec2[aTri[itri].v[2]]) > MIN_TRI_AREA) {
+    if (Area_Tri2(po_add, aVec2[aTri[itri].v[1]], aVec2[aTri[itri].v[2]]) > MIN_TRI_AREA) {
       iflg1++;
       iflg2 += 0;
     }
-    if (Area_Tri(po_add, aVec2[aTri[itri].v[2]], aVec2[aTri[itri].v[0]]) > MIN_TRI_AREA) {
+    if (Area_Tri2(po_add, aVec2[aTri[itri].v[2]], aVec2[aTri[itri].v[0]]) > MIN_TRI_AREA) {
       iflg1++;
       iflg2 += 1;
     }
-    if (Area_Tri(po_add, aVec2[aTri[itri].v[0]], aVec2[aTri[itri].v[1]]) > MIN_TRI_AREA) {
+    if (Area_Tri2(po_add, aVec2[aTri[itri].v[0]], aVec2[aTri[itri].v[1]]) > MIN_TRI_AREA) {
       iflg1++;
       iflg2 += 2;
     }
@@ -385,10 +385,10 @@ DFM2_INLINE void delfem2::AddPointsMesh
       const unsigned int inoel_d = jno0;
       assert(aTri[itri_s].s2[inoel_d] == itri);
       const unsigned int ipo_d = aTri[itri_s].v[inoel_d];
-      assert(Area_Tri(po_add, aVec2[ipo_e1], aVec2[aTri[itri].v[ied0]]) > MIN_TRI_AREA);
-      assert(Area_Tri(po_add, aVec2[aTri[itri].v[ied0]], aVec2[ipo_e0]) > MIN_TRI_AREA);
-      if (Area_Tri(po_add, aVec2[ipo_e0], aVec2[ipo_d]) < MIN_TRI_AREA) { continue; }
-      if (Area_Tri(po_add, aVec2[ipo_d], aVec2[ipo_e1]) < MIN_TRI_AREA) { continue; }
+      assert(Area_Tri2(po_add, aVec2[ipo_e1], aVec2[aTri[itri].v[ied0]]) > MIN_TRI_AREA);
+      assert(Area_Tri2(po_add, aVec2[aTri[itri].v[ied0]], aVec2[ipo_e0]) > MIN_TRI_AREA);
+      if (Area_Tri2(po_add, aVec2[ipo_e0], aVec2[ipo_d]) < MIN_TRI_AREA) { continue; }
+      if (Area_Tri2(po_add, aVec2[ipo_d], aVec2[ipo_e1]) < MIN_TRI_AREA) { continue; }
       const int det_d = DetDelaunay(po_add, aVec2[ipo_e0], aVec2[ipo_e1], aVec2[ipo_d]);
       if (det_d == 2 || det_d == 1) continue;
       itri_in = itri;
@@ -445,8 +445,8 @@ DFM2_INLINE void delfem2::EnforceEdge
                                            ip0, ip1,
                                            aPo2D, aTri, aVec2)) { assert(0); }
       assert(ratio > -1.0e-20 && ratio < 1.0 + 1.0e-20);
-      assert(Area_Tri(aVec2[ip0], aVec2[aTri[itri0].v[inotri0]], aVec2[ip1]) > 1.0e-20);
-      assert(Area_Tri(aVec2[ip0], aVec2[ip1], aVec2[aTri[itri0].v[inotri1]]) > 1.0e-20);
+      assert(Area_Tri2(aVec2[ip0], aVec2[aTri[itri0].v[inotri0]], aVec2[ip1]) > 1.0e-20);
+      assert(Area_Tri2(aVec2[ip0], aVec2[ip1], aVec2[aTri[itri0].v[inotri1]]) > 1.0e-20);
       //            std::cout << ratio << std::endl;
       if (ratio < 1.0e-20) {
         assert(0);

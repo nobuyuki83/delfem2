@@ -104,11 +104,11 @@ DFM2_INLINE void delfem2::opengl::GL4_VAO_PosNrm(
 DFM2_INLINE void delfem2::opengl::VertexArrayObject::Draw(
     unsigned int iel) const
 {
-  if( iel >= aEBO.size() ){ return; }
-  glBindVertexArray(VAO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aEBO[iel].EBO);
-  glDrawElements(aEBO[iel].GL_MODE,
-                 static_cast<GLsizei>(aEBO[iel].size),
+  if( iel >= ebos.size() ){ return; }
+  glBindVertexArray(idx_vao);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebos[iel].ebo_idx);
+  glDrawElements(ebos[iel].GL_MODE,
+                 static_cast<GLsizei>(ebos[iel].size),
                  GL_UNSIGNED_INT,
                  nullptr);
 }
@@ -116,7 +116,7 @@ DFM2_INLINE void delfem2::opengl::VertexArrayObject::Draw(
 DFM2_INLINE void delfem2::opengl::VertexArrayObject::DrawArray(
   int gl_primitive_type,
   unsigned int np) const {
-  glBindVertexArray(VAO);
+  glBindVertexArray(idx_vao);
   glDrawArrays(gl_primitive_type, 0, np);
   glBindVertexArray(0);
 }
@@ -128,11 +128,11 @@ void delfem2::opengl::VertexArrayObject::Add_VBO(
     unsigned int idx_vbo,
     const REAL *vtx_coords,
     size_t num_dof){
-  glBindVertexArray(this->VAO); // opengl4
-  assert( glIsVertexArray(this->VAO) );
-  if( idx_vbo >= aVBO.size() ){ aVBO.resize(idx_vbo+1); }
-  if( !glIsBuffer(aVBO[idx_vbo].VBO) ){ glGenBuffers(1, &aVBO[idx_vbo].VBO); }
-  glBindBuffer(GL_ARRAY_BUFFER, aVBO[idx_vbo].VBO); // gl24
+  glBindVertexArray(this->idx_vao); // opengl4
+  assert( glIsVertexArray(this->idx_vao) );
+  if( idx_vbo >= vbos.size() ){ vbos.resize(idx_vbo+1); }
+  if( !glIsBuffer(vbos[idx_vbo].vbo_idx) ){ glGenBuffers(1, &vbos[idx_vbo].vbo_idx); }
+  glBindBuffer(GL_ARRAY_BUFFER, vbos[idx_vbo].vbo_idx); // gl24
   glBufferData(
       GL_ARRAY_BUFFER,
       sizeof(REAL)*num_dof,
@@ -156,8 +156,8 @@ DFM2_INLINE void delfem2::opengl::VertexArrayObject::Add_EBO(
     const std::vector<unsigned int>& elem_vtx,
     int gl_primitive_type)
 {
-  glBindVertexArray(this->VAO); // opengl4
-  assert( glIsVertexArray(this->VAO) );
+  glBindVertexArray(this->idx_vao); // opengl4
+  assert( glIsVertexArray(this->idx_vao) );
   assert( gl_primitive_type != GL_QUADS ); // quad is for legacy OpenGL
   // -----
   unsigned int idEBO;
@@ -172,14 +172,14 @@ DFM2_INLINE void delfem2::opengl::VertexArrayObject::Add_EBO(
     gl_primitive_type,
     elem_vtx.size(),
     idEBO};
-  this->aEBO.push_back(e0);
+  this->ebos.push_back(e0);
 }
 
 
 void delfem2::opengl::VertexArrayObject::Delete_EBOs(){
-  for(auto & ie : aEBO){
-    unsigned int ebo = ie.EBO;
+  for(auto & ie : ebos){
+    unsigned int ebo = ie.ebo_idx;
     if( glIsBuffer(ebo) ){ glDeleteBuffers(1,&ebo); }
   }
-  aEBO.clear();
+  ebos.clear();
 }

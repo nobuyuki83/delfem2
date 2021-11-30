@@ -251,15 +251,15 @@ template delfem2::CVec2d delfem2::Mat2Vec(const double A[4], const CVec2d& v);
 // --------------------------------
 
 //! Area of the Triangle
-template<typename T>
-double delfem2::Area_Tri
-    (const CVec2<T> &v1,
-     const CVec2<T> &v2,
-     const CVec2<T> &v3) {
-  return 0.5 * ((v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v3.p[0] - v1.p[0]) * (v2.p[1] - v1.p[1]));
+template<class VEC>
+typename VEC::Scalar delfem2::Area_Tri2(
+  const VEC &v1,
+  const VEC &v2,
+  const VEC &v3) {
+  return 0.5 * ((v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]));
 }
 #ifdef DFM2_STATIC_LIBRARY
-template double delfem2::Area_Tri(const CVec2d& v1, const CVec2d& v2, const CVec2d& v3);
+template double delfem2::Area_Tri2(const CVec2d& v1, const CVec2d& v2, const CVec2d& v3);
 #endif
 
 template<typename T>
@@ -475,7 +475,7 @@ int delfem2::DetDelaunay(
     const CVec2<T> &p1,
     const CVec2<T> &p2,
     const CVec2<T> &p3) {
-  const double area = Area_Tri(p0, p1, p2);
+  const double area = Area_Tri2(p0, p1, p2);
   if (fabs(area) < 1.0e-10) {
     return 3;
   }
@@ -518,7 +518,7 @@ double delfem2::Area_Tri(
     const int iv1, const int iv2, const int iv3,
     const std::vector<CVec2 <T> >& point )
 {
-  return Area_Tri(point[iv1], point[iv2], point[iv3]);
+  return Area_Tri2(point[iv1], point[iv2], point[iv3]);
 }
 
 // -----------------------------------------------------------

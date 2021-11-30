@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cstdio>
 #include <vector>
+#include <algorithm>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -71,8 +72,8 @@ double Length_QuadraticBezierCurve_Quadrature(
   int gauss_order) // order of Gaussian quadrature to use
 {
   namespace lcl = ::delfem2::geo_bezier_quadratic;
-  using SCALAR = decltype(p0[0]);
-    
+  using SCALAR = typename VEC::Scalar;
+
   assert(gauss_order < 4);
   SCALAR totalLength = 0;
   for (unsigned int i = 0; i < lcl::NIntLineGauss[gauss_order]; i++) {
@@ -121,29 +122,27 @@ double Nearest_QuadraticBezierCurve(
   unsigned int num_samples,
   unsigned int num_newton_itr) {   // another end point
 
-  // Precompute coefficients
-  // p = at^2 + bt + c
   const VEC a = p0 - 2 * p1 + p2;
   const VEC b = -2 * p0 + 2 * p1;
-  const VEC c = p0;
+  const VEC c = p0 - q;
 
-  double t = 0, dist_min = (p0 - q).norm();
+  double t = 0, dist_min = c.norm();
   for (unsigned int i = 1; i < num_samples + 1; i++) {
     double t0 = static_cast<double>(i) / static_cast<double>(num_samples);
-    double dist0 = (a * (t0 * t0) + b * t0 + c - q).norm();
+    double dist0 = (a * (t0 * t0) + b * t0 + c).norm();
     if (dist0 < dist_min) {
       dist_min = dist0;
       t = t0;
     }
   }
 
-  const double s0 = 2 * b.dot(c - q);
-  const double s1 = 2 * b.squaredNorm() + 4 * a.dot(c - q);
+  const double s0 = 2 * b.dot(c);
+  const double s1 = 2 * b.squaredNorm() + 4 * a.dot(c);
   const double s2 = 6 * a.dot(b);
   const double s3 = 4 * a.squaredNorm();
   const double u0 = s1;
-  const double u1 = 2*s2;
-  const double u2 = 3*s3;
+  const double u1 = 2 * s2;
+  const double u2 = 3 * s3;
 
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
     double dw = s0 + t * (s1 + t * (s2 + t * s3));
@@ -156,36 +155,46 @@ double Nearest_QuadraticBezierCurve(
   return t;
 }
 
-template <typename VEC>
-auto Area_QuadraticBezierCurve(
+template<typename VEC>
+auto Area_QuadraticBezierCurve2(
   const VEC &p0,
   const VEC &p1,
-  const VEC &p2)  -> decltype(p0[0])
-{
-  using T = decltype(p0[0]);
+  const VEC &p2) -> typename VEC::Scalar {
+  using T = typename VEC::Scalar;
   const T tmp0 = p1[0] * (p2[1] - p0[1]) + p1[1] * (p0[0] - p2[0]);
   const T tmp1 = p0[0] * p2[1] - p2[0] * p0[1];
-  return tmp0 / 3 +  tmp1 / 6;
+  return tmp0 / 3 + tmp1 / 6;
 }
 
 /**
  * @tparam ndim dimension of the geometry
  * @return min_x, min_y, (min_z), max_x, max_y, (max_z)
  */
-template <int ndim, typename VEC>
-auto AABB_CubicBezierCurve(
+template<int ndim, typename VEC>
+auto AABB_QuadraticBezierCurve(
   const VEC &p0,
   const VEC &p1,
-  const VEC &p2) -> std::array<decltype(p0[0]),ndim*2>
-{
-    using SCALAR = decltype(p0[0]);
-    std::array<SCALAR, ndim*2> res;
-    /*
-     write something here
-     */
-    return res;
+  const VEC &p2) -> std::array<typename VEC::Scalar, ndim * 2> {
+  using SCALAR = typename VEC::Scalar;
+
+  // bezier expression: p(t) = at^2 + bt + c
+  // p'(t) = 2at + b
+  const VEC a = p0 - 2 * p1 + p2;
+  const VEC b = -2 * p0 + 2 * p1;
+  const VEC c = p0;
+
+  std::array<SCALAR, ndim * 2> res;
+  for (int i = 0; i < ndim; i++) {
+    SCALAR t = b[i] / (-2 * a[i]);
+    t = std::clamp<SCALAR>(t, 0, 1);
+    SCALAR extreme = c[i] + t * (b[i] + (t * a[i]));
+    res[i] = std::min({p0[i], p2[i], extreme});
+    res[i + ndim] = std::max({p0[i], p2[i], extreme});
+  }
+
+  return res;
 }
 
 }
 
-#endif /* DFM2_PGEO_H */
+#endif /* DFM2_CURVE_QUADRATIC_BEZIER_H */

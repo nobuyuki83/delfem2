@@ -44,8 +44,11 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
 )
 
+file(GLOB
+    TEST_SRC
+    *.cpp)
 add_executable(${MY_BINARY_NAME}
-  main.cpp  
+  ${TEST_SRC}
 )
 
 target_link_libraries(${MY_BINARY_NAME}

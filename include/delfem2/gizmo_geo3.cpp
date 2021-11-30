@@ -33,10 +33,10 @@ bool delfem2::isPickQuad(
   const CVec2d sp1 = screenXYProjection(p1, mMV, mPj);
   const CVec2d sp2 = screenXYProjection(p2, mMV, mPj);
   const CVec2d sp3 = screenXYProjection(p3, mMV, mPj);
-  double a01 = Area_Tri(sp, sp0, sp1);
-  double a12 = Area_Tri(sp, sp1, sp2);
-  double a23 = Area_Tri(sp, sp2, sp3);
-  double a30 = Area_Tri(sp, sp3, sp0);
+  double a01 = Area_Tri2(sp, sp0, sp1);
+  double a12 = Area_Tri2(sp, sp1, sp2);
+  double a23 = Area_Tri2(sp, sp2, sp3);
+  double a30 = Area_Tri2(sp, sp3, sp0);
   double a0123 = a01 + a12 + a23 + a30;
   if (fabs(a0123) < 1.0e-10) return false;
   a01 /= a0123;
@@ -226,7 +226,7 @@ DFM2_INLINE double delfem2::DragCircle(
     const float *mMV,
     const float *mPj) {
   CVec2d spo0 = screenXYProjection(p, mMV, mPj);
-  double area = Area_Tri(sp0, spo0, sp1);
+  double area = Area_Tri2(sp0, spo0, sp1);
   double angl = area / ((sp0 - spo0).norm() * (sp1 - spo0).norm());
   {
     CVec3d a3 = screenUnProjectionDirection(axis, mMV, mPj);

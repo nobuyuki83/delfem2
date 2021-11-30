@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cstdio>
 #include <vector>
+#include <algorithm>
 
 namespace delfem2::geo_bezier_cubic {
 
@@ -50,7 +51,6 @@ constexpr static T LineGauss[4][4][2] =
 } // delfem2::pgeo
 
 namespace delfem2 {
-
 
 template<typename VEC>
 VEC PointOnCubicBezierCurve(
@@ -141,7 +141,7 @@ void getCubicBezierCurve(
 }
 
 template<typename VEC>
-double Length_CubicBezierCurve_Quadrature(
+typename VEC::Scalar Length_CubicBezierCurve_Quadrature(
   const VEC &p0,  // end point
   const VEC &p1,  // the control point next tp p0
   const VEC &p2,  // the control point next to p1
@@ -150,7 +150,7 @@ double Length_CubicBezierCurve_Quadrature(
 {
   namespace lcl = ::delfem2::geo_bezier_cubic;
   assert(gauss_order < 4);
-  using SCALAR = decltype(p0[0]);
+  using SCALAR = typename VEC::Scalar;
   SCALAR totalLength = 0;
   for (unsigned int i = 0; i < lcl::NIntLineGauss[gauss_order]; i++) {
     double t = (lcl::LineGauss<double>[gauss_order][i][0] + 1) / 2;
@@ -164,7 +164,7 @@ double Length_CubicBezierCurve_Quadrature(
 }
 
 template<typename VEC>
-double Nearest_CubicBezierCurve(
+typename VEC::Scalar Nearest_CubicBezierCurve(
   const VEC &q,
   const VEC &p0,  // end point
   const VEC &p1,  // the control point
@@ -173,36 +173,38 @@ double Nearest_CubicBezierCurve(
   unsigned int num_samples,
   unsigned int num_newton_itr) {   // another end point
 
+  using SCALAR = typename VEC::Scalar;
+
   const VEC a = -p0 + 3 * p1 - 3 * p2 + p3;
   const VEC b = 3 * p0 - 6 * p1 + 3 * p2;
   const VEC c = -3 * p0 + 3 * p1;
   const VEC d = p0 - q;
 
-  double t = 0, dist_min = (p0 - q).norm();
+  SCALAR t = 0, dist_min = (p0 - q).norm();
   for (unsigned int i = 1; i < num_samples + 1; i++) {
-    double t0 = static_cast<double>(i) / static_cast<double>(num_samples);
-    double dist0 = (a * (t0 * t0 * t0) + b * (t0 * t0) + c * t0 + d).norm();
+    SCALAR t0 = static_cast<SCALAR>(i) / static_cast<SCALAR>(num_samples);
+    SCALAR dist0 = (a * (t0 * t0 * t0) + b * (t0 * t0) + c * t0 + d).norm();
     if (dist0 < dist_min) {
       dist_min = dist0;
       t = t0;
     }
   }
 
-  const double s0 = 2 * c.dot(d);
-  const double s1 = 2 * c.squaredNorm() + 4 * b.dot(d);
-  const double s2 = 6 * b.dot(c) + 6 * a.dot(d);
-  const double s3 = 4 * b.squaredNorm() + 8 * a.dot(c);
-  const double s4 = 10 * a.dot(b);
-  const double s5 = 6 * a.squaredNorm();
-  const double u0 = s1;
-  const double u1 = 2 * s2;
-  const double u2 = 3 * s3;
-  const double u3 = 4 * s4;
-  const double u4 = 5 * s5;
+  const SCALAR s0 = 2 * c.dot(d);
+  const SCALAR s1 = 2 * c.squaredNorm() + 4 * b.dot(d);
+  const SCALAR s2 = 6 * b.dot(c) + 6 * a.dot(d);
+  const SCALAR s3 = 4 * b.squaredNorm() + 8 * a.dot(c);
+  const SCALAR s4 = 10 * a.dot(b);
+  const SCALAR s5 = 6 * a.squaredNorm();
+  const SCALAR u0 = s1;
+  const SCALAR u1 = 2 * s2;
+  const SCALAR u2 = 3 * s3;
+  const SCALAR u3 = 4 * s4;
+  const SCALAR u4 = 5 * s5;
 
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
-    double dw = s0 + t * (s1 + t * (s2 + t * (s3 + t * (s4 + t * s5))));
-    double ddw = u0 + t * (u1 + t * (u2 + t * (u3 + t * u4)));
+    SCALAR dw = s0 + t * (s1 + t * (s2 + t * (s3 + t * (s4 + t * s5))));
+    SCALAR ddw = u0 + t * (u1 + t * (u2 + t * (u3 + t * u4)));
     t -= dw / ddw;
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
@@ -210,14 +212,13 @@ double Nearest_CubicBezierCurve(
   return t;
 }
 
-template <typename VEC>
-auto Area_CubicBezierCurve(
+template<typename VEC>
+auto Area_CubicBezierCurve2(
   const VEC &p0,
   const VEC &p1,
   const VEC &p2,
-  const VEC &p3) -> decltype(p0[0])
-{
-  using T = decltype(p0[0]);
+  const VEC &p3) -> typename VEC::Scalar {
+  using T = typename VEC::Scalar;
   const T tmp0 = -3 * p2[0] * p0[1] - p3[0] * p0[1]
     - 3 * p2[0] * p1[1]
     - 3 * p3[0] * p1[1]
@@ -233,21 +234,44 @@ auto Area_CubicBezierCurve(
  * @tparam ndim dimension of the geometry
  * @return min_x, min_y, (min_z), max_x, max_y, (max_z)
  */
-template <int ndim, typename VEC>
+template<int ndim, typename VEC>
 auto AABB_CubicBezierCurve(
   const VEC &p0,
   const VEC &p1,
   const VEC &p2,
-  const VEC &p3) -> std::array<decltype(p0[0]),ndim*2>
-{
-    using SCALAR = decltype(p0[0]);
-    std::array<SCALAR, ndim*2> res;
-    /*
-     write something here
-     */
-    return res;
+  const VEC &p3) -> std::array<typename VEC::Scalar, ndim * 2> {
+  using SCALAR = typename VEC::Scalar;
+
+  const double EPSILON = 1.0e-10;
+
+  const VEC a = -p0 + 3 * p1 - 3 * p2 + p3;
+  const VEC b = 3 * p0 - 6 * p1 + 3 * p2;
+  const VEC c = -3 * p0 + 3 * p1;
+  const VEC d = p0;
+
+  std::array<SCALAR, ndim * 2> res;
+  for (int i = 0; i < ndim; i++) {
+    if (fabs(a[i]) < EPSILON) {
+      SCALAR r = c[i] / (-2 * b[i]);
+      r = std::clamp<SCALAR>(r, 0, 1);
+      const SCALAR e = d[i] + r * (c[i] + r * (b[i] + r * a[i]));
+      res[i] = std::min({p0[i], p3[i], e});
+      res[i + ndim] = std::max({p0[i], p3[i], e});
+    } else {
+      const SCALAR det = std::sqrt(b[i] * b[i] - 3 * a[i] * c[i]);
+      SCALAR r0 = (-b[i] + det) / (3 * a[i]);
+      SCALAR r1 = (-b[i] - det) / (3 * a[i]);
+      r0 = std::clamp<SCALAR>(r0, 0, 1);
+      r1 = std::clamp<SCALAR>(r1, 0, 1);
+      const SCALAR e0 = d[i] + r0 * (c[i] + r0 * (b[i] + r0 * a[i]));
+      const SCALAR e1 = d[i] + r1 * (c[i] + r1 * (b[i] + r1 * a[i]));
+      res[i] = std::min({p0[i], p3[i], e0, e1});
+      res[i + ndim] = std::max({p0[i], p3[i], e0, e1});
+    }
+  }
+  return res;
 }
 
 }
 
-#endif /* DFM2_PGEO_H */
+#endif /* DFM2_CURVE_CUBIC_BEZIER_H */

@@ -58,17 +58,17 @@ public:
   public:
     int GL_MODE;
     size_t size;
-    unsigned int EBO;
+    unsigned int ebo_idx;
   };
   class CVBO{
   public:
-    CVBO(){ VBO = 0; }
+    CVBO(){ vbo_idx = 0; }
   public:
-    unsigned int VBO;
+    unsigned int vbo_idx;
   };
 public:
   VertexArrayObject(){
-    VAO = 0;
+    idx_vao = 0;
   }
 
   void Draw(unsigned int iel) const;
@@ -97,9 +97,9 @@ public:
     unsigned int np) const;
   
 public:
-  unsigned int VAO;
-  std::vector<CEBO> aEBO;
-  std::vector<CVBO> aVBO;
+  unsigned int idx_vao;
+  std::vector<CEBO> ebos;
+  std::vector<CVBO> vbos;
 };
 
 }

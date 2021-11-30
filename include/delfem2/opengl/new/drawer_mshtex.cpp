@@ -12,7 +12,7 @@ void delfem2::opengl::Drawer_MeshTex::SetElement(
     std::vector<unsigned int>& elem_vtx,
     int gl_primitive_type)
 {
-  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+  if( !glIsVertexArray(vao.idx_vao) ){ glGenVertexArrays(1, &vao.idx_vao); }
   vao.Delete_EBOs();
   vao.Add_EBO(elem_vtx, gl_primitive_type);
 }
@@ -22,7 +22,7 @@ void delfem2::opengl::Drawer_MeshTex::SetCoords(
     std::vector<REAL>& vtx_coords,
     unsigned int ndim)
 {
-  if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
+  if (!glIsVertexArray(vao.idx_vao)) { glGenVertexArrays(1, &vao.idx_vao); }
   vao.ADD_VBO(0, vtx_coords);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(
@@ -44,7 +44,7 @@ template <typename REAL>
 void delfem2::opengl::Drawer_MeshTex::SetTexUV(
     std::vector<REAL>& aTex)
 {
-  if (!glIsVertexArray(vao.VAO)) { glGenVertexArrays(1, &vao.VAO); }
+  if (!glIsVertexArray(vao.idx_vao)) { glGenVertexArrays(1, &vao.idx_vao); }
   vao.ADD_VBO(1,aTex);
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(

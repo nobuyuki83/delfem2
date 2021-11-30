@@ -30,9 +30,9 @@ void delfem2::opengl::Drawer_Coords::SetRawArray(
     unsigned int ndim)
 {
   this->num_vtx = num_vtx_;
-  if( !::glIsVertexArray(vao.VAO) ){ ::glGenVertexArrays(1, &vao.VAO); }  // opengl ver >= 3.0
-  assert(vao.aEBO.empty());
-  ::glBindVertexArray(vao.VAO); // opengl ver >= 3.0
+  if( !::glIsVertexArray(vao.idx_vao) ){ ::glGenVertexArrays(1, &vao.idx_vao); }  // opengl ver >= 3.0
+  assert(vao.ebos.empty());
+  ::glBindVertexArray(vao.idx_vao); // opengl ver >= 3.0
   vao.Add_VBO(0, vtx_coords, num_vtx*ndim);
   ::glEnableVertexAttribArray(0);
   ::glVertexAttribPointer(
@@ -103,7 +103,7 @@ void delfem2::opengl::Drawer_Coords::Draw(
       Loc_MatrixModelView, 1, GL_FALSE,
       TransposeMat4ForOpenGL(mat4_modelview, false).data());
   ::glUniform3f(Loc_Color, color[0],color[1],color[2]);
-  ::glBindVertexArray(this->vao.VAO);
+  ::glBindVertexArray(this->vao.idx_vao);
   ::glDrawArrays(
       gl_primitive_type, 0,
       static_cast<GLsizei>(num_vtx));

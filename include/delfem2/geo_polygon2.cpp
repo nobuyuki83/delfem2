@@ -562,7 +562,7 @@ void delfem2::FixLoopOrientation(
         const int iipo1 = loopIP_ind[iloop]+(ibar+1)%nbar;
         const int ipo0 = loop_old[iipo0];
         const int ipo1 = loop_old[iipo1];
-        area_loop += Area_Tri(vtmp, aXY[ipo0], aXY[ipo1]);
+        area_loop += Area_Tri2(vtmp, aXY[ipo0], aXY[ipo1]);
       }
     }
     const int nbar0 = loopIP_ind[iloop+1]-loopIP_ind[iloop];

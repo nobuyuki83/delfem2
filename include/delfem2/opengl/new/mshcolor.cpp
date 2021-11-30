@@ -42,7 +42,7 @@ void delfem2::opengl::CShader_TriMesh_Scalar::Initialize(
       aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI,
       aPosD.size()/ndim);
   // ------
-  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+  if( !glIsVertexArray(vao.idx_vao) ){ glGenVertexArrays(1, &vao.idx_vao); }
   vao.Delete_EBOs();
   vao.Add_EBO(aTri,GL_TRIANGLES);
   vao.Add_EBO(aLine,GL_LINES);
@@ -174,7 +174,7 @@ void delfem2::opengl::CShader_TriMesh_Disp::Initialize(
       aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI,
       aPosD.size()/ndim);
   // ------
-  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+  if( !glIsVertexArray(vao.idx_vao) ){ glGenVertexArrays(1, &vao.idx_vao); }
   vao.Delete_EBOs();
   vao.Add_EBO(aTri,GL_TRIANGLES);
   vao.Add_EBO(aLine,GL_LINES);

@@ -65,7 +65,7 @@ void Coarse(double px, double py)
       for(unsigned int jjt=0;jjt<npsup-2;++jjt){
         const unsigned int ip2 = aPSuP[(iit+jjt+1)%npsup];
         const unsigned int ip3 = aPSuP[(iit+jjt+2)%npsup];
-        double area = Area_Tri(aVec2[ip1],aVec2[ip2],aVec2[ip3]);
+        double area = Area_Tri2(aVec2[ip1],aVec2[ip2],aVec2[ip3]);
         if( jjt == 0 || area < min_area ){ min_area = area; }
       }
       if( min_area > 1.0e-10 ){
