@@ -4,7 +4,6 @@
 
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/geo_polygon2.h"
-#include "delfem2/geoconvhull3.h"
 #include "delfem2/geo_polyline2.h"
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"

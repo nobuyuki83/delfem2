@@ -86,12 +86,12 @@ double Length_QuadraticBezierCurve_Quadrature(
 }
 
 template<typename VEC>
-double Length_QuadraticBezierCurve_Analytic(
+typename VEC::Scalar Length_QuadraticBezierCurve_Analytic(
   const VEC &p0,  // end point
   const VEC &p1,  // the control point
   const VEC &p2)   // another end point
 {
-  using SCALAR = decltype(p0[0]);
+  using SCALAR = typename VEC::Scalar;
 
   // closed form solution from https://math.stackexchange.com/questions/12186/arc-length-of-b%c3%a9zier-curves
   const SCALAR a = (p2 - 2 * p1 + p0).squaredNorm();
@@ -114,7 +114,7 @@ double Length_QuadraticBezierCurve_Analytic(
  * @return the parameter of quadratic bezier curve nearest to q
  */
 template<typename VEC>
-double Nearest_QuadraticBezierCurve(
+typename VEC::Scalar Nearest_QuadraticBezierCurve(
   const VEC &q,
   const VEC &p0,  // end point
   const VEC &p1,  // the control point
@@ -122,35 +122,39 @@ double Nearest_QuadraticBezierCurve(
   unsigned int num_samples,
   unsigned int num_newton_itr) {   // another end point
 
+  using SCALAR = typename VEC::Scalar;
   const VEC a = p0 - 2 * p1 + p2;
   const VEC b = -2 * p0 + 2 * p1;
   const VEC c = p0 - q;
 
-  double t = 0, dist_min = c.norm();
+  SCALAR t = 0, dist_min = c.norm();
   for (unsigned int i = 1; i < num_samples + 1; i++) {
-    double t0 = static_cast<double>(i) / static_cast<double>(num_samples);
-    double dist0 = (a * (t0 * t0) + b * t0 + c).norm();
+    typename VEC::Scalar t0 = static_cast<SCALAR>(i) / static_cast<SCALAR>(num_samples);
+    SCALAR dist0 = (a * (t0 * t0) + b * t0 + c).norm();
     if (dist0 < dist_min) {
       dist_min = dist0;
       t = t0;
     }
   }
 
-  const double s0 = 2 * b.dot(c);
-  const double s1 = 2 * b.squaredNorm() + 4 * a.dot(c);
-  const double s2 = 6 * a.dot(b);
-  const double s3 = 4 * a.squaredNorm();
-  const double u0 = s1;
-  const double u1 = 2 * s2;
-  const double u2 = 3 * s3;
+  const SCALAR s0 = 2 * b.dot(c);
+  const SCALAR s1 = 2 * b.squaredNorm() + 4 * a.dot(c);
+  const SCALAR s2 = 6 * a.dot(b);
+  const SCALAR s3 = 4 * a.squaredNorm();
+  const SCALAR u0 = s1;
+  const SCALAR u1 = 2 * s2;
+  const SCALAR u2 = 3 * s3;
 
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
-    double dw = s0 + t * (s1 + t * (s2 + t * s3));
-    double ddw = u0 + t * (u1 + t * u2);
+    SCALAR t0 = t;
+    SCALAR dw = s0 + t * (s1 + t * (s2 + t * s3));
+    SCALAR ddw = u0 + t * (u1 + t * u2);
     t -= dw / ddw;
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
-    // t = std::clamp(t, 0., 1.);
+    SCALAR dist0 = (a * (t * t) + b * t + c).norm();
+    if( dist0 > dist_min ){ t = t0; break; }   // winding back
+    dist_min = dist0;
   }
   return t;
 }

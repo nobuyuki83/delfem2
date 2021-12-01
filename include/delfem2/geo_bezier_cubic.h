@@ -203,11 +203,15 @@ typename VEC::Scalar Nearest_CubicBezierCurve(
   const SCALAR u4 = 5 * s5;
 
   for (unsigned int itr = 0; itr < num_newton_itr; ++itr) {
+    SCALAR t0 = t;
     SCALAR dw = s0 + t * (s1 + t * (s2 + t * (s3 + t * (s4 + t * s5))));
     SCALAR ddw = u0 + t * (u1 + t * (u2 + t * (u3 + t * u4)));
     t -= dw / ddw;
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
+    SCALAR dist0 = (a * (t * t * t) + b * (t * t) + c * t + d).norm();
+    if( dist0 > dist_min ){ t = t0; break; }   // winding back
+    dist_min = dist0;
   }
   return t;
 }

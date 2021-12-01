@@ -19,8 +19,8 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/geo_polyline2.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/geo_curve_quadratic_bezier.h"
-#include "delfem2/geo_curve_cubic_bezier.h"
+#include "delfem2/geo_bezier_quadratic.h"
+#include "delfem2/geo_bezier_cubic.h"
 #include "delfem2/geo_parametric.h"
 
 // =========================================

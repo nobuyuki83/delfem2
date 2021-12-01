@@ -6,7 +6,7 @@
  */
 
 #include "delfem2/geo_polyline2.h"
-#include "delfem2/geo_curve_quadratic_bezier.h"
+#include "delfem2/geo_bezier_quadratic.h"
 
 // ----------------------------------------------------------------------------------
 // std::vector starts from here

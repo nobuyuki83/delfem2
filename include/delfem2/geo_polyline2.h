@@ -17,7 +17,7 @@
 #include <algorithm>  // for std::clamp
 
 #include "delfem2/vec2.h"
-#include "delfem2/geo_curve_cubic_bezier.h"
+#include "delfem2/geo_bezier_cubic.h"
 #include "delfem2/dfm2_inline.h"
 
 // -----------------------------------------------------
@@ -202,8 +202,8 @@ template<typename VEC>
 template<typename VEC>
 auto ArcLengthPointInPolyline(
   const std::vector<VEC> &polyline,
-  const VEC &scr) -> decltype(scr[0]) {
-  using SCALAR = decltype(scr[0]);
+  const VEC &scr) -> typename VEC::Scalar {
+  using SCALAR = typename VEC::Scalar;
   if (polyline.size() < 2) { return 0; }
   float dist_min = -1;
   VEC p_min;
