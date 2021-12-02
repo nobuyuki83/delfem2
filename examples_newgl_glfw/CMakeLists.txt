@@ -24,6 +24,7 @@ add_subdirectory(07_RayCasting)
 add_subdirectory(08_SphereTracing)
 add_subdirectory(09_VolumeRenderingRayCasting)
 add_subdirectory(10_FlatColorTriangles)
+add_subdirectory(11_TriangleSelect)
 
 add_subdirectory(20_cad2d)
 

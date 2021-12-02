@@ -200,6 +200,8 @@ class MyViewer : public delfem2::glfw::CViewer3 {
   dfm2::opengl::Drawer_Sphere drawer_sphere;
 } viewer;
 
+
+
 void draw(GLFWwindow *window) {
   glfwPollEvents();
   ::glClearColor(0.45f, 0.55f, 0.60f, 1.00f);

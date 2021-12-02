@@ -39,12 +39,13 @@ class MyView
       const std::vector<double> &aXYZ0, // 3d points
       const std::vector<unsigned int> &aTri0)
       : CViewer3(view_height), 
-      aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0) {
+      tri_flg(aFlagElem0), vtx_xyz(aXYZ0), tri_vtx(aTri0) {
+          
     { // make BVH
       std::vector<double> aCent;
       dfm2::CentsMaxRad_MeshTri3(
           aCent,
-          aXYZ, aTri);
+          vtx_xyz, tri_vtx);
       double min_xyz[3], max_xyz[3];
       delfem2::BoundingBox3_Points3(
           min_xyz, max_xyz,
@@ -56,22 +57,22 @@ class MyView
           aSortedId, aSortedMc,
           aCent, min_xyz, max_xyz);
       dfm2::BVHTopology_Morton(
-          aNodeBVH,
+          bvhnodes,
           aSortedId, aSortedMc);
       dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3_Sphere<double>, double> lvm(
           1.0e-10,
-          aXYZ.data(), aXYZ.size() / 3,
-          aTri.data(), aTri.size() / 3, 3);
+          vtx_xyz.data(), vtx_xyz.size() / 3,
+          tri_vtx.data(), tri_vtx.size() / 3, 3);
       dfm2::BVH_BuildBVHGeometry(
-          aAABB,
-          0, aNodeBVH,
+          bvhnode_aabb,
+          0, bvhnodes,
           lvm);
       { // assertion
         dfm2::Check_MortonCode_Sort(
             aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
         dfm2::Check_MortonCode_RangeSplit(aSortedMc);
         dfm2::Check_BVH(
-            aNodeBVH,
+            bvhnodes,
             aCent.size() / 3);
       }
     }
@@ -79,20 +80,20 @@ class MyView
       std::vector<unsigned int> elsup_ind, elsup;
       dfm2::JArray_ElSuP_MeshElem(
           elsup_ind, elsup,
-          aTri.data(), aTri.size() / 3, 3,
-          aXYZ.size() / 3);
+          tri_vtx.data(), tri_vtx.size() / 3, 3,
+          vtx_xyz.size() / 3);
       ElSuEl_MeshElem(
-          aTriSuTri,
-          aTri.data(), aTri.size() / 3,
+          tri_adjtri,
+          tri_vtx.data(), tri_vtx.size() / 3,
           delfem2::MESHELEM_TRI,
-          aXYZ.size() / 3);
+          vtx_xyz.size() / 3);
     }
   }
 
   void mouse_press(const float src[3], const float dir[3]) override {
     unsigned int itri = this->PickTri(src, dir);
     if (itri == UINT_MAX) { return; }
-    aFlagElem[itri] = 1;
+    tri_flg[itri] = 1;
   }
  private:
   unsigned int PickTri(const float src[3], const float dir[3]) {
@@ -100,25 +101,24 @@ class MyView
     dfm2::BVH_GetIndElem_Predicate(
         aIndElem,
         delfem2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>, float>(src, dir),
-        0, aNodeBVH, aAABB);
+        0, bvhnodes, bvhnode_aabb);
     std::map<double, dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
     dfm2::IntersectionRay_MeshTri3DPart(
         mapDepthPES,
         dfm2::CVec3d(src), dfm2::CVec3d(dir),
-        aTri, aXYZ, aIndElem,
+        tri_vtx, vtx_xyz, aIndElem,
         1.0e-3);
     if (mapDepthPES.empty()) { return UINT_MAX; }
     return mapDepthPES.begin()->second.itri;
   }
 
  public:
-  std::vector<unsigned int> &aFlagElem;
-  const std::vector<double> &aXYZ; // 3d points
-  const std::vector<unsigned int> &aTri;
-  std::vector<dfm2::CNodeBVH2> aNodeBVH;
-  std::vector<dfm2::CBV3_Sphere<double>> aAABB;
-  std::vector<unsigned int> aTriSuTri;
-  std::vector<unsigned int> aDist;
+  std::vector<unsigned int> &tri_flg;
+  const std::vector<double> &vtx_xyz; // 3d points
+  const std::vector<unsigned int> &tri_vtx;
+  std::vector<dfm2::CNodeBVH2> bvhnodes;
+  std::vector<dfm2::CBV3_Sphere<double>> bvhnode_aabb;
+  std::vector<unsigned int> tri_adjtri;
 };
 
 int main() {

@@ -43,21 +43,21 @@ public:
       const std::vector<double>& aXYZ0, // 3d points
       const std::vector<unsigned int>& aTri0)
       : CViewer3(1.5), 
-        aFlagElem(aFlagElem0), aXYZ(aXYZ0), aTri(aTri0)
+        tri_flg(aFlagElem0), vtx_xyz(aXYZ0), tri_vtx(aTri0)
   {
     dfm2::ConstructBVHTriangleMeshMortonCode(
-        aNodeBVH, aAABB,
-        aXYZ, aTri);
+        bvhnodes, bvhnode_aabb,
+        vtx_xyz, tri_vtx);
     { // make triangle surrounding graph
       std::vector<unsigned int> elsup_ind, elsup;
       dfm2::JArray_ElSuP_MeshElem(
           elsup_ind, elsup,
-          aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
+          tri_vtx.data(), tri_vtx.size()/3, 3, vtx_xyz.size()/3);
       ElSuEl_MeshElem(
-          aTriSuTri,
-          aTri.data(), aTri.size()/3,
+          tri_adjtri,
+          tri_vtx.data(), tri_vtx.size()/3,
           delfem2::MESHELEM_TRI,
-          aXYZ.size()/3);
+          vtx_xyz.size()/3);
     }
   }
 
@@ -67,11 +67,11 @@ public:
     std::vector<unsigned int> aOrder;
     dfm2::DijkstraElem_MeshElemTopo(
         aDist,aOrder,
-        itri,aTriSuTri,
-        static_cast<unsigned int>(aTri.size()/3));
-    for(std::size_t ie=0;ie<aTri.size()/3;++ie){
+        itri,tri_adjtri,
+        static_cast<unsigned int>(tri_vtx.size()/3));
+    for(std::size_t ie=0;ie<tri_vtx.size()/3;++ie){
       if( aDist[ie] > 10 ) continue;
-      aFlagElem[ie] = 1;
+      tri_flg[ie] = 1;
     }
   }
 
@@ -81,9 +81,9 @@ public:
     unsigned int itri = this->PickTri(src1, dir);
     if( itri == UINT_MAX ){ return; }
     unsigned int idist = aDist[itri];
-    for(std::size_t ie=0;ie<aTri.size()/3;++ie){
-      if( aDist[ie] > idist ){ aFlagElem[ie] = 0; }
-      else { aFlagElem[ie] = 1; }
+    for(std::size_t ie=0;ie<tri_vtx.size()/3;++ie){
+      if( aDist[ie] > idist ){ tri_flg[ie] = 0; }
+      else { tri_flg[ie] = 1; }
     }
   }
 
@@ -96,24 +96,24 @@ private:
     dfm2::BVH_GetIndElem_Predicate(
         aIndElem,
         delfem2::CIsBV_IntersectLine< dfm2::CBV3_Sphere<double>, float>(src,dir),
-        0, aNodeBVH, aAABB);
+        0, bvhnodes, bvhnode_aabb);
     std::map<double,dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
     dfm2::IntersectionRay_MeshTri3DPart(
         mapDepthPES,
         dfm2::CVec3d(src),dfm2::CVec3d(dir),
-        aTri,aXYZ,aIndElem,
+        tri_vtx,vtx_xyz,aIndElem,
         1.0e-3);
     if( mapDepthPES.empty() ){ return UINT_MAX; }
     return mapDepthPES.begin()->second.itri;
   }
 
 public:
-  std::vector<unsigned int>& aFlagElem;
-  const std::vector<double>& aXYZ; // 3d points
-  const std::vector<unsigned int>& aTri;
-  std::vector<dfm2::CNodeBVH2> aNodeBVH;
-  std::vector<dfm2::CBV3_Sphere<double>> aAABB;
-  std::vector<unsigned int> aTriSuTri;
+  std::vector<unsigned int>& tri_flg;
+  const std::vector<double>& vtx_xyz; // 3d points
+  const std::vector<unsigned int>& tri_vtx;
+  std::vector<dfm2::CNodeBVH2> bvhnodes;
+  std::vector<dfm2::CBV3_Sphere<double>> bvhnode_aabb;
+  std::vector<unsigned int> tri_adjtri;
   std::vector<unsigned int> aDist;
 };
 
