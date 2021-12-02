@@ -21,6 +21,22 @@
 
 namespace delfem2 {
 
+
+// get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
+// this one has implementation in header because GetDist_LineSeg_Point below refers this
+template <class VEC>
+double FindNearestPointParameter_Line_Point(
+    const VEC &po_c,
+    const VEC &po_s,
+    const VEC &po_e) {
+  using SCALAR = typename VEC::Scalar;
+  const VEC &es = po_e - po_s;
+  const SCALAR a = es.squaredNorm();
+  const SCALAR b = es.dot(po_s - po_c);
+  return -b / a;
+}
+
+
 template<class VEC>
 VEC Nearest_Line3_Point3(
   const VEC &point,

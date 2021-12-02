@@ -339,6 +339,9 @@ class CVec3 {
   static CVec3 Random(DIST &dist, ENG &eng) {
     return CVec3(dist(eng), dist(eng), dist(eng));
   }
+
+  using Scalar = T;
+
  public:
   union {
     T p[3];

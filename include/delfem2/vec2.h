@@ -301,42 +301,10 @@ double TriHeight(
 
 //! @brief compute dot product
 template<typename T>
-double Dot(const CVec2<T> &ipo0, const CVec2<T> &ipo1);
+double Dot(
+  const CVec2<T> &ipo0,
+  const CVec2<T> &ipo1);
 
-//! @details get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
-template<typename T>
-double FindNearestPointParameter_Line_Point(
-    const CVec2<T> &po_c,
-    const CVec2<T> &po_s,
-    const CVec2<T> &po_e);
-
-//! @details  get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
-template<typename T>
-CVec2<T> GetNearest_LineSeg_Point(
-    const CVec2<T> &po_c,
-    const CVec2<T> &po_s,
-    const CVec2<T> &po_e);
-
-//! @details  get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
-template<typename T>
-double GetDist_LineSeg_Point(
-    const CVec2<T> &po_c,
-    const CVec2<T> &po_s,
-    const CVec2<T> &po_e);
-
-template<typename T>
-bool IsCross_LineSeg_LineSeg(
-    const CVec2<T> &po_s0,
-    const CVec2<T> &po_e0,
-    const CVec2<T> &po_s1,
-    const CVec2<T> &po_e1);
-
-template<typename T>
-double GetDist_LineSeg_LineSeg(
-    const CVec2<T> &po_s0,
-    const CVec2<T> &po_e0,
-    const CVec2<T> &po_s1,
-    const CVec2<T> &po_e1);
 
 /**
  * @brief square root of circumradius

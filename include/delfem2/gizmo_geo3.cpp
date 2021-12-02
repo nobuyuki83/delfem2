@@ -200,7 +200,7 @@ DFM2_INLINE bool delfem2::isPick_AxisHandler(
     double pick_tol) {
   delfem2::CVec2d sp0 = delfem2::screenXYProjection(p + len * axis, mMV, mPj);
   delfem2::CVec2d sp1 = delfem2::screenXYProjection(p - len * axis, mMV, mPj);
-  double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
+  double sdist = Distance_Edge_Point(sp, sp0, sp1);
   return sdist < pick_tol;
 }
 
@@ -265,7 +265,7 @@ DFM2_INLINE bool delfem2::isPickCircle(
     CVec3d p1 = p + (r * sin(rdiv * jdiv)) * x + (r * cos(rdiv * jdiv)) * y;
     CVec2d sp0 = screenXYProjection(p0, mMV, mPj);
     CVec2d sp1 = screenXYProjection(p1, mMV, mPj);
-    double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
+    double sdist = Distance_Edge_Point(sp, sp0, sp1);
     if (sdist < pick_tol) { return true; }
   }
   return false;

@@ -19,6 +19,7 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/geo_polyline2.h"
 #include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/geo_edge.h"
 #include "delfem2/geo_bezier_quadratic.h"
 #include "delfem2/geo_bezier_cubic.h"
 #include "delfem2/geo_parametric.h"
@@ -373,7 +374,7 @@ bool delfem2::CCad3D_Edge::isPick(
     CVec3d p1a = aP[ip1];
     CVec2d s0 = screenXYProjection(p0a, mMV, mPj);
     CVec2d s1 = screenXYProjection(p1a, mMV, mPj);
-    double dist = GetDist_LineSeg_Point(sp0,s0,s1);
+    double dist = Distance_Edge_Point(sp0, s0, s1);
     if( dist < 0.03 ){
       ratio = (ip0+0.5)/(np-1.0);
       return true;
@@ -1367,10 +1368,10 @@ void delfem2::CCad3D::Pick(
         screenXYProjection(aP[1], mMV, mPj),
         screenXYProjection(aP[2], mMV, mPj),
         screenXYProjection(aP[3], mMV, mPj) };
-      double d01 = GetDist_LineSeg_Point(sp0, sp[0],sp[1]);
-      double d12 = GetDist_LineSeg_Point(sp0, sp[1],sp[2]);
-      double d23 = GetDist_LineSeg_Point(sp0, sp[2],sp[3]);
-      double d30 = GetDist_LineSeg_Point(sp0, sp[3],sp[0]);
+      double d01 = Distance_Edge_Point(sp0, sp[0], sp[1]);
+      double d12 = Distance_Edge_Point(sp0, sp[1], sp[2]);
+      double d23 = Distance_Edge_Point(sp0, sp[2], sp[3]);
+      double d30 = Distance_Edge_Point(sp0, sp[3], sp[0]);
       if( d01 < 0.05 || d12 < 0.05 || d23 < 0.05 || d30 < 0.05 ) {
         ielem_edge_picked = 1;
         iface_picked = UINT_MAX;

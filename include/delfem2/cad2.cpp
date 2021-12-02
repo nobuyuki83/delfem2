@@ -12,6 +12,7 @@
 #include <climits>
 
 #include "delfem2/geo_polyline2.h"
+#include "delfem2/geo_edge.h"
 #include "delfem2/geo_bezier_quadratic.h"
 
 // ------------------------------------------
@@ -184,7 +185,7 @@ DFM2_INLINE double delfem2::CCad2D_EdgeGeo::Distance(
   double x, double y) const {
   const CVec2d q(x, y);
   if (type_edge == LINE) {
-    const CVec2d pn = GetNearest_LineSeg_Point(q, p0, p1);
+    const CVec2d pn = Nearest_Edge_Point(q, p0, p1);
     return delfem2::Distance(pn, q);
   } else if (type_edge == BEZIER_QUADRATIC) {
     assert(param.size() == 2);

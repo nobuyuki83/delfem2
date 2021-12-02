@@ -301,16 +301,17 @@ bool delfem2::IsContact_FV_CCD2(
     const double r2 = 1 - r0 - r1;
     if (dist > max_app) return false;
     if (r0 < 0 || r0 > 1 || r1 < 0 || r1 > 1 || r2 < 0 || r2 > 1) {
-      double dist01 = (Nearest_Edge3_Point3(p3, p0, p1) - p3).norm();
-      double dist12 = (Nearest_Edge3_Point3(p3, p1, p2) - p3).norm();
-      double dist20 = (Nearest_Edge3_Point3(p3, p2, p0) - p3).norm();
+      double dist01 = (Nearest_Edge_Point(p3, p0, p1) - p3).norm();
+      double dist12 = (Nearest_Edge_Point(p3, p1, p2) - p3).norm();
+      double dist20 = (Nearest_Edge_Point(p3, p2, p0) - p3).norm();
       if (dist01 > max_app && dist12 > max_app && dist20 > max_app) { return false; }
     }
   }
   double t;
   {
-    bool res = FindCoplanerInterp(t,
-                                  p0, p1, p2, p3, q0, q1, q2, q3);
+    bool res = FindCoplanerInterp(
+      t,
+      p0, p1, p2, p3, q0, q1, q2, q3);
     if (!res) return false;
     assert(t >= 0 && t <= 1);
   }

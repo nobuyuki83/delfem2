@@ -1,12 +1,12 @@
 #include "delfem2/rgd_v2m3.h"
+#include "delfem2/geo_edge.h"
 
 #ifndef M_PI
   #define M_PI 3.141592653589793
 #endif  
 
 
-namespace delfem2{
-namespace rgd_v2m3{
+namespace delfem2::rgd_v2m3{
 
 CMat3d Mat3_Affine(
     const CVec2d& posl,
@@ -43,7 +43,7 @@ bool Nearest_Polygon2(
     const CVec2d p1 = shape[(iej + 1) % nej];
     double theta = atan2((p0-q)^(p1-q),(p0-q).dot(p1-q));
     winding_nubmer += theta;
-    const CVec2d pe = GetNearest_LineSeg_Point(q, p0, p1);
+    const CVec2d pe = Nearest_Edge_Point(q, p0, p1);
     double re0 = (pe-p0).norm()/(p1-p0).norm();
     const CVec2d ne = (p1 - p0).Rotate(-M_PI * 0.5).normalized();
     const double dist0 = (pe-q).norm();
@@ -148,7 +148,6 @@ void AddFriction(
   }
 }
 
-}
 }
 
 void delfem2::Steptime_Rgd2(
