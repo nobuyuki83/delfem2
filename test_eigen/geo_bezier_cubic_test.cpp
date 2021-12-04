@@ -25,7 +25,7 @@ TEST(cad,cubic_bezier0) {
     {
       double v0 = dfm2::Length_Polyline<Eigen::Vector2d>(polyline);
       double v2 = dfm2::Length_CubicBezierCurve_Quadrature<Eigen::Vector2d>(p0, p1, p2, p3, 3);
-      EXPECT_NEAR(v0, v2, 2.0e-1);
+      EXPECT_NEAR(v0, v2, 0.2);
     }
     {
       double a0 = dfm2::Area_CubicBezierCurve2(p0, p1, p2, p3);
@@ -40,7 +40,7 @@ TEST(cad,cubic_bezier0) {
         scr,
         p0, p1, p2, p3, 100, 3);
       const Eigen::Vector2d v1 = dfm2::PointOnCubicBezierCurve(t1, p0, p1, p2, p3);
-      EXPECT_LT((v0 - v1).norm(), 0.009);
+      EXPECT_LT((v0 - v1).norm(), 0.012);
     }
     {  // bb
       auto bb0 = dfm2::AABB_CubicBezierCurve<2>(p0, p1, p2, p3);

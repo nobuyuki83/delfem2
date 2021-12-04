@@ -39,7 +39,7 @@ TEST(cad,quadratic_bezier0) {
       double v2 = dfm2::Length_QuadraticBezierCurve_Quadrature<Eigen::Vector2d>(
         p0,p1,p2,3);
       EXPECT_NEAR(v1,v0,1.0e-4);
-      EXPECT_NEAR(v1,v2,5.0e-2);
+      EXPECT_NEAR(v1,v2,0.1);
     }
     {  // area
       double a0 = dfm2::Area_QuadraticBezierCurve2(p0, p1, p2);
@@ -54,7 +54,7 @@ TEST(cad,quadratic_bezier0) {
         scr,
         p0,p1,p2,100,3);
       const Eigen::Vector2d v1 = dfm2::PointOnQuadraticBezierCurve(t1,p0,p1,p2);
-      EXPECT_LT( (v0-v1).norm(), 1.0e-2 );
+      EXPECT_LT( (v0-v1).norm(), 1.2e-2 );
     }
     {  // bb
       auto bb0 = dfm2::AABB_QuadraticBezierCurve<2>(p0,p1,p2);

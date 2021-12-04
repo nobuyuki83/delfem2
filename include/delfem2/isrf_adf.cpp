@@ -342,24 +342,10 @@ DFM2_INLINE void VertexInterp
 }
 }
 
-delfem2::CADF3::CADF3() {
-  this->is_show_cage = false;
-  //	this->is_show_cage = true;
-  this->nIsoTri_ = 0;
-  this->aIsoTri_ = 0;
-  this->aIsoEdge_ = 0;
-  color_[0] = 1.0;
-  color_[1] = 1.0;
-  color_[2] = 1.0;
-}
+// ==========================
 
-delfem2::CADF3::~CADF3() {
-  if (this->aIsoTri_ != 0) { delete[] this->aIsoTri_; }
-  if (this->aIsoEdge_ != 0) { delete[] this->aIsoEdge_; }
-}
-
-void delfem2::CADF3::SetUp(
-    const CInput_ADF3 &ct,
+void delfem2::AdaptiveDistanceField3::SetUp(
+    const Input_AdaptiveDistanceField3 &ct,
     double bb[6]) {
   aNode.reserve(1024 * 64);
   aNode.resize(1);
@@ -389,15 +375,11 @@ void delfem2::CADF3::SetUp(
     }
   }
   // std::cout << "dist min max" << dist_min << " " << dist_max << std::endl;
-  if (aIsoTri_ != 0) {
-    delete aIsoTri_;
-    aIsoTri_ = 0;
-  }
-  nIsoTri_ = 0;
+  //  aIsoTri_.clear();
 }
 
 // return penetration depth (inside is positive)
-double delfem2::CADF3::Projection(
+double delfem2::AdaptiveDistanceField3::Projection(
     double px, double py, double pz,
     double n[3]) const // normal outward
 {
@@ -413,35 +395,14 @@ double delfem2::CADF3::Projection(
   return no.FindDistNormal(px, py, pz, n, aNode);
 }
 
-void delfem2::CADF3::BuildIsoSurface_MarchingCube() {
-  std::vector<double> aTri;
-  aTri.reserve(1024 * 32);
-  aNode[0].GenerateIsoSurface(aTri, aNode);
-  if (this->aIsoTri_ != 0) delete aIsoTri_;
-  aIsoTri_ = new double[aTri.size()];
-  for (unsigned int i = 0; i < aTri.size(); i++) { aIsoTri_[i] = aTri[i]; }
-  nIsoTri_ = (unsigned int) aTri.size() / 9;
+void delfem2::AdaptiveDistanceField3::BuildIsoSurface_MarchingCube
+ (  std::vector<double> &tri_xyz) {
+    tri_xyz.clear();
+  tri_xyz.reserve(1024 * 32);
+  aNode[0].GenerateIsoSurface(tri_xyz, aNode);
 }
 
-void delfem2::CADF3::BuildMarchingCubeEdge() {
-  if (nIsoTri_ == 0) { this->BuildIsoSurface_MarchingCube(); }
-  if (this->aIsoEdge_ != 0) { delete aIsoEdge_; }
-  aIsoEdge_ = new double[nIsoTri_ * 18];
-  for (unsigned int itri = 0; itri < nIsoTri_; itri++) {
-    for (unsigned int i = 0; i < 3; i++) {
-      aIsoEdge_[itri * 18 + 0 + i] = aIsoTri_[itri * 9 + 0 + i];
-      aIsoEdge_[itri * 18 + 3 + i] = aIsoTri_[itri * 9 + 3 + i];
-
-      aIsoEdge_[itri * 18 + 6 + i] = aIsoTri_[itri * 9 + 3 + i];
-      aIsoEdge_[itri * 18 + 9 + i] = aIsoTri_[itri * 9 + 6 + i];
-
-      aIsoEdge_[itri * 18 + 12 + i] = aIsoTri_[itri * 9 + 6 + i];
-      aIsoEdge_[itri * 18 + 15 + i] = aIsoTri_[itri * 9 + 0 + i];
-    }
-  }
-}
-
-delfem2::CADF3::CNode::CNode() {
+delfem2::AdaptiveDistanceField3::CNode::CNode() {
   cent_[0] = 0;
   cent_[1] = 0;
   cent_[2] = 0;
@@ -464,8 +425,8 @@ delfem2::CADF3::CNode::CNode() {
   dists_[7] = 0;
 }
 
-void delfem2::CADF3::CNode::SetCornerDist(
-    const CInput_ADF3 &ct) {
+void delfem2::AdaptiveDistanceField3::CNode::SetCornerDist(
+    const Input_AdaptiveDistanceField3 &ct) {
   dists_[0] = ct.sdf(cent_[0] - hw_, cent_[1] - hw_, cent_[2] - hw_);
   dists_[1] = ct.sdf(cent_[0] + hw_, cent_[1] - hw_, cent_[2] - hw_);
   dists_[2] = ct.sdf(cent_[0] + hw_, cent_[1] + hw_, cent_[2] - hw_);
@@ -476,15 +437,15 @@ void delfem2::CADF3::CNode::SetCornerDist(
   dists_[7] = ct.sdf(cent_[0] - hw_, cent_[1] + hw_, cent_[2] + hw_);
 }
 
-void delfem2::CADF3::CNode::MakeChildTree
-    (const CInput_ADF3 &ct,
+void delfem2::AdaptiveDistanceField3::CNode::MakeChildTree
+    (const Input_AdaptiveDistanceField3 &ct,
      std::vector<CNode> &aNo,
      double min_hw, double max_hw) {
   if (hw_ * 0.5 < min_hw) {
     ichilds_[0] = -1;
     return;
   }
-  ////Edges
+  // Edges
   const double va100 = ct.sdf(cent_[0], cent_[1] - hw_, cent_[2] - hw_);
   const double va210 = ct.sdf(cent_[0] + hw_, cent_[1], cent_[2] - hw_);
   const double va120 = ct.sdf(cent_[0], cent_[1] + hw_, cent_[2] - hw_);
@@ -500,7 +461,7 @@ void delfem2::CADF3::CNode::MakeChildTree
   const double va122 = ct.sdf(cent_[0], cent_[1] + hw_, cent_[2] + hw_);
   const double va012 = ct.sdf(cent_[0] - hw_, cent_[1], cent_[2] + hw_);
 
-  ////Faces
+  // Faces
   const double va101 = ct.sdf(cent_[0], cent_[1] - hw_, cent_[2]);
   const double va211 = ct.sdf(cent_[0] + hw_, cent_[1], cent_[2]);
   const double va121 = ct.sdf(cent_[0], cent_[1] + hw_, cent_[2]);
@@ -508,7 +469,7 @@ void delfem2::CADF3::CNode::MakeChildTree
   const double va110 = ct.sdf(cent_[0], cent_[1], cent_[2] - hw_);
   const double va112 = ct.sdf(cent_[0], cent_[1], cent_[2] + hw_);
 
-  ////Center
+  // Center
   const double va111 = ct.sdf(cent_[0], cent_[1], cent_[2]);
 
   if (hw_ * 0.5 > max_hw) goto MAKE_CHILDS;
@@ -732,7 +693,7 @@ void delfem2::CADF3::CNode::MakeChildTree
   return;
 }
 
-double delfem2::CADF3::CNode::FindDistNormal
+double delfem2::AdaptiveDistanceField3::CNode::FindDistNormal
     (double px, double py, double pz,
      double n[3],
      const std::vector<CNode> &aNo) const // normal outward
@@ -764,7 +725,7 @@ double delfem2::CADF3::CNode::FindDistNormal
             + (1 + rx) * (1 - ry) * (1 + rz) * dists_[5]
             + (1 + rx) * (1 + ry) * (1 + rz) * dists_[6]
             + (1 - rx) * (1 + ry) * (1 + rz) * dists_[7]) * 0.125;
-    ////
+    //
     n[0] =
         (-(1 - ry) * (1 - rz) * dists_[0]
             + (1 - ry) * (1 - rz) * dists_[1]
@@ -774,7 +735,7 @@ double delfem2::CADF3::CNode::FindDistNormal
             + (1 - ry) * (1 + rz) * dists_[5]
             + (1 + ry) * (1 + rz) * dists_[6]
             - (1 + ry) * (1 + rz) * dists_[7]);
-    ////
+    //
     n[1] =
         (-(1 - rx) * (1 - rz) * dists_[0]
             - (1 + rx) * (1 - rz) * dists_[1]
@@ -784,7 +745,7 @@ double delfem2::CADF3::CNode::FindDistNormal
             - (1 + rx) * (1 + rz) * dists_[5]
             + (1 + rx) * (1 + rz) * dists_[6]
             + (1 - rx) * (1 + rz) * dists_[7]);
-    ////
+    //
     n[2] =
         (-(1 - rx) * (1 - ry) * dists_[0]
             - (1 + rx) * (1 - ry) * dists_[1]
@@ -820,7 +781,7 @@ double delfem2::CADF3::CNode::FindDistNormal
   }
 }
 
-void delfem2::CADF3::CNode::GenerateIsoSurface
+void delfem2::AdaptiveDistanceField3::CNode::GenerateIsoSurface
     (std::vector<double> &aTri,
      const std::vector<CNode> &aNo) const {
   if (this->ichilds_[0] != -1) {    // Evaluate Child Node

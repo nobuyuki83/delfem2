@@ -18,7 +18,7 @@ namespace delfem2 {
 /**
  * @brief virtual input class
  */
-class CInput_ADF3 {
+class Input_AdaptiveDistanceField3 {
  public:
   virtual double sdf(double px, double py, double pz) const = 0;
 };
@@ -26,38 +26,27 @@ class CInput_ADF3 {
 /**
  * @brief Adaptive distance field
  */
-class CADF3 {
+class AdaptiveDistanceField3 {
  public:
-  CADF3();
-  ~CADF3();
-  void SetUp(const CInput_ADF3 &ct, double bb[6]);
-  void SetFaceColor(double r, double g, double b) {
-    color_[0] = r;
-    color_[1] = g;
-    color_[2] = b;
-  }
+    AdaptiveDistanceField3() = default;
+    
+    ~AdaptiveDistanceField3() = default;
+    
+  void SetUp(const Input_AdaptiveDistanceField3 &ct, double bb[6]);
+    
   virtual double Projection(
       double px, double py, double pz,
       double n[3]) const;
-  virtual bool IntersectionPoint(
-      [[maybe_unused]] double p[3],
-      [[maybe_unused]] const double org[3], 
-	  [[maybe_unused]] const double dir[3]) const { return false; }
-  virtual void GetMesh(
-	  [[maybe_unused]] std::vector<unsigned int> &aTri, 
-	  [[maybe_unused]] std::vector<double> &aXYZ, 
-	  [[maybe_unused]] double elen) const {}
-  //
-  void BuildIsoSurface_MarchingCube();
-  void BuildMarchingCubeEdge();
-  void SetShowCage(bool is_show) { this->is_show_cage = is_show; }
+    
+  void BuildIsoSurface_MarchingCube(std::vector<double> &aTri);
+    
  public:
   class CNode {
    public:
     CNode();
     CNode(const CNode &) = default;
-    void SetCornerDist(const CInput_ADF3 &ct);
-    void MakeChildTree(const CInput_ADF3 &ct, std::vector<CNode> &aNo, double min_hw, double max_hw);
+    void SetCornerDist(const Input_AdaptiveDistanceField3 &ct);
+    void MakeChildTree(const Input_AdaptiveDistanceField3 &ct, std::vector<CNode> &aNo, double min_hw, double max_hw);
     double FindDistNormal
         (double px, double py, double pz,
          double n[3],
@@ -74,12 +63,9 @@ class CADF3 {
  public:
   std::vector<CNode> aNode;
   double dist_min, dist_max;
-  unsigned int nIsoTri_;
-  double *aIsoTri_;
-  double *aIsoEdge_;
-  bool is_show_cage;
-  double color_[3];
 };
+
+
 
 } // namespace delfem2
 

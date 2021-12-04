@@ -67,6 +67,23 @@ void UnindexedColorTriMesh3(
   }
 }
 
+void UnindexedEdgeMesh3_UnindexedTrimesh3
+ (std::vector<double> &edge_xyz,
+  const std::vector<double> &tri_xyz) {
+  unsigned int ntri = tri_xyz.size()/9;
+  edge_xyz.resize(ntri * 18);
+  for (unsigned int itri = 0; itri < ntri; itri++) {
+    for (unsigned int i = 0; i < 3; i++) {
+      edge_xyz[itri * 18 + 0 + i] = tri_xyz[itri * 9 + 0 + i];
+      edge_xyz[itri * 18 + 3 + i] = tri_xyz[itri * 9 + 3 + i];
+      edge_xyz[itri * 18 + 6 + i] = tri_xyz[itri * 9 + 3 + i];
+      edge_xyz[itri * 18 + 9 + i] = tri_xyz[itri * 9 + 6 + i];
+      edge_xyz[itri * 18 + 12 + i] = tri_xyz[itri * 9 + 6 + i];
+      edge_xyz[itri * 18 + 15 + i] = tri_xyz[itri * 9 + 0 + i];
+    }
+  }
+}
+
 }
 
 #endif //DFM2_MSH_UNINDEXED_H_

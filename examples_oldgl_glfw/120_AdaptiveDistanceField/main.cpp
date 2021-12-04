@@ -19,6 +19,7 @@
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/isrf_adf.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/msh_unindexed.h"
 #include "delfem2/points.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshprimitive.h"
@@ -31,7 +32,7 @@ namespace dfm2 = delfem2;
 
 // -----------------------
 
-void Draw_Wire(const delfem2::CADF3::CNode &n) {
+void Draw_Wire(const delfem2::AdaptiveDistanceField3::CNode &n) {
   ::glLineWidth(1);
   ::glColor3d(0, 0, 0);
   ::glBegin(GL_LINES);
@@ -77,8 +78,8 @@ void Draw_Wire(const delfem2::CADF3::CNode &n) {
 }
 
 void DrawThisAndChild_Wire(
-    const delfem2::CADF3::CNode &n,
-    const std::vector<delfem2::CADF3::CNode> &aNo) {
+    const delfem2::AdaptiveDistanceField3::CNode &n,
+    const std::vector<delfem2::AdaptiveDistanceField3::CNode> &aNo) {
   //      std::cout << "ichild " << ichilds_[0] << " " << ichilds_[1] << " " << ichilds_[2] << " " << ichilds_[3] << std::endl;
   if (n.ichilds_[0] == -1) {
     Draw_Wire(n);
@@ -94,43 +95,48 @@ void DrawThisAndChild_Wire(
   DrawThisAndChild_Wire(aNo[n.ichilds_[7]], aNo);
 }
 
-void Draw(const delfem2::CADF3 &adf) {
+
+
+// -----------------------
+
+delfem2::AdaptiveDistanceField3 adf;
+std::vector<unsigned int> aTri;
+std::vector<double> aXYZ;
+std::vector<double> tri_xyz;
+std::vector<double> edge_xyz;
+bool is_show_cage = false;
+const double color_face[3] = {1,1,1};
+
+// ---------------
+
+void Draw(const delfem2::AdaptiveDistanceField3 &adf) {
   //    std::cout << "ADF" << aNode.size() << std::endl;
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glDisable(GL_LIGHTING);
-  if (!adf.aNode.empty() && adf.is_show_cage) {
+  if (!adf.aNode.empty() && is_show_cage) {
     DrawThisAndChild_Wire(adf.aNode[0], adf.aNode);
   }
 
-  if (adf.nIsoTri_ != 0) {
-    ::glColor3dv(adf.color_);
+  if (!tri_xyz.empty()) {
+    ::glColor3dv(color_face);
     ::glEnableClientState(GL_VERTEX_ARRAY);
-    ::glVertexPointer(3, GL_DOUBLE, 0, adf.aIsoTri_);
-    ::glDrawArrays(GL_TRIANGLES, 0, adf.nIsoTri_ * 3);
+    ::glVertexPointer(3, GL_DOUBLE, 0, tri_xyz.data() );
+    ::glDrawArrays(GL_TRIANGLES, 0, tri_xyz.size()/3);
     ::glDisableClientState(GL_VERTEX_ARRAY);
   }
-  if (adf.aIsoEdge_ != 0) {
+  if (!edge_xyz.empty() ){
     ::glColor3d(0, 0, 0);
     ::glEnableClientState(GL_VERTEX_ARRAY);
-    ::glVertexPointer(3, GL_DOUBLE, 0, adf.aIsoEdge_);
-    ::glDrawArrays(GL_LINES, 0, adf.nIsoTri_ * 6);
+    ::glVertexPointer(3, GL_DOUBLE, 0, edge_xyz.data() );
+    ::glDrawArrays(GL_LINES, 0, edge_xyz.size() / 3);
     ::glDisableClientState(GL_VERTEX_ARRAY);
   }
   if (is_lighting) { ::glEnable(GL_LIGHTING); }
 }
 
-
-// -----------------------
-
-delfem2::CADF3 adf;
-std::vector<unsigned int> aTri;
-std::vector<double> aXYZ;
-
-// ---------------
-
 void SetProblem(int iprob) {
   if (iprob == 0) {
-    class CInSphere : public delfem2::CInput_ADF3 {
+    class CInSphere : public delfem2::Input_AdaptiveDistanceField3 {
      public:
       [[nodiscard]] double sdf(double x, double y, double z) const override {
         double n[3];
@@ -145,10 +151,10 @@ void SetProblem(int iprob) {
 //    sphere.sdf.GetMesh(aTri, aXYZ, 0.01);
     double bb[6] = {-1, 1, -1, 1, -1, 1};
     adf.SetUp(sphere, bb);
-    adf.BuildIsoSurface_MarchingCube();
-    adf.BuildMarchingCubeEdge();
+    adf.BuildIsoSurface_MarchingCube(tri_xyz);
+    delfem2::UnindexedEdgeMesh3_UnindexedTrimesh3(edge_xyz, tri_xyz);
   } else if (iprob == 1) {
-    class CInTorus : public delfem2::CInput_ADF3 {
+    class CInTorus : public delfem2::Input_AdaptiveDistanceField3 {
      public:
       [[nodiscard]] double sdf(double x, double y, double z) const override {
         double n[3];
@@ -164,10 +170,10 @@ void SetProblem(int iprob) {
 //    torus.sdf.GetMesh(aTri, aXYZ, 0.01);
     double bb[6] = {-1, 1, -1, 1, -1, 1};
     adf.SetUp(torus, bb);
-    adf.BuildIsoSurface_MarchingCube();
-    adf.BuildMarchingCubeEdge();
+    adf.BuildIsoSurface_MarchingCube(tri_xyz);
+    delfem2::UnindexedEdgeMesh3_UnindexedTrimesh3(edge_xyz, tri_xyz);
   } else if (iprob == 2) {
-    class CMesh : public delfem2::CInput_ADF3 {
+    class CMesh : public delfem2::Input_AdaptiveDistanceField3 {
      public:
       [[nodiscard]] double sdf(double x, double y, double z) const override {
         dfm2::CVec3d n0;
@@ -200,8 +206,8 @@ void SetProblem(int iprob) {
     }
     double bb[6] = {-1, 1, -1, 1, -1, 1};
     adf.SetUp(mesh, bb);
-    adf.BuildIsoSurface_MarchingCube();
-    adf.BuildMarchingCubeEdge();
+    adf.BuildIsoSurface_MarchingCube(tri_xyz);
+    delfem2::UnindexedEdgeMesh3_UnindexedTrimesh3(edge_xyz, tri_xyz);
   }
 }
 
@@ -228,10 +234,10 @@ int main() {
     // --------------------
     viewer.DrawBegin_oldGL();
     if (iproblem == 0) {
-      adf.SetShowCage(false);
+        is_show_cage = false;
       Draw(adf);
     } else if (iproblem == 1) {
-      adf.SetShowCage(true);
+        is_show_cage = true;
       Draw(adf);
     } else if (iproblem == 2) {
 //      opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
