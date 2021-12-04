@@ -636,32 +636,5 @@ bool delfem2::IsTherePointOnMeshInsideSphere(
       if (dist < rad) { return true; }
     }
   }
-  for(unsigned int ksmpl=0;ksmpl<samples.size();++ksmpl){
-    const auto smplk = samples[ksmpl];
-    const auto posk= delfem2::PointOnSurfaceMesh<double>(smplk).PositionOnMeshTri3(vtx_xyz, tri_vtx);
-    const double dist = dfm2::Distance3(posi.data(), posk.data());
-    if( dist < rad ){
-      std::cout << dist << " " << rad << "  " << ksmpl <<std::endl;
-      std::cout << "  " << aIE.size() << std::endl;
-      {
-        auto it = std::find(aIE.begin(), aIE.end(), std::get<0>(smplk));
-        if( it == aIE.end() ){
-          std::cout << "  no find" << std::endl;
-        }
-      }
-      //
-      for (auto ie: aIE) {
-        const auto[il, iu] = el_smpl.equal_range(ie);
-        for (auto it = il; it != iu; ++it) {
-          const unsigned int jsmpl = it->second;
-          const auto smplj = samples[jsmpl];
-          const auto posj = delfem2::PointOnSurfaceMesh<double>(smplj).PositionOnMeshTri3(vtx_xyz, tri_vtx);
-          const double dist = dfm2::Distance3(posi.data(), posj.data());
-          std::cout << "  " << jsmpl << " " << dist << std::endl;
-        }
-      }
-      if (dist < rad) { return true; }
-    }
-  }
   return false;
 }
