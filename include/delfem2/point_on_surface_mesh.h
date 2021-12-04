@@ -15,6 +15,7 @@
 #include <climits>
 #include <map>
 #include <array>
+#include <tuple>
 
 #include "delfem2/vec3.h"
 #include "delfem2/dfm2_inline.h"
@@ -35,6 +36,9 @@ class PointOnSurfaceMesh {
 
   PointOnSurfaceMesh(unsigned int itri, double r0, double r1)
       : itri(itri), r0(r0), r1(r1) {}
+
+  PointOnSurfaceMesh(const std::tuple<unsigned int, T, T>& p)
+      : itri(std::get<0>(p)), r0(std::get<1>(p)), r1(std::get<2>(p)) {}
 
   [[nodiscard]] std::array<T,3> PositionOnMeshTri3(
       const std::vector<double> &aXYZ,

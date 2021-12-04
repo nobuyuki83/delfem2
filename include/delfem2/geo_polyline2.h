@@ -209,7 +209,7 @@ auto ArcLengthPointInPolyline(
   VEC p_min;
   unsigned int ip_min = -1;
   for (unsigned int ip = 0; ip < polyline.size() - 1; ++ip) {
-    VEC p_near = GetNearest_LineSeg_Point(scr, polyline[ip], polyline[ip + 1]);
+    VEC p_near = Nearest_Edge_Point(scr, polyline[ip], polyline[ip + 1]);
     float dist = (p_near - scr).norm();
     if (dist_min < 0 || dist < dist_min) {
       dist_min = dist;

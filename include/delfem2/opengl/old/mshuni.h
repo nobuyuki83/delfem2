@@ -188,6 +188,12 @@ DFM2_INLINE void DrawMeshTriMap3D_Edge(
     const std::vector<unsigned int> &aTri,
     const std::vector<int> &map);
 
+template<typename REAL>
+void DrawMeshtri3_BoundaryEdges(
+  const std::vector<unsigned int> &tri_adjtri,
+  const std::vector<REAL> &vtx_xyz,
+  const std::vector<unsigned int> &tri_vtx);
+
 // =====================================
 // Draw Quad Mesh
 
@@ -230,7 +236,7 @@ DFM2_INLINE void DrawMeshQuad3D_Edge(
 DFM2_INLINE void DrawMeshQuad3D_FaceNorm(
     const double *vtx_xyz,
     const unsigned int *quad_vtx_idx,
-    const size_t num_quad);
+    size_t num_quad);
 
 DFM2_INLINE void DrawMeshQuad3D_FaceNorm(
     const std::vector<double> &vtx_xyz,
@@ -269,9 +275,9 @@ DFM2_INLINE void DrawMeshTet3DSurface_Edge(
 
 DFM2_INLINE void DrawMeshTet3D_FaceNormDisp(
     const double *vtx_xyz,
-    const size_t num_vtx,
+    size_t num_vtx,
     const unsigned int *tet_vtx_idx,
-    const size_t num_tet,
+    size_t num_tet,
     const double *vtx_displacement);
 
 // -------------
@@ -279,9 +285,9 @@ DFM2_INLINE void DrawMeshTet3D_FaceNormDisp(
 
 DFM2_INLINE void DrawMeshHex3D_Edge(
     const double *vtx_xyz,
-    const size_t num_vtx,
+    size_t num_vtx,
     const unsigned int *hex_vtx_idx,
-    const size_t num_hex);
+    size_t num_hex);
 
 DFM2_INLINE void DrawMeshHex3D_EdgeDisp(
     const double *vtx_xyz,

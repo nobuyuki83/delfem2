@@ -817,6 +817,27 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3Selective_FaceNorm(
   ::glEnd();
 }
 
+template<typename REAL>
+void delfem2::opengl::DrawMeshtri3_BoundaryEdges(
+  const std::vector<unsigned int> &tri_adjtri,
+  const std::vector<REAL> &vtx_xyz,
+  const std::vector<unsigned int> &tri_vtx)
+{
+  namespace lcl = delfem2::opengl::old::mshuni;
+  ::glBegin(GL_LINES);
+  unsigned int ntri = tri_vtx.size()/3;
+  for(unsigned int it=0;it<ntri;++it){
+    for(unsigned int ie=0;ie<3;++ie){
+      if( tri_adjtri[it*3+ie] != UINT_MAX ){ continue; }
+      unsigned int ip0 = tri_vtx[it*3+(ie+1)%3];
+      unsigned int ip1 = tri_vtx[it*3+(ie+2)%3];
+      lcl::myGlVtxPtr<3>(vtx_xyz.data()+ip0*3);
+      lcl::myGlVtxPtr<3>(vtx_xyz.data()+ip1*3);
+    }
+  }
+  ::glEnd();
+}
+
 // tri3
 // ------------------------------------------------
 // tri2

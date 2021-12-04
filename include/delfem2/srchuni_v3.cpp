@@ -582,13 +582,15 @@ std::vector<unsigned int> delfem2::IndexesOfConnectedTriangleInSphere(
   const std::vector<double> &vtx_xyz,
   const std::vector<unsigned int> &tri_vtx,
   const std::vector<unsigned int> &tri_adjtri) {
-  std::set<unsigned int> buff;
-  std::stack<unsigned int> st;
-  st.push(itri0);
-  while (!st.empty()) {
-    unsigned int iel0 = st.top();
-    st.pop();
-    if (buff.find(iel0) != buff.end()) { continue; } // already studied
+  std::vector<unsigned int> res;
+  std::set<unsigned int> searched;
+  std::stack<unsigned int> next0;
+  next0.push(itri0);
+  while (!next0.empty()) {
+    unsigned int iel0 = next0.top();
+    next0.pop();
+    if (searched.find(iel0) != searched.end()) { continue; } // already studied
+    searched.insert(iel0);
     double dist_min = -1;
     {
       double pn[3], r0, r1;
@@ -601,14 +603,14 @@ std::vector<unsigned int> delfem2::IndexesOfConnectedTriangleInSphere(
       dist_min = delfem2::Distance3(pn,pos.data());
     }
     if (dist_min > rad) { continue; }
-    buff.insert(iel0);
+    res.push_back(iel0);
     for (unsigned int ie = 0; ie < 3; ++ie) {
       unsigned int iel1 = tri_adjtri[iel0 * 3 + ie];
       if (iel1 == UINT_MAX) { continue; }
-      st.push(iel1);
+      next0.push(iel1);
     }
   }
-  return {buff.begin(), buff.end()};
+  return res;
 }
 
 bool delfem2::IsTherePointOnMeshInsideSphere(
@@ -620,9 +622,7 @@ bool delfem2::IsTherePointOnMeshInsideSphere(
   const std::vector<unsigned int> &tri_vtx,
   const std::vector<unsigned int> &tri_adjtri){
   namespace dfm2 = delfem2;
-  const auto posi = delfem2::PointOnSurfaceMesh<double>{
-    std::get<0>(smpli), std::get<1>(smpli), std::get<2>(smpli)
-  }.PositionOnMeshTri3(vtx_xyz, tri_vtx);
+  const auto posi = delfem2::PointOnSurfaceMesh<double>(smpli).PositionOnMeshTri3(vtx_xyz, tri_vtx);
   std::vector<unsigned int> aIE = dfm2::IndexesOfConnectedTriangleInSphere(
     posi, rad,
     std::get<0>(smpli), vtx_xyz, tri_vtx, tri_adjtri);
@@ -631,10 +631,35 @@ bool delfem2::IsTherePointOnMeshInsideSphere(
     for (auto it = il; it != iu; ++it) {
       const unsigned int jsmpl = it->second;
       const auto smplj = samples[jsmpl];
-      const auto posj = delfem2::PointOnSurfaceMesh<double>{
-        std::get<0>(smplj), std::get<1>(smplj), std::get<2>(smplj)
-      }.PositionOnMeshTri3(vtx_xyz, tri_vtx);
+      const auto posj = delfem2::PointOnSurfaceMesh<double>(smplj).PositionOnMeshTri3(vtx_xyz, tri_vtx);
       const double dist = dfm2::Distance3(posi.data(), posj.data());
+      if (dist < rad) { return true; }
+    }
+  }
+  for(unsigned int ksmpl=0;ksmpl<samples.size();++ksmpl){
+    const auto smplk = samples[ksmpl];
+    const auto posk= delfem2::PointOnSurfaceMesh<double>(smplk).PositionOnMeshTri3(vtx_xyz, tri_vtx);
+    const double dist = dfm2::Distance3(posi.data(), posk.data());
+    if( dist < rad ){
+      std::cout << dist << " " << rad << "  " << ksmpl <<std::endl;
+      std::cout << "  " << aIE.size() << std::endl;
+      {
+        auto it = std::find(aIE.begin(), aIE.end(), std::get<0>(smplk));
+        if( it == aIE.end() ){
+          std::cout << "  no find" << std::endl;
+        }
+      }
+      //
+      for (auto ie: aIE) {
+        const auto[il, iu] = el_smpl.equal_range(ie);
+        for (auto it = il; it != iu; ++it) {
+          const unsigned int jsmpl = it->second;
+          const auto smplj = samples[jsmpl];
+          const auto posj = delfem2::PointOnSurfaceMesh<double>(smplj).PositionOnMeshTri3(vtx_xyz, tri_vtx);
+          const double dist = dfm2::Distance3(posi.data(), posj.data());
+          std::cout << "  " << jsmpl << " " << dist << std::endl;
+        }
+      }
       if (dist < rad) { return true; }
     }
   }
