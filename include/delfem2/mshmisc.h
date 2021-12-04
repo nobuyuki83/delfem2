@@ -95,6 +95,13 @@ DFM2_INLINE void CG_MeshTet3(
     const std::vector<T> &aXYZ,
     const std::vector<unsigned int> &aTet);
 
+template<typename T>
+void CG_MeshLine3(
+  T &v_tot,
+  T cg[3],
+  const std::vector<T> &vtx_xyz,
+  const std::vector<unsigned int> &line_vtx);
+
 // ---------------------------------
 
 DFM2_INLINE void RemoveUnreferencedPoints_MeshElem(

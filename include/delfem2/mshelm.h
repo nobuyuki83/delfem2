@@ -39,7 +39,6 @@ enum MESHELEM_TYPE
 // 13: VTK_WEDGE
 // 14: VTK_PYRAMD
 
-////
 const int mapMeshElemType2NNodeElem[8] = {
   3, // TRI 0
   4, // TET 1
@@ -50,18 +49,21 @@ const int mapMeshElemType2NNodeElem[8] = {
   8,  // VOX 6
   2, // LINE 7
 };
-////
-const int mapMeshElemType2NFaceElem[7] = {
+
+//
+const int mapMeshElemType2NFaceElem[8] = {
   3, // TRI
   4, // TET
   4, // QUAD
   6, // HEX
   5, // Pyramid
   5, // Wedge
-  6  // VOX
+  6, // VOX
+  2  // LINE 7
 };
-////
-const int mapMeshElemTypeIndFace2NNoelElemFace[7][6] =
+
+//
+const int mapMeshElemTypeIndFace2NNoelElemFace[8][6] =
 {
   {2,2,2,-1,-1,-1}, // TRI
   {3,3,3, 3,-1,-1}, // TET
@@ -70,8 +72,15 @@ const int mapMeshElemTypeIndFace2NNoelElemFace[7][6] =
   {4,3,3, 3, 3,-1}, // Pyramid
   {4,4,4, 3, 3,-1}, // Wedge
   {4,4,4, 4, 4, 4}, // VOX
+  {1,1,-1, -1, -1, -1}, // VOX
 };
-////
+
+//
+const int noelElemFace_Line[2][4] = {
+  { 0, -1, -1, -1},
+  { 1, -1, -1, -1},
+};
+
 const int noelElemFace_Tri[3][4] = {
   { 1, 2,-1,-1 }, //edge 0
   { 2, 0,-1,-1 }, //edge 1
@@ -172,14 +181,15 @@ inline int nNodeElemFace(MESHELEM_TYPE type,int iface){
 }
 inline const int (*noelElemFace(MESHELEM_TYPE type))[4]
 {
-  const int (*noelElemFace0[7])[4] = {
-    noelElemFace_Tri,
-    noelElemFace_Tet,
-    noelElemFace_Quad,
-    noelElemFace_Hex,
-    noelElemFace_Pyram,
-    noelElemFace_Wed,
-    noelElemFace_Vox,
+  const int (*noelElemFace0[8])[4] = {
+    noelElemFace_Tri,  // 0
+    noelElemFace_Tet,  // 1
+    noelElemFace_Quad, // 2
+    noelElemFace_Hex,  // 3
+    noelElemFace_Pyram, // 4
+    noelElemFace_Wed,  // 5
+    noelElemFace_Vox,  // 6
+    noelElemFace_Line  // 7
   };
   return noelElemFace0[type];
 }

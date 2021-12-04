@@ -245,8 +245,8 @@ DFM2_INLINE void MakeGroupElem(
     std::vector<unsigned int> &elem_flag,
     const std::vector<unsigned int> &elem_vtx,
     const std::vector<unsigned int> &elem_adjelem,
-    const int num_face_par_elem,
-    const int num_vtx_par_elem);
+    int num_face_par_elem,
+    int num_vtx_par_elem);
 
 } // end namespace delfem2
 

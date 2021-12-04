@@ -710,13 +710,49 @@ template void delfem2::CG_MeshTet3(
     const std::vector<unsigned int> &aTet);
 #endif
 
+// -------------------------------
+
+template<typename T>
+void delfem2::CG_MeshLine3(
+  T &v_tot,
+  T cg[3],
+  const std::vector<T> &vtx_xyz,
+  const std::vector<unsigned int> &line_vtx) {
+  constexpr T half = static_cast<T>(1.0 / 2.0);
+  v_tot = cg[0] = cg[1] = cg[2] = 0.0;
+  const std::size_t nline = line_vtx.size() / 2;
+  for (std::size_t il = 0; il < nline; ++il) {
+    const T *p0 = vtx_xyz.data() + line_vtx[il * 2 + 0] * 3;
+    const T *p1 = vtx_xyz.data() + line_vtx[il * 2 + 1] * 3;
+    const T v = mshmisc::Distance3(p0, p1);
+    v_tot += v;
+    cg[0] += v * (p0[0] + p1[0]) * half;
+    cg[1] += v * (p0[1] + p1[1]) * half;
+    cg[2] += v * (p0[2] + p1[2]) * half;
+  }
+  cg[0] /= v_tot;
+  cg[1] /= v_tot;
+  cg[2] /= v_tot;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::CG_MeshLine3(
+    float &v_tot, float cg[3],
+    const std::vector<float> &aXYZ,
+    const std::vector<unsigned int> &aTet);
+template void delfem2::CG_MeshLine3(
+    double &v_tot, double cg[3],
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTet);
+#endif
+
 // -----------------------------------------------------------------------------------------
 
-void delfem2::SetTopology_ExtrudeTri2Tet
-    (unsigned int *aTet,
-     int nXY,
-     const unsigned int *aTri, int nTri,
-     int nlayer) {
+void delfem2::SetTopology_ExtrudeTri2Tet(
+  unsigned int *aTet,
+  int nXY,
+  const unsigned int *aTri,
+  int nTri,
+  int nlayer) {
   for (int il = 0; il < nlayer; ++il) {
     for (int itri = 0; itri < nTri; ++itri) {
       unsigned int ip0 = 0, ip1 = 0, ip2 = 0;
