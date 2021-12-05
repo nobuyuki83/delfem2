@@ -279,7 +279,7 @@ class CBVH_MeshTri3D {
       n0 = (p0 - q0).normalized();
       return -dist;
     }
-    const CVec3<REAL> n1 = pes.UnitNormalOnMeshTri3(aXYZ0, aTri0, aNorm);
+    const CVec3<REAL> n1 = pes.UnitNormalOnMeshTri3(aNorm, aTri0);
     if (dist < 1.0e-6) {
       n0 = n1;
       if ((q0 - p0).dot(n1) > 0) { return dist; } //inside

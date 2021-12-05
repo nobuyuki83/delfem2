@@ -133,10 +133,10 @@ void UpdateProblem() {
     dfm2::CVec3d p1 = aPES0[1].PositionOnMeshTri3(vtx_xyz, tri_vtx);
     dfm2::CVec3d p2 = aPES0[2].PositionOnMeshTri3(vtx_xyz, tri_vtx);
     dfm2::CVec3d p3 = aPES0[3].PositionOnMeshTri3(vtx_xyz, tri_vtx);
-    dfm2::CVec3d n0 = aPES0[0].UnitNormalOnMeshTri3(vtx_xyz, tri_vtx, vtx_norm);
-    dfm2::CVec3d n1 = aPES0[1].UnitNormalOnMeshTri3(vtx_xyz, tri_vtx, vtx_norm);
-    dfm2::CVec3d n2 = aPES0[2].UnitNormalOnMeshTri3(vtx_xyz, tri_vtx, vtx_norm);
-    dfm2::CVec3d n3 = aPES0[3].UnitNormalOnMeshTri3(vtx_xyz, tri_vtx, vtx_norm);
+    dfm2::CVec3d n0 = aPES0[0].UnitNormalOnMeshTri3(vtx_norm, tri_vtx);
+    dfm2::CVec3d n1 = aPES0[1].UnitNormalOnMeshTri3(vtx_norm, tri_vtx);
+    dfm2::CVec3d n2 = aPES0[2].UnitNormalOnMeshTri3(vtx_norm, tri_vtx);
+    dfm2::CVec3d n3 = aPES0[3].UnitNormalOnMeshTri3(vtx_norm, tri_vtx);
     for (unsigned int i = 0; i < ndiv + 1; ++i) {
       for (unsigned int j = 0; j < ndiv + 1; ++j) {
         double ri = (double) i / ndiv;

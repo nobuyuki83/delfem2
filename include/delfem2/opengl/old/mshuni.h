@@ -49,12 +49,13 @@ DFM2_INLINE void DrawPoints2d_Psup(
 
 DFM2_INLINE void DrawPoints2d_4RotSym(
     const double *vtx_xy,
-    const unsigned int num_vtx,
+    unsigned int num_vtx,
     const double *vtx_direction,
     double scale);
 
-// above: 2D
-// below: 3D
+// above: 2D Point
+// -----------------
+// below: 3D Point
 
 /**
  * @brief DrawHead Points using GL_POINTS
@@ -168,9 +169,10 @@ DFM2_INLINE void DrawMeshTri3D_FaceNorm_TexFace(
     const std::vector<double> &vtx_tex);
 
 DFM2_INLINE void DrawMeshTri3D_FaceNorm_TexVtx(
-    const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<double> &aTex);
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx_xyz,
+    const std::vector<double> &vtx_tex,
+    const std::vector<unsigned int> &tri_vtx_tex);
 
 template<typename REAL>
 DFM2_INLINE void DrawMeshTri3D_Edge(

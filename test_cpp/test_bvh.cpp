@@ -148,7 +148,7 @@ TEST(bvh,nearestinc_sphere)
       dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
       EXPECT_LT(Distance(q0,q1),1.0e-10);
     }
-    dfm2::CVec3d n0 = pes1.UnitNormalOnMeshTri3(aXYZ, aTri, aNorm);
+    dfm2::CVec3d n0 = pes1.UnitNormalOnMeshTri3(aNorm, aTri);
     EXPECT_EQ( n0.dot(p0-q1)>0, itr%2==0);
     // ---------------------
     {

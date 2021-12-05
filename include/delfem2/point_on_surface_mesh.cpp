@@ -62,9 +62,8 @@ template std::array<double,3> delfem2::PointOnSurfaceMesh<double>::PositionOnMes
 
 template<typename T>
 std::array<T,3> delfem2::PointOnSurfaceMesh<T>::UnitNormalOnMeshTri3(
-    [[maybe_unused]] const std::vector<double> &vtx_xyz,
-    const std::vector<unsigned int> &tri_vtx,
-    const std::vector<double> &vtx_normal) const {
+    const std::vector<double> &vtx_normal,
+    const std::vector<unsigned int> &tri_vtx) const {
   assert(itri < tri_vtx.size() / 3);
   const unsigned int i0 = tri_vtx[itri * 3 + 0];
   const unsigned int i1 = tri_vtx[itri * 3 + 1];
@@ -78,8 +77,7 @@ std::array<T,3> delfem2::PointOnSurfaceMesh<T>::UnitNormalOnMeshTri3(
 #ifdef DFM2_STATIC_LIBRARY
 template std::array<double,3> delfem2::PointOnSurfaceMesh<double>::UnitNormalOnMeshTri3(
     const std::vector<double> &,
-    const std::vector<unsigned int> &,
-    const std::vector<double> &) const;
+    const std::vector<unsigned int> &) const;
 #endif
 
 // ------------------------------------------

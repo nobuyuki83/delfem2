@@ -484,7 +484,7 @@ double delfem2::SDFNormal_NearestPoint(
     const std::vector<double> &aNorm) {
   CVec3<T> q1 = pes.PositionOnMeshTri3(aXYZ, aTri);
   double dist = (q1 - p0).norm();
-  CVec3<T> n1 = pes.UnitNormalOnMeshTri3(aXYZ, aTri, aNorm);
+  CVec3<T> n1 = pes.UnitNormalOnMeshTri3(aNorm, aTri);
   if ((q1 - p0).dot(n1) > 0) {  //inside
     if (dist < 1.0e-6) { n0 = n1; }
     else { n0 = (q1 - p0).normalized(); }

@@ -590,25 +590,26 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm(
 }
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexVtx(
-    const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<double> &aTex) {
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx_xyz,
+    const std::vector<double> &vtx_tex,
+    const std::vector<unsigned int> &tri_vtx_tex) {
   namespace lcl = ::delfem2::opengl::old::mshuni;
-  const std::size_t nTri = aTri.size() / 3;
+  const std::size_t nTri = tri_vtx_xyz.size() / 3;
   //
   double uv[6];
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri = 0; itri < nTri; ++itri) {
-    const unsigned int ip0 = aTri[itri * 3 + 0];
-    const unsigned int ip1 = aTri[itri * 3 + 1];
-    const unsigned int ip2 = aTri[itri * 3 + 2];
-    uv[0] = aTex[ip0 * 2 + 0];
-    uv[1] = aTex[ip0 * 2 + 1];
-    uv[2] = aTex[ip1 * 2 + 0];
-    uv[3] = aTex[ip1 * 2 + 1];
-    uv[4] = aTex[ip2 * 2 + 0];
-    uv[5] = aTex[ip2 * 2 + 1];
-    lcl::DrawSingleTri3D_FaceNorm(aXYZ.data(), aTri.data() + itri * 3, uv);
+    const unsigned int ip0 = tri_vtx_tex[itri * 3 + 0];
+    const unsigned int ip1 = tri_vtx_tex[itri * 3 + 1];
+    const unsigned int ip2 = tri_vtx_tex[itri * 3 + 2];
+    uv[0] = vtx_tex[ip0 * 2 + 0];
+    uv[1] = vtx_tex[ip0 * 2 + 1];
+    uv[2] = vtx_tex[ip1 * 2 + 0];
+    uv[3] = vtx_tex[ip1 * 2 + 1];
+    uv[4] = vtx_tex[ip2 * 2 + 0];
+    uv[5] = vtx_tex[ip2 * 2 + 1];
+    lcl::DrawSingleTri3D_FaceNorm(vtx_xyz.data(), tri_vtx_xyz.data() + itri * 3, uv);
   }
   ::glEnd();
 }

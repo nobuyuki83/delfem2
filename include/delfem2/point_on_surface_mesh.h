@@ -62,9 +62,8 @@ class PointOnSurfaceMesh {
       std::vector<float> &aH) const;
 
   [[nodiscard]] std::array<T,3> UnitNormalOnMeshTri3(
-      const std::vector<double> &aXYZ,
-      const std::vector<unsigned int> &aTri,
-      const std::vector<double> &aNorm) const;
+      const std::vector<double> &aNorm,
+      const std::vector<unsigned int> &aTri) const;
 
   std::array<T,3> UnitNormalOnMeshTri3(
       const double *vtx_xyz,
