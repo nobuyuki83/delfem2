@@ -73,9 +73,10 @@ void delfem2::Polyline_BezierQuadratic(
     const VEC &p1,
     const VEC &p2,
     const VEC &p3) {
+  using SCALAR = typename VEC::Scalar;
   aP.resize(n);
   for (unsigned int i = 0; i < n; ++i) {
-    const double t = (double) i / (n - 1.0);
+    const double t = static_cast<SCALAR>(i) / (static_cast<SCALAR>(n) - 1);
     aP[i] = PointOnQuadraticBezierCurve(
         t,
         p1, p2, p3 );

@@ -9,6 +9,8 @@
 #include "delfem2/geo_bezier_cubic.h"
 #include "delfem2/geo_polyline2.h"
 
+
+
 TEST(bezier_cubic, test0) {
   namespace dfm2 = delfem2;
   std::mt19937 rndeng(std::random_device{}());
@@ -23,8 +25,8 @@ TEST(bezier_cubic, test0) {
     dfm2::Polyline_BezierCubic(polyline, 1000, p0, p1, p2, p3);
     {
       double v0 = dfm2::Length_Polyline<dfm2::CVec2d>(polyline);
-      double v2 = dfm2::Length_CubicBezierCurve_Quadrature<dfm2::CVec2d>(p0, p1, p2, p3, 3);
-      EXPECT_NEAR(v0, v2, 2.0e-1);
+      double v2 = dfm2::Length_CubicBezierCurve_Quadrature<dfm2::CVec2d>(p0, p1, p2, p3, 5);
+      EXPECT_NEAR(v0, v2, 0.07);
     }
     {
       double a0 = dfm2::Area_CubicBezierCurve2(p0, p1, p2, p3);
@@ -39,7 +41,7 @@ TEST(bezier_cubic, test0) {
         scr,
         p0, p1, p2, p3, 100, 5);
       const dfm2::CVec2d v1 = dfm2::PointOnCubicBezierCurve(t1, p0, p1, p2, p3);
-      EXPECT_LT((v0 - v1).norm(), 0.02);
+      EXPECT_LT((v0 - v1).norm(), 0.05);
     }
     {  // bb
       auto bb0 = dfm2::AABB_CubicBezierCurve<2>(p0, p1, p2, p3);
@@ -48,6 +50,29 @@ TEST(bezier_cubic, test0) {
       EXPECT_NEAR(bb0[1], bb1[1], 1.0e-3);
       EXPECT_NEAR(bb0[2], bb1[2], 1.0e-3);
       EXPECT_NEAR(bb0[3], bb1[3], 1.0e-3);
+    }
+    {  // bezier split
+      std::vector<dfm2::CVec2d> poly0;
+      {
+        std::array<dfm2::CVec2d,8> r = dfm2::Split_CubicBezierCurve(p0,p1,p2,p3, 0.3);
+        delfem2::Polyline_BezierCubic(
+          poly0, 4,
+          r[0], r[1], r[2], r[3]);
+        std::vector<dfm2::CVec2d> poly1;
+        delfem2::Polyline_BezierCubic(
+          poly1, 8,
+          r[4], r[5], r[6], r[7]);
+        poly0.resize(poly0.size() - 1);
+        poly0.insert(poly0.end(), poly1.begin(), poly1.end());
+      }
+      std::vector<dfm2::CVec2d> poly2;
+      delfem2::Polyline_BezierCubic(
+        poly2, 11,
+        p0, p1, p2,p3);
+      EXPECT_EQ(poly0.size(),poly2.size());
+      for(unsigned int ip=0;ip<poly0.size();++ip){
+        EXPECT_LT((poly0[ip]-poly2[ip]).norm(),1.0e-10);
+      }
     }
   }
 }

@@ -26,21 +26,15 @@ constexpr static T LineGauss[4][4][2] =
   {
     {
       {0.0, 2.0},
-      {0.0, 0.0},
-      {0.0, 0.0},
-      {0.0, 0.0},
     },
     {
       {-0.577350269189626, 1.0},
       {0.577350269189626, 1.0},
-      {0.0, 0.0},
-      {0.0, 0.0},
     },
     {
       {-0.774596669241483, 0.555555555555556},
       {0.0, 0.888888888888889},
       {0.774596669241483, 0.555555555555556},
-      {0.0, 0.0},
     },
     {
       {-0.861136311594053, 0.347854845137454},
@@ -56,11 +50,11 @@ namespace delfem2 {
 
 template<typename VEC>
 VEC PointOnQuadraticBezierCurve(
-  double t,
+  typename VEC::Scalar t,
   const VEC &p1,
   const VEC &p2,
   const VEC &p3) {
-  double tp = 1.0 - t;
+  auto tp = 1 - t;
   return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
 }
 
@@ -73,12 +67,11 @@ double Length_QuadraticBezierCurve_Quadrature(
 {
   namespace lcl = ::delfem2::geo_bezier_quadratic;
   using SCALAR = typename VEC::Scalar;
-
   assert(gauss_order < 4);
   SCALAR totalLength = 0;
   for (unsigned int i = 0; i < lcl::NIntLineGauss[gauss_order]; i++) {
-    const double t = (lcl::LineGauss<double>[gauss_order][i][0] + 1) / 2;
-    const double w = lcl::LineGauss<double>[gauss_order][i][1];
+    const SCALAR t = (lcl::LineGauss<SCALAR>[gauss_order][i][0] + 1) / 2;
+    const SCALAR w = lcl::LineGauss<SCALAR>[gauss_order][i][1];
     const VEC dt = 2 * (1 - t) * (p1 - p0) + 2 * t * (p2 - p1);
     totalLength += dt.norm() * w;
   }
@@ -153,7 +146,10 @@ typename VEC::Scalar Nearest_QuadraticBezierCurve(
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
     SCALAR dist0 = (a * (t * t) + b * t + c).norm();
-    if( dist0 > dist_min ){ t = t0; break; }   // winding back
+    if (dist0 > dist_min) {
+      t = t0;
+      break;
+    }   // winding back
     dist_min = dist0;
   }
   return t;
@@ -202,25 +198,24 @@ auto AABB_QuadraticBezierCurve(
 /**
  * @return 3 control points of the first segment followed by 3 control points of the second segment (in original sequence)
  */
-template <typename VEC>
-std::array<VEC,6> Split_QuadraticBezierCurve(
+template<typename VEC>
+std::array<VEC, 6> Split_QuadraticBezierCurve(
   const VEC &p0,
   const VEC &p1,
   const VEC &p2,
-  double t)
-{
-    // p_i^j = p_i^{j-1} * (1 - t0) + p_{i+1}^{j-1} * t0
-    auto mix = [&t](const VEC &q0, const VEC &q1) {
-        return q0 * (1 - t) + q1 * t;
-    };
+  typename VEC::Scalar t) {
+  // p_i^j = p_i^{j-1} * (1 - t0) + p_{i+1}^{j-1} * t0
+  auto mix = [&t](const VEC &q0, const VEC &q1) {
+    return q0 * (1 - t) + q1 * t;
+  };
 
-    std::array<VEC,6> res;
-    res[0] = p0;
-    res[1] = mix(p0, p1); // p01
-    res[4] = mix(p1, p2); // p11
-    res[2] = res[3] = mix(res[1], res[4]); // p02
-    res[5] = p2; 
-    return res;
+  std::array<VEC, 6> res;
+  res[0] = p0;
+  res[1] = mix(p0, p1); // p01
+  res[4] = mix(p1, p2); // p11
+  res[2] = res[3] = mix(res[1], res[4]); // p02
+  res[5] = p2;
+  return res;
 }
 
 }

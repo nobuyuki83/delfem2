@@ -15,36 +15,47 @@
 
 namespace delfem2::geo_bezier_cubic {
 
-constexpr static unsigned int NIntLineGauss[4] = {
-  1, 2, 3, 4
+
+constexpr static unsigned int NIntLineGauss[6] = {
+  1, 2, 3, 4, 5, 6
 };
 
+// https://pomax.github.io/bezierinfo/legendre-gauss.html
 template<typename T>
-constexpr static T LineGauss[4][4][2] =
+constexpr static T LineGauss[6][6][2] =
   {
-    {
+    { // 0
       {0.0, 2.0},
-      {0.0, 0.0},
-      {0.0, 0.0},
-      {0.0, 0.0},
     },
-    {
+    { // 1
       {-0.577350269189626, 1.0},
       {0.577350269189626, 1.0},
-      {0.0, 0.0},
-      {0.0, 0.0},
     },
-    {
+    {  // 2
       {-0.774596669241483, 0.555555555555556},
       {0.0, 0.888888888888889},
       {0.774596669241483, 0.555555555555556},
-      {0.0, 0.0},
     },
-    {
+    {  // 3
       {-0.861136311594053, 0.347854845137454},
       {-0.339981043584856, 0.652145154862546},
       {0.339981043584856, 0.652145154862546},
       {0.861136311594053, 0.347854845137454},
+    },
+    {  // 4
+      {0.0000000000000000, 0.5688888888888889},
+      {-0.5384693101056831, 0.4786286704993665},
+      {0.5384693101056831, 0.4786286704993665},
+      {-0.9061798459386640, 0.2369268850561891},
+      {0.9061798459386640, 0.2369268850561891},
+    },
+    {  // 5
+      {0.6612093864662645, 0.3607615730481386},
+      {-0.6612093864662645, 0.3607615730481386},
+      {-0.2386191860831969, 0.4679139345726910},
+      {0.2386191860831969, 0.4679139345726910},
+      {-0.9324695142031521, 0.1713244923791704},
+      {0.9324695142031521, 0.1713244923791704}
     }
   };
 
@@ -54,12 +65,12 @@ namespace delfem2 {
 
 template<typename VEC>
 VEC PointOnCubicBezierCurve(
-  double t,
+  typename VEC::Scalar t,
   const VEC &p1,
   const VEC &p2,
   const VEC &p3,
   const VEC &p4) {
-  double tp = 1.0 - t;
+  auto tp = 1 - t;
   return t * t * t * p4
     + 3 * t * t * tp * p3
     + 3 * t * tp * tp * p2
@@ -149,7 +160,7 @@ typename VEC::Scalar Length_CubicBezierCurve_Quadrature(
   int gauss_order)  // order of Gaussian quadrature to use
 {
   namespace lcl = ::delfem2::geo_bezier_cubic;
-  assert(gauss_order < 4);
+  assert(gauss_order < 6);
   using SCALAR = typename VEC::Scalar;
   SCALAR totalLength = 0;
   for (unsigned int i = 0; i < lcl::NIntLineGauss[gauss_order]; i++) {
@@ -286,7 +297,7 @@ std::array<VEC,8> Split_CubicBezierCurve(
   const VEC &p1,
   const VEC &p2,
   const VEC &p3,
-  double t)
+  typename VEC::Scalar t)
 {
     // p_i^j = p_i^{j-1} * (1 - t0) + p_{i+1}^{j-1} * t0
     auto mix = [&t](const VEC &q0, const VEC &q1) {

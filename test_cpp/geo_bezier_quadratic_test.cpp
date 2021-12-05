@@ -54,6 +54,29 @@ TEST(bezier_quadratic, test0) {
       EXPECT_NEAR(bb0[2], bb1[2], 1.0e-3);
       EXPECT_NEAR(bb0[3], bb1[3], 1.0e-3);
     }
+    {
+      std::vector<dfm2::CVec2d> poly0;
+      {
+        std::array<dfm2::CVec2d,6> r = dfm2::Split_QuadraticBezierCurve(p0,p1,p2, 0.3);
+        delfem2::Polyline_BezierQuadratic(
+          poly0, 4,
+          r[0], r[1], r[2]);
+        std::vector<dfm2::CVec2d> poly1;
+        delfem2::Polyline_BezierQuadratic(
+          poly1, 8,
+          r[3], r[4], r[5]);
+        poly0.resize(poly0.size() - 1);
+        poly0.insert(poly0.end(), poly1.begin(), poly1.end());
+      }
+      std::vector<dfm2::CVec2d> poly2;
+      delfem2::Polyline_BezierQuadratic(
+        poly2, 11,
+        p0, p1, p2);
+      EXPECT_EQ(poly0.size(),poly2.size());
+      for(unsigned int ip=0;ip<poly0.size();++ip){
+        EXPECT_LT((poly0[ip]-poly2[ip]).norm(),1.0e-10);
+      }
+    }
   }
 }
 
