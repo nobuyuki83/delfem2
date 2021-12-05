@@ -199,6 +199,30 @@ auto AABB_QuadraticBezierCurve(
   return res;
 }
 
+/**
+ * @return 3 control points of the first segment followed by 3 control points of the second segment (in original sequence)
+ */
+template <typename VEC>
+std::array<VEC,6> Split_QuadraticBezierCurve(
+  const VEC &p0,
+  const VEC &p1,
+  const VEC &p2,
+  double t)
+{
+    // p_i^j = p_i^{j-1} * (1 - t0) + p_{i+1}^{j-1} * t0
+    auto mix = [&t](const VEC &q0, const VEC &q1) {
+        return q0 * (1 - t) + q1 * t;
+    };
+
+    std::array<VEC,6> res;
+    res[0] = p0;
+    res[1] = mix(p0, p1); // p01
+    res[4] = mix(p1, p2); // p11
+    res[2] = res[3] = mix(res[1], res[4]); // p02
+    res[5] = p2; 
+    return res;
+}
+
 }
 
 #endif /* DFM2_CURVE_QUADRATIC_BEZIER_H */

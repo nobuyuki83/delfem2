@@ -276,6 +276,36 @@ auto AABB_CubicBezierCurve(
   return res;
 }
 
+
+/**
+ * @return 4 control points of the first segment followed by 4 control points of the second segment (in original sequence)
+ */
+template <typename VEC>
+std::array<VEC,8> Split_CubicBezierCurve(
+  const VEC &p0,
+  const VEC &p1,
+  const VEC &p2,
+  const VEC &p3,
+  double t)
+{
+    // p_i^j = p_i^{j-1} * (1 - t0) + p_{i+1}^{j-1} * t0
+    auto mix = [&t](const VEC &q0, const VEC &q1) {
+        return q0 * (1 - t) + q1 * t;
+    };
+
+    std::array<VEC,8> res;
+    res[0] = p0; 
+    res[1] = mix(p0, p1); // p01
+    VEC p11 = mix(p1, p2); 
+    res[2] = mix(res[1], p11); // p02
+    res[6] = mix(p2, p3); // p21
+    res[7] = p3; 
+    res[5] = mix(p11, res[6]); // p12
+    res[3] = res[4] = mix(res[2], res[5]); // p03
+    return res;
+}
+
+
 }
 
 #endif /* DFM2_CURVE_CUBIC_BEZIER_H */
