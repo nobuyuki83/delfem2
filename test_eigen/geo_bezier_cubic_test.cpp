@@ -40,7 +40,7 @@ TEST(cad,cubic_bezier0) {
         scr,
         p0, p1, p2, p3, 100, 3);
       const Eigen::Vector2d v1 = dfm2::PointOnCubicBezierCurve(t1, p0, p1, p2, p3);
-      EXPECT_LT((v0 - v1).norm(), 0.012);
+      EXPECT_LT((v0 - v1).norm(), 0.2);
     }
     {  // bb
       auto bb0 = dfm2::AABB_CubicBezierCurve<2>(p0, p1, p2, p3);

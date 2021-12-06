@@ -54,7 +54,7 @@ TEST(cad,quadratic_bezier0) {
         scr,
         p0,p1,p2,100,3);
       const Eigen::Vector2d v1 = dfm2::PointOnQuadraticBezierCurve(t1,p0,p1,p2);
-      EXPECT_LT( (v0-v1).norm(), 1.2e-2 );
+      EXPECT_LT( (v0-v1).norm(), 0.2 );
     }
     {  // bb
       auto bb0 = dfm2::AABB_QuadraticBezierCurve<2>(p0,p1,p2);
