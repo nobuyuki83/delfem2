@@ -256,10 +256,11 @@ typename VEC::Scalar delfem2::Area_Tri2(
   const VEC &v1,
   const VEC &v2,
   const VEC &v3) {
-  return 0.5 * ((v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]));
+  return ((v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1])) / 2;
 }
 #ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Area_Tri2(const CVec2d& v1, const CVec2d& v2, const CVec2d& v3);
+template float delfem2::Area_Tri2(const CVec2f& v1, const CVec2f& v2, const CVec2f& v3);
 #endif
 
 template<typename T>

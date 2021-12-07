@@ -128,32 +128,33 @@ template double delfem2::Distance_Edge_Point(
 // =========================================================
 // below: 2D
 
-template<typename T>
-bool delfem2::IsCross_LineSeg_LineSeg(
-  const CVec2<T> &po_s0,
-  const CVec2<T> &po_e0,
-  const CVec2<T> &po_s1,
-  const CVec2<T> &po_e1) {
+template<typename VEC>
+bool delfem2::IsIntersect_Edge2_Edge2(
+  const VEC &po_s0,
+  const VEC &po_e0,
+  const VEC &po_s1,
+  const VEC &po_e1) {
+  using SCALAR = typename VEC::Scalar;
   {
-    const double min0x = (po_s0.p[0] < po_e0.p[0]) ? po_s0.p[0] : po_e0.p[0];
-    const double max0x = (po_s0.p[0] > po_e0.p[0]) ? po_s0.p[0] : po_e0.p[0];
-    const double max1x = (po_s1.p[0] > po_e1.p[0]) ? po_s1.p[0] : po_e1.p[0];
-    const double min1x = (po_s1.p[0] < po_e1.p[0]) ? po_s1.p[0] : po_e1.p[0];
-    const double min0y = (po_s0.p[1] < po_e0.p[1]) ? po_s0.p[1] : po_e0.p[1];
-    const double max0y = (po_s0.p[1] > po_e0.p[1]) ? po_s0.p[1] : po_e0.p[1];
-    const double max1y = (po_s1.p[1] > po_e1.p[1]) ? po_s1.p[1] : po_e1.p[1];
-    const double min1y = (po_s1.p[1] < po_e1.p[1]) ? po_s1.p[1] : po_e1.p[1];
-    const double len = ((max0x - min0x) + (max0y - min0y) + (max1x - min1x) + (max1y - min1y)) * 0.0001;
+    const SCALAR min0x = (po_s0.p[0] < po_e0.p[0]) ? po_s0.p[0] : po_e0.p[0];
+    const SCALAR max0x = (po_s0.p[0] > po_e0.p[0]) ? po_s0.p[0] : po_e0.p[0];
+    const SCALAR max1x = (po_s1.p[0] > po_e1.p[0]) ? po_s1.p[0] : po_e1.p[0];
+    const SCALAR min1x = (po_s1.p[0] < po_e1.p[0]) ? po_s1.p[0] : po_e1.p[0];
+    const SCALAR min0y = (po_s0.p[1] < po_e0.p[1]) ? po_s0.p[1] : po_e0.p[1];
+    const SCALAR max0y = (po_s0.p[1] > po_e0.p[1]) ? po_s0.p[1] : po_e0.p[1];
+    const SCALAR max1y = (po_s1.p[1] > po_e1.p[1]) ? po_s1.p[1] : po_e1.p[1];
+    const SCALAR min1y = (po_s1.p[1] < po_e1.p[1]) ? po_s1.p[1] : po_e1.p[1];
+    const SCALAR len = ((max0x - min0x) + (max0y - min0y) + (max1x - min1x) + (max1y - min1y)) * 0.0001;
     //    std::cout << len << std::endl;
     if (max1x + len < min0x) return false;
     if (max0x + len < min1x) return false;
     if (max1y + len < min0y) return false;
     if (max0y + len < min1y) return false;
   }
-  const double area1 = Area_Tri(po_s0, po_e0, po_s1);
-  const double area2 = Area_Tri(po_s0, po_e0, po_e1);
-  const double area3 = Area_Tri(po_s1, po_e1, po_s0);
-  const double area4 = Area_Tri(po_s1, po_e1, po_e0);
+  const SCALAR area1 = Area_Tri2(po_s0, po_e0, po_s1);
+  const SCALAR area2 = Area_Tri2(po_s0, po_e0, po_e1);
+  const SCALAR area3 = Area_Tri2(po_s1, po_e1, po_s0);
+  const SCALAR area4 = Area_Tri2(po_s1, po_e1, po_e0);
   //  std::cout << area1 << " " << area2 << " " << area3 << " " << area4 << std::endl;
   const double a12 = area1 * area2;
   if (a12 > 0) return false;
@@ -161,6 +162,18 @@ bool delfem2::IsCross_LineSeg_LineSeg(
   if (a34 > 0) return false;
   return true;
 }
+#ifdef DFM2_STATIC_LIBRARY
+template bool delfem2::IsIntersect_Edge2_Edge2(
+  const delfem2::CVec2d &po_s0,
+  const delfem2::CVec2d &po_e0,
+  const delfem2::CVec2d &po_s1,
+  const delfem2::CVec2d &po_e1);
+template bool delfem2::IsIntersect_Edge2_Edge2(
+  const delfem2::CVec2f &po_s0,
+  const delfem2::CVec2f &po_e0,
+  const delfem2::CVec2f &po_s1,
+  const delfem2::CVec2f &po_e1);
+#endif
 
 template<typename T>
 double delfem2::Distance_Edge2_Edge2(
@@ -179,6 +192,90 @@ double delfem2::Distance_Edge2_Edge2(
   min_dist = (de0 < min_dist) ? de0 : min_dist;
   return min_dist;
 }
+
+template<typename VEC>
+bool IsIntersect_AABB2_Edge2(
+  const VEC &pmin,
+  const VEC &pmax,
+  const VEC &p0,
+  const VEC &p1) {
+  typedef typename VEC::Scalar SCALAR;
+
+  assert(pmin[0]<=pmax[0]);
+  assert(pmin[1]<=pmax[1]);
+
+  {
+    SCALAR xmin, xmax;
+    // x axis
+    if (p0[0] > p1[0]) {
+      xmax = p0[0];
+      xmin = p1[0];
+    } else {
+      xmax = p1[0];
+      xmin = p0[0];
+    }
+    if (xmin > pmax[0]) { return false; }
+    if (xmax < pmin[0]) { return false; }
+  }
+
+  { // y axis
+    SCALAR ymin, ymax;
+    if (p0[1] > p1[1]) {
+      ymax = p0[1];
+      ymin = p1[1];
+    } else {
+      ymax = p1[1];
+      ymin = p0[1];
+    }
+    if (ymin > pmax[1]) { return false; }
+    if (ymax < pmin[1]) { return false; }
+  }
+
+  // normal axis
+  const VEC direction = p1 - p0;
+  const VEC normal = {direction[1], -direction[0]};
+
+  bool positive = false, negative = false;
+  if (normal.dot(pmin - p0) > 0) {
+    positive = true;
+  } else {
+    negative = true;
+  }
+
+  if (normal.dot(pmax - p0) > 0) {
+    positive = true;
+  } else {
+    negative = true;
+  }
+
+  if (normal.dot(VEC(pmin[0], pmax[1]) - p0) > 0) {
+    positive = true;
+  } else {
+    negative = true;
+  }
+
+  if (normal.dot(VEC(pmax[0], pmin[1]) - p0) > 0) {
+    positive = true;
+  } else {
+    negative = true;
+  }
+
+  if (positive && negative) { return true; }
+
+  return false;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template bool IsIntersect_AABB2_Edge2(
+  const delfem2::CVec2d &pmin,
+  const delfem2::CVec2d &pmax,
+  const delfem2::CVec2d &p0,
+  const delfem2::CVec2d &p1);
+template bool IsIntersect_AABB2_Edge2(
+  const delfem2::CVec2f &pmin,
+  const delfem2::CVec2f &pmax,
+  const delfem2::CVec2f &p0,
+  const delfem2::CVec2f &p1);
+#endif
 
 
 // above: 2D

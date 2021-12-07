@@ -75,7 +75,7 @@ TEST(ls,test1)
   std::vector<int> aBCFlag;
   MakeMesh(
       aXY1,aTri1,aBCFlag,
-      0.015, 2);
+      0.08, 2);
   const unsigned int np = aXY1.size()/2;
   const unsigned int nDoF = np*2;
   const std::vector<double> aVal(nDoF,0);

@@ -60,12 +60,12 @@ typename VEC::Scalar Distance_Edge_Point(
 // --------------------------
 // 2D
 
-template<typename T>
-bool IsCross_LineSeg_LineSeg(
-  const CVec2<T> &po_s0,
-  const CVec2<T> &po_e0,
-  const CVec2<T> &po_s1,
-  const CVec2<T> &po_e1);
+template<typename VEC>
+bool IsIntersect_Edge2_Edge2(
+  const VEC &po_s0,
+  const VEC &po_e0,
+  const VEC &po_s1,
+  const VEC &po_e1);
 
 template<typename T>
 double Distance_Edge2_Edge2(
@@ -73,6 +73,21 @@ double Distance_Edge2_Edge2(
   const CVec2<T> &po_e0,
   const CVec2<T> &po_s1,
   const CVec2<T> &po_e1);
+
+/**
+ * @tparam VEC Eigen::Vector2X, delfem2::CVec2
+ * @param pmin position of the left bottom corner of axis-aligned bounding box
+ * @param pmax position of the right top corner of axis-aligned bounding box
+ * @param p0 end point of edge
+ * @param p1 end point of edge
+ * @return if the edge intersect with AABB
+ */
+template <typename VEC>
+bool IsIntersect_AABB2_Edge2(
+  const VEC &pmin,
+  const VEC &pmax,
+  const VEC &p0,
+  const VEC &p1);
 
 // above: 2D
 // ---------------------------

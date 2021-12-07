@@ -66,15 +66,15 @@ class CCad2D_EdgeGeo {
         pos1.y - p1.y };
   }
 
-  std::vector<double> GenMesh(unsigned int ndiv) const;
+  [[nodiscard]] std::vector<double> GenMesh(unsigned int ndiv) const;
 
-  double Distance(double x, double y) const;
+  [[nodiscard]] double Distance(double x, double y) const;
 
-  double ArcLength() const;
+  [[nodiscard]] double ArcLength() const;
 
-  double AreaEnclosingOrigin() const;
+  [[nodiscard]] double AreaEnclosingOrigin() const;
 
-  CBoundingBox2<double> BB() const {
+  [[nodiscard]] CBoundingBox2<double> BB() const {
     CBoundingBox2<double> bb;
     bb.Add(p0.x, p0.y);
     bb.Add(p1.x, p1.y);
@@ -83,16 +83,16 @@ class CCad2D_EdgeGeo {
   }
 
   void Transform(double A[4]){
-    this->MatVec2(p0.x,p0.y, A, p0.x, p0.y);
-    this->MatVec2(p1.x,p1.y, A, p1.x, p1.y);
+    delfem2::CCad2D_EdgeGeo::MatVec2(p0.x,p0.y, A, p0.x, p0.y);
+    delfem2::CCad2D_EdgeGeo::MatVec2(p1.x,p1.y, A, p1.x, p1.y);
     if( type_edge == CCad2D_EdgeGeo::BEZIER_CUBIC ){
       assert( param.size() == 4);
-      this->MatVec2(param[0],param[1],A,param[0],param[1]);
-      this->MatVec2(param[2],param[3],A, param[2],param[3]);
+      delfem2::CCad2D_EdgeGeo::MatVec2(param[0],param[1],A,param[0],param[1]);
+      delfem2::CCad2D_EdgeGeo::MatVec2(param[2],param[3],A, param[2],param[3]);
     }
     if( type_edge == CCad2D_EdgeGeo::BEZIER_QUADRATIC ){
       assert( param.size() == 2);
-      this->MatVec2(param[0],param[1],A,param[0],param[1]);
+      delfem2::CCad2D_EdgeGeo::MatVec2(param[0],param[1],A,param[0],param[1]);
     }
   }
 
@@ -101,7 +101,7 @@ class CCad2D_EdgeGeo {
   EDGE_TYPE type_edge; // 0: line, 1:Cubic Bezier 2: Quadratic Bezier
   std::vector<double> param;
  private:
-  void MatVec2(double& x1, double& y1,
+  static void MatVec2(double& x1, double& y1,
                const double A[4],
                double x0, double y0){
     x1 = A[0]*x0 + A[1]*y0;
@@ -137,15 +137,15 @@ class CCad2D {
   }
   // --------------------
   // const method here
-  std::vector<double> MinMaxXYZ() const;
+  [[nodiscard]] std::vector<double> MinMaxXYZ() const;
 
-  CBoundingBox2<double> BB() const;
+  [[nodiscard]] CBoundingBox2<double> BB() const;
 
-  bool Check() const;
+  [[nodiscard]] bool Check() const;
 
-  size_t nVtx() const { return aVtx.size(); }
+  [[nodiscard]] size_t nVtx() const { return aVtx.size(); }
 
-  size_t nEdge() const { return aEdge.size(); }
+  [[nodiscard]] size_t nEdge() const { return aEdge.size(); }
 
   // ----------------------------------
   // geometric operations from here
@@ -164,8 +164,8 @@ class CCad2D {
 
   void CopyVertexPositionsToEdges(){
     for(size_t ie=0;ie<topo.edges.size();++ie) {
-      const int iv0 = topo.edges[ie].iv0;
-      const int iv1 = topo.edges[ie].iv1;
+      const unsigned int iv0 = topo.edges[ie].iv0;
+      const unsigned int iv1 = topo.edges[ie].iv1;
       aEdge[ie].p0 = aVtx[iv0].pos;
       aEdge[ie].p1 = aVtx[iv1].pos;
     }

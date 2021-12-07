@@ -13,8 +13,6 @@
 #include <vector>
 #include <algorithm>
 
-#include "delfem2/dfm2_inline.h"
-
 namespace delfem2::geo_bezier_quadratic {
 
 constexpr static unsigned int NIntLineGauss[4] = {
