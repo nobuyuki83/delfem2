@@ -11,10 +11,10 @@
 namespace delfem2 {
 
 /**
- *
+ * Evaluate polynomial at x
  * @tparam n degree + 1
  * @param x
- * @param a  f(x)=a[0]+a[1]*x^1+a[2]*a^2 ...
+ * @param a  coefficient of polynomial f(x)=a[0]+a[1]*x^1+a[2]*a^2 ...
  * @return f(x)
  */
 inline double Eval_Polynomial(double x, const double *a, int n) {
@@ -135,6 +135,42 @@ std::vector<REAL> RootsInRange_QuadraticPolynomial(
     res.push_back(cand);
   }
   return res;
+}
+
+/**
+ *
+ * @param range_left  lower bound of range
+ * @param range_right  upper bound of range
+ * @param a coefficient of polynomial
+ * @param ndegree_plus1 degree of polynomial plus 1
+ * @param num_iteration  number of iteration
+ * @return
+ */
+double RootInInterval_Bisection(
+  double range_left,
+  double range_right,
+  const double *a,
+  int ndegree_plus1,
+  int num_iteration) {
+  double x0 = range_left;
+  double x1 = range_right;
+  double fx0 = Eval_Polynomial(x0, a, ndegree_plus1);
+  double fx1 = Eval_Polynomial(x1, a, ndegree_plus1);
+  assert(fx0 * fx1 < 0);
+  for (int i = 0; i < num_iteration; i++) {
+    const double x2 = (x0 + x1) / 2; // bisection method
+    const double fx2 = Eval_Polynomial(x2, a, ndegree_plus1);
+    if (fx1 * fx2 < 0) {
+      x0 = x1;
+      x1 = x2;
+      fx0 = fx1;
+      fx1 = fx2;
+    } else {
+      x1 = x2;
+      fx1 = fx2;
+    }
+  }
+  return (x0 * fx1 - x1 * fx0) / (fx1 - fx0); // secant method
 }
 
 }

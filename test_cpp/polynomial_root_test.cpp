@@ -6,6 +6,7 @@
 
 #include <random>
 #include <vector>
+#include <array>
 
 #include "delfem2/polynomial_root.h"
 
@@ -59,6 +60,18 @@ TEST(polynomial_root, cubic_3roots) {
         double v0 = delfem2::Eval_Polynomial(intvl.first, coeff.data(), 4);
         double v1 = delfem2::Eval_Polynomial(intvl.second, coeff.data(), 4);
         EXPECT_LT(v0 * v1, 0.);
+        double y0 = delfem2::RootInInterval_Bisection(
+          intvl.first, intvl.second,
+          coeff.data(), coeff.size(), 15);
+        if( b0 ){
+          EXPECT_NEAR(y0,x0,1.0e-4);
+        }
+        else if (b1) {
+          EXPECT_NEAR(y0,x1,1.0e-4);
+        }
+        else{
+          EXPECT_NEAR(y0,x2,1.0e-4);
+        }
       }
     }
   }
@@ -86,15 +99,24 @@ TEST(polynomial_root, quad_2roots) {
       std::vector<std::pair<double, double>> intvls = delfem2::RootInterval_StrumSequence<3>(0, 1, strum);
       EXPECT_EQ(intvls.size(), nroot1);
       for (auto intvl: intvls) {
-        bool b0 = (intvl.first - x0) * (intvl.second - x0) < 0;
-        bool b1 = (intvl.first - x1) * (intvl.second - x1) < 0;
+        const bool b0 = (intvl.first - x0) * (intvl.second - x0) < 0;
+        const bool b1 = (intvl.first - x1) * (intvl.second - x1) < 0;
         EXPECT_TRUE(b0 || b1);
         int nr = delfem2::StrumNumber<3>(intvl.first, strum) - delfem2::StrumNumber<3>(intvl.second, strum);
         EXPECT_EQ(nr, 1);
         auto coeff = std::array<double, 3>{c, b, a};
-        double v0 = delfem2::Eval_Polynomial(intvl.first, coeff.data(), 3);
-        double v1 = delfem2::Eval_Polynomial(intvl.second, coeff.data(), 3);
+        const double v0 = delfem2::Eval_Polynomial(intvl.first, coeff.data(), 3);
+        const double v1 = delfem2::Eval_Polynomial(intvl.second, coeff.data(), 3);
         EXPECT_LT(v0 * v1, 0.);
+        const double y0 = delfem2::RootInInterval_Bisection(
+          intvl.first, intvl.second,
+          coeff.data(), coeff.size(), 15);
+        if( b0 ){
+          EXPECT_NEAR(y0,x0,1.0e-4);
+        }
+        else{
+          EXPECT_NEAR(y0,x1,1.0e-4);
+        }
       }
     }
   }
