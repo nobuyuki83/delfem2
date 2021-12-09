@@ -118,6 +118,42 @@ VEC Sample_QuadraticBsplineCurve(
   return poly[i] * w0 + poly[i - 1] * (w1 + w2) + poly[i - 2] * w3;
 }
 
+template <typename VEC, int norderplus1>
+VEC Sample_BsplineCurve(
+  double t,
+  const std::vector<VEC> &poly)
+{
+  const auto safe_divide = [](double a, int b) {
+    return (b == 0) ? 0. : a / static_cast<double>(b);
+  };
+
+  const int N = poly.size() + 1 - norderplus1; // N=max{knot vector}
+  t = static_cast<double>(N) * t;
+
+  const int index = static_cast<int>(t) + (t == N ? -1 : 0);
+
+  int knot[norderplus1 * 2];
+  for (int i = 0; i < norderplus1 * 2; i++) {
+    knot[i] = std::clamp<int>(index + i - (norderplus1-1), 0, N);
+  }
+
+  double weight[norderplus1 + 1];
+  for (int i = 0; i <= norderplus1; i++) { weight[i] = 0.; }
+  weight[norderplus1 - 1] = 1.;
+
+  for (int i = 2; i <= norderplus1; i++){
+    for (int j = 0; j < norderplus1; j++)
+      weight[j] = safe_divide(t - knot[j], knot[j + i - 1] - knot[j]) * weight[j] +
+        safe_divide(knot[j + i] - t, knot[j + i] - knot[j + 1]) * weight[j + 1];
+  }
+
+  VEC p(0, 0);
+  for (int i = 0; i < norderplus1; i++) {
+    p += poly[index + i] * weight[i];
+  }
+  return p;
+}
+
 }
 
 #endif /* DFM2_CURVE_BSPLINE_H */
