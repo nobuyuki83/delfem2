@@ -9,8 +9,6 @@
 #include "delfem2/geo_bezier_cubic.h"
 #include "delfem2/geo_polyline2.h"
 
-
-
 TEST(bezier_cubic, test0) {
   namespace dfm2 = delfem2;
   std::mt19937 rndeng(std::random_device{}());
