@@ -46,10 +46,39 @@ TEST(bspline, quadratic) {
     const dfm2::CVec2d p1 = dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng));
     const dfm2::CVec2d p2 = dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng));
     const dfm2::CVec2d p3 = dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng));
-    const auto p0a = delfem2::Sample_QuadraticBsplineCurve<dfm2::CVec2d>(0, {p0, p1, p2,p3});
-    assert((p0a - p0).norm() < 1.0e-10);
-    const auto p3a = delfem2::Sample_QuadraticBsplineCurve<dfm2::CVec2d>(1, {p0, p1, p2,p3});
-    assert((p3a - p3).norm() < 1.0e-10);
+    {
+      const auto p0a = delfem2::Sample_QuadraticBsplineCurve<dfm2::CVec2d>(0, {p0, p1, p2, p3});
+      assert((p0a - p0).norm() < 1.0e-10);
+      const auto p3a = delfem2::Sample_QuadraticBsplineCurve<dfm2::CVec2d>(1, {p0, p1, p2, p3});
+      assert((p3a - p3).norm() < 1.0e-10);
+    }
+    double t0 = dist_01(rndeng)*0.8 + 0.1;
+    {
+      const auto p0a = delfem2::Sample_BsplineCurve<dfm2::CVec2d,3>(t0, {p0, p1, p2, p3});
+      const auto p0b = delfem2::Sample_QuadraticBsplineCurve<dfm2::CVec2d>(t0, {p0, p1, p2, p3});
+      EXPECT_LT( (p0a-p0b).norm(), 1.0e-10 );
+    }
+    double eps = 1.0e-5;
+    {
+      double eps = 1.0e-5;
+      const auto p0a = delfem2::Sample_BsplineCurve<dfm2::CVec2d,3>(0, {p0, p1, p2, p3});
+      const auto p0b = delfem2::Sample_BsplineCurve<dfm2::CVec2d,3>(0+eps, {p0, p1, p2, p3});
+      const auto t = delfem2::Sample_BsplineDerivative<dfm2::CVec2d,3>(0,{p0, p1, p2, p3});
+      EXPECT_LT( ((p0b-p0a)/eps-t).norm(), 1.0e-4 );
+    }
+    {
+      double eps = 1.0e-5;
+      const auto p0a = delfem2::Sample_BsplineCurve<dfm2::CVec2d,3>(1.-eps, {p0, p1, p2, p3});
+      const auto p0b = delfem2::Sample_BsplineCurve<dfm2::CVec2d,3>(1, {p0, p1, p2, p3});
+      const auto t = delfem2::Sample_BsplineDerivative<dfm2::CVec2d,3>(1,{p0, p1, p2, p3});
+      EXPECT_LT( ((p0b-p0a)/eps-t).norm(), 1.0e-4 );
+    }
+    {
+      const auto p0a = delfem2::Sample_BsplineCurve<dfm2::CVec2d,3>(t0-eps, {p0, p1, p2, p3});
+      const auto p0b = delfem2::Sample_BsplineCurve<dfm2::CVec2d,3>(t0, {p0, p1, p2, p3});
+      const auto t = delfem2::Sample_BsplineDerivative<dfm2::CVec2d,3>(t0,{p0, p1, p2, p3});
+      EXPECT_LT( ((p0b-p0a)/eps-t).norm(), 1.0e-4 );
+    }
   }
 }
 
@@ -76,6 +105,28 @@ TEST(bspline, cubic) {
       const dfm2::CVec2d pt = delfem2::PointOnCubicBezierCurve(t, p0, p1, p2, p3);
       const auto ptb = delfem2::Sample_BsplineCurve<dfm2::CVec2d,4>(t, {p0, p1, p2, p3});
       EXPECT_LT( (pt-ptb).norm(), 1.0e-10 );
+    }
+    {
+      double eps = 1.0e-5;
+      const auto p0a = delfem2::Sample_BsplineCurve<dfm2::CVec2d,4>(0, {p0, p1, p2, p3});
+      const auto p0b = delfem2::Sample_BsplineCurve<dfm2::CVec2d,4>(0+eps, {p0, p1, p2, p3});
+      const auto t = delfem2::Sample_BsplineDerivative<dfm2::CVec2d,4>(0,{p0, p1, p2, p3});
+      EXPECT_LT( ((p0b-p0a)/eps-t).norm(), 1.0e-4 );
+    }
+    {
+      double eps = 1.0e-5;
+      const auto p0a = delfem2::Sample_BsplineCurve<dfm2::CVec2d,4>(1.-eps, {p0, p1, p2, p3});
+      const auto p0b = delfem2::Sample_BsplineCurve<dfm2::CVec2d,4>(1, {p0, p1, p2, p3});
+      const auto t = delfem2::Sample_BsplineDerivative<dfm2::CVec2d,4>(1,{p0, p1, p2, p3});
+      EXPECT_LT( ((p0b-p0a)/eps-t).norm(), 1.0e-4 );
+    }
+    {
+      double t0 = dist_01(rndeng)*0.8 + 0.1;
+      double eps = 1.0e-5;
+      const auto p0a = delfem2::Sample_BsplineCurve<dfm2::CVec2d,4>(t0-eps, {p0, p1, p2, p3});
+      const auto p0b = delfem2::Sample_BsplineCurve<dfm2::CVec2d,4>(t0, {p0, p1, p2, p3});
+      const auto t = delfem2::Sample_BsplineDerivative<dfm2::CVec2d,4>(t0,{p0, p1, p2, p3});
+      EXPECT_LT( ((p0b-p0a)/eps-t).norm(), 1.0e-4 );
     }
   }
 }

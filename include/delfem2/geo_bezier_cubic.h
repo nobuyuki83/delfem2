@@ -13,53 +13,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace delfem2::geo_bezier_cubic {
-
-
-constexpr static unsigned int NIntLineGauss[6] = {
-  1, 2, 3, 4, 5, 6
-};
-
-// https://pomax.github.io/bezierinfo/legendre-gauss.html
-template<typename T>
-constexpr static T LineGauss[6][6][2] =
-  {
-    { // 0
-      {0.0, 2.0},
-    },
-    { // 1
-      {-0.577350269189626, 1.0},
-      {0.577350269189626, 1.0},
-    },
-    {  // 2
-      {-0.774596669241483, 0.555555555555556},
-      {0.0, 0.888888888888889},
-      {0.774596669241483, 0.555555555555556},
-    },
-    {  // 3
-      {-0.861136311594053, 0.347854845137454},
-      {-0.339981043584856, 0.652145154862546},
-      {0.339981043584856, 0.652145154862546},
-      {0.861136311594053, 0.347854845137454},
-    },
-    {  // 4
-      {0.0000000000000000, 0.5688888888888889},
-      {-0.5384693101056831, 0.4786286704993665},
-      {0.5384693101056831, 0.4786286704993665},
-      {-0.9061798459386640, 0.2369268850561891},
-      {0.9061798459386640, 0.2369268850561891},
-    },
-    {  // 5
-      {0.6612093864662645, 0.3607615730481386},
-      {-0.6612093864662645, 0.3607615730481386},
-      {-0.2386191860831969, 0.4679139345726910},
-      {0.2386191860831969, 0.4679139345726910},
-      {-0.9324695142031521, 0.1713244923791704},
-      {0.9324695142031521, 0.1713244923791704}
-    }
-  };
-
-} // delfem2::pgeo
+#include "quadrature.h"
 
 namespace delfem2 {
 
@@ -159,13 +113,12 @@ typename VEC::Scalar Length_CubicBezierCurve_Quadrature(
   const VEC &p3,  // another end point
   int gauss_order)  // order of Gaussian quadrature to use
 {
-  namespace lcl = ::delfem2::geo_bezier_cubic;
   assert(gauss_order < 6);
   using SCALAR = typename VEC::Scalar;
   SCALAR totalLength = 0;
-  for (unsigned int i = 0; i < lcl::NIntLineGauss[gauss_order]; i++) {
-    double t = (lcl::LineGauss<double>[gauss_order][i][0] + 1) / 2;
-    double w = lcl::LineGauss<double>[gauss_order][i][1];
+  for (unsigned int i = 0; i < NIntLineGauss[gauss_order]; i++) {
+    double t = (LineGauss<double>[gauss_order][i][0] + 1) / 2;
+    double w = LineGauss<double>[gauss_order][i][1];
     const VEC dt = 3 * (1 - t) * (1 - t) * (p1 - p0)
       + 6 * (1 - t) * t * (p2 - p1)
       + 3 * t * t * (p3 - p2);
@@ -314,6 +267,87 @@ std::array<VEC,8> Split_CubicBezierCurve(
     res[5] = mix(p11, res[6]); // p12
     res[3] = res[4] = mix(res[2], res[5]); // p03
     return res;
+}
+
+template <typename VEC, unsigned gauss_order>
+double Length_CubicBezierCurve_QuadratureSubdivision(
+  const VEC &p0,  // end point
+  const VEC &p1,  // the control point next tp p0
+  const VEC &p2,  // the control point next to p1
+  const VEC &p3,  // another end point
+  double tolerance = 1E-8,
+  int maxDepth = 8)
+{
+  using SCALAR = typename VEC::Scalar;
+
+  // derivative of cubic Bezier
+  auto cubicBezierdt = [&](SCALAR t) {
+    return 3 * (1 - t) * (1 - t) * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * t * t * (p3 - p2);
+  };
+
+  constexpr auto gdw = gauss_detail<SCALAR, gauss_order>::weights();
+  constexpr auto gda = gauss_detail<SCALAR, gauss_order>::abscissa();
+  constexpr auto krw = gauss_kronrod_detail<SCALAR, gauss_order * 2 + 1>::weights();
+  constexpr auto kra = gauss_kronrod_detail<SCALAR, gauss_order * 2 + 1>::abscissa();
+
+  // integrate using gaussian and gauss-kronrod quadrature at the same time
+  SCALAR length_gauss = 0;
+  SCALAR length_gauss_kronrod = 0;
+
+  { // 0
+    const SCALAR nodeValue = cubicBezierdt(0.5).norm();
+    length_gauss += nodeValue * gdw[0];
+    length_gauss_kronrod += nodeValue * krw[0];
+  }
+
+  // shared terms
+  for(int gauss_node = 1; gauss_node < (gauss_order + 1) / 2; gauss_node++) {
+    SCALAR a0 = gda[gauss_node];
+    {
+      const SCALAR nodeValue = cubicBezierdt((1+a0)/2).norm();
+      length_gauss += nodeValue * gdw[gauss_node];
+      length_gauss_kronrod += nodeValue * krw[gauss_node * 2];
+    }
+    {
+      const SCALAR nodeValue = cubicBezierdt((1-a0)/2).norm();
+      length_gauss += nodeValue * gdw[gauss_node];
+      length_gauss_kronrod += nodeValue * krw[gauss_node * 2];
+    }
+  }
+
+  // kronrod-only terms
+  for(int kronrod_node = 1; kronrod_node <= gauss_order; kronrod_node += 2) {
+    SCALAR a0 = kra[kronrod_node];
+    {
+      const SCALAR nodeValue = cubicBezierdt((1+a0)/2).norm();
+      length_gauss_kronrod += nodeValue * krw[kronrod_node];
+    }
+    {
+      const SCALAR nodeValue = cubicBezierdt((1-a0)/2).norm();
+      length_gauss_kronrod += nodeValue * krw[kronrod_node];
+    }
+  }
+
+  length_gauss /= 2;
+  length_gauss_kronrod /= 2;
+
+  if(std::abs(length_gauss_kronrod - length_gauss) < std::abs(length_gauss_kronrod) * tolerance) {
+    return length_gauss_kronrod;
+  } else {
+    if(maxDepth == 1) {
+      std::cout << "Warning: Max depth reached, current estimated error = " << std::abs(length_gauss_kronrod - length_gauss) / std::abs(length_gauss_kronrod) << std::endl;
+      return length_gauss_kronrod;
+    } else {
+      std::array<VEC, 8> subdiv = Split_CubicBezierCurve(p0, p1, p2, p3, 0.5);
+      double len0 = Length_CubicBezierCurve_QuadratureSubdivision<VEC, gauss_order>(
+        subdiv[0], subdiv[1], subdiv[2], subdiv[3], tolerance, maxDepth - 1);
+      double len1 = Length_CubicBezierCurve_QuadratureSubdivision<VEC, gauss_order>(
+        subdiv[4], subdiv[5], subdiv[6], subdiv[7], tolerance, maxDepth - 1);
+      return len0 + len1;
+    }
+  }
+
+  return -1; // suppress compiler warning
 }
 
 

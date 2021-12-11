@@ -10,6 +10,8 @@
 #include <complex>
 #include <cassert>
 
+#include "delfem2/quadrature.h"
+
 // area of a triangle
 DFM2_INLINE double delfem2::femutil::TriArea2D(
     const double p0[],

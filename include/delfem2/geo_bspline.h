@@ -142,9 +142,11 @@ VEC Sample_BsplineCurve(
   weight[norderplus1 - 1] = 1.;
 
   for (int i = 2; i <= norderplus1; i++){
-    for (int j = 0; j < norderplus1; j++)
-      weight[j] = safe_divide(t - knot[j], knot[j + i - 1] - knot[j]) * weight[j] +
-        safe_divide(knot[j + i] - t, knot[j + i] - knot[j + 1]) * weight[j + 1];
+    for (int j = 0; j < norderplus1; j++) {
+      double w0 = safe_divide(t - knot[j], knot[j + i - 1] - knot[j]);
+      double w1 = safe_divide(knot[j + i] - t, knot[j + i] - knot[j + 1]);
+      weight[j] = w0 * weight[j] + w1 * weight[j + 1];
+    }
   }
 
   VEC p(0, 0);
@@ -153,6 +155,35 @@ VEC Sample_BsplineCurve(
   }
   return p;
 }
+
+template <typename VEC, int norderplus1>
+std::vector<VEC> BSplineDerivativeConverter(const std::vector<VEC> &poly)
+{
+  const int N = poly.size() + 1 - norderplus1;
+  const auto knot_generator = [&](int i) -> int {
+    return std::clamp(i - norderplus1 + 1, 0, N);
+  };
+
+  std::vector<VEC> Q_poly;
+  for (int i = 0; i < poly.size() - 1; i++)
+  {
+    const int i0 = knot_generator(i + norderplus1);
+    const int i1 = knot_generator(i + 1);
+    assert( i0 - i1 != 0);
+    double hoge =  N * (norderplus1 - 1) / static_cast<double>(i0 - i1);
+    Q_poly.emplace_back( hoge*(poly[i + 1] - poly[i]) );
+  }
+  return Q_poly;
+}
+
+template <typename VEC, int norderplus1> VEC Sample_BsplineDerivative(
+  double t, const std::vector<VEC> &poly)
+{
+  std::vector<VEC> Q_poly = BSplineDerivativeConverter<VEC, norderplus1>(poly);
+  return Sample_BsplineCurve<VEC, norderplus1 - 1>(t, Q_poly);
+}
+
+
 
 }
 

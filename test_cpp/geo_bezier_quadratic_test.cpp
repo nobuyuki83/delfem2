@@ -2,7 +2,6 @@
 // Created by Nobuyuki Umetani on 2021/12/01.
 //
 
-#include <string>
 #include <random>
 
 #include "gtest/gtest.h"
@@ -21,15 +20,18 @@ TEST(bezier_quadratic, test0) {
     p1 = dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng));
     p2 = dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng));
     std::vector<dfm2::CVec2d> polyline;
-    dfm2::Polyline_BezierQuadratic(polyline, 100, p0, p1, p2);
+    dfm2::Polyline_BezierQuadratic(polyline, 1000, p0, p1, p2);
     {  // length
       double v1 = dfm2::Length_QuadraticBezierCurve_Analytic<dfm2::CVec2d>(
         p0, p1, p2);
       double v0 = dfm2::Length_Polyline<dfm2::CVec2d>(polyline);
       double v2 = dfm2::Length_QuadraticBezierCurve_Quadrature<dfm2::CVec2d>(
         p0,p1,p2,3);
+      double v3 = dfm2::Length_QuadraticBezierCurve_QuadratureSubdiv<dfm2::CVec2d,11>(
+        p0,p1,p2,1.0e-7,12);
       EXPECT_NEAR(v1,v0,2.0e-4);
       EXPECT_NEAR(v1,v2,0.2);
+      EXPECT_NEAR(v1,v3,1.0e-3);
     }
     {  // area
       double a0 = dfm2::Area_QuadraticBezierCurve2(p0, p1, p2);
