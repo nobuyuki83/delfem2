@@ -1,8 +1,11 @@
 
 
-#include "delfem2/femutil.h"
 #include "delfem2/femsolidhyper.h"
+
 #include <cmath>
+
+#include "delfem2/femutil.h"
+#include "delfem2/quadrature.h"
 
 void MakeStressConstitute_Hyper2D(
     const double c1,

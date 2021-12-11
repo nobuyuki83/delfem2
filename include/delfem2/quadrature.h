@@ -5,6 +5,8 @@
 #ifndef DFM2_QUADRATURE_H_
 #define DFM2_QUADRATURE_H_
 
+#include <array>
+
 namespace delfem2 {
 
 constexpr static unsigned int NIntLineGauss[6] = {
