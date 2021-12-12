@@ -7,6 +7,8 @@
 
 #include "delfem2/fempoisson.h"
 
+#include "delfem2/quadrature.h"
+
 // --------------------------------------------------------
 // below tri
 

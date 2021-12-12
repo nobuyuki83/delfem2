@@ -13,36 +13,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace delfem2::geo_bezier_quadratic {
-
-constexpr static unsigned int NIntLineGauss[4] = {
-  1, 2, 3, 4
-};
-
-template<typename T>
-constexpr static T LineGauss[4][4][2] =
-  {
-    {
-      {0.0, 2.0},
-    },
-    {
-      {-0.577350269189626, 1.0},
-      {0.577350269189626, 1.0},
-    },
-    {
-      {-0.774596669241483, 0.555555555555556},
-      {0.0, 0.888888888888889},
-      {0.774596669241483, 0.555555555555556},
-    },
-    {
-      {-0.861136311594053, 0.347854845137454},
-      {-0.339981043584856, 0.652145154862546},
-      {0.339981043584856, 0.652145154862546},
-      {0.861136311594053, 0.347854845137454},
-    }
-  };
-
-} // delfem2::pgeo
+#include "quadrature.h"
 
 namespace delfem2 {
 
@@ -63,13 +34,12 @@ double Length_QuadraticBezierCurve_Quadrature(
   const VEC &p2,  // another end point
   int gauss_order) // order of Gaussian quadrature to use
 {
-  namespace lcl = ::delfem2::geo_bezier_quadratic;
   using SCALAR = typename VEC::Scalar;
   assert(gauss_order < 4);
   SCALAR totalLength = 0;
-  for (unsigned int i = 0; i < lcl::NIntLineGauss[gauss_order]; i++) {
-    const SCALAR t = (lcl::LineGauss<SCALAR>[gauss_order][i][0] + 1) / 2;
-    const SCALAR w = lcl::LineGauss<SCALAR>[gauss_order][i][1];
+  for (unsigned int i = 0; i < NIntLineGauss[gauss_order]; i++) {
+    const SCALAR t = (LineGauss<SCALAR>[gauss_order][i][0] + 1) / 2;
+    const SCALAR w = LineGauss<SCALAR>[gauss_order][i][1];
     const VEC dt = 2 * (1 - t) * (p1 - p0) + 2 * t * (p2 - p1);
     totalLength += dt.norm() * w;
   }
@@ -214,6 +184,87 @@ std::array<VEC, 6> Split_QuadraticBezierCurve(
   res[2] = res[3] = mix(res[1], res[4]); // p02
   res[5] = p2;
   return res;
+}
+
+// =====================
+
+
+template <typename VEC, unsigned gauss_order>
+typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
+  const VEC &p0,  // end point
+  const VEC &p1,  // the control point next tp p0
+  const VEC &p2,  // another end point
+  double tolerance = 1E-8,
+  int maxDepth = 8)
+{
+  using SCALAR = typename VEC::Scalar;
+
+  // derivative of cubic Bezier
+  auto quadraticBezierdt = [&](SCALAR t) {
+    return 2 * (1 - t) * (p1 - p0) + 2 * t * (p2 - p1);
+  };
+
+  constexpr auto gdw = gauss_detail<double, gauss_order>::weights();
+  constexpr auto gda = gauss_detail<double, gauss_order>::abscissa();
+  constexpr auto krw = gauss_kronrod_detail<double, gauss_order * 2 + 1>::weights();
+  constexpr auto kra = gauss_kronrod_detail<double, gauss_order * 2 + 1>::abscissa();
+
+  // integrate using gaussian and gauss-kronrod quadrature at the same time
+  SCALAR length_gauss = 0;
+  SCALAR length_gauss_kronrod = 0;
+
+  { // 0
+    SCALAR nodeValue = quadraticBezierdt(0.5).norm();
+    length_gauss += nodeValue * gdw[0];
+    length_gauss_kronrod += nodeValue * krw[0];
+  }
+  for(int gauss_node = 1; gauss_node < (gauss_order + 1) / 2; gauss_node++) {
+    SCALAR a0 = gda[gauss_node];
+    {
+      SCALAR nodeValue = quadraticBezierdt((1+a0)/2).norm();
+      length_gauss += nodeValue * gdw[gauss_node];
+      length_gauss_kronrod += nodeValue * krw[gauss_node * 2];
+    }
+    {
+      SCALAR nodeValue = quadraticBezierdt((1-a0)/2).norm();
+      length_gauss += nodeValue * gdw[gauss_node];
+      length_gauss_kronrod += nodeValue * krw[gauss_node * 2];
+    }
+  }
+
+  // kronrod-only terms
+  for(int kronrod_node = 1; kronrod_node <= gauss_order; kronrod_node += 2) {
+    double a0 = kra[kronrod_node];
+    {
+      const SCALAR nodeValue = quadraticBezierdt((1+a0)/2).norm();
+      length_gauss_kronrod += nodeValue * krw[kronrod_node];
+    }
+    {
+      const SCALAR nodeValue = quadraticBezierdt((1-a0)/2).norm();
+      length_gauss_kronrod += nodeValue * krw[kronrod_node];
+    }
+  }
+
+  length_gauss /= 2;
+  length_gauss_kronrod /= 2;
+
+  if(std::abs(length_gauss_kronrod - length_gauss) < std::abs(length_gauss_kronrod) * tolerance) {
+    return length_gauss_kronrod;
+  } else {
+    if(maxDepth == 1) {
+      // std::cout << "Warning: Max depth reached, current estimated error = " << std::abs(length_gauss_kronrod - length_gauss) / std::abs(length_gauss_kronrod) << std::endl;
+      return length_gauss_kronrod;
+    } else { // split
+      std::array<VEC, 6> subdiv = Split_QuadraticBezierCurve(p0, p1, p2, 0.5);
+      const SCALAR len0 = Length_QuadraticBezierCurve_QuadratureSubdiv<VEC, gauss_order>(
+        subdiv[0], subdiv[1], subdiv[2], tolerance, maxDepth - 1);
+      const SCALAR len1 = Length_QuadraticBezierCurve_QuadratureSubdiv<VEC, gauss_order>(
+        subdiv[3], subdiv[4], subdiv[5], tolerance, maxDepth - 1);
+      return len0 + len1;
+    }
+  }
+
+  return -1; // suppress compiler warning
 }
 
 }

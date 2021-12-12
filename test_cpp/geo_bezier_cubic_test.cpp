@@ -9,8 +9,6 @@
 #include "delfem2/geo_bezier_cubic.h"
 #include "delfem2/geo_polyline2.h"
 
-
-
 TEST(bezier_cubic, test0) {
   namespace dfm2 = delfem2;
   std::mt19937 rndeng(std::random_device{}());
@@ -27,6 +25,9 @@ TEST(bezier_cubic, test0) {
       double v0 = dfm2::Length_Polyline<dfm2::CVec2d>(polyline);
       double v2 = dfm2::Length_CubicBezierCurve_Quadrature<dfm2::CVec2d>(p0, p1, p2, p3, 5);
       EXPECT_NEAR(v0, v2, 0.07);
+      double v3 = dfm2::Length_CubicBezierCurve_QuadratureSubdivision<dfm2::CVec2d,11>(
+        p0, p1, p2, p3, 1.0e-3, 12);
+      EXPECT_NEAR(v0, v3, 3.e-3);
     }
     {
       double a0 = dfm2::Area_CubicBezierCurve2(p0, p1, p2, p3);
@@ -39,7 +40,7 @@ TEST(bezier_cubic, test0) {
       const dfm2::CVec2d v0 = dfm2::PositionInPolyline(polyline, i0, l0);
       const double t1 = dfm2::Nearest_CubicBezierCurve<dfm2::CVec2d>(
         scr,
-        p0, p1, p2, p3, 100, 5);
+        p0, p1, p2, p3, 100, 0);
       const dfm2::CVec2d v1 = dfm2::PointOnCubicBezierCurve(t1, p0, p1, p2, p3);
       EXPECT_LT((v0 - v1).norm(), 0.05);
     }

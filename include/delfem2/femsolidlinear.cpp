@@ -7,6 +7,8 @@
 
 #include "delfem2/femsolidlinear.h"
 
+#include "delfem2/quadrature.h"
+
 namespace delfem2 {
 namespace femsolidlinear{
 
