@@ -171,6 +171,9 @@ DFM2_INLINE void GetRotPolarDecomp(
     const double am[9],
     int nitr);
 
+// -----------------
+// below: axis angle vector
+
 template<typename T>
 DFM2_INLINE void AxisAngleVectorCartesian_Mat3(
     T v[3],
@@ -180,6 +183,12 @@ template<typename T>
 DFM2_INLINE void AxisAngleVectorCRV_Mat3(
     T crv[3],
     const T mat[9]);
+
+template<typename T>
+DFM2_INLINE void EulerAngle_Mat3(
+  T ea[3],
+  const T m[9],
+  const std::array<int, 3> &axis_idxs);
 
 // ------------------------------------------------
 // below: mat3 and vec3

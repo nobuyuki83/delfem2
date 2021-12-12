@@ -180,6 +180,43 @@ template DFM2_INLINE void delfem2::Quat_Bryant(
     double q[4], double x, double y, double z);
 #endif
 
+// ----------------
+
+template<typename T>
+void delfem2::Quaternion_EulerAngle(
+  T q[4],
+  const std::array<T, 3> &rads,
+  const std::array<int, 3> &axis_idxs){
+  for (int i = 0; i < 3; ++i) {
+    const T ar = rads[i];
+    const int ia = axis_idxs[i];
+    T v0[3] = {0, 0, 0};
+    v0[ia] = 1.0;
+    const T dq[4] = {
+      std::sin(ar / 2) * v0[0],
+      std::sin(ar / 2) * v0[1],
+      std::sin(ar / 2) * v0[2],
+      std::cos(ar / 2)
+    };
+    T qtmp[4];
+    QuatQuat(
+      qtmp,
+      q, dq);
+    Copy_Quat(q, qtmp);
+  }
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::Quaternion_EulerAngle(
+  double q[4],
+  const std::array<double, 3> &rads,
+  const std::array<int, 3> &axis_idxs);
+template void delfem2::Quaternion_EulerAngle(
+  float q[4],
+  const std::array<float, 3> &rads,
+  const std::array<int, 3> &axis_idxs);
+#endif
+
+
 // ------------------------
 
 template<typename T>

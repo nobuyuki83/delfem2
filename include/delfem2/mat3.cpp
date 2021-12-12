@@ -869,6 +869,30 @@ DFM2_INLINE void delfem2::AxisAngleVectorCRV_Mat3(
   crv[2] = 4 * eparam2[2] / (1 + eparam2[3]);
 }
 
+template<typename T>
+void delfem2::EulerAngle_Mat3(
+  T ea[3],
+  const T m[9],
+  const std::array<int, 3> &axis_idxs) {
+  if (axis_idxs[0] == 2 && axis_idxs[1] == 1 && axis_idxs[2] == 0) {
+    const T y1 = -std::asin(m[2*3+0]);
+    const T inv_cos_y1 = 1 / std::cos(y1);
+    assert(std::fabs(cos(y1))>1.0e-10);
+    ea[1] = y1;
+    ea[0] = std::atan2(m[1*3+0] * inv_cos_y1, m[0*3+0] * inv_cos_y1);
+    ea[2] = std::atan2(m[2*3+1] * inv_cos_y1, m[2*3+2] * inv_cos_y1);
+  }
+  else if (axis_idxs[0] == 2 && axis_idxs[1] == 0 && axis_idxs[2] == 1) {
+    const T y1 = std::asin(m[2*3+1]);
+    assert(std::fabs(cos(y1))>1.0e-10);
+    const T inv_cos_y1 = 1 / std::cos(y1);
+    ea[1] = y1;
+    ea[0] = std::atan2(-m[0*3+1] * inv_cos_y1, m[1*3+1] * inv_cos_y1);
+    ea[2] = std::atan2(-m[2*3+0] * inv_cos_y1, m[2*3+2] * inv_cos_y1);
+  }
+  assert(0);
+}
+
 // -----------------------------------
 
 namespace delfem2 {
