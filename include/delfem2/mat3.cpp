@@ -890,7 +890,9 @@ void delfem2::EulerAngle_Mat3(
     ea[0] = std::atan2(-m[0*3+1] * inv_cos_y1, m[1*3+1] * inv_cos_y1);
     ea[2] = std::atan2(-m[2*3+0] * inv_cos_y1, m[2*3+2] * inv_cos_y1);
   }
-  assert(0);
+  else{
+    assert(0);
+  }
 }
 
 // -----------------------------------

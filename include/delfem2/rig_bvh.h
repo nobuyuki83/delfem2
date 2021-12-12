@@ -5,6 +5,8 @@
 #ifndef DFM2_RIG_BVH_H_
 #define DFM2_RIG_BVH_H_
 
+#include <fstream>
+
 #include "delfem2/rig_geo3.h"
 
 namespace delfem2 {
@@ -24,7 +26,9 @@ DFM2_INLINE void Read_BioVisionHierarchy(
     std::vector<CRigBone> &bones,
     std::vector<CChannel_BioVisionHierarchy> &channels,
     size_t &nframe,
+    double &frame_time,
     std::vector<double> &frame_channel,
+    std::string& bvh_header,
     const std::string &path_bvh);
 
 /**
@@ -45,9 +49,24 @@ class BioVisionHierarchy {
 
   void Open(const std::string &file_path) {
     delfem2::Read_BioVisionHierarchy(
-        bones, channels, nframe, frame_channel,
+        bones, channels, nframe, frame_time, frame_channel, bvh_header,
         file_path);
     assert(frame_channel.size() == nframe * channels.size());
+  }
+
+  void Save(const std::string &file_path) const {
+    std::ofstream fout(file_path.c_str());
+    assert(frame_channel.size() == nframe * channels.size());
+    fout << bvh_header;
+    fout << "Frames: " <<  nframe << std::endl;
+    fout << "Frame Time: " << frame_time << std::endl;
+    unsigned int nch = channels.size();
+    for (unsigned int iframe=0;iframe<nframe;++iframe){
+      for (unsigned int ich=0;ich<nch;++ich){
+        fout << frame_channel[iframe * nch + ich] << " ";
+      }
+      fout << std::endl;
+    }
   }
 
   void SetFrame(unsigned int iframe) {
@@ -98,7 +117,9 @@ class BioVisionHierarchy {
   std::vector<delfem2::CRigBone> bones;
   std::vector<delfem2::CChannel_BioVisionHierarchy> channels;
   std::size_t nframe = 0;
+  double frame_time = 0.;
   std::vector<double> frame_channel;
+  std::string bvh_header;
 };
 
 }

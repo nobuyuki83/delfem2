@@ -33,9 +33,13 @@ int main() {
 
   std::string path_bvh = std::string(PATH_INPUT_DIR) + "/jump.bvh";
 //  std::cout << "path:" << path_bvh << std::endl;
-  Read_BioVisionHierarchy(
-      aBone, aChannelRotTransBone, nframe, aValRotTransBone,
+    {
+        double frame_time;
+        std::string header_bvh;
+        Read_BioVisionHierarchy(
+      aBone, aChannelRotTransBone, nframe, frame_time, aValRotTransBone, header_bvh,
       path_bvh);
+    }
   UpdateBoneRotTrans(aBone);
   std::cout << "nBone:" << aBone.size() << "   aCh:" << aChannelRotTransBone.size() << std::endl;
   for (unsigned int ib = 0; ib < aBone.size(); ++ib) {
