@@ -8,6 +8,8 @@
 /**
  * @file stand alone implementation of the quaternion function and class
  * @details the  order of the parameters on memory is (w,x,y,z)
+ * The order of dependency in delfem2 is "vec2 < mat2 < vec3 < quaternion < mat3 < mat4",
+ * functions related to quaternion and mat3 will be in mat3. etc
  */
 
 #ifndef DFM2_QUAT_H
@@ -120,7 +122,7 @@ DFM2_INLINE T Length_Quat(
     const T q[]);
 
 // -----------------------------
-// below: quaternion and vector
+// below: quaternion and vector3
 
 /**
  * transform a 3D vector with quaternion vo  = q*vi*adj(q)
@@ -176,6 +178,7 @@ CQuat<T> operator*(T, const CQuat<T> &);  //!< multiply scalar
 
 /**
  * @class class of Quaternion
+ * @detail the storage order is (x,y,z,r) but interface is ordered as (r,x,y,z)
  **/
 template<typename T>
 class CQuat {

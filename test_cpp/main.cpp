@@ -5,8 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cstring>
+#include <random>
+
 #include "gtest/gtest.h"
-//
 #include "delfem2/thread/th.h"
 #include "delfem2/filenpy_str.h"
 #include "delfem2/str.h"
@@ -15,9 +17,6 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/specialfuncs.h"
-#include "delfem2/evalmathexp.h"
-#include <cstring>
-#include <random>
 
 #ifndef M_PI
 #  define M_PI 3.14159265359
@@ -26,24 +25,6 @@
 namespace dfm2 = delfem2;
 
 // ------------------------------------------
-
-
-TEST(mathexpeval,test1){
-  delfem2::CMathExpressionEvaluator e;
-  e.SetKey("x", 3.0);
-  e.SetExp("x+3.0");
-  EXPECT_DOUBLE_EQ(e.Eval(),6);
-  e.SetKey("x", 5.0);
-  EXPECT_DOUBLE_EQ(e.Eval(),8.0);
-  //
-  e.SetKey("x", 1.0);
-  e.SetKey("y", 2.0);
-  e.SetExp("x+y");
-  EXPECT_DOUBLE_EQ(e.Eval(),3.0);
-  //
-  e.SetExp("sin(PI*0.5*x)");
-  EXPECT_DOUBLE_EQ(e.Eval(),1.0);
-}
 
 TEST(funcs,numpy_load_2df){
   std::string path = std::string(PATH_INPUT_DIR)+"/numpy_array4x4_float.npy";

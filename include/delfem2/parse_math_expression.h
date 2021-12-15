@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_EVALMATHEXP_H
-#define DFM2_EVALMATHEXP_H
+#ifndef DFM2_PARSE_MATH_EXPRESSION_H
+#define DFM2_PARSE_MATH_EXPRESSION_H
 
 #include <iostream>
 #include <string>
@@ -70,7 +70,7 @@ private:
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/evalmathexp.cpp"
+#  include "delfem2/parse_math_expression.cpp"
 #endif
 
-#endif	// !defind EVALMATHEXP
+#endif	// DFM2_PARSE_MATH_EXPRESSION_H

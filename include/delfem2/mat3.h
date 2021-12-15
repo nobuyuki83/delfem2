@@ -7,6 +7,7 @@
 
 /**
  * @file 3x3 matrix class (CMat3) and functions
+ * @detail The order of dependency in delfem2 is "vec2 < mat2 < vec3 < quaternion < mat3 < mat4",
  */
 
 
@@ -43,7 +44,8 @@ template<typename REAL>
 void Mat3_Spin_ScaleAdd(
     REAL *mat,
     const REAL *v,
-    REAL alpha, REAL beta);
+    REAL alpha,
+    REAL beta);
 
 template<typename REAL>
 void Mat3_Identity(
@@ -53,7 +55,8 @@ void Mat3_Identity(
 template<typename REAL>
 DFM2_INLINE void Mat3_Identity_ScaleAdd(
     REAL *mat,
-    REAL alpha = 1, REAL beta = 0);
+    REAL alpha = 1,
+    REAL beta = 0);
 
 template<typename T>
 DFM2_INLINE void Mat3_AffineRotation(
