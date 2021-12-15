@@ -31,6 +31,8 @@ template<typename T>
 DFM2_INLINE void Normalize_Quat(
     T q[4]);
 
+// ==================
+
 /**
  *
  * @tparam T
@@ -49,6 +51,8 @@ DFM2_INLINE void Inverse_Quat(
   qinv[3] = +q[3] * sqleninv;
 }
 
+// ==================
+
 /**
  * @brief Set Identity in the quaternion
  * @param[out] q (x,y,z,w)
@@ -56,6 +60,8 @@ DFM2_INLINE void Inverse_Quat(
 template<typename T>
 DFM2_INLINE void Quat_Identity(
     T q[4]);
+
+// ==================
 
 /**
  * rotation arounc axis (order x->y->z)
@@ -70,6 +76,16 @@ DFM2_INLINE void Quat_Bryant(
     REAL q[4],
     REAL x, REAL y, REAL z);
 
+// ==================
+
+template<typename T>
+DFM2_INLINE void Quaternion_EulerAngle(
+  T q[4],
+  const std::array<T, 3> &rads,
+  const std::array<int, 3> &axis_idxs);
+
+// ==================
+
 /**
  * Quaternion for cartesian rotation angle
  * (3D axis with magnitude of rotation angle)
@@ -82,6 +98,8 @@ DFM2_INLINE void Quat_CartesianAngle(
     REAL q[4],
     const REAL a[3]);
 
+// ==================
+
 /**
  * copy quaternion
  * @tparam REAL float or double
@@ -90,6 +108,8 @@ template<typename T0, typename T1>
 DFM2_INLINE void Copy_Quat(
     T0 r[],
     const T1 p[]);
+
+// ==================
 
 /**
  * multiply two quaternion
@@ -105,6 +125,8 @@ DFM2_INLINE void QuatQuat(
     const REAL p[],
     const REAL q[]);
 
+// ==================
+
 /**
  * inner product of two quaternion
  * @tparam REAL
@@ -116,6 +138,8 @@ template<typename REAL>
 DFM2_INLINE REAL Dot_Quat(
     const REAL p[],
     const REAL q[]);
+
+// ==================
 
 template<typename T>
 DFM2_INLINE T Length_Quat(

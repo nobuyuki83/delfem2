@@ -78,10 +78,14 @@ int main()
   std::vector<dfm2::CChannel_BioVisionHierarchy> aChannelRotTransBone;
   size_t nframe = 0;
   std::vector<double> aValueChanelHistoryRotTrans;
+    {
+        double frame_time;
+        std::string bvh_header;
   Read_BioVisionHierarchy(
-      aBone_MotionSrc,aChannelRotTransBone,nframe,aValueChanelHistoryRotTrans,
-//                      std::string(PATH_INPUT_DIR)+"/walk.bvh");
-std::string(PATH_INPUT_DIR)+"/jump.bvh");
+      aBone_MotionSrc,aChannelRotTransBone,nframe,frame_time,
+                          aValueChanelHistoryRotTrans,bvh_header,
+                          std::string(PATH_INPUT_DIR)+"/jump.bvh");
+    }
   
   {
     double scale = (1.0/0.45)*2.54/100.0;
