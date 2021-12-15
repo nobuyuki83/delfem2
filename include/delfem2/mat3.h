@@ -7,7 +7,7 @@
 
 /**
  * @file 3x3 matrix class (CMat3) and functions
- * @detail The order of dependency in delfem2 is "vec2 < mat2 < vec3 < quaternion < mat3 < mat4",
+ * @detail The order of dependency in delfem2 is "vec2 -> mat2 -> vec3 -> quaternion -> mat3 -> mat4",
  */
 
 
@@ -144,11 +144,6 @@ template<typename T>
 T SquareNormFrobenius_SymMat3(
     const T sm[6]);
 
-template<typename REAL>
-void Mat3_Rotation_Cartesian(
-    REAL mat[9],
-    const REAL vec[3]);
-
 /**
  * @func compute eigen value & vector for symmmetric matrix
  * @details
@@ -181,6 +176,11 @@ template<typename T>
 DFM2_INLINE void AxisAngleVectorCartesian_Mat3(
     T v[3],
     const T m[9]);
+
+template<typename REAL>
+void Mat3_Rotation_Cartesian(
+  REAL mat[9],
+  const REAL vec[3]);
 
 template<typename T>
 DFM2_INLINE void AxisAngleVectorCRV_Mat3(

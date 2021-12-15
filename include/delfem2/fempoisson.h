@@ -40,19 +40,19 @@ void EMat_Poisson_Tri2D(
     const double coords[3][2],
     const double value[3]);
 
-void EMat_Poission2_QuadOrth(
+DFM2_INLINE void EMat_Poission2_QuadOrth(
     double emat[4][4],
     double lx,
     double ly);
 
 /**
  *
- * @param emat
- * @param lx
- * @param ly
+ * @param[out] emat hessian matrix
+ * @param[in] lx x grid length
+ * @param[in] ly y grid length
  * @param[in] ngauss ngauss=1 is enough for analytically exact integration
  */
-void EMat_Poisson2_QuadOrth_GaussInt(
+DFM2_INLINE void EMat_Poisson2_QuadOrth_GaussInt(
     double emat[4][4],
     double lx,
     double ly,

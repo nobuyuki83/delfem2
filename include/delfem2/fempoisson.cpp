@@ -108,7 +108,7 @@ DFM2_INLINE void delfem2::EMat_Diffusion_Tri2D(
 // ------------------------------------------------------------
 // below: quad
 
-void delfem2::EMat_Poission2_QuadOrth(
+DFM2_INLINE void delfem2::EMat_Poission2_QuadOrth(
     double emat[4][4],
     double lx,
     double ly)
@@ -122,7 +122,7 @@ void delfem2::EMat_Poission2_QuadOrth(
 }
 
 
-void delfem2::EMat_Poisson2_QuadOrth_GaussInt(
+DFM2_INLINE void delfem2::EMat_Poisson2_QuadOrth_GaussInt(
     double emat[4][4],
     double lx,
     double ly,

@@ -8,13 +8,7 @@
 #include <cmath>
 #include "delfem2/specialfuncs.h"
 
-//namespace dfm2 = delfem2;
-
-//const double pi = 3.1415926535;
-//const double invpi = 1.0/pi;
-
-namespace delfem2 {
-namespace specialfuncs {
+namespace delfem2::specialfuncs {
 
 DFM2_INLINE double normalize(double &x, double &z, double &y) {
   double r = sqrt(x * x + y * y + z * z);
@@ -26,15 +20,16 @@ DFM2_INLINE double normalize(double &x, double &z, double &y) {
 }
 
 }
-}
 
 // size(Y) = (n+1)*(n+1)
 // Y_l^m = Y[l*(l+1)+m]
 // https://ciks.cbt.nist.gov/~garbocz/paper134/node10.html
-void delfem2::makeArray_SphericalHarmonics
-(double* Y,
- int n,
- double x, double y, double z)
+DFM2_INLINE void delfem2::makeArray_SphericalHarmonics(
+  double* Y,
+  int n,
+  double x,
+  double y,
+  double z)
 {
   const double pi = 3.1415926535;
   const double invpi = 1.0/pi;
@@ -243,7 +238,10 @@ void delfem2::makeArray_SphericalHarmonics
 
 
 
-void delfem2::makeArray_CoeffSphericalHankelFirst(int n, std::complex<double>* h, double x)
+DFM2_INLINE void delfem2::makeArray_CoeffSphericalHankelFirst(
+  int n,
+  std::complex<double>* h,
+  double x)
 {
   std::complex<double> i = std::complex<double>(0, 1);
   const double y = 1.0/x;

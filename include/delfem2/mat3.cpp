@@ -894,6 +894,16 @@ void delfem2::EulerAngle_Mat3(
     assert(0);
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::EulerAngle_Mat3(
+  double ea[3],
+  const double m[9],
+  const std::array<int, 3> &axis_idxs);
+template void delfem2::EulerAngle_Mat3(
+  float ea[3],
+  const float m[9],
+  const std::array<int, 3> &axis_idxs);
+#endif
 
 // -----------------------------------
 

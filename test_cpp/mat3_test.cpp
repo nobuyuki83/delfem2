@@ -15,14 +15,14 @@ TEST(mat3, eigen3) {
   std::uniform_real_distribution<double> dist(-50.0, 50.0);
   for (int itr = 0; itr < 10000; itr++) {
     double sm[6];
-    for (double &v : sm) {
+    for (double &v: sm) {
       v = dist(rdeng);
     }
     double l[3];
     dfm2::CMat3d U;
     dfm2::eigenSym3(
-        U.data(), l,
-        sm, 20);
+      U.data(), l,
+      sm, 20);
     {
       double diffU = (U.transpose() * U - dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-10);
@@ -42,15 +42,15 @@ TEST(mat3, eigen3) {
   // -----------------------------
   for (int itr = 0; itr < 100; itr++) {
     double sm[6];
-    for (double &v : sm) {
+    for (double &v: sm) {
       v = dist(rdeng);
     }
     sm[5] = -sm[4];
     double l[3];
     dfm2::CMat3d U;
     dfm2::eigenSym3(
-        U.data(), l,
-        sm, 20);
+      U.data(), l,
+      sm, 20);
     {
       double diffU = (U.transpose() * U - dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-10);
@@ -134,7 +134,7 @@ TEST(mat3, quat) {
       EXPECT_NEAR(diff, 0.0, 1.0e-14);
     }
     { // q0 -> R0 -> q1 -> R1
-      const std::array<double,4> quat1 = R0.GetQuaternion();
+      const std::array<double, 4> quat1 = R0.GetQuaternion();
       dfm2::CMat3d R1;
       R1.SetRotMatrix_Quaternion(quat1.data());
       double diff = (R1 - R0).SqNorm_Frobenius();
@@ -148,4 +148,37 @@ TEST(mat3, quat) {
     }
   }
 
+}
+
+TEST(mat3, mat3_quat_eulerangle) {
+  std::uniform_real_distribution<double> dist_m1p1(-1, 1);
+  std::mt19937 mtd(std::random_device{}());
+  for (int itr = 0; itr < 10000; itr++) {
+    double ea0[3] = {
+      dist_m1p1(mtd) * M_PI * 0.5,
+      dist_m1p1(mtd) * M_PI * 0.5,
+      dist_m1p1(mtd) * M_PI * 0.5};
+    {
+      double quat0[4];
+      delfem2::Quaternion_EulerAngle(quat0, {ea0[0], ea0[1], ea0[2]}, {2, 1, 0});
+      double mat0[9];
+      delfem2::Mat3_Quat(mat0, quat0);
+      double ea1[3];
+      delfem2::EulerAngle_Mat3(ea1, mat0, {2, 1, 0});
+      EXPECT_NEAR(ea0[0], ea1[0], 1.0e-10);
+      EXPECT_NEAR(ea0[1], ea1[1], 1.0e-10);
+      EXPECT_NEAR(ea0[2], ea1[2], 1.0e-10);
+    }
+    {
+      double quat0[4];
+      delfem2::Quaternion_EulerAngle(quat0, {ea0[0], ea0[1], ea0[2]}, {2, 0, 1});
+      double mat0[9];
+      delfem2::Mat3_Quat(mat0, quat0);
+      double ea1[3];
+      delfem2::EulerAngle_Mat3(ea1, mat0, {2, 0, 1});
+      EXPECT_NEAR(ea0[0], ea1[0], 1.0e-10);
+      EXPECT_NEAR(ea0[1], ea1[1], 1.0e-10);
+      EXPECT_NEAR(ea0[2], ea1[2], 1.0e-10);
+    }
+  }
 }

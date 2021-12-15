@@ -5,22 +5,24 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#ifndef DFM2_TH_H
+#define DFM2_TH_H
+
 #include <functional>
 #include <mutex>
 #include <queue>
 #include <thread>
 
-#ifndef DFM2_TH_H
-#define DFM2_TH_H
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 namespace thread {
 
-unsigned int mymin(unsigned int x, unsigned int y) {
+DFM2_INLINE unsigned int mymin(unsigned int x, unsigned int y) {
   return (x <= y) ? x : y;
 }
 
-unsigned int mymax(unsigned int x, unsigned int y) {
+DFM2_INLINE unsigned int mymax(unsigned int x, unsigned int y) {
   return (x >= y) ? x : y;
 }
 

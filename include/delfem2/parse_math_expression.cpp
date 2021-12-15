@@ -15,7 +15,7 @@
 
 namespace delfem2::parse_math_expression {
 
-class COperand : public delfem2::evalmathexp::CCmd {
+class COperand : public CCmd {
  public:
   ~COperand() override = default;
   explicit COperand(const double val) { m_Value = val; }
@@ -43,7 +43,7 @@ class COperand : public delfem2::evalmathexp::CCmd {
   double m_Value;
 };
 
-class CBinaryOperator : public delfem2::evalmathexp::CCmd {
+class CBinaryOperator : public CCmd {
  public:
   ~CBinaryOperator() override = default;
   explicit CBinaryOperator(const unsigned int iopr) {
@@ -84,7 +84,7 @@ class CBinaryOperator : public delfem2::evalmathexp::CCmd {
   unsigned int m_iOpr;
 };
 
-class CUnaryOperator : public delfem2::evalmathexp::CCmd {
+class CUnaryOperator : public CCmd {
  public:
   ~CUnaryOperator() override = default;
   explicit CUnaryOperator(const int iopr) {
@@ -430,8 +430,8 @@ bool MakeRPN(
 }
 
 bool MakeCmdAry(
-  std::vector<delfem2::evalmathexp::CCmd *> &cmd_vec,
-  std::vector<delfem2::evalmathexp::CKey> &m_aKey,
+  std::vector<CCmd *> &cmd_vec,
+  std::vector<CKey> &m_aKey,
   const std::vector<SExpCompo> &exp_node_vec) {
   cmd_vec.resize(exp_node_vec.size(), nullptr);
   for (unsigned int iexp = 0; iexp < exp_node_vec.size(); iexp++) {

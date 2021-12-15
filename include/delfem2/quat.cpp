@@ -8,10 +8,9 @@
 #include "delfem2/quat.h"
 
 #include <cmath>
-#include <cstring>
 
 #ifndef M_PI
-#define M_PI 3.141592
+#  define M_PI 3.141592
 #endif
 
 // ----------------------------------
@@ -187,6 +186,10 @@ void delfem2::Quaternion_EulerAngle(
   T q[4],
   const std::array<T, 3> &rads,
   const std::array<int, 3> &axis_idxs){
+  q[0] = 0;
+  q[1] = 0;
+  q[2] = 0;
+  q[3] = 1;
   for (int i = 0; i < 3; ++i) {
     const T ar = rads[i];
     const int ia = axis_idxs[i];
@@ -388,202 +391,3 @@ template delfem2::CQuat<float> delfem2::SphericalLinearInterp(
     const delfem2::CQuat<float> &q1,
     float t);
 #endif
-
-/*
-CQuat operator-(const CQuat& lhs, const CQuat& rhs){
-    CQuat temp = lhs;
-	temp -= rhs;
-    return temp;
-}
-
-CQuat operator*(const CQuat& quat, double d){
-    CQuat temp = quat;
-	temp *= d;
-    return temp;
-}
-
-CQuat operator*(double d, const CQuat& quat){
-    CQuat temp = quat;
-    temp *= d;
-	return temp;
-}
-
-CQuat operator*(const CQuat& lhs, const CQuat& rhs){
-    CQuat temp = lhs;
-    temp *= rhs;
-	return temp;
-}
-
-CVector3D Rotate(const CQuat& quat, const CVector3D& vec){
-	CQuat tmp(0, vec);
-	tmp = quat *  (tmp * quat.GetConjugate());  
-//	tmp = quat.GetConjugate() *  tmp * quat ;   
-	return tmp.GetVector();
-}
-
-CVector3D UnRotate(const CQuat& quat, const CVector3D& vec){
-	CQuat tmp(0, vec);
-	tmp = (quat.GetConjugate() *  tmp) * quat ; 
-//	tmp = quat *  tmp * quat.GetConjugate();    
-	return tmp.GetVector();
-}
-
-
-//////////////////////////////////////////////////////////////////////
-// �����o�֐��̃t�����h�֐�
-//////////////////////////////////////////////////////////////////////
-
-
-bool operator==(const CQuat& lhs, const CQuat& rhs){
-	if( fabs(lhs.real - rhs.real) < NEARLY_ZERO && lhs == rhs )	return true;
-	else return false;
-}
-
-bool operator!=(const CQuat& lhs, const CQuat& rhs){
-	if( lhs == rhs ) return false;
-	else return true;
-}
-
-//////////////////////////////////////////////////////////////////////
-// �����o�֐��̔�t�����h�֐��@
-//////////////////////////////////////////////////////////////////////
-
-CQuat& CQuat::operator = (const CQuat& rhs){
-	if( this != &rhs ){
-		real = rhs.real;
-		vector = rhs.vector;
-	}
-	return *this;
-}
-
-CQuat& CQuat::operator *= (const CQuat& rhs){
-	const double last_real = real;
-	real = real * rhs.real - Dot( vector, rhs.vector );
-	vector = ( (rhs.vector * last_real) + (vector * rhs.real) ) + Cross( vector, rhs.vector );
-	return *this;
-}
-
-CQuat& CQuat::operator *= (double d){
-	real *= d;
-	vector *= d;
-	return *this;
-}
-
-CQuat& CQuat::operator += (const CQuat& rhs){
-	real += rhs.real;
-	vector += rhs.vector;
-	return *this;
-}
-
-CQuat& CQuat::operator -= (const CQuat& rhs){
-	real -= rhs.real;
-	vector -= rhs.vector;
-	return *this;
-}
-
-CQuat CQuat::GetInverse() const
-{
-  double invslen = 1.0/SquareLength();
-	CQuat tmp(real*invslen, vector*(-invslen));
-	return tmp;
-}
-
-CQuat CQuat::GetConjugate() const{
-	CQuat tmp(real, vector*(-1.0));
-	return tmp;
-}
-
-void CQuat::RotMatrix44(double* m) const
-{
-  
-	double vx=vector.x, vy=vector.y, vz=vector.z;
-  
-	m[ 0] = 1.0 - 2.0 * ( vy * vy + vz * vz );
-	m[ 4] = 2.0 * ( vx * vy - vz * real );
-	m[ 8] = 2.0 * ( vz * vx + vy * real );
-	m[12] = 0;
-  
-	m[ 1] = 2.0 * ( vx * vy + vz * real );
-	m[ 5] = 1.0 - 2.0 * ( vz * vz + vx * vx );
-	m[ 9] = 2.0 * ( vy * vz - vx * real );
-	m[13] = 0.0;
-  
-	m[ 2] = 2.0 * ( vz * vx - vy * real );
-	m[ 6] = 2.0 * ( vy * vz + vx * real );
-	m[10] = 1.0 - 2.0 * ( vy * vy + vx * vx );    
-	m[14] = 0.0;  
-  
-  m[ 3] = 0.0;
-  m[ 7] = 0.0;
-  m[11] = 0.0;
-  m[15] = 1.0;  
-}
-
-
-
-void CQuat::RotMatrix33(double* m) const
-{
-	double vx=vector.x, vy=vector.y, vz=vector.z;
-
-	m[0] = 1.0 - 2.0 * ( vy * vy + vz * vz );
-	m[1] = 2.0 * ( vx * vy - vz * real );
-	m[2] = 2.0 * ( vz * vx + vy * real );
-
-	m[3] = 2.0 * ( vx * vy + vz * real );
-	m[4] = 1.0 - 2.0 * ( vz * vz + vx * vx );
-	m[5] = 2.0 * ( vy * vz - vx * real );
-
-	m[6] = 2.0 * ( vz * vx - vy * real );
-	m[7] = 2.0 * ( vy * vz + vx * real );
-	m[8] = 1.0 - 2.0 * ( vy * vy + vx * vx );
-}
-
-
-
-void CQuat::AxisToQuat(const CVector3D &axis )
-{
-	const double phi = axis.Length();
-	if( phi < 1.0e-30 ){
-		vector = CVector3D(0,0,0);
-		real = 1.0;
-		return;
-	}
-	vector = axis;
-	vector.SetNormalizedVector();
-	vector *= sin( phi * 0.5 );
-	real = cos( phi * 0.5 );
-}
-
-void CQuat::VectorTrans(const CVector3D& a_vector, const CVector3D& b_vector){
-	vector = Cross(a_vector, b_vector);
-	if( vector.DLength() < NEARLY_ZERO ){
-		real = 1.0;
-		vector.SetZero();
-		return;
-	}
-	vector.SetNormalizedVector();
-	double cos_theta = Dot(a_vector, b_vector) / ( a_vector.Length() * b_vector.Length() );
-	real = sqrt( 0.5*(1+cos_theta) );
-	vector *= sqrt( 0.5*(1-cos_theta) );
-}
-
-double CQuat::SquareLength() const
-{
-	return real*real + vector.DLength();
-}
-
-
-double CQuat::Length() const
-{
-	return sqrt( real*real + vector.DLength() );
-}
-
-
-*/
-
-
-// CQuat
-// -----------------------------
-// std::vector
-
-

@@ -156,12 +156,12 @@ TEST(fem_mitc3, check_solution_cantilever) {
       mat_A.setZero();
       vec_b.assign(nDoF, 0.0);
       dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
-          mat_A, vec_b.data(),
-          thickness, lambda, myu,
-          rho, gravity_z,
-          aXY0.data(), aXY0.size() / 2,
-          aTri.data(), aTri.size() / 3,
-          aVal.data());
+        mat_A, vec_b.data(),
+        thickness, lambda, myu,
+        rho, gravity_z,
+        aXY0.data(), aXY0.size() / 2,
+        aTri.data(), aTri.size() / 3,
+        aVal.data());
       mat_A.SetFixedBC(aBCFlag.data());
       dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
 // --------------------------
@@ -179,8 +179,8 @@ TEST(fem_mitc3, check_solution_cantilever) {
           auto vs = dfm2::ViewAsVectorXd(tmp0);
           auto vt = dfm2::ViewAsVectorXd(tmp1);
           conv = Solve_PCG(
-              vr, vu, vs, vt,
-              1.0e-5, 1000, mat_A, ilu_A);
+            vr, vu, vs, vt,
+            1.0e-5, 1000, mat_A, ilu_A);
         }
 //        std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
         EXPECT_LT(conv.size(), 1000);
@@ -188,11 +188,11 @@ TEST(fem_mitc3, check_solution_cantilever) {
       }
 // -------------------------
       dfm2::XPlusAY(
-          aVal,
-          static_cast<unsigned int>(nDoF),
-          aBCFlag,
-          1.0,
-          vec_x);
+        aVal,
+        static_cast<unsigned int>(nDoF),
+        aBCFlag,
+        1.0,
+        vec_x);
     }
     {
       assert(fabs(lambda) < 1.0e-10);

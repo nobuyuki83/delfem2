@@ -24,9 +24,9 @@ namespace delfem2 {
 // n <= 9
 // size(Y) = (n+1)*(n+1)
 // Y_l^m = Y[l*(l+1)+m]
-void makeArray_SphericalHarmonics(double* a, int norder, double x, double y, double z);
+DFM2_INLINE void makeArray_SphericalHarmonics(double* a, int norder, double x, double y, double z);
 
-void makeArray_CoeffSphericalHankelFirst(int n, std::complex<double>* h, double x);
+DFM2_INLINE void makeArray_CoeffSphericalHankelFirst(int n, std::complex<double>* h, double x);
 
 
 // size(h) = (n+1)
@@ -131,7 +131,7 @@ inline void makeArrayAssociatedLegendre
 #endif
 
 
-////////////////////////////////////////////////////////////////////////////////////
+// ===================================
 /*
 #include <vector>
 double evaluateSHRealDecomposition
