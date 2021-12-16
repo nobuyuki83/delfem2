@@ -61,11 +61,12 @@ DFM2_INLINE void ParseVtxObj_(
 
 }
 
+template <typename REAL, typename INT>
 DFM2_INLINE void delfem2::Write_Obj(
     const std::string &file_path,
-    const double *vtx_xyz,
+    const REAL *vtx_xyz,
     size_t num_xyz,
-    const unsigned int *tri_vtx,
+    const INT *tri_vtx,
     size_t num_tri) {
   std::ofstream fout(file_path.c_str(), std::ofstream::out);
   for (size_t ip = 0; ip < num_xyz; ip++) {
@@ -81,6 +82,20 @@ DFM2_INLINE void delfem2::Write_Obj(
     fout << tri_vtx[itri * 3 + 2] + 1 << std::endl;
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
+template DFM2_INLINE void delfem2::Write_Obj(
+    const std::string &file_path,
+    const double *vtx_xyz,
+    size_t num_xyz,
+    const unsigned int *tri_vtx,
+    size_t num_tri);
+template DFM2_INLINE void delfem2::Write_Obj(
+    const std::string &file_path,
+    const float *vtx_xyz,
+    size_t num_xyz,
+    const unsigned int *tri_vtx,
+    size_t num_tri);
+#endif
 
 DFM2_INLINE void delfem2::Write_Obj_Quad(
     const std::string &str,

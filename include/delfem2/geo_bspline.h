@@ -100,14 +100,15 @@ VEC Sample_QuadraticBsplineCurve(
   };
 
   const int N = poly.size() - 2;
-  t = (double) N * t;
-  const int i = (t == N) ? (int) t + 1 : (int) t + 2;
-  assert(i - 2 >= 0 && i < poly.size());
+  const int index = static_cast<int>(t) + (t == N ? -1 : 0);
+  assert(index >= 0 && index < poly.size() + 2);
 
-  const int a = std::clamp<int>(i - 3, 0, N);
-  const int b = std::clamp<int>(i - 2, 0, N);
-  const int c = std::clamp<int>(i - 1, 0, N);
-  const int d = std::clamp<int>(i, 0, N);
+  t -= index;
+
+  const int a = std::clamp<int>(index - 1, 0, N) - index;
+  const int b = std::clamp<int>(index, 0, N) - index;
+  const int c = std::clamp<int>(index + 1, 0, N) - index;
+  const int d = std::clamp<int>(index + 2, 0, N) - index;
 
   const double w0 = safe_divide((t - b) * (t - b), (d - b) * (c - b));
   const double w1 = safe_divide((t - a) * (c - t), (c - a) * (c - b));
@@ -115,44 +116,80 @@ VEC Sample_QuadraticBsplineCurve(
   const double w3 = safe_divide((c - t) * (c - t), (c - a) * (c - b));
   assert(fabs(w0 + w1 + w2 + w3 - 1.) < 1.0e-10);
   assert(w0 >= 0 && w1 >= 0 && w2 >= 0 && w3 >= 0);
-  return poly[i] * w0 + poly[i - 1] * (w1 + w2) + poly[i - 2] * w3;
+  return poly[index + 2] * w0 + poly[index + 1] * (w1 + w2) + poly[index] * w3;
+}
+
+template<typename VEC, int norderplus1>
+VEC Sample_BsplineCurveSegment(
+  double t,
+  const int knot[norderplus1 * 2],
+  const VEC polyloc[norderplus1]) {
+  const auto safe_divide = [](double a, int b) {
+    return (b == 0) ? 0. : a / static_cast<double>(b);
+  };
+
+  double coefficient[norderplus1 + 1][norderplus1];
+  for (int i = 0; i <= norderplus1; i++) {
+    for (int m = 0; m < norderplus1; m++) {
+      coefficient[i][m] = 0.;
+    }
+  }
+  coefficient[norderplus1 - 1][0] = 1.;
+
+  for (int i = 2; i < norderplus1 + 1; i++) {
+    for (int j = 0; j < norderplus1; j++) {
+      const double coe[4] = {
+        -safe_divide(knot[j], knot[j + i - 1] - knot[j]),
+        +safe_divide(knot[j + i], knot[j + i] - knot[j + 1]),
+        +safe_divide(1, knot[j + i - 1] - knot[j]),
+        -safe_divide(1, knot[j + i] - knot[j + 1])};
+      for (int m = norderplus1 - 1; m > 0; m--) {
+        coefficient[j][m]
+          = coe[0] * coefficient[j][m]
+          + coe[1] * coefficient[j + 1][m]
+          + coe[2] * coefficient[j][m - 1]
+          + coe[3] * coefficient[j + 1][m - 1];
+      }
+      coefficient[j][0]
+        = coe[0] * coefficient[j][0]
+        + coe[1] * coefficient[j + 1][0];
+    }
+  }
+
+  double weight[norderplus1 + 1];
+  for (int i = 0; i < norderplus1 + 1; i++) {
+    weight[i] = coefficient[i][norderplus1-1];
+    for(int j=1;j<norderplus1;++j){
+      weight[i] = weight[i] * t + coefficient[i][norderplus1-1-j];
+    }
+  }
+
+  VEC p(0, 0);
+  for (int i = 0; i < norderplus1; i++) {
+    p += polyloc[i] * weight[i];
+  }
+  return p;
 }
 
 template<typename VEC, int norderplus1>
 VEC Sample_BsplineCurve(
   double t,
   const std::vector<VEC> &poly) {
-  const auto safe_divide = [](double a, int b) {
-    return (b == 0) ? 0. : a / static_cast<double>(b);
-  };
 
   const int N = poly.size() + 1 - norderplus1; // N=max{knot vector}
-  t = static_cast<double>(N) * t;
-
   const int index = static_cast<int>(t) + (t == N ? -1 : 0);
 
   int knot[norderplus1 * 2];
   for (int i = 0; i < norderplus1 * 2; i++) {
-    knot[i] = std::clamp<int>(index + i - (norderplus1 - 1), 0, N);
+    knot[i] = std::clamp<int>(index + i - (norderplus1 - 1), 0, N) - index;
   }
-
-  double weight[norderplus1 + 1];
-  for (int i = 0; i <= norderplus1; i++) { weight[i] = 0.; }
-  weight[norderplus1 - 1] = 1.;
-
-  for (int i = 2; i <= norderplus1; i++) {
-    for (int j = 0; j < norderplus1; j++) {
-      double w0 = safe_divide(t - knot[j], knot[j + i - 1] - knot[j]);
-      double w1 = safe_divide(knot[j + i] - t, knot[j + i] - knot[j + 1]);
-      weight[j] = w0 * weight[j] + w1 * weight[j + 1];
-    }
-  }
-
-  VEC p(0, 0);
+  //
+  VEC polyloc[norderplus1];
   for (int i = 0; i < norderplus1; i++) {
-    p += poly[index + i] * weight[i];
+    polyloc[i] = poly[index + i];
   }
-  return p;
+  //
+  return Sample_BsplineCurveSegment<VEC, norderplus1>(t - index, knot, polyloc);
 }
 
 template<typename VEC, int norderplus1>
@@ -160,42 +197,24 @@ VEC Sample_BsplineDerivative(
   double t,
   const std::vector<VEC> &poly) {
   const int N = poly.size() + 1 - norderplus1;
+
   const auto knot_generator = [&](int i) -> double {
     return std::clamp(i - norderplus1 + 1, 0, N) / static_cast<double>(N);
   };
-
+  const int index = t + (t == N ? -1 : 0);
+  //
   VEC Q_poly[norderplus1 - 1];
-  int index = N * t + (t == 1. ? -1 : 0);
   for (int i = index; i < index + norderplus1 - 1; i++) {
     double w = (norderplus1 - 1) / (knot_generator(i + norderplus1) - knot_generator(i + 1));
     Q_poly[i - index] = w * (poly[i + 1] - poly[i]);
   }
-
-  const auto safe_divide = [](double a, int b) { return (b == 0) ? 0. : a / static_cast<double>(b); };
-
-  t = static_cast<double>(N * t);
-
-  double knot[norderplus1 * 2 - 2];
+  //
+  int knot[norderplus1 * 2 - 2];
   for (int i = 0; i < norderplus1 * 2 - 2; i++) {
-    knot[i] = std::clamp(index + i - norderplus1 + 2, 0, N);
+    knot[i] = std::clamp(index + i - norderplus1 + 2, 0, N) - index;
   }
-
-  double weight[norderplus1];
-  for (int i = 0; i < norderplus1; i++) { weight[i] = 0; }
-  weight[norderplus1 - 2] = 1;
-
-  for (int i = 2; i < norderplus1; i++) {
-    for (int j = 0; j < norderplus1 - 1; j++) {
-      weight[j] = safe_divide(t - knot[j], knot[j + i - 1] - knot[j]) * weight[j] +
-        safe_divide(knot[j + i] - t, knot[j + i] - knot[j + 1]) * weight[j + 1];
-    }
-  }
-
-  VEC p(0, 0);
-  for (int i = 0; i < norderplus1 - 1; i++) {
-    p += Q_poly[i] * weight[i];
-  }
-  return p;
+  //
+  return Sample_BsplineCurveSegment<VEC, norderplus1 - 1>(t - index, knot, Q_poly) / N;
 }
 
 }

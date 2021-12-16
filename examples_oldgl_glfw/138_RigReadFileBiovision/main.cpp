@@ -33,13 +33,13 @@ int main() {
 
   std::string path_bvh = std::string(PATH_INPUT_DIR) + "/jump.bvh";
 //  std::cout << "path:" << path_bvh << std::endl;
-    {
-        double frame_time;
-        std::string header_bvh;
-        Read_BioVisionHierarchy(
+  {
+    double frame_time;
+    std::string header_bvh;
+    Read_BioVisionHierarchy(
       aBone, aChannelRotTransBone, nframe, frame_time, aValRotTransBone, header_bvh,
       path_bvh);
-    }
+  }
   UpdateBoneRotTrans(aBone);
   std::cout << "nBone:" << aBone.size() << "   aCh:" << aChannelRotTransBone.size() << std::endl;
   for (unsigned int ib = 0; ib < aBone.size(); ++ib) {
@@ -60,8 +60,8 @@ int main() {
       static int iframe = 0;
       const size_t nch = aChannelRotTransBone.size();
       SetPose_BioVisionHierarchy(
-          aBone, aChannelRotTransBone,
-          aValRotTransBone.data() + iframe * nch);
+        aBone, aChannelRotTransBone,
+        aValRotTransBone.data() + iframe * nch);
       iframe = (iframe + 1) % nframe;
     }
     // --------------------
@@ -74,9 +74,9 @@ int main() {
         0.1, 1.0);
         */
     dfm2::opengl::DrawBone_Octahedron(
-        aBone,
-        UINT_MAX, UINT_MAX,
-        0.1, 1.0);
+      aBone,
+      UINT_MAX, UINT_MAX,
+      0.1, 1.0);
     viewer.SwapBuffers();
     glfwPollEvents();
   }

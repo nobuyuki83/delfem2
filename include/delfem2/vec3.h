@@ -301,6 +301,13 @@ class CVec3 {
     v[2] = p[2];
   }
 
+  template <typename S>
+  void push_back_to_vector(std::vector<S>& vec) const {
+    vec.push_back(p[0]);
+    vec.push_back(p[1]);
+    vec.push_back(p[2]);
+  }
+
   template<typename S>
   void CopyToScale(S *v, S s) const {
     v[0] = p[0] * s;

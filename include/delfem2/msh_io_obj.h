@@ -21,12 +21,12 @@
 
 namespace delfem2 {
 
-
+template <typename REAL, typename INT>
 DFM2_INLINE void Write_Obj(
     const std::string &file_path,
-    const double *vtx_xyz,
+    const REAL *vtx_xyz,
     size_t num_xyz,
-    const unsigned int *tri_vtx,
+    const INT *tri_vtx,
     size_t num_tri);
 
 DFM2_INLINE void Write_Obj_Quad(
