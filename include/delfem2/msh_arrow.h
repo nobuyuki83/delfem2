@@ -7,14 +7,13 @@
 
 #include "delfem2/mat4.h"
 #include "delfem2/vec3.h"
-#include "delfem2/rig_bvh.h"
 
 namespace delfem2 {
 
-template<typename REAL>
+template<typename REAL, typename INT>
 DFM2_INLINE void Mesh_ArrowOcta(
   std::vector<REAL> &vtx_xyz,
-  std::vector<int> &tri_vtx,
+  std::vector<INT> &tri_vtx,
   const CMat4<REAL> &affine_trans,
   const CVec3<REAL> &p0,
   const CVec3<REAL> &d,

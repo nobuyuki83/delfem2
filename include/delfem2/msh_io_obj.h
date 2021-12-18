@@ -22,17 +22,13 @@
 namespace delfem2 {
 
 template <typename REAL, typename INT>
-DFM2_INLINE void Write_Obj(
+DFM2_INLINE void Write_Obj_UniformMesh(
     const std::string &file_path,
     const REAL *vtx_xyz,
     size_t num_xyz,
-    const INT *tri_vtx,
-    size_t num_tri);
-
-DFM2_INLINE void Write_Obj_Quad(
-    const std::string &str,
-    const std::vector<double> &vec_xyz,
-    const std::vector<int> &vec_quad);
+    const INT *elem_vtx,
+    size_t num_elem,
+    size_t num_node);
 
 /**
  * write obj file for the mesh the elemenet is a jagged array (tris and quads are mixed).

@@ -3,7 +3,7 @@
 #include <Alembic/AbcCoreOgawa/All.h>
 
 #include "delfem2/msh_io_obj.h"
-#include "delfem2/msh_rig.h"
+#include "delfem2/rig_msh.h"
 #include "delfem2/rig_bvh.h"
 
 int main() {

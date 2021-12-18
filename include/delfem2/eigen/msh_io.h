@@ -30,4 +30,23 @@ ReadTriangleMeshObj(
   return std::make_tuple(V, F);
 }
 
+// -----------------------------------------------
+
+void WriteUniformMesh(
+  const std::string& file_path,
+  const Eigen::Matrix<double, -1, -1, Eigen::RowMajor>& v,
+  const Eigen::Matrix<unsigned int, -1, -1, Eigen::RowMajor>& f)
+{
+  const std::filesystem::path path(file_path);
+  if( path.extension() == ".obj" || path.extension() == ".OBJ" ){
+    delfem2::Write_Obj_UniformMesh(
+      file_path,
+      v.data(), v.rows(),
+      f.data(), f.rows(), f.cols());
+  }
+  else{
+    std::cerr << "Error->there's no support for extension: " << path.extension() << std::endl;
+  }
+}
+
 #endif

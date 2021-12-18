@@ -44,9 +44,9 @@ TEST(bezier_quadratic, test0) {
       const dfm2::CVec2d v0 = dfm2::PositionInPolyline(polyline, i0, l0);
       const double t1 = dfm2::Nearest_QuadraticBezierCurve<dfm2::CVec2d>(
         scr,
-        p0,p1,p2,100,5);
+        p0,p1,p2,30,3);
       const dfm2::CVec2d v1 = dfm2::PointOnQuadraticBezierCurve(t1,p0,p1,p2);
-      EXPECT_LT( (v0-v1).norm(), 0.02 );
+      EXPECT_NEAR( (v0-scr).norm(), (v1-scr).norm(),  1.0e-3 );
     }
     {  // bb
       auto bb0 = dfm2::AABB_QuadraticBezierCurve<2>(p0,p1,p2);

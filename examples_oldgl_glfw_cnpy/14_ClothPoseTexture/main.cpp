@@ -238,9 +238,10 @@ int main()
   }
 
   // output
-  dfm2::Write_Obj(std::string(PATH_OUTPUT_DIR) + "/body.obj",
+  dfm2::Write_Obj_UniformMesh(
+      std::string(PATH_OUTPUT_DIR) + "/body.obj",
       body_smpl.aXYZ1_Body.data(), body_smpl.aXYZ1_Body.size() / 3,
-      body_smpl.aTri_Body.data(), body_smpl.aTri_Body.size() / 3);
+      body_smpl.aTri_Body.data(), body_smpl.aTri_Body.size() / 3, 3);
 
   {
     const unsigned int np = aXYZ_Cloth.size() / 3;

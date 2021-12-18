@@ -77,9 +77,9 @@ public:
     ndim = 3;
   }
   void Write_Obj(const std::string& fname){
-    delfem2::Write_Obj(fname,
+    delfem2::Write_Obj_UniformMesh(fname,
                 aPos.data(), aPos.size()/3,
-                aElem.data(), aElem.size()/3);
+                aElem.data(), aElem.size()/3, 3);
   }
 //  void DrawFace_ElemWiseNorm() const;
 //  void DrawEdge() const;

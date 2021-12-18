@@ -62,62 +62,48 @@ DFM2_INLINE void ParseVtxObj_(
 }
 
 template <typename REAL, typename INT>
-DFM2_INLINE void delfem2::Write_Obj(
+DFM2_INLINE void delfem2::Write_Obj_UniformMesh(
     const std::string &file_path,
     const REAL *vtx_xyz,
     size_t num_xyz,
-    const INT *tri_vtx,
-    size_t num_tri) {
-  std::ofstream fout(file_path.c_str(), std::ofstream::out);
+    const INT *elem_vtx,
+    size_t num_elem,
+    size_t num_node) {
+  std::ofstream fout(
+    file_path.c_str(),
+    std::ofstream::out);
   for (size_t ip = 0; ip < num_xyz; ip++) {
     fout << "v ";
     fout << vtx_xyz[ip * 3 + 0] << " ";
     fout << vtx_xyz[ip * 3 + 1] << " ";
     fout << vtx_xyz[ip * 3 + 2] << std::endl;
   }
-  for (size_t itri = 0; itri < num_tri; itri++) {
+  for (size_t iel = 0; iel < num_elem; iel++) {
     fout << "f ";
-    fout << tri_vtx[itri * 3 + 0] + 1 << " ";
-    fout << tri_vtx[itri * 3 + 1] + 1 << " ";
-    fout << tri_vtx[itri * 3 + 2] + 1 << std::endl;
+    for (size_t ino = 0; ino < num_node; ++ino ) {
+      fout << elem_vtx[iel * num_node + ino] + 1 << " ";
+    }
+    fout << std::endl;
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
-template DFM2_INLINE void delfem2::Write_Obj(
+template DFM2_INLINE void delfem2::Write_Obj_UniformMesh(
     const std::string &file_path,
     const double *vtx_xyz,
     size_t num_xyz,
     const unsigned int *tri_vtx,
-    size_t num_tri);
-template DFM2_INLINE void delfem2::Write_Obj(
+    size_t num_tri,
+    size_t num_node);
+template DFM2_INLINE void delfem2::Write_Obj_UniformMesh(
     const std::string &file_path,
     const float *vtx_xyz,
     size_t num_xyz,
     const unsigned int *tri_vtx,
-    size_t num_tri);
+    size_t num_tri,
+    size_t num_node);
 #endif
 
-DFM2_INLINE void delfem2::Write_Obj_Quad(
-    const std::string &str,
-    const std::vector<double> &vec_xyz,
-    const std::vector<int> &vec_quad) {
-  std::ofstream fout(str.c_str(), std::ofstream::out);
-  const size_t np = vec_xyz.size() / 3;
-  for (size_t ip = 0; ip < np; ip++) {
-    fout << "v ";
-    fout << vec_xyz[ip * 3 + 0] << " ";
-    fout << vec_xyz[ip * 3 + 1] << " ";
-    fout << vec_xyz[ip * 3 + 2] << std::endl;
-  }
-  const size_t nq = vec_quad.size() / 4;
-  for (size_t iq = 0; iq < nq; iq++) {
-    fout << "f ";
-    fout << vec_quad[iq * 4 + 0] + 1 << " ";
-    fout << vec_quad[iq * 4 + 1] + 1 << " ";
-    fout << vec_quad[iq * 4 + 2] + 1 << " ";
-    fout << vec_quad[iq * 4 + 3] + 1 << std::endl;
-  }
-}
+// ------------------------------------------
 
 DFM2_INLINE void delfem2::Write_Obj_ElemJArray(
     const std::string &str,
