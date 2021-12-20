@@ -46,7 +46,7 @@ TEST(bezier_quadratic, test0) {
         scr,
         p0,p1,p2,30,3);
       const dfm2::CVec2d v1 = dfm2::PointOnQuadraticBezierCurve(t1,p0,p1,p2);
-      EXPECT_NEAR( (v0-scr).norm(), (v1-scr).norm(),  1.0e-3 );
+      EXPECT_NEAR( (v0-scr).norm(), (v1-scr).norm(),  2.0e-3 );
     }
     {  // bb
       auto bb0 = dfm2::AABB_QuadraticBezierCurve<2>(p0,p1,p2);
