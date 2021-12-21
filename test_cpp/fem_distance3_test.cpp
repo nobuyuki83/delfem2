@@ -10,13 +10,12 @@
 #include "gtest/gtest.h" // need to be defiend in the beginning
 //
 #include "delfem2/geo3_v23m34q.h"
-#include "delfem2/pbd_geo3.h"
 #include "delfem2/fem_distance3.h"
 #include "delfem2/mshmisc.h"
 
 namespace dfm2 = delfem2;
 
-TEST(objfunc_v23, distancetri2d3d) {
+TEST(fem_distance3, distancetri2d3d) {
   std::random_device randomDevice;
   std::mt19937 randomEng(randomDevice());
   std::uniform_real_distribution<double> dist_01(0, 1);
@@ -35,7 +34,7 @@ TEST(objfunc_v23, distancetri2d3d) {
         {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)}};
     // --------------
     double C[3], dCdp[3][9];
-    dfm2::PBD_ConstraintProjection_DistanceTri2D3D(C, dCdp, P, p);
+    dfm2::CdC_LengthTriEdges23(C, dCdp, P, p);
     for (int ine = 0; ine < 3; ++ine) {
       for (int idim = 0; idim < 3; ++idim) {
         double eps = 1.0e-6;
@@ -43,7 +42,7 @@ TEST(objfunc_v23, distancetri2d3d) {
         for (int i = 0; i < 9; ++i) { (&p1[0][0])[i] = (&p[0][0])[i]; }
         p1[ine][idim] += eps;
         double C1[3], dCdp1[3][9];
-        dfm2::PBD_ConstraintProjection_DistanceTri2D3D(C1, dCdp1, P, p1);
+        dfm2::CdC_LengthTriEdges23(C1, dCdp1, P, p1);
         for (int jdim = 0; jdim < 3; ++jdim) {
           const double val0 = (C1[jdim] - C[jdim]) / eps;
           const double val1 = dCdp[jdim][ine * 3 + idim];
@@ -56,7 +55,7 @@ TEST(objfunc_v23, distancetri2d3d) {
 
 
 
-TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D) {
+TEST(fem_distance3, WdWddW_SquareLengthLineseg3D) {
   std::random_device rd;
   std::mt19937 rndeng(rd());
   std::uniform_real_distribution<double> dist_m1p1(-1, +1);

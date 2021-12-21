@@ -37,10 +37,39 @@ DFM2_INLINE void CdC_SquareLengthLineseg3D(
     const T pos_xyz[2][3],
     T length_ini);
 
+
+/**
+ *
+ * @param C
+ * @param dCdp
+ * @param[in] P undeformed triangle vertex positions
+ * @param[in] p deformed triangle vertex positions
+ */
+DFM2_INLINE void CdC_LengthTriEdges23(
+  double C[3],
+  double dCdp[3][9],
+  const double P[3][2],
+  const double p[3][3]);
+
+/**
+ *
+ * @param C
+ * @param dCdp
+ * @param[in] P undeformed triangle vertex positions
+ * @param[in] p deformed triangle vertex positions
+ */
+DFM2_INLINE void CdC_LengthTetEdges(
+  double C[6],
+  double dCdp[6][12],
+  const double P[4][3],
+  const double p[4][3]);
+
+
+
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/fem_distance3.cpp"
 #endif
 
-#endif  /* DFM2_FEM_ROD3_ENERGY_STRAIGHT_H */
+#endif  /* DFM2_FEM_DISTANCE3_H */

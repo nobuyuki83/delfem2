@@ -66,49 +66,12 @@ DFM2_INLINE void PBD_ConstProj_Rigid3D(
     const int *clstr, int nclstr0,
     const double *aXYZ0, int nXYZ0);
 
-/**
- *
- * @param C
- * @param dCdp
- * @param[in] P undeformed triangle vertex positions
- * @param[in] p deformed triangle vertex positions
- */
-DFM2_INLINE void PBD_ConstraintProjection_DistanceTri2D3D(
-    double C[3],
-    double dCdp[3][9],
-    const double P[3][2],
-    const double p[3][3]);
-
-
-/**
- *
- * @param C
- * @param dCdp
- * @param[in] P undeformed triangle vertex positions
- * @param[in] p deformed triangle vertex positions
- */
-DFM2_INLINE void PBD_ConstraintProjection_DistanceTet(
-    double C[6],
-    double dCdp[6][12],
-    const double P[4][3],
-    const double p[4][3]);
-
-
 DFM2_INLINE void PBD_Seam(
-    double *aXYZt,
-    size_t nXYZ,
-    const unsigned int *aLine,
-    size_t nline);
+  double *aXYZt,
+  size_t nXYZ,
+  const unsigned int *aLine,
+  size_t nline);
 
-template<typename T>
-DFM2_INLINE void CdC_DiscreteShell(
-    double &C,
-    CVec3<T> dC[4],
-    // -----
-    const CVec3<T> &p0,
-    const CVec3<T> &p1,
-    const CVec3<T> &p2,
-    const CVec3<T> &p3);
 }
 
 #ifndef DFM2_STATIC_LIBRARY

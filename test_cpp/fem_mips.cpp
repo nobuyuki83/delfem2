@@ -15,7 +15,7 @@
 
 namespace dfm2 = delfem2;
 
-TEST(objfunc_v23, MIPS) {
+TEST(fem_mips, MIPS) {
   std::random_device randomDevice;
   std::mt19937 randomEng(randomDevice());
   std::uniform_real_distribution<double> dist_01(0, 1);

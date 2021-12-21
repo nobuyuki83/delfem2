@@ -11,6 +11,7 @@
 //
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/pbd_geo3.h"
+#include "delfem2/fem_discreteshell.h"
 #include "delfem2/lsmats.h"  // need this prior to the fempoisson.h
 #include "delfem2/fempoisson.h"
 #include "delfem2/mshmisc.h"

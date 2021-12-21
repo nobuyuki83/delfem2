@@ -21,7 +21,7 @@
 
 namespace dfm2 = delfem2;
 
-TEST(objfunc_v23, arap) {
+TEST(def_arap, arap) {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri;
   dfm2::MeshTri3D_Cube(aXYZ0, aTri, 10);

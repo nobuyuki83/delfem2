@@ -205,107 +205,19 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D(
 }
 
 
-DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTri2D3D(
-    double C[3],
-    double dCdp[3][9],
-    const double P[3][2], // (in) undeformed triangle vertex positions
-    const double p[3][3] // (in) deformed triangle vertex positions
-) {
-  const double L12 = Distance2(P[1], P[2]);
-  const double L20 = Distance2(P[2], P[0]);
-  const double L01 = Distance2(P[0], P[1]);
-  CVec3d v12(p[1][0] - p[2][0], p[1][1] - p[2][1], p[1][2] - p[2][2]);
-  CVec3d v20(p[2][0] - p[0][0], p[2][1] - p[0][1], p[2][2] - p[0][2]);
-  CVec3d v01(p[0][0] - p[1][0], p[0][1] - p[1][1], p[0][2] - p[1][2]);
-  const double l12 = v12.norm();
-  const double l20 = v20.norm();
-  const double l01 = v01.norm();
-  C[0] = l12 - L12;
-  C[1] = l20 - L20;
-  C[2] = l01 - L01;
-  v12 /= l12;
-  v20 /= l20;
-  v01 /= l01;
-  for (int i = 0; i < 27; ++i) { (&dCdp[0][0])[i] = 0.0; }
-  v12.CopyTo(dCdp[0] + 3 * 1);
-  v12.CopyToScale(dCdp[0] + 3 * 2, -1.0);
-  v20.CopyTo(dCdp[1] + 3 * 2);
-  v20.CopyToScale(dCdp[1] + 3 * 0, -1.0);
-  v01.CopyTo(dCdp[2] + 3 * 0);
-  v01.CopyToScale(dCdp[2] + 3 * 1, -1.0);
-}
-
-/**
- *
- * @param C
- * @param dCdp
- * @param[in] P undeformed triangle vertex positions
- * @param[in] p deformed triangle vertex positions
- * @param L01
- */
-DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTet(
-    double C[6],
-    double dCdp[6][12],
-    const double P[4][3],
-    const double p[4][3]) {
-  const double L01 = Distance3(P[0], P[1]);
-  const double L02 = Distance3(P[0], P[2]);
-  const double L03 = Distance3(P[0], P[3]);
-  const double L12 = Distance3(P[1], P[2]);
-  const double L13 = Distance3(P[1], P[3]);
-  const double L23 = Distance3(P[2], P[3]);
-  CVec3d v01(p[0][0] - p[1][0], p[0][1] - p[1][1], p[0][2] - p[1][2]);
-  CVec3d v02(p[0][0] - p[2][0], p[0][1] - p[2][1], p[0][2] - p[2][2]);
-  CVec3d v03(p[0][0] - p[3][0], p[0][1] - p[3][1], p[0][2] - p[3][2]);
-  CVec3d v12(p[1][0] - p[2][0], p[1][1] - p[2][1], p[1][2] - p[2][2]);
-  CVec3d v13(p[1][0] - p[3][0], p[1][1] - p[3][1], p[1][2] - p[3][2]);
-  CVec3d v23(p[2][0] - p[3][0], p[2][1] - p[3][1], p[2][2] - p[3][2]);
-  const double l01 = v01.norm();
-  const double l02 = v02.norm();
-  const double l03 = v03.norm();
-  const double l12 = v12.norm();
-  const double l13 = v13.norm();
-  const double l23 = v23.norm();
-  C[0] = l01 - L01;
-  C[1] = l02 - L02;
-  C[2] = l03 - L03;
-  C[3] = l12 - L12;
-  C[4] = l13 - L13;
-  C[5] = l23 - L23;
-  // ----
-  v01 /= l01;
-  v02 /= l02;
-  v03 /= l03;
-  v12 /= l12;
-  v13 /= l13;
-  v23 /= l23;
-  // ----
-  for (int i = 0; i < 6 * 3 * 4; ++i) { (&dCdp[0][0])[i] = 0.0; }
-  v01.CopyTo(dCdp[0] + 0 * 3);
-  v01.CopyToScale(dCdp[0] + 1 * 3, -1.0);
-  v02.CopyTo(dCdp[1] + 0 * 3);
-  v02.CopyToScale(dCdp[1] + 2 * 3, -1.0);
-  v03.CopyTo(dCdp[2] + 0 * 3);
-  v03.CopyToScale(dCdp[2] + 3 * 3, -1.0);
-  v12.CopyTo(dCdp[3] + 1 * 3);
-  v12.CopyToScale(dCdp[3] + 2 * 3, -1.0);
-  v13.CopyTo(dCdp[4] + 1 * 3);
-  v13.CopyToScale(dCdp[4] + 3 * 3, -1.0);
-  v23.CopyTo(dCdp[5] + 2 * 3);
-  v23.CopyToScale(dCdp[5] + 3 * 3, -1.0);
-}
+// -------------------------
 
 DFM2_INLINE void delfem2::PBD_Seam(
-    double *aXYZt,
-    [[maybe_unused]] size_t nXYZ,
-    const unsigned int *aLine,
-    size_t nline) {
+  double *aXYZt,
+  [[maybe_unused]] size_t nXYZ,
+  const unsigned int *aLine,
+  size_t nline) {
   for (unsigned int il = 0; il < nline; ++il) {
     const unsigned int ip0 = aLine[il * 2 + 0];
     const unsigned int ip1 = aLine[il * 2 + 1];
     const double p[2][3] = {
-        {aXYZt[ip0 * 3 + 0], aXYZt[ip0 * 3 + 1], aXYZt[ip0 * 3 + 2]},
-        {aXYZt[ip1 * 3 + 0], aXYZt[ip1 * 3 + 1], aXYZt[ip1 * 3 + 2]}};
+      {aXYZt[ip0 * 3 + 0], aXYZt[ip0 * 3 + 1], aXYZt[ip0 * 3 + 2]},
+      {aXYZt[ip1 * 3 + 0], aXYZt[ip1 * 3 + 1], aXYZt[ip1 * 3 + 2]}};
     double d0 = Distance3(p[0], p[1]);
     double dLen = 0.01;
     if (d0 > dLen) {
@@ -332,41 +244,3 @@ DFM2_INLINE void delfem2::PBD_Seam(
   }
 }
 
-template<typename T>
-DFM2_INLINE void delfem2::CdC_DiscreteShell(
-    double &C,
-    CVec3<T> dC[4],
-    const CVec3<T> &p0,
-    const CVec3<T> &p1,
-    const CVec3<T> &p2,
-    const CVec3<T> &p3) {
-  const CVec3<T> v02 = p2 - p0;
-  const CVec3<T> v03 = p3 - p0;
-  const CVec3<T> v12 = p2 - p1;
-  const CVec3<T> v13 = p3 - p1;
-  const CVec3<T> v23 = p3 - p2;
-  // ---
-  const CVec3<T> A = v02 ^ v03;
-  const CVec3<T> B = v13 ^ v12;
-  const double lA = A.norm();
-  const double lB = B.norm();
-  const CVec3<T> a = A / lA;
-  const CVec3<T> b = B / lB;
-  const double ab = a.dot(b);
-  //  C = acos(ab);
-  C = ab - 1;
-  const double sab = 1.0;//-1.0/sin(C);
-  const CVec3<T> tmpBA = (b - a * (a.dot(b))) * (sab / lA);
-  const CVec3<T> tmpAB = (a - b * (b.dot(a))) * (sab / lB);
-  dC[0] = (tmpBA ^ v23);
-  dC[1] = (v23 ^ tmpAB);
-  dC[2] = (v03 ^ tmpBA) + (tmpAB ^ v13);
-  dC[3] = (tmpBA ^ v02) + (v12 ^ tmpAB);
-}
-template void delfem2::CdC_DiscreteShell(
-    double &,
-    CVec3d dC[4],
-    const CVec3d &,
-    const CVec3d &,
-    const CVec3d &,
-    const CVec3d &);
