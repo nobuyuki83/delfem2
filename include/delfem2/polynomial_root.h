@@ -72,6 +72,55 @@ void StrumSequence_CubicPolynomial(
 }
 
 template<int n>
+void StrumSequenceOfPolynomial(
+  double strum[n][n],
+  const double coe[n]) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      if (i == 0) {
+        strum[i][j] = coe[j];
+      } else if (i == 1 && j < n - 1) {
+        strum[i][j] = (j + 1) * coe[j + 1];
+      } else {
+        strum[i][j] = 0.;
+      }
+    }
+  }
+
+  for (int i = 0; i < n - 2; i++) {
+    int j = i + 1, k1 = n - i - 1, k2 = n - j - 1;
+    while (strum[i][k1] == 0) {
+      k1--;
+      if (k1 < 0) { return; }
+    }
+    while (strum[j][k2] == 0) {
+      k2--;
+      if (k2 < 0) { return; }
+    }
+    double poly[n];
+    for (int l = 0; l < n; l++) {
+      poly[l] = strum[i][l];
+    }
+    while (k1 >= k2) {
+      while (poly[k1] == 0.) {
+        k1--;
+        if (k1 < k2) { break; }
+      }
+      if (k1 >= k2) {
+        double quotient = poly[k1] / strum[j][k2];
+        poly[k1] = 0.;
+        for (int l = 1; l <= k2; l++) {
+          poly[k1 - l] -= quotient * strum[j][k2 - l];
+        }
+      }
+    }
+    for (int l = 0; l < n; l++) {
+      strum[j + 1][l] = -poly[l];
+    }
+  }
+}
+
+template<int n>
 std::vector<std::pair<double, double> > RootInterval_StrumSequence(
   double x0, double x1,
   const double strum[n][n]) {
