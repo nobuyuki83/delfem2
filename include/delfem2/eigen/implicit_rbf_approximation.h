@@ -17,6 +17,14 @@ class ImplicitRbfApproximation {
       bool is_linear)
       : rbf(std::move(rbf)), is_linear(is_linear) {}
 
+  bool IsInitailized2() const {
+    const auto num_sample = static_cast<unsigned int>(sample_xy.size() / 2);
+    if( num_sample == 0 ){ return false; }
+    const unsigned int ndof = is_linear ? num_sample + 3 : num_sample;
+    if(weights.size() != ndof){ return false; }
+    return true;
+  }
+
   template<class V2>
   void SetPolyline2(const std::vector<V2> &stroke, double eps) {
     GenerateSamplePositionsForPolyline(stroke, eps);

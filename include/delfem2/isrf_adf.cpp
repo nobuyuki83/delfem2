@@ -363,13 +363,11 @@ void delfem2::AdaptiveDistanceField3::SetUp(
     //		no.MakeChildTree(ct,aNode,no.hw_*(0.99/32.0),no.hw_*(1.01/4.0));
   }
   aNode[0] = no;
-  std::cout << "ADF Oct-tree Node Size : " << aNode.size() << std::endl;
-  ////
+  //
   dist_min = no.dists_[0];
   dist_max = dist_min;
-  for (unsigned int ino = 0; ino < aNode.size(); ino++) {
-    for (unsigned int i = 0; i < 8; i++) {
-      const double dist = aNode[ino].dists_[i];
+  for (auto & ino : aNode) {
+    for (double dist : ino.dists_) {
       dist_min = (dist < dist_min) ? dist : dist_min;
       dist_max = (dist > dist_max) ? dist : dist_max;
     }
