@@ -17,7 +17,12 @@ class ImplicitRbfApproximation {
       bool is_linear)
       : rbf(std::move(rbf)), is_linear(is_linear) {}
 
-  bool IsInitailized2() const {
+  void Clear(){
+    sample_xy.clear();
+    weights.clear();
+  }
+
+  [[nodiscard]] bool IsInitailized2() const {
     const auto num_sample = static_cast<unsigned int>(sample_xy.size() / 2);
     if( num_sample == 0 ){ return false; }
     const unsigned int ndof = is_linear ? num_sample + 3 : num_sample;
