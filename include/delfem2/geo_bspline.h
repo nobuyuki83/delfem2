@@ -83,68 +83,65 @@ void SampleBSpline(
   }
 }
 
+template <typename SCALAR>
 void CoefficientsOfOpenUniformBSpline_Quadratic(
-  double coeff[3][3],
-  int index,
+  SCALAR coeff[3][3],
+  int idx_segment,
   int num_segment) {
 
-  const auto safe_divide = [](double a, int b) {
-    return (b == 0) ? 0. : a / static_cast<double>(b);
-  };
-
-  const int k0 = std::clamp<int>(index - 1, 0, num_segment) - index;
-  const int k1 = std::clamp<int>(index + 0, 0, num_segment) - index;
-  const int k2 = std::clamp<int>(index + 1, 0, num_segment) - index;
-  const int k3 = std::clamp<int>(index + 2, 0, num_segment) - index;
+  const int k0 = std::clamp<int>(idx_segment - 1, 0, num_segment) - idx_segment;
+  const int k1 = std::clamp<int>(idx_segment + 0, 0, num_segment) - idx_segment;
+  const int k2 = std::clamp<int>(idx_segment + 1, 0, num_segment) - idx_segment;
+  const int k3 = std::clamp<int>(idx_segment + 2, 0, num_segment) - idx_segment;
   assert(-1 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= 2);
 
-  const double c00 = safe_divide(1., k2 - k1);
-  const double c10 = safe_divide(1., k2 - k0);
-  const double c11 = safe_divide(1., k3 - k1);
+  const SCALAR c00 = (k2 == k1) ? 0.0 : 1./static_cast<SCALAR>(k2 - k1);
+  const SCALAR c10 = (k2 == k0) ? 0.0 : 1./static_cast<SCALAR>(k2 - k0);
+  const SCALAR c11 = (k3 == k1) ? 0.0 : 1./static_cast<SCALAR>(k3 - k1);
 
-  const double d22 = c00 * c10;
-  const double d02 = c10 * c00;
-  const double d13 = c11 * c00;
-  const double d11 = c00 * c11;
+  const SCALAR d22 = c00 * c10;
+  const SCALAR d02 = c10 * c00;
+  const SCALAR d13 = c11 * c00;
+  const SCALAR d11 = c00 * c11;
 
   coeff[0][0] = k2 * k2 * d22;
   coeff[0][1] = -2 * k2 * d22;
   coeff[0][2] = d22;
+  //
   coeff[1][0] = -k0 * k2 * d02 - k1 * k3 * d13;
   coeff[1][1] = (k0 + k2) * d02 + (k1 + k3) * d13;
   coeff[1][2] = -(d02 + d13);
+  //
   coeff[2][0] = k1 * k1 * d11;
   coeff[2][1] = -2 * k1 * d11;
   coeff[2][2] = d11;
 }
 
+template <typename SCALAR>
 void CoefficientsOfOpenUniformBSpline_Cubic(
-  double coeff[4][4],
-  int index,
+  SCALAR coeff[4][4],
+  int idx_segment,
   int num_segment) {
 
-  const auto safe_divide = [](double a, int b) {
-    return (b == 0) ? 0. : a / static_cast<double>(b);
-  };
-
-  const int k0 = std::clamp<int>(index - 2, 0, num_segment) - index;
-  const int k1 = std::clamp<int>(index - 1, 0, num_segment) - index;
-  const int k2 = std::clamp<int>(index + 0, 0, num_segment) - index;
-  const int k3 = std::clamp<int>(index + 1, 0, num_segment) - index;
-  const int k4 = std::clamp<int>(index + 2, 0, num_segment) - index;
-  const int k5 = std::clamp<int>(index + 3, 0, num_segment) - index;
+  // knot vector for this segement
+  const int k0 = std::clamp<int>(idx_segment - 2, 0, num_segment) - idx_segment;
+  const int k1 = std::clamp<int>(idx_segment - 1, 0, num_segment) - idx_segment;
+  const int k2 = std::clamp<int>(idx_segment + 0, 0, num_segment) - idx_segment;
+  const int k3 = std::clamp<int>(idx_segment + 1, 0, num_segment) - idx_segment;
+  const int k4 = std::clamp<int>(idx_segment + 2, 0, num_segment) - idx_segment;
+  const int k5 = std::clamp<int>(idx_segment + 3, 0, num_segment) - idx_segment;
   assert(-2 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= k4 && k4 <= k5 && k5 <= 3);
 
-  const double c32 = safe_divide(1., k3 - k2);
-  const double c31 = safe_divide(1., k3 - k1);
-  const double c42 = safe_divide(1., k4 - k2);
-  const double c30 = safe_divide(1., k3 - k0);
-  const double c41 = safe_divide(1., k4 - k1);
-  const double c52 = safe_divide(1., k5 - k2);
+  const SCALAR c32 = (k3 == k2) ? 0 : 1/static_cast<SCALAR>(k3-k2);
+  const SCALAR c31 = (k3 == k1) ? 0 : 1/static_cast<SCALAR>(k3-k1);
+  const SCALAR c42 = (k4 == k2) ? 0 : 1/static_cast<SCALAR>(k4-k2);
+  const SCALAR c30 = (k3 == k0) ? 0 : 1/static_cast<SCALAR>(k3-k0);
+  const SCALAR c41 = (k4 == k1) ? 0 : 1/static_cast<SCALAR>(k4-k1);
+  const SCALAR c52 = (k5 == k2) ? 0 : 1/static_cast<SCALAR>(k5-k2);
 
   {
     // (k3-t) * (k3-t) * (k3-t)
-    const double d333 = c30 * c31 * c32;
+    const SCALAR d333 = c30 * c31 * c32;
     coeff[0][0] = k3 * k3 * k3 * d333;
     coeff[0][1] = -3 * k3 * k3 * d333;
     coeff[0][2] = +3 * k3 * d333;
@@ -154,9 +151,9 @@ void CoefficientsOfOpenUniformBSpline_Cubic(
     // (t-k0) * (k3-t) * (k3-t)
     // (k4-t) * (t-k1) * (k3-t)
     // (k4-t) * (k4-t) * (t-k2)
-    const double d033 = c30 * c31 * c32;
-    const double d413 = c41 * c31 * c32;
-    const double d442 = c41 * c42 * c32;
+    const SCALAR d033 = c30 * c31 * c32;
+    const SCALAR d413 = c41 * c31 * c32;
+    const SCALAR d442 = c41 * c42 * c32;
     coeff[1][0] = -k0 * k3 * k3 * d033 - k4 * k1 * k3 * d413 - k4 * k4 * k2 * d442;
     coeff[1][1] =
       +(2 * k0 * k3 + k3 * k3) * d033
@@ -169,9 +166,9 @@ void CoefficientsOfOpenUniformBSpline_Cubic(
     // (t-k1) * (t-k1) * (k3-t) / (k4-k1) / (k3-k1) / (k3-k2)
     // (t-k1) * (k4-t) * (t-k2) / (k4-k1) / (k4-k2) / (k3-k2)
     // (k5-t) * (t-k2) * (t-k2) / (k5-k2) / (k4-k2) / (k3-k2)
-    const double d113 = c41 * c31 * c32;
-    const double d142 = c41 * c42 * c32;
-    const double d522 = c52 * c42 * c32;
+    const SCALAR d113 = c41 * c31 * c32;
+    const SCALAR d142 = c41 * c42 * c32;
+    const SCALAR d522 = c52 * c42 * c32;
     coeff[2][0] = k1 * k1 * k3 * d113 + k1 * k4 * k2 * d142 + k5 * k2 * k2 * d522;
     coeff[2][1] =
       -(2 * k1 * k3 + k1 * k1) * d113
@@ -182,7 +179,7 @@ void CoefficientsOfOpenUniformBSpline_Cubic(
   }
   {
     // (t-k2) * (t-k2) * (t-k2)
-    const double d222 = c52 * c42 * c32;
+    const SCALAR d222 = c52 * c42 * c32;
     coeff[3][0] = -k2 * k2 * k2 * d222;
     coeff[3][1] = +3 * k2 * k2 * d222;
     coeff[3][2] = -3 * k2 * d222;
@@ -213,26 +210,27 @@ void CoefficientsOfOpenUniformBSpline_Cubic(
  */
 template<typename VEC>
 VEC Sample_QuadraticBsplineCurve(
-  double t,
+  typename VEC::Scalar t,
   const std::vector<VEC> &poly) {
+  using SCALAR = typename VEC::Scalar;
 
   const int num_segment = poly.size() - 2;
-  const int index = static_cast<int>(t) + (t == num_segment ? -1 : 0);
-  assert(index >= 0 && index < num_segment );
+  const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
+  assert(idx_segment >= 0 && idx_segment < num_segment );
 
-  t -= index;
+  t -= idx_segment;
   assert(t >= 0 && t <= 1);
 
-  double coeff[3][3];
-  CoefficientsOfOpenUniformBSpline_Quadratic(coeff, index, num_segment);
+  SCALAR coeff[3][3];
+  CoefficientsOfOpenUniformBSpline_Quadratic(coeff, idx_segment, num_segment);
 
-  const double w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
-  const double w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
-  const double w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
+  const SCALAR w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
+  const SCALAR w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
+  const SCALAR w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
 
   assert(fabs(w0 + w1 + w2 - 1.) < 1.0e-10);
   assert(w0 >= 0 && w1 >= 0 && w2 >= 0);
-  return poly[index] * w0 + poly[index + 1] * w1 + poly[index + 2] * w2;
+  return poly[idx_segment] * w0 + poly[idx_segment + 1] * w1 + poly[idx_segment + 2] * w2;
 }
 
 /**
@@ -244,8 +242,9 @@ VEC Sample_QuadraticBsplineCurve(
  */
 template<typename VEC>
 VEC Sample_CubicBsplineCurve(
-  double t,
+  typename VEC::Scalar t,
   const std::vector<VEC> &poly) {
+  using SCALAR = typename VEC::Scalar;
 
   const int num_segment = poly.size() - 3;
   const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
@@ -254,13 +253,13 @@ VEC Sample_CubicBsplineCurve(
   t -= idx_segment;
   assert(t >= 0 && t <= 1);
 
-  double coeff[4][4];
+  SCALAR coeff[4][4];
   CoefficientsOfOpenUniformBSpline_Cubic(coeff, idx_segment, num_segment);
 
-  double v0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t + coeff[0][3] * t * t * t;
-  double v1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t + coeff[1][3] * t * t * t;
-  double v2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t + coeff[2][3] * t * t * t;
-  double v3 = coeff[3][0] + coeff[3][1] * t + coeff[3][2] * t * t + coeff[3][3] * t * t * t;
+  SCALAR v0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t + coeff[0][3] * t * t * t;
+  SCALAR v1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t + coeff[1][3] * t * t * t;
+  SCALAR v2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t + coeff[2][3] * t * t * t;
+  SCALAR v3 = coeff[3][0] + coeff[3][1] * t + coeff[3][2] * t * t + coeff[3][3] * t * t * t;
 
   assert(fabs(v0 + v1 + v2 + v3 - 1.) < 1.0e-10);
   assert(v0 >= -1.0e-10 && v1 >= -1.0e-10 && v2 >= -1.0e-10 && v3 >= -1.0e-10);
@@ -333,7 +332,6 @@ VEC Sample_BsplineCurve(
 
   int knot[norderplus1 * 2];
   for (int i = 0; i < norderplus1 * 2; i++) {
-    //        std::clamp<int>(index - 1,                     0, N) - index;
     knot[i] = std::clamp<int>(index + i - (norderplus1 - 1), 0, N) - index;
   }
   //
