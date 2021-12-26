@@ -83,9 +83,130 @@ void SampleBSpline(
   }
 }
 
+void CoefficientsOfOpenUniformBSpline_Quadratic(
+  double coeff[3][3],
+  int index,
+  int num_segment) {
+
+  const auto safe_divide = [](double a, int b) {
+    return (b == 0) ? 0. : a / static_cast<double>(b);
+  };
+
+  const int k0 = std::clamp<int>(index - 1, 0, num_segment) - index;
+  const int k1 = std::clamp<int>(index + 0, 0, num_segment) - index;
+  const int k2 = std::clamp<int>(index + 1, 0, num_segment) - index;
+  const int k3 = std::clamp<int>(index + 2, 0, num_segment) - index;
+  assert(-1 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= 2);
+
+  const double c00 = safe_divide(1., k2 - k1);
+  const double c10 = safe_divide(1., k2 - k0);
+  const double c11 = safe_divide(1., k3 - k1);
+
+  const double d22 = c00 * c10;
+  const double d02 = c10 * c00;
+  const double d13 = c11 * c00;
+  const double d11 = c00 * c11;
+
+  coeff[0][0] = k2 * k2 * d22;
+  coeff[0][1] = -2 * k2 * d22;
+  coeff[0][2] = d22;
+  coeff[1][0] = -k0 * k2 * d02 - k1 * k3 * d13;
+  coeff[1][1] = (k0 + k2) * d02 + (k1 + k3) * d13;
+  coeff[1][2] = -(d02 + d13);
+  coeff[2][0] = k1 * k1 * d11;
+  coeff[2][1] = -2 * k1 * d11;
+  coeff[2][2] = d11;
+}
+
+void CoefficientsOfOpenUniformBSpline_Cubic(
+  double coeff[4][4],
+  int index,
+  int num_segment) {
+
+  const auto safe_divide = [](double a, int b) {
+    return (b == 0) ? 0. : a / static_cast<double>(b);
+  };
+
+  const int k0 = std::clamp<int>(index - 2, 0, num_segment) - index;
+  const int k1 = std::clamp<int>(index - 1, 0, num_segment) - index;
+  const int k2 = std::clamp<int>(index + 0, 0, num_segment) - index;
+  const int k3 = std::clamp<int>(index + 1, 0, num_segment) - index;
+  const int k4 = std::clamp<int>(index + 2, 0, num_segment) - index;
+  const int k5 = std::clamp<int>(index + 3, 0, num_segment) - index;
+  assert(-2 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= k4 && k4 <= k5 && k5 <= 3);
+
+  const double c32 = safe_divide(1., k3 - k2);
+  const double c31 = safe_divide(1., k3 - k1);
+  const double c42 = safe_divide(1., k4 - k2);
+  const double c30 = safe_divide(1., k3 - k0);
+  const double c41 = safe_divide(1., k4 - k1);
+  const double c52 = safe_divide(1., k5 - k2);
+
+  {
+    // (k3-t) * (k3-t) * (k3-t)
+    const double d333 = c30 * c31 * c32;
+    coeff[0][0] = k3 * k3 * k3 * d333;
+    coeff[0][1] = -3 * k3 * k3 * d333;
+    coeff[0][2] = +3 * k3 * d333;
+    coeff[0][3] = -d333;
+  }
+  {
+    // (t-k0) * (k3-t) * (k3-t)
+    // (k4-t) * (t-k1) * (k3-t)
+    // (k4-t) * (k4-t) * (t-k2)
+    const double d033 = c30 * c31 * c32;
+    const double d413 = c41 * c31 * c32;
+    const double d442 = c41 * c42 * c32;
+    coeff[1][0] = -k0 * k3 * k3 * d033 - k4 * k1 * k3 * d413 - k4 * k4 * k2 * d442;
+    coeff[1][1] =
+      +(2 * k0 * k3 + k3 * k3) * d033
+        + (k4 * k1 + k1 * k3 + k3 * k4) * d413
+        + (k4 * k4 + 2 * k4 * k2) * d442;
+    coeff[1][2] = -(k0 + 2 * k3) * d033 - (k4 + k1 + k3) * d413 - (2 * k4 + k2) * d442;
+    coeff[1][3] = d033 + d413 + d442;
+  }
+  {
+    // (t-k1) * (t-k1) * (k3-t) / (k4-k1) / (k3-k1) / (k3-k2)
+    // (t-k1) * (k4-t) * (t-k2) / (k4-k1) / (k4-k2) / (k3-k2)
+    // (k5-t) * (t-k2) * (t-k2) / (k5-k2) / (k4-k2) / (k3-k2)
+    const double d113 = c41 * c31 * c32;
+    const double d142 = c41 * c42 * c32;
+    const double d522 = c52 * c42 * c32;
+    coeff[2][0] = k1 * k1 * k3 * d113 + k1 * k4 * k2 * d142 + k5 * k2 * k2 * d522;
+    coeff[2][1] =
+      -(2 * k1 * k3 + k1 * k1) * d113
+        - (k1 * k4 + k4 * k2 + k2 * k1) * d142
+        - (2 * k5 * k2 + k2 * k2) * d522;
+    coeff[2][2] = (2 * k1 + k3) * d113 + (k1 + k4 + k2) * d142 + (k5 + 2 * k2) * d522;
+    coeff[2][3] = -d113 - d142 - d522;
+  }
+  {
+    // (t-k2) * (t-k2) * (t-k2)
+    const double d222 = c52 * c42 * c32;
+    coeff[3][0] = -k2 * k2 * k2 * d222;
+    coeff[3][1] = +3 * k2 * k2 * d222;
+    coeff[3][2] = -3 * k2 * d222;
+    coeff[3][3] = d222;
+  }
+
+  /*
+  const double w00 = safe_divide(k3 - t, k3 - k2);
+  const double w10 = safe_divide(k3 - t, k3 - k1);
+  const double w11 = safe_divide(k4 - t, k4 - k2);
+  const double w20 = safe_divide(k3 - t, k3 - k0);
+  const double w21 = safe_divide(k4 - t, k4 - k1);
+  const double w22 = safe_divide(k5 - t, k5 - k2);
+
+  const double w0 = w20 * w10 * w00;
+  const double w1 = (1 - w20) * w10 * w00 + w21 * (1 - w10) * w00 + w21 * w11 * (1 - w00);
+  const double w2 = (1 - w21) * (1 - w10) * w00 + (1 - w21) * w11 * (1 - w00) + w22 * (1 - w11) * (1 - w00);
+  const double w3 = (1 - w22) * (1 - w11) * (1 - w00);
+   */
+}
+
 /**
  * Quadratic B-Spline with "open and uniform knot vector"
- * knot vector = [0,0,0,1,2,3,...,N-1,N,N,N] / N where N is poly.size()-2
+ * knot vector = [0,0,0,1,2,3,...,N-1,N,N,N] where N is poly.size()-2
  * @param t parameter of curve that takes [0,1]
  * @param poly position of the the control points
  * @return sampled point
@@ -95,28 +216,55 @@ VEC Sample_QuadraticBsplineCurve(
   double t,
   const std::vector<VEC> &poly) {
 
-  const auto safe_divide = [](double a, int b) {
-    return (b == 0) ? 0. : a / static_cast<double>(b);
-  };
-
-  const int N = poly.size() - 2;
-  const int index = static_cast<int>(t) + (t == N ? -1 : 0);
-  assert(index >= 0 && index < poly.size() + 2);
+  const int num_segment = poly.size() - 2;
+  const int index = static_cast<int>(t) + (t == num_segment ? -1 : 0);
+  assert(index >= 0 && index < num_segment );
 
   t -= index;
+  assert(t >= 0 && t <= 1);
 
-  const int a = std::clamp<int>(index - 1, 0, N) - index;
-  const int b = std::clamp<int>(index, 0, N) - index;
-  const int c = std::clamp<int>(index + 1, 0, N) - index;
-  const int d = std::clamp<int>(index + 2, 0, N) - index;
+  double coeff[3][3];
+  CoefficientsOfOpenUniformBSpline_Quadratic(coeff, index, num_segment);
 
-  const double w0 = safe_divide((t - b) * (t - b), (d - b) * (c - b));
-  const double w1 = safe_divide((t - a) * (c - t), (c - a) * (c - b));
-  const double w2 = safe_divide((d - t) * (t - b), (d - b) * (c - b));
-  const double w3 = safe_divide((c - t) * (c - t), (c - a) * (c - b));
-  assert(fabs(w0 + w1 + w2 + w3 - 1.) < 1.0e-10);
-  assert(w0 >= 0 && w1 >= 0 && w2 >= 0 && w3 >= 0);
-  return poly[index + 2] * w0 + poly[index + 1] * (w1 + w2) + poly[index] * w3;
+  const double w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
+  const double w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
+  const double w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
+
+  assert(fabs(w0 + w1 + w2 - 1.) < 1.0e-10);
+  assert(w0 >= 0 && w1 >= 0 && w2 >= 0);
+  return poly[index] * w0 + poly[index + 1] * w1 + poly[index + 2] * w2;
+}
+
+/**
+ * Quadratic B-Spline with "open and uniform knot vector"
+ * knot vector = [0,0,0,1,2,3,...,N-1,N,N,N] where N is poly.size()-2
+ * @param t parameter of curve that takes [0,1]
+ * @param poly position of the the control points
+ * @return sampled point
+ */
+template<typename VEC>
+VEC Sample_CubicBsplineCurve(
+  double t,
+  const std::vector<VEC> &poly) {
+
+  const int num_segment = poly.size() - 3;
+  const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
+  assert(idx_segment >= 0 && idx_segment < num_segment );
+
+  t -= idx_segment;
+  assert(t >= 0 && t <= 1);
+
+  double coeff[4][4];
+  CoefficientsOfOpenUniformBSpline_Cubic(coeff, idx_segment, num_segment);
+
+  double v0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t + coeff[0][3] * t * t * t;
+  double v1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t + coeff[1][3] * t * t * t;
+  double v2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t + coeff[2][3] * t * t * t;
+  double v3 = coeff[3][0] + coeff[3][1] * t + coeff[3][2] * t * t + coeff[3][3] * t * t * t;
+
+  assert(fabs(v0 + v1 + v2 + v3 - 1.) < 1.0e-10);
+  assert(v0 >= -1.0e-10 && v1 >= -1.0e-10 && v2 >= -1.0e-10 && v3 >= -1.0e-10);
+  return poly[idx_segment] * v0 + poly[idx_segment + 1] * v1 + poly[idx_segment + 2] * v2 + poly[idx_segment + 3] * v3;
 }
 
 template<typename VEC, int norderplus1>
@@ -124,6 +272,9 @@ VEC Sample_BsplineCurveSegment(
   double t,
   const int knot[norderplus1 * 2],
   const VEC polyloc[norderplus1]) {
+
+  assert(t >= 0 && t <= 1);
+
   const auto safe_divide = [](double a, int b) {
     return (b == 0) ? 0. : a / static_cast<double>(b);
   };
@@ -158,9 +309,9 @@ VEC Sample_BsplineCurveSegment(
 
   double weight[norderplus1 + 1];
   for (int i = 0; i < norderplus1 + 1; i++) {
-    weight[i] = coefficient[i][norderplus1-1];
-    for(int j=1;j<norderplus1;++j){
-      weight[i] = weight[i] * t + coefficient[i][norderplus1-1-j];
+    weight[i] = coefficient[i][norderplus1 - 1];
+    for (int j = 1; j < norderplus1; ++j) {
+      weight[i] = weight[i] * t + coefficient[i][norderplus1 - 1 - j];
     }
   }
 
@@ -178,9 +329,11 @@ VEC Sample_BsplineCurve(
 
   const int N = poly.size() + 1 - norderplus1; // N=max{knot vector}
   const int index = static_cast<int>(t) + (t == N ? -1 : 0);
+  assert(index >= 0 && index < poly.size() + norderplus1 - 1);
 
   int knot[norderplus1 * 2];
   for (int i = 0; i < norderplus1 * 2; i++) {
+    //        std::clamp<int>(index - 1,                     0, N) - index;
     knot[i] = std::clamp<int>(index + i - (norderplus1 - 1), 0, N) - index;
   }
   //
