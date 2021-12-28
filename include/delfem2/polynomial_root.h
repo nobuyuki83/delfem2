@@ -252,7 +252,7 @@ std::vector<double> RootsOfPolynomial(
   const double coe[ndegplus1],
   int num_bisection){
   double strum[ndegplus1][ndegplus1];
-  StrumSequenceOfPolynomial(strum, coe);
+  StrumSequenceOfPolynomial<ndegplus1>(strum, coe);
   std::vector<std::pair<double, double>> intvls = RootInterval_StrumSequence<ndegplus1>(0, 1, strum);
   std::vector<double> res;
   for (auto intvl: intvls) {

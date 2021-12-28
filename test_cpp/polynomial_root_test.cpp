@@ -35,7 +35,7 @@ TEST(polynomial_root, quad_2roots) {
     const double b = -a * (x0 + x1);
     const double c = a * x0 * x1;
     double strum[3][3];
-    delfem2::StrumSequenceOfPolynomial(strum, std::array<double,3>{c,b,a}.data());
+    delfem2::StrumSequenceOfPolynomial<3>(strum, std::array<double,3>{c,b,a}.data());
     int nroot1 = delfem2::StrumNumber<3>(0, strum) - delfem2::StrumNumber<3>(1, strum);
     {
       int nroot0 = 0;
@@ -58,7 +58,7 @@ TEST(polynomial_root, quad_2roots) {
         EXPECT_LT(v0 * v1, 0.);
         const double y0 = delfem2::RootInInterval_Bisection(
           intvl.first, intvl.second,
-          coeff.data(), coeff.size(), 15);
+          coeff.data(), static_cast<int>(coeff.size()), 15);
         if (b0) {
           EXPECT_NEAR(y0, x0, 1.0e-4);
         } else {
