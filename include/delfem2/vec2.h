@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @detail The order of dependency in delfem2 is "vec2 -> mat2 -> vec3 -> quaternion -> mat3 -> mat4",
+ */
+
 #ifndef DFM2_VEC2_H
 #define DFM2_VEC2_H
 
@@ -155,6 +159,14 @@ class CVec2 {
     return p[i];
   }
   inline T &operator[](int i) {
+    assert(i < 2);
+    return p[i];
+  }
+  inline T operator()(int i) const {
+    assert(i < 2);
+    return p[i];
+  }
+  inline T &operator()(int i) {
     assert(i < 2);
     return p[i];
   }

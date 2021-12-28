@@ -43,36 +43,8 @@ int StrumNumber(double x, const double s[n][n]) {
   return root_number;
 }
 
-void StrumSequence_QuadraticPolynomial(
-  double strum[3][3],
-  double a, double b, double c) {
-  const double sign_a = (a > 0) ? 1. : -1.;
-  strum[0][0] = c;
-  strum[0][1] = b;
-  strum[0][2] = a;
-  strum[1][0] = b;
-  strum[1][1] = 2 * a;
-  strum[2][0] = sign_a * (b * b - 4 * c * a);
-}
-
-void StrumSequence_CubicPolynomial(
-  double strum[4][4],
-  double a, double b, double c, double d) {
-  const double sign_a = (a > 0) ? 1. : -1.;
-  strum[0][0] = d;
-  strum[0][1] = c;
-  strum[0][2] = b;
-  strum[0][3] = a;
-  strum[1][0] = c;
-  strum[1][1] = 2 * b;
-  strum[1][2] = 3 * a;
-  strum[2][0] = sign_a * (b * c - 9 * a * d);
-  strum[2][1] = sign_a * (2 * b * b - 6 * a * c);
-  strum[3][0] = -a * (-b * b * c * c + 4 * b * b * b * d - 18 * a * b * c * d + a * (4 * c * c * c + 27 * a * d * d));
-}
-
 template<int n>
-void StrumSequenceOfPolynomial(
+inline void StrumSequenceOfPolynomial(
   double strum[n][n],
   const double coe[n]) {
   for (int i = 0; i < n; i++) {
@@ -120,8 +92,54 @@ void StrumSequenceOfPolynomial(
   }
 }
 
+/**
+ * quadratic polynomial
+ * @param strum
+ * @param coe
+ */
+template<>
+inline void StrumSequenceOfPolynomial(
+  double strum[3][3],
+  const double coe[3]) {
+  const double sign_a = (coe[2] > 0) ? 1. : -1.;
+  strum[0][0] = coe[0];
+  strum[0][1] = coe[1];
+  strum[0][2] = coe[2];
+  strum[1][0] = coe[1];
+  strum[1][1] = 2 * coe[2];
+  strum[2][0] = sign_a * (coe[1] * coe[1] - 4 * coe[0] * coe[2]);
+}
+
+/**
+ * cubic polynomial
+ * @param strum
+ * @param coe coe[0] + coe[1]*t + coe[2]*t^2 + coe[3]*t^3
+ */
+template<>
+inline void StrumSequenceOfPolynomial(
+  double strum[4][4],
+  const double coe[4]) {
+  const double sign_a = (coe[3] > 0) ? 1. : -1.;
+  strum[0][0] = coe[0];
+  strum[0][1] = coe[1];
+  strum[0][2] = coe[2];
+  strum[0][3] = coe[3];
+  strum[1][0] = coe[1];
+  strum[1][1] = 2 * coe[2];
+  strum[1][2] = 3 * coe[3];
+  strum[2][0] = sign_a * (coe[2] * coe[1] - 9 * coe[3] * coe[0]);
+  strum[2][1] = sign_a * (2 * coe[2] * coe[2] - 6 * coe[3] * coe[1]);
+  strum[3][0] =
+    -coe[3] * (
+      -coe[2] * coe[2] * coe[1] * coe[1]
+        + 4 * coe[2] * coe[2] * coe[2] * coe[0]
+        - 18 * coe[3] * coe[2] * coe[1] * coe[0]
+        + coe[3] * (4 * coe[1] * coe[1] * coe[1] + 27 * coe[3] * coe[0] * coe[0])
+    );
+}
+
 template<int n>
-std::vector<std::pair<double, double> > RootInterval_StrumSequence(
+inline std::vector<std::pair<double, double> > RootInterval_StrumSequence(
   double x0, double x1,
   const double strum[n][n]) {
 
@@ -195,7 +213,7 @@ std::vector<REAL> RootsInRange_QuadraticPolynomial(
  * @param num_iteration  number of iteration
  * @return
  */
-double RootInInterval_Bisection(
+inline double RootInInterval_Bisection(
   double range_left,
   double range_right,
   const double *a,
@@ -221,6 +239,31 @@ double RootInInterval_Bisection(
   }
   return (x0 * fx1 - x1 * fx0) / (fx1 - fx0); // secant method
 }
+
+ /**
+  * Find the root of polynomial in the range [0,1]
+  * @tparam[in] ndegplus1 (degree of polynomial) + 1, e.g.(ndegplus1==3)->quadratic
+  * @param[in] coe f(t) = coe[0] + coe[1]*t + coe[2]*t^2 + ...
+  * @param[in] num_bisection
+  * @return roots of polynomial
+  */
+template<int ndegplus1>
+std::vector<double> RootsOfPolynomial(
+  const double coe[ndegplus1],
+  int num_bisection){
+  double strum[ndegplus1][ndegplus1];
+  StrumSequenceOfPolynomial(strum, coe);
+  std::vector<std::pair<double, double>> intvls = RootInterval_StrumSequence<ndegplus1>(0, 1, strum);
+  std::vector<double> res;
+  for (auto intvl: intvls) {
+    double y0 = RootInInterval_Bisection(
+      intvl.first, intvl.second,
+      coe, ndegplus1, num_bisection);
+    res.push_back(y0);
+  }
+  return res;
+}
+
 
 }
 

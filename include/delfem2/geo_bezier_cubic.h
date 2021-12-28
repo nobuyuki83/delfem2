@@ -5,6 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @detail The order of dependency in delfem2:
+ * line < ray < edge < polyline < quadratic < cubic < bspline << plane < tri < quad
+ */
+
 #ifndef DFM2_CURVE_CUBIC_BEZIER_H
 #define DFM2_CURVE_CUBIC_BEZIER_H
 
@@ -14,6 +19,7 @@
 #include <algorithm>
 
 #include "quadrature.h"
+#include "polynomial_root.h"
 
 namespace delfem2 {
 
@@ -127,6 +133,8 @@ typename VEC::Scalar Length_CubicBezierCurve_Quadrature(
   return totalLength / 2;
 }
 
+// ======================================
+
 template<typename VEC>
 typename VEC::Scalar Nearest_CubicBezierCurve(
   const VEC &q,
@@ -179,6 +187,49 @@ typename VEC::Scalar Nearest_CubicBezierCurve(
   }
   return t;
 }
+
+
+/**
+ * @return the parameter of cubic bezier curve nearest to q
+ */
+template<typename VEC>
+typename VEC::Scalar Nearest_CubicBezierCurve_Strum(
+  const VEC &q,
+  const VEC &p0,  // end point
+  const VEC &p1,  // the control point
+  const VEC &p2,
+  const VEC &p3,
+  unsigned int num_bisection = 15) {
+  // Precompute coefficients
+  // p = at^3 + bt^2 + ct + d
+  const VEC a = -p0 + 3 * p1 - 3 * p2 + p3;
+  const VEC b = 3 * p0 - 6 * p1 + 3 * p2;
+  const VEC c = -3 * p0 + 3 * p1;
+  const VEC d = p0 - q;
+
+  // Derivative of squared distance function
+  // We use the squared distance because it is easier to find its derivative
+  const double coe[6] = {
+    c.dot(d),
+    c.squaredNorm() + 2 * b.dot(d),
+    3 * (b.dot(c) + a.dot(d)),
+    2 * b.squaredNorm() + 4 * a.dot(c),
+    5 * a.dot(b),
+    3 * a.squaredNorm() };
+
+  auto roots = RootsOfPolynomial<6>(coe, num_bisection);
+  roots.push_back(1); // check t=1
+  double best_t = 0., best_dist = d.squaredNorm(); // check t=0
+  for (double t : roots) {
+    double dist0 = (d + t * (c + t * (b + t * a))).squaredNorm();
+    if(dist0 > best_dist) { continue; }
+    best_t = t;
+    best_dist = dist0;
+  }
+  return best_t;
+}
+
+// ----------------------------------------
 
 template<typename VEC>
 auto Area_CubicBezierCurve2(

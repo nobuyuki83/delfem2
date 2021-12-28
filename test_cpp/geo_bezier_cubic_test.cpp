@@ -27,7 +27,7 @@ TEST(bezier_cubic, test0) {
       EXPECT_NEAR(v0, v2, 0.07);
       double v3 = dfm2::Length_CubicBezierCurve_QuadratureSubdivision<dfm2::CVec2d,11>(
         p0, p1, p2, p3, 1.0e-3, 12);
-      EXPECT_NEAR(v0, v3, 3.e-3);
+      EXPECT_NEAR(v0, v3, 4.e-3);
     }
     {
       double a0 = dfm2::Area_CubicBezierCurve2(p0, p1, p2, p3);
@@ -38,11 +38,18 @@ TEST(bezier_cubic, test0) {
       dfm2::CVec2d scr(0.5, 0.5);
       const auto[i0, l0] = dfm2::FindNearestPointInPolyline(polyline, scr);
       const dfm2::CVec2d v0 = dfm2::PositionInPolyline(polyline, i0, l0);
+      //
       const double t1 = dfm2::Nearest_CubicBezierCurve<dfm2::CVec2d>(
         scr,
         p0, p1, p2, p3, 50, 3);
       const dfm2::CVec2d v1 = dfm2::PointOnCubicBezierCurve(t1, p0, p1, p2, p3);
-      EXPECT_NEAR((v0 - scr).norm(), (v1-scr).norm(), 1.0e-2);
+      EXPECT_NEAR((v0 - scr).norm(), (v1-scr).norm(), 1.2e-2);
+      //
+      const double t2 = dfm2::Nearest_CubicBezierCurve_Strum<dfm2::CVec2d>(
+        scr,
+        p0, p1, p2, p3, 16);
+      const dfm2::CVec2d v2 = dfm2::PointOnCubicBezierCurve(t2, p0, p1, p2, p3);
+      EXPECT_NEAR((v0 - scr).norm(), (v2-scr).norm(), 1.0e-6);
     }
     {  // bb
       auto bb0 = dfm2::AABB_CubicBezierCurve<2>(p0, p1, p2, p3);

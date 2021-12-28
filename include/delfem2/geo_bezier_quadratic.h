@@ -14,6 +14,7 @@
 #include <algorithm>
 
 #include "quadrature.h"
+#include "polynomial_root.h"
 
 namespace delfem2 {
 
@@ -123,6 +124,42 @@ typename VEC::Scalar Nearest_QuadraticBezierCurve(
   return t;
 }
 
+/**
+ * @return the parameter of quadratic bezier curve nearest to q
+ */
+template<typename VEC>
+typename VEC::Scalar Nearest_QuadraticBezierCurve_Strum(
+  const VEC &q,
+  const VEC &p0,  // end point
+  const VEC &p1,  // the control point
+  const VEC &p2,
+  unsigned int num_bisection) {
+  // Precompute coefficients
+  // p = at^2 + bt + c
+  const VEC a = p0 - 2 * p1 + p2;
+  const VEC b = -2 * p0 + 2 * p1;
+  const VEC c = p0 - q;
+
+  // Derivative of squared distance function
+  // We use the squared distance because it is easier to find its derivative
+  const double coe[4] = {
+    b.dot(c),
+    b.squaredNorm() + 2 * a.dot(c),
+    3 * a.dot(b),
+    2 * a.squaredNorm()};
+
+  auto roots = RootsOfPolynomial<4>(coe, num_bisection);
+  roots.push_back(1); // check t = 1
+  double best_t = 0., best_dist = c.squaredNorm(); // check t = 0
+  for (double t: roots) {
+    double dist0 = (c + t * (b + t * a)).squaredNorm();
+    if (dist0 > best_dist) { continue; }
+    best_t = t;
+    best_dist = dist0;
+  }
+  return best_t;
+}
+
 template<typename VEC>
 auto Area_QuadraticBezierCurve2(
   const VEC &p0,
@@ -189,14 +226,13 @@ std::array<VEC, 6> Split_QuadraticBezierCurve(
 // =====================
 
 
-template <typename VEC, unsigned gauss_order>
+template<typename VEC, unsigned gauss_order>
 typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
   const VEC &p0,  // end point
   const VEC &p1,  // the control point next tp p0
   const VEC &p2,  // another end point
   double tolerance = 1E-8,
-  int maxDepth = 8)
-{
+  int maxDepth = 8) {
   using SCALAR = typename VEC::Scalar;
 
   // derivative of cubic Bezier
@@ -218,29 +254,29 @@ typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
     length_gauss += nodeValue * gdw[0];
     length_gauss_kronrod += nodeValue * krw[0];
   }
-  for(int gauss_node = 1; gauss_node < (gauss_order + 1) / 2; gauss_node++) {
+  for (int gauss_node = 1; gauss_node < (gauss_order + 1) / 2; gauss_node++) {
     SCALAR a0 = gda[gauss_node];
     {
-      SCALAR nodeValue = quadraticBezierdt((1+a0)/2).norm();
+      SCALAR nodeValue = quadraticBezierdt((1 + a0) / 2).norm();
       length_gauss += nodeValue * gdw[gauss_node];
       length_gauss_kronrod += nodeValue * krw[gauss_node * 2];
     }
     {
-      SCALAR nodeValue = quadraticBezierdt((1-a0)/2).norm();
+      SCALAR nodeValue = quadraticBezierdt((1 - a0) / 2).norm();
       length_gauss += nodeValue * gdw[gauss_node];
       length_gauss_kronrod += nodeValue * krw[gauss_node * 2];
     }
   }
 
   // kronrod-only terms
-  for(int kronrod_node = 1; kronrod_node <= gauss_order; kronrod_node += 2) {
+  for (int kronrod_node = 1; kronrod_node <= gauss_order; kronrod_node += 2) {
     double a0 = kra[kronrod_node];
     {
-      const SCALAR nodeValue = quadraticBezierdt((1+a0)/2).norm();
+      const SCALAR nodeValue = quadraticBezierdt((1 + a0) / 2).norm();
       length_gauss_kronrod += nodeValue * krw[kronrod_node];
     }
     {
-      const SCALAR nodeValue = quadraticBezierdt((1-a0)/2).norm();
+      const SCALAR nodeValue = quadraticBezierdt((1 - a0) / 2).norm();
       length_gauss_kronrod += nodeValue * krw[kronrod_node];
     }
   }
@@ -248,10 +284,10 @@ typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
   length_gauss /= 2;
   length_gauss_kronrod /= 2;
 
-  if(std::abs(length_gauss_kronrod - length_gauss) < std::abs(length_gauss_kronrod) * tolerance) {
+  if (std::abs(length_gauss_kronrod - length_gauss) < std::abs(length_gauss_kronrod) * tolerance) {
     return length_gauss_kronrod;
   } else {
-    if(maxDepth == 1) {
+    if (maxDepth == 1) {
       // std::cout << "Warning: Max depth reached, current estimated error = " << std::abs(length_gauss_kronrod - length_gauss) / std::abs(length_gauss_kronrod) << std::endl;
       return length_gauss_kronrod;
     } else { // split

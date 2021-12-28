@@ -5,6 +5,9 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+/**
+ * @detail The order of dependency in delfem2 is "vec2 -> mat2 -> vec3 -> quaternion -> mat3 -> mat4",
+ */
 
 #ifndef DFM2_VEC3_H
 #define DFM2_VEC3_H

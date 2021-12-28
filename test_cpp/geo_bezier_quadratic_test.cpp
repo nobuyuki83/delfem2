@@ -6,11 +6,10 @@
 
 #include "gtest/gtest.h"
 
-#include "delfem2/geo_bezier_cubic.h"
 #include "delfem2/geo_bezier_quadratic.h"
 #include "delfem2/geo_polyline2.h"
 
-TEST(bezier_quadratic, test0) {
+TEST(bezier_quadratic, polyline2) {
   namespace dfm2 = delfem2;
   std::mt19937 rndeng(std::random_device{}());
   std::uniform_real_distribution<double> dist_01(0, 1);
@@ -42,11 +41,18 @@ TEST(bezier_quadratic, test0) {
       dfm2::CVec2d scr(0.5, 0.5);
       const auto [i0,l0] = dfm2::FindNearestPointInPolyline(polyline, scr);
       const dfm2::CVec2d v0 = dfm2::PositionInPolyline(polyline, i0, l0);
+      //
       const double t1 = dfm2::Nearest_QuadraticBezierCurve<dfm2::CVec2d>(
         scr,
         p0,p1,p2,30,3);
       const dfm2::CVec2d v1 = dfm2::PointOnQuadraticBezierCurve(t1,p0,p1,p2);
       EXPECT_NEAR( (v0-scr).norm(), (v1-scr).norm(),  0.02 );
+      //
+      const double t2 = dfm2::Nearest_QuadraticBezierCurve_Strum<dfm2::CVec2d>(
+        scr,
+        p0,p1,p2,16);
+      const dfm2::CVec2d v2 = dfm2::PointOnQuadraticBezierCurve(t2,p0,p1,p2);
+      EXPECT_NEAR( (v0-scr).norm(), (v2-scr).norm(),  1.0e-6 );
     }
     {  // bb
       auto bb0 = dfm2::AABB_QuadraticBezierCurve<2>(p0,p1,p2);
@@ -81,4 +87,7 @@ TEST(bezier_quadratic, test0) {
     }
   }
 }
+
+
+
 

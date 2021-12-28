@@ -19,7 +19,7 @@ TEST(polynomial_root, test0) {
     const double c = dist_m1p1(rndeng);
     auto roots0 = delfem2::RootsInRange_QuadraticPolynomial(0., 1., a, b, c);
     double strum[3][3];
-    delfem2::StrumSequence_QuadraticPolynomial(strum, a, b, c);
+    delfem2::StrumSequenceOfPolynomial<3>(strum, std::array<double,3>{c,b,a}.data());
     int nroot1 = delfem2::StrumNumber<3>(0, strum) - delfem2::StrumNumber<3>(1, strum);
     EXPECT_EQ(roots0.size(), nroot1);
   }
@@ -35,7 +35,7 @@ TEST(polynomial_root, quad_2roots) {
     const double b = -a * (x0 + x1);
     const double c = a * x0 * x1;
     double strum[3][3];
-    delfem2::StrumSequence_QuadraticPolynomial(strum, a, b, c);
+    delfem2::StrumSequenceOfPolynomial(strum, std::array<double,3>{c,b,a}.data());
     int nroot1 = delfem2::StrumNumber<3>(0, strum) - delfem2::StrumNumber<3>(1, strum);
     {
       int nroot0 = 0;
@@ -82,7 +82,7 @@ TEST(polynomial_root, cubic_3roots) {
     const double d = -a * x0 * x1 * x2;
     const auto coeff = std::array<double, 4>{d, c, b, a};
     double strum[4][4];
-    delfem2::StrumSequence_CubicPolynomial(strum, a, b, c, d);
+    delfem2::StrumSequenceOfPolynomial<4>(strum, std::array<double,4>{d,c,b,a}.data());
     int nroot1 = delfem2::StrumNumber<4>(0, strum) - delfem2::StrumNumber<4>(1, strum);
     { // number of roots
       int nroot0 = 0;

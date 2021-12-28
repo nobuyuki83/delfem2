@@ -7,6 +7,7 @@
 
 /**
  * @file 4x4 matrix class (CMat4) and functions
+ * @detail The order of dependency in delfem2 is "vec2 -> mat2 -> vec3 -> quaternion -> mat3 -> mat4",
  */
 
 #ifndef DFM2_MAT4_H

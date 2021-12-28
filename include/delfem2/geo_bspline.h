@@ -5,6 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @detail The order of dependency in delfem2:
+ * line < ray < edge < polyline < quadratic < cubic < bspline << plane < tri < quad
+ */
+
 #ifndef DFM2_CURVE_BSPLINE_H
 #define DFM2_CURVE_BSPLINE_H
 
@@ -15,75 +20,15 @@
 
 namespace delfem2 {
 
-void FlatKnot(
-  std::vector<double> &aKnotFlat,
-  const std::vector<int> &aKnotMulti,
-  const std::vector<double> &aKnot) {
-  assert(aKnot.size() == aKnotMulti.size());
-  aKnotFlat.clear();
-  for (size_t ik = 0; ik < aKnot.size(); ++ik) {
-    for (int iik = 0; iik < aKnotMulti[ik]; ++iik) {
-      aKnotFlat.push_back(aKnot[ik]);
-    }
-  }
-}
-
-template<typename T>
-T DeBoorBSpline(
-  double u,
-  int ndegree,
-  const std::vector<T> &aCP,
-  const std::vector<double> &aKnot) {
-  assert(ndegree > 0);
-  assert(aKnot.size() == aCP.size() + ndegree + 1);
-  const double eps = 1.0e-10;
-  //
-  unsigned int iks;
-  {
-    for (iks = ndegree; iks < aKnot.size() - ndegree; ++iks) {
-      double u0 = aKnot[iks];
-      double u1 = aKnot[iks + 1];
-      if (u >= u0 - eps && u <= u1 + eps) { break; }
-    }
-  }
-  std::vector<T> aTmp;
-  {
-    aTmp.reserve(ndegree + 1);
-    for (unsigned int ik = iks - ndegree; ik < iks + 1; ++ik) {
-      assert(ik >= 0);
-      aTmp.push_back(aCP[ik]);
-    }
-  }
-  for (int r = 0; r < ndegree; ++r) {
-    for (int j = 0; j < ndegree - r; ++j) {
-      double u0 = aKnot[j + iks - ndegree + 1 + r];
-      double u1 = aKnot[j + iks + 1];
-//      assert(u>=u0-eps && u<u1+eps);
-      double a = (u - u0) / (u1 - u0);
-      aTmp[j] = (1 - a) * aTmp[j] + a * aTmp[j + 1];
-    }
-  }
-  return aTmp[0];
-}
-
-template<typename T>
-void SampleBSpline(
-  std::vector<T> &polyline0,
-  const int nsmpl,
-  const int ndegree,
-  const std::vector<double> &aKnotFlat,
-  const std::vector<T> &aCtrlPoint) {
-  polyline0.clear();
-  double u0 = aKnotFlat[0];
-  double u1 = aKnotFlat[aKnotFlat.size() - 1];
-  for (int i = 0; i < nsmpl + 1; ++i) {
-    double u = (double) i * (u1 - u0) / nsmpl + u0;
-    T p = DeBoorBSpline(u, ndegree, aCtrlPoint, aKnotFlat);
-    polyline0.push_back(p);
-  }
-}
-
-template <typename SCALAR>
+/**
+ *
+ * @tparam SCALAR float or double
+ * @param[out] coeff array of coefficients
+ * @param[in] idx_segment
+ * @param[in] num_segment
+ * @detail (i-th point's weight) = coeff[i][0] + coeff[i][1] * t + coeff[i][2] * t * t
+ */
+template<typename SCALAR>
 void CoefficientsOfOpenUniformBSpline_Quadratic(
   SCALAR coeff[3][3],
   int idx_segment,
@@ -95,9 +40,9 @@ void CoefficientsOfOpenUniformBSpline_Quadratic(
   const int k3 = std::clamp<int>(idx_segment + 2, 0, num_segment) - idx_segment;
   assert(-1 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= 2);
 
-  const SCALAR c00 = (k2 == k1) ? 0.0 : 1./static_cast<SCALAR>(k2 - k1);
-  const SCALAR c10 = (k2 == k0) ? 0.0 : 1./static_cast<SCALAR>(k2 - k0);
-  const SCALAR c11 = (k3 == k1) ? 0.0 : 1./static_cast<SCALAR>(k3 - k1);
+  const SCALAR c00 = (k2 == k1) ? 0.0 : 1. / static_cast<SCALAR>(k2 - k1);
+  const SCALAR c10 = (k2 == k0) ? 0.0 : 1. / static_cast<SCALAR>(k2 - k0);
+  const SCALAR c11 = (k3 == k1) ? 0.0 : 1. / static_cast<SCALAR>(k3 - k1);
 
   const SCALAR d22 = c00 * c10;
   const SCALAR d02 = c10 * c00;
@@ -117,7 +62,79 @@ void CoefficientsOfOpenUniformBSpline_Quadratic(
   coeff[2][2] = d11;
 }
 
-template <typename SCALAR>
+/**
+ * Quadratic B-Spline with "open and uniform knot vector"
+ * knot vector = [0,0,0,1,2,3,...,N-1,N,N,N] where N is the nubmer of segments, which is poly.size()-2
+ * @param[in] t parameter of curve that takes [0,N]
+ * @param[in] poly position of the the control points
+ * @return sampled point
+ */
+template<typename VEC>
+VEC Sample_QuadraticBsplineCurve(
+  typename VEC::Scalar t,
+  const std::vector<VEC> &poly) {
+  using SCALAR = typename VEC::Scalar;
+
+  const int num_segment = poly.size() - 2;
+  const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
+  assert(idx_segment >= 0 && idx_segment < num_segment);
+
+  t -= idx_segment;
+  assert(t >= 0 && t <= 1);
+
+  SCALAR coeff[3][3];
+  CoefficientsOfOpenUniformBSpline_Quadratic(coeff, idx_segment, num_segment);
+
+  const SCALAR w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
+  const SCALAR w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
+  const SCALAR w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
+
+  assert(fabs(w0 + w1 + w2 - 1.) < 1.0e-10);
+  assert(w0 >= 0 && w1 >= 0 && w2 >= 0);
+  return poly[idx_segment] * w0 + poly[idx_segment + 1] * w1 + poly[idx_segment + 2] * w2;
+}
+
+/**
+ * at parameter "t" the position is evaluated as
+ * const SCALAR w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
+ * const SCALAR w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
+ * const SCALAR w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
+ * return points[0] * w0 + points[1] * w1 + points[2] * w2;
+ */
+template<typename VEC>
+double Length_ParametricCurve_Quadratic(
+  const double coeff[3][3],
+  const VEC points[3]) {
+  const VEC p0 = coeff[0][1] * points[0] + coeff[1][1] * points[1] + coeff[2][1] * points[2];
+  const VEC p1 = coeff[0][2] * points[0] + coeff[1][2] * points[1] + coeff[2][2] * points[2];
+  // dl = sqrt(coe[0] + coe[1]*t + coe[2]*t^2) dt
+  const double coe[3] = {
+    p0.squaredNorm(),
+    4*p0.dot(p1),
+    4*p1.squaredNorm()};
+  auto intt = [&coe](double t) -> double {
+    const double tmp0 = (coe[1] + 2 * coe[2] * t) * std::sqrt(coe[0] + t * (coe[1] + coe[2] * t));
+    const double tmp3 = sqrt(coe[2]);
+    const double tmp1 = coe[1] + 2 * coe[2] * t + 2 * tmp3 * sqrt(coe[0] + t * (coe[1] + coe[2] * t));
+    const double tmp2 = (coe[1] * coe[1] - 4 * coe[0] * coe[2]) * std::log(tmp1);
+    return tmp0 / (4. * coe[2]) - tmp2 / (8. * coe[2] * tmp3);
+  };
+  return intt(1) - intt(0);
+}
+
+// above: quadratic
+// ==========================================
+// below: cubic
+
+/**
+ *
+ * @tparam SCALAR float or double
+ * @param[out] coeff array of coefficients
+ * @param[in] idx_segment
+ * @param[in] num_segment
+ * @detail (i-th point's weight) = coeff[i][0] + coeff[i][1] * t + coeff[i][2] * t * t + coeff[i][3] * t * t * t
+ */
+template<typename SCALAR>
 void CoefficientsOfOpenUniformBSpline_Cubic(
   SCALAR coeff[4][4],
   int idx_segment,
@@ -132,12 +149,12 @@ void CoefficientsOfOpenUniformBSpline_Cubic(
   const int k5 = std::clamp<int>(idx_segment + 3, 0, num_segment) - idx_segment;
   assert(-2 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= k4 && k4 <= k5 && k5 <= 3);
 
-  const SCALAR c32 = (k3 == k2) ? 0 : 1/static_cast<SCALAR>(k3-k2);
-  const SCALAR c31 = (k3 == k1) ? 0 : 1/static_cast<SCALAR>(k3-k1);
-  const SCALAR c42 = (k4 == k2) ? 0 : 1/static_cast<SCALAR>(k4-k2);
-  const SCALAR c30 = (k3 == k0) ? 0 : 1/static_cast<SCALAR>(k3-k0);
-  const SCALAR c41 = (k4 == k1) ? 0 : 1/static_cast<SCALAR>(k4-k1);
-  const SCALAR c52 = (k5 == k2) ? 0 : 1/static_cast<SCALAR>(k5-k2);
+  const SCALAR c32 = (k3 == k2) ? 0 : 1 / static_cast<SCALAR>(k3 - k2);
+  const SCALAR c31 = (k3 == k1) ? 0 : 1 / static_cast<SCALAR>(k3 - k1);
+  const SCALAR c42 = (k4 == k2) ? 0 : 1 / static_cast<SCALAR>(k4 - k2);
+  const SCALAR c30 = (k3 == k0) ? 0 : 1 / static_cast<SCALAR>(k3 - k0);
+  const SCALAR c41 = (k4 == k1) ? 0 : 1 / static_cast<SCALAR>(k4 - k1);
+  const SCALAR c52 = (k5 == k2) ? 0 : 1 / static_cast<SCALAR>(k5 - k2);
 
   {
     // (k3-t) * (k3-t) * (k3-t)
@@ -209,38 +226,6 @@ void CoefficientsOfOpenUniformBSpline_Cubic(
  * @return sampled point
  */
 template<typename VEC>
-VEC Sample_QuadraticBsplineCurve(
-  typename VEC::Scalar t,
-  const std::vector<VEC> &poly) {
-  using SCALAR = typename VEC::Scalar;
-
-  const int num_segment = poly.size() - 2;
-  const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
-  assert(idx_segment >= 0 && idx_segment < num_segment );
-
-  t -= idx_segment;
-  assert(t >= 0 && t <= 1);
-
-  SCALAR coeff[3][3];
-  CoefficientsOfOpenUniformBSpline_Quadratic(coeff, idx_segment, num_segment);
-
-  const SCALAR w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
-  const SCALAR w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
-  const SCALAR w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
-
-  assert(fabs(w0 + w1 + w2 - 1.) < 1.0e-10);
-  assert(w0 >= 0 && w1 >= 0 && w2 >= 0);
-  return poly[idx_segment] * w0 + poly[idx_segment + 1] * w1 + poly[idx_segment + 2] * w2;
-}
-
-/**
- * Quadratic B-Spline with "open and uniform knot vector"
- * knot vector = [0,0,0,1,2,3,...,N-1,N,N,N] where N is poly.size()-2
- * @param t parameter of curve that takes [0,1]
- * @param poly position of the the control points
- * @return sampled point
- */
-template<typename VEC>
 VEC Sample_CubicBsplineCurve(
   typename VEC::Scalar t,
   const std::vector<VEC> &poly) {
@@ -248,7 +233,7 @@ VEC Sample_CubicBsplineCurve(
 
   const int num_segment = poly.size() - 3;
   const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
-  assert(idx_segment >= 0 && idx_segment < num_segment );
+  assert(idx_segment >= 0 && idx_segment < num_segment);
 
   t -= idx_segment;
   assert(t >= 0 && t <= 1);
@@ -264,6 +249,79 @@ VEC Sample_CubicBsplineCurve(
   assert(fabs(v0 + v1 + v2 + v3 - 1.) < 1.0e-10);
   assert(v0 >= -1.0e-10 && v1 >= -1.0e-10 && v2 >= -1.0e-10 && v3 >= -1.0e-10);
   return poly[idx_segment] * v0 + poly[idx_segment + 1] * v1 + poly[idx_segment + 2] * v2 + poly[idx_segment + 3] * v3;
+}
+
+
+// above: cubic
+// ====================================
+// below: general
+
+void FlatKnot(
+  std::vector<double> &aKnotFlat,
+  const std::vector<int> &aKnotMulti,
+  const std::vector<double> &aKnot) {
+  assert(aKnot.size() == aKnotMulti.size());
+  aKnotFlat.clear();
+  for (size_t ik = 0; ik < aKnot.size(); ++ik) {
+    for (int iik = 0; iik < aKnotMulti[ik]; ++iik) {
+      aKnotFlat.push_back(aKnot[ik]);
+    }
+  }
+}
+
+template<typename T>
+T DeBoorBSpline(
+  double u,
+  int ndegree,
+  const std::vector<T> &aCP,
+  const std::vector<double> &aKnot) {
+  assert(ndegree > 0);
+  assert(aKnot.size() == aCP.size() + ndegree + 1);
+  const double eps = 1.0e-10;
+  //
+  unsigned int iks;
+  {
+    for (iks = ndegree; iks < aKnot.size() - ndegree; ++iks) {
+      double u0 = aKnot[iks];
+      double u1 = aKnot[iks + 1];
+      if (u >= u0 - eps && u <= u1 + eps) { break; }
+    }
+  }
+  std::vector<T> aTmp;
+  {
+    aTmp.reserve(ndegree + 1);
+    for (unsigned int ik = iks - ndegree; ik < iks + 1; ++ik) {
+      assert(ik >= 0);
+      aTmp.push_back(aCP[ik]);
+    }
+  }
+  for (int r = 0; r < ndegree; ++r) {
+    for (int j = 0; j < ndegree - r; ++j) {
+      double u0 = aKnot[j + iks - ndegree + 1 + r];
+      double u1 = aKnot[j + iks + 1];
+//      assert(u>=u0-eps && u<u1+eps);
+      double a = (u - u0) / (u1 - u0);
+      aTmp[j] = (1 - a) * aTmp[j] + a * aTmp[j + 1];
+    }
+  }
+  return aTmp[0];
+}
+
+template<typename T>
+void SampleBSpline(
+  std::vector<T> &polyline0,
+  const int nsmpl,
+  const int ndegree,
+  const std::vector<double> &aKnotFlat,
+  const std::vector<T> &aCtrlPoint) {
+  polyline0.clear();
+  double u0 = aKnotFlat[0];
+  double u1 = aKnotFlat[aKnotFlat.size() - 1];
+  for (int i = 0; i < nsmpl + 1; ++i) {
+    double u = (double) i * (u1 - u0) / nsmpl + u0;
+    T p = DeBoorBSpline(u, ndegree, aCtrlPoint, aKnotFlat);
+    polyline0.push_back(p);
+  }
 }
 
 template<typename VEC, int norderplus1>

@@ -5,6 +5,10 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+/**
+ * @detail The order of dependency in delfem2:
+ * line < ray < edge < polyline < quadratic < cubic < bspline << plane < tri < quad
+ */
 
 #ifndef DFM2_PLANE_H
 #define DFM2_PLANE_H
