@@ -68,8 +68,7 @@ class ImplicitRbfApproximation {
 
   [[nodiscard]] double Evaluate2(double x, double y) const {
     const size_t num_samples = sample_xy.size() / 2;
-    const unsigned int ndof = is_linear ? num_samples + 3 : num_samples;
-    assert(weights.size() == ndof);
+    assert(weights.size() == is_linear ? num_samples + 3 : num_samples);
     double t = 0;
     for (unsigned int ismpl = 0; ismpl < num_samples; ismpl++) {
       double dx0 = sample_xy[ismpl * 2 + 0] - x;
@@ -87,8 +86,7 @@ class ImplicitRbfApproximation {
       double x, double y,
       const std::function<double(double)> &diff_rbf) const {
     const size_t num_samples = sample_xy.size() / 2;
-    const unsigned int ndof = is_linear ? num_samples + 3 : num_samples;
-    assert(weights.size() == ndof);
+    assert(weights.size() == is_linear ? num_samples + 3 : num_samples);
     double t = 0., dtdx = 0., dtdy = 0.;
     for (unsigned int ismpl = 0; ismpl < num_samples; ismpl++) {
       const double dx0 = x - sample_xy[ismpl * 2 + 0];
