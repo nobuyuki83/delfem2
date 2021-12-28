@@ -43,10 +43,56 @@ int StrumNumber(double x, const double s[n][n]) {
   return root_number;
 }
 
+/**
+ * quadratic polynomial
+ * @param strum
+ * @param coe
+ */
+inline void StrumSequenceOfPolynomial_Quadratic(
+  double strum[3][3],
+  const double coe[3]) {
+  const double sign_a = (coe[2] > 0) ? 1. : -1.;
+  strum[0][0] = coe[0];
+  strum[0][1] = coe[1];
+  strum[0][2] = coe[2];
+  strum[1][0] = coe[1];
+  strum[1][1] = 2 * coe[2];
+  strum[2][0] = sign_a * (coe[1] * coe[1] - 4 * coe[0] * coe[2]);
+}
+
+/**
+ * cubic polynomial
+ * @param strum
+ * @param coe coe[0] + coe[1]*t + coe[2]*t^2 + coe[3]*t^3
+ */
+inline void StrumSequenceOfPolynomial_Cubic(
+  double strum[4][4],
+  const double coe[4]) {
+  const double sign_a = (coe[3] > 0) ? 1. : -1.;
+  strum[0][0] = coe[0];
+  strum[0][1] = coe[1];
+  strum[0][2] = coe[2];
+  strum[0][3] = coe[3];
+  strum[1][0] = coe[1];
+  strum[1][1] = 2 * coe[2];
+  strum[1][2] = 3 * coe[3];
+  strum[2][0] = sign_a * (coe[2] * coe[1] - 9 * coe[3] * coe[0]);
+  strum[2][1] = sign_a * (2 * coe[2] * coe[2] - 6 * coe[3] * coe[1]);
+  strum[3][0] =
+    -coe[3] * (
+      -coe[2] * coe[2] * coe[1] * coe[1]
+        + 4 * coe[2] * coe[2] * coe[2] * coe[0]
+        - 18 * coe[3] * coe[2] * coe[1] * coe[0]
+        + coe[3] * (4 * coe[1] * coe[1] * coe[1] + 27 * coe[3] * coe[0] * coe[0])
+    );
+}
+
 template<int n>
 inline void StrumSequenceOfPolynomial(
   double strum[n][n],
-  const double coe[n]) {
+  const double coe[n])
+{
+  static_assert(n>=1, "degree of polynominal should not be negative");
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       if (i == 0) {
@@ -90,52 +136,6 @@ inline void StrumSequenceOfPolynomial(
       strum[j + 1][l] = -poly[l];
     }
   }
-}
-
-/**
- * quadratic polynomial
- * @param strum
- * @param coe
- */
-template<>
-inline void StrumSequenceOfPolynomial(
-  double strum[3][3],
-  const double coe[3]) {
-  const double sign_a = (coe[2] > 0) ? 1. : -1.;
-  strum[0][0] = coe[0];
-  strum[0][1] = coe[1];
-  strum[0][2] = coe[2];
-  strum[1][0] = coe[1];
-  strum[1][1] = 2 * coe[2];
-  strum[2][0] = sign_a * (coe[1] * coe[1] - 4 * coe[0] * coe[2]);
-}
-
-/**
- * cubic polynomial
- * @param strum
- * @param coe coe[0] + coe[1]*t + coe[2]*t^2 + coe[3]*t^3
- */
-template<>
-inline void StrumSequenceOfPolynomial(
-  double strum[4][4],
-  const double coe[4]) {
-  const double sign_a = (coe[3] > 0) ? 1. : -1.;
-  strum[0][0] = coe[0];
-  strum[0][1] = coe[1];
-  strum[0][2] = coe[2];
-  strum[0][3] = coe[3];
-  strum[1][0] = coe[1];
-  strum[1][1] = 2 * coe[2];
-  strum[1][2] = 3 * coe[3];
-  strum[2][0] = sign_a * (coe[2] * coe[1] - 9 * coe[3] * coe[0]);
-  strum[2][1] = sign_a * (2 * coe[2] * coe[2] - 6 * coe[3] * coe[1]);
-  strum[3][0] =
-    -coe[3] * (
-      -coe[2] * coe[2] * coe[1] * coe[1]
-        + 4 * coe[2] * coe[2] * coe[2] * coe[0]
-        - 18 * coe[3] * coe[2] * coe[1] * coe[0]
-        + coe[3] * (4 * coe[1] * coe[1] * coe[1] + 27 * coe[3] * coe[0] * coe[0])
-    );
 }
 
 template<int n>
