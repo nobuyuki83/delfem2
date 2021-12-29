@@ -6,8 +6,8 @@
 
 #include "gtest/gtest.h"
 
-#include "delfem2/geo_bezier_quadratic.h"
-#include "delfem2/geo_polyline2.h"
+#include "delfem2/geo_curve_quadratic.h"
+#include "delfem2/geo_polyline.h"
 
 TEST(bezier_quadratic, polyline2) {
   namespace dfm2 = delfem2;
@@ -48,7 +48,7 @@ TEST(bezier_quadratic, polyline2) {
       const dfm2::CVec2d v1 = dfm2::PointOnQuadraticBezierCurve(t1,p0,p1,p2);
       EXPECT_NEAR( (v0-scr).norm(), (v1-scr).norm(),  0.02 );
       //
-      const double t2 = dfm2::Nearest_QuadraticBezierCurve_Strum<dfm2::CVec2d>(
+      const double t2 = dfm2::Nearest_QuadraticBezierCurve_Sturm<dfm2::CVec2d>(
         scr,
         p0,p1,p2,16);
       const dfm2::CVec2d v2 = dfm2::PointOnQuadraticBezierCurve(t2,p0,p1,p2);
@@ -88,6 +88,33 @@ TEST(bezier_quadratic, polyline2) {
   }
 }
 
-
+TEST(bspline, quadratic_curve) {
+  namespace dfm2 = delfem2;
+  std::mt19937 rndeng(std::random_device{}());
+  std::uniform_real_distribution<double> dist_01(0, 1);
+  std::uniform_real_distribution<double> dist_m1p1(-1, 1);
+  for (unsigned int itr = 0; itr < 1000; ++itr) {
+    const dfm2::CVec2d cp[3] = {
+      dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng)),
+      dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng)),
+      dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng)) };
+    const double coeff[3][3] = {
+      {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)},
+      {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)},
+      {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)} };
+    double l0 = delfem2::Length_ParametricCurve_Quadratic(coeff,cp);
+    std::vector<dfm2::CVec2d> poly;
+    const unsigned int N = 1000;
+    for(unsigned int ip=0;ip<N+1;++ip){
+      double t = static_cast<double>(ip) / static_cast<double>(N);
+      const double w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
+      const double w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
+      const double w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
+      poly.push_back(cp[0] * w0 + cp[1] * w1 + cp[2] * w2);
+    }
+    double l1 = delfem2::Length_Polyline(poly);
+    EXPECT_NEAR(l0,l1,1.0e-5);
+  }
+}
 
 

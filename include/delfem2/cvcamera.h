@@ -125,7 +125,7 @@ Mat4_Image2Screen(
 
 
 template<typename T>
-void CdC_DifferenceScreenCoordinate(
+void CdC_ScreenCoordinate(
     T c[2],
     T dc[2][3],
     const T mat[16],

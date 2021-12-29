@@ -13,11 +13,14 @@ namespace delfem2 {
 /**
  * Evaluate polynomial at x
  * @tparam n degree + 1
- * @param x
- * @param a  coefficient of polynomial f(x)=a[0]+a[1]*x^1+a[2]*a^2 ...
+ * @param x argument for polynomial
+ * @param a  coefficient of polynomial f(x)=a[0] + a[1]*x^1 + a[2]*x^2 ...
  * @return f(x)
  */
-inline double Eval_Polynomial(double x, const double *a, int n) {
+inline double Eval_Polynomial(
+  double x,
+  const double *a,
+  int n) {
   double v = a[n - 1];
   for (int i = 1; i < n; ++i) {
     v = v * x + a[n - 1 - i];
@@ -25,8 +28,18 @@ inline double Eval_Polynomial(double x, const double *a, int n) {
   return v;
 }
 
+/**
+ * compute sturm number from sturm sequence
+ * @tparam n degree + 1
+ * @param[in] x location to sample sturm sequence
+ * @param[in] s sturm sequence
+ * @return sturm number
+ */
 template<int n>
-int StrumNumber(double x, const double s[n][n]) {
+int SturmNumber(
+  double x,
+  const double s[n][n]) {
+  static_assert(n >= 1, "degree of polynominal should not be negative");
   double v[n];
   for (int i = 0; i < n; ++i) {
     v[i] = Eval_Polynomial(x, s[i], n - i);
@@ -44,11 +57,11 @@ int StrumNumber(double x, const double s[n][n]) {
 }
 
 /**
- * quadratic polynomial
- * @param strum
- * @param coe
+ * sturm sequence for quadratic polynomial
+ * @param[out] strum strum sequence
+ * @param[in] coe coefficient of polynominal coe[0] + coe[1]*x + coe[2]*x^2
  */
-inline void StrumSequenceOfPolynomial_Quadratic(
+inline void SturmSequenceOfPolynomial_Quadratic(
   double strum[3][3],
   const double coe[3]) {
   const double sign_a = (coe[2] > 0) ? 1. : -1.;
@@ -61,11 +74,11 @@ inline void StrumSequenceOfPolynomial_Quadratic(
 }
 
 /**
- * cubic polynomial
- * @param strum
- * @param coe coe[0] + coe[1]*t + coe[2]*t^2 + coe[3]*t^3
+ * sturm sequence for cubic polynomial
+ * @param[out] strum sturm sequence
+ * @param[in] coe coe[0] + coe[1]*t + coe[2]*t^2 + coe[3]*t^3
  */
-inline void StrumSequenceOfPolynomial_Cubic(
+inline void SturmSequenceOfPolynomial_Cubic(
   double strum[4][4],
   const double coe[4]) {
   const double sign_a = (coe[3] > 0) ? 1. : -1.;
@@ -88,11 +101,10 @@ inline void StrumSequenceOfPolynomial_Cubic(
 }
 
 template<int n>
-inline void StrumSequenceOfPolynomial(
+inline void SturmSequenceOfPolynomial(
   double strum[n][n],
-  const double coe[n])
-{
-  static_assert(n>=1, "degree of polynominal should not be negative");
+  const double coe[n]) {
+  static_assert(n >= 1, "degree of polynominal should not be negative");
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       if (i == 0) {
@@ -138,16 +150,26 @@ inline void StrumSequenceOfPolynomial(
   }
 }
 
+// --------------------------
+
+/**
+ * Compute intervals that contains one root for input polynominal
+ * @tparam n (degree of polynomial) + 1
+ * @param x0 lower end
+ * @param x1 upper end
+ * @param strum sturm sequence
+ * @return intervals (pairs of lower/upper bounds)
+ */
 template<int n>
-inline std::vector<std::pair<double, double> > RootInterval_StrumSequence(
+inline std::vector<std::pair<double, double> > RootInterval_SturmSequence(
   double x0, double x1,
   const double strum[n][n]) {
-
+  static_assert(n >= 1, "degree of polynominal should not be negative");
   std::stack<std::tuple<double, double, int, int> > next;
   next.emplace(
     x0, x1,
-    delfem2::StrumNumber<n>(x0, strum),
-    delfem2::StrumNumber<n>(x1, strum));
+    delfem2::SturmNumber<n>(x0, strum),
+    delfem2::SturmNumber<n>(x1, strum));
 
   std::vector<std::pair<double, double>> res;
   while (!next.empty()) {
@@ -159,7 +181,7 @@ inline std::vector<std::pair<double, double> > RootInterval_StrumSequence(
     const double x_right = std::get<1>(intvl);
     if (n_left - n_right > 1) {  // do the bi-section
       const double x_mid = (x_left + x_right) / 2;
-      const int n_mid = delfem2::StrumNumber<n>(x_mid, strum);
+      const int n_mid = delfem2::SturmNumber<n>(x_mid, strum);
       if (n_left > n_mid) {  // left half interval
         next.emplace(x_left, x_mid, n_left, n_mid);
       }
@@ -205,13 +227,14 @@ std::vector<REAL> RootsInRange_QuadraticPolynomial(
 }
 
 /**
- *
- * @param range_left  lower bound of range
- * @param range_right  upper bound of range
- * @param a coefficient of polynomial
- * @param ndegree_plus1 degree of polynomial plus 1
- * @param num_iteration  number of iteration
- * @return
+ * Find a root of a polynomial in interval using the bisection method.
+ * The polynomial takes opposite signa at the boundary of the interval
+ * @param[in] range_left  lower bound of range
+ * @param[in] range_right  upper bound of range
+ * @param[in] a coefficient of polynomial
+ * @param[in] ndegree_plus1 degree of polynomial plus 1
+ * @param[in] num_iteration  number of iteration
+ * @return root
  */
 inline double RootInInterval_Bisection(
   double range_left,
@@ -240,20 +263,21 @@ inline double RootInInterval_Bisection(
   return (x0 * fx1 - x1 * fx0) / (fx1 - fx0); // secant method
 }
 
- /**
-  * Find the root of polynomial in the range [0,1]
-  * @tparam[in] ndegplus1 (degree of polynomial) + 1, e.g.(ndegplus1==3)->quadratic
-  * @param[in] coe f(t) = coe[0] + coe[1]*t + coe[2]*t^2 + ...
-  * @param[in] num_bisection
-  * @return roots of polynomial
-  */
+/**
+ * Find the root of polynomial in the range [0,1]
+ * @tparam[in] ndegplus1 (degree of polynomial) + 1, e.g.(ndegplus1==3)->quadratic
+ * @param[in] coe f(t) = coe[0] + coe[1]*t + coe[2]*t^2 + ...
+ * @param[in] num_bisection
+ * @return roots of polynomial
+ */
 template<int ndegplus1>
 std::vector<double> RootsOfPolynomial(
   const double coe[ndegplus1],
-  int num_bisection){
+  int num_bisection) {
+  static_assert(ndegplus1 >= 1, "degree of polynominal should not be negative");
   double strum[ndegplus1][ndegplus1];
-  StrumSequenceOfPolynomial<ndegplus1>(strum, coe);
-  std::vector<std::pair<double, double>> intvls = RootInterval_StrumSequence<ndegplus1>(0, 1, strum);
+  SturmSequenceOfPolynomial<ndegplus1>(strum, coe);
+  std::vector<std::pair<double, double>> intvls = RootInterval_SturmSequence<ndegplus1>(0, 1, strum);
   std::vector<double> res;
   for (auto intvl: intvls) {
     double y0 = RootInInterval_Bisection(
@@ -263,7 +287,6 @@ std::vector<double> RootsOfPolynomial(
   }
   return res;
 }
-
 
 }
 

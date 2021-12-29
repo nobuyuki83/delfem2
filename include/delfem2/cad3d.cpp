@@ -17,12 +17,10 @@
 #include "delfem2/geo_plane.h"
 #include "delfem2/geo_line.h"
 #include "delfem2/geo3_v23m34q.h"
-#include "delfem2/geo_polyline2.h"
+#include "delfem2/geo_polyline.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/geo_edge.h"
-#include "delfem2/geo_bezier_quadratic.h"
-#include "delfem2/geo_bezier_cubic.h"
-#include "delfem2/geo_parametric.h"
+#include "delfem2/geo_surface_parametric.h"
 
 // =========================================
 

@@ -3,7 +3,7 @@
 #include "gtest/gtest.h" // need to be defiend in the beginning
 
 #include "delfem2/geo_polygon2.h"
-#include "delfem2/geo_polyline2.h"
+#include "delfem2/geo_polyline.h"
 #include "delfem2/vec2.h"
 #include "delfem2/quat.h"
 

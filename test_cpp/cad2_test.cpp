@@ -6,13 +6,11 @@
  */
 
 #include <string>
-#include <random>
 
 #include "gtest/gtest.h"
 
 #include "delfem2/cad2.h"
 #include "delfem2/cad2_io_svg.h"
-#include "delfem2/geo_bezier_cubic.h"
 
 namespace dfm2 = delfem2;
 

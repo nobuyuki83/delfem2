@@ -197,7 +197,7 @@ TEST(fem_rod, WdWddW_DotFrame) {
           + dW_dP[0].dot(dP[0])
           + dW_dP[1].dot(dP[1])
           + dW_dP[2].dot(dP[2])) / eps;
-      EXPECT_NEAR(val0, val1, 3.5e-2 * (1.0 + fabs(val1)));
+      EXPECT_NEAR(val0, val1, 6.5e-2 * (1.0 + fabs(val1)));
     }
     {
       const double val0 = (dw_dt[0] - dW_dt[0]) / eps;

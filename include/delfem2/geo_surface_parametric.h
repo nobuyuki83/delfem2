@@ -15,23 +15,6 @@
 namespace delfem2 {
 
 template<typename T>
-T QuadBilinear(
-  int iq,
-  double r0,
-  double r1,
-  std::vector<int> &aQuad,
-  std::vector<T> &aPoint) {
-  int i0 = aQuad[iq * 4 + 0];
-  int i1 = aQuad[iq * 4 + 1];
-  int i2 = aQuad[iq * 4 + 2];
-  int i3 = aQuad[iq * 4 + 3];
-  return (1 - r0) * (1 - r1) * aPoint[i0]
-    + r0 * (1 - r1) * aPoint[i1]
-    + r0 * r1 * aPoint[i2]
-    + (1 - r0) * r1 * aPoint[i3];
-}
-
-template<typename T>
 T getPointCoonsQuad_CubicBezier(
   double u, double v,
   T aP[12]) {

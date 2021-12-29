@@ -15,7 +15,8 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/vec2.h"
-#include "delfem2/geo_bspline.h"
+#include "delfem2/geo_curve_ndegree.h"
+// opengl from here
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v2.h"

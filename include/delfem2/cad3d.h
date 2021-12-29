@@ -14,8 +14,8 @@
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
-#include "delfem2/geo_bezier_quadratic.h"
-#include "delfem2/geo_bezier_cubic.h"
+#include "delfem2/geo_curve_quadratic.h"
+#include "delfem2/geo_curve_cubic.h"
 
 // -------------------------------------
 
@@ -113,7 +113,7 @@ public:
     return delfem2::PointOnCubicBezierCurve(t, p0, q0, q1, p1);
   }
   CVec3d GetTangentInEdge(double t) const {
-    return delfem2::getTangentCubicBezierCurve(t, p0, q0, q1, p1);
+    return delfem2::Tangent_CubicBezierCurve(t, p0, q0, q1, p1);
   }
   CVec3d getVtxPos(bool is_root, int ioff) const {
     if( is_root ){

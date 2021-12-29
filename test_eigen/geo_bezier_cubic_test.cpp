@@ -6,8 +6,8 @@
 #include <random>
 
 #include "gtest/gtest.h"
-#include "delfem2/geo_bezier_cubic.h"
-#include "delfem2/geo_polyline2.h"
+#include "delfem2/geo_curve_cubic.h"
+#include "delfem2/geo_polyline.h"
 
 TEST(cad,cubic_bezier0) {
   namespace dfm2 = delfem2;

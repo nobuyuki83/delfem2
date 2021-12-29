@@ -68,38 +68,37 @@ static void glfw_callback_mouse_button(
   assert(pViewer3 != nullptr);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
-  { // save input
-    ::delfem2::CMouseInput &nav = pViewer3->nav;
-    nav.imodifier = mods;
-    double x, y;
-    glfwGetCursorPos(window, &x, &y);
-    nav.mouse_x = (2.0 * x - width) / width;
-    nav.mouse_y = (height - 2.0 * y) / height;
-    if (action == GLFW_RELEASE) {
-      nav.ibutton = -1;
-    } else if (action == GLFW_PRESS) { // mouse down
+  if (action == GLFW_PRESS) {  // "press callback"
+    {
+      ::delfem2::CMouseInput &nav = pViewer3->nav;
+      nav.imodifier = mods;
+      double x, y;
+      glfwGetCursorPos(window, &x, &y);
+      nav.mouse_x = (2.0 * x - width) / width;
+      nav.mouse_y = (height - 2.0 * y) / height;
       nav.ibutton = button;
       nav.mouse_x_down = nav.mouse_x;
       nav.mouse_y_down = nav.mouse_y;
     }
-  }
-  if (action == GLFW_PRESS && (mods == GLFW_MOD_SHIFT || mods == GLFW_MOD_ALT)) {
-    // view control
-    return;
-  }
-  if (action == GLFW_PRESS) { // "press callback"
-    const CMat4f mP = pViewer3->GetProjectionMatrix();
-    const CMat4f mMV = pViewer3->GetModelViewMatrix();
-    {
+    if( mods == GLFW_MOD_SHIFT || mods == GLFW_MOD_ALT ){  // view navigation
+      return;
+    }
+    else {
+      const CMat4f mP = pViewer3->GetProjectionMatrix();
+      const CMat4f mMV = pViewer3->GetModelViewMatrix();
       float src[3], dir[3];
       pViewer3->nav.MouseRay(
-          src, dir,
-          (mP * mMV).data());
+        src, dir,
+        (mP * mMV).data());
       pViewer3->mouse_press(src, dir);
     }
   }
   if (action == GLFW_RELEASE) { // "release callback"
     pViewer3->mouse_release();
+    // nav update from here because "pViewer3->mouse_release()" want to use the nav information
+    ::delfem2::CMouseInput &nav = pViewer3->nav;
+    nav.imodifier = mods;
+    nav.ibutton = -1;
   }
 }
 

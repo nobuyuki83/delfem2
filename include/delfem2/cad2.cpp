@@ -11,9 +11,9 @@
 #include <deque>
 #include <climits>
 
-#include "delfem2/geo_polyline2.h"
+#include "delfem2/geo_polyline.h"
 #include "delfem2/geo_edge.h"
-#include "delfem2/geo_bezier_quadratic.h"
+#include "delfem2/geo_curve_quadratic.h"
 
 // ------------------------------------------
 

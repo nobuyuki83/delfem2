@@ -11,7 +11,7 @@
 #include <cstdio>
 #include <deque>
 
-#include "delfem2/geo_polyline2.h"
+#include "delfem2/geo_polyline.h"
 #include "delfem2/str.h"
 
 // ------------------------------------------

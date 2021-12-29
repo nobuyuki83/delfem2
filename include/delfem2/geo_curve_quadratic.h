@@ -28,6 +28,23 @@ VEC PointOnQuadraticBezierCurve(
   return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
 }
 
+template<class VEC>
+void Polyline_BezierQuadratic(
+  std::vector<VEC>& aP,
+  const unsigned int n,
+  const VEC &p1,
+  const VEC &p2,
+  const VEC &p3) {
+  using SCALAR = typename VEC::Scalar;
+  aP.resize(n);
+  for (unsigned int i = 0; i < n; ++i) {
+    const double t = static_cast<SCALAR>(i) / (static_cast<SCALAR>(n) - 1);
+    aP[i] = PointOnQuadraticBezierCurve(
+      t,
+      p1, p2, p3 );
+  }
+}
+
 template<typename VEC>
 double Length_QuadraticBezierCurve_Quadrature(
   const VEC &p0,  // end point
@@ -128,7 +145,7 @@ typename VEC::Scalar Nearest_QuadraticBezierCurve(
  * @return the parameter of quadratic bezier curve nearest to q
  */
 template<typename VEC>
-typename VEC::Scalar Nearest_QuadraticBezierCurve_Strum(
+typename VEC::Scalar Nearest_QuadraticBezierCurve_Sturm(
   const VEC &q,
   const VEC &p0,  // end point
   const VEC &p1,  // the control point
@@ -301,6 +318,109 @@ typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
   }
 
   return -1; // suppress compiler warning
+}
+
+
+/**
+ *
+ * @tparam SCALAR float or double
+ * @param[out] coeff array of coefficients
+ * @param[in] idx_segment
+ * @param[in] num_segment
+ * @detail (i-th point's weight) = coeff[i][0] + coeff[i][1] * t + coeff[i][2] * t * t
+ */
+template<typename SCALAR>
+void CoefficientsOfOpenUniformBSpline_Quadratic(
+  SCALAR coeff[3][3],
+  int idx_segment,
+  int num_segment) {
+
+  const int k0 = std::clamp<int>(idx_segment - 1, 0, num_segment) - idx_segment;
+  const int k1 = std::clamp<int>(idx_segment + 0, 0, num_segment) - idx_segment;
+  const int k2 = std::clamp<int>(idx_segment + 1, 0, num_segment) - idx_segment;
+  const int k3 = std::clamp<int>(idx_segment + 2, 0, num_segment) - idx_segment;
+  assert(-1 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= 2);
+
+  const SCALAR c00 = (k2 == k1) ? 0.0 : 1. / static_cast<SCALAR>(k2 - k1);
+  const SCALAR c10 = (k2 == k0) ? 0.0 : 1. / static_cast<SCALAR>(k2 - k0);
+  const SCALAR c11 = (k3 == k1) ? 0.0 : 1. / static_cast<SCALAR>(k3 - k1);
+
+  const SCALAR d22 = c00 * c10;
+  const SCALAR d02 = c10 * c00;
+  const SCALAR d13 = c11 * c00;
+  const SCALAR d11 = c00 * c11;
+
+  coeff[0][0] = k2 * k2 * d22;
+  coeff[0][1] = -2 * k2 * d22;
+  coeff[0][2] = d22;
+  //
+  coeff[1][0] = -k0 * k2 * d02 - k1 * k3 * d13;
+  coeff[1][1] = (k0 + k2) * d02 + (k1 + k3) * d13;
+  coeff[1][2] = -(d02 + d13);
+  //
+  coeff[2][0] = k1 * k1 * d11;
+  coeff[2][1] = -2 * k1 * d11;
+  coeff[2][2] = d11;
+}
+
+/**
+ * Quadratic B-Spline with "open and uniform knot vector"
+ * knot vector = [0,0,0,1,2,3,...,N-1,N,N,N] where N is the nubmer of segments, which is poly.size()-2
+ * @param[in] t parameter of curve that takes [0,N]
+ * @param[in] poly position of the the control points
+ * @return sampled point
+ */
+template<typename VEC>
+VEC Sample_QuadraticBsplineCurve(
+  typename VEC::Scalar t,
+  const std::vector<VEC> &poly) {
+  using SCALAR = typename VEC::Scalar;
+
+  const int num_segment = poly.size() - 2;
+  const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
+  assert(idx_segment >= 0 && idx_segment < num_segment);
+
+  t -= idx_segment;
+  assert(t >= 0 && t <= 1);
+
+  SCALAR coeff[3][3];
+  CoefficientsOfOpenUniformBSpline_Quadratic(coeff, idx_segment, num_segment);
+
+  const SCALAR w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
+  const SCALAR w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
+  const SCALAR w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
+
+  assert(fabs(w0 + w1 + w2 - 1.) < 1.0e-10);
+  assert(w0 >= 0 && w1 >= 0 && w2 >= 0);
+  return poly[idx_segment] * w0 + poly[idx_segment + 1] * w1 + poly[idx_segment + 2] * w2;
+}
+
+/**
+ * @details at parameter "t" the position is evaluated as \n
+ * const SCALAR w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t; \n
+ * const SCALAR w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t; \n
+ * const SCALAR w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t; \n
+ * return points[0] * w0 + points[1] * w1 + points[2] * w2;
+ */
+template<typename VEC>
+double Length_ParametricCurve_Quadratic(
+  const double coeff[3][3],
+  const VEC points[3]) {
+  const VEC p0 = coeff[0][1] * points[0] + coeff[1][1] * points[1] + coeff[2][1] * points[2];
+  const VEC p1 = coeff[0][2] * points[0] + coeff[1][2] * points[1] + coeff[2][2] * points[2];
+  // dl = sqrt(coe[0] + coe[1]*t + coe[2]*t^2) dt
+  const double coe[3] = {
+    p0.squaredNorm(),
+    4*p0.dot(p1),
+    4*p1.squaredNorm()};
+  auto intt = [&coe](double t) -> double {
+    const double tmp0 = (coe[1] + 2 * coe[2] * t) * std::sqrt(coe[0] + t * (coe[1] + coe[2] * t));
+    const double tmp3 = sqrt(coe[2]);
+    const double tmp1 = coe[1] + 2 * coe[2] * t + 2 * tmp3 * sqrt(coe[0] + t * (coe[1] + coe[2] * t));
+    const double tmp2 = (coe[1] * coe[1] - 4 * coe[0] * coe[2]) * std::log(tmp1);
+    return tmp0 / (4. * coe[2]) - tmp2 / (8. * coe[2] * tmp3);
+  };
+  return intt(1) - intt(0);
 }
 
 }

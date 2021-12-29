@@ -7,7 +7,8 @@
 
 /**
  * @detail The order of dependency in delfem2:
- * line < ray < edge < polyline < quadratic < cubic < bspline << plane < tri < quad
+ * line < ray < edge < polyline < quadratic_curve < cubic_curve < general_parametric_curve <
+ * < plane < tri < quad
  */
 
 #ifndef DFM2_GEO_POLYLINE2_H
@@ -22,7 +23,7 @@
 #include <algorithm>  // for std::clamp
 
 #include "delfem2/vec2.h"
-#include "delfem2/geo_bezier_cubic.h"
+#include "delfem2/geo_curve_cubic.h"
 #include "delfem2/dfm2_inline.h"
 
 // -----------------------------------------------------
@@ -55,14 +56,6 @@ void Polyline_BezierCubic(
   const VEC &p2,
   const VEC &p3,
   const VEC &p4);
-
-template<class VEC>
-void Polyline_BezierQuadratic(
-  std::vector<VEC> &aP,
-  unsigned int n,
-  const VEC &p1,
-  const VEC &p2,
-  const VEC &p3);
 
 template<class VEC>
 std::vector<VEC> Polyline_Resample_Polyline(
@@ -233,7 +226,7 @@ auto ArcLengthPointInPolyline(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/geo_polyline2.cpp"
+#  include "delfem2/geo_polyline.cpp"
 #endif
 
 #endif // DFM2_GEO_POLYLINE2_H

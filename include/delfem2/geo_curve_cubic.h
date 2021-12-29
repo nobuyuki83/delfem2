@@ -7,7 +7,9 @@
 
 /**
  * @detail The order of dependency in delfem2:
- * line < ray < edge < polyline < quadratic < cubic < bspline << plane < tri < quad
+ * line -> ray -> edge ->
+ * polyline -> quadratic -> cubic -> bspline ->
+ * plane -> tri -> quad
  */
 
 #ifndef DFM2_CURVE_CUBIC_BEZIER_H
@@ -38,7 +40,7 @@ VEC PointOnCubicBezierCurve(
 }
 
 template<typename T>
-T getTangentCubicBezierCurve(
+T Tangent_CubicBezierCurve(
   double t,
   const T &p1, const T &p2, const T &p3, const T &p4) {
   double tp = 1.0 - t;
@@ -47,6 +49,49 @@ T getTangentCubicBezierCurve(
     + 3 * tp * (1 - 3 * t) * p2
     - 3 * tp * tp * p1;
 }
+
+template<class VEC>
+void Polyline_BezierCubic(
+  std::vector<VEC> &aP,
+  const unsigned int n,
+  const VEC &p1,
+  const VEC &p2,
+  const VEC &p3,
+  const VEC &p4) {
+  using SCALAR = typename VEC::Scalar;
+  aP.resize(n);
+  for (unsigned int i = 0; i < n; ++i) {
+    const SCALAR t = static_cast<SCALAR>(i) / static_cast<SCALAR>(n - 1);
+    aP[i] = PointOnCubicBezierCurve(
+      t,
+      p1, p2, p3, p4);
+  }
+}
+
+/*
+template<class VEC>
+void Polyline_CubicBezierCurve(
+  std::vector<VEC>& aP,
+  const int n,
+  const std::vector<VEC>& aCP) {
+  int ns = (int) (aCP.size() / 3);
+  aP.resize(ns * n + 1);
+  for (int is = 0; is < ns; is++) {
+    for (int i = 0; i < n; i++) {
+      double t = (double) i / n;
+      aP[is * n + i] = PointOnCubicBezierCurve(
+        t,
+        aCP[is * 3 + 0],
+        aCP[is * 3 + 1],
+        aCP[is * 3 + 2],
+        aCP[is * 3 + 3]);
+    }
+  }
+  aP[ns * n] = aCP[ns * 3];
+}
+ */
+
+// -----------------------------
 
 template<typename T>
 bool getParameterCubicBezier_IntersectionWithPlane(
@@ -182,12 +227,16 @@ typename VEC::Scalar Nearest_CubicBezierCurve(
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
     SCALAR dist0 = (a * (t * t * t) + b * (t * t) + c * t + d).norm();
-    if( dist0 > dist_min ){ t = t0; break; }   // winding back
+    if (dist0 > dist_min) {
+      t = t0;
+      break;
+    }   // winding back
     dist_min = dist0;
   }
   return t;
 }
 
+// ------------------------------
 
 /**
  * @return the parameter of cubic bezier curve nearest to q
@@ -215,14 +264,14 @@ typename VEC::Scalar Nearest_CubicBezierCurve_Strum(
     3 * (b.dot(c) + a.dot(d)),
     2 * b.squaredNorm() + 4 * a.dot(c),
     5 * a.dot(b),
-    3 * a.squaredNorm() };
+    3 * a.squaredNorm()};
 
   auto roots = RootsOfPolynomial<6>(coe, num_bisection);
   roots.push_back(1); // check t=1
   double best_t = 0., best_dist = d.squaredNorm(); // check t=0
-  for (double t : roots) {
+  for (double t: roots) {
     double dist0 = (d + t * (c + t * (b + t * a))).squaredNorm();
-    if(dist0 > best_dist) { continue; }
+    if (dist0 > best_dist) { continue; }
     best_t = t;
     best_dist = dist0;
   }
@@ -291,44 +340,41 @@ auto AABB_CubicBezierCurve(
   return res;
 }
 
-
 /**
  * @return 4 control points of the first segment followed by 4 control points of the second segment (in original sequence)
  */
-template <typename VEC>
-std::array<VEC,8> Split_CubicBezierCurve(
+template<typename VEC>
+std::array<VEC, 8> Split_CubicBezierCurve(
   const VEC &p0,
   const VEC &p1,
   const VEC &p2,
   const VEC &p3,
-  typename VEC::Scalar t)
-{
-    // p_i^j = p_i^{j-1} * (1 - t0) + p_{i+1}^{j-1} * t0
-    auto mix = [&t](const VEC &q0, const VEC &q1) {
-        return q0 * (1 - t) + q1 * t;
-    };
+  typename VEC::Scalar t) {
+  // p_i^j = p_i^{j-1} * (1 - t0) + p_{i+1}^{j-1} * t0
+  auto mix = [&t](const VEC &q0, const VEC &q1) {
+    return q0 * (1 - t) + q1 * t;
+  };
 
-    std::array<VEC,8> res;
-    res[0] = p0; 
-    res[1] = mix(p0, p1); // p01
-    VEC p11 = mix(p1, p2); 
-    res[2] = mix(res[1], p11); // p02
-    res[6] = mix(p2, p3); // p21
-    res[7] = p3; 
-    res[5] = mix(p11, res[6]); // p12
-    res[3] = res[4] = mix(res[2], res[5]); // p03
-    return res;
+  std::array<VEC, 8> res;
+  res[0] = p0;
+  res[1] = mix(p0, p1); // p01
+  VEC p11 = mix(p1, p2);
+  res[2] = mix(res[1], p11); // p02
+  res[6] = mix(p2, p3); // p21
+  res[7] = p3;
+  res[5] = mix(p11, res[6]); // p12
+  res[3] = res[4] = mix(res[2], res[5]); // p03
+  return res;
 }
 
-template <typename VEC, unsigned gauss_order>
+template<typename VEC, unsigned gauss_order>
 double Length_CubicBezierCurve_QuadratureSubdivision(
   const VEC &p0,  // end point
   const VEC &p1,  // the control point next tp p0
   const VEC &p2,  // the control point next to p1
   const VEC &p3,  // another end point
   double tolerance = 1E-8,
-  int maxDepth = 8)
-{
+  int maxDepth = 8) {
   using SCALAR = typename VEC::Scalar;
 
   // derivative of cubic Bezier
@@ -352,29 +398,29 @@ double Length_CubicBezierCurve_QuadratureSubdivision(
   }
 
   // shared terms
-  for(int gauss_node = 1; gauss_node < (gauss_order + 1) / 2; gauss_node++) {
+  for (int gauss_node = 1; gauss_node < (gauss_order + 1) / 2; gauss_node++) {
     SCALAR a0 = gda[gauss_node];
     {
-      const SCALAR nodeValue = cubicBezierdt((1+a0)/2).norm();
+      const SCALAR nodeValue = cubicBezierdt((1 + a0) / 2).norm();
       length_gauss += nodeValue * gdw[gauss_node];
       length_gauss_kronrod += nodeValue * krw[gauss_node * 2];
     }
     {
-      const SCALAR nodeValue = cubicBezierdt((1-a0)/2).norm();
+      const SCALAR nodeValue = cubicBezierdt((1 - a0) / 2).norm();
       length_gauss += nodeValue * gdw[gauss_node];
       length_gauss_kronrod += nodeValue * krw[gauss_node * 2];
     }
   }
 
   // kronrod-only terms
-  for(int kronrod_node = 1; kronrod_node <= gauss_order; kronrod_node += 2) {
+  for (int kronrod_node = 1; kronrod_node <= gauss_order; kronrod_node += 2) {
     SCALAR a0 = kra[kronrod_node];
     {
-      const SCALAR nodeValue = cubicBezierdt((1+a0)/2).norm();
+      const SCALAR nodeValue = cubicBezierdt((1 + a0) / 2).norm();
       length_gauss_kronrod += nodeValue * krw[kronrod_node];
     }
     {
-      const SCALAR nodeValue = cubicBezierdt((1-a0)/2).norm();
+      const SCALAR nodeValue = cubicBezierdt((1 - a0) / 2).norm();
       length_gauss_kronrod += nodeValue * krw[kronrod_node];
     }
   }
@@ -382,11 +428,12 @@ double Length_CubicBezierCurve_QuadratureSubdivision(
   length_gauss /= 2;
   length_gauss_kronrod /= 2;
 
-  if(std::abs(length_gauss_kronrod - length_gauss) < std::abs(length_gauss_kronrod) * tolerance) {
+  if (std::abs(length_gauss_kronrod - length_gauss) < std::abs(length_gauss_kronrod) * tolerance) {
     return length_gauss_kronrod;
   } else {
-    if(maxDepth == 1) {
-      std::cout << "Warning: Max depth reached, current estimated error = " << std::abs(length_gauss_kronrod - length_gauss) / std::abs(length_gauss_kronrod) << std::endl;
+    if (maxDepth == 1) {
+      std::cout << "Warning: Max depth reached, current estimated error = "
+                << std::abs(length_gauss_kronrod - length_gauss) / std::abs(length_gauss_kronrod) << std::endl;
       return length_gauss_kronrod;
     } else {
       std::array<VEC, 8> subdiv = Split_CubicBezierCurve(p0, p1, p2, p3, 0.5);
@@ -401,6 +448,130 @@ double Length_CubicBezierCurve_QuadratureSubdivision(
   return -1; // suppress compiler warning
 }
 
+/**
+ *
+ * @tparam SCALAR float or double
+ * @param[out] coeff array of coefficients
+ * @param[in] idx_segment
+ * @param[in] num_segment
+ * @detail (i-th point's weight) = coeff[i][0] + coeff[i][1] * t + coeff[i][2] * t * t + coeff[i][3] * t * t * t
+ */
+template<typename SCALAR>
+void CoefficientsOfOpenUniformBSpline_Cubic(
+  SCALAR coeff[4][4],
+  int idx_segment,
+  int num_segment) {
+
+  // knot vector for this segement
+  const int k0 = std::clamp<int>(idx_segment - 2, 0, num_segment) - idx_segment;
+  const int k1 = std::clamp<int>(idx_segment - 1, 0, num_segment) - idx_segment;
+  const int k2 = std::clamp<int>(idx_segment + 0, 0, num_segment) - idx_segment;
+  const int k3 = std::clamp<int>(idx_segment + 1, 0, num_segment) - idx_segment;
+  const int k4 = std::clamp<int>(idx_segment + 2, 0, num_segment) - idx_segment;
+  const int k5 = std::clamp<int>(idx_segment + 3, 0, num_segment) - idx_segment;
+  assert(-2 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= k4 && k4 <= k5 && k5 <= 3);
+
+  const SCALAR c32 = (k3 == k2) ? 0 : 1 / static_cast<SCALAR>(k3 - k2);
+  const SCALAR c31 = (k3 == k1) ? 0 : 1 / static_cast<SCALAR>(k3 - k1);
+  const SCALAR c42 = (k4 == k2) ? 0 : 1 / static_cast<SCALAR>(k4 - k2);
+  const SCALAR c30 = (k3 == k0) ? 0 : 1 / static_cast<SCALAR>(k3 - k0);
+  const SCALAR c41 = (k4 == k1) ? 0 : 1 / static_cast<SCALAR>(k4 - k1);
+  const SCALAR c52 = (k5 == k2) ? 0 : 1 / static_cast<SCALAR>(k5 - k2);
+
+  {
+    // (k3-t) * (k3-t) * (k3-t)
+    const SCALAR d333 = c30 * c31 * c32;
+    coeff[0][0] = k3 * k3 * k3 * d333;
+    coeff[0][1] = -3 * k3 * k3 * d333;
+    coeff[0][2] = +3 * k3 * d333;
+    coeff[0][3] = -d333;
+  }
+  {
+    // (t-k0) * (k3-t) * (k3-t)
+    // (k4-t) * (t-k1) * (k3-t)
+    // (k4-t) * (k4-t) * (t-k2)
+    const SCALAR d033 = c30 * c31 * c32;
+    const SCALAR d413 = c41 * c31 * c32;
+    const SCALAR d442 = c41 * c42 * c32;
+    coeff[1][0] = -k0 * k3 * k3 * d033 - k4 * k1 * k3 * d413 - k4 * k4 * k2 * d442;
+    coeff[1][1] =
+      +(2 * k0 * k3 + k3 * k3) * d033
+        + (k4 * k1 + k1 * k3 + k3 * k4) * d413
+        + (k4 * k4 + 2 * k4 * k2) * d442;
+    coeff[1][2] = -(k0 + 2 * k3) * d033 - (k4 + k1 + k3) * d413 - (2 * k4 + k2) * d442;
+    coeff[1][3] = d033 + d413 + d442;
+  }
+  {
+    // (t-k1) * (t-k1) * (k3-t) / (k4-k1) / (k3-k1) / (k3-k2)
+    // (t-k1) * (k4-t) * (t-k2) / (k4-k1) / (k4-k2) / (k3-k2)
+    // (k5-t) * (t-k2) * (t-k2) / (k5-k2) / (k4-k2) / (k3-k2)
+    const SCALAR d113 = c41 * c31 * c32;
+    const SCALAR d142 = c41 * c42 * c32;
+    const SCALAR d522 = c52 * c42 * c32;
+    coeff[2][0] = k1 * k1 * k3 * d113 + k1 * k4 * k2 * d142 + k5 * k2 * k2 * d522;
+    coeff[2][1] =
+      -(2 * k1 * k3 + k1 * k1) * d113
+        - (k1 * k4 + k4 * k2 + k2 * k1) * d142
+        - (2 * k5 * k2 + k2 * k2) * d522;
+    coeff[2][2] = (2 * k1 + k3) * d113 + (k1 + k4 + k2) * d142 + (k5 + 2 * k2) * d522;
+    coeff[2][3] = -d113 - d142 - d522;
+  }
+  {
+    // (t-k2) * (t-k2) * (t-k2)
+    const SCALAR d222 = c52 * c42 * c32;
+    coeff[3][0] = -k2 * k2 * k2 * d222;
+    coeff[3][1] = +3 * k2 * k2 * d222;
+    coeff[3][2] = -3 * k2 * d222;
+    coeff[3][3] = d222;
+  }
+
+  /*
+  const double w00 = safe_divide(k3 - t, k3 - k2);
+  const double w10 = safe_divide(k3 - t, k3 - k1);
+  const double w11 = safe_divide(k4 - t, k4 - k2);
+  const double w20 = safe_divide(k3 - t, k3 - k0);
+  const double w21 = safe_divide(k4 - t, k4 - k1);
+  const double w22 = safe_divide(k5 - t, k5 - k2);
+
+  const double w0 = w20 * w10 * w00;
+  const double w1 = (1 - w20) * w10 * w00 + w21 * (1 - w10) * w00 + w21 * w11 * (1 - w00);
+  const double w2 = (1 - w21) * (1 - w10) * w00 + (1 - w21) * w11 * (1 - w00) + w22 * (1 - w11) * (1 - w00);
+  const double w3 = (1 - w22) * (1 - w11) * (1 - w00);
+   */
+}
+
+/**
+ * Quadratic B-Spline with "open and uniform knot vector"
+ * knot vector = [0,0,0,1,2,3,...,N-1,N,N,N] where N is poly.size()-2
+ * @param t parameter of curve that takes [0,1]
+ * @param poly position of the the control points
+ * @return sampled point
+ */
+template<typename VEC>
+VEC Sample_CubicBsplineCurve(
+  typename VEC::Scalar t,
+  const std::vector<VEC> &poly) {
+  using SCALAR = typename VEC::Scalar;
+
+  const int num_segment = poly.size() - 3;
+  const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
+  assert(idx_segment >= 0 && idx_segment < num_segment);
+
+  t -= idx_segment;
+  assert(t >= 0 && t <= 1);
+
+  SCALAR coeff[4][4];
+  CoefficientsOfOpenUniformBSpline_Cubic(coeff, idx_segment, num_segment);
+
+  SCALAR v0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t + coeff[0][3] * t * t * t;
+  SCALAR v1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t + coeff[1][3] * t * t * t;
+  SCALAR v2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t + coeff[2][3] * t * t * t;
+  SCALAR v3 = coeff[3][0] + coeff[3][1] * t + coeff[3][2] * t * t + coeff[3][3] * t * t * t;
+
+  assert(fabs(v0 + v1 + v2 + v3 - 1.) < 1.0e-10);
+  assert(v0 >= -1.0e-10 && v1 >= -1.0e-10 && v2 >= -1.0e-10 && v3 >= -1.0e-10);
+  return poly[idx_segment] * v0 + poly[idx_segment + 1] * v1 + poly[idx_segment + 2] * v2 + poly[idx_segment + 3] * v3;
+}
 
 }
 
