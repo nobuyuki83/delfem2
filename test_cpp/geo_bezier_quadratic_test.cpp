@@ -26,7 +26,7 @@ TEST(bezier_quadratic, polyline2) {
       double v0 = dfm2::Length_Polyline<dfm2::CVec2d>(polyline);
       double v2 = dfm2::Length_QuadraticBezierCurve_Quadrature<dfm2::CVec2d>(
         p0,p1,p2,3);
-      double v3 = dfm2::Length_QuadraticBezierCurve_QuadratureSubdiv<dfm2::CVec2d,11>(
+      double v3 = dfm2::Length_QuadraticBezierCurve_QuadratureSubdiv<dfm2::CVec2d>(
         p0,p1,p2,1.0e-7,12);
       EXPECT_NEAR(v1,v0,2.0e-4);
       EXPECT_NEAR(v1,v2,0.2);

@@ -130,12 +130,15 @@ DFM2_INLINE void delfem2::EMat_Poisson2_QuadOrth_GaussInt(
 {
   namespace lcl = delfem2::femutil;
   for (unsigned int i = 0; i < 16; ++i) { (&emat[0][0])[i] = 0.0; }
-  unsigned int nw = NIntLineGauss[ngauss];
-  for (unsigned int iw = 0; iw < nw; ++iw) {
-    for (unsigned int jw = 0; jw < nw; ++jw) {
-      const double w = lx * ly * 0.25 * LineGauss<double>[ngauss][iw][1] * LineGauss<double>[ngauss][jw][1];
-      const double x1 = (1 - LineGauss<double>[ngauss][iw][0]) * 0.5;
-      const double y1 = (1 - LineGauss<double>[ngauss][jw][0]) * 0.5;
+  const unsigned int nw0 = kNumIntegrationPoint_GaussianQuadrature[ngauss];
+  const unsigned int nw1 = kNumIntegrationPoint_GaussianQuadrature[ngauss+1];
+  for (unsigned int iw = nw0; iw < nw1; ++iw) {
+    for (unsigned int jw = nw0; jw < nw1; ++jw) {
+      double wx = kPositionWeight_GaussianQuadrature<double>[iw][1];
+      double wy = kPositionWeight_GaussianQuadrature<double>[jw][1];
+      const double w = lx * ly * 0.25 * wx * wy;
+      const double x1 = (1 - kPositionWeight_GaussianQuadrature<double>[iw][0]) * 0.5;
+      const double y1 = (1 - kPositionWeight_GaussianQuadrature<double>[jw][0]) * 0.5;
       const double x2 = 1 - x1;
       const double y2 = 1 - y1;
       // u = u1x1y1 + u2x2y1 + u3x2y2 + u4x1y2

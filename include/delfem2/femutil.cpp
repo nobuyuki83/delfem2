@@ -426,13 +426,14 @@ DFM2_INLINE double delfem2::DiffShapeFuncAtQuadraturePoint_Hex(
     int ir2,
     int ir3,
     const double aP0[8][3]) {
-  const double r1 = LineGauss<double>[iGauss][ir1][0];
-  const double r2 = LineGauss<double>[iGauss][ir2][0];
-  const double r3 = LineGauss<double>[iGauss][ir3][0];
+  const unsigned int noff = kNumIntegrationPoint_GaussianQuadrature[iGauss];
+  const double r1 = kPositionWeight_GaussianQuadrature<double>[noff+ir1][0];
+  const double r2 = kPositionWeight_GaussianQuadrature<double>[noff+ir2][0];
+  const double r3 = kPositionWeight_GaussianQuadrature<double>[noff+ir3][0];
   double an[8], detjac;
   ShapeFunc_Hex8(r1, r2, r3, aP0, detjac, dndx, an);
   return detjac *
-      LineGauss<double>[iGauss][ir1][1] *
-      LineGauss<double>[iGauss][ir2][1] *
-      LineGauss<double>[iGauss][ir3][1];
+      kPositionWeight_GaussianQuadrature<double>[noff+ir1][1] *
+      kPositionWeight_GaussianQuadrature<double>[noff+ir2][1] *
+      kPositionWeight_GaussianQuadrature<double>[noff+ir3][1];
 }
