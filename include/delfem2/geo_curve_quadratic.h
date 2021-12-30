@@ -438,8 +438,36 @@ VEC Sample_QuadraticBsplineCurve(
   const SCALAR w1 = coeff[1][0] + coeff[1][1] * s + coeff[1][2] * s * s;
   const SCALAR w2 = coeff[2][0] + coeff[2][1] * s + coeff[2][2] * s * s;
 
-  assert(fabs(w0 + w1 + w2 - 1.) < 1.0e-10);
+  assert(fabs(w0 + w1 + w2 - 1.) < 1.0e-5);
   assert(w0 >= 0 && w1 >= 0 && w2 >= 0);
+  return poly[idx_segment] * w0 + poly[idx_segment + 1] * w1 + poly[idx_segment + 2] * w2;
+}
+
+/**
+ * Quadratic B-Spline with "open and uniform knot vector"
+ * knot vector = [0,0,0,1,2,3,...,N-1,N,N,N] where N is the nubmer of segments, which is poly.size()-2
+ * @param[in] t parameter of curve that takes [0,N]
+ * @param[in] poly position of the the control points
+ * @return sampled point
+ */
+template<typename VEC>
+VEC Tangent_QuadraticBsplineCurve(
+  typename VEC::Scalar t,
+  const std::vector<VEC> &poly) {
+  using SCALAR = typename VEC::Scalar;
+
+  const int num_segment = poly.size() - 2;
+  const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
+  assert(idx_segment >= 0 && idx_segment < num_segment);
+  const double s = t - idx_segment;  // parameter in this segment
+  assert(s >= 0 && s <= 1);
+
+  SCALAR coeff[3][3];
+  CoefficientsOfOpenUniformBSpline_Quadratic(coeff, idx_segment, num_segment);
+
+  const SCALAR w0 = coeff[0][1] + 2 * coeff[0][2] * s;
+  const SCALAR w1 = coeff[1][1] + 2 * coeff[1][2] * s;
+  const SCALAR w2 = coeff[2][1] + 2 * coeff[2][2] * s;
   return poly[idx_segment] * w0 + poly[idx_segment + 1] * w1 + poly[idx_segment + 2] * w2;
 }
 
@@ -447,6 +475,7 @@ template<class VEC>
 double Nearest_QuadraticBSplineCurve(
   const std::vector<VEC> &poly,
   const VEC &scr) {
+  assert( poly.size() > 2 );
   using SCALAR = typename VEC::Scalar;
   const unsigned int num_segment = poly.size() - 2;
   SCALAR dist_best = (poly[0] - scr).norm();

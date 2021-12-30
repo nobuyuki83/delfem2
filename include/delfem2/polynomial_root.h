@@ -246,7 +246,7 @@ inline double RootInInterval_Bisection(
   double x1 = range_right;
   double fx0 = Eval_Polynomial(x0, a, ndegree_plus1);
   double fx1 = Eval_Polynomial(x1, a, ndegree_plus1);
-  assert(fx0 * fx1 < 0);
+  assert(fx0 * fx1 <= 0);
   for (int i = 0; i < num_iteration; i++) {
     const double x2 = (x0 + x1) / 2; // bisection method
     const double fx2 = Eval_Polynomial(x2, a, ndegree_plus1);
