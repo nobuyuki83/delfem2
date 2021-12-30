@@ -7,7 +7,10 @@
 
 /**
  * @detail The order of dependency in delfem2:
- * line < ray < edge < polyline < quadratic < cubic < bspline << plane < tri < quad
+ * aabb -> 
+ * line -> ray -> edge -> polyline ->
+ * curve_quadratic -> curve_cubic -> curve_ndegree ->
+ * plane -> tri -> quad
  */
 
 

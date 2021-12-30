@@ -5,8 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_PARAMETRIC_H
-#define DFM2_PARAMETRIC_H
+/**
+ * @detail The order of dependency in delfem2:
+ * aabb ->
+ * line -> ray -> edge -> polyline ->
+ * curve_quadratic -> curve_cubic -> curve_ndegree ->
+ * plane < tri < quad
+ */
+
+#ifndef DFM2_SURFACE_PARAMETRIC_H
+#define DFM2_SURFACE_PARAMETRIC_H
 
 #include <cassert>
 #include <cstdio>

@@ -7,7 +7,10 @@
 
 /**
  * @detail The order of dependency in delfem2:
- * line < ray < edge < polyline < quadratic < cubic < bspline << plane < tri < quad
+ * aabb -> 
+ * line -> ray -> edge -> polyline ->
+ * curve_quadratic -> curve_cubic -> curve_ndegree ->
+ * plane -> tri -> quad
  */
 
 #ifndef DFM2_PLANE_H
@@ -61,31 +64,6 @@ CVec3<T> Intersection_Plane3_Line3(
     const CVec3<T> &s, // one point on line
     const CVec3<T> &d); // direction of line
 
-// ----------------------------------------------------------------------------------
-
-template<typename T>
-bool IsInside_Orgin_BoundingBoxPoint4(
-    const CVec3<T> &p0,
-    const CVec3<T> &p1,
-    const CVec3<T> &p2,
-    const CVec3<T> &p3);
-
-template<typename T>
-bool IsInside_Orgin_BoundingBoxPoint5(
-    const CVec3<T> &p0,
-    const CVec3<T> &p1,
-    const CVec3<T> &p2,
-    const CVec3<T> &p3,
-    const CVec3<T> &p4);
-
-template<typename T>
-bool IsInside_Orgin_BoundingBoxPoint6(
-    const CVec3<T> &p0,
-    const CVec3<T> &p1,
-    const CVec3<T> &p2,
-    const CVec3<T> &p3,
-    const CVec3<T> &p4,
-    const CVec3<T> &p5);
 
 } // end namespace delfem2
 

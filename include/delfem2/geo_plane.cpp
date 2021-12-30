@@ -95,57 +95,6 @@ template delfem2::CVec3d delfem2::Nearest_Origin3_PlaneTri3(
   const CVec3d &q2);
 #endif
 
-
-// ------------------------------------------------------------------------------
-
-template<typename T>
-bool delfem2::IsInside_Orgin_BoundingBoxPoint6(
-  const CVec3<T> &p0,
-  const CVec3<T> &p1,
-  const CVec3<T> &p2,
-  const CVec3<T> &p3,
-  const CVec3<T> &p4,
-  const CVec3<T> &p5) {
-  if (p0.p[0] > 0 && p1.p[0] > 0 && p2.p[0] > 0 && p3.p[0] > 0 && p4.p[0] > 0 && p5.p[0] > 0) { return false; }
-  if (p0.p[0] < 0 && p1.p[0] < 0 && p2.p[0] < 0 && p3.p[0] < 0 && p4.p[0] < 0 && p5.p[0] < 0) { return false; }
-  if (p0.p[1] > 0 && p1.p[1] > 0 && p2.p[1] > 0 && p3.p[1] > 0 && p4.p[1] > 0 && p5.p[1] > 0) { return false; }
-  if (p0.p[1] < 0 && p1.p[1] < 0 && p2.p[1] < 0 && p3.p[1] < 0 && p4.p[1] < 0 && p5.p[1] < 0) { return false; }
-  if (p0.p[2] > 0 && p1.p[2] > 0 && p2.p[2] > 0 && p3.p[2] > 0 && p4.p[2] > 0 && p5.p[2] > 0) { return false; }
-  if (p0.p[2] < 0 && p1.p[2] < 0 && p2.p[2] < 0 && p3.p[2] < 0 && p4.p[2] < 0 && p5.p[2] < 0) { return false; }
-  return true;
-}
-
-template<typename T>
-bool delfem2::IsInside_Orgin_BoundingBoxPoint5
-  (const CVec3<T> &p0,
-   const CVec3<T> &p1,
-   const CVec3<T> &p2,
-   const CVec3<T> &p3,
-   const CVec3<T> &p4) {
-  if (p0.p[0] > 0 && p1.p[0] > 0 && p2.p[0] > 0 && p3.p[0] > 0 && p4.p[0] > 0) { return false; }
-  if (p0.p[0] < 0 && p1.p[0] < 0 && p2.p[0] < 0 && p3.p[0] < 0 && p4.p[0] < 0) { return false; }
-  if (p0.p[1] > 0 && p1.p[1] > 0 && p2.p[1] > 0 && p3.p[1] > 0 && p4.p[1] > 0) { return false; }
-  if (p0.p[1] < 0 && p1.p[1] < 0 && p2.p[1] < 0 && p3.p[1] < 0 && p4.p[1] < 0) { return false; }
-  if (p0.p[2] > 0 && p1.p[2] > 0 && p2.p[2] > 0 && p3.p[2] > 0 && p4.p[2] > 0) { return false; }
-  if (p0.p[2] < 0 && p1.p[2] < 0 && p2.p[2] < 0 && p3.p[2] < 0 && p4.p[2] < 0) { return false; }
-  return true;
-}
-
-template<typename T>
-bool delfem2::IsInside_Orgin_BoundingBoxPoint4
-  (const CVec3<T> &p0,
-   const CVec3<T> &p1,
-   const CVec3<T> &p2,
-   const CVec3<T> &p3) {
-  if (p0.p[0] > 0 && p1.p[0] > 0 && p2.p[0] > 0 && p3.p[0] > 0) { return false; }
-  if (p0.p[0] < 0 && p1.p[0] < 0 && p2.p[0] < 0 && p3.p[0] < 0) { return false; }
-  if (p0.p[1] > 0 && p1.p[1] > 0 && p2.p[1] > 0 && p3.p[1] > 0) { return false; }
-  if (p0.p[1] < 0 && p1.p[1] < 0 && p2.p[1] < 0 && p3.p[1] < 0) { return false; }
-  if (p0.p[2] > 0 && p1.p[2] > 0 && p2.p[2] > 0 && p3.p[2] > 0) { return false; }
-  if (p0.p[2] < 0 && p1.p[2] < 0 && p2.p[2] < 0 && p3.p[2] < 0) { return false; }
-  return true;
-}
-
 // ----------------------------------------------------------------------
 
 template<typename T>

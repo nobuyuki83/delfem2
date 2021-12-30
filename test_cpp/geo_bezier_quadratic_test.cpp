@@ -55,8 +55,8 @@ TEST(bezier_quadratic, polyline2) {
       EXPECT_NEAR( (v0-scr).norm(), (v2-scr).norm(),  1.0e-6 );
     }
     {  // bb
-      auto bb0 = dfm2::AABB_QuadraticBezierCurve<2>(p0,p1,p2);
-      auto bb1 = dfm2::AABB_Polyline<2>(polyline);
+      auto bb0 = dfm2::AABB_QuadraticBezierCurve(p0,p1,p2);
+      auto bb1 = dfm2::AABB_Polyline(polyline);
       EXPECT_NEAR(bb0[0], bb1[0], 1.0e-3);
       EXPECT_NEAR(bb0[1], bb1[1], 1.0e-3);
       EXPECT_NEAR(bb0[2], bb1[2], 1.0e-3);
@@ -102,7 +102,13 @@ TEST(bspline, quadratic_curve) {
       {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)},
       {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)},
       {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)} };
-    double l0 = delfem2::Length_ParametricCurve_Quadratic(coeff,cp);
+    double l0;
+    {
+      const dfm2::CVec2d q0 = coeff[0][0] * cp[0] + coeff[1][0] * cp[1] + coeff[2][0] * cp[2];
+      const dfm2::CVec2d q1 = coeff[0][1] * cp[0] + coeff[1][1] * cp[1] + coeff[2][1] * cp[2];
+      const dfm2::CVec2d q2 = coeff[0][2] * cp[0] + coeff[1][2] * cp[1] + coeff[2][2] * cp[2];
+      l0 = delfem2::Length_QuadraticCurve(q0, q1, q2);
+    }
     std::vector<dfm2::CVec2d> poly;
     const unsigned int N = 1000;
     for(unsigned int ip=0;ip<N+1;++ip){

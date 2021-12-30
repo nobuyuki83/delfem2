@@ -5,8 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_CURVE_QUADRATIC_BEZIER_H
-#define DFM2_CURVE_QUADRATIC_BEZIER_H
+/**
+ * @detail The order of dependency in delfem2:
+ * aabb ->
+ * line -> ray -> edge -> polyline ->
+ * curve_quadratic -> curve_cubic -> curve_ndegree ->
+ * plane -> tri -> quad
+ */
+
+#ifndef DFM2_CURVE_QUADRATIC_H
+#define DFM2_CURVE_QUADRATIC_H
 
 #include <cassert>
 #include <cstdio>
@@ -15,8 +23,118 @@
 
 #include "quadrature.h"
 #include "polynomial_root.h"
+#include "geo_aabb.h"
 
 namespace delfem2 {
+
+/**
+ * @param ngauss number of Gausssian quadrature points minus one
+ *
+ * at parameter "t" the position is evaluated as \n
+ * return q0 + q1 * t + q2 * t * t;
+ */
+template<typename VEC>
+double Length_QuadraticCurve_Gauss(
+  [[maybe_unused]] const VEC &q0,
+  const VEC &q1,
+  const VEC &q2,
+  int ngauss) {
+  const double coe[3] = {q1.squaredNorm(), 4 * q1.dot(q2), 4 * q2.squaredNorm()};
+
+  const unsigned int nw0 = kNumIntegrationPoint_GaussianQuadrature[ngauss];
+  const unsigned int nw1 = kNumIntegrationPoint_GaussianQuadrature[ngauss + 1];
+
+  double sum = 0.;
+  for (unsigned int i = nw0; i < nw1; i++) {
+    const double t = (1. + kPositionWeight_GaussianQuadrature<double>[i][0]) / 2;
+    const double w = kPositionWeight_GaussianQuadrature<double>[i][1] / 2;
+    const double v = std::sqrt(coe[0] + coe[1] * t + coe[2] * t * t);
+    sum += w * v;
+  }
+  return sum;
+}
+
+/**
+ * @details at parameter "t" the position is evaluated as \n
+ * return q0 + q1 * t + q2 * t * t;
+ * https://math.stackexchange.com/questions/12186/arc-length-of-b%c3%a9zier-curves
+ */
+template<typename VEC>
+double Length_QuadraticCurve(
+  const VEC &q0,
+  const VEC &q1,
+  const VEC &q2) {
+  if (q2.squaredNorm() < 1.0e-5) {
+    return Length_QuadraticCurve_Gauss(q0, q1, q2, 3);
+  }
+  // dl = sqrt(coe[0] + coe[1]*t + coe[2]*t^2) dt
+  const double coe[3] = {
+    q1.squaredNorm(),
+    4 * q1.dot(q2),
+    4 * q2.squaredNorm()};
+  auto intt = [&coe](double t) -> double {
+    const double tmp0 = (coe[1] + 2 * coe[2] * t) * std::sqrt(coe[0] + t * (coe[1] + coe[2] * t));
+    const double tmp3 = sqrt(coe[2]);
+    const double tmp1 = coe[1] + 2 * coe[2] * t + 2 * tmp3 * sqrt(coe[0] + t * (coe[1] + coe[2] * t));
+    const double tmp2 = (coe[1] * coe[1] - 4 * coe[0] * coe[2]) * std::log(tmp1);
+    return tmp0 / (4. * coe[2]) - tmp2 / (8. * coe[2] * tmp3);
+  };
+  return intt(1) - intt(0);
+}
+
+template<typename VEC>
+double Nearest_Origin_QuadraticCurve(
+  const VEC &c,
+  const VEC &b,
+  const VEC &a,
+  int num_bisection) {
+  // Derivative of squared distance function
+  // We use the squared distance because it is easier to find its derivative
+  const double coe[4] = {
+    b.dot(c),
+    b.squaredNorm() + 2 * a.dot(c),
+    3 * a.dot(b),
+    2 * a.squaredNorm()};
+
+  auto roots = RootsOfPolynomial<4>(coe, num_bisection);
+  roots.push_back(1); // check t = 1
+  double best_t = 0., best_dist = c.squaredNorm(); // check t = 0
+  for (double t: roots) {
+    double dist0 = (c + t * (b + t * a)).squaredNorm();
+    if (dist0 > best_dist) { continue; }
+    best_t = t;
+    best_dist = dist0;
+  }
+  return best_t;
+}
+
+/**
+ * @tparam ndim dimension of the geometry
+ * @return min_x, min_y, (min_z), max_x, max_y, (max_z)
+ */
+template<typename VEC>
+auto AABB_QuadraticCurve(
+  const VEC &c,
+  const VEC &b,
+  const VEC &a) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
+  using SCALAR = typename VEC::Scalar;
+  constexpr int ndim = VEC::SizeAtCompileTime;
+  const VEC p2 = a + b + c;
+  std::array<SCALAR, ndim * 2> res;
+  for (int i = 0; i < ndim; i++) {
+    SCALAR t = b[i] / (-2 * a[i]);
+    t = std::clamp<SCALAR>(t, 0, 1);
+    SCALAR extreme = c[i] + t * (b[i] + (t * a[i]));
+    res[i] = std::min({c[i], p2[i], extreme});
+    res[i + ndim] = std::max({c[i], p2[i], extreme});
+  }
+  return res;
+}
+
+
+// above: quadratic curve
+// ===============================================
+// below: quadratic Bezier curve
 
 template<typename VEC>
 VEC PointOnQuadraticBezierCurve(
@@ -30,7 +148,7 @@ VEC PointOnQuadraticBezierCurve(
 
 template<class VEC>
 void Polyline_BezierQuadratic(
-  std::vector<VEC>& aP,
+  std::vector<VEC> &aP,
   const unsigned int n,
   const VEC &p1,
   const VEC &p2,
@@ -41,29 +159,20 @@ void Polyline_BezierQuadratic(
     const double t = static_cast<SCALAR>(i) / (static_cast<SCALAR>(n) - 1);
     aP[i] = PointOnQuadraticBezierCurve(
       t,
-      p1, p2, p3 );
+      p1, p2, p3);
   }
 }
 
 template<typename VEC>
 double Length_QuadraticBezierCurve_Quadrature(
-  const VEC &p0,  // end point
-  const VEC &p1,  // the control point
-  const VEC &p2,  // another end point
-  int gauss_order) // order of Gaussian quadrature to use
-{
-  using SCALAR = typename VEC::Scalar;
-  assert(gauss_order < 4);
-  SCALAR totalLength = 0;
-  const unsigned int iw0 = kNumIntegrationPoint_GaussianQuadrature[gauss_order];
-  const unsigned int iw1 = kNumIntegrationPoint_GaussianQuadrature[gauss_order+1];
-  for (unsigned int i = iw0; i < iw1; i++) {
-    const SCALAR t = (kPositionWeight_GaussianQuadrature<SCALAR>[i][0] + 1) / 2;
-    const SCALAR w = kPositionWeight_GaussianQuadrature<SCALAR>[i][1];
-    const VEC dt = 2 * (1 - t) * (p1 - p0) + 2 * t * (p2 - p1);
-    totalLength += dt.norm() * w;
-  }
-  return totalLength / 2;
+  const VEC &p0,
+  const VEC &p1,
+  const VEC &p2,
+  int ngauss) {
+  const VEC q2 = p0 - 2 * p1 + p2;
+  const VEC q1 = -2 * p0 + 2 * p1;
+  const VEC q0 = p0;
+  return Length_QuadraticCurve_Gauss(q0, q1, q2, ngauss);
 }
 
 template<typename VEC>
@@ -72,23 +181,10 @@ typename VEC::Scalar Length_QuadraticBezierCurve_Analytic(
   const VEC &p1,  // the control point
   const VEC &p2)   // another end point
 {
-  using SCALAR = typename VEC::Scalar;
-
-  // closed form solution from https://math.stackexchange.com/questions/12186/arc-length-of-b%c3%a9zier-curves
-  const SCALAR a = (p2 - 2 * p1 + p0).squaredNorm();
-
-  if (a < 1.0e-5) {
-    return Length_QuadraticBezierCurve_Quadrature<VEC>(p0, p1, p2, 3);
-  }
-
-  const SCALAR b = (p1 - p0).dot(p2 - p1 - p1 + p0);
-  const SCALAR c = (p1 - p0).squaredNorm();
-  const SCALAR tmp1 = std::sqrt(a * (c + 2 * b + a));
-  const SCALAR tmp2 = std::sqrt(a * c);
-  const SCALAR tmp3 = (-b * b + a * c);
-  const SCALAR t1 = tmp1 * (b + a) + tmp3 * std::log(b + a + tmp1);
-  const SCALAR t0 = tmp2 * b + tmp3 * std::log(b + tmp2);
-  return (t1 - t0) / (a * std::sqrt(a));
+  const VEC q2 = p0 - 2 * p1 + p2;
+  const VEC q1 = -2 * p0 + 2 * p1;
+  const VEC q0 = p0;
+  return Length_QuadraticCurve(q0, q1, q2);
 }
 
 /**
@@ -102,13 +198,14 @@ typename VEC::Scalar Nearest_QuadraticBezierCurve(
   const VEC &p2,
   unsigned int num_samples,
   unsigned int num_newton_itr) {   // another end point
-
   using SCALAR = typename VEC::Scalar;
+
+  //  SCALAR disttance = (at^2 + bt + c).norm();
   const VEC a = p0 - 2 * p1 + p2;
   const VEC b = -2 * p0 + 2 * p1;
   const VEC c = p0 - q;
 
-  SCALAR t = 0, dist_min = c.norm();
+  SCALAR t = 0, dist_min = c.norm();  // check t=0
   for (unsigned int i = 1; i < num_samples + 1; i++) {
     typename VEC::Scalar t0 = static_cast<SCALAR>(i) / static_cast<SCALAR>(num_samples);
     SCALAR dist0 = (a * (t0 * t0) + b * t0 + c).norm();
@@ -158,25 +255,7 @@ typename VEC::Scalar Nearest_QuadraticBezierCurve_Sturm(
   const VEC a = p0 - 2 * p1 + p2;
   const VEC b = -2 * p0 + 2 * p1;
   const VEC c = p0 - q;
-
-  // Derivative of squared distance function
-  // We use the squared distance because it is easier to find its derivative
-  const double coe[4] = {
-    b.dot(c),
-    b.squaredNorm() + 2 * a.dot(c),
-    3 * a.dot(b),
-    2 * a.squaredNorm()};
-
-  auto roots = RootsOfPolynomial<4>(coe, num_bisection);
-  roots.push_back(1); // check t = 1
-  double best_t = 0., best_dist = c.squaredNorm(); // check t = 0
-  for (double t: roots) {
-    double dist0 = (c + t * (b + t * a)).squaredNorm();
-    if (dist0 > best_dist) { continue; }
-    best_t = t;
-    best_dist = dist0;
-  }
-  return best_t;
+  return Nearest_Origin_QuadraticCurve(c, b, a, num_bisection);
 }
 
 template<typename VEC>
@@ -194,29 +273,16 @@ auto Area_QuadraticBezierCurve2(
  * @tparam ndim dimension of the geometry
  * @return min_x, min_y, (min_z), max_x, max_y, (max_z)
  */
-template<int ndim, typename VEC>
+template<typename VEC>
 auto AABB_QuadraticBezierCurve(
   const VEC &p0,
   const VEC &p1,
-  const VEC &p2) -> std::array<typename VEC::Scalar, ndim * 2> {
-  using SCALAR = typename VEC::Scalar;
-
+  const VEC &p2) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
   // bezier expression: p(t) = at^2 + bt + c
-  // p'(t) = 2at + b
   const VEC a = p0 - 2 * p1 + p2;
   const VEC b = -2 * p0 + 2 * p1;
   const VEC c = p0;
-
-  std::array<SCALAR, ndim * 2> res;
-  for (int i = 0; i < ndim; i++) {
-    SCALAR t = b[i] / (-2 * a[i]);
-    t = std::clamp<SCALAR>(t, 0, 1);
-    SCALAR extreme = c[i] + t * (b[i] + (t * a[i]));
-    res[i] = std::min({p0[i], p2[i], extreme});
-    res[i + ndim] = std::max({p0[i], p2[i], extreme});
-  }
-
-  return res;
+  return AABB_QuadraticCurve(c, b, a);
 }
 
 /**
@@ -242,9 +308,6 @@ std::array<VEC, 6> Split_QuadraticBezierCurve(
   return res;
 }
 
-// =====================
-
-
 template<typename VEC>
 typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
   const VEC &p0,  // end point
@@ -261,26 +324,26 @@ typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
 
   unsigned int np_gauss = 7;
   unsigned int np_kronrod = 15;
-  unsigned int noff = kNumIntegrationPoint_GaussianQuadrature[np_gauss-1];
+  unsigned int noff = kNumIntegrationPoint_GaussianQuadrature[np_gauss - 1];
 
   // integrate using gaussian and gauss-kronrod quadrature at the same time
   SCALAR length_gauss = 0.;
   SCALAR length_kronrod = 0.;
-  for(unsigned int iw=0;iw<np_gauss;++iw){ // shared part
-    const double x0 = kPositionWeight_GaussianQuadrature<double>[noff+iw][0];
-    const double w0 = kPositionWeight_GaussianQuadrature<double>[noff+iw][1];
-    const double w1 = kPositionWeight_GaussKronrodQuadrature<double>[iw][1];
-    assert( fabs(x0-kPositionWeight_GaussKronrodQuadrature<double>[iw][0]) < 1.0e-8 );
-    const SCALAR nodeValue = quadraticBezierdt((x0+1)/2).norm();
+  for (unsigned int iw = 0; iw < np_gauss; ++iw) { // shared part
+    const SCALAR x0 = kPositionWeight_GaussianQuadrature<SCALAR>[noff + iw][0];
+    const SCALAR w0 = kPositionWeight_GaussianQuadrature<SCALAR>[noff + iw][1];
+    const SCALAR w1 = kPositionWeight_GaussKronrodQuadrature<SCALAR>[iw][1];
+    assert(fabs(x0 - kPositionWeight_GaussKronrodQuadrature<SCALAR>[iw][0]) < 1.0e-8);
+    const SCALAR nodeValue = quadraticBezierdt((x0 + 1) / 2).norm();
     length_gauss += nodeValue * w0 / 2;
     length_kronrod += nodeValue * w1 / 2;
   }
 
   // kronrod-only terms
-  for (unsigned int iw=np_gauss;iw<np_kronrod;++iw) {
-    const double x0 = kPositionWeight_GaussKronrodQuadrature<double>[iw][0];
-    const double w1 = kPositionWeight_GaussKronrodQuadrature<double>[iw][1];
-    const SCALAR nodeValue = quadraticBezierdt((x0+1)/2).norm();
+  for (unsigned int iw = np_gauss; iw < np_kronrod; ++iw) {
+    const SCALAR x0 = kPositionWeight_GaussKronrodQuadrature<SCALAR>[iw][0];
+    const SCALAR w1 = kPositionWeight_GaussKronrodQuadrature<SCALAR>[iw][1];
+    const SCALAR nodeValue = quadraticBezierdt((x0 + 1) / 2).norm();
     length_kronrod += nodeValue * w1 / 2;
   }
 
@@ -288,7 +351,6 @@ typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
     return length_kronrod;
   } else {
     if (maxDepth == 1) {
-      // std::cout << "Warning: Max depth reached, current estimated error = " << std::abs(length_gauss_kronrod - length_gauss) / std::abs(length_gauss_kronrod) << std::endl;
       return length_kronrod;
     } else { // split
       std::array<VEC, 6> subdiv = Split_QuadraticBezierCurve(p0, p1, p2, 0.5);
@@ -303,6 +365,9 @@ typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
   return -1; // suppress compiler warning
 }
 
+// above: quadratic Bezier
+// ================================================
+// below: quadratic BSpline
 
 /**
  *
@@ -363,49 +428,49 @@ VEC Sample_QuadraticBsplineCurve(
   const int idx_segment = static_cast<int>(t) + (t == num_segment ? -1 : 0);
   assert(idx_segment >= 0 && idx_segment < num_segment);
 
-  t -= idx_segment;
-  assert(t >= 0 && t <= 1);
+  const double s = t - idx_segment;  // parameter in this segment
+  assert(s >= 0 && s <= 1);
 
   SCALAR coeff[3][3];
   CoefficientsOfOpenUniformBSpline_Quadratic(coeff, idx_segment, num_segment);
 
-  const SCALAR w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t;
-  const SCALAR w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t;
-  const SCALAR w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t;
+  const SCALAR w0 = coeff[0][0] + coeff[0][1] * s + coeff[0][2] * s * s;
+  const SCALAR w1 = coeff[1][0] + coeff[1][1] * s + coeff[1][2] * s * s;
+  const SCALAR w2 = coeff[2][0] + coeff[2][1] * s + coeff[2][2] * s * s;
 
   assert(fabs(w0 + w1 + w2 - 1.) < 1.0e-10);
   assert(w0 >= 0 && w1 >= 0 && w2 >= 0);
   return poly[idx_segment] * w0 + poly[idx_segment + 1] * w1 + poly[idx_segment + 2] * w2;
 }
 
-/**
- * @details at parameter "t" the position is evaluated as \n
- * const SCALAR w0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t; \n
- * const SCALAR w1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t; \n
- * const SCALAR w2 = coeff[2][0] + coeff[2][1] * t + coeff[2][2] * t * t; \n
- * return points[0] * w0 + points[1] * w1 + points[2] * w2;
- */
-template<typename VEC>
-double Length_ParametricCurve_Quadratic(
-  const double coeff[3][3],
-  const VEC points[3]) {
-  const VEC p0 = coeff[0][1] * points[0] + coeff[1][1] * points[1] + coeff[2][1] * points[2];
-  const VEC p1 = coeff[0][2] * points[0] + coeff[1][2] * points[1] + coeff[2][2] * points[2];
-  // dl = sqrt(coe[0] + coe[1]*t + coe[2]*t^2) dt
-  const double coe[3] = {
-    p0.squaredNorm(),
-    4*p0.dot(p1),
-    4*p1.squaredNorm()};
-  auto intt = [&coe](double t) -> double {
-    const double tmp0 = (coe[1] + 2 * coe[2] * t) * std::sqrt(coe[0] + t * (coe[1] + coe[2] * t));
-    const double tmp3 = sqrt(coe[2]);
-    const double tmp1 = coe[1] + 2 * coe[2] * t + 2 * tmp3 * sqrt(coe[0] + t * (coe[1] + coe[2] * t));
-    const double tmp2 = (coe[1] * coe[1] - 4 * coe[0] * coe[2]) * std::log(tmp1);
-    return tmp0 / (4. * coe[2]) - tmp2 / (8. * coe[2] * tmp3);
-  };
-  return intt(1) - intt(0);
+template<class VEC>
+double Nearest_QuadraticBSplineCurve(
+  const std::vector<VEC> &poly,
+  const VEC &scr) {
+  using SCALAR = typename VEC::Scalar;
+  const unsigned int num_segment = poly.size() - 2;
+  SCALAR dist_best = (poly[0] - scr).norm();
+  SCALAR t_best = 0.;
+  for (unsigned int iseg = 0; iseg < num_segment; ++iseg) {
+    const VEC p0 = poly[iseg] - scr;
+    const VEC p1 = poly[iseg+1] - scr;
+    const VEC p2 = poly[iseg+2] - scr;
+    if( !IsContact_Orgin_AabbOfPoint3(p0,p1,p2,dist_best) ){ continue; }
+    SCALAR coeff[3][3];
+    CoefficientsOfOpenUniformBSpline_Quadratic(coeff, iseg, num_segment);
+    const VEC q0 = coeff[0][0] * p0 + coeff[1][0] * p1 + coeff[2][0] * p2;
+    const VEC q1 = coeff[0][1] * p0 + coeff[1][1] * p1 + coeff[2][1] * p2;
+    const VEC q2 = coeff[0][2] * p0 + coeff[1][2] * p1 + coeff[2][2] * p2;
+    double t0 = Nearest_Origin_QuadraticCurve(q0,q1,q2, 16);
+    double dist0 = (q0 + q1*t0 + q2*t0*t0).norm();
+    if( dist0 > dist_best ){ continue; }
+    dist_best = dist0;
+    t_best = iseg + t0;
+    // std::cout << "  " << iseg << " " << num_segment << "  ---> " << t_best << " " << dist_best << std::endl;
+  }
+  return t_best;
 }
 
 }
 
-#endif /* DFM2_CURVE_QUADRATIC_BEZIER_H */
+#endif /* DFM2_CURVE_QUADRATIC_H */

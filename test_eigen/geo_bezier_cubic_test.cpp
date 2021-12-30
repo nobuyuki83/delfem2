@@ -43,8 +43,8 @@ TEST(cad,cubic_bezier0) {
       EXPECT_LT((v0 - v1).norm(), 0.2);
     }
     {  // bb
-      auto bb0 = dfm2::AABB_CubicBezierCurve<2>(p0, p1, p2, p3);
-      auto bb1 = dfm2::AABB_Polyline<2>(polyline);
+      auto bb0 = dfm2::AABB_CubicBezierCurve(p0, p1, p2, p3);
+      auto bb1 = dfm2::AABB_Polyline(polyline);
       EXPECT_NEAR(bb0[0], bb1[0], 1.0e-3);
       EXPECT_NEAR(bb0[1], bb1[1], 1.0e-3);
       EXPECT_NEAR(bb0[2], bb1[2], 1.0e-3);

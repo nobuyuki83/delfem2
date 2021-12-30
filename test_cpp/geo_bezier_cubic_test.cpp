@@ -27,7 +27,7 @@ TEST(bezier_cubic, test0) {
       EXPECT_NEAR(v0, v2, 0.07);
       double v3 = dfm2::Length_CubicBezierCurve_QuadratureSubdivision<dfm2::CVec2d>(
         p0, p1, p2, p3, 1.0e-3, 12);
-      EXPECT_NEAR(v0, v3, 4.e-3);
+      EXPECT_NEAR(v0, v3, 6.e-3);
     }
     {
       double a0 = dfm2::Area_CubicBezierCurve2(p0, p1, p2, p3);
@@ -43,17 +43,17 @@ TEST(bezier_cubic, test0) {
         scr,
         p0, p1, p2, p3, 50, 3);
       const dfm2::CVec2d v1 = dfm2::PointOnCubicBezierCurve(t1, p0, p1, p2, p3);
-      EXPECT_NEAR((v0 - scr).norm(), (v1-scr).norm(), 1.2e-2);
+      EXPECT_NEAR((v0 - scr).norm(), (v1 - scr).norm(), 1.2e-2);
       //
       const double t2 = dfm2::Nearest_CubicBezierCurve_Strum<dfm2::CVec2d>(
         scr,
         p0, p1, p2, p3, 16);
       const dfm2::CVec2d v2 = dfm2::PointOnCubicBezierCurve(t2, p0, p1, p2, p3);
-      EXPECT_NEAR((v0 - scr).norm(), (v2-scr).norm(), 1.0e-6);
+      EXPECT_NEAR((v0 - scr).norm(), (v2 - scr).norm(), 1.0e-6);
     }
     {  // bb
-      auto bb0 = dfm2::AABB_CubicBezierCurve<2>(p0, p1, p2, p3);
-      auto bb1 = dfm2::AABB_Polyline<2>(polyline);
+      auto bb0 = dfm2::AABB_CubicBezierCurve(p0, p1, p2, p3);
+      auto bb1 = dfm2::AABB_Polyline(polyline);
       EXPECT_NEAR(bb0[0], bb1[0], 1.0e-3);
       EXPECT_NEAR(bb0[1], bb1[1], 1.0e-3);
       EXPECT_NEAR(bb0[2], bb1[2], 1.0e-3);
@@ -62,7 +62,7 @@ TEST(bezier_cubic, test0) {
     {  // bezier split
       std::vector<dfm2::CVec2d> poly0;
       {
-        std::array<dfm2::CVec2d,8> r = dfm2::Split_CubicBezierCurve(p0,p1,p2,p3, 0.3);
+        std::array<dfm2::CVec2d, 8> r = dfm2::Split_CubicBezierCurve(p0, p1, p2, p3, 0.3);
         delfem2::Polyline_BezierCubic(
           poly0, 4,
           r[0], r[1], r[2], r[3]);
@@ -76,10 +76,10 @@ TEST(bezier_cubic, test0) {
       std::vector<dfm2::CVec2d> poly2;
       delfem2::Polyline_BezierCubic(
         poly2, 11,
-        p0, p1, p2,p3);
-      EXPECT_EQ(poly0.size(),poly2.size());
-      for(unsigned int ip=0;ip<poly0.size();++ip){
-        EXPECT_LT((poly0[ip]-poly2[ip]).norm(),1.0e-10);
+        p0, p1, p2, p3);
+      EXPECT_EQ(poly0.size(), poly2.size());
+      for (unsigned int ip = 0; ip < poly0.size(); ++ip) {
+        EXPECT_LT((poly0[ip] - poly2[ip]).norm(), 1.0e-10);
       }
     }
   }

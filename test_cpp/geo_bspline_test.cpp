@@ -10,7 +10,7 @@
 #include "delfem2/geo_curve_ndegree.h"
 #include "delfem2/geo_curve_quadratic.h"
 #include "delfem2/geo_curve_cubic.h"
-// #include "delfem2/geo_polyline.h"
+#include "delfem2/geo_polyline.h"
 
 TEST(bspline, quadratic_bezier) {
   namespace dfm2 = delfem2;
@@ -71,6 +71,38 @@ TEST(bspline, quadratic_general) {
     }
   }
 }
+
+// compare quadratic-specific function and general function for BSpline
+TEST(bspline, quadratic_near) {
+  namespace dfm2 = delfem2;
+  std::mt19937 rndeng(std::random_device{}());
+  std::uniform_real_distribution<double> dist_01(0, 1);
+  for (unsigned int itr = 0; itr < 1000; ++itr) {
+    std::vector<dfm2::CVec2d> cps = {
+      dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng)),
+      dfm2::CVec2d(dist_01(rndeng), dist_01(rndeng))};
+    for (int ip = 0; ip < 10; ++ip) {  //  increasing number of points
+      cps.emplace_back(dist_01(rndeng), dist_01(rndeng));
+      const dfm2::CVec2d scr(0.5, 0.5);
+      double t = dfm2::Nearest_QuadraticBSplineCurve(cps, scr);
+      const dfm2::CVec2d p0 = delfem2::Sample_QuadraticBsplineCurve(t, cps);
+      std::vector<dfm2::CVec2d> polyline;
+      {
+        double t_max = cps.size() - 2;
+        unsigned int N = 1000;
+        for (unsigned int i = 0; i < N; ++i) {
+          double t = t_max * static_cast<double>(i) / static_cast<double>(N-1);
+          dfm2::CVec2d q0 = delfem2::Sample_QuadraticBsplineCurve(t,cps);
+          polyline.push_back(q0);
+        }
+      }
+      auto [ie_min, ratio_min] = delfem2::FindNearestPointInPolyline(polyline, scr);
+      const dfm2::CVec2d p1 = delfem2::PositionInPolyline(polyline, ie_min, ratio_min);
+      EXPECT_NEAR((p0-scr).norm(), (p1-scr).norm(), 1.0e-4);
+    }
+  }
+}
+
 
 TEST(bspline, cubic_bezier) {
   namespace dfm2 = delfem2;

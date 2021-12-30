@@ -7,8 +7,10 @@
 
 /**
  * @detail The order of dependency in delfem2:
- * line < ray < edge < polyline < quadratic_curve < cubic_curve < general_parametric_curve <
- * < plane < tri < quad
+ * aabb ->
+ * line -> ray -> edge -> polyline ->
+ * curve_quadratic -> curve_cubic -> curve_ndegree ->
+ * plane -> tri -> quad
  */
 
 #ifndef DFM2_GEO_POLYLINE2_H
@@ -121,10 +123,11 @@ auto Area_Polyline2(
   return area;
 }
 
-template<int ndim, typename VEC>
+template<typename VEC>
 auto AABB_Polyline(
-  const std::vector<VEC> &polyline) -> std::array<typename VEC::Scalar, ndim * 2> {
+  const std::vector<VEC> &polyline) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
   using SCALAR = typename VEC::Scalar;
+  constexpr int ndim = VEC::SizeAtCompileTime;
   std::array<SCALAR, ndim * 2> res;
   for (int idim = 0; idim < ndim; ++idim) {
     res[idim] = res[idim + ndim] = polyline[0][idim];

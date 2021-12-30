@@ -246,6 +246,7 @@ class CVec2 {
   }
 
   using Scalar = T;
+  static constexpr int SizeAtCompileTime = 2;  // size of vector evaluated at compile time
 
  public:
   union {

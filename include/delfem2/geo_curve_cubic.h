@@ -7,8 +7,9 @@
 
 /**
  * @detail The order of dependency in delfem2:
- * line -> ray -> edge ->
- * polyline -> quadratic -> cubic -> bspline ->
+ * aabb ->
+ * line -> ray -> edge -> polyline ->
+ * curve_quadratic -> curve_cubic -> curve_ndegree ->
  * plane -> tri -> quad
  */
 
@@ -168,7 +169,7 @@ typename VEC::Scalar Length_CubicBezierCurve_Quadrature(
   using SCALAR = typename VEC::Scalar;
   SCALAR totalLength = 0;
   const unsigned int iw0 = kNumIntegrationPoint_GaussianQuadrature[gauss_order];
-  const unsigned int iw1 = kNumIntegrationPoint_GaussianQuadrature[gauss_order+1];
+  const unsigned int iw1 = kNumIntegrationPoint_GaussianQuadrature[gauss_order + 1];
   for (unsigned int i = iw0; i < iw1; i++) {
     double t = (kPositionWeight_GaussianQuadrature<double>[i][0] + 1) / 2;
     double w = kPositionWeight_GaussianQuadrature<double>[i][1];
@@ -304,13 +305,14 @@ auto Area_CubicBezierCurve2(
  * @tparam ndim dimension of the geometry
  * @return min_x, min_y, (min_z), max_x, max_y, (max_z)
  */
-template<int ndim, typename VEC>
+template<typename VEC>
 auto AABB_CubicBezierCurve(
   const VEC &p0,
   const VEC &p1,
   const VEC &p2,
-  const VEC &p3) -> std::array<typename VEC::Scalar, ndim * 2> {
+  const VEC &p3) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
   using SCALAR = typename VEC::Scalar;
+  constexpr int ndim = VEC::SizeAtCompileTime;
 
   const double EPSILON = 1.0e-10;
 
@@ -386,26 +388,26 @@ double Length_CubicBezierCurve_QuadratureSubdivision(
 
   constexpr unsigned int np_gauss = 7;
   constexpr unsigned int np_kronrod = 15;
-  constexpr unsigned int noff = kNumIntegrationPoint_GaussianQuadrature[np_gauss-1];
+  constexpr unsigned int noff = kNumIntegrationPoint_GaussianQuadrature[np_gauss - 1];
 
   // integrate using gaussian and gauss-kronrod quadrature at the same time
   SCALAR length_gauss = 0.;
   SCALAR length_kronrod = 0.;
-  for(unsigned int iw=0;iw<np_gauss;++iw){ // shared part
-    const double x0 = kPositionWeight_GaussianQuadrature<double>[noff+iw][0];
-    const double w0 = kPositionWeight_GaussianQuadrature<double>[noff+iw][1];
+  for (unsigned int iw = 0; iw < np_gauss; ++iw) { // shared part
+    const double x0 = kPositionWeight_GaussianQuadrature<double>[noff + iw][0];
+    const double w0 = kPositionWeight_GaussianQuadrature<double>[noff + iw][1];
     const double w1 = kPositionWeight_GaussKronrodQuadrature<double>[iw][1];
-    assert( fabs(x0-kPositionWeight_GaussKronrodQuadrature<double>[iw][0]) < 1.0e-8 );
-    const SCALAR nodeValue = cubicBezierdt((x0+1)/2).norm();
+    assert(fabs(x0 - kPositionWeight_GaussKronrodQuadrature<double>[iw][0]) < 1.0e-8);
+    const SCALAR nodeValue = cubicBezierdt((x0 + 1) / 2).norm();
     length_gauss += nodeValue * w0 / 2;
     length_kronrod += nodeValue * w1 / 2;
   }
 
   // kronrod-only terms
-  for (unsigned int iw=np_gauss;iw<np_kronrod;++iw) {
+  for (unsigned int iw = np_gauss; iw < np_kronrod; ++iw) {
     const double x0 = kPositionWeight_GaussKronrodQuadrature<double>[iw][0];
     const double w1 = kPositionWeight_GaussKronrodQuadrature<double>[iw][1];
-    const SCALAR nodeValue = cubicBezierdt((x0+1)/2).norm();
+    const SCALAR nodeValue = cubicBezierdt((x0 + 1) / 2).norm();
     length_kronrod += nodeValue * w1 / 2;
   }
 
@@ -436,7 +438,7 @@ double Length_CubicBezierCurve_QuadratureSubdivision(
  * @detail (i-th point's weight) = coeff[i][0] + coeff[i][1] * t + coeff[i][2] * t * t + coeff[i][3] * t * t * t
  */
 template<typename SCALAR>
-void CoefficientsOfOpenUniformBSpline_Cubic(
+void CoefficientsOfOpenUniformCubicBSpline(
   SCALAR coeff[4][4],
   int idx_segment,
   int num_segment) {
@@ -540,7 +542,7 @@ VEC Sample_CubicBsplineCurve(
   assert(t >= 0 && t <= 1);
 
   SCALAR coeff[4][4];
-  CoefficientsOfOpenUniformBSpline_Cubic(coeff, idx_segment, num_segment);
+  CoefficientsOfOpenUniformCubicBSpline(coeff, idx_segment, num_segment);
 
   SCALAR v0 = coeff[0][0] + coeff[0][1] * t + coeff[0][2] * t * t + coeff[0][3] * t * t * t;
   SCALAR v1 = coeff[1][0] + coeff[1][1] * t + coeff[1][2] * t * t + coeff[1][3] * t * t * t;
