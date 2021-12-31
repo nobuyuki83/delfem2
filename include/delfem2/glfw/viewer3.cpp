@@ -163,16 +163,14 @@ void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {
     }
   }
   // drag call back
-  if (this->nav.ibutton == 0) {
+  {
     const CMat4f mP = this->GetProjectionMatrix();
     const CMat4f mMV = this->GetModelViewMatrix();
-    {
-      float src0[3], src1[3], dir0[3], dir1[3];
-      this->nav.RayMouseMove(
-          src0, src1, dir0, dir1,
-          (mP * mMV).data());
-      this->mouse_drag(src0, src1, dir0);
-    }
+    float src0[3], src1[3], dir0[3], dir1[3];
+    this->nav.RayMouseMove(
+        src0, src1, dir0, dir1,
+        (mP * mMV).data());
+    this->mouse_drag(src0, src1, dir0);
   }
 }
 
