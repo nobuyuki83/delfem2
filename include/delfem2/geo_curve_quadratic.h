@@ -381,12 +381,12 @@ template<typename SCALAR>
 void CoefficientsOfOpenUniformBSpline_Quadratic(
   SCALAR coeff[3][3],
   int idx_segment,
-  int num_segment) {
+  unsigned int num_segment) {
 
-  const int k0 = std::clamp<int>(idx_segment - 1, 0, num_segment) - idx_segment;
-  const int k1 = std::clamp<int>(idx_segment + 0, 0, num_segment) - idx_segment;
-  const int k2 = std::clamp<int>(idx_segment + 1, 0, num_segment) - idx_segment;
-  const int k3 = std::clamp<int>(idx_segment + 2, 0, num_segment) - idx_segment;
+  const int k0 = std::clamp<int>(idx_segment - 1, 0, static_cast<int>(num_segment)) - idx_segment;
+  const int k1 = std::clamp<int>(idx_segment + 0, 0, static_cast<int>(num_segment)) - idx_segment;
+  const int k2 = std::clamp<int>(idx_segment + 1, 0, static_cast<int>(num_segment)) - idx_segment;
+  const int k3 = std::clamp<int>(idx_segment + 2, 0, static_cast<int>(num_segment)) - idx_segment;
   assert(-1 <= k0 && k0 <= k1 && k1 <= k2 && k2 <= k3 && k3 <= 2);
 
   const SCALAR c00 = (k2 == k1) ? 0.0 : 1. / static_cast<SCALAR>(k2 - k1);
