@@ -190,6 +190,7 @@ void Smooth_Polyline(
     std::vector<VEC> &xys,
     unsigned int ivtx,
     typename VEC::Scalar damping) {
+  if( ivtx >= xys.size() ){ return; }
   const int ixy0 = static_cast<int>(ivtx);
   for (int ixy = ixy0 - 2; ixy < ixy0 + 2; ++ixy) {
     if (ixy - 1 < 0 || ixy + 1 >= static_cast<int>(xys.size())) { continue; }

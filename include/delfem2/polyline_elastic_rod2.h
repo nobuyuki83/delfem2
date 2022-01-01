@@ -13,15 +13,24 @@
 template<class ARRAY2D>
 void DragPolylineElastic_Rod2(
     ARRAY2D &vtx_xy,
+    delfem2::LinearSystemSolver_BlockPentaDiagonal<2> &sparse,
     unsigned int idx_vtx0,
     const std::array<double,2> &pos_vtx0,
-    delfem2::LinearSystemSolver_BlockPentaDiagonal<2> &sparse,
     double edge_length = 0.05,
     double stiff_bend = 0.001) {
   const double stiff_stretch = 1.0;
   const size_t np = vtx_xy.size();
-  assert(np >= 3);
-  assert(sparse.nblk() == np);
+  if( np < 3 ){
+    return;
+  }
+  if( sparse.nblk() != np ){
+    sparse.Initialize(np);
+  }
+  {
+    sparse.dof_bcflag.assign(np * 2, 0);
+    sparse.dof_bcflag[idx_vtx0 * 2 + 0] = 1;
+    sparse.dof_bcflag[idx_vtx0 * 2 + 1] = 1;
+  }
   sparse.BeginMerge();
   double W = 0.0;
   for (unsigned int ihinge = 0; ihinge < np - 2; ++ihinge) {
@@ -51,8 +60,6 @@ void DragPolylineElastic_Rod2(
     sparse.AddValueToDiagonal(ip, 0, 1.);
     sparse.AddValueToDiagonal(ip, 1, 1.);
   }
-  sparse.dof_bcflag[idx_vtx0 * 2 + 0] = 1;
-  sparse.dof_bcflag[idx_vtx0 * 2 + 1] = 1;
   sparse.Solve();
   // std::cout << W << std::endl;
   for (unsigned int ip = 0; ip < np; ++ip) {

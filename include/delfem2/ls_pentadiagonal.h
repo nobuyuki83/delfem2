@@ -1,6 +1,8 @@
 #ifndef DFM2_LS_PENTADIAGONAL_H
 #define DFM2_LS_PENTADIAGONAL_H
 
+#include <cassert>
+
 #include "delfem2/matn.h"
 
 namespace delfem2 {

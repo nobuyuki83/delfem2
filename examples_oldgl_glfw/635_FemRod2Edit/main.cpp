@@ -61,9 +61,9 @@ class MyViewer : public delfem2::glfw::CViewer2 {
     } else if (this->nav.ibutton == GLFW_MOUSE_BUTTON_RIGHT) {  // drag
       if (ivtx >= vtx_xy.size()) { return; }
       DragPolylineElastic_Rod2(
-          vtx_xy,
+          vtx_xy, ls,
           ivtx, {src1[0], src1[1]},
-          ls, edge_length, 0.001);
+          edge_length, 0.001);
     }
   }
 
