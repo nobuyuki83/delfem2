@@ -145,8 +145,15 @@ VEC Sample_Polyline(
 template<typename VEC>
 VEC Tangent_Polyline(
     const std::vector<VEC> &polyline,
-    unsigned int ie,
-    [[maybe_unused]] float ratio) {
+    typename VEC::Scalar param ) {
+  using SCALAR = typename VEC::Scalar;
+  if (polyline.empty()) { return VEC(0, 0); }
+  if (param < 0) { return polyline[0]; }
+  if (param > static_cast<SCALAR>(polyline.size())) {
+    return polyline[polyline.size() - 1];
+  }
+  const unsigned int ie = int(param);
+  const SCALAR ratio = param - static_cast<SCALAR>(ie);
   assert(ie < polyline.size() - 1);
   return (polyline[ie + 1] - polyline[ie]).normalized();
 }
