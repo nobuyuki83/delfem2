@@ -55,14 +55,14 @@ template double delfem2::Dot2(const double v1[2], const double v2[2]);
 namespace delfem2 {
 
 template<>
-DFM2_INLINE double Length2
-    (const double v[2]) {
+DFM2_INLINE double Length2(
+    const double v[2]) {
   return sqrt(v[0] * v[0] + v[1] * v[1]);
 }
 
 template<>
-DFM2_INLINE float Length2
-    (const float v[2]) {
+DFM2_INLINE float Length2(
+    const float v[2]) {
   return sqrtf(v[0] * v[0] + v[1] * v[1]);
 }
 
@@ -74,16 +74,16 @@ DFM2_INLINE float Length2
 namespace delfem2 {
 
 template<>
-DFM2_INLINE double Distance2
-    (const double v1[2],
-     const double v2[2]) {
+DFM2_INLINE double Distance2(
+    const double v1[2],
+    const double v2[2]) {
   return sqrt((v1[0] - v2[0]) * (v1[0] - v2[0]) + (v1[1] - v2[1]) * (v1[1] - v2[1]));
 }
 
 template<>
-DFM2_INLINE float Distance2
-    (const float v1[2],
-     const float v2[2]) {
+DFM2_INLINE float Distance2(
+    const float v1[2],
+    const float v2[2]) {
   return sqrtf((v1[0] - v2[0]) * (v1[0] - v2[0]) + (v1[1] - v2[1]) * (v1[1] - v2[1]));
 }
 
@@ -173,9 +173,13 @@ DFM2_INLINE delfem2::CVec2<T1> operator*(T0 c, const CVec2<T1> &v0) {
 }
 #ifdef DFM2_STATIC_LIBRARY
 template CVec2d operator*(double, const CVec2d&);
+template CVec2f operator*(double, const CVec2f&);
 template CVec2d operator*(float, const CVec2d&);
+template CVec2f operator*(float, const CVec2f&);
 template CVec2d operator*(int, const CVec2d&);
+template CVec2f operator*(int, const CVec2f&);
 template CVec2d operator*(unsigned int, const CVec2d&);
+template CVec2f operator*(unsigned int, const CVec2f&);
 #endif
 
 //  ---------------------
@@ -189,6 +193,10 @@ template CVec2d operator*(const CVec2d& v0, double c);
 template CVec2d operator*(const CVec2d& v0, float c);
 template CVec2d operator*(const CVec2d& v0, int c);
 template CVec2d operator*(const CVec2d& v0, unsigned int c);
+template CVec2f operator*(const CVec2f& v0, double c);
+template CVec2f operator*(const CVec2f& v0, float c);
+template CVec2f operator*(const CVec2f& v0, int c);
+template CVec2f operator*(const CVec2f& v0, unsigned int c);
 #endif
 
 //  ---------------------

@@ -1,14 +1,14 @@
 #include <iostream>
 #include <vector>
 #if defined(_MSC_VER)
-#include <windows.h>
+#  include <windows.h>
 #endif
 //
 #ifdef EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#define GLFW_INCLUDE_ES3
-#define GL_GLEXT_PROTOTYPES
-#define EGL_EGLEXT_PROTOTYPES
+#  include <emscripten/emscripten.h>
+#  define GLFW_INCLUDE_ES3
+#  define GL_GLEXT_PROTOTYPES
+#  define EGL_EGLEXT_PROTOTYPES
 #else
 #include <glad/glad.h>
 #endif
@@ -17,7 +17,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include "delfem2/polyline_elastic_edit2.h"
+#include "delfem2/polyline_elastic_beam2.h"
 #include "delfem2/geo_polyline.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
@@ -30,14 +30,13 @@ namespace dfm2 = delfem2;
 class MyViewer : public delfem2::glfw::CViewer2 {
  public:
   void mouse_press(const float src[2]) override {
-    if( mode == MODE_SKETCH) {
+    if (mode == MODE_SKETCH) {
       vtx_xy.clear();
-    }
-    else if(mode == MODE_DRAG){
-      const auto [ivtx,ratio] = delfem2::FindNearestPointInPolyline(
+    } else if (mode == MODE_DRAG) {
+      const double param = delfem2::Nearest_Polyline(
           vtx_xy,
-          delfem2::CVec2f(src[0],src[1]).cast<double>());
-      drag.Initialize(vtx_xy, ivtx, src[0], src[1]);
+          delfem2::CVec2f(src[0], src[1]).cast<double>());
+      drag.Initialize(vtx_xy, int(param), src[0], src[1]);
     }
   }
 
@@ -47,9 +46,10 @@ class MyViewer : public delfem2::glfw::CViewer2 {
     if (mode == MODE_SKETCH) {
       vtx_xy.emplace_back(src1[0], src1[1]);
     } else if (mode == MODE_SMOOTHING) {
-      const auto[ivtx, ratio] = delfem2::FindNearestPointInPolyline(
+      const double param = delfem2::Nearest_Polyline(
           vtx_xy,
           delfem2::CVec2f(src0[0], src0[1]).cast<double>());
+      int ivtx = int(param);
       unsigned int nvtx = vtx_xy.size();
       for (int jvtx = (int) ivtx - 2; jvtx < (int) ivtx + 2; ++jvtx) {
         if (jvtx <= 0 || jvtx >= (int) nvtx - 1) { continue; }
@@ -64,24 +64,24 @@ class MyViewer : public delfem2::glfw::CViewer2 {
   }
 
   void mouse_release() override {
-    if( mode == MODE_SKETCH) {
+    if (mode == MODE_SKETCH) {
       vtx_xy = delfem2::Polyline_Resample_Polyline(vtx_xy, 0.05);
     }
   }
 
-  void InitGL(){
+  void InitGL() {
     drawer_polyline.InitGL();
     drawer_polyline.radius_cylinder = 0.01;
     drawer_polyline.radius_sphere = 0.02;
-    drawer_polyline.sphere.color = {1,0,0,1};
-    drawer_polyline.cylinder.color = {0,0,0,1};
+    drawer_polyline.sphere.color = {1, 0, 0, 1};
+    drawer_polyline.cylinder.color = {0, 0, 0, 1};
   }
 
-  void Draw()  {
+  void Draw() {
     ::glEnable(GL_DEPTH_TEST);
     ::glEnable(GL_TEXTURE_2D);
     drawer_polyline.Draw(
-        vtx_xy,2,
+        vtx_xy, 2,
         GetProjectionMatrix().data(),
         GetModelViewMatrix().data());
   }
@@ -134,7 +134,7 @@ int main(int, char **) {
 
   delfem2::glfw::InitGLNew();
   viewer.OpenWindow();
-  
+
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cout << "Failed to initialize GLAD" << std::endl;

@@ -6,12 +6,7 @@
  */
 
 #include "delfem2/geo_polyline.h"
-#include "delfem2/geo_curve_quadratic.h"
-
-// ----------------------------------------------------------------------------------
-// std::vector starts from here
-
-// ---------------------------------------
+#include "delfem2/vec2.h"  // instantiation for vec2
 
 template<typename T>
 void delfem2::Translate(
@@ -48,7 +43,7 @@ DFM2_INLINE void Rotate(std::vector<CVec2d> &aP, double dt) {
 template<class VEC>
 std::vector<VEC> delfem2::Polyline_Resample_Polyline(
     const std::vector<VEC>& stroke0,
-    double l)
+    typename VEC::Scalar l)
 {
   if (stroke0.empty()) {
     return std::vector<VEC>{};
@@ -78,6 +73,8 @@ std::vector<VEC> delfem2::Polyline_Resample_Polyline(
 #ifdef DFM2_STATIC_LIBRARY
 template std::vector<delfem2::CVec2d> delfem2::Polyline_Resample_Polyline(
     const std::vector<CVec2d>& stroke0, double l);
+template std::vector<delfem2::CVec2f> delfem2::Polyline_Resample_Polyline(
+    const std::vector<CVec2f>& stroke0, float l);
 #endif
 
 // -------------------------------

@@ -44,6 +44,9 @@ int main() {
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
       gizmo_trnsl.Drag(src0, src1, dir);
     }
+    void mouse_release() override {
+      gizmo_trnsl.ielem_picked = -1;
+    }
     //
     void Draw() {
       DrawBegin_oldGL();

@@ -96,8 +96,8 @@ TEST(bspline, quadratic_near) {
           polyline.push_back(q0);
         }
       }
-      auto [ie_min, ratio_min] = delfem2::FindNearestPointInPolyline(polyline, scr);
-      const dfm2::CVec2d p1 = delfem2::PositionInPolyline(polyline, ie_min, ratio_min);
+      const double param = delfem2::Nearest_Polyline(polyline, scr);
+      const dfm2::CVec2d p1 = delfem2::Sample_Polyline(polyline, param);
       EXPECT_NEAR((p0-scr).norm(), (p1-scr).norm(), 1.0e-4);
     }
   }

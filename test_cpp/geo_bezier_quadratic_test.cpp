@@ -39,8 +39,8 @@ TEST(bezier_quadratic, polyline2) {
     }
     {  // nearest
       dfm2::CVec2d scr(0.5, 0.5);
-      const auto [i0,l0] = dfm2::FindNearestPointInPolyline(polyline, scr);
-      const dfm2::CVec2d v0 = dfm2::PositionInPolyline(polyline, i0, l0);
+      const double param = dfm2::Nearest_Polyline(polyline, scr);
+      const dfm2::CVec2d v0 = dfm2::Sample_Polyline(polyline, param);
       //
       const double t1 = dfm2::Nearest_QuadraticBezierCurve<dfm2::CVec2d>(
         scr,

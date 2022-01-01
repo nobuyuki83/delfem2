@@ -21,7 +21,7 @@ struct GLFWwindow;
 namespace delfem2::glfw {
 
 class CViewer2 {
-public:
+ public:
   void OpenWindow();
 
   void DrawBegin_oldGL() const;
@@ -34,32 +34,30 @@ public:
    * @details for function override. Do nothing here
    */
   virtual void mouse_press(
-	  [[maybe_unused]] const float src[2]) {}
+      [[maybe_unused]] const float src[2]) {}
 
   /**
    * @details for function override. Do nothing here
    */
   virtual void mouse_drag(
-	  [[maybe_unused]] const float src0[2], 
-	  [[maybe_unused]] const float src1[2]) {}
+      [[maybe_unused]] const float src0[2],
+      [[maybe_unused]] const float src1[2]) {}
 
   virtual void mouse_release() {}
 
   virtual void key_press(
-	  [[maybe_unused]] int key, 
-	  [[maybe_unused]] int mods) {}
+      [[maybe_unused]] int key,
+      [[maybe_unused]] int mods) {}
 
   virtual void key_release(
-	  [[maybe_unused]] int key, 
-	  [[maybe_unused]] int mods) {}
+      [[maybe_unused]] int key,
+      [[maybe_unused]] int mods) {}
 
-  std::array<float,16> GetProjectionMatrix() const;
+  std::array<float, 16> GetProjectionMatrix() const;
 
-  std::array<float,16> GetModelViewMatrix() const;
+  std::array<float, 16> GetModelViewMatrix() const;
 
-
-
-public:
+ public:
   GLFWwindow *window = nullptr;
   CMouseInput nav;
   std::string title;
@@ -75,7 +73,7 @@ public:
 } // delfem2::opengl
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/glfw/viewer2.cpp"
+#  include "delfem2/glfw/viewer2.cpp"
 #endif
 
 #endif /* DFM2_GLFW_VIEWER2_H */

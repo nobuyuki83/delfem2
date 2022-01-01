@@ -68,10 +68,12 @@ class CCadMesh2DVeiwer : public delfem2::glfw::CViewer2 {
   void mouse_drag(
       const float src0[2],
       const float src1[2]) override {
-    cad_ui.DragPicked(cad, src1[0], src1[1], src0[0], src0[1]);
-    for (unsigned int ip = 0; ip < vtx_xy.size() / 2; ++ip) {
-      vtx_xy[ip * 2 + 0] = vtx_xy_when_picked[ip * 2 + 0] + vtx_w[ip] * (src1[0] - cad_ui.picked_pos[0]);
-      vtx_xy[ip * 2 + 1] = vtx_xy_when_picked[ip * 2 + 1] + vtx_w[ip] * (src1[1] - cad_ui.picked_pos[1]);
+    if( nav.ibutton == GLFW_MOUSE_BUTTON_LEFT ) {
+      cad_ui.DragPicked(cad, src1[0], src1[1], src0[0], src0[1]);
+      for (unsigned int ip = 0; ip < vtx_xy.size() / 2; ++ip) {
+        vtx_xy[ip * 2 + 0] = vtx_xy_when_picked[ip * 2 + 0] + vtx_w[ip] * (src1[0] - cad_ui.picked_pos[0]);
+        vtx_xy[ip * 2 + 1] = vtx_xy_when_picked[ip * 2 + 1] + vtx_w[ip] * (src1[1] - cad_ui.picked_pos[1]);
+      }
     }
   }
   void Draw() {

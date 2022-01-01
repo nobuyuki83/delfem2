@@ -44,10 +44,12 @@ class Cad2Viewer : public delfem2::glfw::CViewer3 {
       const float src0[3],
       const float src1[3],
       [[maybe_unused]] const float dir[3]) override {
-    cad_ui.DragPicked(cad, src1[0], src1[1], src0[0], src0[1]);
-    delfem2::CMesher_Cad2D mesher;
-    mesher.edge_length = -1;
-    mesher.Meshing(dmesh, cad);
+    if( nav.ibutton == GLFW_MOUSE_BUTTON_LEFT ) {
+      cad_ui.DragPicked(cad, src1[0], src1[1], src0[0], src0[1]);
+      delfem2::CMesher_Cad2D mesher;
+      mesher.edge_length = -1;
+      mesher.Meshing(dmesh, cad);
+    }
   }
   //
   void Draw() const {

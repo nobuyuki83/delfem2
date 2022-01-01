@@ -11,15 +11,15 @@
 #include <cassert>
 
 #if defined(_WIN32)  // windows
-#define NOMINMAX   // to remove min,max macro
-#include <windows.h>
+#  define NOMINMAX   // to remove min,max macro
+#  include <windows.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
-#define GL_SILENCE_DEPRECATION  // remove
-#include <OpenGL/gl.h>
+#  define GL_SILENCE_DEPRECATION  // remove
+#  include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
+#  include <GL/gl.h>
 #endif
 
 #include <GLFW/glfw3.h>
@@ -71,9 +71,7 @@ static void glfw_callback_mouse_button(
     glfwGetCursorPos(window, &x, &y);
     nav.mouse_x = (2.0 * x - width) / width;
     nav.mouse_y = (height - 2.0 * y) / height;
-    if (action == GLFW_RELEASE) {  // mouse up
-      nav.ibutton = -1;
-    } else if (action == GLFW_PRESS) {  // mouse down
+    if (action == GLFW_PRESS) {  // mouse down
       nav.ibutton = button;
       nav.mouse_x_down = nav.mouse_x;
       nav.mouse_y_down = nav.mouse_y;
@@ -90,6 +88,8 @@ static void glfw_callback_mouse_button(
   }
   if( action == GLFW_RELEASE ){
     pViewer2->mouse_release();
+    ::delfem2::CMouseInput &nav = pViewer2->nav;
+    nav.ibutton = -1;
   }
 }
 
@@ -114,13 +114,14 @@ static void glfw_callback_cursor_position(
     nav.mouse_x = mov_end_x;
     nav.mouse_y = mov_end_y;
   }
-  if (pViewer2->nav.ibutton == 0 && pViewer2->nav.imodifier == GLFW_MOD_SHIFT) {
+  if (pViewer2->nav.ibutton == GLFW_MOUSE_BUTTON_LEFT && pViewer2->nav.imodifier == GLFW_MOD_SHIFT) {
     ::delfem2::CMouseInput &nav = pViewer2->nav;
     const float si = 1.f / pViewer2->scale;
     pViewer2->trans[0] += static_cast<float>(nav.dx) * asp * si;
     pViewer2->trans[1] += static_cast<float>(nav.dy) * si;
+    return;
   }
-  if (pViewer2->nav.ibutton == 0) {
+  if( pViewer2->nav.ibutton != -1 ){
     const CMat4f mMV = pViewer2->GetModelViewMatrix();
     const CMat4f mP = pViewer2->GetProjectionMatrix();
     float src0[3], src1[3], dir0[3], dir1[3];

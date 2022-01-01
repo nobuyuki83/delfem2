@@ -78,12 +78,15 @@ public:
   void mouse_drag(
 	  [[maybe_unused]] const float src0[3], 
 	  const float src1[3], const float dir[3]) override {
-    unsigned int itri = this->PickTri(src1, dir);
-    if( itri == UINT_MAX ){ return; }
-    unsigned int idist = aDist[itri];
-    for(std::size_t ie=0;ie<tri_vtx.size()/3;++ie){
-      if( aDist[ie] > idist ){ tri_flg[ie] = 0; }
-      else { tri_flg[ie] = 1; }
+    if( nav.ibutton == GLFW_MOUSE_BUTTON_LEFT ) {
+      unsigned int itri = this->PickTri(src1, dir);
+      if (itri == UINT_MAX) { return; }
+      assert( itri < aDist.size() );
+      unsigned int idist = aDist[itri];
+      for (std::size_t ie = 0; ie < tri_vtx.size() / 3; ++ie) {
+        if (aDist[ie] > idist) { tri_flg[ie] = 0; }
+        else { tri_flg[ie] = 1; }
+      }
     }
   }
 

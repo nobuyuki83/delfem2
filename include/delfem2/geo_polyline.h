@@ -6,10 +6,10 @@
  */
 
 /**
- * @detail The order of dependency in delfem2:
- * aabb ->
- * line -> ray -> edge -> polyline ->
- * curve_quadratic -> curve_cubic -> curve_ndegree ->
+ * @detail The order of dependency in delfem2: \n
+ * aabb -> \n
+ * line -> ray -> edge -> polyline -> \n
+ * curve_quadratic -> curve_cubic -> curve_ndegree -> \n
  * plane -> tri -> quad
  */
 
@@ -35,34 +35,19 @@ namespace delfem2 {
 //! @brief translate all the points
 template<typename T>
 void Translate(
-  std::vector<CVec2<T> > &aP,
-  double dx,
-  double dy);
+    std::vector<CVec2<T> > &aP,
+    double dx,
+    double dy);
 
 template<typename T>
 DFM2_INLINE void Rotate(
-  std::vector<CVec2<T> > &aP,
-  double dt);
-
-template<typename T>
-void Polyline_CubicBezierCurve(
-  std::vector<CVec2<T> > &aP,
-  int n,
-  const std::vector<CVec2<T> > &aCP);
-
-template<class VEC>
-void Polyline_BezierCubic(
-  std::vector<VEC> &aP,
-  unsigned int n,
-  const VEC &p1,
-  const VEC &p2,
-  const VEC &p3,
-  const VEC &p4);
+    std::vector<CVec2<T> > &aP,
+    double dt);
 
 template<class VEC>
 std::vector<VEC> Polyline_Resample_Polyline(
-  const std::vector<VEC> &stroke0,
-  double l);
+    const std::vector<VEC> &stroke0,
+    typename VEC::Scalar l);
 
 /**
  *
@@ -73,8 +58,8 @@ std::vector<VEC> Polyline_Resample_Polyline(
  */
 template<typename VEC>
 unsigned int FindNearestPointInPoints(
-  const std::vector<VEC> &polyline,
-  const VEC &scr) {
+    const std::vector<VEC> &polyline,
+    const VEC &scr) {
   unsigned int idx_point_min_dist = UINT_MAX;
   float dist_min = -1;
   for (unsigned int ip = 0; ip < polyline.size(); ++ip) {
@@ -96,7 +81,7 @@ unsigned int FindNearestPointInPoints(
  */
 template<class VEC>
 typename VEC::Scalar Length_Polyline(
-  const std::vector<VEC> &polyline) {
+    const std::vector<VEC> &polyline) {
   if (polyline.size() < 2) {
     return 0;
   }
@@ -110,7 +95,7 @@ typename VEC::Scalar Length_Polyline(
 
 template<typename VEC>
 auto Area_Polyline2(
-  const std::vector<VEC> &polyline) -> typename VEC::Scalar {
+    const std::vector<VEC> &polyline) -> typename VEC::Scalar {
   if (polyline.size() < 2) {
     return 0;
   }
@@ -125,7 +110,7 @@ auto Area_Polyline2(
 
 template<typename VEC>
 auto AABB_Polyline(
-  const std::vector<VEC> &polyline) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
+    const std::vector<VEC> &polyline) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
   using SCALAR = typename VEC::Scalar;
   constexpr int ndim = VEC::SizeAtCompileTime;
   std::array<SCALAR, ndim * 2> res;
@@ -142,22 +127,28 @@ auto AABB_Polyline(
 }
 
 template<typename VEC>
-VEC PositionInPolyline(
-  const std::vector<VEC> &polyline,
-  unsigned int ie,
-  typename VEC::Scalar ratio) {
-  assert(ie < polyline.size() - 1);
+VEC Sample_Polyline(
+    const std::vector<VEC> &polyline,
+    typename VEC::Scalar param) {
+  using SCALAR = typename VEC::Scalar;
+  if (polyline.empty()) { return VEC(0, 0); }
+  if (param < 0) { return polyline[0]; }
+  if (param > static_cast<SCALAR>(polyline.size())) {
+    return polyline[polyline.size() - 1];
+  }
+  const unsigned int ie = int(param);
+  const SCALAR ratio = param - static_cast<SCALAR>(ie);
+  assert(ratio >= 0 && ratio <= 1);
   return (1 - ratio) * polyline[ie] + ratio * polyline[ie + 1];
 }
 
 template<typename VEC>
-VEC NormalInPolyline(
-  const std::vector<VEC> &polyline,
-  unsigned int ie,
-  [[maybe_unused]] float ratio) {
+VEC Tangent_Polyline(
+    const std::vector<VEC> &polyline,
+    unsigned int ie,
+    [[maybe_unused]] float ratio) {
   assert(ie < polyline.size() - 1);
-  VEC ut = (polyline[ie + 1] - polyline[ie]).normalized();
-  return rotate90(ut);
+  return (polyline[ie + 1] - polyline[ie]).normalized();
 }
 
 /**
@@ -168,11 +159,12 @@ VEC NormalInPolyline(
  * @return
  */
 template<typename VEC>
-[[nodiscard]] auto FindNearestPointInPolyline(
-  const std::vector<VEC> &polyline,
-  const VEC &scr) -> std::pair<unsigned int, typename VEC::Scalar> {
+[[nodiscard]] typename VEC::Scalar Nearest_Polyline(
+    const std::vector<VEC> &polyline,
+    const VEC &scr) {
   using SCALAR = typename VEC::Scalar;
-  if (polyline.empty()) { return {UINT_MAX, 0}; }
+  if (polyline.empty()) { return -1; }
+  if (polyline.size() == 1) { return 0; }
   unsigned int ie_min;
   SCALAR ratio_min;
   SCALAR dist_min = -1;
@@ -190,7 +182,19 @@ template<typename VEC>
       ratio_min = ratio;
     }
   }
-  return {ie_min, ratio_min};
+  return static_cast<SCALAR>(ie_min) + ratio_min;
+}
+
+template<typename VEC>
+void Smooth_Polyline(
+    std::vector<VEC> &xys,
+    unsigned int ivtx,
+    typename VEC::Scalar damping) {
+  const int ixy0 = static_cast<int>(ivtx);
+  for (int ixy = ixy0 - 2; ixy < ixy0 + 2; ++ixy) {
+    if (ixy - 1 < 0 || ixy + 1 >= static_cast<int>(xys.size())) { continue; }
+    xys[ixy] = xys[ixy] * damping + (1 - damping) * (xys[ixy - 1] * 0.5 + xys[ixy + 1] * 0.5);
+  }
 }
 
 /**
@@ -202,8 +206,8 @@ template<typename VEC>
  */
 template<typename VEC>
 auto ArcLengthPointInPolyline(
-  const std::vector<VEC> &polyline,
-  const VEC &scr) -> typename VEC::Scalar {
+    const std::vector<VEC> &polyline,
+    const VEC &scr) -> typename VEC::Scalar {
   using SCALAR = typename VEC::Scalar;
   if (polyline.size() < 2) { return 0; }
   float dist_min = -1;

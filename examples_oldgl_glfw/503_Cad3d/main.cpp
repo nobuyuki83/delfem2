@@ -295,15 +295,17 @@ int main() {
     void mouse_drag(
 		[[maybe_unused]] const float src0[3], 
 		const float src1[3], const float dir[3]) override {
-      dfm2::CVec2d sp0(nav.mouse_x - nav.dx, nav.mouse_y - nav.dy);
-      dfm2::CVec2d sp1(nav.mouse_x, nav.mouse_y);
-      const dfm2::CVec3d src_pick(src1), dir_pick(dir);
-      const delfem2::CMat4f mP = this->GetProjectionMatrix();
-      const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1,1,-1);
-      const delfem2::CMat4f mMV = this->GetModelViewMatrix();
-      cad.MouseMotion(
-          src_pick, dir_pick, sp0, sp1,
-          mMV.transpose().data(), (mP.transpose() * mZ).data());
+      if( nav.ibutton == GLFW_MOUSE_BUTTON_LEFT ) {
+        dfm2::CVec2d sp0(nav.mouse_x - nav.dx, nav.mouse_y - nav.dy);
+        dfm2::CVec2d sp1(nav.mouse_x, nav.mouse_y);
+        const dfm2::CVec3d src_pick(src1), dir_pick(dir);
+        const delfem2::CMat4f mP = this->GetProjectionMatrix();
+        const delfem2::CMat4f mZ = delfem2::CMat4f::ScaleXYZ(1, 1, -1);
+        const delfem2::CMat4f mMV = this->GetModelViewMatrix();
+        cad.MouseMotion(
+            src_pick, dir_pick, sp0, sp1,
+            mMV.transpose().data(), (mP.transpose() * mZ).data());
+      }
     }
    public:
     dfm2::CCad3D cad;
