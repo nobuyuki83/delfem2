@@ -24,8 +24,7 @@
 #include <climits>
 #include <algorithm>  // for std::clamp
 
-#include "delfem2/vec2.h"
-#include "delfem2/geo_curve_cubic.h"
+#include "delfem2/vec2.h"   // this will be removed
 #include "delfem2/dfm2_inline.h"
 
 // -----------------------------------------------------
@@ -43,11 +42,6 @@ template<typename T>
 DFM2_INLINE void Rotate(
     std::vector<CVec2<T> > &aP,
     double dt);
-
-template<class VEC>
-std::vector<VEC> Polyline_Resample_Polyline(
-    const std::vector<VEC> &stroke0,
-    typename VEC::Scalar l);
 
 /**
  *
@@ -71,6 +65,15 @@ unsigned int FindNearestPointInPoints(
   }
   return idx_point_min_dist;
 }
+
+// above: points
+// =====================================
+// below: polyline
+
+template<class VEC>
+std::vector<VEC> Polyline_Resample_Polyline(
+    const std::vector<VEC> &stroke0,
+    typename VEC::Scalar l);
 
 /**
  *

@@ -6,6 +6,7 @@
  */
 
 #include "delfem2/geo_polyline.h"
+
 #include "delfem2/vec2.h"  // instantiation for vec2
 
 template<typename T>

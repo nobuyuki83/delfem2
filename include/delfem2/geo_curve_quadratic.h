@@ -472,7 +472,7 @@ VEC Tangent_QuadraticBsplineCurve(
 }
 
 template<class VEC>
-double Nearest_QuadraticBSplineCurve(
+typename VEC::Scalar Nearest_QuadraticBSplineCurve(
   const std::vector<VEC> &poly,
   const VEC &scr) {
   assert( poly.size() > 2 );

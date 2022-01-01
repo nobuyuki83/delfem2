@@ -38,6 +38,8 @@ static void glfw_callback_key(
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
   if (action == GLFW_PRESS) {
+    ::delfem2::CMouseInput& nav = pViewer3->nav;
+    nav.imodifier = mods;
     if (key == GLFW_KEY_PAGE_UP) { pViewer3->scale *= 1.03; }
     if (key == GLFW_KEY_PAGE_DOWN) { pViewer3->scale *= (1.0 / 1.03); }
     pViewer3->key_press(key, mods);
