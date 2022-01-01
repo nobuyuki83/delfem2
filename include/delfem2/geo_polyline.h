@@ -13,8 +13,8 @@
  * plane -> tri -> quad
  */
 
-#ifndef DFM2_GEO_POLYLINE2_H
-#define DFM2_GEO_POLYLINE2_H
+#ifndef DFM2_GEO_POLYLINE_H
+#define DFM2_GEO_POLYLINE_H
 
 #include <cstdlib>
 #include <cassert>
@@ -244,6 +244,6 @@ auto ArcLengthPointInPolyline(
 #  include "delfem2/geo_polyline.cpp"
 #endif
 
-#endif // DFM2_GEO_POLYLINE2_H
+#endif // DFM2_GEO_POLYLINE_H
 
 

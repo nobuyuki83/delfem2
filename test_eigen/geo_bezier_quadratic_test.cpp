@@ -48,13 +48,13 @@ TEST(cad,quadratic_bezier0) {
     }
     {  // nearest
       Eigen::Vector2d scr(0.5, 0.5);
-      const auto [i0,l0] = dfm2::FindNearestPointInPolyline(polyline, scr);
-      const Eigen::Vector2d v0 = dfm2::PositionInPolyline(polyline, i0, l0);
+      const auto param = dfm2::Nearest_Polyline(polyline, scr);
+      const Eigen::Vector2d v0 = dfm2::Sample_Polyline(polyline, param);
       const double t1 = dfm2::Nearest_QuadraticBezierCurve<Eigen::Vector2d>(
         scr,
         p0,p1,p2,100,3);
       const Eigen::Vector2d v1 = dfm2::PointOnQuadraticBezierCurve(t1,p0,p1,p2);
-      EXPECT_LT( (v0-v1).norm(), 0.2 );
+      EXPECT_NEAR( (v0-scr).norm(), (v1-scr).norm(), 0.002 );
     }
     {  // bb
       auto bb0 = dfm2::AABB_QuadraticBezierCurve(p0,p1,p2);

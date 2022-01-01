@@ -9,11 +9,11 @@
 #include "delfem2/geo_curve_cubic.h"
 #include "delfem2/geo_polyline.h"
 
-TEST(cad,cubic_bezier0) {
+TEST(cad, cubic_bezier0) {
   namespace dfm2 = delfem2;
   std::mt19937 rndeng(std::random_device{}());
-  std::uniform_real_distribution<double> dist_01(0,1);
-  for(int itr=0;itr<1000;++itr) {
+  std::uniform_real_distribution<double> dist_01(0, 1);
+  for (int itr = 0; itr < 1000; ++itr) {
     Eigen::Vector2d p0, p1, p2, p3;
     p0 = Eigen::Vector2d(dist_01(rndeng), dist_01(rndeng));
     p1 = Eigen::Vector2d(dist_01(rndeng), dist_01(rndeng));
@@ -34,13 +34,13 @@ TEST(cad,cubic_bezier0) {
     }
     {  // nearest
       Eigen::Vector2d scr(0.5, 0.5);
-      const auto[i0, l0] = dfm2::FindNearestPointInPolyline(polyline, scr);
-      const Eigen::Vector2d v0 = dfm2::PositionInPolyline(polyline, i0, l0);
+      const double param = dfm2::Nearest_Polyline(polyline, scr);
+      const Eigen::Vector2d v0 = dfm2::Sample_Polyline(polyline, param);
       const double t1 = dfm2::Nearest_CubicBezierCurve<Eigen::Vector2d>(
-        scr,
-        p0, p1, p2, p3, 100, 3);
+          scr,
+          p0, p1, p2, p3, 100, 3);
       const Eigen::Vector2d v1 = dfm2::PointOnCubicBezierCurve(t1, p0, p1, p2, p3);
-      EXPECT_LT((v0 - v1).norm(), 0.2);
+      EXPECT_NEAR((v0 - scr).norm(), (v1 - scr).norm(), 0.002);
     }
     {  // bb
       auto bb0 = dfm2::AABB_CubicBezierCurve(p0, p1, p2, p3);
