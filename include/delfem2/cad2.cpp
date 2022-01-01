@@ -13,6 +13,7 @@
 
 #include "delfem2/geo_polyline.h"
 #include "delfem2/geo_edge.h"
+#include "delfem2/geo_curve_cubic.h"
 #include "delfem2/geo_curve_quadratic.h"
 
 // ------------------------------------------
