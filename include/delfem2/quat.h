@@ -260,7 +260,17 @@ class CQuat {
 
   void normalize();
 
+  T *data() { return p; }
+
+  const T *data() const { return p; }
+
   void SetSmallerRotation();
+
+  std::array<T,3> RotateVector(const T v[3]) const{
+    std::array<T,3> vo;
+    QuatVec(vo.data(), p, v);
+    return vo;
+  }
 
   static CQuat<T> Identity() {
     return CQuat<T>(1, 0, 0, 0); // initialization is (w,x,y,z)

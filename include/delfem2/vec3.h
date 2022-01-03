@@ -135,18 +135,18 @@ class CVec3 {
   CVec3(T vx, T vy, T vz) : p{vx, vy, vz} {}
   CVec3() : p{0.0, 0.0, 0.0} {}
   CVec3(const CVec3 &) = default;
-  
+
   template<typename S>
-  CVec3(const std::array<S,3>&& v) : p{
-    static_cast<T>(v[0]),
-    static_cast<T>(v[1]),
-    static_cast<T>(v[2])} {}
+  CVec3(const std::array<S, 3> &&v) : p{
+      static_cast<T>(v[0]),
+      static_cast<T>(v[1]),
+      static_cast<T>(v[2])} {}
 
   template<typename S>
   explicit CVec3(const S *v) : p{
-    static_cast<T>(v[0]),
-    static_cast<T>(v[1]),
-    static_cast<T>(v[2]) } {}
+      static_cast<T>(v[0]),
+      static_cast<T>(v[1]),
+      static_cast<T>(v[2])} {}
 
   template<typename S>
   explicit CVec3(const std::vector<S> &v)  : p{v[0], v[1], v[2]} {}
@@ -156,7 +156,7 @@ class CVec3 {
   // above: constructor / destructor
   // -------------------------------
   // below: operator
-  
+
   inline CVec3 &operator=(const CVec3 &b) {
     if (this != &b) {
       x = b.x;
@@ -307,8 +307,8 @@ class CVec3 {
     v[2] = p[2];
   }
 
-  template <typename S>
-  void push_back_to_vector(std::vector<S>& vec) const {
+  template<typename S>
+  void push_back_to_vector(std::vector<S> &vec) const {
     vec.push_back(p[0]);
     vec.push_back(p[1]);
     vec.push_back(p[2]);

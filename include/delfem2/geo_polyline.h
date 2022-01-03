@@ -148,17 +148,17 @@ VEC Sample_Polyline(
 template<typename VEC>
 VEC Tangent_Polyline(
     const std::vector<VEC> &polyline,
-    typename VEC::Scalar param ) {
+    typename VEC::Scalar param) {
   using SCALAR = typename VEC::Scalar;
-  if (polyline.empty()) { return VEC(0, 0); }
-  if (param < 0) { return polyline[0]; }
-  if (param > static_cast<SCALAR>(polyline.size())) {
-    return polyline[polyline.size() - 1];
+  const size_t np = polyline.size();
+  if (np < 2) { return VEC(0, 0); }
+  if (param <= 0) { return polyline[1] - polyline[0]; }
+  if (param >= static_cast<SCALAR>(np)) {
+    return polyline[np - 1] - polyline[np - 2];
   }
   const unsigned int ie = int(param);
-  const SCALAR ratio = param - static_cast<SCALAR>(ie);
   assert(ie < polyline.size() - 1);
-  return (polyline[ie + 1] - polyline[ie]).normalized();
+  return polyline[ie + 1] - polyline[ie];
 }
 
 /**
@@ -200,7 +200,7 @@ void Smooth_Polyline(
     std::vector<VEC> &xys,
     unsigned int ivtx,
     typename VEC::Scalar damping) {
-  if( ivtx >= xys.size() ){ return; }
+  if (ivtx >= xys.size()) { return; }
   const int ixy0 = static_cast<int>(ivtx);
   for (int ixy = ixy0 - 2; ixy < ixy0 + 2; ++ixy) {
     if (ixy - 1 < 0 || ixy + 1 >= static_cast<int>(xys.size())) { continue; }
