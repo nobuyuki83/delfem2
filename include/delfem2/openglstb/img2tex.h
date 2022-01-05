@@ -6,6 +6,8 @@
  * please define "STB_IMAGE_IMPLEMENTATION" in only one source file (probably in the main.cpp).
  */
 
+#include <filesystem>
+
 #include "delfem2/opengl/tex.h"
 #include "stb/stb_image.h"
 
@@ -17,10 +19,11 @@ void SetRgbToTex(
     bool is_flip_vertically) {
   int width, height, channels;
   stbi_set_flip_vertically_on_load(is_flip_vertically);
+  assert( std::filesystem::exists(path_img0) );
   unsigned char *img = stbi_load(
       path_img0.c_str(),
       &width, &height, &channels, 0);
-  std::cout << width << " " << height << " " << channels << std::endl;
+  // std::cout << width << " " << height << " " << channels << std::endl;
   assert(width > 0 && height > 0);
   tex0.width = width;
   tex0.height = height;
