@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cmath>
 #include <vector>
+#include <functional>
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -1109,3 +1110,21 @@ DFM2_INLINE void delfem2::AddMesh(
   for (unsigned int i: aTri0) { aTri.push_back(i + np0); }
 }
 
+
+DFM2_INLINE double delfem2::Area_MeshTri3(
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx,
+    const std::function<bool(unsigned int)>& flag){
+  double area_sum = 0;
+  for(unsigned int it=0;it<tri_vtx.size()/3;++it){
+    if( !flag(it) ){ continue; }
+    unsigned int ip0 = tri_vtx[it*3+0];
+    unsigned int ip1 = tri_vtx[it*3+1];
+    unsigned int ip2 = tri_vtx[it*3+2];
+    area_sum += mshmisc::TriArea3D(
+        vtx_xyz.data() + ip0*3,
+        vtx_xyz.data() + ip1*3,
+        vtx_xyz.data() + ip2*3);
+  }
+  return area_sum;
+}

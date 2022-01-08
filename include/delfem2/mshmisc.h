@@ -223,6 +223,12 @@ DFM2_INLINE void AddMesh(
     const std::vector<double> &aXYZ0,
     const std::vector<unsigned int> &aTri0);
 
+DFM2_INLINE double Area_MeshTri3(
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx,
+    const std::function<bool(unsigned int)>& flag);
+
+
 } // delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
