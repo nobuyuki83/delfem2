@@ -241,6 +241,23 @@ auto ArcLengthPointInPolyline(
   return alen;
 }
 
+template <typename VEC>
+typename VEC::Scalar WindingNumber_Polyline2(
+    const std::vector<VEC>& poly,
+    const VEC &q){
+  using SCALAR = typename VEC::Scalar;
+  SCALAR theta = 0;
+  for(unsigned int ip0=0;ip0<poly.size()-1;++ip0){
+    unsigned int ip1 = ip0 + 1;
+    delfem2::CVec2d p0 = poly[ip0]-q;
+    delfem2::CVec2d p1 = poly[ip1]-q;
+    SCALAR s = p1.y*p0.x - p1.x*p0.y;
+    SCALAR c = p0.x * p1.x + p0.y * p1.y;
+    theta += std::atan2(s,c);
+  }
+  return theta;
+}
+
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY

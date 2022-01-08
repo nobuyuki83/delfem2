@@ -82,6 +82,8 @@ double Length_QuadraticCurve(
   return intt(1) - intt(0);
 }
 
+
+// c + b*t + a*t^2
 template<typename VEC>
 double Nearest_Origin_QuadraticCurve(
   const VEC &c,
@@ -498,6 +500,41 @@ typename VEC::Scalar Nearest_QuadraticBSplineCurve(
     // std::cout << "  " << iseg << " " << num_segment << "  ---> " << t_best << " " << dist_best << std::endl;
   }
   return t_best;
+}
+
+/**
+ * curve is represented with parameter t as p0 + p1 * t + p2 * t^2
+ * @return winding number around origin
+ */
+template <typename VEC>
+typename VEC::Scalar WindingNumber_QuadraticCurve2(
+    const VEC& p0,
+    const VEC& p1,
+    const VEC& p2,
+    unsigned int num_bisection,
+    unsigned int num_sample){
+  using SCALAR = typename VEC::Scalar;
+  const SCALAR coe[4] = {
+      p1.dot(p0),
+      p1.squaredNorm() + 2 * p2.dot(p0),
+      3 * p2.dot(p1),
+      2 * p2.squaredNorm()};
+  std::vector<SCALAR> roots = delfem2::RootsOfPolynomial<4>(coe, num_bisection);
+  for(unsigned int i=0;i<num_sample;i++){
+    roots.push_back( static_cast<SCALAR>(i)/static_cast<SCALAR>(num_sample-1) );
+  }
+  std::sort(roots.begin(), roots.end());
+  SCALAR theta = 0.0;
+  VEC q0 = p0;
+  for(unsigned int ir0=0;ir0<roots.size()-1;++ir0) {
+    SCALAR t1 = roots[ir0+1];
+    const VEC q1 = p2 * t1 * t1 + p1 * t1 + p0;
+    const SCALAR sn = q1.y*q0.x - q1.x*q0.y;
+    const SCALAR cs = q0.x * q1.x + q0.y * q1.y;
+    theta += std::atan2(sn,cs);
+    q0 = q1;
+  }
+  return theta;
 }
 
 }

@@ -429,6 +429,10 @@ double Length_CubicBezierCurve_QuadratureSubdivision(
   return -1; // suppress compiler warning
 }
 
+// above: Bezier
+// ===================================================
+// below: bspline
+
 /**
  *
  * @tparam SCALAR float or double
@@ -552,6 +556,19 @@ VEC Sample_CubicBsplineCurve(
   assert(fabs(v0 + v1 + v2 + v3 - 1.) < 1.0e-10);
   assert(v0 >= -1.0e-10 && v1 >= -1.0e-10 && v2 >= -1.0e-10 && v3 >= -1.0e-10);
   return poly[idx_segment] * v0 + poly[idx_segment + 1] * v1 + poly[idx_segment + 2] * v2 + poly[idx_segment + 3] * v3;
+}
+
+template<typename VEC>
+void Polyline_CubicBSplineCurve(
+    std::vector<VEC>& sample,
+    unsigned int num_point,
+    const std::vector<VEC>& cps){
+  sample.clear();
+  for(unsigned int ip=0;ip<num_point;++ip) {
+    double t = static_cast<double>(ip) / static_cast<double>(num_point-1) * (cps.size() - 3);
+    VEC p = delfem2::Sample_CubicBsplineCurve(t, cps);
+    sample.push_back(p);
+  }
 }
 
 }

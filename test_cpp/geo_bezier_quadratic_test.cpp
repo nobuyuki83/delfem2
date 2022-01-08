@@ -88,7 +88,8 @@ TEST(bezier_quadratic, polyline2) {
   }
 }
 
-TEST(bspline, quadratic_curve) {
+
+TEST(quadratic_curve, parametric_curve) {
   namespace dfm2 = delfem2;
   std::mt19937 rndeng(std::random_device{}());
   std::uniform_real_distribution<double> dist_01(0, 1);
@@ -102,13 +103,11 @@ TEST(bspline, quadratic_curve) {
       {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)},
       {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)},
       {dist_m1p1(rndeng), dist_m1p1(rndeng), dist_m1p1(rndeng)} };
-    double l0;
-    {
-      const dfm2::CVec2d q0 = coeff[0][0] * cp[0] + coeff[1][0] * cp[1] + coeff[2][0] * cp[2];
-      const dfm2::CVec2d q1 = coeff[0][1] * cp[0] + coeff[1][1] * cp[1] + coeff[2][1] * cp[2];
-      const dfm2::CVec2d q2 = coeff[0][2] * cp[0] + coeff[1][2] * cp[1] + coeff[2][2] * cp[2];
-      l0 = delfem2::Length_QuadraticCurve(q0, q1, q2);
-    }
+    const dfm2::CVec2d q0 = coeff[0][0] * cp[0] + coeff[1][0] * cp[1] + coeff[2][0] * cp[2];
+    const dfm2::CVec2d q1 = coeff[0][1] * cp[0] + coeff[1][1] * cp[1] + coeff[2][1] * cp[2];
+    const dfm2::CVec2d q2 = coeff[0][2] * cp[0] + coeff[1][2] * cp[1] + coeff[2][2] * cp[2];
+    double l0 = delfem2::Length_QuadraticCurve(q0, q1, q2);
+    //
     std::vector<dfm2::CVec2d> poly;
     const unsigned int N = 1000;
     for(unsigned int ip=0;ip<N+1;++ip){
@@ -120,6 +119,13 @@ TEST(bspline, quadratic_curve) {
     }
     double l1 = delfem2::Length_Polyline(poly);
     EXPECT_NEAR(l0,l1,1.0e-5);
+    //
+    {
+      dfm2::CVec2d org(0.5, 0.5);
+      double wn0 = WindingNumber_Polyline2(poly,org);
+      double wn1 = WindingNumber_QuadraticCurve2(q0-org, q1, q2, 8, 4);
+      EXPECT_NEAR(wn0, wn1, 1.0e-8);
+    }
   }
 }
 
