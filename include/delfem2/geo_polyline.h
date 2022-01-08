@@ -245,15 +245,17 @@ template <typename VEC>
 typename VEC::Scalar WindingNumber_Polyline2(
     const std::vector<VEC>& poly,
     const VEC &q){
+  assert(poly.size()>1);
   using SCALAR = typename VEC::Scalar;
   SCALAR theta = 0;
+  VEC p0 = poly[0]-q;
   for(unsigned int ip0=0;ip0<poly.size()-1;++ip0){
     unsigned int ip1 = ip0 + 1;
-    delfem2::CVec2d p0 = poly[ip0]-q;
-    delfem2::CVec2d p1 = poly[ip1]-q;
-    SCALAR s = p1.y*p0.x - p1.x*p0.y;
-    SCALAR c = p0.x * p1.x + p0.y * p1.y;
+    const VEC p1 = poly[ip1]-q;
+    const SCALAR s = p1[1]*p0[0] - p1[0]*p0[1];
+    const SCALAR c = p0[0] * p1[0] + p0[1] * p1[1];
     theta += std::atan2(s,c);
+    p0 = p1;
   }
   return theta;
 }

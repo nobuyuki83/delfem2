@@ -520,17 +520,17 @@ typename VEC::Scalar WindingNumber_QuadraticCurve2(
       3 * p2.dot(p1),
       2 * p2.squaredNorm()};
   std::vector<SCALAR> roots = delfem2::RootsOfPolynomial<4>(coe, num_bisection);
-  for(unsigned int i=0;i<num_sample;i++){
-    roots.push_back( static_cast<SCALAR>(i)/static_cast<SCALAR>(num_sample-1) );
+  for(unsigned int i=0;i<num_sample+2;i++){
+    roots.push_back( static_cast<SCALAR>(i)/static_cast<SCALAR>(num_sample+1) );
   }
   std::sort(roots.begin(), roots.end());
-  SCALAR theta = 0.0;
+  SCALAR theta = 0;
   VEC q0 = p0;
   for(unsigned int ir0=0;ir0<roots.size()-1;++ir0) {
     SCALAR t1 = roots[ir0+1];
     const VEC q1 = p2 * t1 * t1 + p1 * t1 + p0;
-    const SCALAR sn = q1.y*q0.x - q1.x*q0.y;
-    const SCALAR cs = q0.x * q1.x + q0.y * q1.y;
+    const SCALAR sn = q1[1]*q0[0] - q1[0]*q0[1];
+    const SCALAR cs = q0[0] * q1[0] + q0[1] * q1[1];
     theta += std::atan2(sn,cs);
     q0 = q1;
   }
