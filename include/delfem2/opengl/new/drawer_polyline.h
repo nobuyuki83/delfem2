@@ -42,10 +42,10 @@ class Drawer_Polyline {
   }
 
   /**
-   * use delfem2::ViewAsArray2D in "delfem2/view_array2d.h" for row pointer array
-   * @tparam ARRAY2D
-   * @param vtx_pos
-   * @param ndim
+   * @detail use delfem2::ViewAsArray2D in "delfem2/view_array2d.h" for row pointer array
+   * @tparam ARRAY2D has size() and [][] e.g., std::vector<dfm2::CVecX>, std::vector<Eigen::VectorX>
+   * @param vtx_pos array of coordinate
+   * @param ndim dimension of the points
    * @param mat_projection
    * @param mat_modelview
    */

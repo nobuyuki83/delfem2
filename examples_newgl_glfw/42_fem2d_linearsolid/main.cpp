@@ -31,7 +31,7 @@
 #include "delfem2/lsmats.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/femsolidlinear.h"
-#include "delfem2/opengl/new/mshcolor.h"
+#include "delfem2/opengl/new/drawer_mshdisp.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 

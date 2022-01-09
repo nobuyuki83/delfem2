@@ -1,20 +1,28 @@
 cmake_minimum_required(VERSION 3.12)
 
-option(USE_STATIC_LIB "compile delfem2 as a static library?" OFF)
+option(USE_STATIC_LIB "compile delfem2 with static library?" OFF)
 
-##############################################
+#################################
 
+enable_language(CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-IF (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-ELSE ()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
-ENDIF ()
+if (MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /EHsc")
+else ()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
+endif ()
 
-##############################################
+#################################
 
-project(42_fem2d_linearsolid)
+project(43_FemRod2Edit)
+
+# opengl
+find_package(OpenGL REQUIRED)
+
+# glfw
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
+find_package(glfw3 REQUIRED)
 
 # glad
 set(GLAD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/glad4/include")
@@ -33,21 +41,14 @@ IF (USE_STATIC_LIB)
 endif ()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-# glfw
-set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
-find_package(glfw3 REQUIRED)
-
-# opengl
-find_package(OpenGL REQUIRED)
-
-###########################################
+#################################
 
 include_directories(
     ${GLAD_INCLUDE_DIR}
     ${DELFEM2_INCLUDE_DIR}
 )
 
-set(3RD_PARTY "../../3rd_party")
+set(3RD_PARTY  "../../3rd_party")
 add_executable(${PROJECT_NAME}
     ${3RD_PARTY}/glad4/include/glad/glad.h
     ${3RD_PARTY}/glad4/src/glad.c

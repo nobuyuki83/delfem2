@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/opengl/new/mshcolor.h" // shader definitions
+#include "delfem2/opengl/new/drawer_mshcolormap.h" // shader definitions
 #include "delfem2/opengl/new/drawer_msh.h"
 #include "delfem2/opengl/new/drawer_mshtex.h"
 #include "delfem2/opengl/new/drawer_points.h"

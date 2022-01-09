@@ -7,6 +7,7 @@
   #include <emscripten/emscripten.h>
   #define GLFW_INCLUDE_ES3
 #endif
+#define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -44,15 +45,15 @@ void callback_mouse(
 void do_frame(GLFWwindow *window)
 {
   /*
-    static int a = 0;
-    printf("Fc: %d \n", ++a);
-    glClearColor(rand() / (float)RAND_MAX,
-                 rand() / (float)RAND_MAX,
-                 rand() / (float)RAND_MAX,
-                 1.0f);
-   */
-  //glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
-  //glClear(GL_COLOR_BUFFER_BIT);
+  static int a = 0;
+  printf("Fc: %d \n", ++a);
+  glClearColor(rand() / (float)RAND_MAX,
+               rand() / (float)RAND_MAX,
+               rand() / (float)RAND_MAX,
+               1.0f);
+               */
+  glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
   glfwSwapBuffers(window);
   glfwPollEvents();
 }
