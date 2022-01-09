@@ -87,7 +87,8 @@ std::vector<std::vector<VEC>> RepeatKnitUnit_RowIndependent(
 template<typename VEC>
 void RepeatKnitUnit_SingleStrand(
     std::vector<VEC> &cps_knit,
-    int row, int col,
+    unsigned int row,
+    unsigned int col,
     const std::vector<VEC> &cps,
     const double stride_y) {
 
@@ -97,29 +98,28 @@ void RepeatKnitUnit_SingleStrand(
     max_x = max_x > cps[i][0] ? min_x : cps[i][0];
   }
 
-  const double interval_x = max_x - min_x;
+  const double stride_x = max_x - min_x;
   const double interval_z = 0.;
 
   const unsigned int num_cp_unit = cps.size();
-  for (int j = 0; j < row; j++) {
-    const double add_y = j * stride_y;
-    const double add_z = j * interval_z;
-    std::vector<VEC> yarn;
-    yarn.emplace_back(VEC(cps[0][0], cps[0][1] + add_y, cps[0][2] + add_z));
-    for (int i = 0; i < col; i++) {
-      const double add_x = i * interval_x;
-      for (unsigned int k = 1; k < num_cp_unit; k++) { // ignore the first node to avoid repetation
-        yarn.emplace_back(VEC(cps[k][0] + add_x, cps[k][1] + add_y, cps[k][2] + add_z));
+  for (unsigned int jrow = 0; jrow < row; jrow++) {
+    const double add_y = jrow * stride_y;
+    const double add_z = jrow * interval_z;
+    std::vector<VEC> cps_row;
+    cps_row.emplace_back(VEC(cps[0][0], cps[0][1] + add_y, cps[0][2] + add_z));
+    for (unsigned int icol = 0; icol < col; icol++) {
+      const double add_x = icol * stride_x;
+      for (unsigned int k = 1; k < num_cp_unit; k++) { // ignore the first node to avoid repetition
+        cps_row.emplace_back(VEC(cps[k][0] + add_x, cps[k][1] + add_y, cps[k][2] + add_z));
       }
     }
-    // knitted_peice.emplace_back(yarn);
-    if (j % 2 == 0) {
-      for (int i = 0; i < static_cast<int>(yarn.size()); i++) {
-        cps_knit.emplace_back(yarn.at(i));
+    if (jrow % 2 == 0) {
+      for (unsigned int i = 0; i < cps_row.size(); i++) {
+        cps_knit.emplace_back(cps_row.at(i));
       }
     } else {
-      for (int i = static_cast<int>(yarn.size() - 1); i >= 0; i--) {
-        cps_knit.emplace_back(yarn.at(i));
+      for (int i = static_cast<int>(cps_row.size() - 1); i >= 0; i--) {
+        cps_knit.emplace_back(cps_row.at(i));
       }
     }
   }

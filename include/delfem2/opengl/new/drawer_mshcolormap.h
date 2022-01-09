@@ -8,8 +8,9 @@
 #ifndef DFM2_OPENGL_NEW_DRAWER_MSHCOLORMAP_H
 #define DFM2_OPENGL_NEW_DRAWER_MSHCOLORMAP_H
 
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
+#include <tuple>
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
@@ -21,11 +22,7 @@ namespace delfem2::opengl {
 
 class Drawer_MeshColormap {
  public:
-  Drawer_MeshColormap() {
-    colors = {
-        {0, 0, 0},
-        {1, 1, 1}};
-  }
+  Drawer_MeshColormap() = default;
 
   void AddConnectivity(
       std::vector<unsigned int> &aTri,
@@ -50,13 +47,17 @@ class Drawer_MeshColormap {
 
  public:
   VertexArrayObject vao; // gl4
-  int shaderProgram;
-  int Loc_MatrixProjection;
-  int Loc_MatrixModelView;
-  int Loc_UniformColor;
-  int Loc_UseUniformColor;
-  int Loc_ValMin, Loc_ValMax;
-  std::vector<std::tuple<double, double, double>> colors;
+  int shaderProgram = -1;
+  int Loc_MatrixProjection = -1;
+  int Loc_MatrixModelView = -1;
+  int Loc_UniformColor = -1;
+  int Loc_UseUniformColor = -1;
+  int Loc_ValMin = -1, Loc_ValMax = -1;
+  std::vector<std::tuple<double, double, double>> colors = {
+      {0,0,0},
+      {1,1,1},
+  };
+
 };
 
 }
