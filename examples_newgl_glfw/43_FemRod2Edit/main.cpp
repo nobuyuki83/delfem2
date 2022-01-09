@@ -117,6 +117,7 @@ class MyViewer : public delfem2::glfw::CViewer2 {
     const unsigned int nvtx = vtx_xy.size();
     std::vector<float> vtx_val(nvtx);
     for(unsigned int iv=0;iv<nvtx;++iv){
+      //vtx_val[iv] = static_cast<float>(nvtx-1-iv);
       vtx_val[iv] = static_cast<float>(iv);
     }
 

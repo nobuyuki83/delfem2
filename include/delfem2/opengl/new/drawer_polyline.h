@@ -41,6 +41,11 @@ class Drawer_Polyline {
     this->cylinder.color = c;
   }
 
+  void SetRadius(float rad){
+    this->radius_cylinder = rad;
+    this->radius_sphere = rad;
+  }
+
   /**
    * @detail use delfem2::ViewAsArray2D in "delfem2/view_array2d.h" for row pointer array
    * @tparam ARRAY2D has size() and [][] e.g., std::vector<dfm2::CVecX>, std::vector<Eigen::VectorX>

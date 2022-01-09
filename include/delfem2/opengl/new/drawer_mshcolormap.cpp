@@ -125,6 +125,7 @@ void delfem2::opengl::Drawer_MeshColormap::InitGL() {
           "  if( !use_uniform_color ) {\n"
           "    float scaled_value = (val-val_min)/(val_max-val_min) * (ncolor-1);\n"
           "    int idx_color = int(scaled_value);\n"
+//          "    if( scaled_value < 0 ){ idx_color -= 1; }\n"
           "    float r01 = scaled_value - float(idx_color);\n"
           "    if( idx_color < 0 ){ idx_color = 0; r01 = 0.;}\n"
           "    if( idx_color > ncolor-2 ){ idx_color = ncolor-2; r01 = 1.; }\n"

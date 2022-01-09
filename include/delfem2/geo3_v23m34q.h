@@ -101,10 +101,11 @@ CVec3d GetSpinVector(
 CVec3d GetCartesianRotationVector(
     const CMat3d &m);
 
-CMat3d Mat3(
-    const CVec3d &vec0,
-    const CVec3d &vec1,
-    const CVec3d &vec2);
+template <typename REAL>
+CMat3<REAL> Mat3_3Bases(
+    const CVec3<REAL> &vec0,
+    const CVec3<REAL> &vec1,
+    const CVec3<REAL> &vec2);
 
 CMat3d Mat3(
     const CVec3d &vec0);
@@ -129,12 +130,6 @@ CMat3d Mat3_OuterProduct(
 CMat3d Mat3_Spin(
     const CVec3d &vec0);
 
-CMat3d Mat3_ParallelTransport(
-    const CVec3d &p0,
-    const CVec3d &p1,
-    const CVec3d &q0,
-    const CVec3d &q1);
-
 void Mat4_MatTransl(
     double m[16],
     const CMat3d &mat,
@@ -146,15 +141,6 @@ DFM2_INLINE void Mat4_ScaleMatTransl(
     const CMat3d &mat,
     const CVec3d &trans);
 
-/**
- * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
- * @param V (in) rotation from
- * @param v (in) rotation to
- */
-template<typename REAL>
-CMat3<REAL> Mat3_MinimumRotation(
-    const CVec3<REAL> &V,
-    const CVec3<REAL> &v);
 
 // ----------------------
 // below: inertia tensor

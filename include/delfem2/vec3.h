@@ -546,6 +546,23 @@ CVec3<T> RandUnitVector();
 template<typename T>
 CVec3<T> RandGaussVector();
 
+/**
+ * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
+ * @param V (in) rotation from
+ * @param v (in) rotation to
+ */
+template<typename REAL>
+DFM2_INLINE std::array<REAL,9> Mat3_MinimumRotation(
+    const CVec3<REAL> &V,
+    const CVec3<REAL> &v);
+
+template <typename REAL>
+DFM2_INLINE std::array<REAL,9> Mat3_ParallelTransport(
+    const CVec3<REAL> &p0,
+    const CVec3<REAL> &p1,
+    const CVec3<REAL> &q0,
+    const CVec3<REAL> &q1);
+
 // ----------------------------------------------------------
 // here starts std::vector<CVector3>
 

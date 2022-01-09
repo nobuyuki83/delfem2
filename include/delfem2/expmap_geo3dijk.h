@@ -83,7 +83,8 @@ public:
       const double len01 = d01.norm();
       const CVec3d e01 = (d01 - (d01.dot(n0)) * n0).normalized() * len01; // projected edge and same length
       const double w01 = 1.0 / len01;
-      const CVec3d x1 = Mat3_MinimumRotation(n0, n1) * x0;
+      delfem2::CMat3d R = Mat3_MinimumRotation(n0, n1);
+      const CVec3d x1 = R * x0;
       aAxisX[ip1] += w01 * x1;
       aW[ip1] += w01;
       aTex[ip1 * 2 + 0] += w01 * (aTex[ip0 * 2 + 0] + (e01.dot(x0)));
@@ -158,7 +159,8 @@ public:
       const double len01 = d01.norm();
       const CVec3d e01 = (d01 - (d01.dot(n0)) * n0).normalized() * len01; // projected edge and same length
       const double w01 = 1.0 / len01;
-      const CVec3d x1 = Mat3_MinimumRotation(n0, n1) * x0;
+      const delfem2::CMat3d R =  Mat3_MinimumRotation(n0, n1);
+      const CVec3d x1 = R * x0;
       aAxisX[it1] += w01 * x1;
       aW[it1] += w01;
       aTex[it1 * 2 + 0] += w01 * (aTex[it0 * 2 + 0] + (e01.dot(x0)));

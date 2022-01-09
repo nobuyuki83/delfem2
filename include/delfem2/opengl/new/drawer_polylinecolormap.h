@@ -39,10 +39,15 @@ class Drawer_PolylineColormap {
       cylinder.SetCoordinates(vtx_xyz, 3);
       std::vector<float> vtx_val(vtx_xyz.size() / 3);
       for(unsigned int iv=0;iv<vtx_xyz.size()/3;++iv){
-        vtx_val[iv] = (vtx_xyz[iv*3+1]+0.5);
+        vtx_val[iv] = (vtx_xyz[iv*3+1]+0.5f);
       }
       cylinder.SetValues(vtx_val);
     }
+  }
+
+  void SetRadius(float rad){
+    this->radius_cylinder = rad;
+    this->radius_sphere = rad;
   }
 
   /**
@@ -72,8 +77,8 @@ class Drawer_PolylineColormap {
           * dfm2::CMat4f::Translation(p)
           * dfm2::CMat4f::AffineScale(radius_sphere);
       double v0 = (vtx_val[ivtx] - val_min)/(val_max-val_min);
-      const double umin = 1-v0;
-      const double umax = 2-v0;
+      const float umin = 1.f-v0;
+      const float umax = 2.f-v0;
       sphere.Draw(mat_projection, mmv.data(),umin,umax);
     }
     if (nvtx < 2) { return; }
@@ -86,8 +91,8 @@ class Drawer_PolylineColormap {
         p1_.z = vtx_pos[jvtx][2];
       }
       dfm2::CMat3f R3 = Mat3_MinimumRotation(
-          dfm2::CVec3f{0, 1, 0},
-          p1_ - p0_);
+          dfm2::CVec3f(0, 1, 0),
+          p1_-p0_);
       dfm2::CMat4f R4 = dfm2::CMat4f::Mat3(R3.data());
       const dfm2::CMat4f mmv = dfm2::CMat4f(mat_modelview)
           * dfm2::CMat4f::Translation(((p0_ + p1_) * 0.5).data())
@@ -95,9 +100,29 @@ class Drawer_PolylineColormap {
           * dfm2::CMat4f::ScaleXYZ(radius_cylinder, (p1_ - p0_).norm(), radius_cylinder);
       const double va = (vtx_val[ivtx]-val_min)/(val_max-val_min);
       const double vb = (vtx_val[jvtx]-val_min)/(val_max-val_min);
-      const double umin = va/(va-vb);
-      const double umax = (va-1)/(va-vb);
-      cylinder.Draw(mat_projection, mmv.data(),umin,umax);
+      const double eps = 1.0e-3;
+      double vab = vb-va;
+      double A = 1;
+      if( 0 < vab && vab < eps ){ A = 1./eps; }
+      else if( -eps < vab && vab <= 0 ){ A = -1/eps; }
+      else { A = 1.0/vab; }
+      A = 1.0/vab;
+      const double umin = -va * A;
+      const double umax = -(va - 1) * A;
+      cylinder.Draw(mat_projection, mmv.data(), umin, umax);
+      /*
+      unsigned int ncolor = 256;
+      double val0 = 0.;
+      float scaled_value0 = (val0-umin)/(umax-umin) * (ncolor-1);
+      int idx_color0 = int(scaled_value0);
+      if( scaled_value0 < 0 ){ idx_color0 -= 1; }
+      float r0 = scaled_value0 - float(idx_color0);
+      double val1 = 1.;
+      float scaled_value1 = (val1-umin)/(umax-umin) * (ncolor-1);
+      int idx_color1 = int(scaled_value1);
+      if( scaled_value1 < 0 ){ idx_color1 -= 1; }
+      float r1 = scaled_value1 - float(idx_color1);
+       */
     }
   }
 

@@ -1024,6 +1024,76 @@ delfem2::CVec3<T> delfem2::RandGaussVector() {
   return CVec3<T>(x, y, z);
 }
 
+template<typename REAL>
+std::array<REAL,9> delfem2::Mat3_MinimumRotation(
+    const CVec3<REAL> &V,
+    const CVec3<REAL> &v) {
+  CVec3<REAL> ep = V.normalized();
+  CVec3<REAL> eq = v.normalized();
+  CVec3<REAL> n = ep.cross(eq);
+  const REAL st2 = n.dot(n);
+  const REAL ct = ep.dot(eq);
+
+  if (st2 < 1.0e-8f) { // very small angle or n is zero
+    // inifinitesimal rotation
+    if (ct > 0.99) {
+      return {
+          1.f + 0.5f * (n.x * n.x - st2),
+          -n.z + 0.5f * (n.x * n.y),
+          +n.y + 0.5f * (n.x * n.z),
+          +n.z + 0.5f * (n.y * n.x),
+          1.f + 0.5f * (n.y * n.y - st2),
+          -n.x + 0.5f * (n.y * n.z),
+          -n.y + 0.5f * (n.z * n.x),
+          +n.x + 0.5f * (n.z * n.y),
+          1.f + 0.5f * (n.z * n.z - st2)};
+    } else {
+      CVec3<REAL> epx, epy;
+      delfem2::GetVertical2Vector(ep, epx, epy);
+      const CVec3<REAL> eqx = epx - eq.dot(epx) * eq; // vector orthogonal to eq
+      const CVec3<REAL> eqy = eq.cross(eqx);
+      return {
+          eqx.dot(epx), eqy.dot(epx),  eq.dot(epx),
+          eqx.dot(epy), eqy.dot(epy),  eq.dot(epy),
+          eqx.dot(ep),  eqy.dot(ep),   eq.dot(ep) };
+      /*
+      const CMat3<REAL> Rp = Mat3_3Bases(epx, epy, ep);
+      const CMat3<REAL> Rq = Mat3_3Bases(eqx, eqy, eq);
+      return Rq * Rp.transpose();
+       */
+    }
+  }
+  const REAL st = std::sqrt(st2);
+  n.normalize();
+  // Rodoriguez's rotation formula
+  return {
+      ct + (1 - ct) * n.x * n.x,
+      -n.z * st + (1 - ct) * n.x * n.y,
+      +n.y * st + (1 - ct) * n.x * n.z,
+      +n.z * st + (1 - ct) * n.y * n.x,
+      ct + (1 - ct) * n.y * n.y,
+      -n.x * st + (1 - ct) * n.y * n.z,
+      -n.y * st + (1 - ct) * n.z * n.x,
+      +n.x * st + (1 - ct) * n.z * n.y,
+      ct + (1 - ct) * n.z * n.z};
+}
+#ifdef DFM2_STATIC_LIBRARY
+template std::array<double,9> delfem2::Mat3_MinimumRotation(const CVec3d& V, const CVec3d& v);
+template std::array<float,9> delfem2::Mat3_MinimumRotation(const CVec3f& V, const CVec3f& v);
+#endif
+
+
+// --------------------------
+
+template <typename REAL>
+DFM2_INLINE std::array<REAL,9> delfem2::Mat3_ParallelTransport(
+    const CVec3<REAL> &p0,
+    const CVec3<REAL> &p1,
+    const CVec3<REAL> &q0,
+    const CVec3<REAL> &q1) {
+  return Mat3_MinimumRotation(p1 - p0, q1 - q0);
+}
+
 
 
 // ----------------------------------------------------------------------------------------

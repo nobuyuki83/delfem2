@@ -47,9 +47,9 @@ DFM2_INLINE delfem2::CVec3d delfem2::GetSpinVector(
     const CMat3d &m) {
   const double *mat = m.p_;
   return CVec3d{
-    (mat[7] - mat[5]) * 0.5,
-    (mat[2] - mat[6]) * 0.5,
-    (mat[2] - mat[6]) * 0.5 };
+      (mat[7] - mat[5]) * 0.5,
+      (mat[2] - mat[6]) * 0.5,
+      (mat[2] - mat[6]) * 0.5};
 }
 
 template<typename T>
@@ -160,22 +160,15 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3(const CVec3d &vec0, const CVec3d &vec1
   return m;
 }
 
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3(
-    const CVec3d &vec0,
-    const CVec3d &vec1,
-    const CVec3d &vec2) {
-  CMat3d m;
-  double *mat = m.p_;
-  mat[0 * 3 + 0] = vec0.x;
-  mat[0 * 3 + 1] = vec1.x;
-  mat[0 * 3 + 2] = vec2.x;
-  mat[1 * 3 + 0] = vec0.y;
-  mat[1 * 3 + 1] = vec1.y;
-  mat[1 * 3 + 2] = vec2.y;
-  mat[2 * 3 + 0] = vec0.z;
-  mat[2 * 3 + 1] = vec1.z;
-  mat[2 * 3 + 2] = vec2.z;
-  return m;
+template<typename REAL>
+DFM2_INLINE delfem2::CMat3<REAL> delfem2::Mat3_3Bases(
+    const CVec3<REAL> &vec0,
+    const CVec3<REAL> &vec1,
+    const CVec3<REAL> &vec2) {
+  return CMat3 < REAL > {
+      vec0.x, vec1.x, vec2.x,
+      vec0.y, vec1.y, vec2.y,
+      vec0.z, vec1.z, vec2.z};
 }
 
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_Spin(const CVec3d &vec0) {
@@ -200,7 +193,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_RotCartesian(const CVec3d &vec0) {
 
 namespace delfem2 {
 
-template <typename T>
+template<typename T>
 DFM2_INLINE CVec3<T> operator*(
     const CVec3<T> &v,
     const CMat3<T> &m) {
@@ -213,7 +206,7 @@ template CVec3f operator*(const CVec3f &, const CMat3f &);
 
 // -------------------------------------------
 
-template <typename T>
+template<typename T>
 DFM2_INLINE CVec3<T> operator*(
     const CMat3<T> &m,
     const CVec3<T> &v) {
@@ -228,56 +221,6 @@ template CVec3f operator*(const CMat3f &, const CVec3f &);
 
 // ------------------------------
 
-template<typename REAL>
-delfem2::CMat3<REAL> delfem2::Mat3_MinimumRotation(
-    const CVec3<REAL> &V,
-    const CVec3<REAL> &v) {
-  CVec3<REAL> ep = V.normalized();
-  CVec3<REAL> eq = v.normalized();
-  CVec3<REAL> n = ep ^ eq;
-  const double st2 = n.dot(n);
-  CMat3<REAL> m;
-  if (st2 < 1.0e-4f) {
-    m.p_[0] = 1.f + 0.5f * (n.x * n.x - st2);
-    m.p_[1] = -n.z + 0.5f * (n.x * n.y);
-    m.p_[2] = +n.y + 0.5f * (n.x * n.z);
-    m.p_[3] = +n.z + 0.5f * (n.y * n.x);
-    m.p_[4] = 1.f + 0.5f * (n.y * n.y - st2);
-    m.p_[5] = -n.x + 0.5f * (n.y * n.z);
-    m.p_[6] = -n.y + 0.5f * (n.z * n.x);
-    m.p_[7] = +n.x + 0.5f * (n.z * n.y);
-    m.p_[8] = 1.f + 0.5f * (n.z * n.z - st2);
-    return m;
-  }
-  const double st = sqrt(st2);
-  const double ct = ep.dot(eq);
-  n.normalize();
-  m.p_[0] = ct + (1.f - ct) * n.x * n.x;
-  m.p_[1] = -n.z * st + (1.f - ct) * n.x * n.y;
-  m.p_[2] = +n.y * st + (1.f - ct) * n.x * n.z;
-  m.p_[3] = +n.z * st + (1.f - ct) * n.y * n.x;
-  m.p_[4] = ct + (1.f - ct) * n.y * n.y;
-  m.p_[5] = -n.x * st + (1.f - ct) * n.y * n.z;
-  m.p_[6] = -n.y * st + (1.f - ct) * n.z * n.x;
-  m.p_[7] = +n.x * st + (1.f - ct) * n.z * n.y;
-  m.p_[8] = ct + (1.f - ct) * n.z * n.z;
-  return m;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CMat3d delfem2::Mat3_MinimumRotation(const CVec3d& V, const CVec3d& v);
-#endif
-
-
-// --------------------------
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_ParallelTransport(
-    const CVec3d &p0,
-    const CVec3d &p1,
-    const CVec3d &q0,
-    const CVec3d &q1) {
-  return Mat3_MinimumRotation(p1 - p0, q1 - q0);
-}
-
 // -----------------------------------------------------
 // below: rotational inertia
 
@@ -291,9 +234,9 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTri(
   CVec3d dv = d0 + d1 + d2;
   CMat3d I0 =
       Mat3_OuterProduct(d0, d0) +
-      Mat3_OuterProduct(d1, d1) +
-      Mat3_OuterProduct(d2, d2) +
-      Mat3_OuterProduct(dv, dv);
+          Mat3_OuterProduct(d1, d1) +
+          Mat3_OuterProduct(d2, d2) +
+          Mat3_OuterProduct(dv, dv);
   double tr0 = I0.Trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
 
@@ -311,9 +254,9 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTriSolid(
   CVec3d dv = d0 + d1 + d2;
   CMat3d I0 =
       Mat3_OuterProduct(d0, d0) +
-      Mat3_OuterProduct(d1, d1) +
-      Mat3_OuterProduct(d2, d2) +
-      Mat3_OuterProduct(dv, dv);
+          Mat3_OuterProduct(d1, d1) +
+          Mat3_OuterProduct(d2, d2) +
+          Mat3_OuterProduct(dv, dv);
   double tr0 = I0.Trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
 
