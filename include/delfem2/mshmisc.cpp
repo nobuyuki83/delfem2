@@ -211,7 +211,7 @@ void delfem2::GetCenterWidthGroup(
     // ----------
     const std::vector<double> &vtx_xyz,
     const std::vector<unsigned int> &elm_vtx,
-    const int nnoel,
+    unsigned int nnoel,
     int igroup,
     const std::vector<int> &elm_groupidx) {
   const std::size_t nelem = elm_vtx.size() / nnoel;
@@ -221,7 +221,7 @@ void delfem2::GetCenterWidthGroup(
   double x_min = 0, x_max = 0, y_min = 0, y_max = 0, z_min = 0, z_max = 0;
   for (unsigned int ielem = 0; ielem < nelem; ielem++) {
     if (elm_groupidx[ielem] != igroup) { continue; }
-    for (int inotri = 0; inotri < nnoel; inotri++) {
+    for (unsigned int inotri = 0; inotri < nnoel; inotri++) {
       const unsigned int ip = elm_vtx[ielem * 3 + inotri];
       if (is_ini) {
         x_min = x_max = vtx_xyz[ip * 3 + 0];

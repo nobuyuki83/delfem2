@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_OPENGL_NEW_SHDR_MSH_H
-#define DFM2_OPENGL_NEW_SHDR_MSH_H
+#ifndef DFM2_OPENGL_NEW_DRAWER_MSH_H
+#define DFM2_OPENGL_NEW_DRAWER_MSH_H
 
 #include <cstdio>
 #include <vector>
@@ -54,4 +54,4 @@ class CShader_Mesh {
 #  include "delfem2/opengl/new/drawer_msh.cpp"
 #endif
 
-#endif /* gl4_msh_hpp */
+#endif /* DFM2_OPENGL_NEW_DRAWER_MSH_H */

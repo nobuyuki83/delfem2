@@ -7,13 +7,14 @@
 
 
 /**
- * @details this file should not depends on anything except for  std::vector
+ * @details this file should not depends on anything except for  std::vector, std::functional
  */
 
 #ifndef DFM2_MSHMISC_H
 #define DFM2_MSHMISC_H
 
 #include <vector>
+#include <functional>  // maybe we should separate the functions with this dependency
 
 #include "delfem2/dfm2_inline.h"
 
@@ -27,7 +28,7 @@ DFM2_INLINE void GetCenterWidthGroup(
     double &wx, double &wy, double &wz,
     const std::vector<double> &vtx_xyz,
     const std::vector<unsigned int> &elm_vtx,
-    const int nnoel,
+    unsigned int nnoel,
     int igroup,
     const std::vector<int> &elm_groupidx);
 

@@ -5,6 +5,8 @@
 #ifndef DRAWER_POLYLINE_H_
 #define DRAWER_POLYLINE_H_
 
+#include <array>
+
 #include "delfem2/opengl/new/drawer_sphere.h"
 #include "delfem2/vec3.h"
 #include "delfem2/geo3_v23m34q.h"
@@ -32,6 +34,11 @@ class Drawer_Polyline {
           1.f, 1.f, 32, 1);
       cylinder.Initialize(vtx_xyz, 3, tri_vtx, GL_TRIANGLES);
     }
+  }
+
+  void SetColor(const std::array<float,4>& c) {
+    this->sphere.color = c;
+    this->cylinder.color = c;
   }
 
   /**
