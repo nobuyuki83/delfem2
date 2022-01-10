@@ -28,10 +28,10 @@ DFM2_INLINE delfem2::CVec2d delfem2::screenXYProjection(
 DFM2_INLINE delfem2::CVec3d delfem2::GetCartesianRotationVector(
     const CMat3d &m) {
   const double *mat = m.p_;
-  CVec3d a;
-  a.p[0] = mat[7] - mat[5];
-  a.p[1] = mat[2] - mat[6];
-  a.p[2] = mat[3] - mat[1];
+  CVec3d a{
+    mat[7] - mat[5],
+    mat[2] - mat[6],
+    mat[3] - mat[1] };
   double act = (m.Trace() - 1) * 0.5;
   if (act > +1) { act = +1; }
   if (act < -1) { act = -1; }
@@ -142,9 +142,9 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_CrossCross(const CVec3d &v) {
   return Mat3(v) * Mat3(v);
 }
 
-DFM2_INLINE delfem2::CMat3d delfem2::RotMatrix_Cartesian(const CVec3d &v) {
+DFM2_INLINE delfem2::CMat3d delfem2::Mat3_FromCartesianRotationVector(const CVec3d &vec0) {
   CMat3d m;
-  SetRotMatrix_Cartesian(m, v);
+  m.SetRotMatrix_Cartesian(vec0.x, vec0.y, vec0.z);
   return m;
 }
 
@@ -161,7 +161,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3(const CVec3d &vec0, const CVec3d &vec1
 }
 
 template<typename REAL>
-DFM2_INLINE delfem2::CMat3<REAL> delfem2::Mat3_3Bases(
+DFM2_INLINE delfem2::CMat3<REAL> delfem2::Mat3_From3Bases(
     const CVec3<REAL> &vec0,
     const CVec3<REAL> &vec1,
     const CVec3<REAL> &vec2) {
@@ -180,12 +180,6 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_Spin(const CVec3d &vec0) {
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_OuterProduct(const CVec3d &vec0, const CVec3d &vec1) {
   CMat3d m;
   SetOuterProduct(m, vec0, vec1);
-  return m;
-}
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_RotCartesian(const CVec3d &vec0) {
-  CMat3d m;
-  m.SetRotMatrix_Cartesian(vec0.x, vec0.y, vec0.z);
   return m;
 }
 

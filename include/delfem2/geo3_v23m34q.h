@@ -42,16 +42,6 @@ DFM2_INLINE CVec2d screenXYProjection(
 // vec3 and vec2
 
 
-DFM2_INLINE bool isPickQuad(
-    const CVec3d &p0,
-    const CVec3d &p1,
-    const CVec3d &p2,
-    const CVec3d &p3,
-    const CVec2d &sp,
-    const CVec3d &pick_dir,
-    const float mMV[16],
-    const float mPj[16],
-    double eps);
 
 // ---------------------------------------------------
 // matrix 3
@@ -102,7 +92,7 @@ CVec3d GetCartesianRotationVector(
     const CMat3d &m);
 
 template <typename REAL>
-CMat3<REAL> Mat3_3Bases(
+CMat3<REAL> Mat3_From3Bases(
     const CVec3<REAL> &vec0,
     const CVec3<REAL> &vec1,
     const CVec3<REAL> &vec2);
@@ -114,10 +104,7 @@ CMat3d Mat3(
     const CVec3d &vec0,
     const CVec3d &vec1);
 
-CMat3d RotMatrix_Cartesian(
-    const CVec3d &v);
-
-CMat3d Mat3_RotCartesian(
+CMat3d Mat3_FromCartesianRotationVector(
     const CVec3d &vec0);
 
 /**

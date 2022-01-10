@@ -40,7 +40,7 @@ class CRigidBodyState {
     rb_out.velo = velo + dt * vOpA[0];
     rb_out.Omega = Omega + dt * vOpA[1];
     rb_out.pos = pos + dt * vOpA[2];
-    CMat3d dR = dfm2::Mat3_RotCartesian(dt * vOpA[3]);
+    CMat3d dR = dfm2::Mat3_FromCartesianRotationVector(dt * vOpA[3]);
     if (dR.isNaN()) dR.setZero();
     rb_out.R = R * dR;
     return rb_out;

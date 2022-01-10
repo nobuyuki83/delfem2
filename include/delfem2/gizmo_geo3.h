@@ -45,6 +45,17 @@ DFM2_INLINE bool isPickCircle(
     const CVec3d& dir,
     double pick_tol);
 
+DFM2_INLINE bool isPickQuad(
+    const CVec3d &p0,
+    const CVec3d &p1,
+    const CVec3d &p2,
+    const CVec3d &p3,
+    const CVec2d &sp,
+    const CVec3d &pick_dir,
+    const float mMV[16],
+    const float mPj[16],
+    double eps);
+
 DFM2_INLINE bool isPick_AxisHandler(
     const CVec2d& sp,
     const CVec3d& p,

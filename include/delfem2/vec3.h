@@ -535,7 +535,9 @@ CVec3<T> UnitNormal(
     const CVec3<T> &v3);
 
 template<typename T>
-CVec3<T> RotateVector(const CVec3<T> &vec0, const CVec3<T> &rot);
+CVec3<T> RotateVector(
+    const CVec3<T> &vec0,
+    const CVec3<T> &rot);
 
 template<typename T>
 CVec3<T> RandVector();
@@ -548,14 +550,18 @@ CVec3<T> RandGaussVector();
 
 /**
  * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
- * @param V (in) rotation from
- * @param v (in) rotation to
+ * @param[in] V rotation from
+ * @param[in] v rotation to
  */
+// TODO: consider making this function general to Eigen::Vector3x
+//  using template and moving this functin to "geo_vec3.h"
 template<typename REAL>
 DFM2_INLINE std::array<REAL,9> Mat3_MinimumRotation(
     const CVec3<REAL> &V,
     const CVec3<REAL> &v);
 
+// TODO: consider making this function general to Eigen::Vector3x
+//  using template and moving this functin to "geo_vec3.h"
 template <typename REAL>
 DFM2_INLINE std::array<REAL,9> Mat3_ParallelTransport(
     const CVec3<REAL> &p0,
