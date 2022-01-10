@@ -16,7 +16,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/geoconvhull3.h"
+#include "delfem2/geo_convhull3.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengleigen/funcs.h"
@@ -40,7 +40,7 @@ double MeasureTime()
   std::vector<unsigned int> aTri0;
   auto start = std::chrono::system_clock::now();
   for(int it=0;it<1000;++it) {
-    delfem2::ConvexHull<REAL>(aTri0, aXYZ0);
+    delfem2::ConvexHull3(aTri0, aXYZ0);
   }
   auto end = std::chrono::system_clock::now();
   return std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
@@ -71,7 +71,7 @@ int main()
         xyz(1) = dist_m1p1(rngeng);
         xyz(2) = dist_m1p1(rngeng);
       }
-      delfem2::ConvexHull<double>(aTri,aXYZ);
+      delfem2::ConvexHull3(aTri,aXYZ);
       time_last_update = time_now;
     }
     //

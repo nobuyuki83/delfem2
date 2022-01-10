@@ -15,7 +15,7 @@ ENDIF ()
 
 ####################################
 
-project(102_ConvexHull)
+project(102_ConvexHull3)
 
 # glfw
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)

@@ -9,10 +9,9 @@
  * @file convex hull computation in 3D space
  */
 
-#ifndef DFM2_GEOCONVHULL3_H
-#define DFM2_GEOCONVHULL3_H
+#ifndef DFM2_GEO_CONVHULL3_H
+#define DFM2_GEO_CONVHULL3_H
 
-#include "delfem2/dfm2_inline.h"
 #include <cassert>
 #include <memory>
 #include <cmath>
@@ -20,6 +19,8 @@
 #include <vector>
 #include <climits>
 #include <stack>
+
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -31,8 +32,8 @@ namespace delfem2 {
  * @param[out] aTri triangle index
  * @param[in] aXYZ std::vector array of vector type
  */
-template<typename REAL, typename VEC, typename ALLOCATOR>
-void ConvexHull(
+template<typename VEC, typename ALLOCATOR>
+void ConvexHull3(
     std::vector<unsigned int> &aTri,
     const std::vector<VEC, ALLOCATOR> &aXYZ);
 
@@ -103,12 +104,13 @@ REAL Volume_Tet(
 }
 
 
-template<typename REAL, typename VEC, typename ALLOCATOR>
-void delfem2::ConvexHull(
+template<typename VEC, typename ALLOCATOR>
+void delfem2::ConvexHull3(
     std::vector<unsigned int> &aTri,
     const std::vector<VEC, ALLOCATOR> &aXYZ)
 {
   namespace lcl = ::delfem2::convhull3;
+  using REAL = typename VEC::Scalar;
   std::vector<int> aBflg(aXYZ.size(), -1);
   aTri.reserve(aXYZ.size() * 6);
   aTri = {
@@ -331,4 +333,4 @@ void delfem2::ConvexHull(
 }
 
 
-#endif // VEC3_H
+#endif // DFM2_GEO_CONVHULL3_H

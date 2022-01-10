@@ -19,7 +19,7 @@ add_subdirectory(000_OpenWindowWithGLFW)
 # basic funcs
 add_subdirectory(100_ViewNavigationIn3D)
 add_subdirectory(101_SubdivCatmull)
-add_subdirectory(102_ConvexHull)
+add_subdirectory(102_ConvexHull3)
 add_subdirectory(103_Noise2)
 add_subdirectory(104_CageDef3Mvc)
 add_subdirectory(105_MeshSlices)

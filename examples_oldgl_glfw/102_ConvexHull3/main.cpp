@@ -16,7 +16,7 @@
 
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/geoconvhull3.h"
+#include "delfem2/geo_convhull3.h"
 #include "delfem2/vec3.h"
 
 namespace dfm2 = delfem2;
@@ -54,7 +54,7 @@ int main() {
         p.y = dist_m1p1(rngeng);
         p.z = dist_m1p1(rngeng);
       }
-      delfem2::ConvexHull<double>(tri_vtx, vtx_xyz);
+      delfem2::ConvexHull3(tri_vtx, vtx_xyz);
       time_last_update = time_now;
     }
 

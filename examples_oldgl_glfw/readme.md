@@ -36,8 +36,8 @@ cmake --build .
 ### [101_SubdivCatmull](101_SubdivCatmull)
 <img src="101_SubdivCatmull/thumbnail.png" width=200px>
 
-### [102_ConvexHull](102_ConvexHull)
-<img src="102_ConvexHull/thumbnail.png" width=200px>
+### [102_ConvexHull3](102_ConvexHull3)
+<img src="102_ConvexHull3/thumbnail.png" width=200px>
 
 ### [103_Noise2d](103_Noise2)
 <img src="103_Noise2/thumbnail.png" width=200px>
