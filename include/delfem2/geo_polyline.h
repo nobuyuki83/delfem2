@@ -134,6 +134,7 @@ VEC Sample_Polyline(
     const std::vector<VEC> &polyline,
     typename VEC::Scalar param) {
   using SCALAR = typename VEC::Scalar;
+  assert(!polyline.empty());
   if (polyline.empty()) { return VEC(0, 0); }
   if (param < 0) { return polyline[0]; }
   if (param > static_cast<SCALAR>(polyline.size())) {
@@ -151,6 +152,7 @@ VEC Tangent_Polyline(
     typename VEC::Scalar param) {
   using SCALAR = typename VEC::Scalar;
   const size_t np = polyline.size();
+  assert(np>=2);
   if (np < 2) { return VEC(0, 0); }
   if (param <= 0) { return polyline[1] - polyline[0]; }
   if (param >= static_cast<SCALAR>(np)) {
