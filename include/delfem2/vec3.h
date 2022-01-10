@@ -68,10 +68,6 @@ DFM2_INLINE void Add3(
     REAL vo[3],
     const REAL vi[3]);
 
-// above: functions general for any dimensions
-// ------------------------------------------------
-// below: functions specific to 3 dimension
-
 template<typename T0, typename T1, typename T2>
 void Cross3(
     T0 r[3],
@@ -96,14 +92,14 @@ void UnitNormalAreaTri3(
     REAL n[3], REAL &a,
     const REAL v1[3], const REAL v2[3], const REAL v3[3]);
 
-// --------------------------------
-
 DFM2_INLINE void GetVertical2Vector3D(
     const double vec_n[3],
     double vec_x[3],
     double vec_y[3]);
 
+// above: no dependency
 // -------------------------------------------------------------
+// below: definition of CVec3
 
 template<typename T>
 class CVec3;
@@ -360,7 +356,10 @@ class CVec3 {
 using CVec3d = CVec3<double>;
 using CVec3f = CVec3<float>;
 
-// ------------------------------
+
+// above: definition of CVec3
+// -----------------------------------------
+// below: functions using CVec3 (todo: move to geo_vec3.h?)
 
 template<typename T>
 T Dot(const CVec3<T> &arg1, const CVec3<T> &arg2);
@@ -450,9 +449,6 @@ void GetVertical2Vector(
 
 template<typename T>
 void Cross(CVec3<T> &lhs, const CVec3<T> &v1, const CVec3<T> &v2);
-
-template<typename T>
-T Area_Tri(const CVec3<T> &v1, const CVec3<T> &v2, const CVec3<T> &v3);
 
 template<typename T>
 T SquareTriArea(const CVec3<T> &v1, const CVec3<T> &v2, const CVec3<T> &v3);
@@ -550,14 +546,14 @@ CVec3<T> RandGaussVector();
 // TODO: consider making this function general to Eigen::Vector3x
 //  using template and moving this functin to "geo_vec3.h"
 template<typename REAL>
-DFM2_INLINE std::array<REAL,9> Mat3_MinimumRotation(
+DFM2_INLINE std::array<REAL, 9> Mat3_MinimumRotation(
     const CVec3<REAL> &V,
     const CVec3<REAL> &v);
 
 // TODO: consider making this function general to Eigen::Vector3x
 //  using template and moving this functin to "geo_vec3.h"
-template <typename REAL>
-DFM2_INLINE std::array<REAL,9> Mat3_ParallelTransport(
+template<typename REAL>
+DFM2_INLINE std::array<REAL, 9> Mat3_ParallelTransport(
     const CVec3<REAL> &p0,
     const CVec3<REAL> &p1,
     const CVec3<REAL> &q0,
@@ -566,48 +562,64 @@ DFM2_INLINE std::array<REAL,9> Mat3_ParallelTransport(
 // ----------------------------------------------------------
 // here starts std::vector<CVector3>
 
-template<typename T>
-double Volume_Tet(
-    int iv1,
-    int iv2,
-    int iv3,
-    int iv4,
-    const std::vector<CVec3<T> > &aPoint);
 
-template<typename T>
-double Area_Tri(
-    int iv1,
-    int iv2,
-    int iv3,
-    const std::vector<CVec3<T> > &aPoint);
+template<typename VEC>
+std::ostream &operator<<(
+    std::ostream &output,
+    const std::vector<VEC> &aV) {
+  output << aV.size() << std::endl;
+  for (unsigned int iv = 0; iv < aV.size(); ++iv) {
+    output << "  " << iv << "-->" << aV[iv][0] << " " << aV[iv][1] << " " << aV[iv][2] << std::endl;
+  }
+  return output;
+}
 
-template<typename T>
-CVec3<T> CG_Tri3(
-    unsigned int itri,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<T> &aXYZ) {
-  const unsigned int i0 = aTri[itri * 3 + 0];
-  const unsigned int i1 = aTri[itri * 3 + 1];
-  const unsigned int i2 = aTri[itri * 3 + 2];
-  CVec3<T> p;
-  p.p[0] = (aXYZ[i0 * 3 + 0] + aXYZ[i1 * 3 + 0] + aXYZ[i2 * 3 + 0]) / 3.0;
-  p.p[1] = (aXYZ[i0 * 3 + 1] + aXYZ[i1 * 3 + 1] + aXYZ[i2 * 3 + 1]) / 3.0;
-  p.p[2] = (aXYZ[i0 * 3 + 2] + aXYZ[i1 * 3 + 2] + aXYZ[i2 * 3 + 2]) / 3.0;
-  return p;
+template<typename VEC>
+std::istream &operator>>(std::istream &input, std::vector<VEC> &aV) {
+  int nV;
+  input >> nV;
+  aV.resize(nV);
+  for (int iv = 0; iv < nV; iv++) {
+    input >> aV[iv][0] >> aV[iv][1] >> aV[iv][2];
+  }
+  return input;
 }
 
 template<typename T>
-inline CVec3<T> Normal_Tri3(
+std::array<T, 3> CG_Tri3(
     unsigned int itri,
     const std::vector<unsigned int> &aTri,
     const std::vector<T> &aXYZ) {
   const unsigned int i0 = aTri[itri * 3 + 0];
   const unsigned int i1 = aTri[itri * 3 + 1];
   const unsigned int i2 = aTri[itri * 3 + 2];
-  const CVec3<T> p0(aXYZ[i0 * 3 + 0], aXYZ[i0 * 3 + 1], aXYZ[i0 * 3 + 2]);
-  const CVec3<T> p1(aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]);
-  const CVec3<T> p2(aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]);
-  return (p1 - p0).cross(p2 - p0);
+  return {
+      (aXYZ[i0 * 3 + 0] + aXYZ[i1 * 3 + 0] + aXYZ[i2 * 3 + 0]) / 3.0,
+      (aXYZ[i0 * 3 + 1] + aXYZ[i1 * 3 + 1] + aXYZ[i2 * 3 + 1]) / 3.0,
+      (aXYZ[i0 * 3 + 2] + aXYZ[i1 * 3 + 2] + aXYZ[i2 * 3 + 2]) / 3.0};
+}
+
+template<typename T>
+std::array<T, 3> Normal_Tri3(
+    unsigned int itri,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<T> &aXYZ) {
+  const unsigned int i0 = aTri[itri * 3 + 0];
+  const unsigned int i1 = aTri[itri * 3 + 1];
+  const unsigned int i2 = aTri[itri * 3 + 2];
+  const T p01[3] = {
+      aXYZ[i1 * 3 + 0] - aXYZ[i0 * 3 + 0],
+      aXYZ[i1 * 3 + 1] - aXYZ[i0 * 3 + 1],
+      aXYZ[i1 * 3 + 2] - aXYZ[i0 * 3 + 2]
+  };
+  const T p02[3] = {
+      aXYZ[i2 * 3 + 0] - aXYZ[i0 * 3 + 0],
+      aXYZ[i2 * 3 + 1] - aXYZ[i0 * 3 + 1],
+      aXYZ[i2 * 3 + 2] - aXYZ[i0 * 3 + 2]
+  };
+  std::array<T, 3> ret;
+  Cross3(ret.data(), p01, p02);
+  return ret;
 }
 
 } // namespace delfem2

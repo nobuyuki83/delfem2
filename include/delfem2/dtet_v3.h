@@ -18,6 +18,7 @@
 #include "delfem2/geosolidelm_v3.h"
 #include "delfem2/geodelaunay3_v3.h"
 #include "delfem2/vec3.h"
+#include "delfem2/geo_tri.h"
 
 namespace delfem2 {
 
@@ -28,132 +29,132 @@ const double ILL_CRT = 1.0e+20;
 外からみて半時計周りになるように番号が並べられている．
 */
 const int noelTetFace[4][3] = {
-	{ 1, 2, 3 },
-	{ 0, 3, 2 },
-	{ 0, 1, 3 },
-	{ 0, 2, 1 },
+    {1, 2, 3},
+    {0, 3, 2},
+    {0, 1, 3},
+    {0, 2, 1},
 };
 
 //! 四面体の隣接関係
 static const unsigned int tetRel[12][4] = {
-	{ 0, 1, 3, 2 }, //  0
-	{ 0, 3, 2, 1 }, //  1 
-	{ 0, 2, 1, 3 }, //  2
+    {0, 1, 3, 2}, //  0
+    {0, 3, 2, 1}, //  1
+    {0, 2, 1, 3}, //  2
 
-	{ 1, 0, 2, 3 }, //  3
-	{ 1, 2, 3, 0 }, //  4
-	{ 1, 3, 0, 2 }, //  5
+    {1, 0, 2, 3}, //  3
+    {1, 2, 3, 0}, //  4
+    {1, 3, 0, 2}, //  5
 
-	{ 2, 0, 3, 1 }, //  6
-	{ 2, 3, 1, 0 }, //  7
-	{ 2, 1, 0, 3 }, //  8
+    {2, 0, 3, 1}, //  6
+    {2, 3, 1, 0}, //  7
+    {2, 1, 0, 3}, //  8
 
-	{ 3, 0, 1, 2 }, //  9
-	{ 3, 1, 2, 0 }, // 10
-	{ 3, 2, 0, 1 }, // 11
+    {3, 0, 1, 2}, //  9
+    {3, 1, 2, 0}, // 10
+    {3, 2, 0, 1}, // 11
 };
 
 //! 四面体の隣接関係の逆
 const unsigned int invTetRel[12] = {
-	 0, //  0
-	 1, //  1
-	 2, //  2
-	 3, //  3
-	 9, //  4
-	 6, //  5
-	 5, //  6 
-	11, //  7
-	 8, //  8
-	 4, //  9
-	10, // 10
-	 7, // 11
+    0, //  0
+    1, //  1
+    2, //  2
+    3, //  3
+    9, //  4
+    6, //  5
+    5, //  6
+    11, //  7
+    8, //  8
+    4, //  9
+    10, // 10
+    7, // 11
 };
 
 //! 頂点０の対応関係aと頂点１の対応関係bにおいてa*4+bを引数として隣接関係を得る配列
 const int noel2Rel[16] = {
-	 -1, //  0 00
-	  0, //  1 01
-	  2, //  2 02
-	  1, //  3 03
-	  3, //  4 10
-	 -1, //  5 11
-	  4, //  6 12
-	  5, //  7 13
-	  6, //  8 20
-	  8, //  9 21
-	 -1, // 10 22
-	  7, // 11 23
-	  9, // 12 30
-	 10, // 13 31
-	 11, // 14 32
-	 -1, // 15 33
+    -1, //  0 00
+    0, //  1 01
+    2, //  2 02
+    1, //  3 03
+    3, //  4 10
+    -1, //  5 11
+    4, //  6 12
+    5, //  7 13
+    6, //  8 20
+    8, //  9 21
+    -1, // 10 22
+    7, // 11 23
+    9, // 12 30
+    10, // 13 31
+    11, // 14 32
+    -1, // 15 33
 };
 
 //! 四面体中の無向辺の数
 const unsigned int nSEdgeTet = 6;
 //! 四面体中の無向辺の頂点(辞書式に並んでいる)
 const unsigned int sEdge2Noel[6][2] = {
-	{ 0, 1 },
-	{ 0, 2 },
-	{ 0, 3 },
-	{ 1, 2 },
-	{ 1, 3 },
-	{ 2, 3 }
+    {0, 1},
+    {0, 2},
+    {0, 3},
+    {1, 2},
+    {1, 3},
+    {2, 3}
 };
 //! 四面体の無向辺の両側の面番号
 const unsigned int sEdge2FaTet[6][2] = {
-	{ 3, 2 },
-	{ 1, 3 },
-	{ 2, 1 },
-	{ 3, 0 },
-	{ 0, 2 },
-	{ 1, 0 }
+    {3, 2},
+    {1, 3},
+    {2, 1},
+    {3, 0},
+    {0, 2},
+    {1, 0}
 };
 
 //! 四面体中の有向辺の数
 const unsigned int nDEdgeTet = 12;
 //! 四面体中の有向辺の頂点
 const unsigned int dEdge2Noel[12][2] = {
-	{ 0, 1 },	//  0 
-	{ 0, 2 },	//  1
-	{ 0, 3 },	//  2
-	{ 1, 0 },	//  3
-	{ 1, 2 },	//  4
-	{ 1, 3 },	//  5
-	{ 2, 0 },	//  6
-	{ 2, 1 },	//  7
-	{ 2, 3 },	//  8
-	{ 3, 0 },	//  9
-	{ 3, 1 },	// 10
-	{ 3, 2 },	// 11
+    {0, 1},    //  0
+    {0, 2},    //  1
+    {0, 3},    //  2
+    {1, 0},    //  3
+    {1, 2},    //  4
+    {1, 3},    //  5
+    {2, 0},    //  6
+    {2, 1},    //  7
+    {2, 3},    //  8
+    {3, 0},    //  9
+    {3, 1},    // 10
+    {3, 2},    // 11
 };
 //! 四面体中の２頂点abを結ぶ有向辺の番号をa*4+bから得る配列
 const int noel2DEdge[16] = {
-	 -1, //  0 00
-	  0, //  1 01	
-	  1, //  2 02
-	  2, //  3 03
-	  3, //  4 10
-	 -1, //  5 11
-	  4, //  6 12
-	  5, //  7 13
-	  6, //  8 20
-	  7, //  9 21
-	 -1, // 10 22
-	  8, // 11 23
-	  9, // 12 30
-	 10, // 13 31
-	 11, // 14 32
-	 -1, // 15 33
+    -1, //  0 00
+    0, //  1 01
+    1, //  2 02
+    2, //  3 03
+    3, //  4 10
+    -1, //  5 11
+    4, //  6 12
+    5, //  7 13
+    6, //  8 20
+    7, //  9 21
+    -1, // 10 22
+    8, // 11 23
+    9, // 12 30
+    10, // 13 31
+    11, // 14 32
+    -1, // 15 33
 };
 //! 無向辺から有向辺へのマッピング配列
 const unsigned int sEdge2DEdge[6] = {
-	0,
-	1,
-	2,
-	4,
-	5,
-	8
+    0,
+    1,
+    2,
+    4,
+    5,
+    8
 };
 
 ////////////////////////////////////////////////////////////////
@@ -162,12 +163,12 @@ const unsigned int sEdge2DEdge[6] = {
 外からみて半時計周りになるように番号が並べられている．
 */
 const unsigned int noelHexFace[6][4] = {
-	{ 0, 3, 2, 1 },
-	{ 0, 1, 5, 4 },
-	{ 1, 2, 6, 5 }, 
-	{ 2, 3, 7, 6 },
-	{ 3, 0, 4, 7 },
-	{ 4, 5, 6, 7 }
+    {0, 3, 2, 1},
+    {0, 1, 5, 4},
+    {1, 2, 6, 5},
+    {2, 3, 7, 6},
+    {3, 0, 4, 7},
+    {4, 5, 6, 7}
 };
 
 // -------------------------------------------
@@ -175,42 +176,42 @@ const unsigned int noelHexFace[6][4] = {
 /**
  * @brief element around edge
  */
-class ElemAroundEdge{
-public:
-	ElemAroundEdge(){
-		e.reserve(32);
-		n.reserve(32);
-	}
-	void clear(){
-		e.clear();
-		n.clear();
-	}
+class ElemAroundEdge {
+ public:
+  ElemAroundEdge() {
+    e.reserve(32);
+    n.reserve(32);
+  }
+  void clear() {
+    e.clear();
+    n.clear();
+  }
   int size() const {
-		return (int)e.size();
-	}
-public:
-  std::vector< std::pair<unsigned int,unsigned int> > e;
-  std::vector< unsigned int > n;
+    return (int) e.size();
+  }
+ public:
+  std::vector<std::pair<unsigned int, unsigned int> > e;
+  std::vector<unsigned int> n;
   unsigned int nod;
   unsigned int nou;
   bool is_inner;
-  
+
 };
 
 /**
  * @brief point around element
  */
-class ElemAroundPoint{
-public:
-	std::map<int,int> e;
-	bool is_inner;
-public:
-	void clear(){
-		e.clear();
-	}
-	int size() const {
-		return (int)e.size();
-	}
+class ElemAroundPoint {
+ public:
+  std::map<int, int> e;
+  bool is_inner;
+ public:
+  void clear() {
+    e.clear();
+  }
+  int size() const {
+    return (int) e.size();
+  }
 };
 
 // -------------------------
@@ -267,30 +268,30 @@ bool operator < (const CFlipCrtPrePosPtn& lhs, const CFlipCrtPrePosPtn& rhs);
 /**
  * @brief 3D point class for dynamic tetrahedra mesh
  */
-class CDynPointTet{
-public:
-	CDynPointTet(){}
-	CDynPointTet( const CDynPointTet& rhs ) 
-        : e(rhs.e), poel(rhs.poel), p(rhs.p)//,old_p(rhs.old_p){}
+class CDynPointTet {
+ public:
+  CDynPointTet() {}
+  CDynPointTet(const CDynPointTet &rhs)
+      : e(rhs.e), poel(rhs.poel), p(rhs.p)//,old_p(rhs.old_p){}
   {}
-	CDynPointTet(double x, double y, double z) 
-        : e(UINT_MAX), poel(0), p(x,y,z)//, old_p(-1){}
+  CDynPointTet(double x, double y, double z)
+      : e(UINT_MAX), poel(0), p(x, y, z)//, old_p(-1){}
   {}
-	bool operator < (const CDynPointTet& rhs){
-		if( fabs( this->p.x - rhs.p.x ) > 1.0e-5 ){
-			return this->p.x < rhs.p.x;
-		}
-		if( fabs( this->p.y - rhs.p.y ) > 1.0e-5 ){
-			return this->p.y < rhs.p.y;
-		}
-		if( fabs( this->p.z - rhs.p.z ) > 1.0e-5 ){
-			return this->p.z < rhs.p.z;
-		}
-		return false;
-	}
-public:
-	unsigned int e;		//< element nubmer
-	unsigned int poel;	// element point number
+  bool operator<(const CDynPointTet &rhs) {
+    if (fabs(this->p.x - rhs.p.x) > 1.0e-5) {
+      return this->p.x < rhs.p.x;
+    }
+    if (fabs(this->p.y - rhs.p.y) > 1.0e-5) {
+      return this->p.y < rhs.p.y;
+    }
+    if (fabs(this->p.z - rhs.p.z) > 1.0e-5) {
+      return this->p.z < rhs.p.z;
+    }
+    return false;
+  }
+ public:
+  unsigned int e;        //< element nubmer
+  unsigned int poel;    // element point number
   //
   delfem2::CVec3d p;
 //  int old_p;	//!< 変更前の節点番号
@@ -299,30 +300,28 @@ public:
 /**
  * @brief class of dynamic tetrahedra
  */
-class CDynTet
-{
-public:
+class CDynTet {
+ public:
   inline bool isActive() const { return v[0] != UINT_MAX; }
-public:
+ public:
   /**
    * @brief index of vertex
    */
-	unsigned int v[4];
+  unsigned int v[4];
   /**
    * @brief ndex of adjacent element
    */
-	unsigned int s[4];
+  unsigned int s[4];
 };
 
-
-int GetRelationshipTet(const unsigned int* t0,
-                       const unsigned int* t1);
+int GetRelationshipTet(const unsigned int *t0,
+                       const unsigned int *t1);
 
 bool IsInsideCircumSphere(
-    const delfem2::CVec3d& p,
+    const delfem2::CVec3d &p,
     const delfem2::CDynTet t,
-    const delfem2::CVec3d& c,
-    const std::vector<CDynPointTet>& aPo3D);
+    const delfem2::CVec3d &c,
+    const std::vector<CDynPointTet> &aPo3D);
 
 /*
 //! ６面体要素構造体
@@ -365,11 +364,11 @@ struct SQuad3D{
 
 //! 四面体分割の整合性をチェック
 bool CheckTet(
-    const std::vector<CDynTet>& tet,
-    const std::vector<CDynPointTet>& vertex);
+    const std::vector<CDynTet> &tet,
+    const std::vector<CDynPointTet> &vertex);
 
 //! 四面体分割の整合性をチェック
-bool CheckTet(const std::vector<CDynTet>& tet);
+bool CheckTet(const std::vector<CDynTet> &tet);
 
 //! ３角形分割の整合性をチェック
 //bool CheckTri(const std::vector<STri3D>& tri);
@@ -379,16 +378,16 @@ bool CheckTet(const std::vector<CDynTet>& tet);
 
 //! 四面体分割の辺のリストを得る
 bool MakeEdgeTet
- (unsigned int& nedge,
-  unsigned int*& edge_ind,
-  unsigned int*& edge,
-  const std::vector<CDynTet>& tet,
-  const unsigned int nnode);
+    (unsigned int &nedge,
+     unsigned int *&edge_ind,
+     unsigned int *&edge,
+     const std::vector<CDynTet> &tet,
+     const unsigned int nnode);
 
 //! 各ノードを囲む四面体の１つを作る
 bool MakeOneTetSurNo
- (const std::vector<CDynTet>& tet,
-  std::vector<CDynPointTet>& point);
+    (const std::vector<CDynTet> &tet,
+     std::vector<CDynPointTet> &point);
 
 
 
@@ -466,7 +465,7 @@ bool MakeColorCodingBar( const std::vector<SBar> aBar,
 
 bool MakeColorCodingBar( const std::vector<SBar>& aBar,  const std::vector<CVector3>& aVec, 
 						  std::vector<int>& aColorBar, unsigned int& nColor);
-*/						  
+*/
 
 
 ////////////////////////////////////////////////////////////////
@@ -506,12 +505,12 @@ bool AddPointTet_Edge
  * @param tmp_buffer should be an array of -1. (if input values are all -1, then output values are -1)
  */
 void AddPointTetDelaunay(
-  unsigned int ip_ins,
-  unsigned int itet_ins,
-  std::vector<CDynPointTet>& aPo3D,
-  std::vector<CDynTet>& aSTet,
-  std::vector<CVec3d>& aCent,
-  std::vector<int>& tmp_buffer);
+    unsigned int ip_ins,
+    unsigned int itet_ins,
+    std::vector<CDynPointTet> &aPo3D,
+    std::vector<CDynTet> &aSTet,
+    std::vector<CVec3d> &aCent,
+    std::vector<int> &tmp_buffer);
 
 
 /*
@@ -550,10 +549,10 @@ bool GetEdgeDelCrt(const ElemAroundEdge& elared,
 
 //! 辺周りの要素を取得
 bool MakeElemAroundEdge
- ( ElemAroundEdge& elared,
-  const int itet0,
-  const int idedge0,
-  const std::vector<CDynTet>& tet );
+    (ElemAroundEdge &elared,
+     const int itet0,
+     const int idedge0,
+     const std::vector<CDynTet> &tet);
 
 /*
 double MaxCrtElemAroundPoint(const ElemAroundPoint& elarpo,
@@ -565,10 +564,10 @@ double MaxCrtElemAroundPoint(const ElemAroundPoint& elarpo,
  * @brief get list of tetrahedra around a point
  */
 bool MakeElemAroundPoint
- ( ElemAroundPoint& elarpo,
-  const unsigned int itet0,
-  const unsigned int inoel0,
-  const std::vector<CDynTet>& tet );
+    (ElemAroundPoint &elarpo,
+     const unsigned int itet0,
+     const unsigned int inoel0,
+     const std::vector<CDynTet> &tet);
 
 
 
@@ -657,136 +656,125 @@ inline double TetVolume(
     unsigned int iv2,
     unsigned int iv3,
     unsigned int iv4,
-    const std::vector<CDynPointTet>& point)
-{
-	return Volume_Tet( point[iv1].p, point[iv2].p, point[iv3].p, point[iv4].p );
+    const std::vector<CDynPointTet> &point) {
+  return Volume_Tet(point[iv1].p, point[iv2].p, point[iv3].p, point[iv4].p);
 }
 
 //! volume of tetrahedra
 inline double TetVolume
-(const CDynTet& tet,
- const std::vector<CDynPointTet>& node)
-{
-	return Volume_Tet(
-		node[ tet.v[0] ].p,
-		node[ tet.v[1] ].p, 
-		node[ tet.v[2] ].p, 
-		node[ tet.v[3] ].p );
+    (const CDynTet &tet,
+     const std::vector<CDynPointTet> &node) {
+  return Volume_Tet(
+      node[tet.v[0]].p,
+      node[tet.v[1]].p,
+      node[tet.v[2]].p,
+      node[tet.v[3]].p);
 }
 
 //! volume of tetrahedra
 inline double TetVolume
-(int ielem,
- const std::vector<CDynTet>& tet,
- const std::vector<CDynPointTet>& node)
-{
-	return TetVolume( tet[ielem], node );
+    (int ielem,
+     const std::vector<CDynTet> &tet,
+     const std::vector<CDynPointTet> &node) {
+  return TetVolume(tet[ielem], node);
 }
 
-////////////////////////////////////////////////
+// ----------------------------------------------------
 
 //! ３角形の面積
-inline double TriArea(const CDynTet& tet, 
-		const int iface, 
-		const std::vector<CDynPointTet>& node )
-{
-	return Area_Tri(
-        node[ tet.v[(int)noelTetFace[iface][0]] ].p,
-        node[ tet.v[(int)noelTetFace[iface][1]] ].p,
-        node[ tet.v[(int)noelTetFace[iface][2]] ].p );
+inline double TriArea(const CDynTet &tet,
+                      const int iface,
+                      const std::vector<CDynPointTet> &node) {
+  return Area_Tri3(
+      node[tet.v[(int) noelTetFace[iface][0]]].p,
+      node[tet.v[(int) noelTetFace[iface][1]]].p,
+      node[tet.v[(int) noelTetFace[iface][2]]].p);
 }
 
 //! ３角形の面積
 inline double TriArea(const int itet,
-		const int iface,
-		const std::vector<CDynTet>& tet,
-		const std::vector<CDynPointTet>& node )
-{
-	return TriArea(tet[itet],iface,node);
+                      const int iface,
+                      const std::vector<CDynTet> &tet,
+                      const std::vector<CDynPointTet> &node) {
+  return TriArea(tet[itet], iface, node);
 }
 
 // ----------------
 
 inline double SquareLongestEdgeLength(const int itet,
-		const std::vector<CDynPointTet>& node,
-		const std::vector<CDynTet>& tet )
-{
-	return SqareLongestEdgeLength(
-		node[tet[itet].v[0]].p,
-		node[tet[itet].v[1]].p,
-		node[tet[itet].v[2]].p,
-		node[tet[itet].v[3]].p );
+                                      const std::vector<CDynPointTet> &node,
+                                      const std::vector<CDynTet> &tet) {
+  return SqareLongestEdgeLength(
+      node[tet[itet].v[0]].p,
+      node[tet[itet].v[1]].p,
+      node[tet[itet].v[2]].p,
+      node[tet[itet].v[3]].p);
 }
 
 // -------------------------
 
 inline double LongestEdgeLength(const int itet,
-		const std::vector<CDynPointTet>& node,
-		const std::vector<CDynTet>& tet )
-{
-	return sqrt( SqareLongestEdgeLength(
-			node[tet[itet].v[0]].p,
-			node[tet[itet].v[1]].p,
-			node[tet[itet].v[2]].p,
-			node[tet[itet].v[3]].p ) );
+                                const std::vector<CDynPointTet> &node,
+                                const std::vector<CDynTet> &tet) {
+  return sqrt(SqareLongestEdgeLength(
+      node[tet[itet].v[0]].p,
+      node[tet[itet].v[1]].p,
+      node[tet[itet].v[2]].p,
+      node[tet[itet].v[3]].p));
 }
 
 // ------------------------
 
 inline double SquareShortestEdgeLength(const int itet,
-		const std::vector<CDynPointTet>& node,
-		const std::vector<CDynTet>& tet )
-{
-	return SqareShortestEdgeLength(
-		node[tet[itet].v[0]].p,
-		node[tet[itet].v[1]].p,
-		node[tet[itet].v[2]].p,
-		node[tet[itet].v[3]].p );
+                                       const std::vector<CDynPointTet> &node,
+                                       const std::vector<CDynTet> &tet) {
+  return SqareShortestEdgeLength(
+      node[tet[itet].v[0]].p,
+      node[tet[itet].v[1]].p,
+      node[tet[itet].v[2]].p,
+      node[tet[itet].v[3]].p);
 }
 
 // ------------------------
 
 inline double ShortestEdgeLength(const int itet,
-		const std::vector<CDynPointTet>& node,
-		const std::vector<CDynTet>& tet )
-{
-	return sqrt( SqareShortestEdgeLength(
-		node[tet[itet].v[0]].p,
-		node[tet[itet].v[1]].p,
-		node[tet[itet].v[2]].p,
-		node[tet[itet].v[3]].p ) );
+                                 const std::vector<CDynPointTet> &node,
+                                 const std::vector<CDynTet> &tet) {
+  return sqrt(SqareShortestEdgeLength(
+      node[tet[itet].v[0]].p,
+      node[tet[itet].v[1]].p,
+      node[tet[itet].v[2]].p,
+      node[tet[itet].v[3]].p));
 }
 
 // ------------------------
 
 //! 法線の取得(長さ１とは限らない)
 inline void Normal(
-		delfem2::CVec3d& vnorm,
-		const unsigned int itet0, const unsigned int iface0, 
-		const std::vector<CDynTet>& tet, const std::vector<CDynPointTet>& node)
-{
-	assert( itet0 < tet.size() );
-	assert( iface0 < 4 );
-	Normal(vnorm,
-         node[ tet[itet0].v[(int)noelTetFace[iface0][0] ] ].p,
-         node[ tet[itet0].v[(int)noelTetFace[iface0][1] ] ].p,
-         node[ tet[itet0].v[(int)noelTetFace[iface0][2] ] ].p );
+    delfem2::CVec3d &vnorm,
+    const unsigned int itet0, const unsigned int iface0,
+    const std::vector<CDynTet> &tet, const std::vector<CDynPointTet> &node) {
+  assert(itet0 < tet.size());
+  assert(iface0 < 4);
+  Normal(vnorm,
+         node[tet[itet0].v[(int) noelTetFace[iface0][0]]].p,
+         node[tet[itet0].v[(int) noelTetFace[iface0][1]]].p,
+         node[tet[itet0].v[(int) noelTetFace[iface0][2]]].p);
 }
 
 // ------------------------
 
 //! ３角形の単位法線
 inline void UnitNormal(
-		delfem2::CVec3d& vnorm,
-		const int itet0,
-		const int iface0,
-		const std::vector<CDynTet>& aTet,
-		const std::vector<CDynPointTet>& aPo )
-{
-	UnitNormal(vnorm,
-             aPo[ aTet[itet0].v[ (int)noelTetFace[iface0][0] ] ].p,
-             aPo[ aTet[itet0].v[ (int)noelTetFace[iface0][1] ] ].p,
-             aPo[ aTet[itet0].v[ (int)noelTetFace[iface0][2] ] ].p );
+    delfem2::CVec3d &vnorm,
+    const int itet0,
+    const int iface0,
+    const std::vector<CDynTet> &aTet,
+    const std::vector<CDynPointTet> &aPo) {
+  UnitNormal(vnorm,
+             aPo[aTet[itet0].v[(int) noelTetFace[iface0][0]]].p,
+             aPo[aTet[itet0].v[(int) noelTetFace[iface0][1]]].p,
+             aPo[aTet[itet0].v[(int) noelTetFace[iface0][2]]].p);
 }
 
 /*
@@ -808,51 +796,47 @@ inline void UnitNormal(
 
 //! ３角形の外周円
 inline double Circumradius(
-		const int itet0, 
-		const std::vector<CDynPointTet>& node,
-		const std::vector<CDynTet>& tet )
-{
-	return sqrt( SquareCircumradius(
-		node[ tet[itet0].v[0] ].p,
-		node[ tet[itet0].v[1] ].p,
-		node[ tet[itet0].v[2] ].p,
-		node[ tet[itet0].v[3] ].p) );
+    const int itet0,
+    const std::vector<CDynPointTet> &node,
+    const std::vector<CDynTet> &tet) {
+  return sqrt(SquareCircumradius(
+      node[tet[itet0].v[0]].p,
+      node[tet[itet0].v[1]].p,
+      node[tet[itet0].v[2]].p,
+      node[tet[itet0].v[3]].p));
 }
 
 
 
-////////////////////////////////////////////////
+// ---------------------------------
 
 inline double Criterion_Asp(
-		const delfem2::CVec3d& po0,
-		const delfem2::CVec3d& po1,
-		const delfem2::CVec3d& po2,
-		const delfem2::CVec3d& po3)
-{
-	double saface = Area_Tri( po1, po3, po2 )
-				+	Area_Tri( po0, po2, po3 )
-				+	Area_Tri( po0, po3, po1 )
-				+ Area_Tri( po0, po1, po2 );
-	double inscribed_radius = Volume_Tet(po0,po1,po2,po3) * 3.0 / saface;
-	double circum_radius = Circumradius(po0,po1,po2,po3);
-	return circum_radius / inscribed_radius;
+    const delfem2::CVec3d &po0,
+    const delfem2::CVec3d &po1,
+    const delfem2::CVec3d &po2,
+    const delfem2::CVec3d &po3) {
+  double saface = Area_Tri3(po1, po3, po2)
+      + Area_Tri3(po0, po2, po3)
+      + Area_Tri3(po0, po3, po1)
+      + Area_Tri3(po0, po1, po2);
+  double inscribed_radius = Volume_Tet(po0, po1, po2, po3) * 3.0 / saface;
+  double circum_radius = Circumradius(po0, po1, po2, po3);
+  return circum_radius / inscribed_radius;
 }
 
-inline double Criterion_Asp(const CDynTet& tet,
-		const std::vector<CDynPointTet>& node)
-{
-	return Criterion_Asp(
-		node[tet.v[0]].p,
-		node[tet.v[1]].p,
-		node[tet.v[2]].p,
-		node[tet.v[3]].p);
+inline double Criterion_Asp(const CDynTet &tet,
+                            const std::vector<CDynPointTet> &node) {
+  return Criterion_Asp(
+      node[tet.v[0]].p,
+      node[tet.v[1]].p,
+      node[tet.v[2]].p,
+      node[tet.v[3]].p);
 }
 
 inline double Criterion_Asp(int ielem,
-		const std::vector<CDynPointTet>& node,
-		const std::vector<CDynTet>& tet)
-{
-	return Criterion_Asp(tet[ielem],node);
+                            const std::vector<CDynPointTet> &node,
+                            const std::vector<CDynTet> &tet) {
+  return Criterion_Asp(tet[ielem], node);
 }
 
 ////////////////////////////////////////////////
@@ -914,45 +898,42 @@ v1, v2, v3の外接球の中でもっとも半径の大きな球(中心はv1,v2,
 @retval -1 入っていれば
 */
 inline int DetDelaunay
-(const delfem2::CVec3d& v1,
- const delfem2::CVec3d& v2,
- const delfem2::CVec3d& v3,
- const delfem2::CVec3d& v4)
-{
-	// ３角形v1,v2,v3の外接円の中心を求める。
-	const double dtmp1 = (v2.x-v3.x)*(v2.x-v3.x)+(v2.y-v3.y)*(v2.y-v3.y)+(v2.z-v3.z)*(v2.z-v3.z);
-	const double dtmp2 = (v3.x-v1.x)*(v3.x-v1.x)+(v3.y-v1.y)*(v3.y-v1.y)+(v3.z-v1.z)*(v3.z-v1.z);
-	const double dtmp3 = (v1.x-v2.x)*(v1.x-v2.x)+(v1.y-v2.y)*(v1.y-v2.y)+(v1.z-v2.z)*(v1.z-v2.z);
+    (const delfem2::CVec3d &v1,
+     const delfem2::CVec3d &v2,
+     const delfem2::CVec3d &v3,
+     const delfem2::CVec3d &v4) {
+  // ３角形v1,v2,v3の外接円の中心を求める。
+  const double dtmp1 = (v2.x - v3.x) * (v2.x - v3.x) + (v2.y - v3.y) * (v2.y - v3.y) + (v2.z - v3.z) * (v2.z - v3.z);
+  const double dtmp2 = (v3.x - v1.x) * (v3.x - v1.x) + (v3.y - v1.y) * (v3.y - v1.y) + (v3.z - v1.z) * (v3.z - v1.z);
+  const double dtmp3 = (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y) + (v1.z - v2.z) * (v1.z - v2.z);
 
-	double qarea = SquareTriArea(v1,v2,v3);
-	const double etmp1 = dtmp1*(dtmp2+dtmp3-dtmp1) / (16.0 * qarea );
-	const double etmp2 = dtmp2*(dtmp3+dtmp1-dtmp2) / (16.0 * qarea );
-	const double etmp3 = dtmp3*(dtmp1+dtmp2-dtmp3) / (16.0 * qarea );
+  double qarea = SquareTriArea(v1, v2, v3);
+  const double etmp1 = dtmp1 * (dtmp2 + dtmp3 - dtmp1) / (16.0 * qarea);
+  const double etmp2 = dtmp2 * (dtmp3 + dtmp1 - dtmp2) / (16.0 * qarea);
+  const double etmp3 = dtmp3 * (dtmp1 + dtmp2 - dtmp3) / (16.0 * qarea);
 
-	delfem2::CVec3d out_center(
-		etmp1*v1.x + etmp2*v2.x + etmp3*v3.x,
-		etmp1*v1.y + etmp2*v2.y + etmp3*v3.y,
-		etmp1*v1.z + etmp2*v2.z + etmp3*v3.z );
-	
-	const double qradius = SquareDistance( out_center, v1 );
-	assert( fabs( qradius - SquareDistance(out_center,v2) ) < 1.0e-10 );
-	assert( fabs( qradius - SquareDistance(out_center,v3) ) < 1.0e-10 );
-	assert( fabs( Height(v1,v2,v3,out_center) ) < 1.0e-10 );
+  delfem2::CVec3d out_center(
+      etmp1 * v1.x + etmp2 * v2.x + etmp3 * v3.x,
+      etmp1 * v1.y + etmp2 * v2.y + etmp3 * v3.y,
+      etmp1 * v1.z + etmp2 * v2.z + etmp3 * v3.z);
 
-	const double distance = SquareDistance( out_center, v4 );
-	if( distance > qradius + 1.0e-6 ){
-		return 1;
-	}
-	else{
-		if( distance < qradius - 1.0e-6 ){
-			return -1;
-		}
-		else{
-			return 0;
-		}
-	}
-	assert(0);
-	return -1;
+  const double qradius = SquareDistance(out_center, v1);
+  assert(fabs(qradius - SquareDistance(out_center, v2)) < 1.0e-10);
+  assert(fabs(qradius - SquareDistance(out_center, v3)) < 1.0e-10);
+  assert(fabs(Height(v1, v2, v3, out_center)) < 1.0e-10);
+
+  const double distance = SquareDistance(out_center, v4);
+  if (distance > qradius + 1.0e-6) {
+    return 1;
+  } else {
+    if (distance < qradius - 1.0e-6) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+  assert(0);
+  return -1;
 }
 
 /*! 
@@ -967,39 +948,41 @@ v1, v2, v3，v4の外接球の中にv5が含まれているかどうか調べる
 @retval <0 入っていれば
 */
 inline double DetDelaunay3D
-(const delfem2::CVec3d& v1,
- const delfem2::CVec3d& v2,
- const delfem2::CVec3d& v3,
- const delfem2::CVec3d& v4,
- const delfem2::CVec3d& v5)
-{
-	const double a[12] = {
-		v1.x-v5.x,	//  0
-		v2.x-v5.x,	//  1
-		v3.x-v5.x,	//  2
-		v4.x-v5.x,	//  3
-		v1.y-v5.y,	//  4
-		v2.y-v5.y,	//  5
-		v3.y-v5.y,	//  6
-		v4.y-v5.y,	//  7
-		v1.z-v5.z,	//  8
-		v2.z-v5.z,	//  9
-		v3.z-v5.z,	// 10
-		v4.z-v5.z,	// 11
-	};
-	const double b[6] = {
-		a[ 6]*a[11]-a[ 7]*a[10],	// 0
-		a[ 5]*a[11]-a[ 7]*a[ 9],	// 1
-		a[ 5]*a[10]-a[ 6]*a[ 9],	// 2
-		a[ 7]*a[ 8]-a[ 4]*a[11],	// 3
-		a[ 6]*a[ 8]-a[ 4]*a[10],	// 4
-		a[ 4]*a[ 9]-a[ 5]*a[ 8],	// 5 
-	};
-	return
-      -( a[0]*(v1.x+v5.x)+a[4]*(v1.y+v5.y)+a[ 8]*(v1.z+v5.z) )*( a[ 1]*b[0]-a[ 2]*b[1]+a[ 3]*b[2] )
-			+( a[1]*(v2.x+v5.x)+a[5]*(v2.y+v5.y)+a[ 9]*(v2.z+v5.z) )*( a[ 0]*b[0]+a[ 2]*b[3]-a[ 3]*b[4] )
-			-( a[2]*(v3.x+v5.x)+a[6]*(v3.y+v5.y)+a[10]*(v3.z+v5.z) )*( a[ 0]*b[1]+a[ 1]*b[3]+a[ 3]*b[5] )
-			+( a[3]*(v4.x+v5.x)+a[7]*(v4.y+v5.y)+a[11]*(v4.z+v5.z) )*( a[ 0]*b[2]+a[ 1]*b[4]+a[ 2]*b[5] );
+    (const delfem2::CVec3d &v1,
+     const delfem2::CVec3d &v2,
+     const delfem2::CVec3d &v3,
+     const delfem2::CVec3d &v4,
+     const delfem2::CVec3d &v5) {
+  const double a[12] = {
+      v1.x - v5.x,    //  0
+      v2.x - v5.x,    //  1
+      v3.x - v5.x,    //  2
+      v4.x - v5.x,    //  3
+      v1.y - v5.y,    //  4
+      v2.y - v5.y,    //  5
+      v3.y - v5.y,    //  6
+      v4.y - v5.y,    //  7
+      v1.z - v5.z,    //  8
+      v2.z - v5.z,    //  9
+      v3.z - v5.z,    // 10
+      v4.z - v5.z,    // 11
+  };
+  const double b[6] = {
+      a[6] * a[11] - a[7] * a[10],    // 0
+      a[5] * a[11] - a[7] * a[9],    // 1
+      a[5] * a[10] - a[6] * a[9],    // 2
+      a[7] * a[8] - a[4] * a[11],    // 3
+      a[6] * a[8] - a[4] * a[10],    // 4
+      a[4] * a[9] - a[5] * a[8],    // 5
+  };
+  return
+      -(a[0] * (v1.x + v5.x) + a[4] * (v1.y + v5.y) + a[8] * (v1.z + v5.z)) * (a[1] * b[0] - a[2] * b[1] + a[3] * b[2])
+          + (a[1] * (v2.x + v5.x) + a[5] * (v2.y + v5.y) + a[9] * (v2.z + v5.z))
+              * (a[0] * b[0] + a[2] * b[3] - a[3] * b[4])
+          - (a[2] * (v3.x + v5.x) + a[6] * (v3.y + v5.y) + a[10] * (v3.z + v5.z))
+              * (a[0] * b[1] + a[1] * b[3] + a[3] * b[5])
+          + (a[3] * (v4.x + v5.x) + a[7] * (v4.y + v5.y) + a[11] * (v4.z + v5.z))
+              * (a[0] * b[2] + a[1] * b[4] + a[2] * b[5]);
 }
 
 /*! 
@@ -1015,10 +998,9 @@ v1, v2, v3，v4の外接球の中にv5が含まれているかどうか調べる
 @retval <0 入っていれば
 */
 inline double DetDelaunay3D
-( const int v1, const int v2, const int v3, const int v4, const int v5,
- const std::vector<delfem2::CVec3d>& node )
-{
-	return DetDelaunay3D(node[v1],node[v2],node[v3],node[v4],node[v5]);
+    (const int v1, const int v2, const int v3, const int v4, const int v5,
+     const std::vector<delfem2::CVec3d> &node) {
+  return DetDelaunay3D(node[v1], node[v2], node[v3], node[v4], node[v5]);
 }
 
 } // namespace delfem2

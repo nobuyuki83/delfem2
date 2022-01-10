@@ -6,6 +6,7 @@
  */
 
 #include "delfem2/geodelaunay3_v3.h"
+#include "delfem2/geo_tri.h"
 
 #include <cmath>
 #include <stack>
@@ -152,7 +153,7 @@ int delfem2::DetDelaunay(
     const CVec3<T>& p2,
     const CVec3<T>& p3)
 {
-  const double area = Area_Tri(p0, p1, p2);
+  const double area = Area_Tri3(p0, p1, p2);
   if (fabs(area) < 1.0e-10){
     return 3;
   }

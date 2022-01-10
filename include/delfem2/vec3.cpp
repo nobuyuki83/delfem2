@@ -203,8 +203,6 @@ template void delfem2::Add3(double vo[3], const double vi[3]);
 
 // ---------------------------------
 
-// ---------------------------------
-
 template<typename T0, typename T1, typename T2>
 void delfem2::Cross3(
   T0 r[3],
@@ -348,7 +346,48 @@ DFM2_INLINE void delfem2::GetVertical2Vector3D(
   }
 }
 
-// ---------------------------------------------------------------------------
+
+template<typename REAL>
+void delfem2::AverageTwo3(
+    REAL po[3],
+    const REAL p0[3], const REAL p1[3]) {
+  constexpr REAL half = static_cast<REAL>(0.5);
+  po[0] = (p0[0] + p1[0]) * half;
+  po[1] = (p0[1] + p1[1]) * half;
+  po[2] = (p0[2] + p1[2]) * half;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::AverageTwo3(float po[3], const float p0[3], const float p1[3]);
+template void delfem2::AverageTwo3(double po[3], const double p0[3], const double p1[3]);
+#endif
+
+// ----------------------------
+
+template<typename REAL>
+void delfem2::AverageFour3(
+    REAL po[3],
+    const REAL p0[3],
+    const REAL p1[3],
+    const REAL p2[3],
+    const REAL p3[3]) {
+  constexpr REAL quarter(0.25);
+  po[0] = (p0[0] + p1[0] + p2[0] + p3[0]) * quarter;
+  po[1] = (p0[1] + p1[1] + p2[1] + p3[1]) * quarter;
+  po[2] = (p0[2] + p1[2] + p2[2] + p3[2]) * quarter;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::AverageFour3(
+    float po[3],
+    const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
+template void delfem2::AverageFour3(
+    double po[3],
+    const double p0[3], const double p1[3], const double p2[3], const double p3[3]);
+#endif
+
+
+// above: without CVec3 (move to "geo_vec3_raw.cpp"?)
+// ======================================================
+// below: with CVec3
 
 template<typename T>
 T delfem2::Dot(const CVec3<T> &arg1, const CVec3<T> &arg2) {
@@ -373,48 +412,7 @@ template delfem2::CVec3f delfem2::Cross(const CVec3f& arg1, const CVec3f& arg2);
 template delfem2::CVec3d delfem2::Cross(const CVec3d& arg1, const CVec3d& arg2);
 #endif
 
-// ----------------------------
-
-template<typename REAL>
-void delfem2::AverageTwo3(
-  REAL po[3],
-  const REAL p0[3], const REAL p1[3]) {
-  constexpr REAL half = static_cast<REAL>(0.5);
-  po[0] = (p0[0] + p1[0]) * half;
-  po[1] = (p0[1] + p1[1]) * half;
-  po[2] = (p0[2] + p1[2]) * half;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::AverageTwo3(float po[3], const float p0[3], const float p1[3]);
-template void delfem2::AverageTwo3(double po[3], const double p0[3], const double p1[3]);
-#endif
-
-// ----------------------------
-
-template<typename REAL>
-void delfem2::AverageFour3(
-  REAL po[3],
-  const REAL p0[3],
-  const REAL p1[3],
-  const REAL p2[3],
-  const REAL p3[3]) {
-  constexpr REAL quarter(0.25);
-  po[0] = (p0[0] + p1[0] + p2[0] + p3[0]) * quarter;
-  po[1] = (p0[1] + p1[1] + p2[1] + p3[1]) * quarter;
-  po[2] = (p0[2] + p1[2] + p2[2] + p3[2]) * quarter;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::AverageFour3(float po[3],
-    const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
-template void delfem2::AverageFour3(double po[3],
-    const double p0[3], const double p1[3], const double p2[3], const double p3[3]);
-#endif
-
-
-
-// above: without CVec3
-// --------------------------------------------------------------------------------------------
-// below: with CVec3
+// ---------------------
 
 namespace delfem2 {
 
@@ -629,10 +627,10 @@ template void delfem2::CVec3<double>::SetRandom();
 // -------------------------------------------------------------------------
 
 template<typename T>
-void delfem2::GetVertical2Vector
-  (const CVec3<T> &vec_n,
-   CVec3<T> &vec_x,
-   CVec3<T> &vec_y) {
+void delfem2::GetVertical2Vector(
+    const CVec3<T> &vec_n,
+    CVec3<T> &vec_x,
+    CVec3<T> &vec_y) {
   vec_x = Cross(CVec3<T>(0, 1, 0), vec_n);
   const T len = vec_x.norm();
   if (len < 1.0e-10) {
@@ -801,20 +799,6 @@ template void delfem2::Cross(CVec3d& lhs, const CVec3d& v1, const CVec3d& v2 );
 #endif
 
 // ----------------------
-
-template<typename T>
-T delfem2::Area_Tri(
-  const CVec3<T> &v1,
-  const CVec3<T> &v2,
-  const CVec3<T> &v3) {
-  const T x = (v2.p[1] - v1.p[1]) * (v3.p[2] - v1.p[2]) - (v3.p[1] - v1.p[1]) * (v2.p[2] - v1.p[2]);
-  const T y = (v2.p[2] - v1.p[2]) * (v3.p[0] - v1.p[0]) - (v3.p[2] - v1.p[2]) * (v2.p[0] - v1.p[0]);
-  const T z = (v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v3.p[0] - v1.p[0]) * (v2.p[1] - v1.p[1]);
-  return 0.5 * std::sqrt(x * x + y * y + z * z);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template double delfem2::Area_Tri(const CVec3<double>& v1, const CVec3<double>& v2, const CVec3<double>& v3);
-#endif
 
 // ---------------------------
 
@@ -1092,68 +1076,4 @@ DFM2_INLINE std::array<REAL,9> delfem2::Mat3_ParallelTransport(
     const CVec3<REAL> &q0,
     const CVec3<REAL> &q1) {
   return Mat3_MinimumRotation(p1 - p0, q1 - q0);
-}
-
-
-
-// ----------------------------------------------------------------------------------------
-// using <vector> from here
-
-// --------------------------------------------------
-// TODO: following should be move to mesh class?
-
-namespace delfem2 {
-
-template<typename T>
-std::ostream &operator<<(
-  std::ostream &output,
-  const std::vector<CVec3 < T>>
-& aV) {
-output<<aV.
-size()
-<<
-std::endl;
-for (
-int iv = 0;
-iv<(int)
-aV.
-size();
-++iv) {
-output<<"  "<<aV[iv]<<
-std::endl;
-}
-return
-output;
-}
-
-template<typename T>
-std::istream &operator>>(std::istream &input, std::vector<CVec3 < T>>
-& aV){
-int nV;
-input>>
-nV;
-aV.
-resize(nV);
-for (
-int iv = 0;
-iv<nV;
-iv++){
-input>>aV[iv];
-}
-return
-input;
-}
-
-} // end namespace delfem2
-
-template<typename T>
-double delfem2::Area_Tri(
-  const int iv1,
-  const int iv2,
-  const int iv3,
-  const std::vector<CVec3 < T>>
-&aPoint ) {
-return
-Area_Tri(aPoint[iv1], aPoint[iv2], aPoint[iv3]
-);
 }

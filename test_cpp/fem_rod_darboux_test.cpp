@@ -50,7 +50,7 @@ TEST(fem_rod, dWddW_RodFrameTrans) {
       Frm[0].SetRandom(dist_01, randomEng);
       Frm[0] -= (Frm[0].dot(Frm[2])) * Frm[2];
       Frm[0].normalize();
-      Frm[1] = (Frm[2] ^ Frm[0]);
+      Frm[1] = Frm[2].cross(Frm[0]);
     }
     dfm2::CVec3d Q;
     Q.SetRandom(dist_01, randomEng);

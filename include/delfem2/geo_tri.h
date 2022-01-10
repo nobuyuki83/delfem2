@@ -97,6 +97,27 @@ double DistanceFaceVertex(
     double &w0, 
     double &w1);
 
+template<typename VEC>
+typename VEC::Scalar Area_Tri3(
+  const VEC &v1,
+  const VEC &v2,
+  const VEC &v3) {
+  using SCALAR = typename VEC::Scalar;
+  const SCALAR x = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]);
+  const SCALAR y = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
+  const SCALAR z = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
+  return std::sqrt(x * x + y * y + z * z)/2;
+}
+
+template<typename VEC>
+double Area_Tri3(
+    const int iv1,
+    const int iv2,
+    const int iv3,
+    const std::vector<VEC> &aPoint) {
+  return Area_Tri3(aPoint[iv1], aPoint[iv2], aPoint[iv3]);
+}
+
 } // end namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY

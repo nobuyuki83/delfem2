@@ -285,7 +285,7 @@ class CBVH_MeshTri3D {
       if ((q0 - p0).dot(n1) > 0) { return dist; } //inside
       return -dist; // outside
     }
-    CVec3<REAL> dir = (CG_Tri3(pes.itri, aTri0, aXYZ0) - p0).normalized();
+    CVec3<REAL> dir = (CVec3d(CG_Tri3(pes.itri, aTri0, aXYZ0)) - p0).normalized();
     if ((q0 - p0).dot(n1) < 0) { dir = -dir; } // probaby outside so shoot ray outside
     std::vector<unsigned int> aIndElem;
     BVH_GetIndElem_Predicate(aIndElem,

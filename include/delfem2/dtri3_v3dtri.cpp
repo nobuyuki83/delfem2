@@ -234,7 +234,7 @@ bool delfem2::AssertMeshDTri2(
     assert( i0 >=0 && i0 < (int)aPo3D.size() );
     assert( i1 >=0 && i1 < (int)aPo3D.size() );
     assert( i2 >=0 && i2 < (int)aPo3D.size() );
-    double area = Area_Tri(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
+    double area = Area_Tri3(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
     if (area<1.0e-10){ // very small volume
       assert(0);
       abort();

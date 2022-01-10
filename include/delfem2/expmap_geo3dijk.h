@@ -119,7 +119,7 @@ public:
     { // set kernel point information
       aTex[it_ker * 2 + 0] = 0.0;
       aTex[it_ker * 2 + 1] = 0.0;
-      CVec3d n0 = Normal_Tri3(it_ker,aTri,aXYZ).normalized();
+      CVec3d n0 = CVec3d(Normal_Tri3(it_ker,aTri,aXYZ)).normalized();
       CVec3d y0;
       GetVertical2Vector(
           n0,
@@ -143,7 +143,7 @@ public:
   {
     assert( aOrder.size() == aTri.size()/3 );
     assert( aOrder[it0] != UINT_MAX );
-    const CVec3d n0 = Normal_Tri3(it0,aTri,aXYZ).normalized();
+    const CVec3d n0 = CVec3d(Normal_Tri3(it0,aTri,aXYZ)).normalized();
     const CVec3d p0 = CG_Tri3(it0,aTri,aXYZ);
     aAxisX[it0].normalize();
     const CVec3d x0 = aAxisX[it0];
@@ -154,8 +154,8 @@ public:
       const unsigned int it1 = aTriSuTri[it0*3+iedge];
       if( it1 == UINT_MAX ){ continue; }
       if ( aOrder[it1] != UINT_MAX ) { continue; } // effect propagate from fixed to unfixed
-      const CVec3d n1 = Normal_Tri3(it1,aTri,aXYZ).normalized();
-      const CVec3d d01 = CG_Tri3(it1,aTri,aXYZ)-p0;
+      const CVec3d n1 = CVec3d(Normal_Tri3(it1,aTri,aXYZ)).normalized();
+      const CVec3d d01 = CVec3d(CG_Tri3(it1,aTri,aXYZ))-p0;
       const double len01 = d01.norm();
       const CVec3d e01 = (d01 - (d01.dot(n0)) * n0).normalized() * len01; // projected edge and same length
       const double w01 = 1.0 / len01;
@@ -276,7 +276,7 @@ void FlatteringPattern(
         aXYZ,
         aTriSuTri);
     coordLocal[0] = expmap.aAxisX[ielm_ker];
-    coordLocal[2] = Normal_Tri3(ielm_ker, aTri, aXYZ).normalized();
+    coordLocal[2] = CVec3d(Normal_Tri3(ielm_ker, aTri, aXYZ)).normalized();
     assert(fabs(coordLocal[0].dot(coordLocal[2])) < 1.0e-10);
     assert(fabs(coordLocal[0].norm() - 1.0) < 1.0e-10);
     assert(fabs(coordLocal[2].norm() - 1.0) < 1.0e-10);

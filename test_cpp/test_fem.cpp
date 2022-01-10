@@ -9,10 +9,8 @@
 
 #include "gtest/gtest.h" // need to be defiend in the beginning
 //
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/pbd_geo3.h"
+#include "delfem2/geo_tri.h"
 #include "delfem2/fem_discreteshell.h"
-#include "delfem2/lsmats.h"  // need this prior to the fempoisson.h
 #include "delfem2/fempoisson.h"
 #include "delfem2/mshmisc.h"
 
@@ -58,8 +56,8 @@ TEST(pbd, Check_CdC_DiscreteShell) {
     if (dfm2::Distance(p[1], p[2]) < 0.1) { continue; }
     if (dfm2::Distance(p[1], p[3]) < 0.1) { continue; }
     if (dfm2::Distance(p[2], p[3]) < 0.1) { continue; }
-    if (dfm2::Area_Tri(p[0], p[2], p[3]) < 0.01) { continue; }
-    if (dfm2::Area_Tri(p[1], p[2], p[3]) < 0.01) { continue; }
+    if (dfm2::Area_Tri3(p[0], p[2], p[3]) < 0.01) { continue; }
+    if (dfm2::Area_Tri3(p[1], p[2], p[3]) < 0.01) { continue; }
     double C;
     dfm2::CVec3d dC[4];
     CdC_DiscreteShell(C, dC, p[0], p[1], p[2], p[3]);
