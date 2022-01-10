@@ -43,7 +43,7 @@ TEST(bezier_cubic, test0) {
         scr,
         p0, p1, p2, p3, 50, 3);
       const dfm2::CVec2d v1 = dfm2::PointOnCubicBezierCurve(t1, p0, p1, p2, p3);
-      EXPECT_NEAR((v0 - scr).norm(), (v1 - scr).norm(), 1.2e-2);
+      EXPECT_NEAR((v0 - scr).norm(), (v1 - scr).norm(), 1.3e-2);
       //
       const double t2 = dfm2::Nearest_CubicBezierCurve_Strum<dfm2::CVec2d>(
         scr,

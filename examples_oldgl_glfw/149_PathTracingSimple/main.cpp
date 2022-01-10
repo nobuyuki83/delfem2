@@ -132,7 +132,8 @@ CVec3d radiance(
     double r2 = my_erand48(Xi);
     double r2s = sqrt(r2);
     CVec3d w = nl;
-    CVec3d u = ((fabs(w.x) > .1 ? CVec3d(0, 1, 0) : CVec3d(1,0,0)) ^ w).normalized(), v = w ^ u;
+    CVec3d u = ((fabs(w.x) > .1 ? CVec3d(0, 1, 0) : CVec3d(1,0,0)).cross(w)).normalized();
+    CVec3d v = w.cross(u);
     CVec3d d = (u * cos(r1) * r2s + v * sin(r1) * r2s + w * sqrt(1 - r2)).normalized();
     return obj.e + f.mult(radiance(Ray(x, d), depth, Xi, aSphere));
   }
@@ -204,7 +205,7 @@ int main() {
       CVec3d(50, 52, 295.6),
       CVec3d(0, -0.042612, -1).normalized()); // cam pos, dir
   CVec3d cx = CVec3d(nw * .5135 / nh, 0, 0);
-  CVec3d cy = (cx ^ cam.d).normalized() * .5135;
+  CVec3d cy = (cx.cross(cam.d)).normalized() * .5135;
   std::vector<float> afRGB(tex.height*tex.width*3, 0.f);
   unsigned int isample = 0;
   while (!glfwWindowShouldClose(viewer.window))

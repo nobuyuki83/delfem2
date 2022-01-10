@@ -670,7 +670,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad_Face
     {
       CVec3d v01 = aPoint[iv1] - aPoint[iv0];
       CVec3d v12 = aPoint[iv2] - aPoint[iv1];
-      CVec3d n = (v01 ^ v12).normalized();
+      CVec3d n = (v01.cross(v12)).normalized();
       myGlNormal(n);
     }
     myGlVertex(aPoint[iv0]);

@@ -70,7 +70,7 @@ std::vector<CVec3d> VelocityRigidBody(
   delfem2::CRigidBodyForceModel::GetForceTorque(F, T);
   std::vector<CVec3d> V(4);
   V[0] = (rbs.R * F) * (1.0 / rbi.mass);
-  V[1] = rbi.invIrot * ((rbs.Omega ^ (rbi.Irot * rbs.Omega)) + T);
+  V[1] = rbi.invIrot * ((rbs.Omega.cross(rbi.Irot * rbs.Omega)) + T);
   V[2] = rbs.velo;
   V[3] = rbs.Omega;
   return V;

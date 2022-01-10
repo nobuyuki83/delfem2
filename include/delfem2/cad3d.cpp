@@ -53,7 +53,7 @@ DFM2_INLINE void FaceCenterNormal(
     bool dir0 = aIE[(iie+0)%nIE].second;
     CVec3d pA = dir0 ? aEdge[ie0].p0 : aEdge[ie0].p1;
     CVec3d pB = dir0 ? aEdge[ie0].p1 : aEdge[ie0].p0;
-    nf += ((pA-cg)^(pB-cg));
+    nf += (pA-cg).cross(pB-cg);
   }
   nf.normalize();
 }
@@ -522,7 +522,7 @@ void delfem2::CCad3D_Face::MovePoints(
       int iep0 = aPInfo[ip].iep;
       CVec3d ne = aEdge[ie0].getNorm();
       CVec3d te = aEdge[ie0].GetTangentInEdge((double)iep0/(aEdge[ie0].aP.size()-1));
-      CVec3d nep = ne^te;
+      CVec3d nep = ne.cross(te);
       nep.normalize();
       aPInfo[ip].n = nep;
       aXYZ[ip*3+0] = aEdge[ie0].aP[iep0].x;

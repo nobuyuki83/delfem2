@@ -28,8 +28,8 @@ CVec3d FindNearestOrientation(
     const CVec3d& n1,
     double weight)
 {
-  const auto p0 =n0^o0;
-  const auto p1 =n1^o1;
+  const auto p0 =n0.cross(o0);
+  const auto p1 =n1.cross(o1);
   const CVec3d ad0[2] = { o0, p0 };
   const CVec3d ad1[4] = { o1, p1, -o1, -p1 };
   double dot_max = -2;
@@ -47,7 +47,7 @@ CVec3d FindNearestOrientation(
   idiff = (id0_near+4-id1_near)%4;
   CVec3d d0new = ad0[id0_near] * weight + ad1[id1_near];
   d0new = (d0new - (d0new.dot(n0)) * n0).normalized();
-  if( id0_near == 1 ){ d0new = d0new ^ n0; }
+  if( id0_near == 1 ){ d0new = d0new.cross(n0); }
   return d0new;
 }
 

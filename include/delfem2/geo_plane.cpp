@@ -73,8 +73,8 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_PlaneTri3(
   assert((q1 - q0).norm() > 1.0e-10);
   assert((q2 - q0).norm() > 1.0e-10);
   assert((q1 - q2).norm() > 1.0e-10);
-  assert(((q1 - q0) ^ (q2 - q0)).norm() > 1.0e-10);
-  const CVec3<T> n1 = ((q1 - q0) ^ (q2 - q0)).normalized();
+  assert(((q1 - q0).cross(q2 - q0)).norm() > 1.0e-10);
+  const CVec3<T> n1 = ((q1 - q0).cross(q2 - q0)).normalized();
   const T v0 = lcl::Volume_OrgTet(q1, q2, n1);
   const T v1 = lcl::Volume_OrgTet(q2, q0, n1);
   const T v2 = lcl::Volume_OrgTet(q0, q1, n1);

@@ -27,8 +27,8 @@ DFM2_INLINE void delfem2::CdC_DiscreteShell(
   const CVec3<T> v13 = p3 - p1;
   const CVec3<T> v23 = p3 - p2;
   // ---
-  const CVec3<T> A = v02 ^ v03;
-  const CVec3<T> B = v13 ^ v12;
+  const CVec3<T> A = v02.cross(v03);
+  const CVec3<T> B = v13.cross(v12);
   const double lA = A.norm();
   const double lB = B.norm();
   const CVec3<T> a = A / lA;
@@ -39,10 +39,10 @@ DFM2_INLINE void delfem2::CdC_DiscreteShell(
   const double sab = 1.0;//-1.0/sin(C);
   const CVec3<T> tmpBA = (b - a * (a.dot(b))) * (sab / lA);
   const CVec3<T> tmpAB = (a - b * (b.dot(a))) * (sab / lB);
-  dC[0] = (tmpBA ^ v23);
-  dC[1] = (v23 ^ tmpAB);
-  dC[2] = (v03 ^ tmpBA) + (tmpAB ^ v13);
-  dC[3] = (tmpBA ^ v02) + (v12 ^ tmpAB);
+  dC[0] = tmpBA.cross(v23);
+  dC[1] = v23.cross(tmpAB);
+  dC[2] = v03.cross(tmpBA) + tmpAB.cross(v13);
+  dC[3] = tmpBA.cross(v02) + v12.cross(tmpAB);
 }
 #ifdef DFM2_STATIC_LIBRARY
 template void delfem2::CdC_DiscreteShell(

@@ -180,7 +180,7 @@ DFM2_INLINE void delfem2::RodFrameTrans(
   assert(fabs(S0.norm() - 1.0) < 1.0e-3);
   assert(fabs(S0.dot(V01)) < 1.0e-3);
   const CVec3d &U0 = V01.normalized();
-  const CVec3d &T0 = U0 ^ S0;
+  const CVec3d &T0 = U0.cross(S0);
   frm[2] = (V01 + du).normalized();
   const CMat3d &R = Mat3_MinimumRotation(U0, frm[2]);
   frm[0] = R * (cos(dtheta) * S0 + sin(dtheta) * T0);

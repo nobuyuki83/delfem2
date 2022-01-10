@@ -550,13 +550,13 @@ void delfem2::BEM_VortexSheet_Coeff_0th(
 //  const double areax = nx.Length()*0.5; // area
   nx.normalize(); // unit normal
   const CVec3d ux = (x1-x0).normalized();
-  const CVec3d vx = nx^ux;
+  const CVec3d vx = nx.cross(ux);
   //
   CVec3d ny = Normal(y0, y1, y2);
   const double areay = ny.norm()*0.5; // area
   ny.normalize(); // unit normal
   const CVec3d uy = (y1-y0).normalized();
-  const CVec3d vy = ny^uy;
+  const CVec3d vy = ny.cross(uy);
   //
   aC[0] = aC[1] = aC[2] = aC[3] = 0.0;
   for (int iint = 0; iint<nint; iint++){
@@ -570,8 +570,8 @@ void delfem2::BEM_VortexSheet_Coeff_0th(
 //    double G = -1.0/(4*M_PI*len);
 //    double dGdn = -(r*ny)/(4*M_PI*len*len*len);
     CVec3d dGdy = -r/(4*M_PI*len*len*len);
-    CVec3d pvycdGdy = -(vy^r)/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
-    CVec3d muycdGdy = +(uy^r)/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
+    CVec3d pvycdGdy = -(vy.cross(r))/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
+    CVec3d muycdGdy = +(uy.cross(r))/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
     {
       aC[0] += wb*areay*(pvycdGdy.dot(ux));
       aC[1] += wb*areay*(muycdGdy.dot(ux));
@@ -603,7 +603,7 @@ void delfem2::makeLinearSystem_VortexSheet_Order0th(
     {
       const CVec3d nx = Normal(p0, p1, p2).normalized();
       const CVec3d ux = (p1-p0).normalized();
-      const CVec3d vx = (nx^ux);
+      const CVec3d vx = nx.cross(ux);
       f[it*2+0] = ux.dot(velo);
       f[it*2+1] = vx.dot(velo);
     }
@@ -656,7 +656,7 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
     const double areay = ny.norm()*0.5; // area
     ny.normalize(); // unit normal
     const CVec3d uy = (q1-q0).normalized();
-    const CVec3d vy = ny^uy;
+    const CVec3d vy = ny.cross(uy);
     const int nint = NIntTriGauss[ngauss]; // number of integral points
     for (int iint = 0; iint<nint; iint++){
       const double r0 = TriGauss[ngauss][iint][0];
@@ -669,8 +669,8 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
       //    double G = -1.0/(4*M_PI*len);
       //    double dGdn = -(r*ny)/(4*M_PI*len*len*len);
       //    CVector3 dGdy = -r/(4*M_PI*len*len*len);
-      CVec3d pvycdGdy = -(vy^r)/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
-      CVec3d muycdGdy = +(uy^r)/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
+      CVec3d pvycdGdy = -vy.cross(r)/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
+      CVec3d muycdGdy = +uy.cross(r)/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
       velo_res -= wb*areay*(pvycdGdy*aValSrf[jt*2+0]+muycdGdy*aValSrf[jt*2+1]);
     }
   }
@@ -692,8 +692,8 @@ delfem2::CVec3d delfem2::veloVortexParticle
   double f0 = 1.0-exp(-ratio*ratio*ratio);
 //  double f0 = 1.0;
   double g0 = f0/(4*M_PI*len*len*len);
-  CVec3d k0 = g0*(circ_vp^v);
-  return g0*(circ_vp^v);
+  CVec3d k0 = g0*circ_vp.cross(v);
+  return g0*circ_vp.cross(v);
 }
 
 delfem2::CMat3d delfem2::gradveloVortexParticle
@@ -708,13 +708,13 @@ double rad_vp)
   double ratio = len/rad_vp;
   double f0 = 1.0-exp(-ratio*ratio*ratio);
   double g0 = f0/(4*M_PI*len*len*len);
-  velo_eval = g0*(circ_vp^v);
+  velo_eval = g0*circ_vp.cross(v);
   //
   CVec3d dlen = v.normalized();
   CVec3d dratio = dlen/rad_vp;
   CVec3d df0 = (exp(-ratio*ratio*ratio)*3*ratio*ratio)*dratio;
   CVec3d dg0 = (1.0/(4*M_PI*len*len*len))*df0-(3*f0/(4*M_PI*len*len*len*len))*dlen;
-  return Mat3_OuterProduct(circ_vp^v, dg0)+g0*Mat3_Spin(circ_vp);
+  return Mat3_OuterProduct(circ_vp.cross(v), dg0)+g0*Mat3_Spin(circ_vp);
 }
 
 delfem2::CVec3d delfem2::veloVortexParticles

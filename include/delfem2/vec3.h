@@ -189,12 +189,6 @@ class CVec3 {
     return CVec3(x - b.x, y - b.y, z - b.z);
   }
 
-  inline CVec3 operator^(const CVec3 &b) const {
-    return CVec3(y * b.z - z * b.y,
-                 z * b.x - x * b.z,
-                 x * b.y - y * b.x);
-  }
-
   inline CVec3 operator*(T b) const {
     return CVec3(x * b, y * b, z * b);
   }
@@ -613,7 +607,7 @@ inline CVec3<T> Normal_Tri3(
   const CVec3<T> p0(aXYZ[i0 * 3 + 0], aXYZ[i0 * 3 + 1], aXYZ[i0 * 3 + 2]);
   const CVec3<T> p1(aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]);
   const CVec3<T> p2(aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]);
-  return (p1 - p0) ^ (p2 - p0);
+  return (p1 - p0).cross(p2 - p0);
 }
 
 } // namespace delfem2

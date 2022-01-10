@@ -72,7 +72,7 @@ public:
     const CVec3d n0 = CVec3d(aNorm.data() + ip0 * 3).normalized();
     aAxisX[ip0].normalize();
     const CVec3d x0 = aAxisX[ip0];
-    const CVec3d y0 = n0 ^x0;
+    const CVec3d y0 = n0.cross(x0);
     aTex[ip0 * 2 + 0] /= aW[ip0];
     aTex[ip0 * 2 + 1] /= aW[ip0];
     for (unsigned int ipsup = psup_ind[ip0]; ipsup < psup_ind[ip0 + 1]; ++ipsup) {
@@ -147,7 +147,7 @@ public:
     const CVec3d p0 = CG_Tri3(it0,aTri,aXYZ);
     aAxisX[it0].normalize();
     const CVec3d x0 = aAxisX[it0];
-    const CVec3d y0 = n0^x0;
+    const CVec3d y0 = n0.cross(x0);
     aTex[it0 * 2 + 0] /= aW[it0];
     aTex[it0 * 2 + 1] /= aW[it0];
     for (unsigned int iedge = 0; iedge < 3; ++iedge) {
@@ -280,7 +280,7 @@ void FlatteringPattern(
     assert(fabs(coordLocal[0].dot(coordLocal[2])) < 1.0e-10);
     assert(fabs(coordLocal[0].norm() - 1.0) < 1.0e-10);
     assert(fabs(coordLocal[2].norm() - 1.0) < 1.0e-10);
-    coordLocal[1] = coordLocal[2] ^ coordLocal[0];
+    coordLocal[1] = coordLocal[2].cross(coordLocal[0]);
     coordLocal[3] = CG_Tri3(ielm_ker, aTri, aXYZ);
     //
     TexPoint_TexElemFlag(aTexP,

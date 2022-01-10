@@ -147,7 +147,7 @@ int main() {
     assert(fabs(coordLocal[0].dot(coordLocal[2])) < 1.0e-10);
     assert(fabs(coordLocal[0].norm() - 1.0) < 1.0e-10);
     assert(fabs(coordLocal[2].norm() - 1.0) < 1.0e-10);
-    coordLocal[1] = coordLocal[2] ^ coordLocal[0];
+    coordLocal[1] = coordLocal[2].cross(coordLocal[0]);
     coordLocal[3] = dfm2::CG_Tri3(ielm_ker, tri_vtx, vtx_xyz);
     //
     aTexP.resize(vtx_xyz.size() / 3 * 2);

@@ -139,24 +139,12 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mirror(const CVec3d &n) {
 }
 
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_CrossCross(const CVec3d &v) {
-  return Mat3(v) * Mat3(v);
+  return Mat3_Spin(v) * Mat3_Spin(v);
 }
 
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_FromCartesianRotationVector(const CVec3d &vec0) {
   CMat3d m;
   m.SetRotMatrix_Cartesian(vec0.x, vec0.y, vec0.z);
-  return m;
-}
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3(const CVec3d &vec0) {
-  CMat3d m;
-  SetSpinTensor(m, vec0);
-  return m;
-}
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3(const CVec3d &vec0, const CVec3d &vec1) {
-  CMat3d m;
-  SetOuterProduct(m, vec0, vec1);
   return m;
 }
 
@@ -234,7 +222,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTri(
   double tr0 = I0.Trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
 
-  double darea = ((d1 - d0) ^ (d2 - d0)).norm();
+  double darea = ((d1 - d0).cross(d2 - d0)).norm();
   I *= darea / 24.0;
   return I;
 }
@@ -254,7 +242,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTriSolid(
   double tr0 = I0.Trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
 
-  double darea = d0.dot(d1 ^ d2);
+  double darea = d0.dot(d1.cross(d2));
   I *= darea / 120.0;
   return I;
 }
@@ -359,7 +347,7 @@ DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_Linear(
       const CVec3d v0 = Qi * (CVec3d(aXYZ0.data() + jp * 3) - Pi);
       const CVec3d d01 = CVec3d(aXYZ1.data() + jp * 3) - pi - v0;
       Mat += Mat3_CrossCross(v0);
-      rhs += d01 ^ v0;
+      rhs += d01.cross(v0);
     }
     CVec3d sol = Mat.Inverse() * rhs;
     CQuatd q0 = Quat_CartesianAngle(sol);

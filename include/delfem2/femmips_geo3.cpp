@@ -10,10 +10,12 @@
 
 // =======================================
 
-DFM2_INLINE void delfem2::WdWddW_MIPS
- (double& E, double dE[3][3], double ddE[3][3][3][3],
-  const double c[3][3],
-  const double C[3][3])
+DFM2_INLINE void delfem2::WdWddW_MIPS(
+    double& E,
+    double dE[3][3],
+    double ddE[3][3][3][3],
+    const double c[3][3],
+    const double C[3][3])
 {
   /*
    double area = TriArea3D(c[0], c[1], c[2]);
@@ -40,9 +42,9 @@ DFM2_INLINE void delfem2::WdWddW_MIPS
   CVec3d v01 = p1-p0;
   CVec3d v12 = p2-p1;
   CVec3d v20 = p0-p2;
-  CVec3d n = v01^v20;
+  CVec3d n = v01.cross(v20);
   double area = n.norm()*0.5;
-  double Area = ((P1-P0)^(P2-P0)).norm()*0.5;
+  double Area = ((P1-P0).cross(P2-P0)).norm()*0.5;
   double la = (p1-p2).dot(p1-p2);
   double lb = (p2-p0).dot(p2-p0);
   double lc = (p0-p1).dot(p0-p1);

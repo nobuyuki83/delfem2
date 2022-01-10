@@ -97,13 +97,6 @@ CMat3<REAL> Mat3_From3Bases(
     const CVec3<REAL> &vec1,
     const CVec3<REAL> &vec2);
 
-CMat3d Mat3(
-    const CVec3d &vec0);
-
-CMat3d Mat3(
-    const CVec3d &vec0,
-    const CVec3d &vec1);
-
 CMat3d Mat3_FromCartesianRotationVector(
     const CVec3d &vec0);
 

@@ -129,7 +129,7 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_Tri3(
   const CVec3<T> &q1,
   const CVec3<T> &q2) {
 
-  if (((q1 - q0) ^ (q2 - q0)).norm() > 1.0e-10) {
+  if (((q1 - q0).cross(q2 - q0)).norm() > 1.0e-10) {
     CVec3<T> p012 = Nearest_Origin3_PlaneTri3(r0, r1, q0, q1, q2);
     if (r0 > 0 && r1 > 0 && (1 - r0 - r1) > 0) { return p012; }
   }

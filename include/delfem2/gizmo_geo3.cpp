@@ -320,7 +320,7 @@ void delfem2::CGizmo_Rotation<REAL>::Drag(
                         pos, va, size);
     CV3 a0 = (qz0 - pos) / size;
     CV3 a1 = (qz1 - pos) / size;
-    const double ar = atan2((a0 ^ a1).dot(va), a0.dot(a1));
+    const double ar = atan2((a0.cross(a1)).dot(va), a0.dot(a1));
     const REAL dq[4] = {
         (REAL) (va.x * sin(ar * 0.5)),
         (REAL) (va.y * sin(ar * 0.5)),
