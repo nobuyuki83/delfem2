@@ -12,7 +12,6 @@
 #ifndef DFM2_GEO_CONVHULL2_H
 #define DFM2_GEO_CONVHULL2_H
 
-
 namespace delfem2 {
 
 /**
@@ -22,25 +21,25 @@ namespace delfem2 {
  * @param point_idxs
  * @param points
  */
-template <typename VEC>
+template<typename VEC>
 void ConvexHull2(
-    std::vector<unsigned int>& point_idxs,
-    const std::vector<VEC>& points) {
-
-  constexpr double EPSILON = 1.0e-8;
+    std::vector<unsigned int> &point_idxs,
+    const std::vector<VEC> &points) {
+  using SCALAR = typename VEC::Scalar;
+  constexpr SCALAR EPSILON = 1.0e-8;
 
   unsigned int p0_idx;
   { // find the index with minimum y coordinate
     VEC p0;
     for (unsigned int i = 0; i < points.size(); ++i) {
-      if ( points[i][1] > p0[1] ){ continue; }
-      if ( points[i][1] == p0[1] && points[i][0] > p0[0]) { continue; }
+      if (points[i][1] > p0[1]) { continue; }
+      if (points[i][1] == p0[1] && points[i][0] > p0[0]) { continue; }
       p0_idx = i;
       p0 = points[i];
     }
   }
 
-  std::vector<std::pair<unsigned int, double> > idxcos;
+  std::vector<std::pair<unsigned int, SCALAR> > idxcos;
   { // compute and sort points by cosine value
     VEC x_axis = {1, 0};
     for (unsigned int i = 0; i < points.size(); i++) {
@@ -51,13 +50,13 @@ void ConvexHull2(
   }
   { // sort idxcos
     auto comp = [&points, &p0_idx](
-        const std::pair<unsigned int, double> &a,
-        const std::pair<unsigned int, double> &b) {
+        const std::pair<unsigned int, SCALAR> &a,
+        const std::pair<unsigned int, SCALAR> &b) {
       if (std::abs(a.second - b.second) > EPSILON) {
         return a.second > b.second;
       } else {
-        double dista = (points[a.first] - points[p0_idx]).squaredNorm();
-        double distb = (points[b.first] - points[p0_idx]).squaredNorm();
+        const SCALAR dista = (points[a.first] - points[p0_idx]).squaredNorm();
+        const SCALAR distb = (points[b.first] - points[p0_idx]).squaredNorm();
         return dista > distb;
       }
     };
@@ -65,25 +64,25 @@ void ConvexHull2(
   }
 
   // check for collinear points
-  for(auto itr = ++idxcos.begin(); std::next(itr) != idxcos.end(); itr++) {
-    if(std::abs((*itr).second - (*std::next(itr)).second) < EPSILON) {
+  for (auto itr = ++idxcos.begin(); std::next(itr) != idxcos.end(); itr++) {
+    if (std::abs((*itr).second - (*std::next(itr)).second) < EPSILON) {
       idxcos.erase(std::next(itr)); // only keep the furthest
     }
   }
-  idxcos.emplace_back(p0_idx, 0.0);
+  idxcos.emplace_back(p0_idx, 0);
 
   point_idxs.clear();
   point_idxs.push_back(p0_idx);
   point_idxs.push_back(idxcos.begin()->first);
   unsigned int stack_top = 1;
-  for(auto itr = ++idxcos.begin(); itr != idxcos.end(); itr++) {
+  for (auto itr = ++idxcos.begin(); itr != idxcos.end(); itr++) {
     unsigned int p3_idx = itr->first;
-    while(true) {
+    while (true) {
       unsigned int p1_idx = point_idxs[stack_top - 1];
       unsigned int p2_idx = point_idxs[stack_top];
-      VEC p1p2 = points[p2_idx] - points[p1_idx];
-      VEC p1p3 = points[p3_idx] - points[p1_idx];
-      if(p1p2[0] * p1p3[1] - p1p2[1] * p1p3[0] <= 0) { // right turn or collinear
+      const VEC p1p2 = points[p2_idx] - points[p1_idx];
+      const VEC p1p3 = points[p3_idx] - points[p1_idx];
+      if (p1p2[0] * p1p3[1] - p1p2[1] * p1p3[0] <= 0) { // right turn or collinear
         point_idxs.pop_back(); // pop top of the stack
         stack_top--;
       } else {
@@ -97,5 +96,4 @@ void ConvexHull2(
 
 }
 
-
-#endif // VEC3_H
+#endif // DFM2_GEO_CONVHULL2_H

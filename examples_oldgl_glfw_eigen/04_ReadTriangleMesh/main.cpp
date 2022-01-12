@@ -18,7 +18,6 @@
 
 #include "delfem2/eigen/msh_io.h"
 #include "delfem2/msh_io_obj.h"
-#include "delfem2/geoconvhull3.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengleigen/funcs.h"
