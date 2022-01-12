@@ -2,16 +2,19 @@
 // Created by Nobuyuki Umetani on 2022/01/12.
 //
 
-#include <gtest/gtest.h>
-
 #include <random>
 #include <set>
 #include <vector>
 
 #include <Eigen/Core>
+#include <gtest/gtest.h>
 
 #include "delfem2/geo_convhull2.h"
 #include "delfem2/geo_polyline.h"
+
+#ifndef M_PI
+#  define M_PI 3.14159265359
+#endif
 
 TEST(convexhull2, test0) {
   std::mt19937 rndeng(std::random_device{}());
