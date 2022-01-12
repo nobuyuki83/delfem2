@@ -26,7 +26,7 @@ void ConvexHull2(
     std::vector<unsigned int> &point_idxs,
     const std::vector<VEC> &points) {
   using SCALAR = typename VEC::Scalar;
-  constexpr SCALAR EPSILON = 1.0e-8;
+  const SCALAR EPSILON = 1.0e-8;
 
   unsigned int p0_idx;
   { // find the index with minimum y coordinate
@@ -49,7 +49,7 @@ void ConvexHull2(
     }
   }
   { // sort idxcos
-    auto comp = [&points, &p0_idx](
+    auto comp = [&points, &p0_idx, &EPSILON](
         const std::pair<unsigned int, SCALAR> &a,
         const std::pair<unsigned int, SCALAR> &b) {
       if (std::abs(a.second - b.second) > EPSILON) {
