@@ -433,15 +433,17 @@ template CVec3d operator* (int d, const CVec3d& rhs);
 // -----------------------
 
 //! divide by real number
-template<typename T>
-CVec3<T> operator/(const CVec3<T> &vec, T d) {
-  CVec3<T> temp = vec;
+template<typename T0, typename T1>
+CVec3<T0> operator/(const CVec3<T0> &vec, T1 d) {
+  CVec3<T0> temp = vec;
   temp /= d;
   return temp;
 }
 #ifdef DFM2_STATIC_LIBRARY
 template CVec3f operator/ (const CVec3f& vec, float d);
+template CVec3f operator/ (const CVec3f& vec, int d);
 template CVec3d operator/ (const CVec3d& vec, double d);
+template CVec3d operator/ (const CVec3d& vec, int d);
 #endif
 
 // ----------------

@@ -6,7 +6,6 @@
  */
 
 #include <iostream>
-#include <random>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -16,50 +15,41 @@
 
 #include "delfem2/vec2.h"
 #include "delfem2/geo_curve_ndegree.h"
-// opengl from here
+#include "delfem2/geo_curve_cubic.h"
+// #include "delfem2/geo_curve_quadratic.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v2.h"
 
 namespace dfm2 = delfem2;
 
-// ---------------------------------------------
-int ndegree = 2;
-std::vector<int> aKnotMulti;
-std::vector<double> aKnot;
-std::vector<double> aKnotFlat;
-std::vector<dfm2::CVec2d> aCtrlPoint;
-
-const int nsmpl = 100;
-std::vector<dfm2::CVec2d> polyline0; // current test
-
-namespace dfm2 = delfem2;
-
 // -----------------------------------------------
 
-void SetExample(int ndeg, int ncp) {
-  ndegree = ndeg;
-//  const int nk = ncp+ndeg+1;
-  const int ndiv = ncp - ndeg;
+void SetExample(
+    std::vector<double> &aKnotFlat,
+    unsigned int ndegree,
+    unsigned int ncp) {
+  const int ndiv = ncp - ndegree;
+  //
+  std::vector<double> aKnot;
   aKnot.assign(ndiv + 1, 0);
   for (int idiv = 0; idiv < ndiv + 1; ++idiv) {
     aKnot[idiv] = (double) idiv / ndiv;
   }
+  //
+  std::vector<int> aKnotMulti;
   aKnotMulti.assign(ndiv + 1, 1);
-  aKnotMulti[0] = ndeg + 1;
-  aKnotMulti[ndiv] = ndeg + 1;
+  aKnotMulti[0] = ndegree + 1;
+  aKnotMulti[ndiv] = ndegree + 1;
   dfm2::FlatKnot(aKnotFlat, aKnotMulti, aKnot);
   for (unsigned int ik = 0; ik < aKnotFlat.size(); ++ik) {
     std::cout << "knot" << ik << " " << aKnotFlat[ik] << std::endl;
   }
-  //
-  aCtrlPoint.assign(ncp, dfm2::CVec2d(0, 0));  //7+2+1 = 10
-  for (unsigned int i = 0; i < aCtrlPoint.size(); ++i) {
-    aCtrlPoint[i].p[0] = i * 2.0 / (aCtrlPoint.size() - 1) - 1.0;
-  }
 }
 
-void myGlutDisplay() {
+void myGlutDisplay(
+    const std::vector<dfm2::CVec2d> &aCtrlPoint,
+    const std::vector<dfm2::CVec2d> &polyline0) {
   ::glDisable(GL_LIGHTING);
 
   ::glLineWidth(2);
@@ -75,41 +65,59 @@ void myGlutDisplay() {
 }
 
 int main() {
-  delfem2::glfw::CViewer3 viewer;
+  const unsigned int ncp = 10;
+  std::vector<dfm2::CVec2d> aCtrlPoint;
+  const int nsmpl = 100;
+  std::vector<dfm2::CVec2d> polyline0; // current test
+  //
+  delfem2::glfw::CViewer3 viewer(5);
   delfem2::glfw::InitGLOld();
-  viewer.OpenWindow();
-
-  // -----------
-
-  SetExample(3, 6);
-  dfm2::SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
-
-  // -----------
-
-  while (!glfwWindowShouldClose(viewer.window)) {
-    {
-      static int iframe = 0;
-      if (iframe == 0) {
-        std::random_device rd;
-        std::mt19937 mt(rd());
-        std::uniform_real_distribution<> dist(-0.01, 0.01);
-        for (auto &icp : aCtrlPoint) {
-          icp.p[0] += dist(mt);
-          icp.p[1] += dist(mt);
-        }
-        dfm2::SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
+  for (unsigned int ndegree = 2; ndegree < 5; ++ndegree) {
+    viewer.OpenWindow();
+    std::vector<double> aKnotFlat;
+    SetExample(
+        aKnotFlat,
+        ndegree, ncp);
+    aCtrlPoint.resize(ncp);
+    while (!glfwWindowShouldClose(viewer.window)) {
+      double t0 = glfwGetTime();
+      for (unsigned int icp = 0; icp < ncp; ++icp) {
+        aCtrlPoint[icp] = {
+            icp + 0.3 * cos(icp * t0) - ncp * 0.5,
+            aCtrlPoint[icp].y = sin(icp * t0)};
       }
-      iframe = (iframe + 1) % 50;
+      dfm2::SampleBSpline(
+          polyline0,
+          nsmpl, ndegree, aKnotFlat, aCtrlPoint);
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(aCtrlPoint, polyline0);
+      glfwSwapBuffers(viewer.window);
+      glfwPollEvents();
+    }
+    glfwDestroyWindow(viewer.window);
+  }
+
+  viewer.OpenWindow();
+  aCtrlPoint.resize(ncp);
+  while (!glfwWindowShouldClose(viewer.window)) {
+    double t0 = glfwGetTime();
+    for (unsigned int icp = 0; icp < ncp; ++icp) {
+      aCtrlPoint[icp] = {
+          icp + 0.3 * cos(icp * t0) - ncp * 0.5,
+          aCtrlPoint[icp].y = sin(icp * t0)};
+    }
+    for (unsigned int ismpl = 0; ismpl < nsmpl + 1; ++ismpl) {
+      polyline0[ismpl] = Sample_CatmullRomSplineCurve(
+          static_cast<double>(ismpl) / (nsmpl) * (aCtrlPoint.size() - 1),
+          aCtrlPoint);
     }
     viewer.DrawBegin_oldGL();
-
-    myGlutDisplay();
-
+    myGlutDisplay(aCtrlPoint, polyline0);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }
-
   glfwDestroyWindow(viewer.window);
+
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }

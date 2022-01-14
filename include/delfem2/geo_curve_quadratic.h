@@ -35,10 +35,10 @@ namespace delfem2 {
  */
 template<typename VEC>
 double Length_QuadraticCurve_Gauss(
-  [[maybe_unused]] const VEC &q0,
-  const VEC &q1,
-  const VEC &q2,
-  int ngauss) {
+    [[maybe_unused]] const VEC &q0,
+    const VEC &q1,
+    const VEC &q2,
+    int ngauss) {
   const double coe[3] = {q1.squaredNorm(), 4 * q1.dot(q2), 4 * q2.squaredNorm()};
 
   const unsigned int nw0 = kNumIntegrationPoint_GaussianQuadrature[ngauss];
@@ -61,17 +61,17 @@ double Length_QuadraticCurve_Gauss(
  */
 template<typename VEC>
 double Length_QuadraticCurve(
-  const VEC &q0,
-  const VEC &q1,
-  const VEC &q2) {
+    const VEC &q0,
+    const VEC &q1,
+    const VEC &q2) {
   if (q2.squaredNorm() < 1.0e-5) {
     return Length_QuadraticCurve_Gauss(q0, q1, q2, 3);
   }
   // dl = sqrt(coe[0] + coe[1]*t + coe[2]*t^2) dt
   const double coe[3] = {
-    q1.squaredNorm(),
-    4 * q1.dot(q2),
-    4 * q2.squaredNorm()};
+      q1.squaredNorm(),
+      4 * q1.dot(q2),
+      4 * q2.squaredNorm()};
   auto intt = [&coe](double t) -> double {
     const double tmp0 = (coe[1] + 2 * coe[2] * t) * std::sqrt(coe[0] + t * (coe[1] + coe[2] * t));
     const double tmp3 = sqrt(coe[2]);
@@ -82,21 +82,20 @@ double Length_QuadraticCurve(
   return intt(1) - intt(0);
 }
 
-
 // c + b*t + a*t^2
 template<typename VEC>
 double Nearest_Origin_QuadraticCurve(
-  const VEC &c,
-  const VEC &b,
-  const VEC &a,
-  int num_bisection) {
+    const VEC &c,
+    const VEC &b,
+    const VEC &a,
+    int num_bisection) {
   // Derivative of squared distance function
   // We use the squared distance because it is easier to find its derivative
   const double coe[4] = {
-    b.dot(c),
-    b.squaredNorm() + 2 * a.dot(c),
-    3 * a.dot(b),
-    2 * a.squaredNorm()};
+      b.dot(c),
+      b.squaredNorm() + 2 * a.dot(c),
+      3 * a.dot(b),
+      2 * a.squaredNorm()};
 
   auto roots = RootsOfPolynomial<4>(coe, num_bisection);
   roots.push_back(1); // check t = 1
@@ -116,9 +115,9 @@ double Nearest_Origin_QuadraticCurve(
  */
 template<typename VEC>
 auto AABB_QuadraticCurve(
-  const VEC &c,
-  const VEC &b,
-  const VEC &a) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
+    const VEC &c,
+    const VEC &b,
+    const VEC &a) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
   using SCALAR = typename VEC::Scalar;
   constexpr int ndim = VEC::SizeAtCompileTime;
   const VEC p2 = a + b + c;
@@ -133,44 +132,78 @@ auto AABB_QuadraticCurve(
   return res;
 }
 
+/**
+ * curve is represented with parameter t as p0 + p1 * t + p2 * t^2
+ * @return winding number around origin
+ */
+template<typename VEC>
+typename VEC::Scalar WindingNumber_QuadraticCurve2(
+    const VEC &p0,
+    const VEC &p1,
+    const VEC &p2,
+    unsigned int num_bisection,
+    unsigned int num_sample) {
+  using SCALAR = typename VEC::Scalar;
+  const SCALAR coe[4] = {
+      p1.dot(p0),
+      p1.squaredNorm() + 2 * p2.dot(p0),
+      3 * p2.dot(p1),
+      2 * p2.squaredNorm()};
+  std::vector<SCALAR> roots = delfem2::RootsOfPolynomial<4>(coe, num_bisection);
+  for (unsigned int i = 0; i < num_sample + 2; i++) {
+    roots.push_back(static_cast<SCALAR>(i) / static_cast<SCALAR>(num_sample + 1));
+  }
+  std::sort(roots.begin(), roots.end());
+  SCALAR theta = 0;
+  VEC q0 = p0;
+  for (unsigned int ir0 = 0; ir0 < roots.size() - 1; ++ir0) {
+    SCALAR t1 = roots[ir0 + 1];
+    const VEC q1 = p2 * t1 * t1 + p1 * t1 + p0;
+    const SCALAR sn = q1[1] * q0[0] - q1[0] * q0[1];
+    const SCALAR cs = q0[0] * q1[0] + q0[1] * q1[1];
+    theta += std::atan2(sn, cs);
+    q0 = q1;
+  }
+  return theta;
+}
 
-// above: quadratic curve
+// above: general quadratic curve
 // ===============================================
 // below: quadratic Bezier curve
 
 template<typename VEC>
 VEC PointOnQuadraticBezierCurve(
-  typename VEC::Scalar t,
-  const VEC &p1,
-  const VEC &p2,
-  const VEC &p3) {
+    typename VEC::Scalar t,
+    const VEC &p1,
+    const VEC &p2,
+    const VEC &p3) {
   auto tp = 1 - t;
   return (t * t) * p3 + (2 * t * tp) * p2 + (tp * tp) * p1;
 }
 
 template<class VEC>
 void Polyline_BezierQuadratic(
-  std::vector<VEC> &aP,
-  const unsigned int n,
-  const VEC &p1,
-  const VEC &p2,
-  const VEC &p3) {
+    std::vector<VEC> &aP,
+    const unsigned int n,
+    const VEC &p1,
+    const VEC &p2,
+    const VEC &p3) {
   using SCALAR = typename VEC::Scalar;
   aP.resize(n);
   for (unsigned int i = 0; i < n; ++i) {
     const double t = static_cast<SCALAR>(i) / (static_cast<SCALAR>(n) - 1);
     aP[i] = PointOnQuadraticBezierCurve(
-      t,
-      p1, p2, p3);
+        t,
+        p1, p2, p3);
   }
 }
 
 template<typename VEC>
 double Length_QuadraticBezierCurve_Quadrature(
-  const VEC &p0,
-  const VEC &p1,
-  const VEC &p2,
-  int ngauss) {
+    const VEC &p0,
+    const VEC &p1,
+    const VEC &p2,
+    int ngauss) {
   const VEC q2 = p0 - 2 * p1 + p2;
   const VEC q1 = -2 * p0 + 2 * p1;
   const VEC q0 = p0;
@@ -179,9 +212,9 @@ double Length_QuadraticBezierCurve_Quadrature(
 
 template<typename VEC>
 typename VEC::Scalar Length_QuadraticBezierCurve_Analytic(
-  const VEC &p0,  // end point
-  const VEC &p1,  // the control point
-  const VEC &p2)   // another end point
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point
+    const VEC &p2)   // another end point
 {
   const VEC q2 = p0 - 2 * p1 + p2;
   const VEC q1 = -2 * p0 + 2 * p1;
@@ -194,12 +227,12 @@ typename VEC::Scalar Length_QuadraticBezierCurve_Analytic(
  */
 template<typename VEC>
 typename VEC::Scalar Nearest_QuadraticBezierCurve(
-  const VEC &q,
-  const VEC &p0,  // end point
-  const VEC &p1,  // the control point
-  const VEC &p2,
-  unsigned int num_samples,
-  unsigned int num_newton_itr) {   // another end point
+    const VEC &q,
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point
+    const VEC &p2,
+    unsigned int num_samples,
+    unsigned int num_newton_itr) {   // another end point
   using SCALAR = typename VEC::Scalar;
 
   //  SCALAR disttance = (at^2 + bt + c).norm();
@@ -247,11 +280,11 @@ typename VEC::Scalar Nearest_QuadraticBezierCurve(
  */
 template<typename VEC>
 typename VEC::Scalar Nearest_QuadraticBezierCurve_Sturm(
-  const VEC &q,
-  const VEC &p0,  // end point
-  const VEC &p1,  // the control point
-  const VEC &p2,
-  unsigned int num_bisection) {
+    const VEC &q,
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point
+    const VEC &p2,
+    unsigned int num_bisection) {
   // Precompute coefficients
   // p = at^2 + bt + c
   const VEC a = p0 - 2 * p1 + p2;
@@ -262,9 +295,9 @@ typename VEC::Scalar Nearest_QuadraticBezierCurve_Sturm(
 
 template<typename VEC>
 auto Area_QuadraticBezierCurve2(
-  const VEC &p0,
-  const VEC &p1,
-  const VEC &p2) -> typename VEC::Scalar {
+    const VEC &p0,
+    const VEC &p1,
+    const VEC &p2) -> typename VEC::Scalar {
   using T = typename VEC::Scalar;
   const T tmp0 = p1[0] * (p2[1] - p0[1]) + p1[1] * (p0[0] - p2[0]);
   const T tmp1 = p0[0] * p2[1] - p2[0] * p0[1];
@@ -277,9 +310,9 @@ auto Area_QuadraticBezierCurve2(
  */
 template<typename VEC>
 auto AABB_QuadraticBezierCurve(
-  const VEC &p0,
-  const VEC &p1,
-  const VEC &p2) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
+    const VEC &p0,
+    const VEC &p1,
+    const VEC &p2) -> std::array<typename VEC::Scalar, VEC::SizeAtCompileTime * 2> {
   // bezier expression: p(t) = at^2 + bt + c
   const VEC a = p0 - 2 * p1 + p2;
   const VEC b = -2 * p0 + 2 * p1;
@@ -292,10 +325,10 @@ auto AABB_QuadraticBezierCurve(
  */
 template<typename VEC>
 std::array<VEC, 6> Split_QuadraticBezierCurve(
-  const VEC &p0,
-  const VEC &p1,
-  const VEC &p2,
-  typename VEC::Scalar t) {
+    const VEC &p0,
+    const VEC &p1,
+    const VEC &p2,
+    typename VEC::Scalar t) {
   // p_i^j = p_i^{j-1} * (1 - t0) + p_{i+1}^{j-1} * t0
   auto mix = [&t](const VEC &q0, const VEC &q1) {
     return q0 * (1 - t) + q1 * t;
@@ -312,11 +345,11 @@ std::array<VEC, 6> Split_QuadraticBezierCurve(
 
 template<typename VEC>
 typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
-  const VEC &p0,  // end point
-  const VEC &p1,  // the control point next tp p0
-  const VEC &p2,  // another end point
-  double tolerance = 1E-8,
-  int maxDepth = 8) {
+    const VEC &p0,  // end point
+    const VEC &p1,  // the control point next tp p0
+    const VEC &p2,  // another end point
+    double tolerance = 1E-8,
+    int maxDepth = 8) {
   using SCALAR = typename VEC::Scalar;
 
   // derivative of cubic Bezier
@@ -357,9 +390,9 @@ typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
     } else { // split
       std::array<VEC, 6> subdiv = Split_QuadraticBezierCurve(p0, p1, p2, 0.5);
       const SCALAR len0 = Length_QuadraticBezierCurve_QuadratureSubdiv<VEC>(
-        subdiv[0], subdiv[1], subdiv[2], tolerance, maxDepth - 1);
+          subdiv[0], subdiv[1], subdiv[2], tolerance, maxDepth - 1);
       const SCALAR len1 = Length_QuadraticBezierCurve_QuadratureSubdiv<VEC>(
-        subdiv[3], subdiv[4], subdiv[5], tolerance, maxDepth - 1);
+          subdiv[3], subdiv[4], subdiv[5], tolerance, maxDepth - 1);
       return len0 + len1;
     }
   }
@@ -381,9 +414,9 @@ typename VEC::Scalar Length_QuadraticBezierCurve_QuadratureSubdiv(
  */
 template<typename SCALAR>
 void CoefficientsOfOpenUniformBSpline_Quadratic(
-  SCALAR coeff[3][3],
-  int idx_segment,
-  unsigned int num_segment) {
+    SCALAR coeff[3][3],
+    int idx_segment,
+    unsigned int num_segment) {
 
   const int k0 = std::clamp<int>(idx_segment - 1, 0, static_cast<int>(num_segment)) - idx_segment;
   const int k1 = std::clamp<int>(idx_segment + 0, 0, static_cast<int>(num_segment)) - idx_segment;
@@ -422,8 +455,8 @@ void CoefficientsOfOpenUniformBSpline_Quadratic(
  */
 template<typename VEC>
 VEC Sample_QuadraticBsplineCurve(
-  typename VEC::Scalar t,
-  const std::vector<VEC> &poly) {
+    typename VEC::Scalar t,
+    const std::vector<VEC> &poly) {
   using SCALAR = typename VEC::Scalar;
 
   const int num_segment = poly.size() - 2;
@@ -454,8 +487,8 @@ VEC Sample_QuadraticBsplineCurve(
  */
 template<typename VEC>
 VEC Tangent_QuadraticBsplineCurve(
-  typename VEC::Scalar t,
-  const std::vector<VEC> &poly) {
+    typename VEC::Scalar t,
+    const std::vector<VEC> &poly) {
   using SCALAR = typename VEC::Scalar;
 
   const int num_segment = poly.size() - 2;
@@ -475,66 +508,31 @@ VEC Tangent_QuadraticBsplineCurve(
 
 template<class VEC>
 typename VEC::Scalar Nearest_QuadraticBSplineCurve(
-  const std::vector<VEC> &poly,
-  const VEC &scr) {
-  assert( poly.size() > 2 );
+    const std::vector<VEC> &poly,
+    const VEC &scr) {
+  assert(poly.size() > 2);
   using SCALAR = typename VEC::Scalar;
   const unsigned int num_segment = poly.size() - 2;
   SCALAR dist_best = (poly[0] - scr).norm();
   SCALAR t_best = 0.;
   for (unsigned int iseg = 0; iseg < num_segment; ++iseg) {
     const VEC p0 = poly[iseg] - scr;
-    const VEC p1 = poly[iseg+1] - scr;
-    const VEC p2 = poly[iseg+2] - scr;
-    if( !IsContact_Orgin_AabbOfPoint3(p0,p1,p2,dist_best) ){ continue; }
+    const VEC p1 = poly[iseg + 1] - scr;
+    const VEC p2 = poly[iseg + 2] - scr;
+    if (!IsContact_Orgin_AabbOfPoint3(p0, p1, p2, dist_best)) { continue; }
     SCALAR coeff[3][3];
     CoefficientsOfOpenUniformBSpline_Quadratic(coeff, iseg, num_segment);
     const VEC q0 = coeff[0][0] * p0 + coeff[1][0] * p1 + coeff[2][0] * p2;
     const VEC q1 = coeff[0][1] * p0 + coeff[1][1] * p1 + coeff[2][1] * p2;
     const VEC q2 = coeff[0][2] * p0 + coeff[1][2] * p1 + coeff[2][2] * p2;
-    double t0 = Nearest_Origin_QuadraticCurve(q0,q1,q2, 16);
-    double dist0 = (q0 + q1*t0 + q2*t0*t0).norm();
-    if( dist0 > dist_best ){ continue; }
+    double t0 = Nearest_Origin_QuadraticCurve(q0, q1, q2, 16);
+    double dist0 = (q0 + q1 * t0 + q2 * t0 * t0).norm();
+    if (dist0 > dist_best) { continue; }
     dist_best = dist0;
     t_best = iseg + t0;
     // std::cout << "  " << iseg << " " << num_segment << "  ---> " << t_best << " " << dist_best << std::endl;
   }
   return t_best;
-}
-
-/**
- * curve is represented with parameter t as p0 + p1 * t + p2 * t^2
- * @return winding number around origin
- */
-template <typename VEC>
-typename VEC::Scalar WindingNumber_QuadraticCurve2(
-    const VEC& p0,
-    const VEC& p1,
-    const VEC& p2,
-    unsigned int num_bisection,
-    unsigned int num_sample){
-  using SCALAR = typename VEC::Scalar;
-  const SCALAR coe[4] = {
-      p1.dot(p0),
-      p1.squaredNorm() + 2 * p2.dot(p0),
-      3 * p2.dot(p1),
-      2 * p2.squaredNorm()};
-  std::vector<SCALAR> roots = delfem2::RootsOfPolynomial<4>(coe, num_bisection);
-  for(unsigned int i=0;i<num_sample+2;i++){
-    roots.push_back( static_cast<SCALAR>(i)/static_cast<SCALAR>(num_sample+1) );
-  }
-  std::sort(roots.begin(), roots.end());
-  SCALAR theta = 0;
-  VEC q0 = p0;
-  for(unsigned int ir0=0;ir0<roots.size()-1;++ir0) {
-    SCALAR t1 = roots[ir0+1];
-    const VEC q1 = p2 * t1 * t1 + p1 * t1 + p0;
-    const SCALAR sn = q1[1]*q0[0] - q1[0]*q0[1];
-    const SCALAR cs = q0[0] * q1[0] + q0[1] * q1[1];
-    theta += std::atan2(sn,cs);
-    q0 = q1;
-  }
-  return theta;
 }
 
 }

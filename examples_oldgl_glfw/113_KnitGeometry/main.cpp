@@ -127,16 +127,16 @@ void RepeatKnitUnit_SingleStrand(
 
 int main() {
   std::vector<dfm2::CVec3d> cps_unit = {
-      {-0.4, 0, 0},
-      {-0.06, 0, 0},
-      {-0.02, 0.45, 0.5},
-      {-0.34, 0.45, 0.5},
-      {-0.31, 1, 0.2},
-      {0.31, 1, 0.2},
-      {0.34, 0.45, 0.5},
-      {0.02, 0.45, 0.5},
-      {0.06, 0, 0},
-      {0.4, 0, 0}};
+      {-0.4, 0.0, 0.0},
+      {-0.1, 0.2, 0.0},
+      {-0.1, 0.4, 0.3},
+      {-0.3, 0.5, 0.5},
+      {-0.3, 1.0, 0.2},
+      {+0.3, 1.0, 0.2},
+      {+0.3, 0.5, 0.5},
+      {+0.1, 0.4, 0.3},
+      {+0.1, 0.2, 0.0},
+      {+0.4, 0.0, 0.0}};
 
   delfem2::glfw::CViewer3 viewer(1);
   delfem2::glfw::InitGLOld();
@@ -144,7 +144,7 @@ int main() {
 
   {
     std::vector<dfm2::CVec3d> sample;
-    delfem2::Polyline_CubicBSplineCurve(
+    delfem2::Polyline_CatmullRomSplineCurve(
         sample,
         1001, cps_unit);
     for (unsigned int iframe = 0; iframe < 100; ++iframe) {
@@ -166,7 +166,7 @@ int main() {
     std::vector<std::vector<dfm2::CVec3d >> samples;
     samples.resize(cps_knit.size());
     for (unsigned int iy = 0; iy < cps_knit.size(); ++iy) {
-      delfem2::Polyline_CubicBSplineCurve(
+      delfem2::Polyline_CatmullRomSplineCurve(
           samples[iy],
           1001, cps_knit[iy]);
     }
@@ -185,7 +185,7 @@ int main() {
         cps_knit,
         3, 3, cps_unit, 0.5);
     std::vector<dfm2::CVec3d> sample;
-    delfem2::Polyline_CubicBSplineCurve(
+    delfem2::Polyline_CatmullRomSplineCurve(
         sample,
         1001, cps_knit);
     for (unsigned int iframe = 0; iframe < 100; iframe++) {

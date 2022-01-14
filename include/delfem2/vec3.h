@@ -107,8 +107,8 @@ class CVec3;
 template<typename T0, typename T1>
 CVec3<T0> operator*(T1 d, const CVec3<T0> &rhs);
 
-template<typename T>
-CVec3<T> operator/(const CVec3<T> &vec, T d);
+template<typename T0, typename T1>
+CVec3<T0> operator/(const CVec3<T0> &vec, T1 d);
 
 template<typename T>
 std::ostream &operator<<(std::ostream &output, const CVec3<T> &v);
