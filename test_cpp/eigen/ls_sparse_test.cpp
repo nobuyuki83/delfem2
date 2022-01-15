@@ -148,6 +148,9 @@ TEST(ls, test1) {
     for (int itr = 0; itr < max_itr; ++itr) { // CG method with eigen
       const std::size_t n = Veig0.size();
       Eigen::VectorXd tmp0(n), tmp1(n), vx0(n), vB0(n);
+      tmp0.setZero();
+      tmp1.setZero();
+      vx0.setZero();
       vB0 = Veig0;
       std::vector<double> aConv = delfem2::Solve_CG(
           vB0, vx0, tmp0, tmp1,

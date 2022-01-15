@@ -302,7 +302,7 @@ echo "###############################"
 echo "test eigen"
 echo "###############################"
 
-cd test_eigen || exit
+cd test_cpp/eigen || exit
 mkdir buildMake
 cd buildMake || exit
 cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -310,7 +310,7 @@ cmake --build . --config Release
 ./runUnitTests
 cd ../../
 
-cd test_eigen || exit
+cd test_cpp/eigen || exit
 mkdir buildXcode
 cd buildXcode || exit
 cmake .. -G Xcode 

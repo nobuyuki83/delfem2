@@ -110,12 +110,12 @@ jobs:
         cmake --install . --prefix ../../libeigen
         cd ../../../
         
-        cd test_eigen
+        cd test_cpp/eigen
         mkdir buildMakeStatic && cd buildMakeStatic
         cmake .. -DCMAKE_BUILD_TYPE=Release
         cmake --build .
         ./runUnitTests
-        cd ../../ 
+        cd ../../../
 
     - name: build_glfw
       run: |

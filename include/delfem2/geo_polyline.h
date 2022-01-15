@@ -136,8 +136,8 @@ VEC Sample_Polyline(
   using SCALAR = typename VEC::Scalar;
   assert(!polyline.empty());
   if (polyline.empty()) { return VEC(0, 0); }
-  if (param < 0) { return polyline[0]; }
-  if (param > static_cast<SCALAR>(polyline.size())) {
+  if (param <= 0) { return polyline[0]; }
+  if (param >= static_cast<SCALAR>(polyline.size()-1)) {
     return polyline[polyline.size() - 1];
   }
   const unsigned int ie = int(param);

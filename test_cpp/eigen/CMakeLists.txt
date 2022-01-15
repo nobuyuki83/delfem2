@@ -17,23 +17,23 @@ endif()
 project(test_eigen)
 set(MY_BINARY_NAME runUnitTests)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../test_inputs")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 ################################
 
 # google test
-set(GTEST_ROOT ${PROJECT_SOURCE_DIR}/../3rd_party/libgtest)
+set(GTEST_ROOT ${PROJECT_SOURCE_DIR}/../../3rd_party/libgtest)
 find_package( GTest REQUIRED )
 
 # thread
 find_package(Threads REQUIRED)
 
 # eigen
-set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/libeigen)
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libeigen)
 FIND_PACKAGE(Eigen3 REQUIRED)
 
 # delfem2
-set(DELFEM2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/../include")
+set(DELFEM2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/../../include")
 
 #############################
 
