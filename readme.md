@@ -42,7 +42,7 @@ There are currently no tutorial available for this library. To understand the co
 + C++ test:
   + [test_cpp](test_cpp): tests using C++
   + [test_cuda](test_cuda) : test using cuda
-  + [test_eigen](test_eigen) : test using eigen
+  + [test_cpp/eigen](test_cpp/eigen) : test using eigen
 
 Several demos in "examples_newgl_glfw" can be run on the browser. Please take a look at https://nobuyuki83.github.io/delfem2/
 

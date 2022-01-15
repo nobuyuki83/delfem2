@@ -35,7 +35,7 @@ void ConvexHull2(
   { // find the index with minimum y coordinate
     p0_idx = 0;
     VEC p0 = points[0];
-    for (unsigned int i = 0; i < points.size(); ++i) {
+    for (unsigned int i = 1; i < points.size(); ++i) {
       if (points[i][1] > p0[1]) { continue; }
       if (points[i][1] == p0[1] && points[i][0] > p0[0]) { continue; }
       p0_idx = i;
