@@ -61,7 +61,7 @@ No installation is necessary to use DelFEM2. All the source code of DelFEM2 can 
 git clone https://github.com/nobuyuki83/delfem2.git
 ```
 
-DelFEM2 can be compiled either as a header-only library or as a static library. Nothing complicated is necessary if DelFEM2 is used as a header only library -- just by include header files and compile the code with option ```DFM2_HEADER_ONLY```. To use DelFEM2 as a static library, you may compiles  several dependent DelFEM2 source files and link them manually (this is not very complicated too).
+DelFEM2 can be compiled either as a header-only library or as a static library. Nothing complicated is necessary if DelFEM2 is used as a header only library -- just by include header files. To use DelFEM2 as a static library, you may compiles the delfem2 codes with option ```DFM2_STATIC_LIBRARY``` and several dependent DelFEM2 source files and link them manually (this is not very complicated too).
 
 
 

@@ -43,7 +43,7 @@ void ConvexHull2_Test0(unsigned int nitr) {
       const VEC p1p2 = points[i] - points[last];
       const VEC p2p3 = points[next] - points[i];
       const SCALAR cos_val = p1p2.dot(p2p3) / p1p2.norm() / p2p3.norm();
-      EXPECT_GE(cos_val, -1.-1.0e-10);
+      EXPECT_GE(cos_val, -1.0-1.0e-6);
     }
 
     // checks winding number for internal points are 2 * Pi
