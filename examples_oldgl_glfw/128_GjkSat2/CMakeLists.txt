@@ -15,7 +15,7 @@ ENDIF ()
 
 ####################################
 
-project(128_GJK2)
+project(128_GjkSat2)
 
 # glfw
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)

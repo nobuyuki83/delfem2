@@ -17,7 +17,7 @@
 
 #include "delfem2/vec2.h"
 #include "delfem2/geo_convhull2.h"
-#include "delfem2/geo_gjk2.h"
+#include "delfem2/geo_gjksat2.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 
@@ -106,6 +106,7 @@ int main() {
       DrawPointsAndTheirConvexhull(vtxB_xy, edgeB_vtx);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
+      if(glfwWindowShouldClose(viewer.window)){ break; }
     }
   }
   glfwDestroyWindow(viewer.window);
