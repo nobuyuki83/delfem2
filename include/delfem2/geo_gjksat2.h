@@ -5,6 +5,10 @@
 #ifndef GJK2_GEO_GJK2_H_
 #define GJK2_GEO_GJK2_H_
 
+#include <vector>
+#include <climits>
+#include <utility>  // for pair
+
 namespace delfem2 {
 
 // finds furthest point from poly in direction dir
@@ -158,17 +162,17 @@ bool Penetration_Points2_Points2_Epa(
   };
 
   while (true) {
-    const std::pair<int, VEC> ret = FindClosestEdge(simplex);
-    int v0 = ret.first;
+    const std::pair<unsigned int, VEC> ret = FindClosestEdge(simplex);
+    const unsigned int iv0 = ret.first;
     const VEC n = ret.second;
-    const SCALAR dist = n.dot(simplex[v0]);
+    const SCALAR dist = n.dot(simplex[iv0]);
     const VEC p = support(n);
     const SCALAR d = p.dot(n);
     if (d - dist < tolerance) {
       normalA = n * dist;
       return true;
     } else {
-      simplex.insert(simplex.begin() + v0 + 1, p);
+      simplex.insert(simplex.begin() + iv0 + 1, p);
     }
   }
 }
