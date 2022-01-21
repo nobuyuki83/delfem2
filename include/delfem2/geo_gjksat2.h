@@ -8,35 +8,36 @@
 namespace delfem2 {
 
 // finds furthest point from poly in direction dir
-template <typename VEC>
-auto FindFurthest(const std::vector<VEC>& poly, const VEC& dir) -> VEC {
-  double max_dist = std::numeric_limits<double>::lowest();
-  VEC ret = *poly.begin();
-  for (auto vert : poly) {
-    double dist = dir.dot(vert);
-    if (dist > max_dist) {
-      ret = vert;
-      max_dist = dist;
-    }
+template<typename VEC, typename SCALAR = typename VEC::Scalar>
+VEC FindFurthest(
+    const std::vector<VEC> &poly,
+    const VEC &dir) {
+  SCALAR max_dist = std::numeric_limits<SCALAR>::lowest();
+  assert(!poly.empty());
+  VEC ret = poly[0];
+  for (auto vert: poly) {
+    SCALAR dist = dir.dot(vert);
+    if (dist < max_dist) { continue; }
+    ret = vert;
+    max_dist = dist;
   }
   return ret;
 }
 
 /**
- * The functions returns true if the convex hull of a 2D point set A
- * and the convex hull of a 2D point set B intersects.
+ * The functions returns the triangle simplex that GJK finds if there is intersection
  * @tparam VEC
  * @param vtxsA points of the point set A
  * @param vtxsB points of the point set B
- * @return
  */
-template <typename VEC>
-bool IsIntersect_Points2_Points2_Gjk(
-    const std::vector<VEC>& vtxsA,
-    const std::vector<VEC>& vtxsB) {
+template<typename VEC>
+auto FindIntersectingSimplexForGjk2(
+    const std::vector<VEC> &vtxsA,
+    const std::vector<VEC> &vtxsB) -> std::vector<VEC> {
+  assert(!vtxsA.empty() && !vtxsB.empty());
 
   // compute support on Minkowski difference
-  auto support = [&vtxsA, &vtxsB](const VEC& dir) -> VEC {
+  auto support = [&vtxsA, &vtxsB](const VEC &dir) -> VEC {
     VEC ndir = -dir;
     return FindFurthest(vtxsA, dir) - FindFurthest(vtxsB, ndir);
   };
@@ -52,7 +53,7 @@ bool IsIntersect_Points2_Points2_Gjk(
   while (true) {
     VEC P = support(d);
     if (P.dot(d) < 0) {
-      return false;
+      return std::vector<VEC>();
     } else {
       simplex.push_back(P);
     }
@@ -74,12 +75,103 @@ bool IsIntersect_Points2_Points2_Gjk(
         simplex.erase(simplex.begin() + 1); // remove B
         d = ACperp;
       } else {
-        return true;
+        return simplex;
       }
     }
   }
 }
 
+/**
+ * The functions returns true if the convex hull of a 2D point set A
+ * and the convex hull of a 2D point set B intersects.
+ * @tparam VEC
+ * @param vtxsA points of the point set A
+ * @param vtxsB points of the point set B
+ * @return
+ */
+template<typename VEC>
+bool IsIntersect_Points2_Points2_Gjk(
+    const std::vector<VEC> &vtxsA,
+    const std::vector<VEC> &vtxsB) {
+  assert(!vtxsA.empty() && !vtxsB.empty());
+  return !FindIntersectingSimplexForGjk2(vtxsA, vtxsB).empty();
+}
+
+/**
+ * @brief return normal vector towards origin of the closest edge and the starting index
+ * @param simplex
+ */
+template<typename VEC, typename SCALAR = typename VEC::Scalar>
+auto FindClosestEdge(
+    const std::vector<VEC> &simplex) -> std::pair<unsigned int, VEC> {
+  assert(!simplex.empty());
+  SCALAR min_dist = std::numeric_limits<SCALAR>::max();
+  unsigned int min_idx = UINT_MAX;
+  VEC ret_normal;
+
+  for (unsigned int i = 0; i < simplex.size(); i++) {
+    unsigned int j = (i + 1 + simplex.size()) % simplex.size();
+    VEC edge = simplex[j] - simplex[i];
+    VEC n{edge[1], -edge[0]}; // we know the simplex is counterclockwise, so origin is always at left
+    n.normalize();
+    SCALAR dist = n.dot(simplex[i]);
+    if (dist >= min_dist) { continue; }
+    min_dist = dist;
+    min_idx = i;
+    ret_normal = n;
+  }
+
+  return {min_idx, ret_normal};
+}
+
+/**
+ * computing maximum penetration depth and its normal for the intersection of convex hulls
+ * @tparam VEC Eigen::Vector2x
+ * @param[out] normalA if we move all the vertices of vtxB with normalA, there is no collision
+ * @param[in] vtxsA coordinates of point set A
+ * @param[in] vtxsB coordinates of point set B
+ * @return Direction (Vector), depth
+ */
+template<typename VEC, typename SCALAR = typename VEC::Scalar>
+bool Penetration_Points2_Points2_Epa(
+    VEC &normalA,
+    const std::vector<VEC> &vtxsA,
+    const std::vector<VEC> &vtxsB,
+    SCALAR tolerance) {
+  std::vector<VEC> simplex = FindIntersectingSimplexForGjk2(vtxsA, vtxsB);
+  if (simplex.empty()) { return false; } // no intersection
+  assert(simplex.size() == 3);
+
+  { // make the simplex counterclockwise
+    const VEC v01 = simplex[1] - simplex[0];
+    const VEC v02 = simplex[2] - simplex[0];
+    if (v01[0] * v02[1] - v01[1] * v02[0] < 0) {  // check area of triangle
+      const VEC temp = simplex[2];
+      simplex[2] = simplex[1];
+      simplex[1] = temp;
+    }
+  }
+
+  auto support = [&vtxsA, &vtxsB](const VEC &dir) -> VEC {
+    const VEC ndir = -dir;
+    return FindFurthest(vtxsA, dir) - FindFurthest(vtxsB, ndir);
+  };
+
+  while (true) {
+    const std::pair<int, VEC> ret = FindClosestEdge(simplex);
+    int v0 = ret.first;
+    const VEC n = ret.second;
+    const SCALAR dist = n.dot(simplex[v0]);
+    const VEC p = support(n);
+    const SCALAR d = p.dot(n);
+    if (d - dist < tolerance) {
+      normalA = n * dist;
+      return true;
+    } else {
+      simplex.insert(simplex.begin() + v0 + 1, p);
+    }
+  }
+}
 
 /**
  *
@@ -88,14 +180,14 @@ bool IsIntersect_Points2_Points2_Gjk(
  * @param[in] a axis of projection
  * @return range of the projection
  */
-template<typename VEC>
-std::pair<double, double> Range_ProjectionPointsOnAxis(
+template<typename VEC, typename SCALAR=typename VEC::Scalar>
+std::pair<SCALAR, SCALAR> Range_ProjectionPointsOnAxis(
     const std::vector<VEC> &vtxs,
     const VEC &a) {
-  double min0 = a.dot(vtxs[0]);
-  double max0 = min0;
+  SCALAR min0 = a.dot(vtxs[0]);
+  SCALAR max0 = min0;
   for (unsigned int ivtx = 1; ivtx < vtxs.size(); ++ivtx) {
-    double d = a.dot(vtxs[ivtx]);
+    const SCALAR d = a.dot(vtxs[ivtx]);
     min0 = (d < min0) ? d : min0;
     max0 = (d > max0) ? d : max0;
   }
@@ -111,8 +203,8 @@ bool IsIntersect_Points2_Points2_Sat(
     for (unsigned int jB = iB + 1; jB < vtxsB.size(); ++jB) {
       VEC a = vtxsB[iB] - vtxsB[jB];
       a = {a[1], -a[0]}; // rotate 90 degree
-      auto rangeA = Range_ProjectionPointsOnAxis(vtxsA, a);
-      auto rangeB = Range_ProjectionPointsOnAxis(vtxsB, a);
+      const auto rangeA = Range_ProjectionPointsOnAxis(vtxsA, a);
+      const auto rangeB = Range_ProjectionPointsOnAxis(vtxsB, a);
       if (rangeA.second < rangeB.first) { return false; } // not intersect
       if (rangeB.second < rangeA.first) { return false; } // not intersect
     }
@@ -121,16 +213,14 @@ bool IsIntersect_Points2_Points2_Sat(
     for (unsigned int jA = iA + 1; jA < vtxsA.size(); ++jA) {
       VEC a = vtxsA[iA] - vtxsA[jA];
       a = {a[1], -a[0]}; // rotate 90 degree
-      auto rangeA = Range_ProjectionPointsOnAxis(vtxsA, a);
-      auto rangeB = Range_ProjectionPointsOnAxis(vtxsB, a);
+      const auto rangeA = Range_ProjectionPointsOnAxis(vtxsA, a);
+      const auto rangeB = Range_ProjectionPointsOnAxis(vtxsB, a);
       if (rangeA.second < rangeB.first) { return false; } // not intersect
       if (rangeB.second < rangeA.first) { return false; } // not intersect
     }
   }
   return true;
 }
-
-
 
 }
 
