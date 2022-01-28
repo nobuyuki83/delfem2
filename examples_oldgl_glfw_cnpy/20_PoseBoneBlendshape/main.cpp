@@ -21,6 +21,7 @@
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/quat.h"
+#include "delfem2/sampling.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -112,7 +113,7 @@ int main()
     for(auto& bone : aBone){
       dfm2::CQuatd::Random(0.2).CopyTo(bone.quatRelativeRot);
     }
-    dfm2::CVec3d::Random(dist_01,rnd_eng).CopyToScale(aBone[0].transRelative, 0.2);
+    dfm2::CVec3d(dfm2::RandomVec3(dist_01,rnd_eng)).CopyToScale(aBone[0].transRelative, 0.2);
     //
     for(unsigned int iframe=0;iframe<100;++iframe) {
       double t0 = iframe * 0.01 * 2 * M_PI;

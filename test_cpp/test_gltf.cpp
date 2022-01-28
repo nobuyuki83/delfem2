@@ -12,6 +12,7 @@
 #include "delfem2/rig_geo3.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/quat.h"
+#include "delfem2/sampling.h"
 
 // Define these only in *one* .cc file.
 //#define TINYGLTF_IMPLEMENTATION
@@ -19,6 +20,7 @@
 //#define STB_IMAGE_WRITE_IMPLEMENTATION
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 #include "tinygltf/tiny_gltf.h"
+
 
 namespace dfm2 = delfem2;
 
@@ -188,8 +190,7 @@ TEST(gltf, constraint_sensitivity )
       aBone);
   assert( L.size()==(nb+1)*3*nb*12 );
 
-  std::random_device rd;
-  std::mt19937 rndeng(rd());
+  std::mt19937 rndeng(std::random_device{}());
   std::uniform_real_distribution<double> dist_01(+0, +1);
   std::uniform_int_distribution<int> rand_ib(+0, static_cast<int>(nb-1));
   const double eps = 1.0e-4;
@@ -204,7 +205,7 @@ TEST(gltf, constraint_sensitivity )
     for(int itr=0;itr<5;++itr){
       dfm2::CTarget t;
       t.ib = rand_ib(rndeng);
-      t.pos = dfm2::CVec3d::Random(dist_01,rndeng) + aBone[t.ib].RootPosition();
+      t.pos = dfm2::CVec3d(dfm2::RandomVec3(dist_01,rndeng)) + aBone[t.ib].RootPosition();
       aTarget.push_back(t);
     }
     

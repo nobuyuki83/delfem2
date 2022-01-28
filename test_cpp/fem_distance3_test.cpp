@@ -12,6 +12,7 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/fem_distance3.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/sampling.h"
 
 namespace dfm2 = delfem2;
 
@@ -56,8 +57,7 @@ TEST(fem_distance3, distancetri2d3d) {
 
 
 TEST(fem_distance3, WdWddW_SquareLengthLineseg3D) {
-  std::random_device rd;
-  std::mt19937 rndeng(rd());
+  std::mt19937 rndeng(std::random_device{}());
   std::uniform_real_distribution<double> dist_m1p1(-1, +1);
   std::uniform_real_distribution<double> dist_12(+1, +2);
   std::uniform_real_distribution<double> dist_01(+0, +1);
@@ -66,8 +66,8 @@ TEST(fem_distance3, WdWddW_SquareLengthLineseg3D) {
   for (int itr = 0; itr < 10000; ++itr) {
     const double stiff_stretch = dist_12(rndeng);
     const dfm2::CVec3d P[2] = {
-        dfm2::CVec3d::Random(dist_01, rndeng),
-        dfm2::CVec3d::Random(dist_01, rndeng)};
+        { dist_01(rndeng), dist_01(rndeng), dist_01(rndeng) },
+        { dist_01(rndeng), dist_01(rndeng), dist_01(rndeng) } };
     if ((P[0] - P[1]).norm() < 0.1) { continue; }
     dfm2::CVec3d dW_dP[2];
     dfm2::CMat3d ddW_ddP[2][2];
@@ -77,8 +77,8 @@ TEST(fem_distance3, WdWddW_SquareLengthLineseg3D) {
         stiff_stretch, P, L0);
     // -----
     const dfm2::CVec3d dP[2] = {
-        dfm2::CVec3d::Random(dist_01, rndeng) * eps,
-        dfm2::CVec3d::Random(dist_01, rndeng) * eps};
+        dfm2::CVec3d(dfm2::RandomVec3(dist_01, rndeng)) * eps,
+        dfm2::CVec3d(dfm2::RandomVec3(dist_01, rndeng)) * eps};
     const dfm2::CVec3d p[2] = {P[0] + dP[0], P[1] + dP[1]};
     double w;
     dfm2::CVec3d dw_dP[2];

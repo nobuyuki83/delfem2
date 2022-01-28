@@ -330,7 +330,8 @@ class CVec3 {
     if (idim < 3) { r[idim] = 1; }
     return r;
   }
-  //
+
+  /*
   template<typename DIST, typename ENG>
   void SetRandom(DIST &dist, ENG &eng) {
     p[0] = dist(eng);
@@ -342,6 +343,7 @@ class CVec3 {
   static CVec3 Random(DIST &dist, ENG &eng) {
     return CVec3(dist(eng), dist(eng), dist(eng));
   }
+   */
 
   using Scalar = T;
 

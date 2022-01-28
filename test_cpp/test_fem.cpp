@@ -14,6 +14,7 @@
 #include "delfem2/fem_discreteshell.h"
 #include "delfem2/fempoisson.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/sampling.h"
 
 namespace dfm2 = delfem2;
 
@@ -47,10 +48,10 @@ TEST(pbd, Check_CdC_DiscreteShell) {
   const double eps = 1.0e-5;
   for (unsigned int itr = 0; itr < 10000; ++itr) {
     const dfm2::CVec3d p[4] = {
-        dfm2::CVec3d::Random(dist_01, randomEng),
-        dfm2::CVec3d::Random(dist_01, randomEng),
-        dfm2::CVec3d::Random(dist_01, randomEng),
-        dfm2::CVec3d::Random(dist_01, randomEng)};
+        dfm2::RandomVec3(dist_01, randomEng),
+        dfm2::RandomVec3(dist_01, randomEng),
+        dfm2::RandomVec3(dist_01, randomEng),
+        dfm2::RandomVec3(dist_01, randomEng)};
     if (dfm2::Distance(p[0], p[1]) < 0.1) { continue; }
     if (dfm2::Distance(p[0], p[2]) < 0.1) { continue; }
     if (dfm2::Distance(p[0], p[3]) < 0.1) { continue; }

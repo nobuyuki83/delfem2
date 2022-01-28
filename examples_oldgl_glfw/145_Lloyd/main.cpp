@@ -16,7 +16,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/sampler2.h"
+#include "delfem2/sampler_lloyd2.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -78,13 +78,12 @@ void Draw(
 
 int main()
 {
-  std::vector<double> aXY;
+  std::vector<double> vtx_xy;
   const unsigned int ndiv = 128;
   std::vector<double> aDensity;
   const double min_xy[2] = {0,0};
   const double max_xy[2] = {1,1};
-  std::random_device rd;
-  std::mt19937 rdeng(rd());
+  std::mt19937 rdeng(std::random_device{}());
   std::uniform_real_distribution<double> dist_x(min_xy[0], max_xy[0]);
   std::uniform_real_distribution<double> dist_y(min_xy[1], max_xy[1]);
   // -----------
@@ -98,7 +97,7 @@ int main()
   {
     for(unsigned int imode=0;imode<3;++imode){
       MakeDensity(aDensity,imode,ndiv);
-      aXY.resize(0);
+      vtx_xy.resize(0);
       int icnt_fail = 0;
       for(unsigned int idart=0;idart<1000;++idart){
         for(int itr=0;itr<10;++itr) {
@@ -110,9 +109,9 @@ int main()
 		  assert(iy0*ndiv+ix0<aDensity.size());
           double dist01 = 1.0 / aDensity[iy0 * ndiv + ix0];
           bool flg_fail = false;
-          for (unsigned int ip = 0; ip < aXY.size() / 2; ++ip) {
-            const double x1 = aXY[ip * 2 + 0];
-            const double y1 = aXY[ip * 2 + 1];
+          for (unsigned int ip = 0; ip < vtx_xy.size() / 2; ++ip) {
+            const double x1 = vtx_xy[ip * 2 + 0];
+            const double y1 = vtx_xy[ip * 2 + 1];
             const double d01 = (x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1);
             if (d01 * d01 < dist01 * dist01) {
               flg_fail = true;
@@ -122,18 +121,18 @@ int main()
           }
           if (!flg_fail) {
             icnt_fail = 0;
-            aXY.push_back(x0);
-            aXY.push_back(y0);
+            vtx_xy.push_back(x0);
+            vtx_xy.push_back(y0);
           }
         }
-        Draw(viewer,aXY,min_xy,max_xy);
+        Draw(viewer, vtx_xy, min_xy, max_xy);
         if( icnt_fail > 100 ){ break; }
         if (glfwWindowShouldClose(viewer.window)) { break; }
       }
       for(int itr=0;itr<50;++itr){
-        dfm2::Step_Lloyd2(aXY,
+        dfm2::Step_Lloyd2(vtx_xy,
                           ndiv, aDensity, min_xy, max_xy);
-        Draw(viewer,aXY,min_xy,max_xy);
+        Draw(viewer, vtx_xy, min_xy, max_xy);
         if (glfwWindowShouldClose(viewer.window)) { break; }
       }
     }

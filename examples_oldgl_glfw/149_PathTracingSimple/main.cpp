@@ -14,43 +14,13 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
+#include "delfem2/sampling.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/vec3.h"
 
 using namespace delfem2;
-
-// based on https://github.com/postgres/postgres/blob/master/src/port/erand48.c
-double my_erand48(unsigned short xseed[3])
-{
-  constexpr unsigned short my_rand48_mult[3] = {
-      0xe66d,
-      0xdeec,
-      0x0005
-  };
-  constexpr unsigned short my_rand48_add = 0x000b;
-
-  unsigned long accu;
-  unsigned short temp[2];
-
-  accu = (unsigned long) my_rand48_mult[0] * (unsigned long) xseed[0] +
-         (unsigned long) my_rand48_add;
-  temp[0] = (unsigned short) accu;	/* lower 16 bits */
-  accu >>= sizeof(unsigned short) * 8;
-  accu += (unsigned long) my_rand48_mult[0] * (unsigned long) xseed[1] +
-          (unsigned long) my_rand48_mult[1] * (unsigned long) xseed[0];
-  temp[1] = (unsigned short) accu;	/* middle 16 bits */
-  accu >>= sizeof(unsigned short) * 8;
-  accu += my_rand48_mult[0] * xseed[2] + my_rand48_mult[1] * xseed[1] + my_rand48_mult[2] * xseed[0];
-  xseed[0] = temp[0];
-  xseed[1] = temp[1];
-  xseed[2] = (unsigned short) accu;
-  // --------
-  return ldexp((double) xseed[0], -48) +
-         ldexp((double) xseed[1], -32) +
-         ldexp((double) xseed[2], -16);
-}
 
 struct Ray {
   CVec3d o, d;
@@ -107,13 +77,13 @@ inline bool intersect(
 CVec3d radiance(
     const Ray &r,
     int depth,
-    unsigned short *Xi,
+    std::array<unsigned short,3> &Xi,
     const std::vector<CSphere>& aSphere)
 {
   double t;
   int id = 0;
   if (!intersect(r, t, id, aSphere)){
-    return CVec3d();
+    return {0,0,0};
   }
   const CSphere &obj = aSphere[id];
   CVec3d x = r.o + r.d * t; // hitting point
@@ -122,20 +92,18 @@ CVec3d radiance(
   CVec3d f = obj.c;  // color
   double p = f.x > f.y && f.x > f.z ? f.x : f.y > f.z ? f.y : f.z;  // maximum reflectance
   if (++depth > 5){ // Russian Roulette
-    if (my_erand48(Xi) < p){
+    if (my_erand48<double>(Xi) < p){
       f = f * (1 / p);
     } else{
       return obj.e;
     }
   }
   if (obj.refl == DIFF) {
-    double r1 = 2 * M_PI * my_erand48(Xi);
-    double r2 = my_erand48(Xi);
-    double r2s = sqrt(r2);
+    const auto h0 = SampleHemisphereZupCos<double>(Xi);
     CVec3d w = nl;
-    CVec3d u = ((fabs(w.x) > .1 ? CVec3d(0, 1, 0) : CVec3d(1,0,0)).cross(w)).normalized();
-    CVec3d v = -w.cross(u);
-    CVec3d d = (u * cos(r1) * r2s + v * sin(r1) * r2s + w * sqrt(1 - r2)).normalized(); // sample hemisphere
+    CVec3d u = ((fabs(w.x) > .1 ? CVec3d(0, 1, 0) : CVec3d(1,0,0)).cross(w)).normalized();  // orthogonal to w
+    CVec3d v = w.cross(u);  // orthogonal to w and u
+    CVec3d d = (h0[0] * u + h0[1] * v + h0[2] * w).normalized();
     return obj.e + f.mult(radiance(Ray(x, d), depth, Xi, aSphere));
   }
   else if (obj.refl == SPEC) {
@@ -161,7 +129,7 @@ CVec3d radiance(
   double P = .25 + .5 * Re, RP = Re / P;
   double TP = Tr / (1 - P);
   if( depth > 2 ){
-    if( my_erand48(Xi) < P ){
+    if( my_erand48<double>(Xi) < P ){
       return obj.e + f.mult(
           radiance(reflRay, depth, Xi, aSphere) * RP );
     }
@@ -191,14 +159,14 @@ int main() {
 
   delfem2::opengl::CTexRGB_Rect2D tex;
   {
-    tex.width = 1024;
-    tex.height = 768;
+    tex.width = 400;
+    tex.height = 400;
     tex.channels = 3;
     tex.pixel_color.resize(tex.width*tex.height*tex.channels);
   }
   delfem2::glfw::CViewer3 viewer(2);
-  viewer.width = 1024;
-  viewer.height = 768;
+  viewer.width = 400;
+  viewer.height = 400;
   delfem2::glfw::InitGLOld();
   viewer.OpenWindow();
   tex.InitGL();
@@ -215,14 +183,12 @@ int main() {
   while (!glfwWindowShouldClose(viewer.window))
   {
     for (unsigned int ih = 0; ih < nh; ih++) {
-      unsigned short Xi[3] = {0, 0, (unsigned short)(ih * ih * ih + isample * isample)}; // random seed
+      std::array<unsigned short,3> Xi = {0, 0, (unsigned short)(ih * ih * ih + isample * isample)}; // random seed
       for (unsigned int iw = 0; iw < nw; iw++){
         for (int sy = 0; sy < 2; sy++) {
           for (int sx = 0; sx < 2; sx++) {
-            const double r1 = 2 * my_erand48(Xi);
-            const double r2 = 2 * my_erand48(Xi);
-            double dx = r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 - r1);  // tent filter
-            double dy = r2 < 1 ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);  // tent filter
+            const auto dx = SampleTent<double>(Xi);
+            const auto dy = SampleTent<double>(Xi);
             CVec3d d = cx * (((sx + .5 + dx) / 2 + iw) / nw - .5) +
                        cy * (((sy + .5 + dy) / 2 + ih) / nh - .5) + cam.d;
             CVec3d r = radiance(Ray(cam.o + d * 140., d.normalized()), 0, Xi, aSphere);

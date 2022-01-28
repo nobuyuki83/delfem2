@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <random>
+
 #include "gtest/gtest.h" // need to be defined in the beginning
 
 #include "delfem2/srchuni_v3.h"
@@ -16,7 +18,7 @@
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
-#include <random>
+#include "delfem2/sampling.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265359
@@ -328,8 +330,8 @@ TEST(bvh,lineintersection)
            aTri.data(), aTri.size()/3,
            1.0e-5);
   for(int itr=0;itr<100;++itr){
-    const dfm2::CVec3d s0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice);
-    const dfm2::CVec3d d0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice).normalized();
+    const dfm2::CVec3d s0 = dfm2::RandomVec3(dist_m2p2,randomEng);
+    const dfm2::CVec3d d0 = dfm2::CVec3d(dfm2::RandomVec3(dist_m2p2,randomEng)).normalized();
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -346,7 +348,7 @@ TEST(bvh,lineintersection)
         dfm2::CIsBV_IntersectLine<dfm2::CBV3d_Sphere,double>(s0.p,d0.p),
         bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
-    for(int itri0 : aIndElem){
+    for(unsigned int itri0 : aIndElem){
       aFlg[itri0] = 1;
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
@@ -364,8 +366,7 @@ TEST(bvh,lineintersection)
 
 TEST(bvh,rayintersection)
 {
-  std::random_device randomDevice;
-  std::mt19937 randomEng(randomDevice());
+  std::mt19937 randomEng(std::random_device{}());
   std::uniform_real_distribution<double> dist_m2p2(-2.,2.);
   // ----
   std::vector<double> aXYZ;
@@ -385,8 +386,8 @@ TEST(bvh,rayintersection)
       aTri.data(), aTri.size()/3,
       1.0e-5);
   for(int itr=0;itr<100;++itr){
-    const dfm2::CVec3d s0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice);
-    const dfm2::CVec3d d0 = dfm2::CVec3d::Random(dist_m2p2,randomDevice).normalized();
+    const dfm2::CVec3d s0 = dfm2::RandomVec3(dist_m2p2,randomEng);
+    const dfm2::CVec3d d0 = dfm2::CVec3d(dfm2::RandomVec3(dist_m2p2,randomEng)).normalized();
     for(unsigned int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -403,7 +404,7 @@ TEST(bvh,rayintersection)
         dfm2::CIsBV_IntersectRay<dfm2::CBV3d_Sphere>(s0.p, d0.p),
         bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
-    for(int itri0 : aIndElem){
+    for(unsigned int itri0 : aIndElem){
       aFlg[itri0] = 1;
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){

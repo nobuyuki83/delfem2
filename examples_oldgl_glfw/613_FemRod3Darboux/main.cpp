@@ -362,19 +362,17 @@ int main() {
     // apply random deviation
     for (unsigned int ip = 0; ip < aP.size(); ++ip) {
       aP[ip] = aP0[ip];
-      auto rnd = dfm2::CVec3d::Random(dist03, reng);
-      if (aBCFlag[ip * 3 + 0] == 0) { aP[ip].p[0] += rnd.x; }
-      if (aBCFlag[ip * 3 + 1] == 0) { aP[ip].p[1] += rnd.y; }
-      if (aBCFlag[ip * 3 + 2] == 0) { aP[ip].p[2] += rnd.z; }
+      if (aBCFlag[ip * 3 + 0] == 0) { aP[ip].p[0] += dist03(reng); }
+      if (aBCFlag[ip * 3 + 1] == 0) { aP[ip].p[1] += dist03(reng); }
+      if (aBCFlag[ip * 3 + 2] == 0) { aP[ip].p[2] += dist03(reng); }
     }
     const auto ns = static_cast<unsigned int>(aS.size());
     for (unsigned int is = 0; is < ns; ++is) {
       aS[is] = aS0[is];
-      auto rnd = dfm2::CVec3d::Random(dist03, reng);
       const auto np = static_cast<unsigned int>(aP.size());
-      if (aBCFlag[(np + is) * 3 + 0] == 0) { aS[is].p[0] += rnd.x; }
-      if (aBCFlag[(np + is) * 3 + 1] == 0) { aS[is].p[1] += rnd.y; }
-      if (aBCFlag[(np + is) * 3 + 2] == 0) { aS[is].p[2] += rnd.z; }
+      if (aBCFlag[(np + is) * 3 + 0] == 0) { aS[is].p[0] += dist03(reng); }
+      if (aBCFlag[(np + is) * 3 + 1] == 0) { aS[is].p[1] += dist03(reng); }
+      if (aBCFlag[(np + is) * 3 + 2] == 0) { aS[is].p[2] += dist03(reng); }
     }
     for (unsigned int iseg = 0; iseg < aElemSeg.size() / 2; ++iseg) {
       const unsigned int i0 = aElemSeg[iseg * 2 + 0];
