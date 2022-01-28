@@ -259,8 +259,8 @@ echo "######################################"
 
 git submodule update --init -- 3rd_party/googletest
 cd 3rd_party/googletest || exit
-git checkout master
-git pull origin master
+git checkout main
+git pull origin main
 cmake .
 cmake --build . 
 mkdir ../libgtest

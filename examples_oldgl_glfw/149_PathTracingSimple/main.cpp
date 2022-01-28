@@ -70,7 +70,7 @@ public:
       const CVec3d& c_,
       Refl_t refl_)
       : rad(rad_), p(p_), e(e_), c(c_), refl(refl_) {}
-  double intersect(const Ray &r) const {
+  [[nodiscard]] double intersect(const Ray &r) const {
     CVec3d op = p - r.o;
     double t, eps = 1e-4, b = op.dot(r.d), det = b * b - op.dot(op) + rad * rad;
     if (det < 0) {
@@ -92,7 +92,7 @@ inline bool intersect(
     int &id,
     const std::vector<CSphere>& spheres)
 {
-  double n = static_cast<double>(spheres.size());
+  auto n = static_cast<double>(spheres.size());
   double inf = t = 1e20;
   for (int i = int(n); i--;) {
     const double d = spheres[i].intersect(r);
@@ -116,11 +116,12 @@ CVec3d radiance(
     return CVec3d();
   }
   const CSphere &obj = aSphere[id];
-  CVec3d x = r.o + r.d * t;
-  CVec3d n = (x - obj.p).normalized();
-  CVec3d nl = n.dot(r.d) < 0 ? n : n * -1., f = obj.c;
-  double p = f.x > f.y && f.x > f.z ? f.x : f.y > f.z ? f.y : f.z;
-  if (++depth > 5){
+  CVec3d x = r.o + r.d * t; // hitting point
+  CVec3d n = (x - obj.p).normalized();  // normal at hitting point
+  CVec3d nl = n.dot(r.d) < 0 ? n : n * -1.;  // normal should have component of ray direction
+  CVec3d f = obj.c;  // color
+  double p = f.x > f.y && f.x > f.z ? f.x : f.y > f.z ? f.y : f.z;  // maximum reflectance
+  if (++depth > 5){ // Russian Roulette
     if (my_erand48(Xi) < p){
       f = f * (1 / p);
     } else{
@@ -133,8 +134,8 @@ CVec3d radiance(
     double r2s = sqrt(r2);
     CVec3d w = nl;
     CVec3d u = ((fabs(w.x) > .1 ? CVec3d(0, 1, 0) : CVec3d(1,0,0)).cross(w)).normalized();
-    CVec3d v = w.cross(u);
-    CVec3d d = (u * cos(r1) * r2s + v * sin(r1) * r2s + w * sqrt(1 - r2)).normalized();
+    CVec3d v = -w.cross(u);
+    CVec3d d = (u * cos(r1) * r2s + v * sin(r1) * r2s + w * sqrt(1 - r2)).normalized(); // sample hemisphere
     return obj.e + f.mult(radiance(Ray(x, d), depth, Xi, aSphere));
   }
   else if (obj.refl == SPEC) {
@@ -172,6 +173,9 @@ CVec3d radiance(
   }
 }
 
+inline double clamp(double x){ return x<0 ? 0 : x>1 ? 1 : x; }
+inline int toIntGammaCorrection(double x){ return int(pow(clamp(x), 1/2.2)*255+.5); }
+
 int main() {
   std::vector<CSphere> aSphere = {//Scene: radius, position, emission, color, material
       CSphere(1e5, CVec3d(1e5 + 1, 40.8, 81.6), CVec3d(), CVec3d(.75, .25, .25), DIFF),//Left
@@ -187,14 +191,14 @@ int main() {
 
   delfem2::opengl::CTexRGB_Rect2D tex;
   {
-    tex.width = 256;
-    tex.height = 256;
+    tex.width = 1024;
+    tex.height = 768;
     tex.channels = 3;
     tex.pixel_color.resize(tex.width*tex.height*tex.channels);
   }
   delfem2::glfw::CViewer3 viewer(2);
-  viewer.width = 400;
-  viewer.height = 400;
+  viewer.width = 1024;
+  viewer.height = 768;
   delfem2::glfw::InitGLOld();
   viewer.OpenWindow();
   tex.InitGL();
@@ -217,8 +221,8 @@ int main() {
           for (int sx = 0; sx < 2; sx++) {
             const double r1 = 2 * my_erand48(Xi);
             const double r2 = 2 * my_erand48(Xi);
-            const double dx = r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 - r1);
-            const double dy = r2 < 1 ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
+            double dx = r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 - r1);  // tent filter
+            double dy = r2 < 1 ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);  // tent filter
             CVec3d d = cx * (((sx + .5 + dx) / 2 + iw) / nw - .5) +
                        cy * (((sy + .5 + dy) / 2 + ih) / nh - .5) + cam.d;
             CVec3d r = radiance(Ray(cam.o + d * 140., d.normalized()), 0, Xi, aSphere);
@@ -235,10 +239,11 @@ int main() {
         for(int ic=0;ic<3;++ic) {
           float fc = afRGB[(ih * tex.width + iw) * 3 + ic]*0.25f/float(isample);
           fc = (fc>1.f) ? 1.f:fc;
-          tex.pixel_color[(ih * tex.width + iw) * 3 + ic] = static_cast<unsigned char>(255*fc);
+          tex.pixel_color[(ih * tex.width + iw) * 3 + ic] = toIntGammaCorrection(fc);
         }
       }
     }
+    std::cout << " " << isample << std::endl;
     tex.InitGL();
     //
     viewer.DrawBegin_oldGL();

@@ -29,6 +29,23 @@ void WdWddW_PlateBendingMITC3(double &W,
                               double lambda,
                               double myu);
 
+
+/**
+ *
+ * @tparam MAT
+ * @param mat_A
+ * @param vec_b
+ * @param thick
+ * @param lambda
+ * @param myu
+ * @param rho
+ * @param gravity_z
+ * @param aXY1
+ * @param nXY
+ * @param aTri1
+ * @param nTri
+ * @param[in] aVal (z displacement) + (xy axis rotation) for each vertex
+ */
 template<class MAT>
 void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     MAT &mat_A,
@@ -56,8 +73,8 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     delfem2::FetchData<3, 3>(u, aIP, aVal);
     //
     double W = 0.0, dW[3][3], ddW[3][3][3][3];
-    for (int i = 0; i < 9; ++i) { (&dW[0][0])[i] = 0.0; }
-    for (int i = 0; i < 81; ++i) { (&ddW[0][0][0][0])[i] = 0.0; }
+    std::fill_n(&dW[0][0], 9, 0.0);
+    std::fill_n(&ddW[0][0][0][0], 81, 0.0);
     WdWddW_PlateBendingMITC3(
         W, dW, ddW,
         P, u,

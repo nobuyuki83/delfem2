@@ -35,8 +35,8 @@ namespace dfm2 = delfem2;
 // ---------------------------------------------------
 
 int main() {
-  std::vector<unsigned int> aTri1;
-  std::vector<double> aXY1;
+  std::vector<unsigned int> tri_vtx;
+  std::vector<double> vtx_xy;
   std::vector<std::vector<unsigned int> > aaIP;
   int ipCenter;
   {
@@ -52,7 +52,7 @@ int main() {
     dfm2::CMeshDynTri2D dmsh;
     mshr.Meshing(dmsh, cad2d);
     dfm2::MeshTri2D_Export(
-        aXY1, aTri1,
+        vtx_xy, tri_vtx,
         dmsh.aVec2, dmsh.aETri);
 
     aaIP.resize(4);
@@ -62,30 +62,31 @@ int main() {
     aaIP[3] = mshr.IndPoint_IndEdge(3, true, cad2d);
     ipCenter = 4;
   }
+  using COMPLEX = std::complex<double>;
   std::vector<int> aBCFlag; // boundary condition flag
-  std::vector<std::complex<double> > aCVal;
-  dfm2::CMatrixSparse<std::complex<double> > mat_A;
-  dfm2::CPreconditionerILU<std::complex<double> > ilu_A;
-  std::vector<std::complex<double> > vec_b;
+  std::vector<COMPLEX> aCVal;
+  dfm2::CMatrixSparse<COMPLEX> mat_A;
+  dfm2::CPreconditionerILU<COMPLEX> ilu_A;
+  std::vector<COMPLEX> vec_b;
   // ----------------------
   {
-    const auto np = static_cast<unsigned int>(aXY1.size() / 2);
-    aCVal.assign(np, std::complex<double>(0.0));
+    const auto np = static_cast<unsigned int>(vtx_xy.size() / 2);
+    aCVal.assign(np, COMPLEX(0.0));
     aBCFlag.resize(np, 0);
     aBCFlag[ipCenter] = 1;
     aCVal[ipCenter] = 1;
     std::vector<unsigned int> psup_ind, psup;
     dfm2::JArray_PSuP_MeshElem(
         psup_ind, psup,
-        aTri1.data(), aTri1.size() / 3, 3,
-        aXY1.size() / 2);
+        tri_vtx.data(), tri_vtx.size() / 3, 3,
+        vtx_xy.size() / 2);
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.Initialize(np, 1, true);
     mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(), psup.size());
     ilu_A.SetPattern0(mat_A);
   }
   {
-    const auto np = static_cast<unsigned int>(aXY1.size() / 2);
+    const auto np = static_cast<unsigned int>(vtx_xy.size() / 2);
     const unsigned int nDoF = np;
     const double wave_length = 0.4;
     mat_A.setZero();
@@ -93,20 +94,20 @@ int main() {
     dfm2::MergeLinSys_Helmholtz_MeshTri2D(
         mat_A, vec_b.data(),
         wave_length,
-        aXY1.data(), aXY1.size() / 2,
-        aTri1.data(), aTri1.size() / 3,
+        vtx_xy.data(), vtx_xy.size() / 2,
+        tri_vtx.data(), tri_vtx.size() / 3,
         aCVal.data());
     for (auto &ipl : aaIP) {
       dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
           mat_A, vec_b.data(),
           wave_length,
-          aXY1.data(), aXY1.size() / 2,
+          vtx_xy.data(), vtx_xy.size() / 2,
           ipl.data(), ipl.size(),
           aCVal.data());
     }
     mat_A.SetFixedBC(aBCFlag.data());
     dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
-    std::vector<std::complex<double> > vec_x;
+    std::vector<COMPLEX> vec_x;
     ilu_A.CopyValue(mat_A);
     ilu_A.Decompose();
     vec_x.resize(vec_b.size());
@@ -153,18 +154,18 @@ int main() {
     // ------------
     viewer.DrawBegin_oldGL();
     {
-      dfm2::opengl::DrawMeshTri2D_Edge(aTri1, aXY1);
+      dfm2::opengl::DrawMeshTri2D_Edge(tri_vtx, vtx_xy);
       ::glPointSize(2);
       ::glColor3d(0, 0, 0);
-      dfm2::opengl::DrawPoints2d_Points(aXY1);
+      dfm2::opengl::DrawPoints2d_Points(vtx_xy);
 
       std::vector<std::pair<double, dfm2::CColor> > colorMap;
       //  makeHeatMap_BlueGrayRed(colorMap, -0.2, +0.2);
       dfm2::ColorMap_BlueCyanGreenYellowRed(colorMap, -0.2f, +0.2f);
       dfm2::opengl::DrawMeshTri2D_ScalarP1(
-		  aXY1.data(), aXY1.size() / 2,
-		  aTri1.data(), aTri1.size() / 3,
-		  aVal.data(), 1, colorMap);
+          vtx_xy.data(), vtx_xy.size() / 2,
+          tri_vtx.data(), tri_vtx.size() / 3,
+          aVal.data(), 1, colorMap);
     }
     viewer.SwapBuffers();
     glfwPollEvents();

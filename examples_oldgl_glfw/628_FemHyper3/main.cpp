@@ -188,9 +188,7 @@ int main() {
 
   // ----------------------
   delfem2::glfw::CViewer3 viewer(1.5);
-//  viewer.camera.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
-//  viewer.camera.theta = 0.1;
-//  viewer.camera.psi = 0.1;
+  viewer.view_rotation = std::make_unique<dfm2::ModelView_Ztop>();
   delfem2::glfw::InitGLOld();
   viewer.OpenWindow();
 

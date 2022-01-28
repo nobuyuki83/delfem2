@@ -64,10 +64,10 @@ class ModelView_Trackball : public ModelView {
    * @detail column major
    */
   [[nodiscard]] std::array<float, 16> GetMatrix() const override {
-    const CMat4f mT = CMat4f::Translation({-(float)anchor[0], -(float)anchor[1], -(float)anchor[2]});
+    const CMat4f mT = CMat4f::Translation({-(float) anchor[0], -(float) anchor[1], -(float) anchor[2]});
     const CMat4f mR = CMat4f::Quat(quaternion);
     std::array<float, 16> mMV{};
-    (mR*mT).CopyTo(mMV.data());
+    (mR * mT).CopyTo(mMV.data());
     return mMV;
   }
   void Rot_Camera(float dx, float dy) override {
@@ -90,7 +90,7 @@ class ModelView_Trackball : public ModelView {
 
 // ------------------------------------
 
-class ModelView_Ytop : public ModelView{
+class ModelView_Ytop : public ModelView {
  public:
   ModelView_Ytop() = default;
   ModelView_Ytop(float theta, float psi) : theta(theta), psi(psi) {}
@@ -123,8 +123,7 @@ class ModelView_Ytop : public ModelView{
 
 // ------------------------------------
 
-template<typename REAL>
-class ModelView_Ztop {
+class ModelView_Ztop : public ModelView {
  public:
   /**
    *
@@ -132,25 +131,29 @@ class ModelView_Ztop {
    * @param mMV model view matrix (column major order)
    * @detail column major
    */
-  void Mat4ColumnMajor(float mMV[16]) const {
-    REAL Mr[16];
+  [[nodiscard]] std::array<float, 16> GetMatrix() const {
+    float Mr[16];
     {
-      REAL x = std::sin(theta);
-      REAL y = std::cos(theta);
-      REAL z = std::sin(psi);
-      x *= std::cos(psi);
-      y *= std::cos(psi);
-      Mat4_AffineTransLookAt(Mr, x, y, z, 0., 0., 0., 0., 0., 1.);
+      const float x = std::sin(theta) * std::cos(psi);
+      const float y = std::cos(theta) * std::cos(psi);
+      const float z = std::sin(psi);
+      Mat4_AffineLookAt<float>(
+          Mr,
+          x, y, z,  // cam pos
+          0.f, 0.f, 0.f,  // target vector
+          0.f, 0.f, 1.f);  // up vector
     }
-    Transpose_Mat4(mMV, Mr);
+    std::array<float, 16> m;
+    Copy_Mat4(m.data(), Mr);
+    return m;
   }
-  void Rot_Camera(REAL dx, REAL dy) {
+  void Rot_Camera(float dx, float dy) {
     theta += dx;
     psi -= dy;
   }
  public:
-  REAL theta = 0;
-  REAL psi = 0;
+  float theta = 0.f;
+  float psi = 0.f;
 };
 
 } // namespace delfem2

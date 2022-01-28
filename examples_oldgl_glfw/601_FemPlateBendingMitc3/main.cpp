@@ -11,6 +11,7 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
+#include "delfem2/ls_solver_block_sparse.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/vecxitrsol.h"
@@ -28,42 +29,54 @@ namespace dfm2 = delfem2;
 // ------------------------
 
 void InitializeProblem_PlateBendingMITC3(
-    dfm2::CMatrixSparse<double> &mat_A,
-    dfm2::CPreconditionerILU<double> &ilu_A,
-    std::vector<int> &aBCFlag,
+    dfm2::LinearSystemSolver_BlockSparse &ls,
+    dfm2::CPreconditionerILU<double> &ilu_sparse,
     const double lenx,
     [[maybe_unused]] const double leny,
-    const std::vector<double> &aXY0,
-    const std::vector<unsigned int> &aTri) {
-  const std::size_t np = aXY0.size() / 2;
-  aBCFlag.assign(np * 3, 0);
+    const std::vector<double> &vtx_xy_initial,
+    const std::vector<unsigned int> &tri_vtx) {
+  const std::size_t np = vtx_xy_initial.size() / 2;
+  {  // initialize linear system
+    std::vector<unsigned int> psup_ind, psup;
+    dfm2::JArray_PSuP_MeshElem(
+        psup_ind, psup,
+        tri_vtx.data(), tri_vtx.size() / 3, 3,
+        vtx_xy_initial.size() / 2);
+    dfm2::JArray_Sort(psup_ind, psup);
+    ls.Initialize(np, 3, psup_ind, psup);
+  }
+  ls.vec_x.resize(vtx_xy_initial.size() / 2 * 3, 0.0);
+  // set boundary condition flag
   for (unsigned int ip = 0; ip < np; ++ip) {
-    const double px = aXY0[ip * 2 + 0];
-//    const double py = aXY0[ip*2+1];
+    const double px = vtx_xy_initial[ip * 2 + 0];
     if (fabs(px - (-lenx * 0.5)) < 0.0001) {
-      aBCFlag[ip * 3 + 0] = 1;
-      aBCFlag[ip * 3 + 1] = 1;
-      aBCFlag[ip * 3 + 2] = 1;
+      ls.dof_bcflag[ip * 3 + 0] = 1;
+      ls.dof_bcflag[ip * 3 + 1] = 1;
+      ls.dof_bcflag[ip * 3 + 2] = 1;
     }
   }
-  //
-  std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArray_PSuP_MeshElem(
-      psup_ind, psup,
-      aTri.data(), aTri.size() / 3, 3,
-      aXY0.size() / 2);
-  dfm2::JArray_Sort(psup_ind, psup);
-  //
-  mat_A.Initialize(np, 3, true);
-  mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(), psup.size());
-//  ilu_A.Initialize_ILU0(mat_A);
-  ilu_A.Initialize_ILUk(mat_A, 0);
+  // initialize sparse solver
+  ilu_sparse.Initialize_ILUk(ls.matrix, 0);
 }
 
+/**
+ *
+ * @param vec_x
+ * @param vec_r residual
+ * @param mat_A
+ * @param ilu_A
+ * @param aBCFlag
+ * @param thickness
+ * @param myu
+ * @param lambda
+ * @param rho
+ * @param gravity_z
+ * @param aXY0
+ * @param aTri
+ */
 void SolveProblem_PlateBendingMITC3(
-    std::vector<double> &aVal,
-    std::vector<double> &vec_b,
-    [[maybe_unused]] std::vector<int> &aMSFlag,
+    std::vector<double> &vec_x,
+    std::vector<double> &vec_r,
     dfm2::CMatrixSparse<double> &mat_A,
     dfm2::CPreconditionerILU<double> &ilu_A,
     const std::vector<int> &aBCFlag,
@@ -78,28 +91,28 @@ void SolveProblem_PlateBendingMITC3(
   const std::size_t nDoF = np * 3;
   //
   mat_A.setZero();
-  vec_b.assign(nDoF, 0.0);
+  vec_r.assign(nDoF, 0.0);
+  assert(vec_x.size() == nDoF);
   dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
-      mat_A, vec_b.data(),
+      mat_A, vec_r.data(),
       thickness, lambda, myu,
       rho, gravity_z,
       aXY0.data(), aXY0.size() / 2,
       aTri.data(), aTri.size() / 3,
-      aVal.data());
-  std::cout << dfm2::Dot(vec_b, vec_b) << std::endl;
+      vec_x.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  dfm2::setRHS_Zero(vec_b, aBCFlag, 0);
+  dfm2::setRHS_Zero(vec_r, aBCFlag, 0);
   //
-  std::vector<double> vec_x;
+  std::vector<double> vec_u;
   {
     ilu_A.CopyValue(mat_A);
     ilu_A.Decompose();
-    vec_x.resize(vec_b.size());
+    vec_u.resize(vec_r.size());
     {
-      const std::size_t n = vec_b.size();
+      const std::size_t n = vec_r.size();
       std::vector<double> tmp0(n), tmp1(n);
-      auto vr = dfm2::ViewAsVectorXd(vec_b);
-      auto vu = dfm2::ViewAsVectorXd(vec_x);
+      auto vr = dfm2::ViewAsVectorXd(vec_r);
+      auto vu = dfm2::ViewAsVectorXd(vec_u);
       auto vt = dfm2::ViewAsVectorXd(tmp0);
       auto vs = dfm2::ViewAsVectorXd(tmp1);
       std::vector<double> conv = dfm2::Solve_PCG(
@@ -109,28 +122,28 @@ void SolveProblem_PlateBendingMITC3(
     }
   }
   //
-  dfm2::XPlusAY(aVal, nDoF, aBCFlag,
-                1.0, vec_x);
+  dfm2::XPlusAY(vec_x, nDoF, aBCFlag,
+                1.0, vec_u);
 }
 
-void myGlutDisplay(
-    const std::vector<double> &aXY0,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<double> &aVal) {
+void MyDisplay(
+    const std::vector<double> &vtx_xy_initial,
+    const std::vector<unsigned int> &tri_vtx,
+    const std::vector<double> &vtx_value) {
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0, 0, 0);
-  delfem2::opengl::DrawMeshTri2D_Edge(aTri, aXY0);
+  delfem2::opengl::DrawMeshTri2D_Edge(tri_vtx, vtx_xy_initial);
   {
-    assert(aVal.size() / 3 == aXY0.size() / 2);
+    assert(vtx_value.size() / 3 == vtx_xy_initial.size() / 2);
     ::glColor3d(1, 0, 0);
     ::glBegin(GL_LINES);
-    for (size_t itri = 0; itri < aTri.size() / 3; itri++) {
-      const unsigned int i0 = aTri[itri * 3 + 0];
-      const unsigned int i1 = aTri[itri * 3 + 1];
-      const unsigned int i2 = aTri[itri * 3 + 2];
-      const double p0[3] = {aXY0[i0 * 2 + 0], aXY0[i0 * 2 + 1], aVal[i0 * 3 + 0]};
-      const double p1[3] = {aXY0[i1 * 2 + 0], aXY0[i1 * 2 + 1], aVal[i1 * 3 + 0]};
-      const double p2[3] = {aXY0[i2 * 2 + 0], aXY0[i2 * 2 + 1], aVal[i2 * 3 + 0]};
+    for (size_t itri = 0; itri < tri_vtx.size() / 3; itri++) {
+      const unsigned int i0 = tri_vtx[itri * 3 + 0];
+      const unsigned int i1 = tri_vtx[itri * 3 + 1];
+      const unsigned int i2 = tri_vtx[itri * 3 + 2];
+      const double p0[3] = {vtx_xy_initial[i0 * 2 + 0], vtx_xy_initial[i0 * 2 + 1], vtx_value[i0 * 3 + 0]};
+      const double p1[3] = {vtx_xy_initial[i1 * 2 + 0], vtx_xy_initial[i1 * 2 + 1], vtx_value[i1 * 3 + 0]};
+      const double p2[3] = {vtx_xy_initial[i2 * 2 + 0], vtx_xy_initial[i2 * 2 + 1], vtx_value[i2 * 3 + 0]};
       ::glVertex3dv(p0);
       ::glVertex3dv(p1);
       ::glVertex3dv(p1);
@@ -145,8 +158,8 @@ void myGlutDisplay(
 int main() {
   const double lenx = 1.0;
   const double leny = 0.2;
-  std::vector<unsigned int> aTri;
-  std::vector<double> aXY0;
+  std::vector<unsigned int> tri_vtx;
+  std::vector<double> vtx_xy_initial;
   {
     std::vector<std::vector<double> > aaXY;
     {
@@ -165,36 +178,31 @@ int main() {
     std::vector<dfm2::CVec2d> aVec2;
     GenMesh(aPo2D, aETri, aVec2,
             aaXY, 0.03, 0.03);
-    MeshTri2D_Export(aXY0, aTri,
+    MeshTri2D_Export(vtx_xy_initial, tri_vtx,
                      aVec2, aETri);
-    std::cout << "  ntri;" << aTri.size() / 3 << "  nXY:" << aXY0.size() / 2 << std::endl;
+    std::cout << "  ntri;" << tri_vtx.size() / 3 << "  nXY:" << vtx_xy_initial.size() / 2 << std::endl;
   }
   // -------------
-  std::vector<double> aVal(aXY0.size() / 2 * 3, 0.0);
-  std::vector<int> aBCFlag; // boundary condition flag
-  dfm2::CMatrixSparse<double> mat_A;
+  dfm2::LinearSystemSolver_BlockSparse ls;
   dfm2::CPreconditionerILU<double> ilu_A;
-  InitializeProblem_PlateBendingMITC3(mat_A, ilu_A, aBCFlag,
-                                      lenx, leny, aXY0, aTri);
+  InitializeProblem_PlateBendingMITC3(
+      ls, ilu_A,
+      lenx, leny, vtx_xy_initial, tri_vtx);
   // -----------
   const double thickness = 0.05;
   const double myu = 10000.0;
   const double lambda = 0.0;
   const double rho = 1.0;
   const double gravity_z = -10.0;
-  std::vector<double> vec_b;
-  std::vector<int> aMSFlag; // master slave flag
   SolveProblem_PlateBendingMITC3(
-      aVal, vec_b, aMSFlag, mat_A, ilu_A, aBCFlag,
+      ls.vec_x, ls.vec_r, ls.matrix, ilu_A, ls.dof_bcflag,
       thickness, myu, lambda, rho, gravity_z,
-      aXY0, aTri);
+      vtx_xy_initial, tri_vtx);
 
   delfem2::glfw::CViewer3 viewer(0.8);
   delfem2::glfw::InitGLOld();
   viewer.OpenWindow();
-//  viewer.modelview.camera_rot_mode = delfem2::CCam3_OnAxisZplusLookOrigin<double>::CAMERA_ROT_MODE::ZTOP;
-//  viewer.modelview.psi = 0.2;
-//  viewer.modelview.theta = 0.2;
+  viewer.view_rotation = std::make_unique<dfm2::ModelView_Ztop>();
   delfem2::opengl::setSomeLighting();
 
   {
@@ -205,16 +213,16 @@ int main() {
     const double w = W / lenx;
     const double disp = w * (lenx * lenx * lenx * lenx) / (8.0 * E * I);
     std::cout << "disp:" << disp << std::endl;
-    for (size_t ip = 0; ip < aXY0.size() / 2; ++ip) {
-      const double px = aXY0[ip * 2 + 0];
+    for (size_t ip = 0; ip < vtx_xy_initial.size() / 2; ++ip) {
+      const double px = vtx_xy_initial[ip * 2 + 0];
       if (fabs(px - (+lenx * 0.5)) > 0.0001) { continue; }
-      std::cout << aVal[ip * 3 + 0] << std::endl;
+      std::cout << ls.vec_x[ip * 3 + 0] << std::endl;
     }
   }
 
   while (!glfwWindowShouldClose(viewer.window)) {
     viewer.DrawBegin_oldGL();
-    myGlutDisplay(aXY0, aTri, aVal);
+    MyDisplay(vtx_xy_initial, tri_vtx, ls.vec_x);
     viewer.SwapBuffers();
     glfwPollEvents();
   }
