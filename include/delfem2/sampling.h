@@ -7,12 +7,17 @@
 
 #include <array>
 #include <random>
+#include <algorithm>  // clamp
+
+#ifndef M_PI
+#  define M_PI 3.1415926535897932384626433832
+#endif
 
 namespace delfem2 {
 
 // based on https://github.com/postgres/postgres/blob/master/src/port/erand48.c
 template<typename T>
-T my_erand48(std::array<unsigned short, 3> &xseed) {
+T MyERand48(std::array<unsigned short, 3> &xseed) {
   constexpr unsigned short my_rand48_mult[3] = {
       0xe66d,
       0xdeec,
@@ -43,6 +48,12 @@ T my_erand48(std::array<unsigned short, 3> &xseed) {
 }
 
 template<typename T>
+std::array<T, 2> RandomVec2(
+    std::array<unsigned short, 3> &xi) {
+  return { MyERand48<T>(xi), MyERand48<T>(xi) };
+}
+
+template<typename T>
 std::array<T, 3> RandomVec3(
     std::uniform_real_distribution<T> &dist,
     std::mt19937 &reng) {
@@ -52,28 +63,39 @@ std::array<T, 3> RandomVec3(
 template<typename T>
 T SampleTent(
     std::array<unsigned short, 3> &Xi) {
-  const T r1 = 2 * my_erand48<T>(Xi);
+  const T r1 = 2 * MyERand48<T>(Xi);
   return r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 - r1);  // tent filter (-1 .. +1 )
 }
 
 // Sample an hemispherical direction with uniform distribution.
 template<typename T>
-inline std::array<T, 3> SampleHemisphereZup(
-    std::array<unsigned short, 3> &Xi) {
-  auto z = my_erand48<T>(Xi);
+inline std::array<T, 3> SampleHemisphereZupUniform(
+    const std::array<T, 2> &v2) {
+  auto z = v2[0];
   auto r = std::sqrt(std::clamp(1 - z * z, 0, 1));
-  auto phi = 2 * M_PI * my_erand48<T>(Xi);
+  auto phi = 2 * M_PI * v2[1];
   return {r * cos(phi), r * sin(phi), z};
 }
 
 // Sample an hemispherical direction with cosine distribution.
 template<typename T>
 inline std::array<T, 3> SampleHemisphereZupCos(
-    std::array<unsigned short, 3> &Xi) {
-  auto z = std::sqrt(my_erand48<T>(Xi));
+    const std::array<T, 2> &v2) {
+  auto z = std::sqrt(v2[0]);
   auto r = std::sqrt(1 - z * z);
-  auto phi = 2 * M_PI * my_erand48<T>(Xi);
+  auto phi = 2 * M_PI * v2[1];
   return {r * cos(phi), r * sin(phi), z};
+}
+
+// Sample an hemispherical direction with cosine distribution.
+template<typename VEC, typename SCALAR = typename VEC::Scalar>
+inline VEC SampleHemisphereNormalCos(
+    const VEC &n,
+    const std::array<SCALAR, 2> &v2) {
+  const std::array<SCALAR, 3> h0 = SampleHemisphereZupCos(v2);
+  const VEC u = ((fabs(n[0]) > .1 ? VEC(0, 1, 0) : VEC(1,0,0)).cross(n)).normalized();  // orthogonal to w
+  const VEC v = n.cross(u);  // orthogonal to w and u
+  return (h0[0] * u + h0[1] * v + h0[2] * n).normalized();
 }
 
 }

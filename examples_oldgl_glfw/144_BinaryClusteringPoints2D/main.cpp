@@ -19,13 +19,11 @@
 
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/color.h"
 #include "delfem2/clusterpoints.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 
 

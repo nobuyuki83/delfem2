@@ -20,141 +20,142 @@
 #include "delfem2/glfw/util.h"
 #include "delfem2/vec3.h"
 
-using namespace delfem2;
-
 struct Ray {
-  CVec3d o, d;
-  Ray(const CVec3d& o_, const CVec3d& d_) : o(o_), d(d_) {}
+  delfem2::CVec3d o, d;
+  Ray(const delfem2::CVec3d &o_, const delfem2::CVec3d &d_) : o(o_), d(d_) {}
 };
 
 enum Refl_t {
   DIFF, SPEC, REFR
 };
 
-class CSphere {
-public:
-  CSphere(
+class SphereForRayTracing {
+ public:
+  SphereForRayTracing(
       double rad_,
-      const CVec3d& p_,
-      const CVec3d& e_,
-      const CVec3d& c_,
+      const delfem2::CVec3d &p_,
+      const delfem2::CVec3d &e_,
+      const delfem2::CVec3d &c_,
       Refl_t refl_)
       : rad(rad_), p(p_), e(e_), c(c_), refl(refl_) {}
   [[nodiscard]] double intersect(const Ray &r) const {
-    CVec3d op = p - r.o;
+    delfem2::CVec3d op = p - r.o;
     double t, eps = 1e-4, b = op.dot(r.d), det = b * b - op.dot(op) + rad * rad;
     if (det < 0) {
       return 0;
-    } else{
+    } else {
       det = sqrt(det);
     }
     return (t = b - det) > eps ? t : ((t = b + det) > eps ? t : 0);
   }
-public:
+ public:
   double rad;
-  CVec3d p, e, c;
+  delfem2::CVec3d p, e, c;
   Refl_t refl;
 };
 
-inline bool intersect(
+template<typename VEC>
+std::tuple<bool, VEC, VEC, VEC, VEC, Refl_t> RayIntersection(
     const Ray &r,
-    double &t,
-    int &id,
-    const std::vector<CSphere>& spheres)
-{
-  auto n = static_cast<double>(spheres.size());
+    const std::vector<SphereForRayTracing> &spheres) {
+  double t;
+  int id;
+  auto nsphere = static_cast<double>(spheres.size());
   double inf = t = 1e20;
-  for (int i = int(n); i--;) {
+  for (int i = int(nsphere); i--;) {
     const double d = spheres[i].intersect(r);
-    if ((d>0) && d < t) {
+    if ((d > 0) && d < t) {
       t = d;
       id = i;
     }
   }
-  return t < inf;
+  if (t > inf) {
+    return {false, VEC(), VEC(), VEC(), VEC(), DIFF};
+  }
+  //
+  const SphereForRayTracing &obj = spheres[id];
+  const delfem2::CVec3d x = r.o + r.d * t; // hitting point
+  const delfem2::CVec3d n = (x - obj.p).normalized();  // normal at hitting point
+  return {true, x, n, obj.c, obj.e, obj.refl};
 }
 
-CVec3d radiance(
+template<class RENDER_TARGET>
+delfem2::CVec3d Radiance(
     const Ray &r,
     int depth,
-    std::array<unsigned short,3> &Xi,
-    const std::vector<CSphere>& aSphere)
-{
-  double t;
-  int id = 0;
-  if (!intersect(r, t, id, aSphere)){
-    return {0,0,0};
+    std::array<unsigned short, 3> &Xi,
+    const RENDER_TARGET &render_target) {
+  using VEC = delfem2::CVec3d;
+  auto[is_intersect,
+       his_pos, hit_nrm,
+       mtrl_refl, mtrl_emis, mtrl_type] = RayIntersection<delfem2::CVec3d>(r, render_target);
+  if (!is_intersect) {
+    return {0, 0, 0};
   }
-  const CSphere &obj = aSphere[id];
-  CVec3d x = r.o + r.d * t; // hitting point
-  CVec3d n = (x - obj.p).normalized();  // normal at hitting point
-  CVec3d nl = n.dot(r.d) < 0 ? n : n * -1.;  // normal should have component of ray direction
-  CVec3d f = obj.c;  // color
-  double p = f.x > f.y && f.x > f.z ? f.x : f.y > f.z ? f.y : f.z;  // maximum reflectance
-  if (++depth > 5){ // Russian Roulette
-    if (my_erand48<double>(Xi) < p){
-      f = f * (1 / p);
-    } else{
-      return obj.e;
+  VEC nl = hit_nrm.dot(r.d) < 0 ? hit_nrm : hit_nrm * -1.;  // normal should have component of ray direction
+  if (++depth > 5) { // Russian roulette
+    double p = (mtrl_refl.x > mtrl_refl.y && mtrl_refl.x) >
+        mtrl_refl.z ? mtrl_refl.x : mtrl_refl.y > mtrl_refl.z ? mtrl_refl.y : mtrl_refl.z;  // maximum reflectance
+    if (delfem2::MyERand48<double>(Xi) < p) {
+      mtrl_refl = mtrl_refl * (1 / p);
+    } else {
+      return mtrl_emis;
     }
   }
-  if (obj.refl == DIFF) {
-    const auto h0 = SampleHemisphereZupCos<double>(Xi);
-    CVec3d w = nl;
-    CVec3d u = ((fabs(w.x) > .1 ? CVec3d(0, 1, 0) : CVec3d(1,0,0)).cross(w)).normalized();  // orthogonal to w
-    CVec3d v = w.cross(u);  // orthogonal to w and u
-    CVec3d d = (h0[0] * u + h0[1] * v + h0[2] * w).normalized();
-    return obj.e + f.mult(radiance(Ray(x, d), depth, Xi, aSphere));
+  if (mtrl_type == DIFF) {
+    const VEC d = SampleHemisphereNormalCos(nl, delfem2::RandomVec2<double>(Xi));
+    return mtrl_emis + mtrl_refl.mult(Radiance(Ray(his_pos, d), depth, Xi, render_target));
+  } else if (mtrl_type == SPEC) {
+    const VEC r0 = Radiance(Ray(his_pos, r.d - hit_nrm * 2. * hit_nrm.dot(r.d)), depth, Xi, render_target);
+    return mtrl_emis + mtrl_refl.mult(r0);
   }
-  else if (obj.refl == SPEC) {
-    return obj.e + f.mult(radiance(Ray(x, r.d - n * 2. * n.dot(r.d)), depth, Xi, aSphere));
-  }
-  Ray reflRay(x, r.d - n * 2. * n.dot(r.d));
-  bool into = n.dot(nl) > 0;
+  Ray reflRay(his_pos, r.d - hit_nrm * 2. * hit_nrm.dot(r.d));
+  bool into = hit_nrm.dot(nl) > 0;
   double nc = 1;
   double nt = 1.5;
   double nnt = into ? nc / nt : nt / nc;
   double ddn = r.d.dot(nl);
   double cos2t;
   if ((cos2t = 1 - nnt * nnt * (1 - ddn * ddn)) < 0) {
-    return obj.e + f.mult(radiance(reflRay, depth, Xi, aSphere));
+    return mtrl_emis + mtrl_refl.mult(Radiance(reflRay, depth, Xi, render_target));
   }
-  CVec3d tdir = (r.d * nnt - n * ((into ? 1 : -1) * (ddn * nnt + sqrt(cos2t)))).normalized();
+  VEC tdir = (r.d * nnt - hit_nrm * ((into ? 1 : -1) * (ddn * nnt + sqrt(cos2t)))).normalized();
   double a = nt - nc;
   double b = nt + nc;
   double R0 = a * a / (b * b);
-  double c = 1 - (into ? -ddn : tdir.dot(n));
+  double c = 1 - (into ? -ddn : tdir.dot(hit_nrm));
   double Re = R0 + (1 - R0) * c * c * c * c * c;
   double Tr = 1 - Re;
   double P = .25 + .5 * Re, RP = Re / P;
   double TP = Tr / (1 - P);
-  if( depth > 2 ){
-    if( my_erand48<double>(Xi) < P ){
-      return obj.e + f.mult(
-          radiance(reflRay, depth, Xi, aSphere) * RP );
-    }
-    else {
-      return obj.e + f.mult(radiance(Ray(x, tdir), depth, Xi, aSphere) * TP);
+  if (depth > 2) {
+    if (delfem2::MyERand48<double>(Xi) < P) {
+      return mtrl_emis + mtrl_refl.mult(
+          Radiance(reflRay, depth, Xi, render_target) * RP);
+    } else {
+      return mtrl_emis + mtrl_refl.mult(Radiance(Ray(his_pos, tdir), depth, Xi, render_target) * TP);
     }
   } else {
-    return obj.e + f.mult(radiance(reflRay, depth, Xi, aSphere) * Re + radiance(Ray(x, tdir), depth, Xi, aSphere) * Tr);
+    return mtrl_emis + mtrl_refl.mult(
+        Radiance(reflRay, depth, Xi, render_target) * Re + Radiance(Ray(his_pos, tdir), depth, Xi, render_target) * Tr);
   }
 }
 
-inline double clamp(double x){ return x<0 ? 0 : x>1 ? 1 : x; }
-inline int toIntGammaCorrection(double x){ return int(pow(clamp(x), 1/2.2)*255+.5); }
+inline double clamp(double x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+inline int toIntGammaCorrection(double x) { return int(pow(clamp(x), 1 / 2.2) * 255 + .5); }
 
 int main() {
-  std::vector<CSphere> aSphere = {//Scene: radius, position, emission, color, material
-      CSphere(1e5, CVec3d(1e5 + 1, 40.8, 81.6), CVec3d(), CVec3d(.75, .25, .25), DIFF),//Left
-      CSphere(1e5, CVec3d(-1e5 + 99, 40.8, 81.6), CVec3d(), CVec3d(.25, .25, .75), DIFF),//Rght
-      CSphere(1e5, CVec3d(50, 40.8, 1e5), CVec3d(), CVec3d(.75, .75, .75), DIFF),//Back
-      CSphere(1e5, CVec3d(50, 40.8, -1e5 + 170), CVec3d(), CVec3d(), DIFF),//Frnt
-      CSphere(1e5, CVec3d(50, 1e5, 81.6), CVec3d(), CVec3d(.75, .75, .75), DIFF),//Botm
-      CSphere(1e5, CVec3d(50, -1e5 + 81.6, 81.6), CVec3d(), CVec3d(.75, .75, .75), DIFF),//Top
-      CSphere(16.5, CVec3d(27, 16.5, 47), CVec3d(), CVec3d(1, 1, 1) * .999, SPEC),//Mirr
-      CSphere(16.5, CVec3d(73, 16.5, 78), CVec3d(), CVec3d(1, 1, 1) * .999, REFR),//Glas
-      CSphere(600, CVec3d(50, 681.6 - .27, 81.6), CVec3d(12, 12, 12), CVec3d(), DIFF) //Lite
+  using namespace delfem2;
+  std::vector<SphereForRayTracing> aSphere = {//Scene: radius, position, emission, color, material
+      SphereForRayTracing(1e5, CVec3d(1e5 + 1, 40.8, 81.6), CVec3d(), CVec3d(.75, .25, .25), DIFF),//Left
+      SphereForRayTracing(1e5, CVec3d(-1e5 + 99, 40.8, 81.6), CVec3d(), CVec3d(.25, .25, .75), DIFF),//Rght
+      SphereForRayTracing(1e5, CVec3d(50, 40.8, 1e5), CVec3d(), CVec3d(.75, .75, .75), DIFF),//Back
+      SphereForRayTracing(1e5, CVec3d(50, 40.8, -1e5 + 170), CVec3d(), CVec3d(), DIFF),//Frnt
+      SphereForRayTracing(1e5, CVec3d(50, 1e5, 81.6), CVec3d(), CVec3d(.75, .75, .75), DIFF),//Botm
+      SphereForRayTracing(1e5, CVec3d(50, -1e5 + 81.6, 81.6), CVec3d(), CVec3d(.75, .75, .75), DIFF),//Top
+      SphereForRayTracing(16.5, CVec3d(27, 16.5, 47), CVec3d(), CVec3d(1, 1, 1) * .999, SPEC),//Mirr
+      SphereForRayTracing(16.5, CVec3d(73, 16.5, 78), CVec3d(), CVec3d(1, 1, 1) * .999, REFR),//Glas
+      SphereForRayTracing(600, CVec3d(50, 681.6 - .27, 81.6), CVec3d(12, 12, 12), CVec3d(), DIFF) //Lite
   };
 
   delfem2::opengl::CTexRGB_Rect2D tex;
@@ -162,7 +163,7 @@ int main() {
     tex.width = 400;
     tex.height = 400;
     tex.channels = 3;
-    tex.pixel_color.resize(tex.width*tex.height*tex.channels);
+    tex.pixel_color.resize(tex.width * tex.height * tex.channels);
   }
   delfem2::glfw::CViewer3 viewer(2);
   viewer.width = 400;
@@ -178,33 +179,32 @@ int main() {
       CVec3d(0, -0.042612, -1).normalized()); // cam pos, dir
   CVec3d cx = CVec3d(nw * .5135 / nh, 0, 0);
   CVec3d cy = (cx.cross(cam.d)).normalized() * .5135;
-  std::vector<float> afRGB(tex.height*tex.width*3, 0.f);
+  std::vector<float> afRGB(tex.height * tex.width * 3, 0.f);
   unsigned int isample = 0;
-  while (!glfwWindowShouldClose(viewer.window))
-  {
+  while (!glfwWindowShouldClose(viewer.window)) {
     for (unsigned int ih = 0; ih < nh; ih++) {
-      std::array<unsigned short,3> Xi = {0, 0, (unsigned short)(ih * ih * ih + isample * isample)}; // random seed
-      for (unsigned int iw = 0; iw < nw; iw++){
+      std::array<unsigned short, 3> Xi = {0, 0, (unsigned short) (ih * ih * ih + isample * isample)}; // random seed
+      for (unsigned int iw = 0; iw < nw; iw++) {
         for (int sy = 0; sy < 2; sy++) {
           for (int sx = 0; sx < 2; sx++) {
             const auto dx = SampleTent<double>(Xi);
             const auto dy = SampleTent<double>(Xi);
             CVec3d d = cx * (((sx + .5 + dx) / 2 + iw) / nw - .5) +
-                       cy * (((sy + .5 + dy) / 2 + ih) / nh - .5) + cam.d;
-            CVec3d r = radiance(Ray(cam.o + d * 140., d.normalized()), 0, Xi, aSphere);
-            afRGB[(ih*nw+iw)*3+0] += static_cast<float>(r.x);
-            afRGB[(ih*nw+iw)*3+1] += static_cast<float>(r.y);
-            afRGB[(ih*nw+iw)*3+2] += static_cast<float>(r.z);
+                cy * (((sy + .5 + dy) / 2 + ih) / nh - .5) + cam.d;
+            CVec3d r = Radiance(Ray(cam.o + d * 140., d.normalized()), 0, Xi, aSphere);
+            afRGB[(ih * nw + iw) * 3 + 0] += static_cast<float>(r.x);
+            afRGB[(ih * nw + iw) * 3 + 1] += static_cast<float>(r.y);
+            afRGB[(ih * nw + iw) * 3 + 2] += static_cast<float>(r.z);
           }
         }
       }
     }
     isample++;
-    for(unsigned int ih=0;ih<tex.height;++ih){
-      for(unsigned int iw=0;iw<tex.width;++iw) {
-        for(int ic=0;ic<3;++ic) {
-          float fc = afRGB[(ih * tex.width + iw) * 3 + ic]*0.25f/float(isample);
-          fc = (fc>1.f) ? 1.f:fc;
+    for (unsigned int ih = 0; ih < tex.height; ++ih) {
+      for (unsigned int iw = 0; iw < tex.width; ++iw) {
+        for (int ic = 0; ic < 3; ++ic) {
+          float fc = afRGB[(ih * tex.width + iw) * 3 + ic] * 0.25f / float(isample);
+          fc = (fc > 1.f) ? 1.f : fc;
           tex.pixel_color[(ih * tex.width + iw) * 3 + ic] = toIntGammaCorrection(fc);
         }
       }
