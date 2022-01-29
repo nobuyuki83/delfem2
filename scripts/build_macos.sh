@@ -15,6 +15,15 @@ cd buildXcode || exit
 cmake -G Xcode ..
 cd ../../
 
+echo "################################"
+echo "fetch latest stb"
+echo "################################"
+
+git submodule update --init -- 3rd_party/stb
+cd 3rd_party/stb || exit
+git checkout master
+git pull origin master
+cd ../../
 
 echo "################################"
 echo "fetch latest glfw and compile it"
@@ -308,14 +317,14 @@ cd buildMake || exit
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release
 ./runUnitTests
-cd ../../
+cd ../../../
 
 cd test_cpp/eigen || exit
 mkdir buildXcode
 cd buildXcode || exit
 cmake .. -G Xcode 
 cmake --build . 
-cd ../../
+cd ../../../
 
 echo "################################"
 echo "build Imath"
@@ -365,3 +374,21 @@ mkdir buildXcode
 cd buildXcode || exit
 cmake -G Xcode ..
 cd ../../
+
+echo "################################"
+echo "fetch latest pugixml"
+echo "################################"
+
+git submodule update --init -- 3rd_party/pugixml
+cd 3rd_party/pugixml || exit
+git checkout master
+git pull origin master
+cd ../../
+
+cd examples_oldgl_glfw_pugixml || exit
+mkdir buildMake 
+cd buildMake || exit
+cmake ..
+cmake --build .
+cd ../../
+

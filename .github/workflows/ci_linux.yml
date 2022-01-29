@@ -26,6 +26,15 @@ jobs:
       run: |
         git submodule update --init --recursive       
 
+    - name: download stb
+      run: |
+        echo "################################"
+        echo "fetch latest stb"
+
+        git submodule update --init -- 3rd_party/stb
+        cd 3rd_party/stb || exit
+        cd ../../
+
     - name: build_examples (alembic)
       run: |
         echo ########################################
@@ -237,6 +246,25 @@ jobs:
 
         cd examples_newgl_glfw_imgui
         mkdir buildMakeHdronly && cd buildMakeHdronly
+        cmake ..
+        cmake --build .
+        cd ../../
+
+    - name: build example pugixml 
+      run: |
+        echo "################################"
+        echo "fetch latest pugixml"
+
+        git submodule update --init -- 3rd_party/pugixml
+        cd 3rd_party/pugixml || exit
+        cd ../../
+
+        echo "################################"
+        echo "build examples using pugixml"
+
+        cd examples_oldgl_glfw_pugixml || exit
+        mkdir buildMake 
+        cd buildMake || exit
         cmake ..
         cmake --build .
         cd ../../

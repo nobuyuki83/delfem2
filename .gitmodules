@@ -34,3 +34,6 @@
 [submodule "3rd_party/pugixml"]
 	path = 3rd_party/pugixml
 	url = https://github.com/zeux/pugixml.git
+[submodule "3rd_party/stb"]
+	path = 3rd_party/stb
+	url = https://github.com/nothings/stb.git
