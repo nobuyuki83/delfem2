@@ -15,15 +15,17 @@ namespace delfem2 {
 
 void Print(const tinygltf::Model& model);
 
-void GetMeshInfo(std::vector<double>& aXYZ,
-                 std::vector<unsigned int>& aTri,
-                 std::vector<double>& aRigWeight,
-                 std::vector<unsigned int>& aRigJoint,
-                 const tinygltf::Model& model,
-                 int imsh, int iprimitive);
+void GetMeshInfo(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    std::vector<double>& aRigWeight,
+    std::vector<unsigned int>& aRigJoint,
+    const tinygltf::Model& model,
+    int imsh, int iprimitive);
 
-void GetBoneBinding(std::vector<delfem2::CRigBone>& aBone,
-                    const tinygltf::Model& model);
+void GetBoneBinding(
+    std::vector<delfem2::CRigBone>& aBone,
+    const tinygltf::Model& model);
 
 /**
  * given a node idx of root bone, it recursively search the tree brunch to construct bone tree
@@ -50,11 +52,13 @@ class CGLTF
 public:
   bool Read(const std::string& fpath);
   void Print() const;
-  void GetMeshInfo(std::vector<double>& aXYZ0,
-                   std::vector<unsigned int>& aTri,
-                   std::vector<double>& aRigWeight,
-                   std::vector<unsigned int>& aRigJoint,
-                   int imesh, int iprimitive) const;
+  void GetMeshInfo(
+      std::vector<double>& aXYZ0,
+      std::vector<unsigned int>& aTri,
+      std::vector<double>& aRigWeight,
+      std::vector<unsigned int>& aRigJoint,
+      int imesh, int iprimitive) const;
+
   void GetBone(
       std::vector<delfem2::CRigBone>& aBone,
       unsigned int iskin) const;

@@ -16,6 +16,25 @@
 
 namespace delfem2 {
 
+
+/**
+ * @discussion interface doesn't have CQuat, CMat3, CVec3, but the implementation has it.
+ */
+DFM2_INLINE void UpdateRotationsByMatchingCluster_Linear(
+    std::vector<double> &aQuat1,
+    const std::vector<double> &aXYZ0,
+    const std::vector<double> &aXYZ1,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup);
+
+DFM2_INLINE void UpdateRotationsByMatchingCluster_SVD(
+    std::vector<double> &aQuat1,
+    unsigned int ip,
+    const std::vector<double> &aXYZ0,
+    const std::vector<double> &aXYZ1,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup);
+
 /**
  * @brief Edge-based As-Rigid-As-Possible shape deformation wihtout rotation
  */

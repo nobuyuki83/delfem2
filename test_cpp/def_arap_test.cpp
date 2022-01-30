@@ -11,6 +11,7 @@
 //
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/defarapenergy_geo3.h"
+#include "delfem2/defarap.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsmats.h"

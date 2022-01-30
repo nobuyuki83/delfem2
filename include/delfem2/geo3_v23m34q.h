@@ -91,11 +91,17 @@ CVec3d GetSpinVector(
 CVec3d GetCartesianRotationVector(
     const CMat3d &m);
 
-template <typename REAL>
-CMat3<REAL> Mat3_From3Bases(
-    const CVec3<REAL> &vec0,
-    const CVec3<REAL> &vec1,
-    const CVec3<REAL> &vec2);
+template <typename VEC, typename REAL = typename VEC::Scalar>
+std::array<REAL,9> Mat3_From3Bases(
+    const VEC &vec0,
+    const VEC &vec1,
+    const VEC &vec2)
+{
+  return  {
+    vec0.x, vec1.x, vec2.x,
+    vec0.y, vec1.y, vec2.y,
+    vec0.z, vec1.z, vec2.z};
+}
 
 CMat3d Mat3_FromCartesianRotationVector(
     const CVec3d &vec0);
@@ -169,25 +175,6 @@ DFM2_INLINE CVec3<REAL> operator*(
 
 DFM2_INLINE CQuatd Quat_CartesianAngle(
     const CVec3d &p);
-
-
-/**
- * @discussion interface doesn't have CQuat, CMat3, CVec3, but the implementation has it.
- */
-DFM2_INLINE void UpdateRotationsByMatchingCluster_Linear(
-    std::vector<double> &aQuat1,
-    const std::vector<double> &aXYZ0,
-    const std::vector<double> &aXYZ1,
-    const std::vector<unsigned int> &psup_ind,
-    const std::vector<unsigned int> &psup);
-
-DFM2_INLINE void UpdateRotationsByMatchingCluster_SVD(
-    std::vector<double> &aQuat1,
-    unsigned int ip,
-    const std::vector<double> &aXYZ0,
-    const std::vector<double> &aXYZ1,
-    const std::vector<unsigned int> &psup_ind,
-    const std::vector<unsigned int> &psup);
 
 DFM2_INLINE bool Distortion_MappingTriangleFrom2To3Dim(
     double thresA,

@@ -169,8 +169,9 @@ DFM2_INLINE void MyMatVec3
 
 // ---------------------------------
 
+/*
 template<typename T>
-T delfem2::Volume_Tet3(
+T delfem2::Volume_Tet(
     const T v1[3],
     const T v2[3],
     const T v3[3],
@@ -183,15 +184,16 @@ T delfem2::Volume_Tet3(
       ) * static_cast<T>(1.0 / 6.0);
 }
 #ifdef DFM2_STATIC_LIBRARY
-template float delfem2::Volume_Tet3(const float v1[3],
+template float delfem2::Volume_Tet(const float v1[3],
                                     const float v2[3],
                                     const float v3[3],
                                     const float v4[3]);
-template double delfem2::Volume_Tet3(const double v1[3],
+template double delfem2::Volume_Tet(const double v1[3],
                                      const double v2[3],
                                      const double v3[3],
                                      const double v4[3]);
 #endif
+*/
 
 // --------------------------------
 
@@ -355,26 +357,6 @@ bool delfem2::barycentricCoord_Origin_Wedge(
 
 
 // ----------------------------------------------------------------------
-
-//! Volume of a tetrahedra
-template<typename T>
-T delfem2::Volume_Tet(
-    const CVec3<T> &v0,
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3) {
-  return delfem2::Volume_Tet3(v0.p, v1.p, v2.p, v3.p);
-  /*
-  double v = (v1.p[0]-v0.p[0])*( (v2.p[1]-v0.p[1])*(v3.p[2]-v0.p[2]) - (v3.p[1]-v0.p[1])*(v2.p[2]-v0.p[2]) )
-           + (v1.p[1]-v0.p[1])*( (v2.p[2]-v0.p[2])*(v3.p[0]-v0.p[0]) - (v3.p[2]-v0.p[2])*(v2.p[0]-v0.p[0]) )
-           + (v1.p[2]-v0.p[2])*( (v2.p[0]-v0.p[0])*(v3.p[1]-v0.p[1]) - (v3.p[0]-v0.p[0])*(v2.p[1]-v0.p[1]) );
-  return v*0.16666666666666666666666666666667;
-   */
-}
-#ifdef DFM2_STATIC_LIBRARY
-template double delfem2::Volume_Tet(const CVec3d &v0, const CVec3d &v1, const CVec3d &v2, const CVec3d &v3);
-template float delfem2::Volume_Tet(const CVec3f &v0, const CVec3f &v1, const CVec3f &v2, const CVec3f &v3);
-#endif
 
 //! Volume of a tetrahedra v0 is orgin
 template<typename T>

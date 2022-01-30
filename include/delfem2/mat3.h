@@ -144,31 +144,6 @@ template<typename T>
 T SquareNormFrobenius_SymMat3(
     const T sm[6]);
 
-/**
- * @func compute eigen value & vector for symmmetric matrix
- * @details
- * sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
- * M = ULU^T
- * u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
- */
-DFM2_INLINE bool eigenSym3(
-    double u[9],
-    double l[3],
-    const double sm[6],
-    int nitr);
-
-DFM2_INLINE void svd3(
-    double U[9],
-    double G[3],
-    double V[9],
-    const double m[9],
-    int nitr);
-
-DFM2_INLINE void GetRotPolarDecomp(
-    double R[9],
-    const double am[9],
-    int nitr);
-
 // -----------------
 // below: axis angle vector
 

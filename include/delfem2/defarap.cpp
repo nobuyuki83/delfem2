@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "delfem2/geo3_v23m34q.h"  // update rotation by matching cluster
+#include "delfem2/svd3.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/vecxitrsol.h"
@@ -556,4 +557,67 @@ void delfem2::CDef_Arap::UpdateQuats_SVD(
         aQuat1,
         ip, aXYZ0, aXYZ1, psup_ind, psup);
   }
+}
+
+DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_Linear(
+    std::vector<double> &aQuat1,
+    const std::vector<double> &aXYZ0,
+    const std::vector<double> &aXYZ1,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup) {
+  const size_t np = aXYZ0.size() / 3;
+  for (unsigned int ip = 0; ip < np; ++ip) {
+    const CVec3d Pi(aXYZ0.data() + ip * 3);
+    const CVec3d pi(aXYZ1.data() + ip * 3);
+    const CQuatd Qi(aQuat1.data() + ip * 4);
+    CMat3d Mat;
+    Mat.setZero();
+    CVec3d rhs;
+    rhs.setZero();
+    for (unsigned int ipsup = psup_ind[ip]; ipsup < psup_ind[ip + 1]; ++ipsup) {
+      const unsigned int jp = psup[ipsup];
+      const CVec3d v0 = Qi * (CVec3d(aXYZ0.data() + jp * 3) - Pi);
+      const CVec3d d01 = CVec3d(aXYZ1.data() + jp * 3) - pi - v0;
+      Mat += Mat3_CrossCross(v0);
+      rhs += d01.cross(v0);
+    }
+    CVec3d sol = Mat.Inverse() * rhs;
+    CQuatd q0 = Quat_CartesianAngle(sol);
+    CQuatd q1 = q0 * Qi;
+    q1.CopyTo(aQuat1.data() + ip * 4);
+  }
+}
+
+DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_SVD(
+    std::vector<double> &aQuat1,
+    unsigned int ip,
+    const std::vector<double> &aXYZ0,
+    const std::vector<double> &aXYZ1,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup) {
+  const CVec3d Pi(aXYZ0.data() + ip * 3);
+  const CVec3d pi(aXYZ1.data() + ip * 3);
+  const CMat3d R0i = CMat3d::Quat(aQuat1.data() + ip * 4);
+  double A[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  for (unsigned int ipsup = psup_ind[ip]; ipsup < psup_ind[ip + 1]; ++ipsup) {
+    const unsigned int jp = psup[ipsup];
+    const CVec3d &v0 = R0i * (CVec3d(aXYZ0.data() + jp * 3) - Pi);
+    const CVec3d v1 = CVec3d(aXYZ1.data() + jp * 3) - pi;
+    const double *dp = v1.p;
+    const double *dq = v0.p;
+    A[0 * 3 + 0] += dp[0] * dq[0];
+    A[0 * 3 + 1] += dp[0] * dq[1];
+    A[0 * 3 + 2] += dp[0] * dq[2];
+    A[1 * 3 + 0] += dp[1] * dq[0];
+    A[1 * 3 + 1] += dp[1] * dq[1];
+    A[1 * 3 + 2] += dp[1] * dq[2];
+    A[2 * 3 + 0] += dp[2] * dq[0];
+    A[2 * 3 + 1] += dp[2] * dq[1];
+    A[2 * 3 + 2] += dp[2] * dq[2];
+  }
+  CMat3d dRi;
+  GetRotPolarDecomp(dRi.p_, A, 40);
+  const CMat3d R1 = dRi * R0i;
+  const CQuatd q1 = R1.GetQuaternion();
+  q1.CopyTo(aQuat1.data() + ip * 4);
 }

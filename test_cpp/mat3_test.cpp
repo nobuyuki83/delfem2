@@ -6,6 +6,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
 #include "delfem2/mat3.h"
+#include "delfem2/svd3.h"
 
 namespace dfm2 = delfem2;
 
@@ -20,7 +21,7 @@ TEST(mat3, eigen3) {
     }
     double l[3];
     dfm2::CMat3d U;
-    dfm2::eigenSym3(
+    dfm2::EigenSym3(
       U.data(), l,
       sm, 20);
     {
@@ -48,7 +49,7 @@ TEST(mat3, eigen3) {
     sm[5] = -sm[4];
     double l[3];
     dfm2::CMat3d U;
-    dfm2::eigenSym3(
+    dfm2::EigenSym3(
       U.data(), l,
       sm, 20);
     {
@@ -73,10 +74,7 @@ TEST(mat3, svd3) {
   for (int itr = 0; itr < 10000; itr++) {
     dfm2::CMat3d M;
     M.SetRandom();
-    double g[3];
-    dfm2::CMat3d U, V;
-    dfm2::svd3(U.data(), g, V.data(),
-               M.data(), 20);
+    auto [U,UG,V] = dfm2::Svd3<dfm2::CMat3d>(M, 20);
     {
       double diffU = (U.transpose() * U - dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-6);
@@ -86,11 +84,7 @@ TEST(mat3, svd3) {
       EXPECT_NEAR(diffV, 0.0, 1.0e-10);
     }
     {
-      const double G[9] = {g[0], 0, 0, 0, g[1], 0, 0, 0, g[2]};
-      dfm2::CMat3d UG;
-      dfm2::MatMat3(UG.data(), U.data(), G);
-      dfm2::CMat3d UGVt;
-      dfm2::MatMatT3(UGVt.data(), UG.data(), V.data());
+      dfm2::CMat3d UGVt = U * UG * V.transpose();
       double diff = (UGVt - M).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-10);
     }

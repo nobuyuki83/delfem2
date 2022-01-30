@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <vector>
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
+
 #include "delfem2/tinygltf/io_gltf.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
@@ -12,9 +16,6 @@
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/rigv3.h"
 #include "delfem2/rig_geo3.h"
-#include <vector>
-#include <set>
-#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 

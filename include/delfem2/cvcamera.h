@@ -5,12 +5,10 @@
 #include <fstream>
 #include <array>
 
-#include "delfem2/vec3.h"
-
 namespace delfem2 {
 
 class CCvCamera {
-public:
+ public:
   char name[32];
   float t[3];
   float R[9];
@@ -30,9 +28,9 @@ bool ReadCamera(
     fin >> icam0;
     assert(icam0 == icam);
     fin >> aCamera[icam].name;
-    for (float &k : aCamera[icam].K) { fin >> k; }
-    for (float &t : aCamera[icam].t) { fin >> t; }
-    for (float &r : aCamera[icam].R) { fin >> r; }
+    for (float &k: aCamera[icam].K) { fin >> k; }
+    for (float &t: aCamera[icam].t) { fin >> t; }
+    for (float &r: aCamera[icam].R) { fin >> r; }
   }
   return true;
 }
@@ -75,15 +73,14 @@ void SetCameraInteriorMat(
  * @param img_width
  * @param img_height
  */
-template <typename T>
+template<typename T>
 void ProjectionCameraWithCalibration(
     T coord_image[2],
     const T pos_xyz[3],
     T cx, T cy, T f,
     T k1, T k2, T k3, T p1, T p2,
     unsigned int img_width,
-    unsigned int img_height)
-{
+    unsigned int img_height) {
   T x0 = pos_xyz[0] / pos_xyz[2];
   T y0 = pos_xyz[1] / pos_xyz[2];
   T r1 = sqrt(x0 * x0 + y0 * y0);
@@ -103,47 +100,57 @@ Mat4_CameraInternal_MetashapePinhole(
     float cx,
     float cy,
     float width,
-    float height){
+    float height) {
   return {
-      f, 0,  cx+width*0.5f, 0,
-      0, f,  cy+height*0.5f, 0,
+      f, 0, cx + width * 0.5f, 0,
+      0, f, cy + height * 0.5f, 0,
       0, 0, 0, 1,
-      0, 0, 1, 0 };
+      0, 0, 1, 0};
 }
 
 std::array<float, 16>
 Mat4_Image2Screen(
     float width,
     float height,
-    float z_scale){
+    float z_scale) {
   return {
-      2.f/width, 0, 0, -1,
-      0, -2.f/height, 0, 1,
+      2.f / width, 0, 0, -1,
+      0, -2.f / height, 0, 1,
       0, 0, z_scale, 0,
-      0, 0, 0, 1 };
+      0, 0, 0, 1};
 }
 
 
-template<typename T>
+/**
+ *
+ * @tparam VEC
+ * @tparam T
+ * @param c screen coordinate after projection
+ * @param dc how screen coordinate move with respect to input 3d point
+ * @param mat homography transformation matrix
+ * @param pos 3d position
+ */
+template<typename VEC, typename T = typename VEC::Scalar>
 void CdC_ScreenCoordinate(
     T c[2],
     T dc[2][3],
     const T mat[16],
     const T pos[3]) {
-  delfem2::CVec3<T> vx(mat), vy(mat + 4), vw(mat + 12), vp(pos);
+  VEC vx(mat), vy(mat + 4), vw(mat + 12), vp(pos);
   const auto qx = vx.dot(vp) + mat[3];
   const auto qy = vy.dot(vp) + mat[7];
   const auto qw = vw.dot(vp) + mat[15];
   const auto v0 = vx / qw - qx / (qw * qw) * vw;
   const auto v1 = vy / qw - qy / (qw * qw) * vw;
-  c[0] = qx/qw;
-  c[1] = qy/qw;
+  c[0] = qx / qw;
+  c[1] = qy / qw;
   dc[0][0] = v0.x;
   dc[0][1] = v0.y;
   dc[0][2] = v0.z;
   dc[1][0] = v1.x;
   dc[1][1] = v1.y;
-  dc[1][2] = v1.z;}
+  dc[1][2] = v1.z;
+}
 
 }
 

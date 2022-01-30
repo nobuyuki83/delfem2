@@ -28,6 +28,7 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/jagarray.h"
+#include "delfem2/defarap.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/rigv3.h"

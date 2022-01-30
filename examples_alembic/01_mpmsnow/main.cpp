@@ -5,6 +5,7 @@
 #include <array>
 #include <random>
 #include "delfem2/mat3.h"
+#include "delfem2/svd3.h"
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/points.h"
@@ -360,7 +361,7 @@ void ForceOnGrid(
       delfem2::CMat3d Rot;
       {
         double U0[9], G0[3], V0[9];
-        delfem2::svd3(U0,G0,V0,Fe.data(),30);
+        delfem2::Svd3(U0,G0,V0,Fe.data(),30);
         delfem2::MatMatT3(Rot.data(), U0,V0);
       }
       const double mu0 = mu * std::exp(hardening_coefficient * (1.0 - detFp));
@@ -438,7 +439,7 @@ void UpdateDeformationGradient(
   const delfem2::CMat3d Fe1 = (delfem2::CMat3d::Identity()+dt*delfem2::CMat3d(gradV))*Fe0;
   delfem2::CMat3d U, V;
   double G[3];
-  delfem2::svd3(U.data(),G,V.data(),Fe1.data(),30);
+  delfem2::Svd3(U.data(),G,V.data(),Fe1.data(),30);
   const double a = 1 - critical_compression;
   const double b = 1 + critical_stretch;
   G[0] = MyClamp(G[0], a, b);
