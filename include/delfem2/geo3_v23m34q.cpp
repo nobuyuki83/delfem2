@@ -32,7 +32,7 @@ DFM2_INLINE delfem2::CVec3d delfem2::GetCartesianRotationVector(
     mat[7] - mat[5],
     mat[2] - mat[6],
     mat[3] - mat[1] };
-  double act = (m.Trace() - 1) * 0.5;
+  double act = (m.trace() - 1) * 0.5;
   if (act > +1) { act = +1; }
   if (act < -1) { act = -1; }
   double theta = acos(act);
@@ -219,7 +219,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTri(
           Mat3_OuterProduct(d1, d1) +
           Mat3_OuterProduct(d2, d2) +
           Mat3_OuterProduct(dv, dv);
-  double tr0 = I0.Trace();
+  double tr0 = I0.trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
 
   double darea = ((d1 - d0).cross(d2 - d0)).norm();
@@ -239,7 +239,7 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTriSolid(
           Mat3_OuterProduct(d1, d1) +
           Mat3_OuterProduct(d2, d2) +
           Mat3_OuterProduct(dv, dv);
-  double tr0 = I0.Trace();
+  double tr0 = I0.trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
 
   double darea = d0.dot(d1.cross(d2));

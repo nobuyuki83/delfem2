@@ -396,6 +396,10 @@ class CMat3 {
   [[nodiscard]] std::array<REAL,4> GetQuaternion() const;
   
   // ------------------------
+  /**
+   * named after Eigen library
+   * @return
+   */
   [[nodiscard]] CMat3 transpose() const {
     CMat3 m;
     m.p_[0] = p_[0];
@@ -422,14 +426,20 @@ class CMat3 {
         p_[6] * p_[4] * p_[2] -
         p_[3] * p_[1] * p_[8];
   }
-  [[nodiscard]] double SqNorm_Frobenius() const {
-    double s = 0.0;
-    for (auto &i : p_) {
-      s += i * i;
-    }
+  /**
+   * Frobenius norm. named after Eigen
+   * @return
+   */
+  [[nodiscard]] REAL squaredNorm() const {
+    REAL s = 0;
+    for (auto &i : p_) { s += i * i; }
     return s;
   }
-  [[nodiscard]] double Trace() const {
+  /**
+   * named after Eigen library
+   * @return
+   */
+  [[nodiscard]] REAL trace() const {
     return p_[0] + p_[4] + p_[8];
   }
   [[nodiscard]] double SecondInvarint() const {

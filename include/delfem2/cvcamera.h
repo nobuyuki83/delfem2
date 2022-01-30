@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <array>
+#include <cassert>
 
 namespace delfem2 {
 
