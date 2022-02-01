@@ -41,8 +41,6 @@ DFM2_INLINE CVec2d screenXYProjection(
 // -------------
 // vec3 and vec2
 
-
-
 // ---------------------------------------------------
 // matrix 3
 

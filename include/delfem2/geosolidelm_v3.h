@@ -122,6 +122,13 @@ T Volume_Tet(
   return v * 0.16666666666666666666666666666667;
 }
 
+template<typename VEC>
+std::array<VEC, 4> DiffDeformationGradient(
+    const VEC &P0,
+    const VEC &P1,
+    const VEC &P2,
+    const VEC &P3);
+
 template<typename T>
 double Volume_Pyramid(
     const CVec3<T> &p0,
@@ -192,4 +199,39 @@ double SolidAngleTri(
 #  include "delfem2/geosolidelm_v3.cpp"
 #endif
 
-#endif // VEC3_H
+// ----------------------------
+// local function interface
+
+namespace delfem2::solidelm {
+  template<typename REAL>
+  DFM2_INLINE void MyInverse_Mat3(
+      REAL Ainv[9],
+      const REAL A[9]);
+}
+
+// ---------------------------
+// implementation of exposed functions
+
+template <typename VEC>
+std::array<VEC, 4> delfem2::DiffDeformationGradient(
+    const VEC &P0,
+    const VEC &P1,
+    const VEC &P2,
+    const VEC &P3) {
+  using SCALAR = typename VEC::Scalar;
+  const SCALAR Basis0[9] = {
+      P1[0] - P0[0], P2[0] - P0[0], P3[0] - P0[0],
+      P1[1] - P0[1], P2[1] - P0[1], P3[1] - P0[1],
+      P1[2] - P0[2], P2[2] - P0[2], P3[2] - P0[2] };
+  SCALAR Bi0[9];
+  ::delfem2::solidelm::MyInverse_Mat3(Bi0, Basis0);
+  return {
+      VEC{-Bi0[0] - Bi0[3] - Bi0[6],
+          -Bi0[1] - Bi0[4] - Bi0[7],
+          -Bi0[2] - Bi0[5] - Bi0[8]},
+      VEC{Bi0[0], Bi0[1], Bi0[2]},
+      VEC{Bi0[3], Bi0[4], Bi0[5]},
+      VEC{Bi0[6], Bi0[7], Bi0[8]}};
+}
+
+#endif // DFM2_GEOSOLIDELM_V3_H

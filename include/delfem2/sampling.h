@@ -66,6 +66,24 @@ std::array<T, 3> RandomVec3(
 }
 
 template<typename T>
+std::array<T, 9> RandomMat3(
+    std::uniform_real_distribution<T> &dist,
+    std::mt19937 &reng,
+    T mag = 1.0,
+    T offset = 0.0) {
+  return {
+      mag * dist(reng) + offset,
+      mag * dist(reng) + offset,
+      mag * dist(reng) + offset,
+      mag * dist(reng) + offset,
+      mag * dist(reng) + offset,
+      mag * dist(reng) + offset,
+      mag * dist(reng) + offset,
+      mag * dist(reng) + offset,
+      mag * dist(reng) + offset };
+}
+
+template<typename T>
 T SampleTent(
     std::array<unsigned short, 3> &Xi) {
   const T r1 = 2 * MyERand48<T>(Xi);

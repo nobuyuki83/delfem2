@@ -9,6 +9,7 @@
 #define SVD3_H_
 
 #include <tuple>
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 
@@ -58,6 +59,55 @@ DFM2_INLINE void GetRotPolarDecomp(
     //
     const double am[9],
     int nitr);
+
+/**
+ * this is put in the header because MAT can be Eigen::Matrix3
+ * @tparam MAT
+ * @tparam T
+ * @param diff
+ * @param U
+ * @param S
+ * @param V
+ */
+template<class MAT, typename T = typename MAT::Scalar>
+DFM2_INLINE void Svd3Differential(
+    T diff[3][3][9],
+    const MAT &U,
+    const MAT &S,
+    const MAT &V) {
+  auto invmat2 = [](T a0, T a1) -> std::array<T, 2> {
+    if (fabs(a0 - a1) < 1.0e-6) { a0 += 1.0e-6; }
+    T detinv = 1 / (a0 * a0 - a1 * a1);
+    return {+detinv * a0, -detinv * a1};
+  };
+
+  const std::array<T, 2> Ai0 = invmat2(S(1, 1), S(2, 2));
+  const std::array<T, 2> Ai1 = invmat2(S(2, 2), S(0, 0));
+  const std::array<T, 2> Ai2 = invmat2(S(0, 0), S(1, 1));
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
+      // dSdu
+      diff[i][j][3] = U(i, 0) * V(j, 0);
+      diff[i][j][4] = U(i, 1) * V(j, 1);
+      diff[i][j][5] = U(i, 2) * V(j, 2);
+      {
+        const T b0[2] = {-U(i, 2) * V(j, 1), U(i, 1) * V(j, 2)};
+        diff[i][j][0] = +Ai0[0] * b0[0] + Ai0[1] * b0[1];
+        diff[i][j][6] = -Ai0[1] * b0[0] - Ai0[0] * b0[1];
+      }
+      {
+        const T b1[2] = {-U(i, 0) * V(j, 2), U(i, 2) * V(j, 0)};
+        diff[i][j][1] = +Ai1[0] * b1[0] + Ai1[1] * b1[1];
+        diff[i][j][7] = -Ai1[1] * b1[0] - Ai1[0] * b1[1];
+      }
+      {
+        const T b2[2] = {-U(i, 1) * V(j, 0), U(i, 0) * V(j, 1)};
+        diff[i][j][2] = +Ai2[0] * b2[0] + Ai2[1] * b2[1];
+        diff[i][j][8] = -Ai2[1] * b2[0] - Ai2[0] * b2[1];
+      }
+    }
+  }
+}
 
 }  // delfem2
 

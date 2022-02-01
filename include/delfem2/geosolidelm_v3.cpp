@@ -134,9 +134,9 @@ template void MyQuatConjVec(double vo[3], const double q[4], const double vi[3])
 // --------------------------
 
 template<typename REAL>
-DFM2_INLINE void MyInverse_Mat3
-    (REAL Ainv[9],
-     const REAL A[9]) {
+DFM2_INLINE void MyInverse_Mat3(
+    REAL Ainv[9],
+    const REAL A[9]) {
   const REAL det =
       A[0] * A[4] * A[8] +
           A[3] * A[7] * A[2] +
@@ -144,7 +144,7 @@ DFM2_INLINE void MyInverse_Mat3
           A[0] * A[7] * A[5] -
           A[6] * A[4] * A[2] -
           A[3] * A[1] * A[8];
-  const REAL inv_det = 1.0 / det;
+  const REAL inv_det = 1 / det;
   Ainv[0] = inv_det * (A[4] * A[8] - A[5] * A[7]);
   Ainv[1] = inv_det * (A[2] * A[7] - A[1] * A[8]);
   Ainv[2] = inv_det * (A[1] * A[5] - A[2] * A[4]);
@@ -155,11 +155,16 @@ DFM2_INLINE void MyInverse_Mat3
   Ainv[7] = inv_det * (A[1] * A[6] - A[0] * A[7]);
   Ainv[8] = inv_det * (A[0] * A[4] - A[1] * A[3]);
 }
+#ifdef DFM2_STATIC_LIBRARY
+template void MyInverse_Mat3(float Ainv[9],const float A[9]);
+template void MyInverse_Mat3(double Ainv[9],const double A[9]);
+#endif
 
 template<typename T>
-DFM2_INLINE void MyMatVec3
-    (T y[3],
-     const T m[9], const T x[3]) {
+DFM2_INLINE void MyMatVec3(
+    T y[3],
+    const T m[9],
+    const T x[3]) {
   y[0] = m[0] * x[0] + m[1] * x[1] + m[2] * x[2];
   y[1] = m[3] * x[0] + m[4] * x[1] + m[5] * x[2];
   y[2] = m[6] * x[0] + m[7] * x[1] + m[8] * x[2];
@@ -168,34 +173,7 @@ DFM2_INLINE void MyMatVec3
 }
 
 // ---------------------------------
-
-/*
-template<typename T>
-T delfem2::Volume_Tet(
-    const T v1[3],
-    const T v2[3],
-    const T v3[3],
-    const T v4[3]) {
-  return
-      (
-          (v2[0] - v1[0]) * ((v3[1] - v1[1]) * (v4[2] - v1[2]) - (v4[1] - v1[1]) * (v3[2] - v1[2])) -
-              (v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2])) +
-              (v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]))
-      ) * static_cast<T>(1.0 / 6.0);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template float delfem2::Volume_Tet(const float v1[3],
-                                    const float v2[3],
-                                    const float v3[3],
-                                    const float v4[3]);
-template double delfem2::Volume_Tet(const double v1[3],
-                                     const double v2[3],
-                                     const double v3[3],
-                                     const double v4[3]);
-#endif
-*/
-
-// --------------------------------
+// inplementation of exposed function
 
 //! Hight of a tetrahedra
 template<typename T>
@@ -211,28 +189,22 @@ double delfem2::Height(
   return (v4.p[0] - v1.p[0]) * n[0] + (v4.p[1] - v1.p[1]) * n[1] + (v4.p[2] - v1.p[2]) * n[2];
 }
 #ifdef DFM2_STATIC_LIBRARY
-template double delfem2::Height(const CVec3f &v1,
-                                const CVec3f &v2,
-                                const CVec3f &v3,
-                                const CVec3f &v4);
-template double delfem2::Height(const CVec3d &v1,
-                                const CVec3d &v2,
-                                const CVec3d &v3,
-                                const CVec3d &v4);
+template double delfem2::Height(const CVec3f &,const CVec3f &,const CVec3f &, const CVec3f &);
+template double delfem2::Height(const CVec3d &,const CVec3d &,const CVec3d &, const CVec3d &);
 #endif
 
 // ------------------------------------------------------------------------------
 
 template<typename T>
-delfem2::CVec3<T> delfem2::positionBarycentricCoord_Pyramid
-    (double r0,
-     double r1,
-     double r2,
-     const CVec3<T> &p0,
-     const CVec3<T> &p1,
-     const CVec3<T> &p2,
-     const CVec3<T> &p3,
-     const CVec3<T> &p4) {
+delfem2::CVec3<T> delfem2::positionBarycentricCoord_Pyramid(
+    double r0,
+    double r1,
+    double r2,
+    const CVec3<T> &p0,
+    const CVec3<T> &p1,
+    const CVec3<T> &p2,
+    const CVec3<T> &p3,
+    const CVec3<T> &p4) {
   return (1.0 - r2) * (1.0 - r0) * (1.0 - r1) * p0
       + (1.0 - r2) * r0 * (1.0 - r1) * p1
       + (1.0 - r2) * r0 * r1 * p2

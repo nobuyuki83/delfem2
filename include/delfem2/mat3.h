@@ -369,6 +369,10 @@ class CMat3 {
     return this->p_[i * 3 + j];
   }
   // -------------------------
+  /**
+   * @return
+   * @details named after Eigen library (#include <Eigen/LU>)
+   */
   [[nodiscard]] CMat3 Inverse() const;
   // -------------------------
   // function whose name starts with "Set" changes itself
@@ -417,7 +421,11 @@ class CMat3 {
     double s = p_[0] + p_[1] + p_[2] + p_[3] + p_[4] + p_[5] + p_[6] + p_[7] + p_[8];
     return myIsNAN_Matrix3(s) != 0;
   }
-  [[nodiscard]] double determinant() const {
+  /**
+   * @return
+   * @details named after Eigen library (#include <Eigen/LU>)
+   */
+  [[nodiscard]] REAL determinant() const {
     return
         p_[0] * p_[4] * p_[8] +
         p_[3] * p_[7] * p_[2] +
