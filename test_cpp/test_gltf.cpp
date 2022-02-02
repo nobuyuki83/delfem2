@@ -205,7 +205,7 @@ TEST(gltf, constraint_sensitivity )
     for(int itr=0;itr<5;++itr){
       dfm2::CTarget t;
       t.ib = rand_ib(rndeng);
-      t.pos = dfm2::CVec3d(dfm2::RandomVec3(dist_01,rndeng)) + aBone[t.ib].RootPosition();
+      t.pos = dfm2::CVec3d(dfm2::RandomVec<3>(dist_01,rndeng)) + aBone[t.ib].RootPosition();
       aTarget.push_back(t);
     }
     

@@ -53,16 +53,17 @@ std::array<T, 2> RandomVec2(
   return { MyERand48<T>(xi), MyERand48<T>(xi) };
 }
 
-template<typename T>
-std::array<T, 3> RandomVec3(
+template<int n, typename T>
+std::array<T, n> RandomVec(
     std::uniform_real_distribution<T> &dist,
     std::mt19937 &reng,
     T mag = 1.0,
     T offset = 0.0) {
-  return {
-    mag * dist(reng) + offset,
-    mag * dist(reng) + offset,
-    mag * dist(reng) + offset};
+  std::array<T, n> r;
+  for(int i=0;i<n;++i){
+    r[i] =mag * dist(reng) + offset;
+  }
+  return r;
 }
 
 template<typename T>

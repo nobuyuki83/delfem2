@@ -330,8 +330,8 @@ TEST(bvh,lineintersection)
            aTri.data(), aTri.size()/3,
            1.0e-5);
   for(int itr=0;itr<100;++itr){
-    const dfm2::CVec3d s0 = dfm2::RandomVec3(dist_m2p2,randomEng);
-    const dfm2::CVec3d d0 = dfm2::CVec3d(dfm2::RandomVec3(dist_m2p2,randomEng)).normalized();
+    const dfm2::CVec3d s0 = dfm2::RandomVec<3>(dist_m2p2,randomEng);
+    const dfm2::CVec3d d0 = dfm2::CVec3d(dfm2::RandomVec<3>(dist_m2p2,randomEng)).normalized();
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -386,8 +386,8 @@ TEST(bvh,rayintersection)
       aTri.data(), aTri.size()/3,
       1.0e-5);
   for(int itr=0;itr<100;++itr){
-    const dfm2::CVec3d s0 = dfm2::RandomVec3(dist_m2p2,randomEng);
-    const dfm2::CVec3d d0 = dfm2::CVec3d(dfm2::RandomVec3(dist_m2p2,randomEng)).normalized();
+    const dfm2::CVec3d s0 = dfm2::RandomVec<3>(dist_m2p2,randomEng);
+    const dfm2::CVec3d d0 = dfm2::CVec3d(dfm2::RandomVec<3>(dist_m2p2,randomEng)).normalized();
     for(unsigned int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];

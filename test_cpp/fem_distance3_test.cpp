@@ -77,8 +77,8 @@ TEST(fem_distance3, WdWddW_SquareLengthLineseg3D) {
         stiff_stretch, P, L0);
     // -----
     const dfm2::CVec3d dP[2] = {
-        dfm2::CVec3d(dfm2::RandomVec3(dist_01, rndeng)) * eps,
-        dfm2::CVec3d(dfm2::RandomVec3(dist_01, rndeng)) * eps};
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, rndeng)) * eps,
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, rndeng)) * eps};
     const dfm2::CVec3d p[2] = {P[0] + dP[0], P[1] + dP[1]};
     double w;
     dfm2::CVec3d dw_dP[2];

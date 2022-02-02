@@ -359,13 +359,16 @@ class CMat3 {
     for (auto &m : p_) { m *= invd; }
     return *this;
   }
-  inline REAL operator[](int i) const {
+  template <typename INDEX>
+  inline REAL operator[](INDEX i) const {
     return this->p_[i];
   }
-  inline REAL &operator()(int i, int j) {
+  template <typename INDEX0, typename INDEX1>
+  inline REAL &operator()(INDEX0 i, INDEX1 j) {
     return this->p_[i * 3 + j];
   }
-  inline const REAL &operator()(int i, int j) const {
+  template <typename INDEX0, typename INDEX1>
+  inline const REAL &operator()(INDEX0 i, INDEX1 j) const {
     return this->p_[i * 3 + j];
   }
   // -------------------------

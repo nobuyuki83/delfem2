@@ -12,20 +12,20 @@ bool GenRandomConfigRod(
     std::mt19937 &randomEng,
     std::uniform_real_distribution<double> &dist_m1p1) {
   namespace dfm2 = delfem2;
-  P0[0] = dfm2::RandomVec3(dist_m1p1, randomEng);
-  P0[1] = dfm2::RandomVec3(dist_m1p1, randomEng);
-  P0[2] = dfm2::RandomVec3(dist_m1p1, randomEng);
+  P0[0] = dfm2::RandomVec<3>(dist_m1p1, randomEng);
+  P0[1] = dfm2::RandomVec<3>(dist_m1p1, randomEng);
+  P0[2] = dfm2::RandomVec<3>(dist_m1p1, randomEng);
   if ((P0[1] - P0[0]).norm() < 0.1) { return false; }
   if ((P0[2] - P0[1]).norm() < 0.1) { return false; }
   if ((P0[1] - P0[0]).normalized().dot((P0[2] - P0[1]).normalized()) < -0.1) { return false; }
   {
-    S0[0] = dfm2::RandomVec3(dist_m1p1, randomEng);
+    S0[0] = dfm2::RandomVec<3>(dist_m1p1, randomEng);
     const dfm2::CVec3d U0 = (P0[1] - P0[0]).normalized();
     S0[0] -= (S0[0].dot(U0)) * U0;
     S0[0].normalize();
   }
   {
-    S0[1] = dfm2::RandomVec3(dist_m1p1, randomEng);
+    S0[1] = dfm2::RandomVec<3>(dist_m1p1, randomEng);
     const dfm2::CVec3d U1 = (P0[2] - P0[1]).normalized();
     S0[1] -= (S0[1].dot(U1)) * U1;
     S0[1].normalize();
@@ -42,18 +42,18 @@ TEST(fem_rod, dWddW_RodFrameTrans) {
   const double eps = 1.0e-6;
 //
   for (int itr = 0; itr < 10000; ++itr) {
-    const dfm2::CVec3d V01 = dfm2::RandomVec3(dist_01, randomEng);
+    const dfm2::CVec3d V01 = dfm2::RandomVec<3>(dist_01, randomEng);
     if (V01.norm() < 0.1) { continue; }
     dfm2::CVec3d Frm[3];
     {
       Frm[2] = V01;
       Frm[2].normalize();
-      Frm[0] = dfm2::RandomVec3(dist_01, randomEng);
+      Frm[0] = dfm2::RandomVec<3>(dist_01, randomEng);
       Frm[0] -= (Frm[0].dot(Frm[2])) * Frm[2];
       Frm[0].normalize();
       Frm[1] = Frm[2].cross(Frm[0]);
     }
-    dfm2::CVec3d Q = dfm2::RandomVec3(dist_01, randomEng);
+    dfm2::CVec3d Q = dfm2::RandomVec<3>(dist_01, randomEng);
 //  Q = Frm[2];
 // --------------------------------
     double W[3] = {Q.dot(Frm[0]), Q.dot(Frm[1]), Q.dot(Frm[2])};
@@ -72,7 +72,7 @@ TEST(fem_rod, dWddW_RodFrameTrans) {
       DW_Dt[2] = Q.dot(dF_dt[2]);
     }
 // ---------
-    const dfm2::CVec3d du = dfm2::CVec3d(dfm2::RandomVec3(dist_01, randomEng)) * eps;
+    const dfm2::CVec3d du = dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, randomEng)) * eps;
     const double dtheta = dist_m1p1(randomEng) * eps;
 // ------
     dfm2::CVec3d frm[3];
@@ -132,21 +132,21 @@ TEST(fem_rod, WdWddW_DotFrame) {
 //
   for (int itr = 0; itr < 10000; ++itr) {
     dfm2::CVec3d P[3] = {
-        dfm2::RandomVec3(dist_01, randomEng),
-        dfm2::RandomVec3(dist_01, randomEng),
-        dfm2::RandomVec3(dist_01, randomEng)};
+        dfm2::RandomVec<3>(dist_01, randomEng),
+        dfm2::RandomVec<3>(dist_01, randomEng),
+        dfm2::RandomVec<3>(dist_01, randomEng)};
     if ((P[1] - P[0]).norm() < 0.01) { continue; }
     if ((P[2] - P[1]).norm() < 0.01) { continue; }
     if ((P[1] - P[0]).normalized().dot((P[2] - P[1]).normalized()) < -0.1) { continue; }
     dfm2::CVec3d S[2];
     {
-      S[0] = dfm2::RandomVec3(dist_01, randomEng);
+      S[0] = dfm2::RandomVec<3>(dist_01, randomEng);
       const dfm2::CVec3d U0 = (P[1] - P[0]).normalized();
       S[0] -= (S[0].dot(U0)) * U0;
       S[0].normalize();
     }
     {
-      S[1] = dfm2::RandomVec3(dist_01, randomEng);
+      S[1] = dfm2::RandomVec<3>(dist_01, randomEng);
       const dfm2::CVec3d U1 = (P[2] - P[1]).normalized();
       S[1] -= (S[1].dot(U1)) * U1;
       S[1].normalize();
@@ -166,9 +166,9 @@ TEST(fem_rod, WdWddW_DotFrame) {
                                P, S, off);
 // -----------------------
     const dfm2::CVec3d dP[3] = {
-        dfm2::CVec3d(dfm2::RandomVec3(dist_01, randomEng)).normalized() * eps,
-        dfm2::CVec3d(dfm2::RandomVec3(dist_01, randomEng)).normalized() * eps,
-        dfm2::CVec3d(dfm2::RandomVec3(dist_01, randomEng)).normalized() * eps};
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, randomEng)).normalized() * eps,
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, randomEng)).normalized() * eps,
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, randomEng)).normalized() * eps};
     const double dT[2] = {
         dist_m1p1(randomEng) * eps,
         dist_m1p1(randomEng) * eps};
@@ -279,9 +279,9 @@ TEST(fem_rod, WdWddW_Rod) {
                           dfm2::CVec3d(off));
 // -----------------------
     const dfm2::CVec3d dP[3] = {
-        dfm2::CVec3d(dfm2::RandomVec3(dist_01, randomEng)) * eps,
-        dfm2::CVec3d(dfm2::RandomVec3(dist_01, randomEng)) * eps,
-        dfm2::CVec3d(dfm2::RandomVec3(dist_01, randomEng)) * eps};
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, randomEng)) * eps,
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, randomEng)) * eps,
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, randomEng)) * eps};
     const double dT[2] = {
         dist_m1p1(randomEng) * eps,
         dist_m1p1(randomEng) * eps};
@@ -378,9 +378,9 @@ TEST(fem_rod, Check_CdC) {
         P0, S0);
     //
     const dfm2::CVec3d dP[3] = {
-        dfm2::CVec3d(dfm2::RandomVec3(dist_m1p1, randomEng)) * eps,
-        dfm2::CVec3d(dfm2::RandomVec3(dist_m1p1, randomEng)) * eps,
-        dfm2::CVec3d(dfm2::RandomVec3(dist_m1p1, randomEng)) * eps};
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_m1p1, randomEng)) * eps,
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_m1p1, randomEng)) * eps,
+        dfm2::CVec3d(dfm2::RandomVec<3>(dist_m1p1, randomEng)) * eps};
     const double dT[2] = {
         dist_m1p1(randomEng) * eps,
         dist_m1p1(randomEng) * eps};

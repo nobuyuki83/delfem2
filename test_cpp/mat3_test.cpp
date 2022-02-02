@@ -185,56 +185,13 @@ TEST(mat3, diff_svd) {
   std::uniform_real_distribution<double> dist_01(0, 1);
   double eps = 1.0e-5;
 
-  for (unsigned int itr = 0; itr < 10000; ++itr) {
+  for (unsigned int itr = 0; itr < 1; ++itr) {
     // make random rest shape of a tetrahedron
-    const dfm2::CVec3d Pos0[4] = {
-        delfem2::RandomVec3(dist_01, rndeng),
-        delfem2::RandomVec3(dist_01, rndeng),
-        delfem2::RandomVec3(dist_01, rndeng),
-        delfem2::RandomVec3(dist_01, rndeng)};
-    double Vol = dfm2::Volume_Tet(Pos0[0], Pos0[1], Pos0[2], Pos0[3]);
-    if (Vol < 0.01) { continue; }
-
-    // make random deformed shape of a tetrahedron
-    const dfm2::CVec3d pos0[4] = {
-        Pos0[0] + dfm2::CVec3d(dfm2::RandomVec3(dist_01, rndeng)) * 0.2,
-        Pos0[1] + dfm2::CVec3d(dfm2::RandomVec3(dist_01, rndeng)) * 0.2,
-        Pos0[2] + dfm2::CVec3d(dfm2::RandomVec3(dist_01, rndeng)) * 0.2,
-        Pos0[3] + dfm2::CVec3d(dfm2::RandomVec3(dist_01, rndeng)) * 0.2};
-
-    const dfm2::CMat3d Basis0 = dfm2::Mat3_From3Bases(
-        Pos0[1] - Pos0[0],
-        Pos0[2] - Pos0[0],
-        Pos0[3] - Pos0[0]);
-    const dfm2::CMat3d basis0 = dfm2::Mat3_From3Bases(
-        pos0[1] - pos0[0],
-        pos0[2] - pos0[0],
-        pos0[3] - pos0[0]);
-    const dfm2::CMat3d F0 = basis0 * Basis0.Inverse(); // deformation gradient tensor
-
-    const std::array<dfm2::CVec3d, 4> dFdu = DiffDeformationGradient(
-        Pos0[0], Pos0[1], Pos0[2], Pos0[3]);
-
-    // check dFdu
-    for (unsigned int ino = 0; ino < 4; ++ino) {
-      for (unsigned int idim = 0; idim < 3; ++idim) {
-        const dfm2::CMat3d A = dfm2::RandomMat3(dist_01, rndeng);
-        dfm2::CVec3d pos1[4] = {pos0[0], pos0[1], pos0[2], pos0[3]};
-        pos1[ino][idim] += eps;
-        const dfm2::CMat3d basis1 = dfm2::Mat3_From3Bases(
-            pos1[1] - pos1[0],
-            pos1[2] - pos1[0],
-            pos1[3] - pos1[0]);
-        const dfm2::CMat3d F1 = basis1 * Basis0.Inverse();
-        const double v0 = (A.transpose() * (F1 - F0)).trace() / eps;
-        const double v1 = (A * dFdu[ino])[idim];
-        EXPECT_NEAR(v0, v1, 1.0e-5);
-      }
-    }
+    const dfm2::CMat3d F0 = dfm2::RandomMat3(dist_01, rndeng);
 
     const auto[U0, S0, V0] = dfm2::Svd3<dfm2::CMat3d>(F0, 30);
     EXPECT_LT((U0 * (S0 * V0.transpose()) - F0).squaredNorm(), 1.0e-20);
-    double diff[3][3][9];
+    double diff[9][3][3];
     Svd3Differential(
         diff,
         U0, S0, V0);
@@ -247,23 +204,23 @@ TEST(mat3, diff_svd) {
         const auto[U1, S1, V1] = dfm2::Svd3<dfm2::CMat3d>(F1, 30);
         {  // check diff. of U.  Asym(diff) = U^T U'
           dfm2::CMat3d dU = U0.transpose() * (U1 - U0) / eps;
-          EXPECT_NEAR(dU(1, 2), diff[i][j][0], 2.0e-3 * (1.0 + fabs(diff[i][j][0])));
-          EXPECT_NEAR(dU(2, 0), diff[i][j][1], 2.0e-3 * (1.0 + fabs(diff[i][j][1])));
-          EXPECT_NEAR(dU(0, 1), diff[i][j][2], 2.0e-3 * (1.0 + fabs(diff[i][j][2])));
+          EXPECT_NEAR(dU(1, 2), diff[0][i][j], 2.0e-3 * (1.0 + fabs(diff[0][i][j])));
+          EXPECT_NEAR(dU(2, 0), diff[1][i][j], 2.0e-3 * (1.0 + fabs(diff[1][i][j])));
+          EXPECT_NEAR(dU(0, 1), diff[2][i][j], 2.0e-3 * (1.0 + fabs(diff[2][i][j])));
         }
         {  // check diff. of singular value
           double v0 = (S1(0, 0) - S0(0, 0)) / eps;
           double v1 = (S1(1, 1) - S0(1, 1)) / eps;
           double v2 = (S1(2, 2) - S0(2, 2)) / eps;
-          EXPECT_NEAR(v0, diff[i][j][3], 5.0e-4 * (1.0 + fabs(diff[i][j][3])));
-          EXPECT_NEAR(v1, diff[i][j][4], 5.0e-4 * (1.0 + fabs(diff[i][j][4])));
-          EXPECT_NEAR(v2, diff[i][j][5], 5.0e-4 * (1.0 + fabs(diff[i][j][5])));
+          EXPECT_NEAR(v0, diff[3][i][j], 5.0e-4 * (1.0 + fabs(diff[3][i][j])));
+          EXPECT_NEAR(v1, diff[4][i][j], 5.0e-4 * (1.0 + fabs(diff[4][i][j])));
+          EXPECT_NEAR(v2, diff[5][i][j], 5.0e-4 * (1.0 + fabs(diff[5][i][j])));
         }
         {   // check diff. of V. Asym(diff) = V^T V'
           dfm2::CMat3d dV = V0.transpose() * (V1 - V0) / eps;
-          EXPECT_NEAR(dV(1, 2), diff[i][j][6], 2.0e-3 * (1.0 + fabs(diff[i][j][6])));
-          EXPECT_NEAR(dV(2, 0), diff[i][j][7], 2.0e-3 * (1.0 + fabs(diff[i][j][7])));
-          EXPECT_NEAR(dV(0, 1), diff[i][j][8], 2.0e-3 * (1.0 + fabs(diff[i][j][8])));
+          EXPECT_NEAR(dV(1, 2), diff[6][i][j], 2.0e-3 * (1.0 + fabs(diff[6][i][j])));
+          EXPECT_NEAR(dV(2, 0), diff[7][i][j], 2.0e-3 * (1.0 + fabs(diff[7][i][j])));
+          EXPECT_NEAR(dV(0, 1), diff[8][i][j], 2.0e-3 * (1.0 + fabs(diff[8][i][j])));
         }
       }
     }

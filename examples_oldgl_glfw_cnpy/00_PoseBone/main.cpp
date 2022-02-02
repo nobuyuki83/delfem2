@@ -102,7 +102,7 @@ int main()
     for(auto& bone : aBone){
       dfm2::CQuatd::Random(0.2).CopyTo(bone.quatRelativeRot);
     }
-    dfm2::CVec3d(dfm2::RandomVec3(dist_01,rnd_eng)).CopyToScale(aBone[0].transRelative, 0.2);
+    dfm2::CVec3d(dfm2::RandomVec<3>(dist_01,rnd_eng,0.2)).CopyTo(aBone[0].transRelative);
     dfm2::UpdateBoneRotTrans(aBone);
     //
     for(int iframe=0;iframe<20;++iframe) {

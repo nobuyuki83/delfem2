@@ -61,7 +61,11 @@ DFM2_INLINE void GetRotPolarDecomp(
     int nitr);
 
 /**
- * this is put in the header because MAT can be Eigen::Matrix3
+ * Jacobian of singular value decomposition
+ * @details this is put in the header because MAT can be Eigen::Matrix3
+ * Papadopoulo, Théodore & Lourakis, Manolis. (2000).
+ * Estimating the Jacobian of the Singular Value Decomposition
+ * : Theory and Applications. 554-570.
  * @tparam MAT
  * @tparam T
  * @param diff
@@ -71,7 +75,7 @@ DFM2_INLINE void GetRotPolarDecomp(
  */
 template<class MAT, typename T = typename MAT::Scalar>
 DFM2_INLINE void Svd3Differential(
-    T diff[3][3][9],
+    T diff[9][3][3],
     const MAT &U,
     const MAT &S,
     const MAT &V) {
@@ -87,23 +91,23 @@ DFM2_INLINE void Svd3Differential(
   for (unsigned int i = 0; i < 3; ++i) {
     for (unsigned int j = 0; j < 3; ++j) {
       // dSdu
-      diff[i][j][3] = U(i, 0) * V(j, 0);
-      diff[i][j][4] = U(i, 1) * V(j, 1);
-      diff[i][j][5] = U(i, 2) * V(j, 2);
+      diff[3][i][j] = U(i, 0) * V(j, 0);
+      diff[4][i][j] = U(i, 1) * V(j, 1);
+      diff[5][i][j] = U(i, 2) * V(j, 2);
       {
         const T b0[2] = {-U(i, 2) * V(j, 1), U(i, 1) * V(j, 2)};
-        diff[i][j][0] = +Ai0[0] * b0[0] + Ai0[1] * b0[1];
-        diff[i][j][6] = -Ai0[1] * b0[0] - Ai0[0] * b0[1];
+        diff[0][i][j] = +Ai0[0] * b0[0] + Ai0[1] * b0[1];
+        diff[6][i][j] = -Ai0[1] * b0[0] - Ai0[0] * b0[1];
       }
       {
         const T b1[2] = {-U(i, 0) * V(j, 2), U(i, 2) * V(j, 0)};
-        diff[i][j][1] = +Ai1[0] * b1[0] + Ai1[1] * b1[1];
-        diff[i][j][7] = -Ai1[1] * b1[0] - Ai1[0] * b1[1];
+        diff[1][i][j] = +Ai1[0] * b1[0] + Ai1[1] * b1[1];
+        diff[7][i][j] = -Ai1[1] * b1[0] - Ai1[0] * b1[1];
       }
       {
         const T b2[2] = {-U(i, 1) * V(j, 0), U(i, 0) * V(j, 1)};
-        diff[i][j][2] = +Ai2[0] * b2[0] + Ai2[1] * b2[1];
-        diff[i][j][8] = -Ai2[1] * b2[0] - Ai2[0] * b2[1];
+        diff[2][i][j] = +Ai2[0] * b2[0] + Ai2[1] * b2[1];
+        diff[8][i][j] = -Ai2[1] * b2[0] - Ai2[0] * b2[1];
       }
     }
   }
