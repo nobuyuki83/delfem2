@@ -108,7 +108,8 @@ T Volume_OrgTet(
 
 /**
  * Volume of a tetrahedra
- * @tparam VEC dfm2::CVec3, Eigen::Vector3, std::array<*,3>
+ * @tparam VEC dfm2::CVec3, Eigen::Vector3, std::array<*,3>, * [3]
+ * example: Volume_Tet<double [3], double >(v0,...)
  */
 template<typename VEC, typename T = typename VEC::Scalar>
 T Volume_Tet(
@@ -122,8 +123,27 @@ T Volume_Tet(
   return v * 0.16666666666666666666666666666667;
 }
 
-template<typename VEC>
-std::array<VEC, 4> DiffDeformationGradient(
+/**
+ * three basis of a tetrahedra (origin is the first vertex)
+ * @tparam VEC dfm2::CVec3, Eigen::Vector3, std::array<*,3>, * [3]
+ * example: Mat3_3BasesOfTet<double [3], double >(v0,...)
+ */
+template <typename VEC, typename REAL = typename VEC::Scalar>
+std::array<REAL,9> Mat3_3BasesOfTet(
+    const VEC &p0,
+    const VEC &p1,
+    const VEC &p2,
+    const VEC &p3)
+{
+  return  {
+      p1[0]-p0[0], p2[0]-p0[0], p3[0]-p0[0],
+      p1[1]-p0[1], p2[1]-p0[1], p3[1]-p0[1],
+      p1[2]-p0[2], p2[2]-p0[2], p3[2]-p0[2]};
+}
+
+template<typename VEC, typename T = typename VEC::Scalar>
+void DiffDeformationGradient(
+    T dF[4][3],
     const VEC &P0,
     const VEC &P1,
     const VEC &P2,
@@ -212,26 +232,31 @@ namespace delfem2::solidelm {
 // ---------------------------
 // implementation of exposed functions
 
-template <typename VEC>
-std::array<VEC, 4> delfem2::DiffDeformationGradient(
+template <typename VEC, typename SCALAR>
+void delfem2::DiffDeformationGradient(
+    SCALAR dF[4][3],
     const VEC &P0,
     const VEC &P1,
     const VEC &P2,
     const VEC &P3) {
-  using SCALAR = typename VEC::Scalar;
   const SCALAR Basis0[9] = {
       P1[0] - P0[0], P2[0] - P0[0], P3[0] - P0[0],
       P1[1] - P0[1], P2[1] - P0[1], P3[1] - P0[1],
       P1[2] - P0[2], P2[2] - P0[2], P3[2] - P0[2] };
   SCALAR Bi0[9];
   ::delfem2::solidelm::MyInverse_Mat3(Bi0, Basis0);
-  return {
-      VEC{-Bi0[0] - Bi0[3] - Bi0[6],
-          -Bi0[1] - Bi0[4] - Bi0[7],
-          -Bi0[2] - Bi0[5] - Bi0[8]},
-      VEC{Bi0[0], Bi0[1], Bi0[2]},
-      VEC{Bi0[3], Bi0[4], Bi0[5]},
-      VEC{Bi0[6], Bi0[7], Bi0[8]}};
+  dF[0][0] = -Bi0[0] - Bi0[3] - Bi0[6];
+  dF[0][1] = -Bi0[1] - Bi0[4] - Bi0[7];
+  dF[0][2] = -Bi0[2] - Bi0[5] - Bi0[8];
+  dF[1][0] = Bi0[0];
+  dF[1][1] = Bi0[1];
+  dF[1][2] = Bi0[2];
+  dF[2][0] = Bi0[3];
+  dF[2][1] = Bi0[4];
+  dF[2][2] = Bi0[5];
+  dF[3][0] = Bi0[6];
+  dF[3][1] = Bi0[7];
+  dF[3][2] = Bi0[8];
 }
 
 #endif // DFM2_GEOSOLIDELM_V3_H

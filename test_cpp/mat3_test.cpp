@@ -187,7 +187,7 @@ TEST(mat3, diff_svd) {
 
   for (unsigned int itr = 0; itr < 1; ++itr) {
     // make random rest shape of a tetrahedron
-    const dfm2::CMat3d F0 = dfm2::RandomMat3(dist_01, rndeng);
+    const dfm2::CMat3d F0 = dfm2::RandomVec<9>(dist_01, rndeng);
 
     const auto[U0, S0, V0] = dfm2::Svd3<dfm2::CMat3d>(F0, 30);
     EXPECT_LT((U0 * (S0 * V0.transpose()) - F0).squaredNorm(), 1.0e-20);

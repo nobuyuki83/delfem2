@@ -9,6 +9,7 @@
 
 #include "gtest/gtest.h" // need to be defiend in the beginning
 //
+#include "delfem2/sampling.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/femmips_geo3.h"
 #include "delfem2/mshmisc.h"
@@ -16,16 +17,13 @@
 namespace dfm2 = delfem2;
 
 TEST(fem_mips, MIPS) {
-  std::random_device randomDevice;
-  std::mt19937 randomEng(randomDevice());
+  std::mt19937 randomEng(std::random_device{}());
   std::uniform_real_distribution<double> dist_01(0, 1);
   const double eps = 1.0e-5;
   //
   for (unsigned int itr = 0; itr < 10000; ++itr) {
-    const double P[3][3] = {
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)}};
+    double P[3][3];
+    delfem2::Fill2dArrayWithRandomValue<3,3>(P, dist_01, randomEng);
     if (dfm2::Distance3(P[0], P[1]) < 0.1) { continue; }
     if (dfm2::Distance3(P[0], P[2]) < 0.1) { continue; }
     if (dfm2::Distance3(P[1], P[2]) < 0.1) { continue; }
@@ -43,8 +41,9 @@ TEST(fem_mips, MIPS) {
     }
     if (dfm2::Area_Tri3(p[0], p[1], p[2]) < 0.01) { continue; }
     double E, dE[3][3], ddE[3][3][3][3];
-    dfm2::WdWddW_MIPS(E, dE, ddE,
-                      p, P);
+    dfm2::WdWddW_MIPS(
+        E, dE, ddE,
+        p, P);
     for (int ino = 0; ino < 3; ++ino) {
       for (int idim = 0; idim < 3; ++idim) {
         double c1[3][3] = {

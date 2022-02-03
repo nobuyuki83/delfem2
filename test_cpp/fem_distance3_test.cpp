@@ -22,17 +22,13 @@ TEST(fem_distance3, distancetri2d3d) {
   std::uniform_real_distribution<double> dist_01(0, 1);
   //
   for (unsigned int itr = 0; itr < 10000; ++itr) {
-    const double P[3][2] = {  // undeformed triangle vertex positions
-        {dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng)}};
+    double P[3][2];  // undeformed triangle vertex positions
+    delfem2::Fill2dArrayWithRandomValue<3,2>(P, dist_01, randomEng);
     if (dfm2::Distance3(P[0], P[1]) < 0.1) { continue; }
     if (dfm2::Distance3(P[0], P[2]) < 0.1) { continue; }
     if (dfm2::Distance3(P[1], P[2]) < 0.1) { continue; }
-    const double p[3][3] = { //  deformed triangle vertex positions)
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)},
-        {dist_01(randomEng), dist_01(randomEng), dist_01(randomEng)}};
+    double p[3][3]; //  deformed triangle vertex positions)
+    delfem2::Fill2dArrayWithRandomValue<3,3>(p, dist_01, randomEng);
     // --------------
     double C[3], dCdp[3][9];
     dfm2::CdC_LengthTriEdges23(C, dCdp, P, p);
@@ -54,8 +50,6 @@ TEST(fem_distance3, distancetri2d3d) {
   }
 }
 
-
-
 TEST(fem_distance3, WdWddW_SquareLengthLineseg3D) {
   std::mt19937 rndeng(std::random_device{}());
   std::uniform_real_distribution<double> dist_m1p1(-1, +1);
@@ -66,8 +60,8 @@ TEST(fem_distance3, WdWddW_SquareLengthLineseg3D) {
   for (int itr = 0; itr < 10000; ++itr) {
     const double stiff_stretch = dist_12(rndeng);
     const dfm2::CVec3d P[2] = {
-        { dist_01(rndeng), dist_01(rndeng), dist_01(rndeng) },
-        { dist_01(rndeng), dist_01(rndeng), dist_01(rndeng) } };
+        dfm2::RandomVec<3>(dist_01, rndeng),
+        dfm2::RandomVec<3>(dist_01, rndeng) };
     if ((P[0] - P[1]).norm() < 0.1) { continue; }
     dfm2::CVec3d dW_dP[2];
     dfm2::CMat3d ddW_ddP[2][2];
@@ -77,8 +71,8 @@ TEST(fem_distance3, WdWddW_SquareLengthLineseg3D) {
         stiff_stretch, P, L0);
     // -----
     const dfm2::CVec3d dP[2] = {
-        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, rndeng)) * eps,
-        dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, rndeng)) * eps};
+        dfm2::RandomVec<3>(dist_01, rndeng, eps),
+        dfm2::RandomVec<3>(dist_01, rndeng, eps) };
     const dfm2::CVec3d p[2] = {P[0] + dP[0], P[1] + dP[1]};
     double w;
     dfm2::CVec3d dw_dP[2];

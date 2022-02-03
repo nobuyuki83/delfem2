@@ -89,6 +89,10 @@ CVec3d GetSpinVector(
 CVec3d GetCartesianRotationVector(
     const CMat3d &m);
 
+/**
+ * @tparam VEC dfm2::CVec3, Eigen::Vector3, * [3], std::array<*,3>
+ * example: Mat3_From3Bases<double [3], double>
+ */
 template <typename VEC, typename REAL = typename VEC::Scalar>
 std::array<REAL,9> Mat3_From3Bases(
     const VEC &vec0,
@@ -96,9 +100,9 @@ std::array<REAL,9> Mat3_From3Bases(
     const VEC &vec2)
 {
   return  {
-    vec0.x, vec1.x, vec2.x,
-    vec0.y, vec1.y, vec2.y,
-    vec0.z, vec1.z, vec2.z};
+    vec0[0], vec1[0], vec2[0],
+    vec0[1], vec1[1], vec2[1],
+    vec0[2], vec1[2], vec2[2]};
 }
 
 CMat3d Mat3_FromCartesianRotationVector(

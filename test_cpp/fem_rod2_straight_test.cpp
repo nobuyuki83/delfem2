@@ -8,6 +8,7 @@
 
 #include "delfem2/fem_rod2.h"
 #include "delfem2/vec2.h"
+#include "delfem2/sampling.h"
 
 TEST(fem_rod2_straight, check_WdWddW) {
   namespace dfm2 = delfem2;
@@ -15,11 +16,8 @@ TEST(fem_rod2_straight, check_WdWddW) {
   std::uniform_real_distribution<double> dist_m1p1(-1., +1.);
   std::uniform_real_distribution<double> dist_12(+1., +2.);
   for (int nitr = 0; nitr < 100; ++nitr) {
-    const double aP0[3][2] = {
-        {dist_m1p1(rndeng), dist_m1p1(rndeng)},
-        {dist_m1p1(rndeng), dist_m1p1(rndeng)},
-        {dist_m1p1(rndeng), dist_m1p1(rndeng)},
-    };
+    double aP0[3][2];
+    delfem2::Fill2dArrayWithRandomValue<3,2>(aP0, dist_m1p1, rndeng);
     if (delfem2::Distance2(aP0[0], aP0[1]) < 0.1) { continue; }
     if (delfem2::Distance2(aP0[1], aP0[2]) < 0.1) { continue; }
     if (delfem2::Distance2(aP0[0], aP0[2]) < 0.1) { continue; }

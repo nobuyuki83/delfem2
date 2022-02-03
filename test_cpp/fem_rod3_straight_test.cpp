@@ -3,6 +3,7 @@
 #include "gtest/gtest.h" // need to be defiend in the beginning
 
 #include "delfem2/fem_rod3_straight.h"
+#include "delfem2/sampling.h"
 
 TEST(fem_rod3_straight, check_WdWddW) {
   namespace dfm2 = delfem2;
@@ -10,10 +11,10 @@ TEST(fem_rod3_straight, check_WdWddW) {
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
   const double eps = 1.0e-6;
   for (int nitr = 0; nitr < 100; ++nitr) {
-    dfm2::CVec3d vec_pos0[3] = {
-        dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng)),
-        dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng)),
-        dfm2::CVec3d(dist01(reng), dist01(reng), dist01(reng))};
+    const dfm2::CVec3d vec_pos0[3] = {
+        dfm2::RandomVec<3>(dist01, reng),
+        dfm2::RandomVec<3>(dist01, reng),
+        dfm2::RandomVec<3>(dist01, reng) };
     if ((vec_pos0[1] - vec_pos0[0]).norm() < 0.1) { continue; }
     if ((vec_pos0[2] - vec_pos0[1]).norm() < 0.1) { continue; }
     if ((vec_pos0[1] - vec_pos0[0]).normalized().dot(
@@ -53,10 +54,8 @@ TEST(fem_rod3_straight, check_CdC) {
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
   const double eps = 1.0e-6;
   for (int nitr = 0; nitr < 100; ++nitr) {
-    double vec_pos0[3][3] = {
-        {dist01(reng), dist01(reng), dist01(reng)},
-        {dist01(reng), dist01(reng), dist01(reng)},
-        {dist01(reng), dist01(reng), dist01(reng)}};
+    double vec_pos0[3][3];
+    delfem2::Fill2dArrayWithRandomValue<3,3>(vec_pos0, dist01, reng);
     if (dfm2::Distance3(vec_pos0[1], vec_pos0[0]) < 0.1) { continue; }
     if (dfm2::Distance3(vec_pos0[2], vec_pos0[1]) < 0.1) { continue; }
     if ((dfm2::CVec3d(vec_pos0[1]) - dfm2::CVec3d(vec_pos0[0])).normalized().dot(

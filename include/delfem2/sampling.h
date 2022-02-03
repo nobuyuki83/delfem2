@@ -66,23 +66,22 @@ std::array<T, n> RandomVec(
   return r;
 }
 
-template<typename T>
-std::array<T, 9> RandomMat3(
+template<int n, int m, typename T>
+void Fill2dArrayWithRandomValue(
+    T A[n][m],
     std::uniform_real_distribution<T> &dist,
     std::mt19937 &reng,
     T mag = 1.0,
     T offset = 0.0) {
-  return {
-      mag * dist(reng) + offset,
-      mag * dist(reng) + offset,
-      mag * dist(reng) + offset,
-      mag * dist(reng) + offset,
-      mag * dist(reng) + offset,
-      mag * dist(reng) + offset,
-      mag * dist(reng) + offset,
-      mag * dist(reng) + offset,
-      mag * dist(reng) + offset };
+  std::array<T, n> r;
+  for(int i=0;i<n;++i){
+    for(int j=0;j<m;++j) {
+      A[i][j] = mag * dist(reng) + offset;
+    }
+  }
 }
+
+
 
 template<typename T>
 T SampleTent(
