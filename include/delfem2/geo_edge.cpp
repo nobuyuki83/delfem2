@@ -11,6 +11,7 @@
 #include <cmath>
 
 #include "delfem2/geo_line.h"
+#include "delfem2/geo_vec3.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -378,12 +379,12 @@ double delfem2::Distance_Edge3_Edge3(
     CVec3<T> pq0 = p0 - q0;
     CVec3<T> nvp = vp;
     nvp.normalize();
-    CVec3<T> vert = pq0 - Dot(pq0, nvp) * nvp;
+    CVec3<T> vert = pq0 - pq0.dot(nvp) * nvp;
     double dist = vert.norm();
-    double lp0 = Dot(p0, nvp);
-    double lp1 = Dot(p1, nvp);
-    double lq0 = Dot(q0, nvp);
-    double lq1 = Dot(q1, nvp);
+    double lp0 = p0.dot(nvp);
+    double lp1 = p1.dot(nvp);
+    double lq0 = q0.dot(nvp);
+    double lq1 = q1.dot(nvp);
     double p_min = (lp0 < lp1) ? lp0 : lp1;
     double p_max = (lp0 > lp1) ? lp0 : lp1;
     double q_min = (lq0 < lq1) ? lq0 : lq1;
@@ -397,11 +398,11 @@ double delfem2::Distance_Edge3_Edge3(
     ratio_q = (lm - lq0) / (lq1 - lq0);
     return dist;
   }
-  double t0 = Dot(vp, vp);
-  double t1 = Dot(vq, vq);
-  double t2 = Dot(vp, vq);
-  double t3 = Dot(vp, q0 - p0);
-  double t4 = Dot(vq, q0 - p0);
+  double t0 = vp.dot(vp);
+  double t1 = vq.dot(vq);
+  double t2 = vp.dot(vq);
+  double t3 = vp.dot(q0 - p0);
+  double t4 = vq.dot(q0 - p0);
   double det = t0 * t1 - t2 * t2;
   double invdet = 1.0 / det;
   ratio_p = (+t1 * t3 - t2 * t4) * invdet;

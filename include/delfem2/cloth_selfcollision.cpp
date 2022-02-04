@@ -54,8 +54,8 @@ void SelfCollisionImpulse_Proximity(
       double w2 = 1.0 - w0 - w1;
       dfm2::CVec3d pc = w0*p0 + w1*p1 + w2*p2;
       dfm2::CVec3d norm = p3-pc; norm.normalize();
-      double p_depth = delta - Dot(p3-pc,norm); // penetration depth 
-      double rel_v = Dot(v3-w0*v0-w1*v1-w2*v2,norm);
+      double p_depth = delta - (p3-pc).dot(norm); // penetration depth
+      double rel_v = (v3-w0*v0-w1*v1-w2*v2).dot(norm);
       if( rel_v > 0.1*p_depth/dt ) continue;
       double imp_el = dt*stiffness*p_depth;
       double imp_ie = mass*(0.1*p_depth/dt-rel_v);
@@ -88,7 +88,7 @@ void SelfCollisionImpulse_Proximity(
       dfm2::CVec3d c23 = (1-w23)*p2 + w23*p3;
       dfm2::CVec3d norm = (c23-c01); norm.normalize();
       double p_depth = delta - (c23-c01).norm();
-      double rel_v = Dot((1-w23)*v2+w23*v3-(1-w01)*v0-w01*v1,norm);
+      double rel_v = ((1-w23)*v2+w23*v3-(1-w01)*v0-w01*v1).dot(norm);
       if( rel_v > 0.1*p_depth/dt ) continue;
       double imp_el = dt*stiffness*p_depth;
       double imp_ie = mass*(0.1*p_depth/dt-rel_v);
@@ -161,7 +161,7 @@ void SelfCollisionImpulse_CCD(
       double w2 = 1.0 - w0 - w1;
       dfm2::CVec3d pc = w0*p0 + w1*p1 + w2*p2;
       dfm2::CVec3d norm = p3 - pc; norm.normalize();
-      double rel_v = Dot(v3-w0*v0-w1*v1-w2*v2,norm); // relative velocity (positive if separating)
+      double rel_v = (v3-w0*v0-w1*v1-w2*v2).dot(norm); // relative velocity (positive if separating)
       if( rel_v > 0.1*delta/dt ) continue; // separating
       double imp = mass*(0.1*delta/dt-rel_v);
       double imp_mod = 2*imp/(1.0+w0*w0+w1*w1+w2*w2);
@@ -195,7 +195,7 @@ void SelfCollisionImpulse_CCD(
       dfm2::CVec3d c01 = (1-w01)*p0 + w01*p1;
       dfm2::CVec3d c23 = (1-w23)*p2 + w23*p3;
       dfm2::CVec3d norm = (c23-c01); norm.normalize();
-      double rel_v = Dot((1-w23)*v2+w23*v3-(1-w01)*v0-w01*v1,norm);
+      double rel_v = ((1-w23)*v2+w23*v3-(1-w01)*v0-w01*v1).dot(norm);
       if( rel_v > 0.1*delta/dt ) continue; // separating
       double imp = mass*(0.1*delta/dt-rel_v); // reasonable
       double imp_mod = 2*imp/( w01*w01+(1-w01)*(1-w01) + w23*w23+(1-w23)*(1-w23) );

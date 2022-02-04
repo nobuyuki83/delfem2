@@ -364,14 +364,14 @@ bool delfem2::CCad3D_Edge::isPick(
 	const float mMV[16], 
 	const float mPj[16]) const
 {
-  const int np = (int)aP.size();
-  for(int ie=0;ie<np-1;ie++){
+  const CMat4d mvp = (CMat4f(mPj) * CMat4f(mMV)).cast<double>();
+  assert(!aP.empty());
+  const unsigned int np = aP.size();
+  for(unsigned int ie=0;ie<np-1;ie++){
     int ip0 = ie;
     int ip1 = ie+1;
-    CVec3d p0a = aP[ip0];
-    CVec3d p1a = aP[ip1];
-    CVec2d s0 = screenXYProjection(p0a, mMV, mPj);
-    CVec2d s1 = screenXYProjection(p1a, mMV, mPj);
+    CVec2d s0 = mvp.Vec2_MultVec3_Homography(aP[ip0].data());
+    CVec2d s1 = mvp.Vec2_MultVec3_Homography(aP[ip1].data());
     double dist = Distance_Edge_Point(sp0, s0, s1);
     if( dist < 0.03 ){
       ratio = (ip0+0.5)/(np-1.0);
@@ -1012,6 +1012,7 @@ bool delfem2::MovePointsAlongSketch(
     float mPj[16],
     double view_height)
 {
+  const CMat4d mvpinv = (CMat4f(mPj) * CMat4f(mMV)).cast<double>().Inverse();
   // resampling
   std::vector<CVec2d> aStroke1 = Polyline_Resample_Polyline(aStroke,0.025);
   //
@@ -1020,8 +1021,8 @@ bool delfem2::MovePointsAlongSketch(
   CVec3d plane_ey(0,0,0); plane_ey[(inorm+2)%3] = 1;
   std::vector<CVec2d> aP2D;
   for(const auto& sp0 : aStroke1){
-    CVec3d src = screenUnProjection(CVec3d(sp0.x,sp0.y,0), mMV, mPj);
-    CVec3d dir = screenUnProjection(CVec3d(0,0,1), mMV, mPj);
+    CVec3d src = mvpinv.MultVec3_Homography(CVec3d(sp0.x,sp0.y,0).data());
+    CVec3d dir = mvpinv.MultVec3(CVec3d(0,0,1).data());
     CVec3d p = Intersection_Plane3_Line3(plane_org, plane_nrm, src, dir);
     aP2D.emplace_back((p-plane_org).dot(plane_ex),(p-plane_org).dot(plane_ey));
   }
@@ -1300,6 +1301,7 @@ void delfem2::CCad3D::Pick(
     float mPj[16],
     double view_height)
 {
+  const CMat4d mvp = (CMat4f(mPj) * CMat4f(mMV)).cast<double>();
   if ( ivtx_picked<aVertex.size() ){
     ielem_vtx_picked = 0;
     for (int iaxis = 0; iaxis<3; iaxis++){
@@ -1338,7 +1340,7 @@ void delfem2::CCad3D::Pick(
   if( iedge_picked != -1 ){ // edge was picked
     ielem_edge_picked = 0;
     {
-      CVec2d sp = screenXYProjection(aEdge[iedge_picked].q0, mMV, mPj);
+      CVec2d sp = mvp.Vec2_MultVec3_Homography(aEdge[iedge_picked].q0.data());
       if( (sp0-sp).norm() < 0.05 ){
         ielem_edge_picked = 2;
         iface_picked = UINT_MAX;
@@ -1346,7 +1348,7 @@ void delfem2::CCad3D::Pick(
       }
     }
     {
-      CVec2d sp = screenXYProjection(aEdge[iedge_picked].q1, mMV, mPj);
+      CVec2d sp = mvp.Vec2_MultVec3_Homography(aEdge[iedge_picked].q1.data());
       if( (sp0-sp).norm() < 0.05 ){
         ielem_edge_picked = 3;
         iface_picked = UINT_MAX;
@@ -1362,10 +1364,10 @@ void delfem2::CCad3D::Pick(
         plane_org+plane_sizeX*plane_ex+plane_sizeY*plane_ey,
         plane_org-plane_sizeX*plane_ex+plane_sizeY*plane_ey };
       CVec2d sp[4]  = {
-        screenXYProjection(aP[0], mMV, mPj),
-        screenXYProjection(aP[1], mMV, mPj),
-        screenXYProjection(aP[2], mMV, mPj),
-        screenXYProjection(aP[3], mMV, mPj) };
+          mvp.Vec2_MultVec3_Homography(aP[0].data()),
+          mvp.Vec2_MultVec3_Homography(aP[1].data()),
+          mvp.Vec2_MultVec3_Homography(aP[2].data()),
+          mvp.Vec2_MultVec3_Homography(aP[3].data()) };
       double d01 = Distance_Edge_Point(sp0, sp[0], sp[1]);
       double d12 = Distance_Edge_Point(sp0, sp[1], sp[2]);
       double d23 = Distance_Edge_Point(sp0, sp[2], sp[3]);
@@ -1500,11 +1502,15 @@ bool delfem2::CCad3D::ReflectChangeForCurveAndSurface
   return is_edit;
 }
 
-bool delfem2::CCad3D::MouseMotion
-(const CVec3d& src_pick, const CVec3d& dir_pick,
- const CVec2d& sp0, const CVec2d& sp1,
- float mMV[16], float mPj[16])
+bool delfem2::CCad3D::MouseMotion(
+    const CVec3d& src_pick,
+    const CVec3d& dir_pick,
+    const CVec2d& sp0,
+    const CVec2d& sp1,
+    const float mMV[16],
+    const float mPj[16])
 {
+  const CMat4d mvp = (CMat4f(mPj) * CMat4f(mMV)).cast<double>();
   if( imode_edit == EDIT_MOVE ){
     std::vector<int> aIsMoved_Vtx(aVertex.size(),0);
     std::vector<int> aIsMoved_Edge(aEdge.size(),0);
@@ -1538,8 +1544,8 @@ bool delfem2::CCad3D::MouseMotion
       if( !aEdge[iedge_picked].is_sim  ){
         int iaxis = aEdge[iedge_picked].inorm;
         CVec3d axis(0, 0, 0); axis[iaxis] = 1;
-        CVec2d spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
-        CVec2d spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
+        CVec2d spa0 = mvp.Vec2_MultVec3_Homography((plane_org+axis).data());
+        CVec2d spa1 = mvp.Vec2_MultVec3_Homography((plane_org-axis).data());
         double r = (spa0-spa1).dot(sp1-sp0)/(spa0-spa1).squaredNorm();
         CVec3d d = r*axis;
         plane_org += d;
@@ -1561,8 +1567,8 @@ bool delfem2::CCad3D::MouseMotion
       int iaxis = aEdge[iedge_picked].inorm;
       if( iaxis>=0 && iaxis<3 ){
         CVec3d axis(0, 0, 0); axis[iaxis] = 1;
-        CVec2d spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
-        CVec2d spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
+        CVec2d spa0 = mvp.Vec2_MultVec3_Homography((plane_org+axis).data());
+        CVec2d spa1 = mvp.Vec2_MultVec3_Homography((plane_org-axis).data());
         double r = (spa0-spa1).dot(sp1-sp0)/(spa0-spa1).squaredNorm();
         CVec3d d = r*axis;
         plane_org += d;

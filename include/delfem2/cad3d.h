@@ -387,7 +387,8 @@ public:
   void MouseUp(float mMV[16], float mPj[16], double view_height);
   bool MouseMotion(const CVec3d& src_pick, const CVec3d& dir_pick,
                    const CVec2d& sp0, const CVec2d& sp1,
-                   float mMV[16], float mPj[16]);
+                   const float mMV[16],
+                   const float mPj[16]);
   
   void WriteFile(std::ofstream& fout) const;
   void ReadFile(std::ifstream& fin);

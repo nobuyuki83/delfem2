@@ -417,6 +417,12 @@ class CMat4 {
     Vec3_Mat4Vec3_Homography(r.data(), mat, v);
     return r;
   }
+
+  std::array<REAL,2> Vec2_MultVec3_Homography(const REAL* v) const {
+    double v3[3];
+    Vec3_Mat4Vec3_Homography(v3, mat, v);
+    return {v3[0],v3[1]};
+  }
   
   std::array<REAL,3> MultVec3(const REAL* v) const {
     std::array<REAL,3> r;

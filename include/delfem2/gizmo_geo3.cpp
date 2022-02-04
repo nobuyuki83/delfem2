@@ -29,10 +29,11 @@ bool delfem2::isPickQuad(
     const delfem2::CVec2d &sp, const CVec3d &pick_dir,
     const float mMV[16], const float mPj[16],
     double eps) {
-  const CVec2d sp0 = screenXYProjection(p0, mMV, mPj);
-  const CVec2d sp1 = screenXYProjection(p1, mMV, mPj);
-  const CVec2d sp2 = screenXYProjection(p2, mMV, mPj);
-  const CVec2d sp3 = screenXYProjection(p3, mMV, mPj);
+  const CMat4d mvp = (CMat4f(mPj) * CMat4f(mMV)).cast<double>();
+  const CVec2d sp0 = mvp.Vec2_MultVec3_Homography(p0.data());
+  const CVec2d sp1 = mvp.Vec2_MultVec3_Homography(p1.data());
+  const CVec2d sp2 = mvp.Vec2_MultVec3_Homography(p2.data());
+  const CVec2d sp3 = mvp.Vec2_MultVec3_Homography(p3.data());
   double a01 = Area_Tri2(sp, sp0, sp1);
   double a12 = Area_Tri2(sp, sp1, sp2);
   double a23 = Area_Tri2(sp, sp2, sp3);
@@ -198,8 +199,9 @@ DFM2_INLINE bool delfem2::isPick_AxisHandler(
     const float *mMV,
     const float *mPj,
     double pick_tol) {
-  delfem2::CVec2d sp0 = delfem2::screenXYProjection(p + len * axis, mMV, mPj);
-  delfem2::CVec2d sp1 = delfem2::screenXYProjection(p - len * axis, mMV, mPj);
+  const CMat4d mvp = (CMat4f(mPj) * CMat4f(mMV)).cast<double>();
+  delfem2::CVec2d sp0 = mvp.Vec2_MultVec3_Homography((p + len * axis).data());
+  delfem2::CVec2d sp1 = mvp.Vec2_MultVec3_Homography((p - len * axis).data());
   double sdist = Distance_Edge_Point(sp, sp0, sp1);
   return sdist < pick_tol;
 }
@@ -212,8 +214,9 @@ DFM2_INLINE delfem2::CVec3d delfem2::drag_AxisHandler(
     double len,
     const float *mMV,
     const float *mPj) {
-  CVec2d spa0 = screenXYProjection(p + len * axis, mMV, mPj);
-  CVec2d spa1 = screenXYProjection(p - len * axis, mMV, mPj);
+  const CMat4d mvp = (CMat4f(mPj) * CMat4f(mMV)).cast<double>();
+  CVec2d spa0 = mvp.Vec2_MultVec3_Homography((p + len * axis).data());
+  CVec2d spa1 = mvp.Vec2_MultVec3_Homography((p - len * axis).data());
   double r = (spa0 - spa1).dot(sp1 - sp0) / (spa0 - spa1).squaredNorm();
   return r * axis * len;
 }
@@ -225,16 +228,16 @@ DFM2_INLINE double delfem2::DragCircle(
     const CVec3d &axis,
     const float *mMV,
     const float *mPj) {
-  CVec2d spo0 = screenXYProjection(p, mMV, mPj);
+  const CMat4f mvp = CMat4f(mPj) * CMat4f(mMV);
+  const CVec3d sp0t = mvp.MultVec3_Homography(p.cast<float>().data());
+  const CVec2d spo0{sp0t.x, sp0t.y};
   double area = Area_Tri2(sp0, spo0, sp1);
   double angl = area / ((sp0 - spo0).norm() * (sp1 - spo0).norm());
   {
-    CVec3d a3 = screenUnProjectionDirection(axis, mMV, mPj);
+    CVec3d a3 = mvp.MultVec3(axis.cast<float>().data());
     if (a3.z < 0) { angl *= -1; }
   }
   return angl;
-  //  CMatrix3 R; R.SetRotMatrix_Cartesian(angl*axis);
-  //  return R;
 }
 
 DFM2_INLINE bool delfem2::isPickPoint(
@@ -243,7 +246,8 @@ DFM2_INLINE bool delfem2::isPickPoint(
     const float *mMV,
     const float *mPj,
     double pick_tol) {
-  CVec2d sp0 = screenXYProjection(p, mMV, mPj);
+  const CMat4d mvp = (CMat4f(mPj) * CMat4f(mMV)).cast<double>();
+  CVec2d sp0 = mvp.Vec2_MultVec3_Homography(p.data());
   return (sp - sp0).norm() < pick_tol;
 }
 
@@ -255,16 +259,17 @@ DFM2_INLINE bool delfem2::isPickCircle(
     const float *mMV,
     const float *mPj,
     double pick_tol) {
+  const CMat4d mvp = (CMat4f(mPj) * CMat4f(mMV)).cast<double>();
   const int ndiv = 32;
   double rdiv = 3.1415 * 2.0 / ndiv;
   CVec3d x, y;
   GetVertical2Vector(axis, x, y);
   for (int idiv = 0; idiv < ndiv + 1; idiv++) {
     int jdiv = idiv + 1;
-    CVec3d p0 = p + (r * sin(rdiv * idiv)) * x + (r * cos(rdiv * idiv)) * y;
-    CVec3d p1 = p + (r * sin(rdiv * jdiv)) * x + (r * cos(rdiv * jdiv)) * y;
-    CVec2d sp0 = screenXYProjection(p0, mMV, mPj);
-    CVec2d sp1 = screenXYProjection(p1, mMV, mPj);
+    const CVec3d p0 = p + (r * sin(rdiv * idiv)) * x + (r * cos(rdiv * idiv)) * y;
+    const CVec3d p1 = p + (r * sin(rdiv * jdiv)) * x + (r * cos(rdiv * jdiv)) * y;
+    const CVec2d sp0 = mvp.Vec2_MultVec3_Homography(p0.data());
+    const CVec2d sp1 = mvp.Vec2_MultVec3_Homography(p1.data());
     double sdist = Distance_Edge_Point(sp, sp0, sp1);
     if (sdist < pick_tol) { return true; }
   }

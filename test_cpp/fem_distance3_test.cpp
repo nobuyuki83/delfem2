@@ -24,9 +24,9 @@ TEST(fem_distance3, distancetri2d3d) {
   for (unsigned int itr = 0; itr < 10000; ++itr) {
     double P[3][2];  // undeformed triangle vertex positions
     delfem2::Fill2dArrayWithRandomValue<3,2>(P, dist_01, randomEng);
-    if (dfm2::Distance3(P[0], P[1]) < 0.1) { continue; }
-    if (dfm2::Distance3(P[0], P[2]) < 0.1) { continue; }
-    if (dfm2::Distance3(P[1], P[2]) < 0.1) { continue; }
+    if (dfm2::Distance2(P[0], P[1]) < 0.1) { continue; }
+    if (dfm2::Distance2(P[0], P[2]) < 0.1) { continue; }
+    if (dfm2::Distance2(P[1], P[2]) < 0.1) { continue; }
     double p[3][3]; //  deformed triangle vertex positions)
     delfem2::Fill2dArrayWithRandomValue<3,3>(p, dist_01, randomEng);
     // --------------

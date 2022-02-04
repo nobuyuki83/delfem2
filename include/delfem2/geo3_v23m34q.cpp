@@ -14,16 +14,9 @@
 #include "delfem2/mat3.h"
 #include "delfem2/mat4.h"
 #include "delfem2/quat.h"
+#include "delfem2/geo_vec3.h"
 
 // ----------------------------------------
-
-DFM2_INLINE delfem2::CVec2d delfem2::screenXYProjection(
-    const CVec3d &v,
-    const float *mMV,
-    const float *mPj) {
-  CVec3d sp0 = screenProjection(v, mMV, mPj);
-  return {sp0.x, sp0.y};
-}
 
 DFM2_INLINE delfem2::CVec3d delfem2::GetCartesianRotationVector(
     const CMat3d &m) {

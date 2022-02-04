@@ -5,6 +5,7 @@
 #include "delfem2/fem_stvk.h"
 
 #include "delfem2/vec3.h"
+#include "delfem2/geo_vec3.h"
 
 /**
  *
@@ -25,17 +26,17 @@ DFM2_INLINE void delfem2::CdC_StVK(
   Gd2 /= (Area * 2.0);
 
   CVec3d Gu0 = Cross(Gd1, Gd2);
-  Gu0 /= Dot(Gu0, Gd0);
+  Gu0 /= Gu0.dot(Gd0);
   CVec3d Gu1 = Cross(Gd2, Gd0);
-  Gu1 /= Dot(Gu1, Gd1);
+  Gu1 /= Gu1.dot(Gd1);
 
   const CVec3d gd0(p[1][0] - p[0][0], p[1][1] - p[0][1], p[1][2] - p[0][2]);
   const CVec3d gd1(p[2][0] - p[0][0], p[2][1] - p[0][1], p[2][2] - p[0][2]);
 
   const double E2[3] = {  // green lagrange strain (with engineer's notation)
-    0.5 * (Dot(gd0, gd0) - Dot(Gd0, Gd0)),
-    0.5 * (Dot(gd1, gd1) - Dot(Gd1, Gd1)),
-    1.0 * (Dot(gd0, gd1) - Dot(Gd0, Gd1))};
+    0.5 * (gd0.dot(gd0) - Gd0.dot(Gd0)),
+    0.5 * (gd1.dot(gd1) - Gd1.dot(Gd1)),
+    1.0 * (gd0.dot(gd1) - Gd0.dot(Gd1))};
 
   const double GuGu_xx[3] = {Gu0.x * Gu0.x, Gu1.x * Gu1.x, Gu0.x * Gu1.x};
   const double GuGu_yy[3] = {Gu0.y * Gu0.y, Gu1.y * Gu1.y, Gu0.y * Gu1.y};
@@ -79,17 +80,17 @@ DFM2_INLINE void delfem2::CdC_EnergyStVK(
   Gd2 /= (Area * 2.0);
 
   CVec3d Gu0 = Cross(Gd1, Gd2);
-  Gu0 /= Dot(Gu0, Gd0);
+  Gu0 /= Gu0.dot(Gd0);
   CVec3d Gu1 = Cross(Gd2, Gd0);
-  Gu1 /= Dot(Gu1, Gd1);
+  Gu1 /= Gu1.dot(Gd1);
 
   const CVec3d gd0(p[1][0] - p[0][0], p[1][1] - p[0][1], p[1][2] - p[0][2]);
   const CVec3d gd1(p[2][0] - p[0][0], p[2][1] - p[0][1], p[2][2] - p[0][2]);
 
   const double E2[3] = {  // green lagrange strain (with engineer's notation)
-    0.5 * (Dot(gd0, gd0) - Dot(Gd0, Gd0)),
-    0.5 * (Dot(gd1, gd1) - Dot(Gd1, Gd1)),
-    1.0 * (Dot(gd0, gd1) - Dot(Gd0, Gd1))};
+    0.5 * (gd0.dot(gd0) - Gd0.dot(Gd0)),
+    0.5 * (gd1.dot(gd1) - Gd1.dot(Gd1)),
+    1.0 * (gd0.dot(gd1) - Gd0.dot(Gd1))};
 
   /*
    double Gd[3][3] = { // undeformed edge vector

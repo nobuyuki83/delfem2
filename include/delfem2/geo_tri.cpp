@@ -10,6 +10,7 @@
 #include <cmath>
 #include <stack>
 
+#include "delfem2/geo_vec3.h"
 #include "delfem2/geo_edge.h"
 #include "delfem2/geo_plane.h"
 
@@ -42,7 +43,7 @@ bool isPointSameSide(
   const CVec3<T> &line_p1) {
   CVec3<T> crossProd1 = Cross(line_p1 - line_p0, p0 - line_p0);
   CVec3<T> crossProd2 = Cross(line_p1 - line_p0, p1 - line_p0);
-  if (Dot(crossProd1, crossProd2) >= 0) {
+  if (crossProd1.dot(crossProd2) >= 0) {
     return true;
   } else {
     return false;
@@ -348,18 +349,18 @@ delfem2::CVec3<T> delfem2::ProjectPointOnTriangle
 // ----------------------
 
 template<typename T>
-bool delfem2::isRayIntersectingTriangle
-  (const CVec3<T> &line0, const CVec3<T> &line1,
-   const CVec3<T> &tri0, const CVec3<T> &tri1, const CVec3<T> &tri2,
+bool delfem2::isRayIntersectingTriangle(
+    const CVec3<T> &line0, const CVec3<T> &line1,
+    const CVec3<T> &tri0, const CVec3<T> &tri1, const CVec3<T> &tri2,
    CVec3<T> &intersectionPoint) {
   CVec3<T> normal = Cross(tri1 - tri0, tri2 - tri0);
 
   // The ray is parallel to the triangle plane
-  if (Dot(normal, line1 - line0) == 0) {
+  if ( normal.dot(line1 - line0) == 0 ) {
     return false;
   }
 
-  double r = Dot(normal, tri0 - line0) / Dot(normal, line1 - line0);
+  double r = normal.dot(tri0 - line0) / normal.dot(line1 - line0);
 
   // The ray does not intersect the triangle plane
   if (r < 0) {
@@ -413,11 +414,11 @@ double delfem2::DistanceFaceVertex(
    double &w1) {
   CVec3<T> v20 = p0 - p2;
   CVec3<T> v21 = p1 - p2;
-  double t0 = Dot(v20, v20);
-  double t1 = Dot(v21, v21);
-  double t2 = Dot(v20, v21);
-  double t3 = Dot(v20, p3 - p2);
-  double t4 = Dot(v21, p3 - p2);
+  double t0 = v20.dot(v20);
+  double t1 = v21.dot(v21);
+  double t2 = v20.dot(v21);
+  double t3 = v20.dot(p3 - p2);
+  double t4 = v21.dot(p3 - p2);
   double det = t0 * t1 - t2 * t2;
   double invdet = 1.0 / det;
   w0 = (+t1 * t3 - t2 * t4) * invdet;

@@ -29,24 +29,6 @@
 
 namespace delfem2 {
 
-template<typename T>
-DFM2_INLINE T Distance3(const T p0[3], const T p1[3]);
-
-template<typename T>
-DFM2_INLINE T SquareDistance3(const T p0[3], const T p1[3]);
-
-template<typename T>
-DFM2_INLINE T Length3(const T v[3]);
-
-template<typename T>
-DFM2_INLINE T SquareLength3(const T v[3]);
-
-template<typename T>
-DFM2_INLINE T Dot3(const T a[3], const T b[3]);
-
-template<typename T>
-DFM2_INLINE void Normalize3(T v[3]);
-
 template<typename REAL>
 void AverageTwo3(
     REAL po[3],
@@ -350,29 +332,11 @@ using CVec3f = CVec3<float>;
 // below: functions using CVec3 (todo: move to geo_vec3.h?)
 
 template<typename T>
-T Dot(const CVec3<T> &arg1, const CVec3<T> &arg2);
-
-template<typename T>
 CVec3<T> Cross(const CVec3<T> &arg1, const CVec3<T> &arg2);
 
 
 // --------------------------------------------------------------------------
 // rule about naming, the method starts "Set" change it self (not const)
-
-template<typename T>
-CVec3<T> mult_GlAffineMatrix(
-    const float *m,
-    const CVec3<T> &p);
-
-template<typename T>
-CVec3<T> solve_GlAffineMatrix(
-    const float *m,
-    const CVec3<T> &p);
-
-template<typename T>
-CVec3<T> solve_GlAffineMatrixDirection(
-    const float *m,
-    const CVec3<T> &v);
 
 template<typename T>
 CVec3<T> Mat3Vec(
@@ -393,31 +357,6 @@ template<typename REAL>
 CVec3<REAL> QuatConjVec(
     const REAL quat[4],
     const CVec3<REAL> &v0);
-
-template<typename T>
-CVec3<T> screenProjection(
-    const CVec3<T> &v,
-    const float *mMV,
-    const float *mPj);
-
-// opposite to the screen normal
-template<typename T>
-CVec3<T> screenDepthDirection(
-    const CVec3<T> &v,
-    const float *mMV,
-    const float *mPj);
-
-template<typename T>
-CVec3<T> screenUnProjection(
-    const CVec3<T> &v,
-    const float *mMV,
-    const float *mPj);
-
-template<typename T>
-CVec3<T> screenUnProjectionDirection(
-    const CVec3<T> &v,
-    const float *mMV,
-    const float *mPj);
 
 template<typename T>
 T ScalarTripleProduct(

@@ -73,7 +73,6 @@ void Fill2dArrayWithRandomValue(
     std::mt19937 &reng,
     T mag = 1.0,
     T offset = 0.0) {
-  std::array<T, n> r;
   for(int i=0;i<n;++i){
     for(int j=0;j<m;++j) {
       A[i][j] = mag * dist(reng) + offset;

@@ -25,22 +25,6 @@
 
 namespace delfem2 {
 
-// -------------------------------------------------------
-// vec2
-
-
-// --------------------------------------------------------
-// vec3
-
-DFM2_INLINE CVec2d screenXYProjection(
-    const CVec3d &v,
-    const float *mMV,
-    const float *mPj);
-
-
-// -------------
-// vec3 and vec2
-
 // ---------------------------------------------------
 // matrix 3
 

@@ -10,6 +10,8 @@
 #include <cmath>
 #include <stack>
 
+#include "delfem2/geo_vec3.h"
+
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
 #endif
@@ -164,28 +166,6 @@ DFM2_INLINE void MyMatVec3
 
 // ===========================================================
 
-template<typename T>
-DFM2_INLINE T delfem2::Dot3(const T a[3], const T b[3]) {
-  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
-
-template<typename REAL>
-DFM2_INLINE REAL delfem2::Distance3(
-  const REAL p0[3],
-  const REAL p1[3]) {
-  return std::sqrt(
-    (p1[0] - p0[0]) * (p1[0] - p0[0]) +
-      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
-      (p1[2] - p0[2]) * (p1[2] - p0[2]));
-}
-
-// -------------------------
-
-template<typename REAL>
-DFM2_INLINE REAL delfem2::Length3(const REAL v[3]) {
-  return std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-}
-
 // ---------------------------------
 
 template<typename REAL>
@@ -220,18 +200,6 @@ template void delfem2::Cross3(double r[3], const double v1[3], const double v2[3
 
 // ---------------------------------
 
-template<typename T>
-DFM2_INLINE void delfem2::Normalize3(T v[3]) {
-  T len = std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-  v[0] /= len;
-  v[1] /= len;
-  v[2] /= len;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Normalize3(float v[3]);
-template void delfem2::Normalize3(double v[3]);
-#endif
-
 // ---------------------------------
 
 template<typename T>
@@ -248,29 +216,6 @@ template double delfem2::Area_Tri3(const double v1[3], const double v2[3], const
 #endif
 
 // ----------------------------------
-
-template<typename T>
-DFM2_INLINE T delfem2::SquareDistance3(const T p0[3], const T p1[3]) {
-  return
-    (p1[0] - p0[0]) * (p1[0] - p0[0]) +
-      (p1[1] - p0[1]) * (p1[1] - p0[1]) +
-      (p1[2] - p0[2]) * (p1[2] - p0[2]);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template float delfem2::SquareDistance3(const float p0[3], const float p1[3]);
-template double delfem2::SquareDistance3(const double p0[3], const double p1[3]);
-#endif
-
-// ------------------------------------
-
-template<typename T>
-DFM2_INLINE T delfem2::SquareLength3(const T v[3]) {
-  return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-}
-#ifdef DFM2_STATIC_LIBRARY
-template float delfem2::SquareLength3(const float v[3]);
-template double delfem2::SquareLength3(const double v[3]);
-#endif
 
 // ------------------------------------
 
@@ -387,18 +332,7 @@ template void delfem2::AverageFour3(
 
 // above: without CVec3 (move to "geo_vec3_raw.cpp"?)
 // ======================================================
-// below: with CVec3
-
-template<typename T>
-T delfem2::Dot(const CVec3<T> &arg1, const CVec3<T> &arg2) {
-  return Dot3(arg1.p, arg2.p);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template float delfem2::Dot(const CVec3f& arg1, const CVec3f& arg2);
-template double delfem2::Dot(const CVec3d& arg1, const CVec3d& arg2);
-#endif
-
-// ----------------------------
+// below: with CVec
 
 // cross product
 template<typename T>
@@ -653,137 +587,6 @@ template void delfem2::GetVertical2Vector(const CVec3d& vec_n,
                                           CVec3d& vec_x,
                                           CVec3d& vec_y);
 #endif
-
-// ------------------------------------------------------------------------------
-
-// matrix are column major
-template<typename T>
-delfem2::CVec3<T> delfem2::mult_GlAffineMatrix
-  (const float *m,
-   const CVec3<T> &p) {
-  CVec3<T> v;
-  v.p[0] = m[0 * 4 + 0] * p.p[0] + m[1 * 4 + 0] * p.p[1] + m[2 * 4 + 0] * p.p[2] + m[3 * 4 + 0];
-  v.p[1] = m[0 * 4 + 1] * p.p[0] + m[1 * 4 + 1] * p.p[1] + m[2 * 4 + 1] * p.p[2] + m[3 * 4 + 1];
-  v.p[2] = m[0 * 4 + 2] * p.p[0] + m[1 * 4 + 2] * p.p[1] + m[2 * 4 + 2] * p.p[2] + m[3 * 4 + 2];
-  return v;
-}
-
-template<typename T>
-delfem2::CVec3<T> delfem2::solve_GlAffineMatrix
-  (const float *m,
-   const CVec3<T> &p) {
-  CVec3<T> v = p - CVec3<T>(m[3 * 4 + 0], m[3 * 4 + 1], m[3 * 4 + 2]);
-  double M[9] = {
-    m[0 * 4 + 0], m[1 * 4 + 0], m[2 * 4 + 0],
-    m[0 * 4 + 1], m[1 * 4 + 1], m[2 * 4 + 1],
-    m[0 * 4 + 2], m[1 * 4 + 2], m[2 * 4 + 2]};
-  double Minv[9];
-  vec3::MyInverse_Mat3(Minv, M);
-  return Mat3Vec(Minv, v);
-//  CMatrix3 Minv = M.Inverse();  
-//  return Minv*v;
-}
-
-template<typename T>
-delfem2::CVec3<T> delfem2::solve_GlAffineMatrixDirection
-  (const float *m,
-   const CVec3<T> &v) {
-  double M[9] = {
-    m[0 * 4 + 0], m[1 * 4 + 0], m[2 * 4 + 0],
-    m[0 * 4 + 1], m[1 * 4 + 1], m[2 * 4 + 1],
-    m[0 * 4 + 2], m[1 * 4 + 2], m[2 * 4 + 2]};
-  double Minv[9];
-  vec3::MyInverse_Mat3(Minv, M);
-  return Mat3Vec(Minv, v);
-  /*
-  CMatrix3 M(m[0*4+0],m[1*4+0],m[2*4+0],
-             m[0*4+1],m[1*4+1],m[2*4+1],
-             m[0*4+2],m[1*4+2],m[2*4+2]);
-   */
-  /*
-   CMatrix3 M(m[0*4+0], m[0*4+1], m[0*4+2],
-   m[1*4+0], m[1*4+1], m[1*4+2],
-   m[2*4+0], m[2*4+1], m[2*4+2]);
-   */
-//  CMatrix3 Minv = M.Inverse();
-//  return Minv*v;
-}
-
-// ----------------------
-
-template<typename T>
-delfem2::CVec3<T> delfem2::screenProjection
-  (const CVec3<T> &v,
-   const float *mMV,
-   const float *mPj) {
-  CVec3<T> v0 = mult_GlAffineMatrix(mMV, v);
-  CVec3<T> v1 = mult_GlAffineMatrix(mPj, v0);
-  float w1 = mPj[11] * (float) v0.p[2] + mPj[15];
-  return CVec3<T>(v1.p[0] / w1, v1.p[1] / w1, 0.0);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::screenProjection (
-    const CVec3d& v,
-    const float* mMV,
-    const float* mPj);
-#endif
-
-template<typename T>
-delfem2::CVec3<T> delfem2::screenUnProjection(
-  const CVec3<T> &v,
-  const float *mMV,
-  const float *mPj) {
-  float D = mPj[11] + mPj[15]; // z is 1 after model view
-  CVec3<T> v0(D * v.p[0], D * v.p[1], 0.0);
-  CVec3<T> v1 = solve_GlAffineMatrix(mPj, v0);
-  v1.p[2] = 1;
-  CVec3<T> v2 = solve_GlAffineMatrix(mMV, v1);
-  return v2;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::screenUnProjection(
-    const CVec3d& v,
-    const float* mMV, const float* mPj);
-#endif
-
-template<typename T>
-delfem2::CVec3<T> delfem2::screenUnProjectionDirection(
-  const CVec3<T> &v,
-  const float *mMV,
-  const float *mPj) {
-  CVec3<T> v0 = solve_GlAffineMatrixDirection(mPj, v);
-  CVec3<T> v1 = solve_GlAffineMatrixDirection(mMV, v0);
-  v1.normalize();
-  return v1;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::screenUnProjectionDirection(
-    const CVec3d& v,
-    const float* mMV,
-    const float* mPj);
-#endif
-
-// -----------------------
-
-template<typename T>
-delfem2::CVec3<T> delfem2::screenDepthDirection(
-  const CVec3<T> &v,
-  const float *mMV,
-  const float *mPj) {
-  float Dv = mPj[11] + mPj[15]; // z is 1 after model view
-  CVec3<T> v0(Dv * v.p[0], Dv * v.p[1], 0.0);
-  CVec3<T> v1 = solve_GlAffineMatrix(mPj, v0);
-  v1.p[2] = 1;
-  //
-  float Du = mPj[11] * 2.f + mPj[15]; // z is 1 after model view
-  CVec3<T> u0(Du * v.p[0], Du * v.p[1], 0.0);
-  CVec3<T> u1 = solve_GlAffineMatrix(mPj, u0);
-  u1.p[2] = 2;
-  //
-  CVec3<T> v2 = solve_GlAffineMatrixDirection(mMV, (v1 - u1));
-  v2.normalize();
-  return v2;
-}
 
 // ----------------------------------------------------------------------------
 

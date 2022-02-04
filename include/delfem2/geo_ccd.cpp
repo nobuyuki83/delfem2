@@ -282,10 +282,10 @@ bool delfem2::IsContact_FV_CCD2(
   const CVec3<T> &q3) {
   { // CSAT
     CVec3<T> n = Cross(p1 - p0, p2 - p0);
-    double t0 = Dot(p0 - p3, n);
-    double t1 = Dot(q0 - q3, n);
-    double t2 = Dot(q1 - q3, n);
-    double t3 = Dot(q2 - q3, n);
+    double t0 = (p0 - p3).dot(n);
+    double t1 = (q0 - q3).dot(n);
+    double t2 = (q1 - q3).dot(n);
+    double t3 = (q2 - q3).dot(n);
     if (t0 * t1 > 0 && t0 * t2 > 0 && t0 * t3 > 0) { return false; }
   }
   double r0, r1;

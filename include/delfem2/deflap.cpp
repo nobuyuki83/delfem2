@@ -15,6 +15,7 @@
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
+#include "delfem2/geo_vec3.h"
 
 namespace delfem2::defarap {
 
