@@ -19,6 +19,7 @@
 #include "delfem2/srchbvh.h"
 #include "delfem2/mshuni.h" // sourrounding relationship
 #include "delfem2/vec3.h"
+#include "delfem2/geo_vec3.h"
 #include "delfem2/mat4.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
@@ -380,16 +381,17 @@ void Project_PointsIncludedInBVH_Outside_Cache(
   for (unsigned int ip = 0; ip < np; ++ip) {
     CVec3<REAL> p0(aXYZt[ip * 3 + 0], aXYZt[ip * 3 + 1], aXYZt[ip * 3 + 2]);
     if (aInfoNearest[ip].is_active) {
-      double dp = Distance(p0, aInfoNearest[ip].pos);
+      double dp = Distance3(p0, aInfoNearest[ip].pos);
       if (aInfoNearest[ip].sdf + dp + cc < 0) {
         continue;
       }
     }
     aInfoNearest[ip].pos = p0;
-    double dist0 = bvh.Nearest_Point_IncludedInBVH(aInfoNearest[ip].pes,
-                                                   aInfoNearest[ip].pos, rad_explore,
-                                                   pXYZ0, nXYZ0,
-                                                   pTri0, nTri0);
+    double dist0 = bvh.Nearest_Point_IncludedInBVH(
+        aInfoNearest[ip].pes,
+        aInfoNearest[ip].pos, rad_explore,
+        pXYZ0, nXYZ0,
+        pTri0, nTri0);
     if (aInfoNearest[ip].pes.itri == UINT_MAX) {
       if (aInfoNearest[ip].is_active) {
         if (aInfoNearest[ip].sdf < 0) { aInfoNearest[ip].sdf = -dist0; }

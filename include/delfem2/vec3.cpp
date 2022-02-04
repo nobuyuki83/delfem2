@@ -647,12 +647,15 @@ double delfem2::SquareLength(
 
 // ---------------------
 
+/*
 //! length of vector
 template<typename T>
 double delfem2::Length(const CVec3<T> &point) {
   return delfem2::Length3(point.p);
 }
+ */
 
+/*
 //! distance between two points
 template<typename T>
 double delfem2::Distance(
@@ -663,6 +666,7 @@ double delfem2::Distance(
 #ifdef DFM2_STATIC_LIBRARY
 template double delfem2::Distance(const CVec3<double>& p0, const CVec3<double>& p1);
 #endif
+*/
 
 // -------------------------------------------
 

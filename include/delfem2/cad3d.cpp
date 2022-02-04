@@ -21,6 +21,7 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/geo_edge.h"
 #include "delfem2/geo_surface_parametric.h"
+#include "delfem2/geo_vec3.h"
 
 // =========================================
 
@@ -40,7 +41,7 @@ DFM2_INLINE void FaceCenterNormal(
     bool dir0 = aIE[(iie+0)%nIE].second;
     CVec3d pA = dir0 ? aEdge[ie0].p0 : aEdge[ie0].p1;
     CVec3d pB = dir0 ? aEdge[ie0].p1 : aEdge[ie0].p0;
-    double lenAB = Distance(pA, pB);
+    double lenAB = Distance3(pA, pB);
     cg += (pA+pB)*(0.5*lenAB);
     len_tot += lenAB;
   }

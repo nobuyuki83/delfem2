@@ -12,15 +12,16 @@
 #ifndef DFM2_SRCHBI_V3BVH_H
 #define DFM2_SRCHBI_V3BVH_H
 
+#include <stdio.h>
+
 #include "delfem2/srchbvh.h"
+#include "delfem2/geo_vec3.h"
 #include "delfem2/geo_plane.h"
 #include "delfem2/geo_tri.h"
 #include "delfem2/geo_ccd.h"
 #include "delfem2/geo_edge.h"
 #include "delfem2/geosolidelm_v3.h"
 #include "delfem2/vec3.h"
-#include <stdio.h>
-
 
 namespace delfem2 {
 
@@ -144,7 +145,7 @@ bool delfem2::IsContact_FV_Proximity
   const double dist = DistanceFaceVertex(p0,p1,p2,p3,w0,w1);
   const double w2 = 1-w0-w1;
   if( dist > delta ) return false;
-  double mgn = ( Distance(p0, p1) + Distance(p1, p2) + Distance(p2, p3) ) / 3.0;
+  double mgn = ( Distance3(p0, p1) + Distance3(p1, p2) + Distance3(p2, p3) ) / 3.0;
   mgn = 0;
   if( w0 < -mgn || w0 > 1+mgn ) return false;
   if( w1 < -mgn || w1 > 1+mgn ) return false;

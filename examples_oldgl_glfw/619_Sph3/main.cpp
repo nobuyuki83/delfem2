@@ -7,7 +7,8 @@
 
 
 /**
- * @file implementation based on "Müller et al., Particle-based fluid simulation for interactive applications. SCA 2003"
+ * @file implementation based on
+ * "Müller et al., Particle-based fluid simulation for interactive applications. SCA 2003"
  */
 
 #include <cmath>
@@ -21,6 +22,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/vec3.h"
+#include "delfem2/geo_vec3.h"
 #include "delfem2/srchgrid.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"

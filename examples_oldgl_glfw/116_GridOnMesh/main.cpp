@@ -23,6 +23,7 @@
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
+#include "delfem2/geo_vec3.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -154,7 +155,7 @@ void UpdateProblem() {
         std::map<double, dfm2::PointOnSurfaceMesh<double>> mapPES;
         for (auto pes : aPES) {
           dfm2::CVec3d p_intersec = pes.PositionOnMeshTri3(vtx_xyz, tri_vtx);
-          mapPES.insert(std::make_pair(Distance(p_intersec, pA), pes));
+          mapPES.insert(std::make_pair(Distance3(p_intersec, pA), pes));
         }
         if (mapPES.empty()) {
           aPES1.emplace_back();

@@ -52,12 +52,12 @@ TEST(pbd, Check_CdC_DiscreteShell) {
         dfm2::RandomVec<3>(dist_01, randomEng),
         dfm2::RandomVec<3>(dist_01, randomEng),
         dfm2::RandomVec<3>(dist_01, randomEng)};
-    if (dfm2::Distance(p[0], p[1]) < 0.1) { continue; }
-    if (dfm2::Distance(p[0], p[2]) < 0.1) { continue; }
-    if (dfm2::Distance(p[0], p[3]) < 0.1) { continue; }
-    if (dfm2::Distance(p[1], p[2]) < 0.1) { continue; }
-    if (dfm2::Distance(p[1], p[3]) < 0.1) { continue; }
-    if (dfm2::Distance(p[2], p[3]) < 0.1) { continue; }
+    if (dfm2::Distance3(p[0], p[1]) < 0.1) { continue; }
+    if (dfm2::Distance3(p[0], p[2]) < 0.1) { continue; }
+    if (dfm2::Distance3(p[0], p[3]) < 0.1) { continue; }
+    if (dfm2::Distance3(p[1], p[2]) < 0.1) { continue; }
+    if (dfm2::Distance3(p[1], p[3]) < 0.1) { continue; }
+    if (dfm2::Distance3(p[2], p[3]) < 0.1) { continue; }
     if (dfm2::Area_Tri3(p[0], p[2], p[3]) < 0.01) { continue; }
     if (dfm2::Area_Tri3(p[1], p[2], p[3]) < 0.01) { continue; }
     double C;

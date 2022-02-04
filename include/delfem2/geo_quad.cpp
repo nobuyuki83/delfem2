@@ -81,7 +81,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::Nearst_Origin3_Quad3(
   const double d01 = q01.norm();
   if (dist_min < 0 || d01 < dist_min) {
     dist_min = d01;
-    s0 = Distance(q01, q0) / Distance(q0, q1);
+    s0 = Distance3(q01, q0) / Distance3(q0, q1);
     s1 = 0.0;
     q_min = q01;
   }
@@ -91,7 +91,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::Nearst_Origin3_Quad3(
   if (dist_min < 0 || d12 < dist_min) {
     dist_min = d12;
     s0 = 1.0;
-    s1 = Distance(q12, q1) / Distance(q1, q2);
+    s1 = Distance3(q12, q1) / Distance3(q1, q2);
     q_min = q12;
   }
   //
@@ -99,7 +99,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::Nearst_Origin3_Quad3(
   const double d23 = q23.norm();
   if (dist_min < 0 || d23 < dist_min) {
     dist_min = d23;
-    s0 = Distance(q23, q3) / Distance(q2, q3);
+    s0 = Distance3(q23, q3) / Distance3(q2, q3);
     s1 = 1.0;
     q_min = q23;
   }
@@ -109,7 +109,7 @@ DFM2_INLINE delfem2::CVec3<T> delfem2::Nearst_Origin3_Quad3(
   if (dist_min < 0 || d30 < dist_min) {
     dist_min = d30;
     s0 = 0.0;
-    s1 = Distance(q30, q0) / Distance(q3, q0);
+    s1 = Distance3(q30, q0) / Distance3(q3, q0);
     q_min = q30;
   }
   return q_min;

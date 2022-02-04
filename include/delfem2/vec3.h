@@ -389,15 +389,6 @@ template<typename T>
 double SquareLength(const CVec3<T> &point);
 
 template<typename T>
-double Length(
-    const CVec3<T> &point);
-
-template<typename T>
-double Distance(
-    const CVec3<T> &p0,
-    const CVec3<T> &p1);
-
-template<typename T>
 double SqareLongestEdgeLength(
     const CVec3<T> &ipo0,
     const CVec3<T> &ipo1,

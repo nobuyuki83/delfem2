@@ -16,6 +16,8 @@
 #include "delfem2/vec2.h"
 #include "delfem2/geo_curve_quadratic.h"
 #include "delfem2/geo_curve_cubic.h"
+#include "delfem2/geo_vec3.h"
+
 
 // -------------------------------------
 
@@ -100,7 +102,7 @@ public:
   void Initialize(const std::vector<CCad3D_Vertex>& aVertex, double elen){
     p0 = aVertex[iv0].pos;
     p1 = aVertex[iv1].pos;
-    double len = Distance(p0, p1);
+    double len = Distance3(p0, p1);
     const int ndiv = static_cast<int>(len/elen);
     aP.resize((ndiv+1));
     MovePoints(aVertex);

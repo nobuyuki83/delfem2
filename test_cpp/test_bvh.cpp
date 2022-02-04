@@ -15,6 +15,7 @@
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/srchbvh.h"
 #include "delfem2/vec3.h"
+#include "delfem2/geo_vec3.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
@@ -148,7 +149,7 @@ TEST(bvh,nearestinc_sphere)
     {
       dfm2::PointOnSurfaceMesh<double> pes0 = Nearest_Point_MeshTri3D(p0, aXYZ, aTri);
       dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
-      EXPECT_LT(Distance(q0,q1),1.0e-10);
+      EXPECT_LT(Distance3(q0,q1),1.0e-10);
     }
     dfm2::CVec3d n0 = pes1.UnitNormalOnMeshTri3(aNorm, aTri);
     EXPECT_EQ( n0.dot(p0-q1)>0, itr%2==0);
@@ -163,7 +164,7 @@ TEST(bvh,nearestinc_sphere)
           aTri.data(), aXYZ.size()/3,
           bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       dfm2::CVec3d q2 = pes2.PositionOnMeshTri3(aXYZ, aTri);
-      EXPECT_LT(Distance(q2,q1),1.0e-10);
+      EXPECT_LT(Distance3(q2,q1),1.0e-10);
     }
   }
 }
@@ -266,7 +267,7 @@ TEST(bvh,nearest_point) // find global nearest directry
     {
       dfm2::PointOnSurfaceMesh<double> pes0 = Nearest_Point_MeshTri3D(p0, aXYZ, aTri);
       dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
-      EXPECT_LT(Distance(q0,q1),1.0e-10);
+      EXPECT_LT(Distance3(q0,q1),1.0e-10);
     }
   }
 }
@@ -436,7 +437,7 @@ TEST(bvh,rayintersection)
         dfm2::PointOnSurfaceMesh<double> pes1 = itr1->second;
         const dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
         const dfm2::CVec3d q1 = pes1.PositionOnMeshTri3(aXYZ, aTri);
-        EXPECT_NEAR(Distance(q0,q1), 0.0, 1.0e-10);
+        EXPECT_NEAR(Distance3(q0,q1), 0.0, 1.0e-10);
       }
     }
   }
