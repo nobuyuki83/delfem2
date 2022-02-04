@@ -15,6 +15,7 @@
 #include "delfem2/fempoisson.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/sampling.h"
+#include "delfem2/geo_vec3.h"
 
 namespace dfm2 = delfem2;
 

@@ -420,16 +420,16 @@ double delfem2::SqareLongestEdgeLength(
     const CVec3<T> &ipo2,
     const CVec3<T> &ipo3) {
   double edge1, edge2;
-  edge1 = SquareDistance(ipo0, ipo1);
-  edge2 = SquareDistance(ipo0, ipo2);
+  edge1 = SquareDistance3(ipo0, ipo1);
+  edge2 = SquareDistance3(ipo0, ipo2);
   if (edge2 > edge1) edge1 = edge2;
-  edge2 = SquareDistance(ipo0, ipo3);
+  edge2 = SquareDistance3(ipo0, ipo3);
   if (edge2 > edge1) edge1 = edge2;
-  edge2 = SquareDistance(ipo1, ipo2);
+  edge2 = SquareDistance3(ipo1, ipo2);
   if (edge2 > edge1) edge1 = edge2;
-  edge2 = SquareDistance(ipo1, ipo3);
+  edge2 = SquareDistance3(ipo1, ipo3);
   if (edge2 > edge1) edge1 = edge2;
-  edge2 = SquareDistance(ipo2, ipo3);
+  edge2 = SquareDistance3(ipo2, ipo3);
   if (edge2 > edge1) edge1 = edge2;
   return edge1;
 }
@@ -454,16 +454,16 @@ double delfem2::SqareShortestEdgeLength(
     const CVec3<T> &ipo2,
     const CVec3<T> &ipo3) {
   double edge1, edge2;
-  edge1 = SquareDistance(ipo0, ipo1);
-  edge2 = SquareDistance(ipo0, ipo2);
+  edge1 = SquareDistance3(ipo0, ipo1);
+  edge2 = SquareDistance3(ipo0, ipo2);
   if (edge2 < edge1) edge1 = edge2;
-  edge2 = SquareDistance(ipo0, ipo3);
+  edge2 = SquareDistance3(ipo0, ipo3);
   if (edge2 < edge1) edge1 = edge2;
-  edge2 = SquareDistance(ipo1, ipo2);
+  edge2 = SquareDistance3(ipo1, ipo2);
   if (edge2 < edge1) edge1 = edge2;
-  edge2 = SquareDistance(ipo1, ipo3);
+  edge2 = SquareDistance3(ipo1, ipo3);
   if (edge2 < edge1) edge1 = edge2;
-  edge2 = SquareDistance(ipo2, ipo3);
+  edge2 = SquareDistance3(ipo2, ipo3);
   if (edge2 < edge1) edge1 = edge2;
   return edge1;
 }

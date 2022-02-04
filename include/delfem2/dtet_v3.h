@@ -756,10 +756,10 @@ inline void Normal(
     const std::vector<CDynTet> &tet, const std::vector<CDynPointTet> &node) {
   assert(itet0 < tet.size());
   assert(iface0 < 4);
-  Normal(vnorm,
-         node[tet[itet0].v[(int) noelTetFace[iface0][0]]].p,
-         node[tet[itet0].v[(int) noelTetFace[iface0][1]]].p,
-         node[tet[itet0].v[(int) noelTetFace[iface0][2]]].p);
+  Normal_Tri3(vnorm,
+              node[tet[itet0].v[(int) noelTetFace[iface0][0]]].p,
+              node[tet[itet0].v[(int) noelTetFace[iface0][1]]].p,
+              node[tet[itet0].v[(int) noelTetFace[iface0][2]]].p);
 }
 
 // ------------------------
@@ -771,10 +771,11 @@ inline void UnitNormal(
     const int iface0,
     const std::vector<CDynTet> &aTet,
     const std::vector<CDynPointTet> &aPo) {
-  UnitNormal(vnorm,
-             aPo[aTet[itet0].v[(int) noelTetFace[iface0][0]]].p,
-             aPo[aTet[itet0].v[(int) noelTetFace[iface0][1]]].p,
-             aPo[aTet[itet0].v[(int) noelTetFace[iface0][2]]].p);
+  UnitNormal_Tri3(
+      vnorm,
+      aPo[aTet[itet0].v[(int) noelTetFace[iface0][0]]].p,
+      aPo[aTet[itet0].v[(int) noelTetFace[iface0][1]]].p,
+      aPo[aTet[itet0].v[(int) noelTetFace[iface0][2]]].p);
 }
 
 /*
@@ -917,12 +918,12 @@ inline int DetDelaunay
       etmp1 * v1.y + etmp2 * v2.y + etmp3 * v3.y,
       etmp1 * v1.z + etmp2 * v2.z + etmp3 * v3.z);
 
-  const double qradius = SquareDistance(out_center, v1);
-  assert(fabs(qradius - SquareDistance(out_center, v2)) < 1.0e-10);
-  assert(fabs(qradius - SquareDistance(out_center, v3)) < 1.0e-10);
+  const double qradius = SquareDistance3(out_center, v1);
+  assert(fabs(qradius - SquareDistance3(out_center, v2)) < 1.0e-10);
+  assert(fabs(qradius - SquareDistance3(out_center, v3)) < 1.0e-10);
   assert(fabs(Height(v1, v2, v3, out_center)) < 1.0e-10);
 
-  const double distance = SquareDistance(out_center, v4);
+  const double distance = SquareDistance3(out_center, v4);
   if (distance > qradius + 1.0e-6) {
     return 1;
   } else {

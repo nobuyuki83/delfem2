@@ -19,6 +19,7 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dijkstra.h"
+#include "delfem2/geo_tri.h"
 
 namespace delfem2 {
 

@@ -21,6 +21,7 @@
 
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/vec3.h"
+#include "delfem2/geo_tri.h"
 
 // -------------------------------------------------
 
@@ -44,7 +45,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm(
       continue;
     }
     {
-      CVec3d n; UnitNormal(n, aVec3[i0], aVec3[i1], aVec3[i2]);
+      CVec3d n;
+      UnitNormal_Tri3(n, aVec3[i0], aVec3[i1], aVec3[i2]);
       ::glNormal3d(n.x,n.y,n.z);
     }
     {

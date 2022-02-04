@@ -281,11 +281,11 @@ DFM2_INLINE void delfem2::WdWddW_CST(
   
   double Gu[2][3]; // inverse of Gd
   {
-    Cross3(Gu[0], Gd[1], Gd[2]);
+    Cross(Gu[0], Gd[1], Gd[2]);
     const double invtmp1 = 1.0/Dot3(Gu[0],Gd[0]);
     Gu[0][0] *= invtmp1;  Gu[0][1] *= invtmp1;  Gu[0][2] *= invtmp1;
     //
-    Cross3(Gu[1], Gd[2], Gd[0]);
+    Cross(Gu[1], Gd[2], Gd[0]);
     const double invtmp2 = 1.0/Dot3(Gu[1],Gd[1]);
     Gu[1][0] *= invtmp2;  Gu[1][1] *= invtmp2;  Gu[1][2] *= invtmp2;
   }
@@ -390,10 +390,10 @@ void delfem2::WdWddW_CST_Sensitivity(
   double Gu[2][3];
   {
     double invArea = 0.5/Area;
-    Cross3(Gu[0], Gd[1], Gd[2]);
+    Cross(Gu[0], Gd[1], Gd[2]);
     Gu[0][0] *= invArea;  Gu[0][1] *= invArea;  Gu[0][2] *= invArea;
     //  
-    Cross3(Gu[1], Gd[2], Gd[0]);
+    Cross(Gu[1], Gd[2], Gd[0]);
     Gu[1][0] *= invArea ; Gu[1][1] *= invArea;  Gu[1][2] *= invArea;
   }
   
@@ -423,16 +423,16 @@ void delfem2::WdWddW_CST_Sensitivity(
       { C[2][0]-C[1][0], C[2][1]-C[1][1], C[2][2]-C[1][2] },
       { C[0][0]-C[2][0], C[0][1]-C[2][1], C[0][2]-C[2][2] },
       { C[1][0]-C[0][0], C[1][1]-C[0][1], C[1][2]-C[0][2] } };
-    Cross3(DAdC[0], Gd[2], D[0]);
-    Cross3(DAdC[1], Gd[2], D[1]);
-    Cross3(DAdC[2], Gd[2], D[2]);
+    Cross(DAdC[0], Gd[2], D[0]);
+    Cross(DAdC[1], Gd[2], D[1]);
+    Cross(DAdC[2], Gd[2], D[2]);
   }
   
   double GuDC[3][3][2][3];  // GuDC[a][i][b][j] : derivative of Gu[b][j] w.r.t. C[a][i]
   {
     const double invSqDArea = 0.25/(Area*Area);
-    double G101[3]; Cross3(G101,  Gd[1], Gd[2]);
-    double G010[3]; Cross3(G010,  Gd[2], Gd[0]);
+    double G101[3]; Cross(G101,  Gd[1], Gd[2]);
+    double G010[3]; Cross(G010,  Gd[2], Gd[0]);
     for(unsigned int idim=0;idim<3;idim++){
       for(unsigned int jdim=0;jdim<3;jdim++){      
         GuDC[0][idim][0][jdim] = invSqDArea*( -2.0*G101[jdim]*DAdC[0][idim] - 2.0*Gd[1][idim]*Gd[0][jdim] + (Gd[0][idim]+Gd[1][idim])*Gd[1][jdim] );

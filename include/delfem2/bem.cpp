@@ -6,7 +6,9 @@
  */
 
 #include "delfem2/bem.h"
+
 #include "delfem2/geo3_v23m34q.h"
+#include "delfem2/geo_tri.h"
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793
@@ -45,7 +47,7 @@ CVec3d NormalTri(
   CVec3d v1(aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]);
   CVec3d v2(aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]);
   CVec3d n;
-  Normal(n, v0, v1, v2);
+  Normal_Tri3(n, v0, v1, v2);
   return n;
 }
 

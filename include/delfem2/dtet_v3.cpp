@@ -1704,8 +1704,8 @@ bool delfem2::IsInsideCircumSphere(
   const delfem2::CVec3d& p1 = aPo3D[i1].p;
   const delfem2::CVec3d& p2 = aPo3D[i2].p;
   const delfem2::CVec3d& p3 = aPo3D[i3].p;
-  double sqrad = SquareDistance(p0,c)+SquareDistance(p1,c)+SquareDistance(p2,c)+SquareDistance(p3,c);
-  return sqrad > SquareDistance(p,c)*4.0;
+  double sqrad = SquareDistance3(p0,c)+SquareDistance3(p1,c)+SquareDistance3(p2,c)+SquareDistance3(p3,c);
+  return sqrad > SquareDistance3(p,c)*4.0;
 }
 
 bool delfem2::CheckTet

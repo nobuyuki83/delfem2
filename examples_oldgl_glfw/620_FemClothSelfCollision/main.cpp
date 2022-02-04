@@ -11,6 +11,7 @@
 #include "delfem2/cloth_internal.h"
 #include "delfem2/cloth_selfcollision.h"
 #include "delfem2/vec3.h"
+#include "delfem2/geo_tri.h"
 #include "delfem2/srchbvh.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"

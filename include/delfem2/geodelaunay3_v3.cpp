@@ -7,6 +7,7 @@
 
 #include "delfem2/geodelaunay3_v3.h"
 #include "delfem2/geo_tri.h"
+#include "delfem2/geo_vec3.h"
 
 #include <cmath>
 #include <stack>
@@ -159,9 +160,9 @@ int delfem2::DetDelaunay(
   }
   const double tmp_val = 1.0/(area*area*16.0);
 
-  const double dtmp0 = SquareDistance(p1, p2);
-  const double dtmp1 = SquareDistance(p0, p2);
-  const double dtmp2 = SquareDistance(p0, p1);
+  const double dtmp0 = SquareDistance3(p1, p2);
+  const double dtmp1 = SquareDistance3(p0, p2);
+  const double dtmp2 = SquareDistance3(p0, p1);
 
   const double etmp0 = tmp_val*dtmp0*(dtmp1+dtmp2-dtmp0);
   const double etmp1 = tmp_val*dtmp1*(dtmp0+dtmp2-dtmp1);
@@ -169,8 +170,8 @@ int delfem2::DetDelaunay(
 
   const CVec3<T> out_center = etmp0*p0+etmp1*p1+etmp2*p2;
 
-  const double qradius = SquareDistance(out_center, p0);
-  const double qdistance = SquareDistance(out_center, p3);
+  const double qradius = SquareDistance3(out_center, p0);
+  const double qdistance = SquareDistance3(out_center, p3);
 
   const double tol = 1.0e-20;
   if (qdistance > qradius*(1.0+tol)){ return 2; }	// outside the circumcircle

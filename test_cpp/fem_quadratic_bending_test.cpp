@@ -9,6 +9,7 @@
 #include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/vec3.h"
 #include "delfem2/geo_vec3.h"
+#include "delfem2/geo_tri.h"
 
 bool RandomTriangle(
   double P[4][3],

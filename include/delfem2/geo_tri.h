@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "delfem2/vec3.h"
+#include "delfem2/geo_vec3.h"
 #include "delfem2/dfm2_inline.h"
 
 #define NEARLY_ZERO 1.e-16
@@ -97,25 +98,102 @@ double DistanceFaceVertex(
     double &w0, 
     double &w1);
 
-template<typename VEC>
-typename VEC::Scalar Area_Tri3(
+template<typename VEC, typename T = value_type<VEC>>
+DFM2_INLINE T Area_Tri3(
   const VEC &v1,
   const VEC &v2,
   const VEC &v3) {
-  using SCALAR = typename VEC::Scalar;
-  const SCALAR x = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]);
-  const SCALAR y = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
-  const SCALAR z = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
+  const T x = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]);
+  const T y = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
+  const T z = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
   return std::sqrt(x * x + y * y + z * z)/2;
 }
 
-template<typename VEC>
-double Area_Tri3(
+template<typename VEC, typename T = value_type<VEC>>
+T Area_Tri3(
     const int iv1,
     const int iv2,
     const int iv3,
     const std::vector<VEC> &aPoint) {
   return Area_Tri3(aPoint[iv1], aPoint[iv2], aPoint[iv3]);
+}
+
+template<typename VEC, typename T = value_type<VEC>>
+T SquareTriArea(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3) {
+  const T dtmp_x = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v2[2] - v1[2]) * (v3[1] - v1[1]);
+  const T dtmp_y = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v2[0] - v1[0]) * (v3[2] - v1[2]);
+  const T dtmp_z = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]);
+  return (dtmp_x * dtmp_x + dtmp_y * dtmp_y + dtmp_z * dtmp_z) / 4;
+}
+
+template<typename VEC0, typename VEC1>
+void Normal_Tri3(
+    VEC0 &&vnorm,
+    const VEC1 &v1,
+    const VEC1 &v2,
+    const VEC1 &v3) {
+  vnorm[0] = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v2[2] - v1[2]) * (v3[1] - v1[1]);
+  vnorm[1] = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v2[0] - v1[0]) * (v3[2] - v1[2]);
+  vnorm[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]);
+}
+
+template<typename VEC0, typename VEC1, typename T = value_type<VEC0>>
+void UnitNormal_Tri3(
+    VEC0 &&vnorm,
+    const VEC1 &v1,
+    const VEC1 &v2,
+    const VEC1 &v3) {
+  vnorm[0] = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v2[2] - v1[2]) * (v3[1] - v1[1]);
+  vnorm[1] = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v2[0] - v1[0]) * (v3[2] - v1[2]);
+  vnorm[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]);
+  const T dtmp1 = 1 / vnorm.norm();
+  vnorm[0] *= dtmp1;
+  vnorm[1] *= dtmp1;
+  vnorm[2] *= dtmp1;
+}
+
+
+// -----------------------------------------------
+// should moved to mshuni
+
+template<typename T>
+std::array<T, 3> Normal_Tri3(
+    unsigned int itri,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<T> &aXYZ) {
+  const unsigned int i0 = aTri[itri * 3 + 0];
+  const unsigned int i1 = aTri[itri * 3 + 1];
+  const unsigned int i2 = aTri[itri * 3 + 2];
+  const T p01[3] = {
+      aXYZ[i1 * 3 + 0] - aXYZ[i0 * 3 + 0],
+      aXYZ[i1 * 3 + 1] - aXYZ[i0 * 3 + 1],
+      aXYZ[i1 * 3 + 2] - aXYZ[i0 * 3 + 2]
+  };
+  const T p02[3] = {
+      aXYZ[i2 * 3 + 0] - aXYZ[i0 * 3 + 0],
+      aXYZ[i2 * 3 + 1] - aXYZ[i0 * 3 + 1],
+      aXYZ[i2 * 3 + 2] - aXYZ[i0 * 3 + 2]
+  };
+  std::array<T, 3> ret;
+  Cross(ret.data(), p01, p02);
+  return ret;
+}
+
+template<typename T>
+std::array<T, 3> CG_Tri3(
+    unsigned int itri,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<T> &aXYZ) {
+  const unsigned int i0 = aTri[itri * 3 + 0];
+  const unsigned int i1 = aTri[itri * 3 + 1];
+  const unsigned int i2 = aTri[itri * 3 + 2];
+  return {
+      (aXYZ[i0 * 3 + 0] + aXYZ[i1 * 3 + 0] + aXYZ[i2 * 3 + 0]) / 3.0,
+      (aXYZ[i0 * 3 + 1] + aXYZ[i1 * 3 + 1] + aXYZ[i2 * 3 + 1]) / 3.0,
+      (aXYZ[i0 * 3 + 2] + aXYZ[i1 * 3 + 2] + aXYZ[i2 * 3 + 2]) / 3.0};
 }
 
 } // end namespace delfem2

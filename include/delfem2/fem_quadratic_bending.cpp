@@ -6,6 +6,7 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/geo_vec3.h"
+#include "delfem2/geo_tri.h"
 
 DFM2_INLINE void delfem2::CdC_QuadBend(
   double C[3],
@@ -117,9 +118,9 @@ void DerDoubleAreaTri3D(
     {c2[0] - c1[0], c2[1] - c1[1], c2[2] - c1[2]},
     {c0[0] - c2[0], c0[1] - c2[1], c0[2] - c2[2]},
     {c1[0] - c0[0], c1[1] - c0[1], c1[2] - c0[2]}};
-  delfem2::Cross3(dAdC[0], un, c[0]);
-  delfem2::Cross3(dAdC[1], un, c[1]);
-  delfem2::Cross3(dAdC[2], un, c[2]);
+  delfem2::Cross(dAdC[0], un, c[0]);
+  delfem2::Cross(dAdC[1], un, c[1]);
+  delfem2::Cross(dAdC[2], un, c[2]);
 }
 
 }  // namespace delfem2::fem_quadratic_bending

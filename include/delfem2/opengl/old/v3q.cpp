@@ -24,6 +24,7 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
+#include "delfem2/geo_tri.h"
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793238462643383279502
@@ -89,7 +90,7 @@ DFM2_INLINE void myDrawOneTriangle(
     const CVec3<REAL> &v1,
     const CVec3<REAL> &v2) {
   CVec3<REAL> n;
-  UnitNormal(n, v0, v1, v2);
+  UnitNormal_Tri3(n, v0, v1, v2);
   myGlNormal(n);
   myGlVertex(v0);
   myGlVertex(v1);
@@ -106,7 +107,7 @@ DFM2_INLINE void delfem2::opengl::myGlNormal(
     const CVec3d &b,
     const CVec3d &c) {
   CVec3d n;
-  UnitNormal(n, a, b, c);
+  UnitNormal_Tri3(n, a, b, c);
   ::glNormal3d(n.x, n.y, n.z);
 }
 
@@ -234,7 +235,7 @@ DFM2_INLINE void delfem2::opengl::DrawCylinder
       CVec3d v1 = p1 + (r * sin((idiv + 1) * dt)) * x + (r * cos((idiv + 1) * dt)) * y;
       const CVec3d &v2 = p1;
       CVec3d n;
-      UnitNormal(n, v1, v0, v2);
+      UnitNormal_Tri3(n, v1, v0, v2);
       myGlNormal(n);
       myGlVertex(v0);
       myGlVertex(v2);
@@ -441,7 +442,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleArrow(
       CVec3d v1 = q0 + r1 * sin((jdiv + 1) * dt) * s0 + r1 * cos((jdiv + 1) * dt) * z;
       const CVec3d &v2 = q1;
       CVec3d n;
-      UnitNormal(n, v0, v2, v1);
+      UnitNormal_Tri3(n, v0, v2, v1);
       ::glNormal3d(n.x, n.y, n.z);
       myGlVertex(v0);
       myGlVertex(v2);
@@ -497,7 +498,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleSolid
       CVec3d v1 = org + (r * sin((idiv + 1) * dt)) * x + (r * cos((idiv + 1) * dt)) * y;
       const CVec3d &v2 = org;
       CVec3d n;
-      UnitNormal(n, v1, v0, v2);
+      UnitNormal_Tri3(n, v1, v0, v2);
       myGlNormal(n);
       myGlVertex(v0);
       myGlVertex(v2);
@@ -527,7 +528,7 @@ DFM2_INLINE void delfem2::opengl::DrawArcSolid
       CVec3d v0 = org + (rv * sin(rads + (idiv + 0) * dt)) * y + (rv * cos(rads + (idiv + 0) * dt)) * x;
       CVec3d v1 = org + (rv * sin(rads + (idiv + 1) * dt)) * y + (rv * cos(rads + (idiv + 1) * dt)) * x;
       CVec3d n;
-      UnitNormal(n, v1, v0, org);
+      UnitNormal_Tri3(n, v1, v0, org);
       myGlNormal(n);
       myGlVertex(v0);
       myGlVertex(v1);
@@ -553,30 +554,33 @@ DFM2_INLINE void delfem2::opengl::DrawSingleQuad_Edge
 
 // ------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawSingleQuad_FaceNorm
-    (const CVec3d &p0, const CVec3d &p1, const CVec3d &p2, const CVec3d &p3) {
+DFM2_INLINE void delfem2::opengl::DrawSingleQuad_FaceNorm(
+    const CVec3d &p0,
+    const CVec3d &p1,
+    const CVec3d &p2,
+    const CVec3d &p3) {
   ::glBegin(GL_QUADS);
   {
     CVec3d n0;
-    UnitNormal(n0, p0, p1, p3);
+    UnitNormal_Tri3(n0, p0, p1, p3);
     myGlNormal(n0);
     myGlVertex(p0);
   }
   {
     CVec3d n1;
-    UnitNormal(n1, p0, p1, p2);
+    UnitNormal_Tri3(n1, p0, p1, p2);
     myGlNormal(n1);
     myGlVertex(p1);
   }
   {
     CVec3d n2;
-    UnitNormal(n2, p1, p2, p3);
+    UnitNormal_Tri3(n2, p1, p2, p3);
     myGlNormal(n2);
     myGlVertex(p2);
   }
   {
     CVec3d n3;
-    UnitNormal(n3, p2, p3, p0);
+    UnitNormal_Tri3(n3, p2, p3, p0);
     myGlNormal(n3);
     myGlVertex(p3);
   }

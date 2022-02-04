@@ -50,20 +50,6 @@ DFM2_INLINE void Add3(
     REAL vo[3],
     const REAL vi[3]);
 
-template<typename T0, typename T1, typename T2>
-void Cross3(
-    T0 r[3],
-    const T1 v1[3],
-    const T2 v2[3]);
-
-template<typename T>
-T Area_Tri3(
-    const T v1[3], const T v2[3], const T v3[3]);
-
-template<typename T>
-T ScalarTripleProduct3(
-    const T a[], const T b[], const T c[]);
-
 template<typename T>
 void NormalTri3(
     T n[3],
@@ -332,8 +318,9 @@ using CVec3f = CVec3<float>;
 // below: functions using CVec3 (todo: move to geo_vec3.h?)
 
 template<typename T>
-CVec3<T> Cross(const CVec3<T> &arg1, const CVec3<T> &arg2);
-
+delfem2::CVec3<T> Cross(
+    const CVec3<T> &arg1,
+    const CVec3<T> &arg2);
 
 // --------------------------------------------------------------------------
 // rule about naming, the method starts "Set" change it self (not const)
@@ -359,10 +346,6 @@ CVec3<REAL> QuatConjVec(
     const CVec3<REAL> &v0);
 
 template<typename T>
-T ScalarTripleProduct(
-    const CVec3<T> &a, const CVec3<T> &b, const CVec3<T> &c);
-
-template<typename T>
 bool operator==(const CVec3<T> &lhs, const CVec3<T> &rhs);
 
 template<typename T>
@@ -373,20 +356,6 @@ void GetVertical2Vector(
     const CVec3<T> &vec_n, CVec3<T> &vec_x, CVec3<T> &vec_y);
 
 // ---------------------------------------------
-
-template<typename T>
-void Cross(CVec3<T> &lhs, const CVec3<T> &v1, const CVec3<T> &v2);
-
-template<typename T>
-T SquareTriArea(const CVec3<T> &v1, const CVec3<T> &v2, const CVec3<T> &v3);
-
-template<typename T>
-double SquareDistance(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1);
-
-template<typename T>
-double SquareLength(const CVec3<T> &point);
 
 template<typename T>
 double SqareLongestEdgeLength(
@@ -417,21 +386,7 @@ double ShortestEdgeLength(
     const CVec3<T> &ipo3);
 
 template<typename T>
-void Normal(
-    CVec3<T> &vnorm,
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3);
-
-template<typename T>
 CVec3<T> Normal(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3);
-
-template<typename T>
-void UnitNormal(
-    CVec3<T> &vnorm,
     const CVec3<T> &v1,
     const CVec3<T> &v2,
     const CVec3<T> &v3);
@@ -501,43 +456,6 @@ std::istream &operator>>(std::istream &input, std::vector<VEC> &aV) {
     input >> aV[iv][0] >> aV[iv][1] >> aV[iv][2];
   }
   return input;
-}
-
-template<typename T>
-std::array<T, 3> CG_Tri3(
-    unsigned int itri,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<T> &aXYZ) {
-  const unsigned int i0 = aTri[itri * 3 + 0];
-  const unsigned int i1 = aTri[itri * 3 + 1];
-  const unsigned int i2 = aTri[itri * 3 + 2];
-  return {
-      (aXYZ[i0 * 3 + 0] + aXYZ[i1 * 3 + 0] + aXYZ[i2 * 3 + 0]) / 3.0,
-      (aXYZ[i0 * 3 + 1] + aXYZ[i1 * 3 + 1] + aXYZ[i2 * 3 + 1]) / 3.0,
-      (aXYZ[i0 * 3 + 2] + aXYZ[i1 * 3 + 2] + aXYZ[i2 * 3 + 2]) / 3.0};
-}
-
-template<typename T>
-std::array<T, 3> Normal_Tri3(
-    unsigned int itri,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<T> &aXYZ) {
-  const unsigned int i0 = aTri[itri * 3 + 0];
-  const unsigned int i1 = aTri[itri * 3 + 1];
-  const unsigned int i2 = aTri[itri * 3 + 2];
-  const T p01[3] = {
-      aXYZ[i1 * 3 + 0] - aXYZ[i0 * 3 + 0],
-      aXYZ[i1 * 3 + 1] - aXYZ[i0 * 3 + 1],
-      aXYZ[i1 * 3 + 2] - aXYZ[i0 * 3 + 2]
-  };
-  const T p02[3] = {
-      aXYZ[i2 * 3 + 0] - aXYZ[i0 * 3 + 0],
-      aXYZ[i2 * 3 + 1] - aXYZ[i0 * 3 + 1],
-      aXYZ[i2 * 3 + 2] - aXYZ[i0 * 3 + 2]
-  };
-  std::array<T, 3> ret;
-  Cross3(ret.data(), p01, p02);
-  return ret;
 }
 
 } // namespace delfem2

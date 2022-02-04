@@ -17,20 +17,7 @@
 #include <array>
 #include <cassert>
 
-namespace delfem2::cagedef {
-
-template<typename VEC>
-double ScalarTripleProduct(
-    const VEC &a,
-    const VEC &b,
-    const VEC &c) {
-  return
-      a[0] * (b[1] * c[2] - b[2] * c[1]) +
-          a[1] * (b[2] * c[0] - b[0] * c[2]) +
-          a[2] * (b[0] * c[1] - b[1] * c[0]);
-}
-
-}  // namespace delfem2::cagedef
+#include "delfem2/geo_vec3.h"
 
 namespace delfem2 {
 
@@ -48,7 +35,6 @@ void MeanValueCoordinate_Triangle(
     const VEC &v0,
     const VEC &v1,
     const VEC &v2) {
-  namespace lcl = delfem2::cagedef;
   double eps = 1.0e-5;
   double d0 = v0.norm();
   double d1 = v1.norm();
