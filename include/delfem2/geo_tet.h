@@ -13,6 +13,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/geo_meta_funcs.h"
@@ -85,7 +86,7 @@ std::array<REAL,9> Mat3_3BasesOfTet(
 
 // -----------------------------------------------
 
-template<typename VEC, typename T = typename VEC::Scalar>
+template<typename VEC, typename T = value_type<VEC>>
 std::array<T, 9> DeformationGradientOfTet(
     const VEC &P0,
     const VEC &P1,

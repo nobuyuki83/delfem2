@@ -161,8 +161,8 @@ T delfem2::LongestSquaredEdgeLengthOfTet(
 
 namespace delfem2 {
 
-using f0 = float[3];
-using d0 = double[3];
+using f0 = float [3];
+using d0 = double [3];
 using f1 = float *;
 using d1 = double *;
 using f2 = std::array<float, 3>;
@@ -215,6 +215,9 @@ template std::array<double, 9> DeformationGradientOfTet(const d3&, const d3&, co
                                                         const d3&, const d3&, const d3&, const d3&);
 //
 template void DiffDeformationGradientOfTet(double [4][3], const d0 &, const d0 &, const d0 &, const d0 &);
+template void DiffDeformationGradientOfTet(double [4][3], const d1 &, const d1 &, const d1 &, const d1 &);
+template void DiffDeformationGradientOfTet(double [4][3], const d2 &, const d2 &, const d2 &, const d2 &);
+template void DiffDeformationGradientOfTet(double [4][3], const d3 &, const d3 &, const d3 &, const d3 &);
 }
 
 #endif

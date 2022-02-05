@@ -60,7 +60,7 @@ double WdWddW_InvertibleFEM(
     const double pos[4][3],
     const std::function<double(double[3], double[3][3], double, double, double)> &neohook) {
   namespace dfm2 = delfem2;
-  const dfm2::CMat3d F0 = DeformationGradientOfTet<const double [3], double>(
+  const dfm2::CMat3d F0 = DeformationGradientOfTet(
       Pos[0], Pos[1], Pos[2], Pos[3],
       pos[0], pos[1], pos[2], pos[3]);
 

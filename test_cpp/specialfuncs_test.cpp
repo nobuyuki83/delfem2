@@ -8,7 +8,6 @@
 #include "gtest/gtest.h"
 #include "delfem2/vec3.h"
 #include "delfem2/geo_tri.h"
-#include "delfem2/geosolidelm_v3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/specialfuncs.h"

@@ -502,7 +502,7 @@ namespace delfem2 {
   template void UnitNormalAreaTri3(d3&, double&, const d3&, const d3&, const d3&);
   //
   template float SolidAngleTri(const f3&, const f3&, const f3&);
-  template float SolidAngleTri(const d3&, const d3&, const d3&);
+  template double SolidAngleTri(const d3&, const d3&, const d3&);
   //
   template bool IntersectRay_Tri3(double &, double &, const d3 &, const d3 &,
                                   const d3 &, const d3 &, const d3 &, double);
