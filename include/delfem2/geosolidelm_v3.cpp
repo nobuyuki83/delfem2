@@ -178,25 +178,6 @@ DFM2_INLINE void MyMatVec3(
 // ---------------------------------
 // inplementation of exposed function
 
-//! Hight of a tetrahedra
-template<typename T>
-double delfem2::Height(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3,
-    const CVec3<T> &v4) {
-  T n[3];
-  Normal_Tri3(
-      n,
-      v1.p, v2.p, v3.p);
-  Normalize3(n);
-  return (v4.p[0] - v1.p[0]) * n[0] + (v4.p[1] - v1.p[1]) * n[1] + (v4.p[2] - v1.p[2]) * n[2];
-}
-#ifdef DFM2_STATIC_LIBRARY
-template double delfem2::Height(const CVec3f &,const CVec3f &,const CVec3f &, const CVec3f &);
-template double delfem2::Height(const CVec3d &,const CVec3d &,const CVec3d &, const CVec3d &);
-#endif
-
 // ------------------------------------------------------------------------------
 
 template<typename T>
@@ -262,26 +243,6 @@ void delfem2::iteration_barycentricCoord_Origin_Solid(
 }
 
 template<typename T>
-bool delfem2::barycentricCoord_Origin_Tet(
-    double &r0,
-    double &r1,
-    double &r2,
-    const CVec3<T> &p0,
-    const CVec3<T> &p1,
-    const CVec3<T> &p2,
-    const CVec3<T> &p3) {
-  double v0 = Volume_OrgTet(p1, p2, p3);
-  double v1 = Volume_OrgTet(p2, p0, p3);
-  double v2 = Volume_OrgTet(p1, p3, p0);
-  double v3 = Volume_OrgTet(p1, p0, p2);
-  double vt_inv = 1.0 / (v0 + v1 + v2 + v3);
-  r0 = v0 * vt_inv;
-  r1 = v1 * vt_inv;
-  r2 = v2 * vt_inv;
-  return true;
-}
-
-template<typename T>
 bool delfem2::barycentricCoord_Origin_Pyramid(
     double &r0,
     double &r1,
@@ -334,35 +295,13 @@ bool delfem2::barycentricCoord_Origin_Wedge(
 
 // ----------------------------------------------------------------------
 
-//! Volume of a tetrahedra v0 is orgin
 template<typename T>
-T delfem2::Volume_OrgTet(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3) {
-  T v = v1.p[0] * (v2.p[1] * v3.p[2] - v3.p[1] * v2.p[2])
-      + v1.p[1] * (v2.p[2] * v3.p[0] - v3.p[2] * v2.p[0])
-      + v1.p[2] * (v2.p[0] * v3.p[1] - v3.p[0] * v2.p[1]);
-  return v * static_cast<T>(1.0 / 6.0);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template double delfem2::Volume_OrgTet(
-    const CVec3d &v1,
-    const CVec3d &v2,
-    const CVec3d &v3);
-template float delfem2::Volume_OrgTet(
-    const CVec3f &v1,
-    const CVec3f &v2,
-    const CVec3f &v3);
-#endif
-
-template<typename T>
-double delfem2::Volume_Pyramid
-    (const CVec3<T> &p0,
-     const CVec3<T> &p1,
-     const CVec3<T> &p2,
-     const CVec3<T> &p3,
-     const CVec3<T> &p4) {
+double delfem2::Volume_Pyramid(
+    const CVec3<T> &p0,
+    const CVec3<T> &p1,
+    const CVec3<T> &p2,
+    const CVec3<T> &p3,
+    const CVec3<T> &p4) {
   double v0124 = Volume_Tet(p0, p1, p2, p4);
   double v0234 = Volume_Tet(p0, p2, p3, p4);
   double v0134 = Volume_Tet(p0, p1, p3, p4);
@@ -388,115 +327,4 @@ double delfem2::Volume_Wedge(
   double vp2035 = Volume_Pyramid(p2, p2, p3, p5, pm);
   return vm012 + vm435 + vp0143 + vp1254 + vp2035;
 }
-
-// ---------------------------------------------------------------
-
-template<typename T>
-double delfem2::SolidAngleTri(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3) {
-  double l1 = v1.norm();
-  double l2 = v2.norm();
-  double l3 = v3.norm();
-  double den = (v1.cross(v2)).dot(v3);
-  double num = l1 * l2 * l3 + (v1.dot(v2)) * l3 + (v2.dot(v3)) * l1 + (v3.dot(v1)) * l2;
-  double tho = den / num;
-  double v = atan(tho);
-  if (v < 0) { v += 2 * M_PI; }
-  v *= 2;
-  return v;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template double delfem2::SolidAngleTri(const CVec3d &v1, const CVec3d &v2, const CVec3d &v3);
-#endif
-
-
-
-// ------------------------------------------------------------------
-
-template<typename T>
-double delfem2::SqareLongestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3) {
-  double edge1, edge2;
-  edge1 = SquareDistance3(ipo0, ipo1);
-  edge2 = SquareDistance3(ipo0, ipo2);
-  if (edge2 > edge1) edge1 = edge2;
-  edge2 = SquareDistance3(ipo0, ipo3);
-  if (edge2 > edge1) edge1 = edge2;
-  edge2 = SquareDistance3(ipo1, ipo2);
-  if (edge2 > edge1) edge1 = edge2;
-  edge2 = SquareDistance3(ipo1, ipo3);
-  if (edge2 > edge1) edge1 = edge2;
-  edge2 = SquareDistance3(ipo2, ipo3);
-  if (edge2 > edge1) edge1 = edge2;
-  return edge1;
-}
-
-// --------------------------------------
-
-template<typename T>
-double delfem2::LongestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3) {
-  return sqrt(SqareLongestEdgeLength(ipo0, ipo1, ipo2, ipo3));
-}
-
-// --------------------------------------
-
-template<typename T>
-double delfem2::SqareShortestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3) {
-  double edge1, edge2;
-  edge1 = SquareDistance3(ipo0, ipo1);
-  edge2 = SquareDistance3(ipo0, ipo2);
-  if (edge2 < edge1) edge1 = edge2;
-  edge2 = SquareDistance3(ipo0, ipo3);
-  if (edge2 < edge1) edge1 = edge2;
-  edge2 = SquareDistance3(ipo1, ipo2);
-  if (edge2 < edge1) edge1 = edge2;
-  edge2 = SquareDistance3(ipo1, ipo3);
-  if (edge2 < edge1) edge1 = edge2;
-  edge2 = SquareDistance3(ipo2, ipo3);
-  if (edge2 < edge1) edge1 = edge2;
-  return edge1;
-}
-
-// -----------------------------------------
-
-template<typename T>
-double delfem2::ShortestEdgeLength
-    (const CVec3<T> &ipo0,
-     const CVec3<T> &ipo1,
-     const CVec3<T> &ipo2,
-     const CVec3<T> &ipo3) {
-  return sqrt(SqareShortestEdgeLength(ipo0, ipo1, ipo2, ipo3));
-}
-
-template<typename T>
-double delfem2::Volume_Tet(
-    int iv1,
-    int iv2,
-    int iv3,
-    int iv4,
-    const std::vector<CVec3<T>> &aPoint) {
-  return Volume_Tet(aPoint[iv1], aPoint[iv2], aPoint[iv3], aPoint[iv4]);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template double delfem2::Volume_Tet(
-    int iv1,
-    int iv2,
-    int iv3,
-    int iv4,
-    const std::vector<CVec3d> &aPoint);
-#endif
-
 

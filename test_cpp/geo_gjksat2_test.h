@@ -52,13 +52,13 @@ void TestGjkSat2Test0(unsigned int nitr) {
       std::vector<VEC> vtxB_xy_translated;
 
       for (unsigned int ivtxB = 0; ivtxB < vtxB_xy.size(); ++ivtxB) {
-        vtxB_xy_translated.push_back(vtxB_xy[ivtxB] + normalA * 1.001);
+        vtxB_xy_translated.push_back(vtxB_xy[ivtxB] + normalA * 1.002);
       }
       EXPECT_EQ(delfem2::IsIntersect_Points2_Points2_Gjk(vtxA_xy, vtxB_xy_translated), false);
 
       vtxB_xy_translated.clear();
       for (unsigned int ivtxB = 0; ivtxB < vtxB_xy.size(); ++ivtxB) {
-        vtxB_xy_translated.push_back(vtxB_xy[ivtxB] + normalA * 0.999);
+        vtxB_xy_translated.push_back(vtxB_xy[ivtxB] + normalA * 0.998);
       }
       EXPECT_EQ(delfem2::IsIntersect_Points2_Points2_Gjk(vtxA_xy, vtxB_xy_translated), true);
 

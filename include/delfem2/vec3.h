@@ -69,12 +69,6 @@ std::ostream &operator<<(std::ostream &output, const CVec3<T> &v);
 template<typename T>
 std::istream &operator>>(std::istream &input, CVec3<T> &v);
 
-template<typename T>
-std::ostream &operator<<(std::ostream &output, const std::vector<CVec3<T> > &aV);
-
-template<typename T>
-std::istream &operator>>(std::istream &input, std::vector<CVec3<T> > &aV);
-
 /**
  * @class 3 dimentional vector class
  */

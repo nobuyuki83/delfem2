@@ -15,13 +15,15 @@
 #include <stdio.h>
 
 #include "delfem2/srchbvh.h"
+#include "delfem2/vec3.h"
 #include "delfem2/geo_vec3.h"
 #include "delfem2/geo_plane.h"
 #include "delfem2/geo_tri.h"
+#include "delfem2/geo_tet.h"
 #include "delfem2/geo_ccd.h"
 #include "delfem2/geo_edge.h"
 #include "delfem2/geosolidelm_v3.h"
-#include "delfem2/vec3.h"
+
 
 namespace delfem2 {
 
@@ -139,7 +141,7 @@ bool delfem2::IsContact_FV_Proximity
 {
   if( ino3 == ino0 || ino3 == ino1 || ino3 == ino2 ){ return false; }
   if( !bb.isInclude_Point(p3.x,p3.y,p3.z) ) return false;
-  double height = fabs( Height(p0,p1,p2,p3) );
+  double height = fabs( Height_Tet(p0,p1,p2,p3) );
   if( height > delta ) return false;
   double w0,w1;
   const double dist = DistanceFaceVertex(p0,p1,p2,p3,w0,w1);

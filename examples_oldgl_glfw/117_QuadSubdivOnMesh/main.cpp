@@ -43,8 +43,8 @@ std::vector<std::vector<unsigned int>> aaQuad;
 void InitializeProblem() {
 
   dfm2::MeshTri3D_Sphere(
-    aXYZ, aTri,
-    1.0, 12, 34);
+      aXYZ, aTri,
+      1.0, 12, 34);
   {
     const double bbmin[3] = {-1, -1, -1};
     const double bbmax[3] = {+1, +1, +1};
@@ -55,9 +55,9 @@ void InitializeProblem() {
 
   for (unsigned int ip = 0; ip < aXYZ_Quad.size() / 3; ++ip) {
     dfm2::CVec3d p0(
-      aXYZ_Quad[ip * 3 + 0],
-      aXYZ_Quad[ip * 3 + 1],
-      aXYZ_Quad[ip * 3 + 2]);
+        aXYZ_Quad[ip * 3 + 0],
+        aXYZ_Quad[ip * 3 + 1],
+        aXYZ_Quad[ip * 3 + 2]);
     dfm2::PointOnSurfaceMesh<double> pes0 = Nearest_Point_MeshTri3D(p0,
                                                                     aXYZ, aTri);
     dfm2::CVec3d q0 = pes0.PositionOnMeshTri3(aXYZ, aTri);
@@ -67,17 +67,17 @@ void InitializeProblem() {
   }
 
   dfm2::Normal_MeshQuad3(
-    aNorm_Quad,
-    aXYZ_Quad, aaQuad[0]);
+      aNorm_Quad,
+      aXYZ_Quad, aaQuad[0]);
 
   aaQuad.resize(nsubdiv + 1);
   for (unsigned int isubdiv = 0; isubdiv < nsubdiv; ++isubdiv) {
     std::vector<unsigned int> psup_ind, psup;
     std::vector<unsigned int> aEdgeFace0;
     dfm2::SubdivTopo_MeshQuad(
-      aaQuad[isubdiv + 1], psup_ind, psup, aEdgeFace0,
-      aaQuad[isubdiv].data(), aaQuad[isubdiv].size() / 4,
-      aXYZ_Quad.size() / 3);
+        aaQuad[isubdiv + 1], psup_ind, psup, aEdgeFace0,
+        aaQuad[isubdiv].data(), aaQuad[isubdiv].size() / 4,
+        aXYZ_Quad.size() / 3);
     const size_t nv0 = aXYZ_Quad.size() / 3;
     const size_t ne0 = aEdgeFace0.size() / 4;
     const size_t nq0 = aaQuad[isubdiv].size() / 4;
@@ -118,9 +118,9 @@ void InitializeProblem() {
       const dfm2::CVec3d p0(aXYZ_Quad[ip * 3 + 0], aXYZ_Quad[ip * 3 + 1], aXYZ_Quad[ip * 3 + 2]);
       const dfm2::CVec3d n0(aNorm_Quad[ip * 3 + 0], aNorm_Quad[ip * 3 + 1], aNorm_Quad[ip * 3 + 2]);
       std::vector<dfm2::PointOnSurfaceMesh<double>> aPES = IntersectionLine_MeshTri3(
-        p0, n0,
-        aTri, aXYZ,
-        1.0e-3);
+          p0, n0,
+          aTri, aXYZ,
+          1.0e-3);
       std::map<double, dfm2::PointOnSurfaceMesh<double>> mapPES;
       for (auto &pes: aPES) {
         dfm2::CVec3d q0 = pes.PositionOnMeshTri3(aXYZ, aTri);
@@ -139,8 +139,8 @@ void InitializeProblem() {
       aNorm_Quad.resize((nv0 + ne0 + nq0) * 3);
       std::vector<double> aNorm1;
       dfm2::Normal_MeshQuad3(
-        aNorm1,
-        aXYZ_Quad, aaQuad[isubdiv + 1]);
+          aNorm1,
+          aXYZ_Quad, aaQuad[isubdiv + 1]);
       for (auto ip = nv0; ip < nv0 + ne0 + nq0; ++ip) {
         aNorm_Quad[ip * 3 + 0] = aNorm1[ip * 3 + 0];
         aNorm_Quad[ip * 3 + 1] = aNorm1[ip * 3 + 1];

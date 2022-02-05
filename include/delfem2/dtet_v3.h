@@ -19,6 +19,7 @@
 #include "delfem2/geodelaunay3_v3.h"
 #include "delfem2/vec3.h"
 #include "delfem2/geo_tri.h"
+#include "delfem2/geo_tet.h"
 
 namespace delfem2 {
 
@@ -704,7 +705,7 @@ inline double TriArea(const int itet,
 inline double SquareLongestEdgeLength(const int itet,
                                       const std::vector<CDynPointTet> &node,
                                       const std::vector<CDynTet> &tet) {
-  return SqareLongestEdgeLength(
+  return LongestSquaredEdgeLengthOfTet(
       node[tet[itet].v[0]].p,
       node[tet[itet].v[1]].p,
       node[tet[itet].v[2]].p,
@@ -716,7 +717,7 @@ inline double SquareLongestEdgeLength(const int itet,
 inline double LongestEdgeLength(const int itet,
                                 const std::vector<CDynPointTet> &node,
                                 const std::vector<CDynTet> &tet) {
-  return sqrt(SqareLongestEdgeLength(
+  return sqrt(LongestSquaredEdgeLengthOfTet(
       node[tet[itet].v[0]].p,
       node[tet[itet].v[1]].p,
       node[tet[itet].v[2]].p,
@@ -728,7 +729,7 @@ inline double LongestEdgeLength(const int itet,
 inline double SquareShortestEdgeLength(const int itet,
                                        const std::vector<CDynPointTet> &node,
                                        const std::vector<CDynTet> &tet) {
-  return SqareShortestEdgeLength(
+  return ShortestSquaredEdgeLengthOfTet(
       node[tet[itet].v[0]].p,
       node[tet[itet].v[1]].p,
       node[tet[itet].v[2]].p,
@@ -740,7 +741,7 @@ inline double SquareShortestEdgeLength(const int itet,
 inline double ShortestEdgeLength(const int itet,
                                  const std::vector<CDynPointTet> &node,
                                  const std::vector<CDynTet> &tet) {
-  return sqrt(SqareShortestEdgeLength(
+  return sqrt(ShortestSquaredEdgeLengthOfTet(
       node[tet[itet].v[0]].p,
       node[tet[itet].v[1]].p,
       node[tet[itet].v[2]].p,
@@ -921,7 +922,7 @@ inline int DetDelaunay
   const double qradius = SquareDistance3(out_center, v1);
   assert(fabs(qradius - SquareDistance3(out_center, v2)) < 1.0e-10);
   assert(fabs(qradius - SquareDistance3(out_center, v3)) < 1.0e-10);
-  assert(fabs(Height(v1, v2, v3, out_center)) < 1.0e-10);
+  assert(fabs(Height_Tet(v1, v2, v3, out_center)) < 1.0e-10);
 
   const double distance = SquareDistance3(out_center, v4);
   if (distance > qradius + 1.0e-6) {

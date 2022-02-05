@@ -6,9 +6,11 @@
 #ifndef DFM2_FEM_INVERTIBLEFEM_H
 #define DFM2_FEM_INVERTIBLEFEM_H
 
+#include <functional>
+
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mat3.h"
-#include "delfem2/geosolidelm_v3.h"
+#include "delfem2/geo_tet.h"
 #include "delfem2/svd3.h"
 
 namespace delfem2 {
@@ -82,7 +84,7 @@ double WdWddW_InvertibleFEM(
       pos[0], pos[1], pos[2], pos[3]);
 
   double dFdu[4][3];
-  delfem2::DiffDeformationGradient(
+  delfem2::DiffDeformationGradientOfTet(
       dFdu,
       Pos[0], Pos[1], Pos[2], Pos[3]);
 
@@ -126,4 +128,4 @@ double WdWddW_InvertibleFEM(
 }
 
 
-#endif /* DFM2 */
+#endif /* DFM2_FEM_INVERTIBLEFEM_H */

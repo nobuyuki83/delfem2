@@ -18,8 +18,6 @@
 #include "delfem2/sampling.h"
 #include "delfem2/ls_solver_block_sparse.h"
 #include "delfem2/mshuni.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/mshprimitive.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"

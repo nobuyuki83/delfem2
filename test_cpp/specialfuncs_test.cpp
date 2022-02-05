@@ -7,6 +7,7 @@
 
 #include "gtest/gtest.h"
 #include "delfem2/vec3.h"
+#include "delfem2/geo_tri.h"
 #include "delfem2/geosolidelm_v3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshprimitive.h"
@@ -42,7 +43,7 @@ TEST(mathfunc, sherical_harmonics_orthgonality) {
     dfm2::CVec3d p0(aXYZ[i0 * 3 + 0], aXYZ[i0 * 3 + 1], aXYZ[i0 * 3 + 2]);
     dfm2::CVec3d p1(aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]);
     dfm2::CVec3d p2(aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]);
-    double area = SolidAngleTri(p0, p1, p2);
+    double area = delfem2::SolidAngleTri(p0, p1, p2);
     area_sum += area;
     double a0[N];
     dfm2::makeArray_SphericalHarmonics(a0, norder, p0.p[0], p0.p[1], p0.p[2]);

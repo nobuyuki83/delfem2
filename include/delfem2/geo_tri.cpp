@@ -431,3 +431,29 @@ template double delfem2::DistanceFaceVertex(
   const CVec3d &p2, const CVec3d &p3,
   double &w0, double &w1);
 #endif
+
+// ==============================================
+
+#ifdef DFM2_STATIC_LIBRARY
+
+#include "delfem2/vec3.h"
+
+namespace delfem2 {
+  using f0 = float [3];
+  using d0 = double [3];
+  using f1 = float*;
+  using d1 = double*;
+  using f2 = std::array<float,3>;
+  using d2 = std::array<double,3>;
+  using f3 = CVec3f;
+  using d3 = CVec3d;
+  template float Area_Tri3(const f0&, const f0&, const f0&);
+  template float Area_Tri3(const f1&, const f1&, const f1&);
+  template float Area_Tri3(const f2&, const f2&, const f2&);
+  template float Area_Tri3(const f3&, const f3&, const f3&);
+  template double Area_Tri3(const d0&, const d0&, const d0&);
+  template double Area_Tri3(const d1&, const d1&, const d1&);
+  template double Area_Tri3(const d2&, const d2&, const d2&);
+  template double Area_Tri3(const d3&, const d3&, const d3&);
+}
+#endif

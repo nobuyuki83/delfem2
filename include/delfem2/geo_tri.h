@@ -155,33 +155,6 @@ void UnitNormal_Tri3(
   vnorm[2] *= dtmp1;
 }
 
-
-// -----------------------------------------------
-// should moved to mshuni
-
-template<typename T>
-std::array<T, 3> Normal_Tri3(
-    unsigned int itri,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<T> &aXYZ) {
-  const unsigned int i0 = aTri[itri * 3 + 0];
-  const unsigned int i1 = aTri[itri * 3 + 1];
-  const unsigned int i2 = aTri[itri * 3 + 2];
-  const T p01[3] = {
-      aXYZ[i1 * 3 + 0] - aXYZ[i0 * 3 + 0],
-      aXYZ[i1 * 3 + 1] - aXYZ[i0 * 3 + 1],
-      aXYZ[i1 * 3 + 2] - aXYZ[i0 * 3 + 2]
-  };
-  const T p02[3] = {
-      aXYZ[i2 * 3 + 0] - aXYZ[i0 * 3 + 0],
-      aXYZ[i2 * 3 + 1] - aXYZ[i0 * 3 + 1],
-      aXYZ[i2 * 3 + 2] - aXYZ[i0 * 3 + 2]
-  };
-  std::array<T, 3> ret;
-  Cross(ret.data(), p01, p02);
-  return ret;
-}
-
 // --------------------
 
 template<typename VEC0, typename VEC1, typename T = value_type<VEC0>>
@@ -226,6 +199,24 @@ VEC UnitNormal_Tri3(
   return vnorm;
 }
 
+template<typename VEC, typename T = typename VEC::Scalar>
+T SolidAngleTri(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3) {
+  const T l1 = v1.norm();
+  const T l2 = v2.norm();
+  const T l3 = v3.norm();
+  const T den = (v1.cross(v2)).dot(v3);
+  const T num = l1 * l2 * l3 + (v1.dot(v2)) * l3 + (v2.dot(v3)) * l1 + (v3.dot(v1)) * l2;
+  const T tho = den / num;
+  T v = std::atan(tho);
+  if (v < 0) { v += 2 * M_PI; }
+  v *= 2;
+  return v;
+}
+
+
 // ----------------------------------
 // this can be moved to meshuni
 
@@ -243,10 +234,35 @@ std::array<T, 3> CG_Tri3(
       (aXYZ[i0 * 3 + 2] + aXYZ[i1 * 3 + 2] + aXYZ[i2 * 3 + 2]) / 3.0};
 }
 
+template<typename T>
+std::array<T, 3> Normal_Tri3(
+    unsigned int itri,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<T> &aXYZ) {
+  const unsigned int i0 = aTri[itri * 3 + 0];
+  const unsigned int i1 = aTri[itri * 3 + 1];
+  const unsigned int i2 = aTri[itri * 3 + 2];
+  const T p01[3] = {
+      aXYZ[i1 * 3 + 0] - aXYZ[i0 * 3 + 0],
+      aXYZ[i1 * 3 + 1] - aXYZ[i0 * 3 + 1],
+      aXYZ[i1 * 3 + 2] - aXYZ[i0 * 3 + 2]
+  };
+  const T p02[3] = {
+      aXYZ[i2 * 3 + 0] - aXYZ[i0 * 3 + 0],
+      aXYZ[i2 * 3 + 1] - aXYZ[i0 * 3 + 1],
+      aXYZ[i2 * 3 + 2] - aXYZ[i0 * 3 + 2]
+  };
+  std::array<T, 3> ret;
+  Cross(ret.data(), p01, p02);
+  return ret;
+}
+
 } // end namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/geo_tri.cpp"
 #endif
+
+
 
 #endif // DFM2_GEO_TRI_H

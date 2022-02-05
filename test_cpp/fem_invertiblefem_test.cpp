@@ -36,7 +36,7 @@ TEST(invertible_fem, dF) {
         pos0[0], pos0[1], pos0[2], pos0[3]);
 
     double dFdu[4][3];
-    DiffDeformationGradient(
+    DiffDeformationGradientOfTet(
         dFdu,
         Pos0[0], Pos0[1], Pos0[2], Pos0[3]);
 
@@ -113,7 +113,7 @@ TEST(invertible_fem, dPdF) {
         pos0[0], pos0[1], pos0[2], pos0[3]);
 
     double dFdu[4][3];
-    DiffDeformationGradient(
+    DiffDeformationGradientOfTet(
         dFdu,
         Pos0[0], Pos0[1], Pos0[2], Pos0[3]);
 

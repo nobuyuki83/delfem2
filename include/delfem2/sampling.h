@@ -41,16 +41,16 @@ T MyERand48(std::array<unsigned short, 3> &xseed) {
   xseed[1] = temp[1];
   xseed[2] = (unsigned short) accu;
   // --------
-  return
-      std::ldexp(static_cast<T>(xseed[0]), -48) +
-          std::ldexp(static_cast<T>(xseed[1]), -32) +
-          std::ldexp(static_cast<T>(xseed[2]), -16);
+  const T v0 = std::ldexp(static_cast<T>(xseed[0]), -48);
+  const T v1 = std::ldexp(static_cast<T>(xseed[1]), -32);
+  const T v2 = std::ldexp(static_cast<T>(xseed[2]), -16);
+  return v0 + v1 + v2;
 }
 
 template<typename T>
 std::array<T, 2> RandomVec2(
     std::array<unsigned short, 3> &xi) {
-  return { MyERand48<T>(xi), MyERand48<T>(xi) };
+  return {MyERand48<T>(xi), MyERand48<T>(xi)};
 }
 
 template<int n, typename T>
@@ -60,8 +60,8 @@ std::array<T, n> RandomVec(
     T mag = 1.0,
     T offset = 0.0) {
   std::array<T, n> r;
-  for(int i=0;i<n;++i){
-    r[i] =mag * dist(reng) + offset;
+  for (int i = 0; i < n; ++i) {
+    r[i] = mag * dist(reng) + offset;
   }
   return r;
 }
@@ -73,29 +73,27 @@ void Fill2dArrayWithRandomValue(
     std::mt19937 &reng,
     T mag = 1.0,
     T offset = 0.0) {
-  for(int i=0;i<n;++i){
-    for(int j=0;j<m;++j) {
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < m; ++j) {
       A[i][j] = mag * dist(reng) + offset;
     }
   }
 }
 
 template<typename T>
-std::array<T,3> RandGaussVec3(
+std::array<T, 3> RandGaussVec3(
     std::mt19937 &reng) {
   constexpr T pi = static_cast<T>(M_PI);
-  std::uniform_real_distribution<T> dist(0,1);
+  std::uniform_real_distribution<T> dist(0, 1);
   T a0 = dist(reng);
   T a1 = dist(reng);
   T a2 = dist(reng);
   T a3 = dist(reng);
   return {
-    std::sqrt(-2 * std::log(a0)) * std::cos(pi * 2 * a1),
-    std::sqrt(-2 * std::log(a0)) * std::sin(pi * 2 * a1),
-    std::sqrt(-2 * std::log(a2)) * std::cos(pi * 2 * a3) };
+      std::sqrt(-2 * std::log(a0)) * std::cos(pi * 2 * a1),
+      std::sqrt(-2 * std::log(a0)) * std::sin(pi * 2 * a1),
+      std::sqrt(-2 * std::log(a2)) * std::cos(pi * 2 * a3)};
 }
-template std::array<float,3> RandGaussVec3<float>(std::mt19937 &reng);
-
 
 template<typename T>
 T SampleTent(
@@ -130,7 +128,7 @@ inline VEC SampleHemisphereNormalCos(
     const VEC &n,
     const std::array<SCALAR, 2> &v2) {
   const std::array<SCALAR, 3> h0 = SampleHemisphereZupCos(v2);
-  const VEC u = ((fabs(n[0]) > .1 ? VEC(0, 1, 0) : VEC(1,0,0)).cross(n)).normalized();  // orthogonal to w
+  const VEC u = ((fabs(n[0]) > .1 ? VEC(0, 1, 0) : VEC(1, 0, 0)).cross(n)).normalized();  // orthogonal to w
   const VEC v = n.cross(u);  // orthogonal to w and u
   return (h0[0] * u + h0[1] * v + h0[2] * n).normalized();
 }

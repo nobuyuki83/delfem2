@@ -22,25 +22,6 @@
 namespace delfem2 {
 
 template<typename T>
-double Height(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3,
-    const CVec3<T> &v4);
-
-// ---------------------------------------------------------
-
-template<typename T>
-bool barycentricCoord_Origin_Tet(
-    double &r0,
-    double &r1,
-    double &r2,
-    const CVec3<T> &p0,
-    const CVec3<T> &p1,
-    const CVec3<T> &p2,
-    const CVec3<T> &p3);
-
-template<typename T>
 bool barycentricCoord_Origin_Pyramid(
     double &r0,
     double &r1,
@@ -101,55 +82,6 @@ void iteration_barycentricCoord_Origin_Solid(
 // -----------------------------------------------
 
 template<typename T>
-T Volume_OrgTet(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3);
-
-/**
- * Volume of a tetrahedra
- * @tparam VEC dfm2::CVec3, Eigen::Vector3, std::array<*,3>, * [3]
- * example: Volume_Tet<double [3], double >(v0,...)
- */
-template<typename VEC, typename T = typename VEC::Scalar>
-T Volume_Tet(
-    const VEC &v0,
-    const VEC &v1,
-    const VEC &v2,
-    const VEC &v3) {
-  T v = (v1[0] - v0[0]) * ((v2[1] - v0[1]) * (v3[2] - v0[2]) - (v3[1] - v0[1]) * (v2[2] - v0[2]))
-      + (v1[1] - v0[1]) * ((v2[2] - v0[2]) * (v3[0] - v0[0]) - (v3[2] - v0[2]) * (v2[0] - v0[0]))
-      + (v1[2] - v0[2]) * ((v2[0] - v0[0]) * (v3[1] - v0[1]) - (v3[0] - v0[0]) * (v2[1] - v0[1]));
-  return v * 0.16666666666666666666666666666667;
-}
-
-/**
- * three basis of a tetrahedra (origin is the first vertex)
- * @tparam VEC dfm2::CVec3, Eigen::Vector3, std::array<*,3>, * [3]
- * example: Mat3_3BasesOfTet<double [3], double >(v0,...)
- */
-template <typename VEC, typename REAL = typename VEC::Scalar>
-std::array<REAL,9> Mat3_3BasesOfTet(
-    const VEC &p0,
-    const VEC &p1,
-    const VEC &p2,
-    const VEC &p3)
-{
-  return  {
-      p1[0]-p0[0], p2[0]-p0[0], p3[0]-p0[0],
-      p1[1]-p0[1], p2[1]-p0[1], p3[1]-p0[1],
-      p1[2]-p0[2], p2[2]-p0[2], p3[2]-p0[2]};
-}
-
-template<typename VEC, typename T = typename VEC::Scalar>
-void DiffDeformationGradient(
-    T dF[4][3],
-    const VEC &P0,
-    const VEC &P1,
-    const VEC &P2,
-    const VEC &P3);
-
-template<typename T>
 double Volume_Pyramid(
     const CVec3<T> &p0,
     const CVec3<T> &p1,
@@ -166,97 +98,11 @@ double Volume_Wedge(
     const CVec3<T> &p4,
     const CVec3<T> &p5);
 
-// ---------------------------------------------
-
-template<typename T>
-double SqareLongestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3);
-
-template<typename T>
-double LongestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3);
-
-template<typename T>
-double SqareShortestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3);
-
-template<typename T>
-double ShortestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3);
-
-// ----------------------------------------------------------
-// here starts std::vector<CVector3>
-
-template<typename T>
-double Volume_Tet(
-    int iv1,
-    int iv2,
-    int iv3,
-    int iv4,
-    const std::vector<CVec3<T> > &aPoint);
-
-template<typename T>
-double SolidAngleTri(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3);
 
 } // end namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/geosolidelm_v3.cpp"
 #endif
-
-// ----------------------------
-// local function interface
-
-namespace delfem2::solidelm {
-  template<typename REAL>
-  DFM2_INLINE void MyInverse_Mat3(
-      REAL Ainv[9],
-      const REAL A[9]);
-}
-
-// ---------------------------
-// implementation of exposed functions
-
-template <typename VEC, typename SCALAR>
-void delfem2::DiffDeformationGradient(
-    SCALAR dF[4][3],
-    const VEC &P0,
-    const VEC &P1,
-    const VEC &P2,
-    const VEC &P3) {
-  const SCALAR Basis0[9] = {
-      P1[0] - P0[0], P2[0] - P0[0], P3[0] - P0[0],
-      P1[1] - P0[1], P2[1] - P0[1], P3[1] - P0[1],
-      P1[2] - P0[2], P2[2] - P0[2], P3[2] - P0[2] };
-  SCALAR Bi0[9];
-  ::delfem2::solidelm::MyInverse_Mat3(Bi0, Basis0);
-  dF[0][0] = -Bi0[0] - Bi0[3] - Bi0[6];
-  dF[0][1] = -Bi0[1] - Bi0[4] - Bi0[7];
-  dF[0][2] = -Bi0[2] - Bi0[5] - Bi0[8];
-  dF[1][0] = Bi0[0];
-  dF[1][1] = Bi0[1];
-  dF[1][2] = Bi0[2];
-  dF[2][0] = Bi0[3];
-  dF[2][1] = Bi0[4];
-  dF[2][2] = Bi0[5];
-  dF[3][0] = Bi0[6];
-  dF[3][1] = Bi0[7];
-  dF[3][2] = Bi0[8];
-}
 
 #endif // DFM2_GEOSOLIDELM_V3_H
