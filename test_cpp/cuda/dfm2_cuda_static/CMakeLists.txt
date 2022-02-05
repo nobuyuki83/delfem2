@@ -1,8 +1,8 @@
 set(PROJ_NAME dfm2_cuda_static)
 project(${PROJ_NAME})
 
-set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
+set(DELFEM2_INCLUDE_DIR "../../../include")
+set(DELFEM2_INC         "../../../include/delfem2")
 
 find_package(CUDA REQUIRED)
 message("Cuda version: " ${CUDA_VERSION})

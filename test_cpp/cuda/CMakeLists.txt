@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.12)
 
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 set(PROJ_NAME test_cuda)
 project(${PROJ_NAME})
 
-set(DELFEM2_INCLUDE_DIR "../include")
-set(DELFEM2_INC         "../include/delfem2")
-set(3RD_PARTY           "../3rd_party")
+set(DELFEM2_INCLUDE_DIR "../../include")
+set(DELFEM2_INC         "../../include/delfem2")
+set(3RD_PARTY           "../../3rd_party")
 
 get_filename_component(GTEST_DIR ${3RD_PARTY}/googletest ABSOLUTE)
 
@@ -16,6 +20,7 @@ add_executable(${PROJ_NAME}
         ${DELFEM2_INC}/mshmisc.h      ${DELFEM2_INC}/mshmisc.cpp
         ${DELFEM2_INC}/mshprimitive.h ${DELFEM2_INC}/mshprimitive.cpp
         ${DELFEM2_INC}/vec3.h         ${DELFEM2_INC}/vec3.cpp
+        ${DELFEM2_INC}/geo_vec3.h     ${DELFEM2_INC}/geo_vec3.cpp
         ${DELFEM2_INC}/points.h       ${DELFEM2_INC}/points.cpp
         ${DELFEM2_INC}/srchbvh.h      ${DELFEM2_INC}/srchbvh.cpp
         ${DELFEM2_INC}/srchbv3sphere.h

@@ -14,6 +14,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/vec3.h"
+#include "delfem2/geo_vec3.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbvh.h"
 

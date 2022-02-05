@@ -59,5 +59,6 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     OpenGL::GL
-    glfw
+    glfw 
+    ${CMAKE_DL_LIBS}
     )

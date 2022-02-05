@@ -21,11 +21,11 @@ cmake ..
 make
 cd ../../
 
-cd test_cuda
+cd test_cpp/cuda
 mkdir buildMake
 cd buildMake
 cmake ..
 make
 ./test_cuda
-cd ../../
+cd ../../../
 

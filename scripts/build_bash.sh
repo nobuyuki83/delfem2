@@ -1,3 +1,10 @@
+
+git submodule update --init -- 3rd_party/stb
+cd 3rd_party/stb
+git checkout master 
+git pull origin master
+cd ../../
+
 echo "#######################"
 echo "# glut"
 
