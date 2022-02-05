@@ -80,6 +80,21 @@ void Fill2dArrayWithRandomValue(
   }
 }
 
+template<typename T>
+std::array<T,3> RandGaussVec3(
+    std::mt19937 &reng) {
+  constexpr T pi = static_cast<T>(M_PI);
+  std::uniform_real_distribution<T> dist(0,1);
+  T a0 = dist(reng);
+  T a1 = dist(reng);
+  T a2 = dist(reng);
+  T a3 = dist(reng);
+  return {
+    std::sqrt(-2 * std::log(a0)) * std::cos(pi * 2 * a1),
+    std::sqrt(-2 * std::log(a0)) * std::sin(pi * 2 * a1),
+    std::sqrt(-2 * std::log(a2)) * std::cos(pi * 2 * a3) };
+}
+template std::array<float,3> RandGaussVec3<float>(std::mt19937 &reng);
 
 
 template<typename T>

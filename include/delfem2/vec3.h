@@ -333,15 +333,6 @@ CVec3<T> RotateVector(
     const CVec3<T> &vec0,
     const CVec3<T> &rot);
 
-template<typename T>
-CVec3<T> RandVector();
-
-template<typename T>
-CVec3<T> RandUnitVector();
-
-template<typename T>
-CVec3<T> RandGaussVector();
-
 /**
  * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
  * @param[in] V rotation from

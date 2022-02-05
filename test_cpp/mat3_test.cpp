@@ -161,9 +161,9 @@ TEST(mat3, mat3_quat_eulerangle) {
       delfem2::Mat3_Quat(mat0, quat0);
       double ea1[3];
       delfem2::EulerAngle_Mat3(ea1, mat0, {2, 1, 0});
-      EXPECT_NEAR(ea0[0], ea1[0], 2.0e-10);
-      EXPECT_NEAR(ea0[1], ea1[1], 2.0e-10);
-      EXPECT_NEAR(ea0[2], ea1[2], 2.0e-10);
+      EXPECT_NEAR(ea0[0], ea1[0], 1.0e-9);
+      EXPECT_NEAR(ea0[1], ea1[1], 1.0e-9);
+      EXPECT_NEAR(ea0[2], ea1[2], 1.0e-9);
     }
     {
       double quat0[4];
@@ -172,9 +172,9 @@ TEST(mat3, mat3_quat_eulerangle) {
       delfem2::Mat3_Quat(mat0, quat0);
       double ea1[3];
       delfem2::EulerAngle_Mat3(ea1, mat0, {2, 0, 1});
-      EXPECT_NEAR(ea0[0], ea1[0], 2.0e-10);
-      EXPECT_NEAR(ea0[1], ea1[1], 2.0e-10);
-      EXPECT_NEAR(ea0[2], ea1[2], 2.0e-10);
+      EXPECT_NEAR(ea0[0], ea1[0], 1.0e-9);
+      EXPECT_NEAR(ea0[1], ea1[1], 1.0e-9);
+      EXPECT_NEAR(ea0[2], ea1[2], 1.0e-9);
     }
   }
 }

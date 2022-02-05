@@ -184,10 +184,6 @@ template void delfem2::AverageFour3(
 // ======================================================
 // below: with CVec
 
-
-
-// ---------------------
-
 namespace delfem2 {
 
 //! scale
@@ -246,8 +242,6 @@ template std::istream &operator>>(std::istream &input, CVec3f& v);
 #endif
 
 } // namespace delfem2
-
-// ----------------------
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -386,41 +380,6 @@ delfem2::CVec3<T> delfem2::RotateVector(
   vec1.p[1] = dot00 * e0.p[1] + dot01 * cost * e1.p[1] + dot01 * sint * e2.p[1];
   vec1.p[2] = dot00 * e0.p[2] + dot01 * cost * e1.p[2] + dot01 * sint * e2.p[2];
   return vec1;
-}
-
-template<typename T>
-delfem2::CVec3<T> delfem2::RandVector() {
-  CVec3<T> r;
-  r.p[0] = (2 * (double) rand() / (RAND_MAX + 1.0) - 1);
-  r.p[1] = (2 * (double) rand() / (RAND_MAX + 1.0) - 1);
-  r.p[2] = (2 * (double) rand() / (RAND_MAX + 1.0) - 1);
-  return r;
-}
-
-template<typename T>
-delfem2::CVec3<T> delfem2::RandUnitVector() {
-  for (int itr = 0; itr < 100; itr++) {
-    CVec3<T> r = RandVector<T>();
-    double l = r.norm();
-    if ((l <= 1 || itr == 9) && l > 1.0e-5) {
-      r.normalize();
-      return r;
-    }
-  }
-  return CVec3<T>(1, 0, 0);
-}
-
-template<typename T>
-delfem2::CVec3<T> delfem2::RandGaussVector() {
-  double a0 = rand() / (RAND_MAX + 1.0);
-  double a1 = rand() / (RAND_MAX + 1.0);
-  double a2 = rand() / (RAND_MAX + 1.0);
-  double a3 = rand() / (RAND_MAX + 1.0);
-
-  double x = sqrt(-2.0 * log(a0)) * cos(3.1415 * 2 * a1);
-  double y = sqrt(-2.0 * log(a0)) * sin(3.1415 * 2 * a1);
-  double z = sqrt(-2.0 * log(a2)) * cos(3.1415 * 2 * a3);
-  return CVec3<T>(x, y, z);
 }
 
 template<typename REAL>

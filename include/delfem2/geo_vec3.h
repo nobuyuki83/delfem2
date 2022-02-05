@@ -209,7 +209,7 @@ template float delfem2::Length3(const CVec3f&);
 template double delfem2::Length3(const CVec3d&);
 template float delfem2::Length3(const std::array<float,3>&);
 template double delfem2::Length3(const std::array<double,3>&);
-
+//
 template void delfem2::Normalize3(float (&)[3]);
 template void delfem2::Normalize3(double (&)[3]);
 template void delfem2::Normalize3(float (&)[]);
