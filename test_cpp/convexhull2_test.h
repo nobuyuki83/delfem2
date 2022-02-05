@@ -12,14 +12,14 @@
 
 #include "delfem2/geo_convhull2.h"
 #include "delfem2/geo_polyline.h"
+#include "delfem2/vec2.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265359
 #endif
 
-template<typename VEC>
+template<typename VEC, typename SCALAR = typename VEC::Scalar>
 void ConvexHull2_Test0(unsigned int nitr) {
-  using SCALAR = typename VEC::Scalar;
 
   const unsigned int N = 10;
   std::mt19937 rndeng(std::random_device{}());
@@ -37,13 +37,16 @@ void ConvexHull2_Test0(unsigned int nitr) {
 
     // checks whether all angles are less than Pi
     const unsigned int num_points_polygon = polygon_pointidx.size();
-    for (unsigned int i = 0; i < num_points_polygon; i++) {
-      const unsigned int last = (i + num_points_polygon - 1) % num_points_polygon;
-      const unsigned int next = (i + 1) % num_points_polygon;
-      const VEC p1p2 = points[i] - points[last];
-      const VEC p2p3 = points[next] - points[i];
-      const SCALAR cos_val = p1p2.dot(p2p3) / p1p2.norm() / p2p3.norm();
-      EXPECT_GE(cos_val, -1.0-1.0e-6);
+    for (unsigned int ip1 = 0; ip1 < num_points_polygon; ip1++) {
+      const unsigned int ip0 = (ip1 + num_points_polygon - 1) % num_points_polygon;
+      const unsigned int ip2 = (ip1 + 1) % num_points_polygon;
+      EXPECT_NE(ip0, ip1);
+      EXPECT_NE(ip1, ip2);
+      const VEC p1p2 = points[polygon_pointidx[ip1]] - points[polygon_pointidx[ip0]];
+      const VEC p2p3 = points[polygon_pointidx[ip2]] - points[polygon_pointidx[ip1]];
+      const SCALAR sin_val = delfem2::Cross2(p1p2, p2p3);
+      const SCALAR v0 = p1p2.norm() * p2p3.norm();
+      EXPECT_GE(sin_val, 1.0e-10 * v0);
     }
 
     // checks winding number for internal points are 2 * Pi
@@ -60,6 +63,5 @@ void ConvexHull2_Test0(unsigned int nitr) {
     }
   }
 };
-
 
 #endif //CONVEXHULL2_TEST_H_

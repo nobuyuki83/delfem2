@@ -31,7 +31,7 @@ TEST(invertible_fem, dF) {
         Pos0[2] + dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, rndeng)) * 0.2,
         Pos0[3] + dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, rndeng)) * 0.2};
 
-    const dfm2::CMat3d F0 = DeformationGradientTensor(
+    const dfm2::CMat3d F0 = DeformationGradientOfTet(
         Pos0[0], Pos0[1], Pos0[2], Pos0[3],
         pos0[0], pos0[1], pos0[2], pos0[3]);
 
@@ -108,7 +108,7 @@ TEST(invertible_fem, dPdF) {
         Pos0[2] + dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, rndeng)) * 0.2,
         Pos0[3] + dfm2::CVec3d(dfm2::RandomVec<3>(dist_01, rndeng)) * 0.2};
 
-    const dfm2::CMat3d F0 = DeformationGradientTensor(
+    const dfm2::CMat3d F0 = DeformationGradientOfTet(
         Pos0[0], Pos0[1], Pos0[2], Pos0[3],
         pos0[0], pos0[1], pos0[2], pos0[3]);
 

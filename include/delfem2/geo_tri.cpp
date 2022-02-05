@@ -171,11 +171,6 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_Tri3(
   }
   return p_min;
 }
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::Nearest_Origin3_Tri3(
-  double &r0, double &r1,
-  const CVec3d &q0, const CVec3d &q1, const CVec3d &q2);
-#endif
 
 // ===================
 
@@ -200,19 +195,6 @@ bool delfem2::IntersectRay_Tri3(
   const REAL r2 = v2 / vt;
   return (r0 >= -eps && r1 >= -eps && r2 >= -eps);
 }
-#ifdef DFM2_STATIC_LIBRARY
-template bool delfem2::IntersectRay_Tri3(
-  double &r0, double &r1,
-  const CVec3d &org, const CVec3d &dir,
-  const CVec3d &p0, const CVec3d &p1, const CVec3d &p2,
-  double eps);
-template bool delfem2::IntersectRay_Tri3(
-  float &r0, float &r1,
-  const CVec3f &org, const CVec3f &dir,
-  const CVec3f &p0, const CVec3f &p1, const CVec3f &p2,
-  float eps);
-#endif
-
 
 // =====================
 
@@ -333,14 +315,15 @@ template bool delfem2::isIntersectTriPair(
 
 
 template<typename T>
-delfem2::CVec3<T> delfem2::ProjectPointOnTriangle
-  (const CVec3<T> &p0,
-   const CVec3<T> &tri_p1, const CVec3<T> &tri_p2, const CVec3<T> &tri_p3) {
+delfem2::CVec3<T> delfem2::ProjectPointOnTriangle(
+    const CVec3<T> &p0,
+    const CVec3<T> &tri_p1,
+    const CVec3<T> &tri_p2,
+    const CVec3<T> &tri_p3) {
   CVec3<T> normal = Cross(tri_p2 - tri_p1, tri_p3 - tri_p1);
   double cosAlpha = Dot(p0 - tri_p1, normal) / (Length(p0 - tri_p1) * Length(normal));
   double lenP0ProjectedP0 = Length(tri_p1 - p0) * cosAlpha;
   CVec3<T> p0ProjectedP0 = -1 * lenP0ProjectedP0 * normal / Length(normal);
-
   return p0 + p0ProjectedP0;
 }
 
@@ -375,12 +358,6 @@ bool delfem2::isRayIntersectingTriangle(
 
   return true;
 }
-#ifdef DFM2_STATIC_LIBRARY
-template bool delfem2::isRayIntersectingTriangle(
-  const CVec3d &line0, const CVec3d &line1,
-  const CVec3d &tri0, const CVec3d &tri1, const CVec3d &tri2,
-  CVec3d &intersectionPoint);
-#endif
 
 // ----------------------------------------
 
@@ -425,12 +402,64 @@ double delfem2::DistanceFaceVertex(
   CVec3<T> pw = w0 * p0 + w1 * p1 + w2 * p2;
   return (pw - p3).norm();
 }
-#ifdef DFM2_STATIC_LIBRARY
-template double delfem2::DistanceFaceVertex(
-  const CVec3d &p0, const CVec3d &p1,
-  const CVec3d &p2, const CVec3d &p3,
-  double &w0, double &w1);
-#endif
+
+// -------------------
+
+template<typename VEC, typename T>
+T delfem2::SolidAngleTri(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3) {
+  const T l1 = v1.norm();
+  const T l2 = v2.norm();
+  const T l3 = v3.norm();
+  const T den = (v1.cross(v2)).dot(v3);
+  const T num = l1 * l2 * l3 + (v1.dot(v2)) * l3 + (v2.dot(v3)) * l1 + (v3.dot(v1)) * l2;
+  const T tho = den / num;
+  T v = std::atan(tho);
+  if (v < 0) { v += 2 * M_PI; }
+  v *= 2;
+  return v;
+}
+
+
+template<typename VEC0, typename VEC1, typename T>
+void delfem2::UnitNormalAreaTri3(
+    VEC0 &&n,
+    T &a,
+    const VEC1 &v1,
+    const VEC1 &v2,
+    const VEC1 &v3) {
+  Normal_Tri3(
+      n,
+      v1, v2, v3);
+  a = Length3(n) / 2;
+  const T invlen = 1 / (a * 2);
+  n[0] *= invlen;
+  n[1] *= invlen;
+  n[2] *= invlen;
+}
+
+template<typename VEC>
+VEC delfem2::Normal_Tri3(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3) {
+  return {
+      (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v2[2] - v1[2]) * (v3[1] - v1[1]),
+      (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v2[0] - v1[0]) * (v3[2] - v1[2]),
+      (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]) };
+}
+
+template<typename VEC>
+VEC delfem2::UnitNormal_Tri3(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3) {
+  VEC vnorm = Normal_Tri3(v1,v2,v3);
+  Normalize3(vnorm);
+  return vnorm;
+}
 
 // ==============================================
 
@@ -447,6 +476,7 @@ namespace delfem2 {
   using d2 = std::array<double,3>;
   using f3 = CVec3f;
   using d3 = CVec3d;
+  //
   template float Area_Tri3(const f0&, const f0&, const f0&);
   template float Area_Tri3(const f1&, const f1&, const f1&);
   template float Area_Tri3(const f2&, const f2&, const f2&);
@@ -455,5 +485,36 @@ namespace delfem2 {
   template double Area_Tri3(const d1&, const d1&, const d1&);
   template double Area_Tri3(const d2&, const d2&, const d2&);
   template double Area_Tri3(const d3&, const d3&, const d3&);
+  //
+  template f2 Normal_Tri3(const f2 &v1, const f2 &v2, const f2 &v3);
+  template f3 Normal_Tri3(const f3 &v1, const f3 &v2, const f3 &v3);
+  //
+  template f2 UnitNormal_Tri3(const f2 &, const f2 &, const f2 &);
+  template f3 UnitNormal_Tri3(const f3 &, const f3 &, const f3 &);
+  //
+  template void UnitNormalAreaTri3(f0&, float&, const f0&, const f0&, const f0&);
+  template void UnitNormalAreaTri3(f1&, float&, const f1&, const f1&, const f1&);
+  template void UnitNormalAreaTri3(f2&, float&, const f2&, const f2&, const f2&);
+  template void UnitNormalAreaTri3(f3&, float&, const f3&, const f3&, const f3&);
+  template void UnitNormalAreaTri3(d0&, double&, const d0&, const d0&, const d0&);
+  template void UnitNormalAreaTri3(d1&, double&, const d1&, const d1&, const d1&);
+  template void UnitNormalAreaTri3(d2&, double&, const d2&, const d2&, const d2&);
+  template void UnitNormalAreaTri3(d3&, double&, const d3&, const d3&, const d3&);
+  //
+  template float SolidAngleTri(const f3&, const f3&, const f3&);
+  template float SolidAngleTri(const d3&, const d3&, const d3&);
+  //
+  template bool IntersectRay_Tri3(double &, double &, const d3 &, const d3 &,
+                                  const d3 &, const d3 &, const d3 &, double);
+  template bool IntersectRay_Tri3(float &, float &, const f3 &, const f3 &,
+                                  const f3 &, const f3 &, const f3 &, float);
+  template bool isRayIntersectingTriangle(const d3 &, const d3 &,
+                                          const d3 &, const d3 &, const d3 &,
+                                          d3 &);
+  template double DistanceFaceVertex(const d3 &, const d3 &,
+                                     const d3 &, const d3 &,
+                                     double &, double &);
+  template d3 Nearest_Origin3_Tri3(double &r0, double &r1,
+                                   const d3 &q0, const d3 &q1, const d3 &q2);
 }
 #endif

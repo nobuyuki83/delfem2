@@ -15,25 +15,6 @@
 
 namespace delfem2 {
 
-template<typename VEC, typename T = typename VEC::Scalar>
-std::array<T, 9> DeformationGradientTensor(
-    const VEC &P0,
-    const VEC &P1,
-    const VEC &P2,
-    const VEC &P3,
-    const VEC &p0,
-    const VEC &p1,
-    const VEC &p2,
-    const VEC &p3) {
-  namespace dfm2 = delfem2;
-  std::array<T, 9> Basis0 = delfem2::Mat3_3BasesOfTet<VEC,T>(P0,P1,P2,P3);
-  const std::array<T, 9> basis0 = delfem2::Mat3_3BasesOfTet<VEC,T>(p0,p1,p2,p3);
-  delfem2::Inverse_Mat3(Basis0.data());
-  std::array<T, 9> r{};
-  delfem2::MatMat3(r.data(), basis0.data(), Basis0.data());
-  return r;
-}
-
 // dPdF[k][l][i][j] = dP_kl / dF_ij
 double DiffPiolaKirchhoff1st(
     delfem2::CMat3d &P0,
@@ -79,7 +60,7 @@ double WdWddW_InvertibleFEM(
     const double pos[4][3],
     const std::function<double(double[3], double[3][3], double, double, double)> &neohook) {
   namespace dfm2 = delfem2;
-  const dfm2::CMat3d F0 = DeformationGradientTensor<const double [3], double>(
+  const dfm2::CMat3d F0 = DeformationGradientOfTet<const double [3], double>(
       Pos[0], Pos[1], Pos[2], Pos[3],
       pos[0], pos[1], pos[2], pos[3]);
 

@@ -67,6 +67,13 @@ template<typename T>
 DFM2_INLINE void GaussianDistribution2(
     T noise[2]);
 
+template<typename VEC, typename T = typename VEC::Scalar>
+T Cross2(
+    const VEC &v2,
+    const VEC &v3) {
+  return v2[0] * v3[1] - v3[0] * v2[1];
+}
+
 // ----------------------
 
 template<typename T>

@@ -24,13 +24,7 @@ TEST(mathfunc, sherical_harmonics_orthgonality) {
   std::vector<unsigned int> aTri;
   delfem2::MeshTri3D_Cube(aXYZ, aTri, 50);
   for (int ip = 0; ip < aXYZ.size() / 3; ip++) {
-    double x = aXYZ[ip * 3 + 0];
-    double y = aXYZ[ip * 3 + 1];
-    double z = aXYZ[ip * 3 + 2];
-    double invlen = 1.0 / sqrt(x * x + y * y + z * z);
-    aXYZ[ip * 3 + 0] *= invlen;
-    aXYZ[ip * 3 + 1] *= invlen;
-    aXYZ[ip * 3 + 2] *= invlen;
+    delfem2::Normalize3(aXYZ.data()+ip*3);
   }
   const int norder = 9;
   const int N = (norder + 1) * (norder + 1);
