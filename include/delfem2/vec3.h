@@ -50,21 +50,6 @@ DFM2_INLINE void Add3(
     REAL vo[3],
     const REAL vi[3]);
 
-template<typename T>
-void NormalTri3(
-    T n[3],
-    const T v1[3], const T v2[3], const T v3[3]);
-
-template<typename REAL>
-void UnitNormalAreaTri3(
-    REAL n[3], REAL &a,
-    const REAL v1[3], const REAL v2[3], const REAL v3[3]);
-
-DFM2_INLINE void GetVertical2Vector3D(
-    const double vec_n[3],
-    double vec_x[3],
-    double vec_y[3]);
-
 // above: no dependency
 // -------------------------------------------------------------
 // below: definition of CVec3
@@ -312,16 +297,6 @@ class CVec3 {
 using CVec3d = CVec3<double>;
 using CVec3f = CVec3<float>;
 
-
-// above: definition of CVec3
-// -----------------------------------------
-// below: functions using CVec3 (todo: move to geo_vec3.h?)
-
-template<typename T>
-delfem2::CVec3<T> Cross(
-    const CVec3<T> &arg1,
-    const CVec3<T> &arg2);
-
 // --------------------------------------------------------------------------
 // rule about naming, the method starts "Set" change it self (not const)
 
@@ -351,51 +326,7 @@ bool operator==(const CVec3<T> &lhs, const CVec3<T> &rhs);
 template<typename T>
 bool operator!=(const CVec3<T> &lhs, const CVec3<T> &rhs);
 
-template<typename T>
-void GetVertical2Vector(
-    const CVec3<T> &vec_n, CVec3<T> &vec_x, CVec3<T> &vec_y);
-
 // ---------------------------------------------
-
-template<typename T>
-double SqareLongestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3);
-
-template<typename T>
-double LongestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3);
-
-template<typename T>
-double SqareShortestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3);
-
-template<typename T>
-double ShortestEdgeLength(
-    const CVec3<T> &ipo0,
-    const CVec3<T> &ipo1,
-    const CVec3<T> &ipo2,
-    const CVec3<T> &ipo3);
-
-template<typename T>
-CVec3<T> Normal(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3);
-
-template<typename T>
-CVec3<T> UnitNormal(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3);
 
 template<typename T>
 CVec3<T> RotateVector(
@@ -431,32 +362,6 @@ DFM2_INLINE std::array<REAL, 9> Mat3_ParallelTransport(
     const CVec3<REAL> &p1,
     const CVec3<REAL> &q0,
     const CVec3<REAL> &q1);
-
-// ----------------------------------------------------------
-// here starts std::vector<CVector3>
-
-
-template<typename VEC>
-std::ostream &operator<<(
-    std::ostream &output,
-    const std::vector<VEC> &aV) {
-  output << aV.size() << std::endl;
-  for (unsigned int iv = 0; iv < aV.size(); ++iv) {
-    output << "  " << iv << "-->" << aV[iv][0] << " " << aV[iv][1] << " " << aV[iv][2] << std::endl;
-  }
-  return output;
-}
-
-template<typename VEC>
-std::istream &operator>>(std::istream &input, std::vector<VEC> &aV) {
-  int nV;
-  input >> nV;
-  aV.resize(nV);
-  for (int iv = 0; iv < nV; iv++) {
-    input >> aV[iv][0] >> aV[iv][1] >> aV[iv][2];
-  }
-  return input;
-}
 
 } // namespace delfem2
 

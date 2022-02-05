@@ -441,7 +441,8 @@ void delfem2::CCad3D_Face::Initialize(
   }
   ////
   CVec3d cg, norm; cad3d::FaceCenterNormal(cg,norm, aIE, aEdge);
-  CVec3d axis_x, axis_y; GetVertical2Vector(norm, axis_x, axis_y);
+  CVec3d axis_x, axis_y;
+  FrameFromVectorZ(axis_x, axis_y, norm);
   std::vector<double> aXY_B0;
   for(unsigned int ixyz=0;ixyz<aXYZ_B0.size()/3;++ixyz){
     CVec3d p(aXYZ_B0[ixyz*3+0],aXYZ_B0[ixyz*3+1],aXYZ_B0[ixyz*3+2]);

@@ -347,7 +347,7 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
   CVec3d p3 = (1 - rx) * (1 - ry) * p00 + rx * (1 - ry) * p10 + (1 - rx) * ry * p01 + rx * ry * p11;
   CVec3d dpx = (ry - 1) * p00 + (1 - ry) * p10 - ry * p01 + ry * p11;
   CVec3d dpy = (rx - 1) * p00 - rx * p10 + (1 - rx) * p01 + rx * p11;
-  CVec3d n3 = Cross(dpx, dpy);
+  CVec3d n3 = dpx.cross(dpy);
   //
   const CMat4d depthfield2global = global2depthfield.Inverse();
   Vec3_Mat4Vec3_Homography(p0.p, depthfield2global.data(), p3.p);

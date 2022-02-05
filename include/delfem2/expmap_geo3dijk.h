@@ -53,9 +53,9 @@ public:
       aTex[ip_ker * 2 + 0] = 0.0;
       aTex[ip_ker * 2 + 1] = 0.0;
       CVec3d y0;
-      GetVertical2Vector(
-          CVec3d(aNorm.data() + ip_ker * 3),
-          aAxisX[ip_ker], y0);
+      FrameFromVectorZ(
+          aAxisX[ip_ker], y0,
+          CVec3d(aNorm.data() + ip_ker * 3));
       aW[ip_ker] = 1.0;
     }
   }
@@ -122,9 +122,9 @@ public:
       aTex[it_ker * 2 + 1] = 0.0;
       CVec3d n0 = CVec3d(Normal_Tri3(it_ker,aTri,aXYZ)).normalized();
       CVec3d y0;
-      GetVertical2Vector(
-          n0,
-          aAxisX[it_ker], y0);
+      FrameFromVectorZ(
+          aAxisX[it_ker], y0,
+          n0);
       aW[it_ker] = 1.0;
     }
   }

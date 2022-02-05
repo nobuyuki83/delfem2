@@ -24,7 +24,7 @@ DFM2_INLINE void Mesh_ArrowOcta(
   CV3 z = d;
   z.normalize();
   CV3 x, y;
-  GetVertical2Vector(z, x, y);
+  FrameFromVectorZ(x, y, z);
   const REAL dt = M_PI * 0.5;
   const REAL r0 = d.norm() * rad_ratio;
   const CV3 p1 = p0 + node_ratio * d;

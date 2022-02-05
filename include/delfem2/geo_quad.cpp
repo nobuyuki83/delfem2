@@ -167,7 +167,7 @@ bool delfem2::intersection_Point_Quad(
   const CVec3<T> &src, const CVec3<T> &dir,
   const CVec3<T> &q0, const CVec3<T> &q1, const CVec3<T> &q2, const CVec3<T> &q3) {
   CVec3<T> u, v;
-  GetVertical2Vector(dir, u, v);
+  FrameFromVectorZ(u, v, dir);
   //
   double dist_min = -1;
   CVec3<T> q_min;

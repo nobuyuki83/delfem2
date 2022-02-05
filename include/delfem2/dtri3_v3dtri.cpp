@@ -216,7 +216,7 @@ DFM2_INLINE delfem2::CVec3d delfem2::UnitNormal_DTri3(
   const unsigned int i0 = aSTri[itri0].v[0];
   const unsigned int i1 = aSTri[itri0].v[1];
   const unsigned int i2 = aSTri[itri0].v[2];
-  const CVec3d n = Normal(aP3[i0], aP3[i1], aP3[i2]);
+  const CVec3d n = Normal_Tri3(aP3[i0], aP3[i1], aP3[i2]);
   return n.normalized();
 }
 

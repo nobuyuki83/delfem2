@@ -249,13 +249,13 @@ DFM2_INLINE double delfem2::WdWddW_DotFrame(
   {
     Frm0[2] = (P[1] - P[0]).normalized();
     Frm0[0] = S[0];
-    Frm0[1] = Cross(Frm0[2], Frm0[0]);
+    Frm0[1] = Frm0[2].cross(Frm0[0]);
   }
   CVec3d Frm1[3];
   {
     Frm1[2] = (P[2] - P[1]).normalized();
     Frm1[0] = S[1];
-    Frm1[1] = Cross(Frm1[2], Frm1[0]);
+    Frm1[1] = Frm1[2].cross(Frm1[0]);
   }
   // ----------
   CMat3d dF0_dv[3];
@@ -301,13 +301,13 @@ DFM2_INLINE delfem2::CVec3d delfem2::Darboux_Rod(
   { // frame on line segment 01
     F0[2] = (P[1] - P[0]).normalized();
     F0[0] = S[0];
-    F0[1] = Cross(F0[2], F0[0]);
+    F0[1] = F0[2].cross(F0[0]);
   }
   CVec3d F1[3];
   { // frame on line segment 12
     F1[2] = (P[2] - P[1]).normalized();
     F1[0] = S[1];
-    F1[1] = Cross(F1[2], F1[0]);
+    F1[1] = F1[2].cross(F1[0]);
   }
   const double Y = 1 + F0[0].dot(F1[0]) + F0[1].dot(F1[1]) + F0[2].dot(F1[2]);
   const double X[3] = {
@@ -331,13 +331,13 @@ void delfem2::CdC_Rod(
   { // compute frame on 01 segment
     F[2] = (P[1] - P[0]).normalized();
     F[0] = S[0];
-    F[1] = Cross(F[2], F[0]);
+    F[1] = F[2].cross(F[0]);
   }
   CVec3d G[3];
   { // compute frame on 12 segment
     G[2] = (P[2] - P[1]).normalized();
     G[0] = S[1];
-    G[1] = Cross(G[2], G[0]);
+    G[1] = G[2].cross(G[0]);
   }
   // ----------
   CMat3d dF_dv[3];
@@ -562,13 +562,13 @@ DFM2_INLINE double delfem2::WdWddW_Rod3Exact(
   { // compute frame on 01 segment
     F[2] = (P[1] - P[0]).normalized();
     F[0] = S[0];
-    F[1] = Cross(F[2], F[0]);
+    F[1] = F[2].cross(F[0]);
   }
   CVec3d G[3];
   { // compute frame on 12 segment
     G[2] = (P[2] - P[1]).normalized();
     G[0] = S[1];
-    G[1] = Cross(G[2], G[0]);
+    G[1] = G[2].cross(G[0]);
   }
   // ----------
   CMat3d dF_dv[3];

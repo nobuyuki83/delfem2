@@ -380,12 +380,12 @@ class CStep_Circle : public CStep_Curve {
     pA2P3D = (CStep_Axis2Placement3D *) apStepElem[iA2P3D];
   }
   void Draw() const override {}
-  /////
+  //
   [[nodiscard]] double GetParameter(const dfm2::CVec3d &p) const override {
     const dfm2::CVec3d &c = pA2P3D->pCP->p;
     const dfm2::CVec3d &n = pA2P3D->pDir1->dir;
     const dfm2::CVec3d ex = (pA2P3D->pDir2->dir).normalized();
-    const dfm2::CVec3d ey = Cross(n, ex).normalized();
+    const dfm2::CVec3d ey = n.cross(ex).normalized();
     return atan2((p - c).dot(ey), (p - c).dot(ex));
   }
   void SampleCurve(
@@ -395,7 +395,7 @@ class CStep_Circle : public CStep_Curve {
     const dfm2::CVec3d &c = pA2P3D->pCP->p;
     const dfm2::CVec3d &n = pA2P3D->pDir1->dir;
     const dfm2::CVec3d ex = (pA2P3D->pDir2->dir).normalized();
-    const dfm2::CVec3d ey = Cross(n, ex).normalized();
+    const dfm2::CVec3d ey = n.cross(ex).normalized();
     if (r1 > r2) { r2 += M_PI * 2; }
     polyLine.clear();
     for (unsigned int is = 0; is < nsmpl; ++is) {
@@ -407,7 +407,7 @@ class CStep_Circle : public CStep_Curve {
  public:
   int idA2P3D{};
   double radius{};
-  ////
+  //
   const CStep_Axis2Placement3D *pA2P3D{};
 };
 
@@ -713,7 +713,7 @@ class CStep_Plane : public CStep_Surface {
     dfm2::CVec3d org = pA2P3D->pCP->p;
     dfm2::CVec3d n = pA2P3D->pDir1->dir;
     dfm2::CVec3d ex = pA2P3D->pDir2->dir;
-    dfm2::CVec3d ey = Cross(n, ex);
+    dfm2::CVec3d ey = n.cross(ex);
     double l = 100;
 //    ::glEnable(GL_LIGHTING);
     ::glBegin(GL_LINE_LOOP);
@@ -730,7 +730,7 @@ class CStep_Plane : public CStep_Surface {
     const dfm2::CVec3d &org = pA2P3D->pCP->p;
     const dfm2::CVec3d &n = pA2P3D->pDir1->dir;
     const dfm2::CVec3d &ex = pA2P3D->pDir2->dir;
-    const dfm2::CVec3d &ey = Cross(n, ex);
+    const dfm2::CVec3d &ey = n.cross(ex);
     r0 = (p0 - org).dot(ex);
     r1 = (p0 - org).dot(ey);
   }
@@ -790,7 +790,7 @@ class CStep_AdvancedFace : public CStep_Elem {
     }
   }
   void Draw() const override {}
-  ///
+  //
   void SampleSurface() {
   }
  public:
@@ -798,7 +798,7 @@ class CStep_AdvancedFace : public CStep_Elem {
   int idSurf{};
   CStep_Surface *pSurf{};
   std::vector<CStep_FaceOuterBound *> apFOB;
-  /////
+  //
   std::vector<double> aXYZ;
   std::vector<int> aTri;
 };

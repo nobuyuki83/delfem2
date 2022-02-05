@@ -18,15 +18,16 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/points.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
 #include "delfem2/slice.h"
+#include "delfem2/geo_tri.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 
 namespace dfm2 = delfem2;
 
@@ -134,8 +135,9 @@ void Hoge(
       iseg.Pos3D(pA, pB,
                  vtx_xyz, tri_adjtri);
       double n0[3];
-      dfm2::NormalTri3(n0,
-                       pA, pB, po);
+      dfm2::Normal_Tri3(
+          n0,
+          pA, pB, po);
       const double area0 = n0[0] * nrm[0] + n0[1] * nrm[1] + n0[2] * nrm[2];
       sum_area += area0;
       cg.p[0] += area0 * (po[0] + pA[0] + pB[0]) / 3.0;

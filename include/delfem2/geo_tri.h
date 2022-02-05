@@ -182,6 +182,53 @@ std::array<T, 3> Normal_Tri3(
   return ret;
 }
 
+// --------------------
+
+template<typename VEC0, typename VEC1, typename T = value_type<VEC0>>
+void UnitNormalAreaTri3(
+    VEC0 &&n,
+    T &a,
+    const VEC1 &v1, const VEC1 &v2, const VEC1 &v3) {
+  Normal_Tri3(
+      n,
+      v1, v2, v3);
+  a = Length3(n) / 2;
+  const T invlen = 1 / (a * 2);
+  n[0] *= invlen;
+  n[1] *= invlen;
+  n[2] *= invlen;
+}
+
+template<typename VEC>
+VEC Normal_Tri3(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3) {
+  return {
+      (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v2[2] - v1[2]) * (v3[1] - v1[1]),
+      (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v2[0] - v1[0]) * (v3[2] - v1[2]),
+      (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]) };
+}
+
+template<typename VEC, typename T = value_type<VEC>>
+VEC UnitNormal_Tri3(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3) {
+  VEC vnorm{
+      (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v2[2] - v1[2]) * (v3[1] - v1[1]),
+      (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v2[0] - v1[0]) * (v3[2] - v1[2]),
+      (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]) };
+  const T dtmp1 = 1 / vnorm.norm();
+  vnorm[0] *= dtmp1;
+  vnorm[1] *= dtmp1;
+  vnorm[2] *= dtmp1;
+  return vnorm;
+}
+
+// ----------------------------------
+// this can be moved to meshuni
+
 template<typename T>
 std::array<T, 3> CG_Tri3(
     unsigned int itri,

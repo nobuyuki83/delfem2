@@ -27,12 +27,10 @@ T Volume_Tet3(
   const T v2[3],
   const T v3[3],
   const T v4[3]) {
-  return
-    (
-      +(v2[0] - v1[0]) * ((v3[1] - v1[1]) * (v4[2] - v1[2]) - (v4[1] - v1[1]) * (v3[2] - v1[2]))
-        - (v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2]))
-        + (v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]))
-    ) * 0.16666666666666666666666666666667;
+  const T a0 = + (v2[0] - v1[0]) * ((v3[1] - v1[1]) * (v4[2] - v1[2]) - (v4[1] - v1[1]) * (v3[2] - v1[2]));
+  const T a1 = - (v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2]));
+  const T a2 = + (v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]));
+  return (a0+a1+a2) * 0.16666666666666666666666666666667;
 }
 
 template<typename T>
@@ -241,8 +239,8 @@ bool delfem2::isIntersectTriPair(
   const CVec3<T> q0(aXYZ[j0 * 3 + 0], aXYZ[j0 * 3 + 1], aXYZ[j0 * 3 + 2]);
   const CVec3<T> q1(aXYZ[j1 * 3 + 0], aXYZ[j1 * 3 + 1], aXYZ[j1 * 3 + 2]);
   const CVec3<T> q2(aXYZ[j2 * 3 + 0], aXYZ[j2 * 3 + 1], aXYZ[j2 * 3 + 2]);
-  const CVec3<T> np = Normal(p0, p1, p2);
-  const CVec3<T> nq = Normal(q0, q1, q2);
+  const CVec3<T> np = Normal_Tri3(p0, p1, p2);
+  const CVec3<T> nq = Normal_Tri3(q0, q1, q2);
   double dp0 = (p0 - q0).dot(nq);
   double dp1 = (p1 - q0).dot(nq);
   double dp2 = (p2 - q0).dot(nq);
@@ -257,7 +255,7 @@ bool delfem2::isIntersectTriPair(
   const CVec3<T> q01 = (1.0 / (dq0 - dq1)) * (dq0 * q1 - dq1 * q0);
   const CVec3<T> q12 = (1.0 / (dq1 - dq2)) * (dq1 * q2 - dq2 * q1);
   const CVec3<T> q20 = (1.0 / (dq2 - dq0)) * (dq2 * q0 - dq0 * q2);
-  const CVec3<T> vz = Cross(np, nq);
+  const CVec3<T> vz = np.cross(nq);
   CVec3<T> ps, pe;
   if (dp0 * dp1 > 0) {
     ps = p20;

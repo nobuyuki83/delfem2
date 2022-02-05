@@ -11,6 +11,7 @@
 #include <stack>
 
 #include "delfem2/geo_vec3.h"
+#include "delfem2/geo_tri.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -185,8 +186,9 @@ double delfem2::Height(
     const CVec3<T> &v3,
     const CVec3<T> &v4) {
   T n[3];
-  NormalTri3(n,
-             v1.p, v2.p, v3.p);
+  Normal_Tri3(
+      n,
+      v1.p, v2.p, v3.p);
   Normalize3(n);
   return (v4.p[0] - v1.p[0]) * n[0] + (v4.p[1] - v1.p[1]) * n[1] + (v4.p[2] - v1.p[2]) * n[2];
 }

@@ -7,9 +7,10 @@
 
 #include "delfem2/geo_line.h"
 
-#include <cstdlib>
 #include <cmath>
 #include <stack>
+
+#include "delfem2/geo_vec3.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -262,7 +263,7 @@ void delfem2::Nearest_Line_Circle(
   const int nitr = 4;
   // ---------------------------------------
   CVec3<T> ex, ey;
-  GetVertical2Vector(normal, ex, ey);
+  FrameFromVectorZ(ex, ey, normal);
   T u0;
   {
     if (fabs(dir.dot(normal)) > fabs((org - src).dot(normal)) * 1.0e-4) {

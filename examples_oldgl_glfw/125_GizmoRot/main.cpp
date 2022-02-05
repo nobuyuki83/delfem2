@@ -82,12 +82,10 @@ int main() {
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   // --------------------
-  while (true) {
+  while (!glfwWindowShouldClose(viewer.window)) {
     viewer.Draw();
     glfwPollEvents();
-    if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
   }
-  EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

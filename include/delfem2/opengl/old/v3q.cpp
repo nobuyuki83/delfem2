@@ -176,15 +176,15 @@ DFM2_INLINE void delfem2::opengl::ViewTransformation(
 
 //--------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawCylinderWire
-    (const CVec3d &p0,
-     const CVec3d &p1,
-     double r) {
+DFM2_INLINE void delfem2::opengl::DrawCylinderWire(
+    const CVec3d &p0,
+    const CVec3d &p1,
+    double r) {
   const int ndiv = 16;
   double rdiv = 3.1415 * 2.0 / ndiv;
   CVec3d ez = (p1 - p0).normalized();
   CVec3d ex, ey;
-  GetVertical2Vector(ez, ex, ey);
+  FrameFromVectorZ(ex, ey, ez);
   ::glBegin(GL_LINES);
   for (int idiv = 0; idiv < ndiv; ++idiv) {
     double tA = rdiv * idiv;
@@ -213,7 +213,7 @@ DFM2_INLINE void delfem2::opengl::DrawCylinder
      double r) {
   CVec3d z = (p1 - p0).normalized();
   CVec3d x, y;
-  GetVertical2Vector(z, x, y);
+  FrameFromVectorZ(x, y, z);
   const int ndivt = 32;
   const double dt = 3.1415 * 2.0 / ndivt;
   { // cylinder
@@ -254,7 +254,7 @@ DFM2_INLINE void delfem2::opengl::DrawArrow(
   CV3 z = d;
   z.normalize();
   CV3 x, y;
-  GetVertical2Vector(z, x, y);
+  FrameFromVectorZ(x, y, z);
   REAL dt = static_cast<REAL>(3.1415 * 2.0) / ndivt;
   REAL r0 = d.norm() * static_cast<REAL>(0.05);
   REAL r1 = d.norm() * static_cast<REAL>(0.10);
@@ -315,7 +315,7 @@ DFM2_INLINE void delfem2::opengl::DrawArrowOcta_FaceNrm(
   CV3 z = d;
   z.normalize();
   CV3 x, y;
-  GetVertical2Vector(z, x, y);
+  FrameFromVectorZ(x, y, z);
   const REAL dt = M_PI * 0.5;
   const REAL r0 = d.norm() * rad_ratio;
   const CV3 p1 = p0 + node_ratio * d;
@@ -357,7 +357,7 @@ DFM2_INLINE void delfem2::opengl::DrawArrowOcta_Edge(
   CV3 z = d;
   z.normalize();
   CV3 x, y;
-  GetVertical2Vector(z, x, y);
+  FrameFromVectorZ(x, y, z);
   const REAL dt = M_PI * 0.5;
   const REAL r0 = d.norm() * rad_ratio;
   const CV3 p1 = p0 + node_ratio * d;
@@ -404,7 +404,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleArrow(
   CVec3d z = -axis;
   z.normalize();
   CVec3d x, y;
-  GetVertical2Vector(z, x, y);
+  FrameFromVectorZ(x, y, z);
   CVec3d p0 = org + offset * z;
   int ndivt = 32;
   double dt = 3.1415 * 2.0 / ndivt;
@@ -463,7 +463,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleWire(
   int n = 32;
   REAL dt0 = 2 * pi / n;
   CVec3<REAL> vh, vw;
-  GetVertical2Vector(axis, vh, vw);
+  FrameFromVectorZ(vh, vw, axis);
   ::glBegin(GL_LINE_STRIP);
   for (int i = 0; i < n + 1; i++) {
     CVec3<REAL> p = org + (REAL) (r * sin(dt0 * i)) * vh + (REAL) (r * cos(dt0 * i)) * vw;
@@ -488,7 +488,7 @@ DFM2_INLINE void delfem2::opengl::DrawCircleSolid
      double r) {
   const CVec3d &z = axis;
   CVec3d x, y;
-  GetVertical2Vector(z, x, y);
+  FrameFromVectorZ(x, y, z);
   const int ndivt = 32;
   const double dt = 3.1415 * 2.0 / ndivt;
   {
@@ -517,7 +517,7 @@ DFM2_INLINE void delfem2::opengl::DrawArcSolid
      double rade) {
   const CVec3d &z = axis;
   CVec3d x, y;
-  GetVertical2Vector(z, x, y);
+  FrameFromVectorZ(x, y, z);
   const int ndivt = 32;
   const double dt = (rade - rads) / ndivt;
   {
@@ -619,7 +619,7 @@ DFM2_INLINE void delfem2::opengl::DrawTriMeshNorm
     const CVec3d &v0 = aP[i0];
     const CVec3d &v1 = aP[i1];
     const CVec3d &v2 = aP[i2];
-    const CVec3d &n = Normal(v0, v1, v2).normalized();
+    const CVec3d &n = Normal_Tri3(v0, v1, v2).normalized();
     myGlNormal(n);
     myGlVertex(v0);
     myGlVertex(v1);

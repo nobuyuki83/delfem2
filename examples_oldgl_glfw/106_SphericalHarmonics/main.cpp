@@ -13,13 +13,13 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
+#include "delfem2/vec3.h"
+#include "delfem2/specialfuncs.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/v3q.h"
-#include "delfem2/vec3.h"
-#include "delfem2/specialfuncs.h"
 
 namespace dfm2 = delfem2;
 

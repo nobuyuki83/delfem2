@@ -103,7 +103,7 @@ int main() {
         const dfm2::CVec3d p = dfm2::CVec3d(vtx_xyz.data() + ip * 3);
         const dfm2::CVec3d n = dfm2::CVec3d(vtx_normal.data() + ip * 3).normalized();
         const dfm2::CVec3d o = dfm2::CVec3d(aOdir.data() + ip * 3).normalized();
-        const dfm2::CVec3d q = dfm2::Cross(n, o);
+        const dfm2::CVec3d q = n.cross(o);
         ::glBegin(GL_LINES);
         ::glColor3d(0, 0, 0);
         dfm2::opengl::myGlVertex(p);

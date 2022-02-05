@@ -301,7 +301,7 @@ void delfem2::makeLinearSystem_PotentialFlow_Order1st(
       const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
       const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
       const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
-      CVec3d n = Normal(q0, q1, q2);
+      CVec3d n = Normal_Tri3(q0, q1, q2);
       const double area = n.norm()*0.5; // area
       n.normalize(); // unit normal
       n *= -1; // outward pointing vector
@@ -361,7 +361,7 @@ delfem2::CVec3d delfem2::evaluateField_PotentialFlow_Order1st(
     const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
     const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
     assert(ngauss>=0&&ngauss<6);
-    CVec3d n = Normal(q0, q1, q2);
+    CVec3d n = Normal_Tri3(q0, q1, q2);
     const double area = n.norm()*0.5; // area
     n.normalize(); // unit normal
     n *= -1; // outward normal 
@@ -417,7 +417,7 @@ void delfem2::makeLinearSystem_PotentialFlow_Order0th(
       const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
       const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
       const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
-      CVec3d ny = Normal(q0, q1, q2);
+      CVec3d ny = Normal_Tri3(q0, q1, q2);
       const double area = ny.norm()*0.5; // area
       ny.normalize(); // unit normal
       ny *= -1; // it is pointing outward to the domain
@@ -491,7 +491,7 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
     const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
     const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
     const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
-    CVec3d ny = Normal(q0, q1, q2);
+    CVec3d ny = Normal_Tri3(q0, q1, q2);
     const double area = ny.norm()*0.5; // area
 //    const double elen = sqrt(area*2)*0.5;
     ny.normalize(); // unit normal
@@ -548,13 +548,13 @@ void delfem2::BEM_VortexSheet_Coeff_0th(
   const int nint = NIntTriGauss[ngauss]; // number of integral points
   //
   CVec3d xm = (x0+x1+x2)*0.3333333333333333333;
-  CVec3d nx = Normal(x0, x1, x2);
+  CVec3d nx = Normal_Tri3(x0, x1, x2);
 //  const double areax = nx.Length()*0.5; // area
   nx.normalize(); // unit normal
   const CVec3d ux = (x1-x0).normalized();
   const CVec3d vx = nx.cross(ux);
   //
-  CVec3d ny = Normal(y0, y1, y2);
+  CVec3d ny = Normal_Tri3(y0, y1, y2);
   const double areay = ny.norm()*0.5; // area
   ny.normalize(); // unit normal
   const CVec3d uy = (y1-y0).normalized();
@@ -603,7 +603,7 @@ void delfem2::makeLinearSystem_VortexSheet_Order0th(
     const CVec3d p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
     const CVec3d p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
     {
-      const CVec3d nx = Normal(p0, p1, p2).normalized();
+      const CVec3d nx = Normal_Tri3(p0, p1, p2).normalized();
       const CVec3d ux = (p1-p0).normalized();
       const CVec3d vx = nx.cross(ux);
       f[it*2+0] = ux.dot(velo);
@@ -654,7 +654,7 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
     const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
     const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
     const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
-    CVec3d ny = Normal(q0, q1, q2);
+    CVec3d ny = Normal_Tri3(q0, q1, q2);
     const double areay = ny.norm()*0.5; // area
     ny.normalize(); // unit normal
     const CVec3d uy = (q1-q0).normalized();
@@ -682,11 +682,11 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
 
 // -------------------------------------------------
 
-delfem2::CVec3d delfem2::veloVortexParticle
-(const CVec3d& pos_eval,
- const CVec3d& pos_vp,
- const CVec3d& circ_vp,
- double rad_vp)
+delfem2::CVec3d delfem2::veloVortexParticle(
+    const CVec3d& pos_eval,
+    const CVec3d& pos_vp,
+    const CVec3d& circ_vp,
+    double rad_vp)
 {
   CVec3d v = pos_eval-pos_vp;
   double len = v.norm();
@@ -698,12 +698,12 @@ delfem2::CVec3d delfem2::veloVortexParticle
   return g0*circ_vp.cross(v);
 }
 
-delfem2::CMat3d delfem2::gradveloVortexParticle
-(CVec3d& velo_eval,
-const CVec3d& pos_eval,
-const CVec3d& pos_vp,
-const CVec3d& circ_vp,
-double rad_vp)
+delfem2::CMat3d delfem2::gradveloVortexParticle(
+    CVec3d& velo_eval,
+    const CVec3d& pos_eval,
+    const CVec3d& pos_vp,
+    const CVec3d& circ_vp,
+    double rad_vp)
 {
   CVec3d v = pos_eval-pos_vp;
   double len = v.norm();
@@ -959,7 +959,7 @@ std::complex<double> delfem2::evaluateField_Helmholtz_Order0th(
   return c1;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------
 
 void delfem2::Helmholtz_TransferOrder1st_PntTri
 (std::complex<double> aC[3],
@@ -972,7 +972,7 @@ int ngauss)
   const COMPLEX IMG(0.0, 1.0);
   assert(ngauss>=0&&ngauss<3);
   const int nint = NIntTriGauss[ngauss]; // number of integral points
-  CVec3d n = Normal(q0, q1, q2);
+  CVec3d n = Normal_Tri3(q0, q1, q2);
   const double a = n.norm()*0.5; // area
   n.normalize(); // unit normal
   aC[0] = aC[1] = aC[2] = COMPLEX(0, 0);

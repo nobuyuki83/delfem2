@@ -6,6 +6,7 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/geo_vec3.h"
+#include "delfem2/geo_tri.h"
 
 /**
  *

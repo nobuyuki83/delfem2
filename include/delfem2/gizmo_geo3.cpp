@@ -8,8 +8,10 @@
 #include "delfem2/gizmo_geo3.h"
 
 #include "delfem2/vec3.h"
+#include "delfem2/geo_vec3.h"
 #include "delfem2/geo_edge.h"
 #include "delfem2/geo_line.h"
+#include "delfem2/geo_tri.h"
 
 DFM2_INLINE bool delfem2::isPickCircle(
     const CVec3d &axis,
@@ -45,7 +47,7 @@ bool delfem2::isPickQuad(
   a23 /= a0123;
   a30 /= a0123;
   if (a01 < eps || a12 < eps || a23 < eps || a30 < eps) { return false; }
-  CVec3d n0123 = Normal(p0, p1, p2) + Normal(p1, p2, p3) + Normal(p2, p3, p0) + Normal(p3, p0, p1);
+  CVec3d n0123 = Normal_Tri3(p0, p1, p2) + Normal_Tri3(p1, p2, p3) + Normal_Tri3(p2, p3, p0) + Normal_Tri3(p3, p0, p1);
   return n0123.dot(pick_dir) <= 0;
 }
 
@@ -263,7 +265,7 @@ DFM2_INLINE bool delfem2::isPickCircle(
   const int ndiv = 32;
   double rdiv = 3.1415 * 2.0 / ndiv;
   CVec3d x, y;
-  GetVertical2Vector(axis, x, y);
+  FrameFromVectorZ(x, y, axis);
   for (int idiv = 0; idiv < ndiv + 1; idiv++) {
     int jdiv = idiv + 1;
     const CVec3d p0 = p + (r * sin(rdiv * idiv)) * x + (r * cos(rdiv * idiv)) * y;

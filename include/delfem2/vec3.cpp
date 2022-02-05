@@ -23,45 +23,6 @@ namespace delfem2::vec3 {
 
 DFM2_INLINE bool MyIsnan(double x) { return x != x; }
 
-// evaluate cubic function
-template<typename REAL>
-DFM2_INLINE REAL EvaluateCubic(
-    REAL x,
-    REAL k0, REAL k1, REAL k2, REAL k3) // coefficient of cubic function
-{
-  return k0 + k1 * x + k2 * x * x + k3 * x * x * x;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template float EvaluateCubic(float r2, float k0, float k1, float k2, float k3);
-template double EvaluateCubic(double r2, double k0, double k1, double k2, double k3);
-#endif
-
-
-// find root of cubic function using bisection method
-DFM2_INLINE double FindRootCubic_Bisect(
-    double r0, double r1,
-    double v0, double v1,
-    double k0, double k1, double k2, double k3) {
-  assert(v0 * v1 <= 0);
-  if (v0 * v1 == 0) {
-    if (v0 == 0) { return r0; }
-    else { return r1; }
-  }
-  for (unsigned int itr = 0; itr < 15; itr++) {
-    const double r2 = 0.5 * (r0 + r1);
-    const double v2 = EvaluateCubic(r2, k0, k1, k2, k3);
-    if (v2 == 0) { return r2; }
-    if (v0 * v2 < 0) {
-      r1 = r2;
-      v1 = v2;
-    } else {
-      r0 = r2;
-      v0 = v2;
-    }
-  }
-  return 0.5 * (r0 + r1);
-}
-
 // there is another impelemntation in quat.h so this is "static function"
 // transform vector with quaternion
 // quaternion order (x,y,z,w)
@@ -179,66 +140,7 @@ template void delfem2::Add3(float vo[3], const float vi[3]);
 template void delfem2::Add3(double vo[3], const double vi[3]);
 #endif
 
-// ---------------------------------
-
-template<typename REAL>
-void delfem2::NormalTri3(
-    REAL n[3],
-    const REAL v1[3],
-    const REAL v2[3],
-    const REAL v3[3]) {
-  n[0] = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]);
-  n[1] = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
-  n[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::NormalTri3(float n[3], const float v1[3], const float v2[3], const float v3[3]);
-template void delfem2::NormalTri3(double n[3], const double v1[3], const double v2[3], const double v3[3]);
-#endif
-
 // ------------------------------------------
-
-template<typename REAL>
-void delfem2::UnitNormalAreaTri3(
-    REAL n[3],
-    REAL &a,
-    const REAL v1[3], const REAL v2[3], const REAL v3[3]) {
-  NormalTri3(n,
-             v1, v2, v3);
-  a = Length3(n) / 2;
-  const REAL invlen = 1 / (a * 2);
-  n[0] *= invlen;
-  n[1] *= invlen;
-  n[2] *= invlen;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::UnitNormalAreaTri3(float n[3], float& a,
-    const float v1[3], const float v2[3], const float v3[3]);
-template void delfem2::UnitNormalAreaTri3(double n[3], double& a,
-    const double v1[3], const double v2[3], const double v3[3]);
-#endif
-
-// ------------------------------------------
-
-DFM2_INLINE void delfem2::GetVertical2Vector3D(
-    const double vec_n[3],
-    double vec_x[3],
-    double vec_y[3]) {
-  const double vec_s[3] = {0, 1, 0};
-  Cross(vec_x, vec_s, vec_n);
-  const double len = Length3(vec_x);
-  if (len < 1.0e-10) {
-    const double vec_t[3] = {1, 0, 0};
-    Cross(vec_x, vec_t, vec_n);  // z????
-    Cross(vec_y, vec_n, vec_x);  // x????
-  } else {
-    const double invlen = 1.0 / len;
-    vec_x[0] *= invlen;
-    vec_x[1] *= invlen;
-    vec_x[2] *= invlen;
-    Cross(vec_y, vec_n, vec_x);
-  }
-}
 
 template<typename REAL>
 void delfem2::AverageTwo3(
@@ -282,17 +184,7 @@ template void delfem2::AverageFour3(
 // ======================================================
 // below: with CVec
 
-// cross product
-template<typename T>
-delfem2::CVec3<T> delfem2::Cross(const CVec3<T> &arg1, const CVec3<T> &arg2) {
-  CVec3<T> temp;
-  Cross(temp.p, arg1.p, arg2.p);
-  return temp;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3f delfem2::Cross(const CVec3f& arg1, const CVec3f& arg2);
-template delfem2::CVec3d delfem2::Cross(const CVec3d& arg1, const CVec3d& arg2);
-#endif
+
 
 // ---------------------
 
@@ -327,9 +219,6 @@ template CVec3f operator/ (const CVec3f& vec, int d);
 template CVec3d operator/ (const CVec3d& vec, double d);
 template CVec3d operator/ (const CVec3d& vec, int d);
 #endif
-
-// ----------------
-
 
 // ------------------
 
@@ -420,9 +309,7 @@ template delfem2::CVec3d delfem2::QuatConjVec(const double quat[4], const CVec3d
 #endif
 
 
-// ------------------------------------------------------------
-
-// --------------------------
+// -----------------------------------------------------------
 
 namespace delfem2 {
 
@@ -470,86 +357,7 @@ template void delfem2::CVec3<double>::setZero();
 template void delfem2::CVec3<int>::setZero();
 #endif
 
-// -------------------------------------------------------------------------
-
-template<typename T>
-void delfem2::GetVertical2Vector(
-    const CVec3<T> &vec_n,
-    CVec3<T> &vec_x,
-    CVec3<T> &vec_y) {
-  vec_x = Cross(CVec3<T>(0, 1, 0), vec_n);
-  const T len = vec_x.norm();
-  if (len < 1.0e-10) {
-    vec_x = Cross(CVec3<T>(1, 0, 0), vec_n);  // z????
-    vec_x.normalize();
-    vec_y = Cross(vec_n, vec_x);  // x????
-  } else {
-    const T invlen = 1 / len;
-    vec_x *= invlen;
-    vec_y = Cross(vec_n, vec_x);
-  }
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::GetVertical2Vector(const CVec3f& vec_n,
-                                          CVec3f& vec_x,
-                                          CVec3f& vec_y);
-template void delfem2::GetVertical2Vector(const CVec3d& vec_n,
-                                          CVec3d& vec_x,
-                                          CVec3d& vec_y);
-#endif
-
 // ----------------------------------------------------------------------------
-
-template<typename T>
-delfem2::CVec3<T> delfem2::Normal(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3) {
-  CVec3<T> vnorm;
-  vnorm.p[0] = (v2.p[1] - v1.p[1]) * (v3.p[2] - v1.p[2]) - (v2.p[2] - v1.p[2]) * (v3.p[1] - v1.p[1]);
-  vnorm.p[1] = (v2.p[2] - v1.p[2]) * (v3.p[0] - v1.p[0]) - (v2.p[0] - v1.p[0]) * (v3.p[2] - v1.p[2]);
-  vnorm.p[2] = (v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v2.p[1] - v1.p[1]) * (v3.p[0] - v1.p[0]);
-  return vnorm;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::Normal(const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
-#endif
-
-
-// --------------------------------------------
-
-
-
-
-// ---------------------------------------
-
-template<typename T>
-delfem2::CVec3<T> delfem2::UnitNormal(
-    const CVec3<T> &v1,
-    const CVec3<T> &v2,
-    const CVec3<T> &v3) {
-  CVec3<T> vnorm;
-  vnorm.p[0] = (v2.p[1] - v1.p[1]) * (v3.p[2] - v1.p[2]) - (v2.p[2] - v1.p[2]) * (v3.p[1] - v1.p[1]);
-  vnorm.p[1] = (v2.p[2] - v1.p[2]) * (v3.p[0] - v1.p[0]) - (v2.p[0] - v1.p[0]) * (v3.p[2] - v1.p[2]);
-  vnorm.p[2] = (v2.p[0] - v1.p[0]) * (v3.p[1] - v1.p[1]) - (v2.p[1] - v1.p[1]) * (v3.p[0] - v1.p[0]);
-  const T dtmp1 = 1 / vnorm.norm();
-  vnorm.p[0] *= dtmp1;
-  vnorm.p[1] *= dtmp1;
-  vnorm.p[2] *= dtmp1;
-  return vnorm;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3f delfem2::UnitNormal
- (const CVec3f& v1,
-  const CVec3f& v2,
-  const CVec3f& v3);
-template delfem2::CVec3d delfem2::UnitNormal
-(const CVec3d& v1,
- const CVec3d& v2,
- const CVec3d& v3);
-#endif
-
-// ---------------------------------------------------
 
 template<typename T>
 delfem2::CVec3<T> delfem2::RotateVector(
@@ -640,7 +448,7 @@ std::array<REAL, 9> delfem2::Mat3_MinimumRotation(
           1.f + 0.5f * (n.z * n.z - st2)};
     } else {
       CVec3<REAL> epx, epy;
-      delfem2::GetVertical2Vector(ep, epx, epy);
+      delfem2::FrameFromVectorZ(epx, epy, ep);
       const CVec3<REAL> eqx = epx - eq.dot(epx) * eq; // vector orthogonal to eq
       const CVec3<REAL> eqy = eq.cross(eqx);
       return {
