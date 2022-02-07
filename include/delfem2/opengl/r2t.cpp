@@ -322,8 +322,7 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
     const CVec3d &ps,
     const CRender2Tex &smplr) {
   const CMat4d global2depthfield = smplr.GetAffineMatrix4_Global2DepthOnGrid();
-  double pg[3];
-  Vec3_Mat4Vec3_Homography(pg, global2depthfield.data(), ps.p);
+  std::array<double,3> pg = Vec3_Mat4Vec3_Homography(global2depthfield.data(), ps.p);
   const unsigned int nx = smplr.width;
   const unsigned int ny = smplr.height;
   const int ix0 = (int) floor(pg[0]);
@@ -350,9 +349,8 @@ DFM2_INLINE bool delfem2::opengl::GetProjectedPoint(
   CVec3d n3 = dpx.cross(dpy);
   //
   const CMat4d depthfield2global = global2depthfield.Inverse();
-  Vec3_Mat4Vec3_Homography(p0.p, depthfield2global.data(), p3.p);
-  CVec3d p4;
-  Vec3_Mat4Vec3_Homography(p4.p, depthfield2global.data(), (p3 + n3).p);
+  p0 = Vec3_Mat4Vec3_Homography(depthfield2global.data(), p3.p);
+  CVec3d p4 = Vec3_Mat4Vec3_Homography(depthfield2global.data(), (p3 + n3).p);
   n0 = (p4 - p0).normalized();
   return true;
 }

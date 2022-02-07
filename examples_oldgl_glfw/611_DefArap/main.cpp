@@ -15,6 +15,7 @@
 
 #include "delfem2/defarap.h"
 #include "delfem2/mat4.h"
+#include "delfem2/thread.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
@@ -33,16 +34,10 @@ void SetPositionAtFixedBoundary(
     const std::vector<int> &aBCFlag) {
   double A[16];
   {
-    dfm2::Mat4_Identity(A);
-    const double trans0[3] = {0, -0.8, 0};
-    dfm2::Translate_Mat4Affine(A,
-                               trans0);
-    const double axis0[3] = {0, +2.0 * sin(0.03 * iframe), 1.0 * sin(0.07 * iframe)};
-    dfm2::Rotate_Mat4AffineRodriguez(A,
-                                     axis0);
-    const double trans1[3] = {0.2 * sin(0.03 * iframe), +0.5 + 0.1 * cos(0.05 * iframe), 0};
-    dfm2::Translate_Mat4Affine(A,
-                               trans1);
+    auto T0 = dfm2::CMat4d::Translation({0, -0.8, 0});
+    dfm2::CMat4d R0 = dfm2::Mat4_AffineRotationRodriguez(0., +2.0 * sin(0.03 * iframe), 1.0 * sin(0.07 * iframe));
+    auto T1 = dfm2::CMat4d::Translation({0.2 * sin(0.03 * iframe), +0.5 + 0.1 * cos(0.05 * iframe), 0});
+    (T1 * R0 * T0).CopyTo(A);
   }
   const size_t np = aRhs.size() / 3;
   for (unsigned int ip = 0; ip < np; ++ip) {
@@ -53,9 +48,26 @@ void SetPositionAtFixedBoundary(
       aRhs[ip * 3 + 2] = aXYZ0[ip * 3 + 2];
     }
     if (aBCFlag[ip * 3 + 0] == 2) {
-      dfm2::Vec3_Mat4Vec3_Homography(aRhs.data() + ip * 3, A, aXYZ0.data() + ip * 3);
+      dfm2::CVec3d t0 = dfm2::Vec3_Mat4Vec3_Homography(A, aXYZ0.data() + ip * 3);
+      t0.CopyTo(aRhs.data() + ip * 3);
     }
   }
+}
+
+void UpdateRotationsByMatchingCluster_SVD_Parallel(
+    std::vector<double>& aQuat1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup)
+{
+  auto func_matchrot = [&aQuat1, &aXYZ0, & aXYZ1, &psup_ind, &psup](unsigned int ip)
+  {
+    dfm2::UpdateRotationsByMatchingCluster_SVD(
+        aQuat1,
+        ip,aXYZ0,aXYZ1,psup_ind,psup);
+  };
+  delfem2::thread::parallel_for(aXYZ0.size()/3, func_matchrot);
 }
 
 void myGlutDisplay_Mesh(
@@ -94,8 +106,8 @@ void Draw_BCFlag(
 // --------------------------------------------------
 
 int main(
-	[[maybe_unused]] int argc, 
-	[[maybe_unused]] char *argv[]) {
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *argv[]) {
   std::vector<unsigned int> aTri;
   std::vector<double> aXYZ0;
   std::vector<int> aBCFlag;
@@ -136,7 +148,11 @@ int main(
     { // arap edge linear disponly
       dfm2::CDef_Arap def0;
       def0.Init(aXYZ0, aTri, false);
-      glfwSetWindowTitle(viewer.window, "(1) ARAP without Preconditioner");
+      if( itr == 0 ) {
+        glfwSetWindowTitle(viewer.window, "(1) ARAP without preconditioner");
+      } else{
+        glfwSetWindowTitle(viewer.window, "(1) ARAP without preconditioner using thread");
+      }
       for (; iframe < 200; ++iframe) {
         SetPositionAtFixedBoundary(
             aXYZ1,
@@ -144,9 +160,15 @@ int main(
         def0.Deform(
             aXYZ1, aQuat1,
             aXYZ0, aBCFlag);
-        def0.UpdateQuats_SVD(
-            aXYZ1, aQuat1,
-            aXYZ0);
+        if( itr == 0 ) {
+          def0.UpdateQuats_SVD(
+              aXYZ1, aQuat1,
+              aXYZ0);
+        } else{
+          UpdateRotationsByMatchingCluster_SVD_Parallel(
+              aQuat1,
+              aXYZ0, aXYZ1, def0.psup_ind, def0.psup);
+        }
         // --------------------
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0, aXYZ1, aTri);
@@ -160,7 +182,11 @@ int main(
     {  // arap edge linear displacement only
       dfm2::CDef_Arap def0;
       def0.Init(aXYZ0, aTri, true);
-      glfwSetWindowTitle(viewer.window, "(2) ARAP with Preconditioner");
+      if( itr == 0 ) {
+        glfwSetWindowTitle(viewer.window, "(2) ARAP with preconditioner");
+      } else {
+        glfwSetWindowTitle(viewer.window, "(2) ARAP with preconditioner using thread");
+      }
       for (; iframe < 400; ++iframe) {
         SetPositionAtFixedBoundary(
             aXYZ1,
@@ -168,9 +194,15 @@ int main(
         def0.Deform(
             aXYZ1, aQuat1,
             aXYZ0, aBCFlag);
-        def0.UpdateQuats_SVD(
-            aXYZ1, aQuat1,
-            aXYZ0);
+        if( itr == 0 ) {
+          def0.UpdateQuats_SVD(
+              aXYZ1, aQuat1,
+              aXYZ0);
+        } else {
+          UpdateRotationsByMatchingCluster_SVD_Parallel(
+              aQuat1,
+              aXYZ0, aXYZ1, def0.psup_ind, def0.psup);
+        }
         // --------------------
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0, aXYZ1, aTri);

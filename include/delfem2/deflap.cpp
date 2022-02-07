@@ -10,6 +10,7 @@
 #include <cstring> // memcpy
 
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
+#include "delfem2/geo_mat3.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/vecxitrsol.h"

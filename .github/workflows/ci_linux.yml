@@ -216,17 +216,6 @@ jobs:
         make
         cd ../../
 
-    - name: build examples (glfw,　thread)
-      run: |
-        echo ########################
-        echo ## build thread examples
-
-        cd examples_oldgl_glfw_thread
-        mkdir buildMakeHdronly && cd buildMakeHdronly
-        cmake ..
-        cmake --build .
-        cd ../../
-
     - name: build examples (glfw, imgui)
       run: |
         echo ########################

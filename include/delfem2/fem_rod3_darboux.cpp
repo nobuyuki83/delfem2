@@ -198,7 +198,7 @@ DFM2_INLINE void delfem2::DiffFrameRod(
   dF_dt[2].setZero();
   dF_dv[0] = (-1.0 / l01) * Mat3_OuterProduct(Frm[2], Frm[0]);
   dF_dv[1] = (-1.0 / l01) * Mat3_OuterProduct(Frm[2], Frm[1]);
-  dF_dv[2] = (+1.0 / l01) * (Mat3_Identity(1.0) - Mat3_OuterProduct(Frm[2], Frm[2]));
+  dF_dv[2] = (+1.0 / l01) * (CMat3d::Identity(1.0) - Mat3_OuterProduct(Frm[2], Frm[2]));
 }
 
 DFM2_INLINE void delfem2::DifDifFrameRod(
@@ -226,7 +226,7 @@ DFM2_INLINE void delfem2::DifDifFrameRod(
     CMat3d M0a = -S * (A * S);
     CVec3d b0 = (-A + A.transpose()) * Frm[2];
     CMat3d M1 = Mat3_OuterProduct(Frm[2], b0);
-    CMat3d M3 = (b0.dot(Frm[2])) * (3 * Mat3_OuterProduct(Frm[2], Frm[2]) - Mat3_Identity(1.0));
+    CMat3d M3 = (b0.dot(Frm[2])) * (3 * Mat3_OuterProduct(Frm[2], Frm[2]) - CMat3d::Identity(1.0));
     ddW_ddv = (1.0 / (l01 * l01)) * (M0a + M1 + M1.transpose() + M3);
   }
 }

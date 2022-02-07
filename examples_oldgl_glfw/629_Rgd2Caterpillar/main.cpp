@@ -16,6 +16,7 @@
 #include "delfem2/geo_polygon2.h"
 #include "delfem2/vec2.h"
 #include "delfem2/mat3.h"
+#include "delfem2/geo_mat3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -31,12 +32,10 @@ void Draw(
   ::glColor3d(0, 0, 0);
   for (unsigned int i0 = 0; i0 < rs.shape.size(); ++i0) {
     unsigned int i1 = (i0 + 1) % rs.shape.size();
-    double p0[2];
-    dfm2::Vec2_Mat3Vec2_AffineProjection(p0, mT1RT0.p_, rs.shape[i0].p);
-    double p1[2];
-    dfm2::Vec2_Mat3Vec2_AffineProjection(p1, mT1RT0.p_, rs.shape[i1].p);
-    ::glVertex2dv(p0);
-    ::glVertex2dv(p1);
+    std::array<double,2> p0 = dfm2::Vec2_Mat3Vec2_Homography(mT1RT0.p_, rs.shape[i0].p);
+    std::array<double,2> p1 = dfm2::Vec2_Mat3Vec2_Homography(mT1RT0.p_, rs.shape[i1].p);
+    ::glVertex2dv(p0.data());
+    ::glVertex2dv(p1.data());
   }
   ::glEnd();
   //
@@ -44,9 +43,8 @@ void Draw(
   ::glBegin(GL_POINTS);
   ::glColor3d(0, 0, 0);
   for (const auto & i0 : rs.shape) {
-    double p0[2];
-    dfm2::Vec2_Mat3Vec2_AffineProjection(p0, mT1RT0.p_, i0.p);
-    ::glVertex2dv(p0);
+    std::array<double,2> p0 = dfm2::Vec2_Mat3Vec2_Homography(mT1RT0.p_, i0.p);
+    ::glVertex2dv(p0.data());
   }
   ::glEnd();
 }
@@ -119,19 +117,21 @@ int main() {
       const double rad = 0.02;
       for (unsigned int ip = 0; ip < np; ++ip) {
         double x0 = lw / (np - 1) * ip;
-        aP[ip].p[0] = rad * cos(x0 * 20 + time * angvelo) + x0;
-        aP[ip].p[1] = rad * sin(x0 * 20 + time * angvelo);
-        aV[ip] = dfm2::CVec2d(
+        aP[ip] = {
+            rad * cos(x0 * 20 + time * angvelo) + x0,
+            rad * sin(x0 * 20 + time * angvelo) };
+        aV[ip] = {
             -rad * angvelo * sin(x0 * 20 + time * angvelo),
-            +rad * angvelo * cos(x0 * 20 + time * angvelo));
+            +rad * angvelo * cos(x0 * 20 + time * angvelo) };
       }
       for (unsigned int ip = 0; ip < np; ++ip) {
         double x0 = lw / (np - 1) * (np - 1 - ip);
-        aP[ip + np].p[0] = rad * cos(x0 * 20 + time * angvelo) + x0;
-        aP[ip + np].p[1] = rad * sin(x0 * 20 + time * angvelo) + lh;
-        aV[ip + np] = dfm2::CVec2d(
+        aP[ip + np] = {
+            rad * cos(x0 * 20 + time * angvelo) + x0,
+            rad * sin(x0 * 20 + time * angvelo) + lh };
+        aV[ip + np] = {
             -rad * angvelo * sin(x0 * 20 + time * angvelo),
-            +rad * angvelo * cos(x0 * 20 + time * angvelo));
+            +rad * angvelo * cos(x0 * 20 + time * angvelo) };
       }
     }
     Steptime_Rgd2(aRS, dt, gravity);

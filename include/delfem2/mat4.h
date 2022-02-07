@@ -21,6 +21,7 @@
 #include <array>
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/geo_meta_funcs.h"
 
 #define NEARLY_ZERO 1.e-16
 
@@ -28,8 +29,17 @@
 
 namespace delfem2 {
 
-template<typename REAL>
-void Print_Mat4(const REAL m[16]) {
+// if matrix is delfem2::CMat4 or Eigen::Mat4
+template<typename MAT, typename T = typename MAT::Scalar>
+void Print_Mat4(const MAT &m) {
+  std::cout << m(0,0) << " " << m(0,1) << " " << m(0,2) << " " << m(0,3) << std::endl;
+  std::cout << m(1,0) << " " << m(1,1) << " " << m(1,2) << " " << m(1,3) << std::endl;
+  std::cout << m(2,0) << " " << m(2,1) << " " << m(2,2) << " " << m(2,3) << std::endl;
+  std::cout << m(3,0) << " " << m(3,1) << " " << m(3,2) << " " << m(3,3) << std::endl;
+}
+
+template<typename MAT, typename std::enable_if_t<std::is_array_v<MAT>, std::nullptr_t> = nullptr>
+void Print_Mat4(const MAT &m) {
   std::cout << m[0] << " " << m[1] << " " << m[2] << " " << m[3] << std::endl;
   std::cout << m[4] << " " << m[5] << " " << m[6] << " " << m[7] << std::endl;
   std::cout << m[8] << " " << m[9] << " " << m[10] << " " << m[11] << std::endl;
@@ -179,17 +189,21 @@ void Mat4_AffineScale(
 template<typename REAL>
 void Mat4_AffineTranslation(
     REAL A[16],
-    REAL dx, REAL dy, REAL dz);
+    REAL dx,
+    REAL dy,
+    REAL dz);
 
 template<typename REAL>
-void Mat4_AffineTranslation(
-    REAL A[16],
-    const REAL v[3]);
+std::array<REAL,16> Mat4_AffineTranslation(
+    REAL dx,
+    REAL dy,
+    REAL dz);
 
 template<typename T>
-void Mat4_AffineRotationRodriguez(
-    T A[16],
-    T dx, T dy, T dz);
+std::array<T,16> Mat4_AffineRotationRodriguez(
+    T dx,
+    T dy,
+    T dz);
 
 template<typename REAL>
 void Mat4_AffineRotationCartesian(
@@ -245,9 +259,8 @@ void Translate_Mat4Affine(
     REAL A[16],
     const REAL v[3]);
 
-template<typename T0, typename T1, typename T2>
-void Vec3_Mat4Vec3_Homography(
-    T0 y0[3],
+template<typename T1, typename T2>
+std::array<T1,3> Vec3_Mat4Vec3_Homography(
     const T1 a[16],
     const T2 x0[3]);
 
@@ -300,7 +313,7 @@ DFM2_INLINE void Mat4_ScaleRotTrans(
     const double quat[4],
     const double trans[3]);
 
-// ---------------------------------------
+// =============================================
 
 template<typename T>
 class CMat4;
@@ -413,15 +426,11 @@ class CMat4 {
   }
 
   std::array<REAL,3> MultVec3_Homography(const REAL* v) const {
-    std::array<REAL,3> r;
-    Vec3_Mat4Vec3_Homography(r.data(), mat, v);
-    return r;
+    return Vec3_Mat4Vec3_Homography(mat, v);
   }
 
   std::array<REAL,2> Vec2_MultVec3_Homography(const REAL* v) const {
-    double v3[3];
-    Vec3_Mat4Vec3_Homography(v3, mat, v);
-    return {v3[0],v3[1]};
+    return Vec2_Mat4Vec3_Homography(mat, v);
   }
   
   std::array<REAL,3> MultVec3(const REAL* v) const {
@@ -545,6 +554,7 @@ class CMat4 {
 
  public:
   REAL mat[16];
+  using Scalar = REAL;
 };
 using CMat4d = CMat4<double>;
 using CMat4f = CMat4<float>;

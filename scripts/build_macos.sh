@@ -112,18 +112,6 @@ cmake .. -G Xcode
 cd ../../
 
 echo "################################"
-echo "build examples_glfw_thread_oldgl"
-echo "################################"
-
-cd examples_oldgl_glfw_thread || exit
-mkdir buildMake 
-cd buildMake || exit
-cmake ..
-cmake --build .
-cd ../../
-
-
-echo "################################"
 echo "fetch latest imgui"
 echo "################################"
 

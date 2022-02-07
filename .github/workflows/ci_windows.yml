@@ -123,18 +123,6 @@ jobs:
         cmake --build . --config Release
         cd ../../
 
-    - name: build examples (thread)
-      run: |
-        echo "#########################"
-        echo "## build demo glfw,thread"
-
-        cd examples_oldgl_glfw_thread
-        mkdir buildVS64
-        cd buildVS64
-        cmake .. -A x64
-        cmake --build . --config Release
-        cd ../../   
-
     - name: build zlib
       run: |
         echo "##############################"

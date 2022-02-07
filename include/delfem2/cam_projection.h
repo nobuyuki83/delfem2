@@ -96,10 +96,7 @@ class Projection_LookOriginFromZplus : public Projection{
     }
     // the camera is placed at the origin and lookin into the -Z direction in the range [-2*depth,0]
     // to view the object we translate the object at the origin (0,0,-depth)
-    CMat4f mT1;
-    ::delfem2::Mat4_AffineTranslation(
-        mT1.data(),
-        std::array<float,3>{0.f, 0.f, -depth}.data());
+    CMat4f mT1= ::delfem2::Mat4_AffineTranslation(0.f, 0.f, -depth);
     return (mP1 * mT1).GetStlArray();
    }
 public:

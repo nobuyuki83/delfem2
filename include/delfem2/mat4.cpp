@@ -335,9 +335,8 @@ template void delfem2::VecMat4(
 
 // ---------------------------
 
-template<typename T0, typename T1, typename T2>
-DFM2_INLINE void delfem2::Vec3_Mat4Vec3_Homography(
-    T0 y0[3],
+template<typename T1, typename T2>
+std::array<T1, 3> delfem2::Vec3_Mat4Vec3_Homography(
     const T1 a[16],
     const T2 x0[3]) {
   const T1 x1[4] = {
@@ -347,15 +346,15 @@ DFM2_INLINE void delfem2::Vec3_Mat4Vec3_Homography(
       1};
   T1 y1[4];
   MatVec4(y1, a, x1);
-  y0[0] = y1[0] / y1[3];
-  y0[1] = y1[1] / y1[3];
-  y0[2] = y1[2] / y1[3];
+  return {
+      y1[0] / y1[3],
+      y1[1] / y1[3],
+      y1[2] / y1[3]
+  };
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Vec3_Mat4Vec3_Homography(
-    float y0[3], const float a[16], const float x0[3]);
-template void delfem2::Vec3_Mat4Vec3_Homography(
-    double y0[3], const double a[16], const double x0[3]);
+template std::array<float,3> delfem2::Vec3_Mat4Vec3_Homography(const float a[16], const float x0[3]);
+template std::array<double,3> delfem2::Vec3_Mat4Vec3_Homography(const double a[16], const double x0[3]);
 #endif
 
 // ---------------------------
@@ -442,9 +441,9 @@ template void delfem2::Mat4_AffineScale(double A[16], double s);
 // ------------------------
 
 template<typename T>
-DFM2_INLINE void delfem2::Mat4_AffineTranslation
-    (T A[16],
-     T dx, T dy, T dz) {
+DFM2_INLINE void delfem2::Mat4_AffineTranslation(
+    T A[16],
+    T dx, T dy, T dz) {
   for (auto i = 0; i < 16; ++i) { A[i] = 0.0; }
   for (int i = 0; i < 4; ++i) { A[i * 4 + i] = 1.0; }
   A[0 * 4 + 3] = dx;
@@ -460,76 +459,59 @@ template void delfem2::Mat4_AffineTranslation(
     double dx, double dy, double dz);
 #endif
 
+// ------------------------------------
+
 template<typename T>
-DFM2_INLINE void
-delfem2::Mat4_AffineTranslation(
-    T A[16],
-    const T v[3]) {
-  A[0 * 4 + 0] = 1;
-  A[0 * 4 + 1] = 0;
-  A[0 * 4 + 2] = 0;
-  A[0 * 4 + 3] = v[0];
-  A[1 * 4 + 0] = 0;
-  A[1 * 4 + 1] = 1;
-  A[1 * 4 + 2] = 0;
-  A[1 * 4 + 3] = v[1];
-  A[2 * 4 + 0] = 0;
-  A[2 * 4 + 1] = 0;
-  A[2 * 4 + 2] = 1;
-  A[2 * 4 + 3] = v[2];
-  A[3 * 4 + 0] = 0;
-  A[3 * 4 + 1] = 0;
-  A[3 * 4 + 2] = 0;
-  A[3 * 4 + 3] = 1;
+std::array<T, 16> delfem2::Mat4_AffineTranslation(
+    const T dx,
+    const T dy,
+    const T dz) {
+  return {
+      1, 0, 0, dx,
+      0, 1, 0, dy,
+      0, 0, 1, dz,
+      0, 0, 0, 1};
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat4_AffineTranslation(
-    float A[16],
-    const float v[3]);
-template void delfem2::Mat4_AffineTranslation(
-    double A[16],
-    const double v[3]);
+template std::array<float, 16> delfem2::Mat4_AffineTranslation(float, float, float);
+template std::array<double, 16> delfem2::Mat4_AffineTranslation(double, double, double);
 #endif
 
 // --------------------------
 
 template<typename T>
-DFM2_INLINE void delfem2::Mat4_AffineRotationRodriguez(
-    T A[16],
-    T dx, T dy, T dz) {
+DFM2_INLINE std::array<T, 16> delfem2::Mat4_AffineRotationRodriguez(
+    T dx,
+    T dy,
+    T dz) {
   constexpr T half = static_cast<T>(0.5);
   constexpr T one4th = static_cast<T>(0.25);
-  for (int i = 0; i < 16; ++i) { A[i] = 0; }
-  //
   const T sqlen = dx * dx + dy * dy + dz * dz;
   const T tmp1 = 1 / (1 + one4th * sqlen);
-  A[0 * 4 + 0] = 1 + tmp1 * (+half * dx * dx - half * sqlen);
-  A[0 * 4 + 1] = +tmp1 * (-dz + half * dx * dy);
-  A[0 * 4 + 2] = +tmp1 * (+dy + half * dx * dz);
-  A[0 * 4 + 3] = 0;
-  //
-  A[1 * 4 + 0] = +tmp1 * (+dz + half * dy * dx);
-  A[1 * 4 + 1] = 1 + tmp1 * (+half * dy * dy - half * sqlen);
-  A[1 * 4 + 2] = +tmp1 * (-dx + half * dy * dz);
-  A[1 * 4 + 3] = 0;
-  //
-  A[2 * 4 + 0] = +tmp1 * (-dy + half * dz * dx);
-  A[2 * 4 + 1] = +tmp1 * (+dx + half * dz * dy);
-  A[2 * 4 + 2] = 1 + tmp1 * (+half * dz * dz - half * sqlen);
-  A[2 * 4 + 3] = 0;
-  //
-  A[3 * 4 + 0] = 0;
-  A[3 * 4 + 1] = 0;
-  A[3 * 4 + 2] = 0;
-  A[3 * 4 + 3] = 1;
+  return {
+      1 + tmp1 * (+half * dx * dx - half * sqlen),
+      +tmp1 * (-dz + half * dx * dy),
+      +tmp1 * (+dy + half * dx * dz),
+      0,
+      //
+      +tmp1 * (+dz + half * dy * dx),
+      1 + tmp1 * (+half * dy * dy - half * sqlen),
+      +tmp1 * (-dx + half * dy * dz),
+      0,
+      //
+      +tmp1 * (-dy + half * dz * dx),
+      +tmp1 * (+dx + half * dz * dy),
+      1 + tmp1 * (+half * dz * dz - half * sqlen),
+      0,
+      //
+      0,
+      0,
+      0,
+      1};
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat4_AffineRotationRodriguez(
-    float A[16],
-    float dx, float dy, float dz);
-template void delfem2::Mat4_AffineRotationRodriguez(
-    double A[16],
-    double dx, double dy, double dz);
+template std::array<float,16> delfem2::Mat4_AffineRotationRodriguez(float dx, float dy, float dz);
+template std::array<double,16> delfem2::Mat4_AffineRotationRodriguez(double dx, double dy, double dz);
 #endif
 
 // ------------------------------------------------
@@ -573,13 +555,10 @@ template<typename REAL>
 void delfem2::Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL V[3]) {
-  REAL B[16];
-  Mat4_AffineRotationRodriguez(B,
-                               V[0], V[1], V[2]);
+  std::array<REAL, 16> B = Mat4_AffineRotationRodriguez(V[0], V[1], V[2]);
   REAL C[16];
   MatMat4(C,
-          B, A);
-
+          B.data(), A);
   for (int i = 0; i < 16; ++i) { A[i] = C[i]; }
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -780,7 +759,7 @@ template void delfem2::Inverse_Mat4(float minv[], const float m[]);
 template void delfem2::Inverse_Mat4(double minv[], const double m[]);
 #endif
 
-// ------------------------------------------------------------------
+// ===================================================
 
 template<typename REAL>
 delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL *q) {

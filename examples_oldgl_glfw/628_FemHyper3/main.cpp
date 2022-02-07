@@ -88,9 +88,9 @@ void Simulation(
     //
     double W = 0.0;
     double dW[8][3];
-    for (int i = 0; i < 8 * 3; ++i) { (&dW[0][0])[i] = 0.0; }
+    std::fill_n(&dW[0][0], 8 * 3, 0.0);
     double ddW[8][8][3][3];
-    for (int i = 0; i < 8 * 8 * 3 * 3; ++i) { (&ddW[0][0][0][0])[i] = 0.0; }
+    std::fill_n(&ddW[0][0][0][0], 8*8*3*3, 0.0);
     double vol = 0.0;
     delfem2::AddWdWddW_Solid3HyperMooneyrivlin2Reduced_Hex(
         W, dW, ddW, vol,

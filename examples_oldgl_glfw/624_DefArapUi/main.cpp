@@ -105,10 +105,10 @@ int main() {
             aXYZ1[ip * 3 + 2] = aXYZ0[ip * 3 + 2];
           }
           if (aBCFlag[ip * 3 + 0] == 2) {
-            dfm2::Vec3_Mat4Vec3_Homography(
-                aXYZ1.data() + ip * 3,
+            dfm2::CVec3d t0 = dfm2::Vec3_Mat4Vec3_Homography(
                 aff1.mat,
                 aXYZ0.data() + ip * 3);
+            t0.CopyTo(aXYZ1.data() + ip * 3);
           }
         }
         for (int itr = 0; itr < 2; ++itr) {

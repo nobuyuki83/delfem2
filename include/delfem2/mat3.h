@@ -29,212 +29,6 @@
 
 namespace delfem2 {
 
-/**
- * @func Set spin 3x3 matrix (skew asymetric matrix)
- * @tparam REAL float and double
- * @param mat pointer of 3x3 matrix
- * @param v ponter of 3 vector
- */
-template<typename REAL>
-void Mat3_Spin(
-    REAL *mat,
-    const REAL *v);
-
-template<typename REAL>
-void Mat3_Spin_ScaleAdd(
-    REAL *mat,
-    const REAL *v,
-    REAL alpha,
-    REAL beta);
-
-template<typename REAL>
-void Mat3_Identity(
-    REAL *mat,
-    REAL alpha);
-
-template<typename REAL>
-DFM2_INLINE void Mat3_Identity_ScaleAdd(
-    REAL *mat,
-    REAL alpha = 1,
-    REAL beta = 0);
-
-template<typename T>
-DFM2_INLINE void Mat3_AffineRotation(
-    T *mat,
-    T theta);
-
-template<typename T>
-void Mat3_AffineTranslation(
-    T *mat,
-    const T transl[2]);
-
-template<typename T0, typename T1>
-void Copy_Mat3(
-    T0 m0[9],
-    const T1 m1[9]) {
-  for (int i = 0; i < 9; ++i) { m0[i] = m1[i]; }
-}
-
-// ------------
-
-template<typename T>
-void Transpose_Mat3(
-    T At[],
-    const T A[]);
-
-template<typename T0, typename T1>
-void Inverse_Mat3(
-    T0 Ainv[],
-    const T1 A[]);
-
-template<typename REAL>
-void Inverse_Mat3(
-    REAL Ainv[9]);
-
-/**
- * compute C = A*B
- * @tparam T0
- * @tparam T1
- * @tparam T2
- * @param C
- * @param A
- * @param B
- */
-template<typename T0, typename T1, typename T2>
-void MatMat3(
-    T0 *AB,
-    const T1 *A,
-    const T2 *B);
-
-template<typename T0, typename T1, typename T2>
-void MatMatT3(
-    T0 *ABt,
-    const T1 *A,
-    const T2 *B);
-
-/**
- * @func product of a transposed 3x3 matrix and another 3x3 matrix.
- * [C] = [A]^T[B}
- * @details row major data structure
- */
-template<typename T0, typename T1, typename T2>
-void MatTMat3(
-    T0 *AtB,
-    const T1 *A,
-    const T2 *B);
-
-/**
- * @func adding scaled product of a transposed 3x3 matrix and another 3x3 matrix.
- * [C] = alpha * [A]^T[B} + beta* [C]
- * @details row major data structure
- */
-template<typename T>
-void MatTMat3_ScaleAdd(
-    T *C,
-    const T *A,
-    const T *B,
-    T alpha,
-    T beta);
-
-template<typename T>
-T Det_Mat3(
-    const T U[9]);
-
-template<typename T>
-T SquareNormFrobenius_SymMat3(
-    const T sm[6]);
-
-// -----------------
-// below: axis angle vector
-
-template<typename T>
-DFM2_INLINE void AxisAngleVectorCartesian_Mat3(
-    T v[3],
-    const T m[9]);
-
-template<typename REAL>
-void Mat3_Rotation_Cartesian(
-  REAL mat[9],
-  const REAL vec[3]);
-
-template<typename T>
-DFM2_INLINE void AxisAngleVectorCRV_Mat3(
-    T crv[3],
-    const T mat[9]);
-
-template<typename T>
-DFM2_INLINE void EulerAngle_Mat3(
-  T ea[3],
-  const T m[9],
-  const std::array<int, 3> &axis_idxs);
-
-// ------------------------------------------------
-// below: mat3 and vec3
-
-template<typename T0, typename T1, typename T2>
-DFM2_INLINE void MatTVec3(
-    T0 y[3],
-    const T1 m[9],
-    const T2 x[3]);
-
-/**
- * @func {y} = beta*{y} + alpha*[M]^T{x}
- */
-template<typename T0, typename T1, typename T2, typename T3, typename T4>
-void MatTVec3_ScaleAdd(
-    T0 y[3],
-    const T1 m[9],
-    const T2 x[3],
-    T3 alpha,
-    T4 beta);
-
-/**
- * @func matrix vector product for 3x3 matrix {y} := [m]{x}
- */
-template<typename T0, typename T1, typename T2>
-void MatVec3(
-    T0 y[3],
-    const T1 m[9],
-    const T2 x[3]);
-
-template<typename T>
-void MatVec3_ScaleAdd(
-    T y[3],
-    const T m[9],
-    const T x[3],
-    T alpha,
-    T beta);
-
-DFM2_INLINE void VecMat3(
-    double y[3],
-    const double x[3],
-    const double m[9]);
-
-template<typename T>
-DFM2_INLINE void Vec2_Mat3Vec2_AffineProjection(
-    T y[2],
-    const T Z[9],
-    const T x[2]);
-
-template<typename T>
-DFM2_INLINE void Vec2_Mat3Vec2_AffineDirection(
-    T y[2],
-    const T A[9],
-    const T x[2]);
-
-// --------------------------------
-// below: mat3 and quat
-
-template<typename REAL>
-DFM2_INLINE void Mat3_Quat(
-    REAL r[],
-    const REAL q[]);
-
-template <typename T>
-DFM2_INLINE void Quat_Mat3(
-    T quat[4],
-    const T p_[9]);
-
 template<typename T>
 class CMat3; // this pre-definition is needed for following functions
 
@@ -277,8 +71,8 @@ class CMat3 {
         REAL v10, REAL v11, REAL v12,
         REAL v20, REAL v21, REAL v22);
   CMat3(REAL x, REAL y, REAL z);
-  CMat3(const std::array<REAL,9>& m) :
-  p_{m[0],m[1],m[2],m[3],m[4],m[5],m[6],m[7],m[8]} {}
+  CMat3(const std::array<REAL, 9> &m) :
+      p_{m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]} {}
   // ---------------
   REAL *data() { return p_; }
   [[nodiscard]] const REAL *data() const { return p_; }
@@ -325,7 +119,7 @@ class CMat3 {
     for (int i = 0; i < 9; ++i) { ptr[i] += p_[i] * s; }
   }
   // ---------------
-  [[nodiscard]] std::array<REAL,3> MatVec(const REAL vec0[3]) const;
+  [[nodiscard]] std::array<REAL, 3> MatVec(const REAL vec0[3]) const;
   void MatVecTrans(const REAL vec0[], REAL vec1[]) const;
 
   [[nodiscard]] CMat3 MatMat(const CMat3 &mat0) const;
@@ -351,23 +145,23 @@ class CMat3 {
     return *this;
   }
   inline CMat3 &operator*=(REAL d) {
-    for (auto &m : p_) { m *= d; }
+    for (auto &m: p_) { m *= d; }
     return *this;
   }
   inline CMat3 &operator/=(REAL d) {
     REAL invd = (REAL) 1.0 / d;
-    for (auto &m : p_) { m *= invd; }
+    for (auto &m: p_) { m *= invd; }
     return *this;
   }
-  template <typename INDEX>
+  template<typename INDEX>
   inline REAL operator[](INDEX i) const {
     return this->p_[i];
   }
-  template <typename INDEX0, typename INDEX1>
+  template<typename INDEX0, typename INDEX1>
   inline REAL &operator()(INDEX0 i, INDEX1 j) {
     return this->p_[i * 3 + j];
   }
-  template <typename INDEX0, typename INDEX1>
+  template<typename INDEX0, typename INDEX1>
   inline const REAL &operator()(INDEX0 i, INDEX1 j) const {
     return this->p_[i * 3 + j];
   }
@@ -398,10 +192,10 @@ class CMat3 {
     }
   }
   // ------------------------
-  
+
   // quaterion (x,y,z,w)
-  [[nodiscard]] std::array<REAL,4> GetQuaternion() const;
-  
+  [[nodiscard]] std::array<REAL, 4> GetQuaternion() const;
+
   // ------------------------
   /**
    * named after Eigen library
@@ -431,11 +225,11 @@ class CMat3 {
   [[nodiscard]] REAL determinant() const {
     return
         p_[0] * p_[4] * p_[8] +
-        p_[3] * p_[7] * p_[2] +
-        p_[6] * p_[1] * p_[5] -
-        p_[0] * p_[7] * p_[5] -
-        p_[6] * p_[4] * p_[2] -
-        p_[3] * p_[1] * p_[8];
+            p_[3] * p_[7] * p_[2] +
+            p_[6] * p_[1] * p_[5] -
+            p_[0] * p_[7] * p_[5] -
+            p_[6] * p_[4] * p_[2] -
+            p_[3] * p_[1] * p_[8];
   }
   /**
    * Frobenius norm. named after Eigen
@@ -443,7 +237,7 @@ class CMat3 {
    */
   [[nodiscard]] REAL squaredNorm() const {
     REAL s = 0;
-    for (auto &i : p_) { s += i * i; }
+    for (auto &i: p_) { s += i * i; }
     return s;
   }
   /**
@@ -480,9 +274,10 @@ class CMat3 {
     return m;
   }
   static CMat3 Spin(const REAL *v) {
-    CMat3 m;
-    Mat3_Spin(m.p_, v);
-    return m;
+    return CMat3{
+        0, -v[2], +v[1],
+        +v[2], 0, -v[0],
+        -v[1], +v[0], 0};
   }
   static CMat3 OuterProduct(const REAL *v0, const REAL *v1) {
     return CMat3<REAL>(
@@ -519,13 +314,6 @@ class CMat3 {
 
 using CMat3d = CMat3<double>;
 using CMat3f = CMat3<float>;
-
-template<typename T>
-CMat3<T> Mat3_Identity(T alpha) {
-  CMat3<T> m;
-  Mat3_Identity(m.p_, alpha);
-  return m;
-}
 
 }
 

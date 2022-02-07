@@ -1,5 +1,6 @@
 #include "delfem2/rgd_v2m3.h"
 #include "delfem2/geo_edge.h"
+#include "delfem2/geo_mat3.h"
 
 #ifndef M_PI
   #define M_PI 3.141592653589793

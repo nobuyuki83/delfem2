@@ -441,12 +441,10 @@ void Intersection_ImageRay_TriMesh3(
       //
       const double ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
       const double pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
-      double qs[3];
-      Vec3_Mat4Vec3_Homography(qs, mMVPd_inv, ps);
-      double qe[3];
-      Vec3_Mat4Vec3_Homography(qe, mMVPd_inv, pe);
-      const CVec3d src1(qs);
-      const CVec3d dir1 = CVec3d(qe) - src1;
+      std::array<double,3> qs = Vec3_Mat4Vec3_Homography(mMVPd_inv, ps);
+      std::array<double,3> qe = Vec3_Mat4Vec3_Homography(mMVPd_inv, pe);
+      const CVec3d src1(qs.data());
+      const CVec3d dir1 = CVec3d(qe.data()) - src1;
       //
       aIndElem.resize(0);
       BVH_GetIndElem_Predicate(

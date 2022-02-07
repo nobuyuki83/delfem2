@@ -48,12 +48,10 @@ void ShadingImageRayLambertian(
     for (unsigned int iw = 0; iw < nwidth; ++iw) {
       const double ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
       const double pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
-      double qs[3];
-      dfm2::Vec3_Mat4Vec3_Homography(qs, mMVPd_inv, ps);
-      double qe[3];
-      dfm2::Vec3_Mat4Vec3_Homography(qe, mMVPd_inv, pe);
-      const dfm2::CVec3d src1(qs);
-      const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
+      std::array<double,3> qs = dfm2::Vec3_Mat4Vec3_Homography(mMVPd_inv, ps);
+      std::array<double,3> qe = dfm2::Vec3_Mat4Vec3_Homography(mMVPd_inv, pe);
+      const dfm2::CVec3d src1(qs.data());
+      const dfm2::CVec3d dir1 = dfm2::CVec3d(qe.data()) - src1;
       //
       const delfem2::PointOnSurfaceMesh<double> &pes = aPointElemSurf[ih * nwidth + iw];
       if (pes.itri == UINT_MAX) {

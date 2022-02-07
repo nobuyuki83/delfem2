@@ -80,7 +80,7 @@ class CVec3 {
   CVec3(const CVec3 &) = default;
 
   template<typename S>
-  CVec3(const std::array<S, 3> &&v) : p{
+  CVec3(const std::array<S, 3> &v) : p{
       static_cast<T>(v[0]),
       static_cast<T>(v[1]),
       static_cast<T>(v[2])} {}

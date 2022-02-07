@@ -468,7 +468,7 @@ VEC delfem2::UnitNormal_Tri3(
 #include "delfem2/vec3.h"
 
 namespace delfem2 {
-  using f0 = float [3];
+  using f0 = double [3];
   using d0 = double [3];
   using f1 = float*;
   using d1 = double*;
@@ -477,11 +477,9 @@ namespace delfem2 {
   using f3 = CVec3f;
   using d3 = CVec3d;
   //
-  template float Area_Tri3(const f0&, const f0&, const f0&);
   template float Area_Tri3(const f1&, const f1&, const f1&);
   template float Area_Tri3(const f2&, const f2&, const f2&);
   template float Area_Tri3(const f3&, const f3&, const f3&);
-  template double Area_Tri3(const d0&, const d0&, const d0&);
   template double Area_Tri3(const d1&, const d1&, const d1&);
   template double Area_Tri3(const d2&, const d2&, const d2&);
   template double Area_Tri3(const d3&, const d3&, const d3&);
@@ -492,7 +490,6 @@ namespace delfem2 {
   template f2 UnitNormal_Tri3(const f2 &, const f2 &, const f2 &);
   template f3 UnitNormal_Tri3(const f3 &, const f3 &, const f3 &);
   //
-  template void UnitNormalAreaTri3(f0&, float&, const f0&, const f0&, const f0&);
   template void UnitNormalAreaTri3(f1&, float&, const f1&, const f1&, const f1&);
   template void UnitNormalAreaTri3(f2&, float&, const f2&, const f2&, const f2&);
   template void UnitNormalAreaTri3(f3&, float&, const f3&, const f3&, const f3&);
@@ -514,7 +511,7 @@ namespace delfem2 {
   template double DistanceFaceVertex(const d3 &, const d3 &,
                                      const d3 &, const d3 &,
                                      double &, double &);
-  template d3 Nearest_Origin3_Tri3(double &r0, double &r1,
-                                   const d3 &q0, const d3 &q1, const d3 &q2);
+  template d3 Nearest_Origin3_Tri3(double &, double &,
+                                   const d3 &, const d3 &, const d3 &);
 }
 #endif

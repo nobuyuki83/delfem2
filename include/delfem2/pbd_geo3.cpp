@@ -11,6 +11,7 @@
 #include "delfem2/svd3.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/geo_vec3.h"
+#include "delfem2/geo_mat3.h"
 
 // =======================================
 
