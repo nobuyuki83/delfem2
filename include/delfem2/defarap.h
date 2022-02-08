@@ -134,10 +134,10 @@ public:
       std::vector<double>& aQuat,
       const std::vector<double>& aXYZ0,
       const std::vector<int>& aBCFlag);
-  void UpdateQuats_SVD(
-      std::vector<double>& aXYZ1,
+  void UpdateQuaternions_Svd(
       std::vector<double>& aQuat1,
-      const std::vector<double>& aXYZ0) const;
+      const std::vector<double>& aXYZ0,
+      const std::vector<double>& aXYZ1) const;
 public:
   mutable std::vector<double> aConvHist;
   std::vector<unsigned int> psup_ind, psup;

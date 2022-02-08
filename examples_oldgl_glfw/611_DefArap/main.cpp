@@ -34,9 +34,9 @@ void SetPositionAtFixedBoundary(
     const std::vector<int> &aBCFlag) {
   double A[16];
   {
-    auto T0 = dfm2::CMat4d::Translation({0, -0.8, 0});
+    dfm2::CMat4d T0 = dfm2::Mat4_AffineTranslation(0., -0.8, 0.);
     dfm2::CMat4d R0 = dfm2::Mat4_AffineRotationRodriguez(0., +2.0 * sin(0.03 * iframe), 1.0 * sin(0.07 * iframe));
-    auto T1 = dfm2::CMat4d::Translation({0.2 * sin(0.03 * iframe), +0.5 + 0.1 * cos(0.05 * iframe), 0});
+    dfm2::CMat4d T1 = dfm2::Mat4_AffineTranslation(0.2 * sin(0.03 * iframe), +0.5 + 0.1 * cos(0.05 * iframe), 0.);
     (T1 * R0 * T0).CopyTo(A);
   }
   const size_t np = aRhs.size() / 3;
@@ -55,19 +55,17 @@ void SetPositionAtFixedBoundary(
 }
 
 void UpdateRotationsByMatchingCluster_SVD_Parallel(
-    std::vector<double>& aQuat1,
-    const std::vector<double>& aXYZ0,
-    const std::vector<double>& aXYZ1,
-    const std::vector<unsigned int>& psup_ind,
-    const std::vector<unsigned int>& psup)
-{
-  auto func_matchrot = [&aQuat1, &aXYZ0, & aXYZ1, &psup_ind, &psup](unsigned int ip)
-  {
+    std::vector<double> &aQuat1,
+    const std::vector<double> &aXYZ0,
+    const std::vector<double> &aXYZ1,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup) {
+  auto func_matchrot = [&aQuat1, &aXYZ0, & aXYZ1, &psup_ind, &psup](unsigned int ip) {
     dfm2::UpdateRotationsByMatchingCluster_SVD(
         aQuat1,
-        ip,aXYZ0,aXYZ1,psup_ind,psup);
+        ip, aXYZ0, aXYZ1, psup_ind, psup);
   };
-  delfem2::thread::parallel_for(aXYZ0.size()/3, func_matchrot);
+  delfem2::thread::parallel_for(aXYZ0.size() / 3, func_matchrot);
 }
 
 void myGlutDisplay_Mesh(
@@ -148,9 +146,9 @@ int main(
     { // arap edge linear disponly
       dfm2::CDef_Arap def0;
       def0.Init(aXYZ0, aTri, false);
-      if( itr == 0 ) {
+      if (itr == 0) {
         glfwSetWindowTitle(viewer.window, "(1) ARAP without preconditioner");
-      } else{
+      } else {
         glfwSetWindowTitle(viewer.window, "(1) ARAP without preconditioner using thread");
       }
       for (; iframe < 200; ++iframe) {
@@ -160,11 +158,11 @@ int main(
         def0.Deform(
             aXYZ1, aQuat1,
             aXYZ0, aBCFlag);
-        if( itr == 0 ) {
-          def0.UpdateQuats_SVD(
-              aXYZ1, aQuat1,
-              aXYZ0);
-        } else{
+        if (itr == 0) {
+          def0.UpdateQuaternions_Svd(
+              aQuat1,
+              aXYZ0, aXYZ1);
+        } else {
           UpdateRotationsByMatchingCluster_SVD_Parallel(
               aQuat1,
               aXYZ0, aXYZ1, def0.psup_ind, def0.psup);
@@ -182,7 +180,7 @@ int main(
     {  // arap edge linear displacement only
       dfm2::CDef_Arap def0;
       def0.Init(aXYZ0, aTri, true);
-      if( itr == 0 ) {
+      if (itr == 0) {
         glfwSetWindowTitle(viewer.window, "(2) ARAP with preconditioner");
       } else {
         glfwSetWindowTitle(viewer.window, "(2) ARAP with preconditioner using thread");
@@ -194,10 +192,10 @@ int main(
         def0.Deform(
             aXYZ1, aQuat1,
             aXYZ0, aBCFlag);
-        if( itr == 0 ) {
-          def0.UpdateQuats_SVD(
-              aXYZ1, aQuat1,
-              aXYZ0);
+        if (itr == 0) {
+          def0.UpdateQuaternions_Svd(
+              aQuat1,
+              aXYZ0, aXYZ1);
         } else {
           UpdateRotationsByMatchingCluster_SVD_Parallel(
               aQuat1,

@@ -548,10 +548,10 @@ void delfem2::CDef_Arap::Deform(
 
 }
 
-void delfem2::CDef_Arap::UpdateQuats_SVD(
-    std::vector<double> &aXYZ1,
+void delfem2::CDef_Arap::UpdateQuaternions_Svd(
     std::vector<double> &aQuat1,
-    const std::vector<double> &aXYZ0) const {
+    const std::vector<double> &aXYZ0,
+    const std::vector<double> &aXYZ1) const {
   std::size_t np = aXYZ1.size() / 3;
   for (unsigned int ip = 0; ip < np; ++ip) {
     UpdateRotationsByMatchingCluster_SVD(

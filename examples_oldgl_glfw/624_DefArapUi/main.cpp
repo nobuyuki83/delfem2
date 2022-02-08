@@ -121,9 +121,9 @@ int main() {
       def0.Deform(
           aXYZ1, aQuat1,
           aXYZ0, aBCFlag);
-      def0.UpdateQuats_SVD(
-          aXYZ1, aQuat1,
-          aXYZ0);
+      def0.UpdateQuaternions_Svd(
+          aQuat1,
+          aXYZ0, aXYZ1);
       // -------------------------------
       DrawBegin_oldGL();
       delfem2::opengl::DrawAxis(1);

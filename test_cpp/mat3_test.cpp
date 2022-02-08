@@ -6,15 +6,14 @@
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
 #include "delfem2/mat3.h"
-#include "delfem2/geosolidelm_v3.h"
+#include "delfem2/geo_mat3.h"
 #include "delfem2/sampling.h"
 #include "delfem2/svd3.h"
 
 namespace dfm2 = delfem2;
 
 TEST(mat3, eigen3) {
-  std::random_device randomDevice;
-  std::mt19937 rdeng(randomDevice());
+  std::mt19937 rdeng(std::random_device{}());
   std::uniform_real_distribution<double> dist(-50.0, 50.0);
   for (int itr = 0; itr < 10000; itr++) {
     double sm[6];
