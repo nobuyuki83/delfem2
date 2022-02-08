@@ -15,7 +15,7 @@ ENDIF ()
 
 ######################################################
 
-project(608_FdmFluid2D)
+project(608_StableFluids2Staggered)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

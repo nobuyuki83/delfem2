@@ -231,8 +231,8 @@ cmake --build .
 ### [607_PbdCloth](607_PbdCloth)
 <img src="607_PbdCloth/thumbnail.png" width=200>
 
-### [608_FdmFluid2D](608_FdmFluid2D)
-<img src="608_FdmFluid2D/thumbnail.png" width=200>
+### [608_StableFluids2Staggered](608_StableFluids2Staggered)
+<img src="608_StableFluids2Staggered/thumbnail.png" width=200>
 
 ### [609_DefLaplacianMesh](609_DefLaplacian)
 <img src="609_DefLaplacian/thumbnail.png" width=200>
