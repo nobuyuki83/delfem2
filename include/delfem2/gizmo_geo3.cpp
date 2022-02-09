@@ -8,10 +8,11 @@
 #include "delfem2/gizmo_geo3.h"
 
 #include "delfem2/vec3.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/geo_edge.h"
 #include "delfem2/geo_line.h"
 #include "delfem2/geo_tri.h"
+#include "delfem2/quat.h"
 
 DFM2_INLINE bool delfem2::isPickCircle(
     const CVec3d &axis,
@@ -60,9 +61,9 @@ DFM2_INLINE int delfem2::PickHandlerRotation_PosQuat(
     REAL rad,
     REAL tol) {
   using CV3 = CVec3<REAL>;
-  const CV3 ax = QuatVec(quat, CV3(1, 0, 0));
-  const CV3 ay = QuatVec(quat, CV3(0, 1, 0));
-  const CV3 az = QuatVec(quat, CV3(0, 0, 1));
+  const CV3 ax = QuatVec3(quat, CV3(1, 0, 0));
+  const CV3 ay = QuatVec3(quat, CV3(0, 1, 0));
+  const CV3 az = QuatVec3(quat, CV3(0, 0, 1));
   CV3 px, qx;
   Nearest_Line_Circle(px, qx, src, dir, pos, ax, rad);
   CV3 py, qy;
@@ -102,9 +103,9 @@ DFM2_INLINE int delfem2::PickHandlerRotation_Mat4(
     const CVec3d &src, const CVec3d &dir,
     const double mat[16], double rad,
     double tol) {
-  CVec3d ax = Mat4Vec(mat, CVec3d(1, 0, 0));
-  CVec3d ay = Mat4Vec(mat, CVec3d(0, 1, 0));
-  CVec3d az = Mat4Vec(mat, CVec3d(0, 0, 1));
+  CVec3d ax = Mat4Vec3(mat, CVec3d(1, 0, 0));
+  CVec3d ay = Mat4Vec3(mat, CVec3d(0, 1, 0));
+  CVec3d az = Mat4Vec3(mat, CVec3d(0, 0, 1));
   CVec3d pos(mat[3], mat[7], mat[11]);
   CVec3d px, qx;
   Nearest_Line_Circle(px, qx, src, dir, pos, ax, rad);

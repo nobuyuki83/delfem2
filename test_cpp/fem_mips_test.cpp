@@ -11,7 +11,7 @@
 //
 #include "delfem2/sampling.h"
 #include "delfem2/geo3_v23m34q.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/geo_tri.h"
 #include "delfem2/femmips_geo3.h"
 #include "delfem2/mshmisc.h"

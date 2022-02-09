@@ -10,8 +10,8 @@
 #include "delfem2/mat2.h"
 #include "delfem2/svd3.h"
 #include "delfem2/geo3_v23m34q.h"
-#include "delfem2/geo_vec3.h"
-#include "delfem2/geo_mat3.h"
+#include "delfem2/vec3_funcs.h"
+#include "delfem2/mat3_funcs.h"
 
 // =======================================
 
@@ -151,7 +151,7 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid3D(
     for (int iip = clstr_ind[iclstr]; iip < clstr_ind[iclstr + 1]; iip++) {
       const int ip = clstr[iip];
       CVec3d dq = CVec3d(aXYZ0[ip * 3 + 0], aXYZ0[ip * 3 + 1], aXYZ0[ip * 3 + 2]) - qc;
-      CVec3d pg = pc + Mat3Vec(R, dq); // goal position
+      CVec3d pg = pc + Mat3Vec3(R, dq); // goal position
       CVec3d pg2 = stiffness * pg + (1 - stiffness) * CVec3d(aXYZt[ip * 3 + 0], aXYZt[ip * 3 + 1], aXYZt[ip * 3 + 2]);
       aXYZt[ip * 3 + 0] = pg2.p[0];
       aXYZt[ip * 3 + 1] = pg2.p[1];

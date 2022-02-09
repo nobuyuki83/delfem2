@@ -5,7 +5,7 @@
 #include "delfem2/fem_quadratic_bending.h"
 
 #include "delfem2/vec3.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/geo_tri.h"
 
 DFM2_INLINE void delfem2::CdC_QuadBend(

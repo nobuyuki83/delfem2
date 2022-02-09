@@ -132,17 +132,17 @@ DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_PosQuat(
   ::glDisable(GL_LIGHTING);
   {
     if (ielem_picked == 0) { ::glColor3d(1, 1, 0); } else { ::glColor3d(1, 0, 0); }
-    const CVec3<REAL> &ax = QuatVec(quat, CVec3<REAL>(1, 0, 0));
+    const CVec3<REAL> &ax = QuatVec3(quat, CVec3<REAL>(1, 0, 0));
     opengl::DrawCircleWire(ax, pos, size);
   }
   {
     if (ielem_picked == 1) { ::glColor3d(1, 1, 0); } else { ::glColor3d(0, 1, 0); }
-    const CVec3<REAL> &ay = QuatVec(quat, CVec3<REAL>(0, 1, 0));
+    const CVec3<REAL> &ay = QuatVec3(quat, CVec3<REAL>(0, 1, 0));
     opengl::DrawCircleWire(ay, pos, size);
   }
   {
     if (ielem_picked == 2) { ::glColor3d(1, 1, 0); } else { ::glColor3d(0, 0, 1); }
-    const CVec3<REAL> &az = QuatVec(quat, CVec3<REAL>(0, 0, 1));
+    const CVec3<REAL> &az = QuatVec3(quat, CVec3<REAL>(0, 0, 1));
     opengl::DrawCircleWire(az, pos, size);
   }
 }

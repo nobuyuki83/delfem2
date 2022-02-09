@@ -5,9 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/geo_mat3.h"
+#include "delfem2/mat3_funcs.h"
 
 #include <random>
+
+#include "delfem2/vec3_funcs.h"
 
 namespace delfem2::mat3 {
 
@@ -678,4 +680,82 @@ template void delfem2::EulerAngle_Mat3(
   float ea[3],
   const float m[9],
   const std::array<int, 3> &axis_idxs);
+#endif
+
+// ---------------
+
+template<typename VEC, typename REAL>
+std::array<REAL, 9> delfem2::Mat3_MinimumRotation(
+    const VEC &V,
+    const VEC &v) {
+  VEC ep = V.normalized();
+  VEC eq = v.normalized();
+  VEC n = ep.cross(eq);
+  const REAL st2 = n.dot(n);
+  const REAL ct = ep.dot(eq);
+  constexpr REAL half = static_cast<REAL>(0.5);
+
+  if (st2 < 1.0e-8f) { // very small angle or n is zero
+    // inifinitesimal rotation
+    if (ct > 0.99) {
+      return {
+          1 + half * (n.x * n.x - st2),
+          -n.z + half * (n.x * n.y),
+          +n.y + half * (n.x * n.z),
+          +n.z + half * (n.y * n.x),
+          1 + half * (n.y * n.y - st2),
+          -n.x + half * (n.y * n.z),
+          -n.y + half * (n.z * n.x),
+          +n.x + half * (n.z * n.y),
+          1 + half * (n.z * n.z - st2)};
+    } else {
+      VEC epx, epy;
+      FrameFromVectorZ(epx, epy, ep);
+      const VEC eqx = epx - eq.dot(epx) * eq; // vector orthogonal to eq
+      const VEC eqy = eq.cross(eqx);
+      return {
+          eqx.dot(epx), eqy.dot(epx), eq.dot(epx),
+          eqx.dot(epy), eqy.dot(epy), eq.dot(epy),
+          eqx.dot(ep), eqy.dot(ep), eq.dot(ep)};
+      /*
+      const CMat3<REAL> Rp = Mat3_3Bases(epx, epy, ep);
+      const CMat3<REAL> Rq = Mat3_3Bases(eqx, eqy, eq);
+      return Rq * Rp.transpose();
+       */
+    }
+  }
+  const REAL st = std::sqrt(st2);
+  n.normalize();
+  // Rodoriguez's rotation formula
+  return {
+      ct + (1 - ct) * n.x * n.x,
+      -n.z * st + (1 - ct) * n.x * n.y,
+      +n.y * st + (1 - ct) * n.x * n.z,
+      +n.z * st + (1 - ct) * n.y * n.x,
+      ct + (1 - ct) * n.y * n.y,
+      -n.x * st + (1 - ct) * n.y * n.z,
+      -n.y * st + (1 - ct) * n.z * n.x,
+      +n.x * st + (1 - ct) * n.z * n.y,
+      ct + (1 - ct) * n.z * n.z};
+}
+
+// ============================================
+
+#ifdef DFM2_STATIC_LIBRARY
+
+#include "delfem2/vec3.h"
+//
+namespace delfem2 {
+using f0 = float [3];
+using d0 = double [3];
+using f1 = float *;
+using d1 = double *;
+using f2 = std::array<float, 3>;
+using d2 = std::array<double, 3>;
+using f3 = CVec3f;
+using d3 = CVec3d;
+//
+template std::array<float, 9> Mat3_MinimumRotation(const f3 &, const f3 &);
+template std::array<double, 9> Mat3_MinimumRotation(const d3 &, const d3 &);
+}
 #endif

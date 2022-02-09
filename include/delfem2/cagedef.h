@@ -17,7 +17,7 @@
 #include <array>
 #include <cassert>
 
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 
 namespace delfem2 {
 

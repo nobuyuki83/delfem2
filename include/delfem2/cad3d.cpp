@@ -21,7 +21,8 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/geo_edge.h"
 #include "delfem2/geo_surface_parametric.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
+#include "delfem2/mat3_funcs.h"
 
 // =========================================
 

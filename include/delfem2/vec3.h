@@ -22,52 +22,10 @@
 
 #if defined(_MSC_VER)
 #  pragma warning( push )
-#  pragma warning( disable : 4201 )
+#  pragma warning( disable : 4201 )  // because we use nameless union in CVec3
 #endif
 
-#define NEARLY_ZERO 1.e-16
-
 namespace delfem2 {
-
-template<typename REAL>
-void AverageTwo3(
-    REAL po[3],
-    const REAL p0[3], const REAL p1[3]);
-
-template<typename REAL>
-void AverageFour3(
-    REAL po[3],
-    const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
-
-/**
- * @func add values for 3-array (vo += vi)
- * @tparam REAL float and double
- * @param vo (out)
- * @param vi (in)
- */
-template<typename REAL>
-DFM2_INLINE void Add3(
-    REAL vo[3],
-    const REAL vi[3]);
-
-// above: no dependency
-// -------------------------------------------------------------
-// below: definition of CVec3
-
-template<typename T>
-class CVec3;
-
-template<typename T0, typename T1>
-CVec3<T0> operator*(T1 d, const CVec3<T0> &rhs);
-
-template<typename T0, typename T1>
-CVec3<T0> operator/(const CVec3<T0> &vec, T1 d);
-
-template<typename T>
-std::ostream &operator<<(std::ostream &output, const CVec3<T> &v);
-
-template<typename T>
-std::istream &operator>>(std::istream &input, CVec3<T> &v);
 
 /**
  * @class 3 dimentional vector class
@@ -111,7 +69,7 @@ class CVec3 {
   inline CVec3 operator-() const { return ((T) (-1)) * (*this); }
   inline CVec3 operator+() const { return *this; }
   inline CVec3 operator+() { return *this; }
-  inline CVec3 operator-() { return CVec3(-p[0], -p[1], -p[2]); }
+  inline CVec3 operator-() { return {-x, -y, -z}; }
   inline CVec3 &operator+=(const CVec3 &b) {
     x += b.x;
     y += b.y;
@@ -125,15 +83,15 @@ class CVec3 {
     return *this;
   }
   inline CVec3 operator+(const CVec3 &b) const {
-    return CVec3(x + b.x, y + b.y, z + b.z);
+    return {x + b.x, y + b.y, z + b.z};
   }
 
   inline CVec3 operator-(const CVec3 &b) const {
-    return CVec3(x - b.x, y - b.y, z - b.z);
+    return {x - b.x, y - b.y, z - b.z};
   }
 
   inline CVec3 operator*(T b) const {
-    return CVec3(x * b, y * b, z * b);
+    return {x * b, y * b, z * b};
   }
 
   inline CVec3 &operator*=(T d) {
@@ -149,6 +107,13 @@ class CVec3 {
     z /= d;
     return *this;
   }
+
+  template<typename T1>
+  CVec3 operator/(T1 d) const {
+    if (fabs(d) < NEARLY_ZERO) { return CVec3(0,0,0); }
+    return { x / d, y / d, z / d};
+  }
+
   template<typename INDEX>
   inline T operator[](INDEX i) const {
     assert(i < 3);
@@ -183,7 +148,12 @@ class CVec3 {
 
   //! @brief in-place normalization of vector
   //! @details named after Eigen library
-  void normalize();
+  void normalize(){
+    T invmag = 1 / norm();
+    p[0] *= invmag;
+    p[1] *= invmag;
+    p[2] *= invmag;
+  }
 
   //! @details named after Eigen library
   inline T norm() const {
@@ -196,7 +166,11 @@ class CVec3 {
   }
 
   //! @details named after Eigen library
-  void setZero();
+  void setZero(){
+    p[0] = 0;
+    p[1] = 0;
+    p[2] = 0;
+  }
 
   //! @details named after Eigen library
   T dot(const CVec3 &rhs) const { return x * rhs.x + y * rhs.y + z * rhs.z; }
@@ -279,6 +253,7 @@ class CVec3 {
   }
   
   using Scalar = T;
+  static constexpr T NEARLY_ZERO = static_cast<T>(1.e-16);
 
  public:
   union {
@@ -291,71 +266,48 @@ class CVec3 {
 using CVec3d = CVec3<double>;
 using CVec3f = CVec3<float>;
 
-// --------------------------------------------------------------------------
-// rule about naming, the method starts "Set" change it self (not const)
+template<typename T0, typename T1>
+CVec3<T0> operator*(T1 d, const CVec3<T0> &rhs) {
+  return {
+      static_cast<T0>(rhs.x * d),
+      static_cast<T0>(rhs.y * d),
+      static_cast<T0>(rhs.z * d) };
+}
 
 template<typename T>
-CVec3<T> Mat3Vec(
-    const T M[9],
-    const CVec3<T> &v);
+std::ostream &operator<<(
+    std::ostream &output,
+    const CVec3<T> &v) {
+  output.setf(std::ios::scientific);
+  output << v.x << " " << v.y << " " << v.z;
+  return output;
+}
 
 template<typename T>
-CVec3<T> Mat4Vec(
-    const T M[16],
-    const CVec3<T> &v);
+std::istream &operator>>(
+    std::istream &input,
+    CVec3<T> &v) {
+  input >> v.x >> v.y >> v.z;
+  return input;
+}
 
 template<typename T>
-DFM2_INLINE CVec3<T> QuatVec(
-    const T quat[4],
-    const CVec3<T> &v0);
-
-template<typename REAL>
-CVec3<REAL> QuatConjVec(
-    const REAL quat[4],
-    const CVec3<REAL> &v0);
+bool operator==(const CVec3<T> &lhs, const CVec3<T> &rhs) {
+  if (fabs(lhs.p[0] - rhs.p[0]) < CVec3<T>::NEARLY_ZERO
+      && fabs(lhs.p[1] - rhs.p[1]) < CVec3<T>::NEARLY_ZERO
+      && fabs(lhs.p[2] - rhs.p[2]) < CVec3<T>::NEARLY_ZERO) { return true; }
+  else { return false; }
+}
 
 template<typename T>
-bool operator==(const CVec3<T> &lhs, const CVec3<T> &rhs);
-
-template<typename T>
-bool operator!=(const CVec3<T> &lhs, const CVec3<T> &rhs);
-
-// ---------------------------------------------
-
-template<typename T>
-CVec3<T> RotateVector(
-    const CVec3<T> &vec0,
-    const CVec3<T> &rot);
-
-/**
- * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
- * @param[in] V rotation from
- * @param[in] v rotation to
- */
-// TODO: consider making this function general to Eigen::Vector3x
-//  using template and moving this functin to "geo_vec3.h"
-template<typename REAL>
-DFM2_INLINE std::array<REAL, 9> Mat3_MinimumRotation(
-    const CVec3<REAL> &V,
-    const CVec3<REAL> &v);
-
-// TODO: consider making this function general to Eigen::Vector3x
-//  using template and moving this functin to "geo_vec3.h"
-template<typename REAL>
-DFM2_INLINE std::array<REAL, 9> Mat3_ParallelTransport(
-    const CVec3<REAL> &p0,
-    const CVec3<REAL> &p1,
-    const CVec3<REAL> &q0,
-    const CVec3<REAL> &q1);
+bool operator!=(const CVec3<T> &lhs, const CVec3<T> &rhs) {
+  return !(lhs == rhs);
+}
 
 } // namespace delfem2
 
 #if defined(_MSC_VER)
 #  pragma warning( pop )
-#endif
-
-#ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/vec3.cpp"
 #endif
 
 #endif // DFM2_VEC3_H

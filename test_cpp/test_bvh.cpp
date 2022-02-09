@@ -15,7 +15,7 @@
 #include "delfem2/srchbv3aabb.h"
 #include "delfem2/srchbvh.h"
 #include "delfem2/vec3.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"

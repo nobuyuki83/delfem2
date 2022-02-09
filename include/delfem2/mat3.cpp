@@ -9,7 +9,7 @@
 
 #include <random>
 
-#include "delfem2/geo_mat3.h"
+#include "delfem2/mat3_funcs.h"
 
 // -----------------------------------
 

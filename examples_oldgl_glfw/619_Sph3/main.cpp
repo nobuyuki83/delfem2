@@ -22,7 +22,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/vec3.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/srchgrid.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"

@@ -10,13 +10,13 @@
 #include <cstring> // memcpy
 
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
-#include "delfem2/geo_mat3.h"
+#include "delfem2/mat3_funcs.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/jagarray.h"
-#include "delfem2/geo_vec3.h"
 
 namespace delfem2::defarap {
 

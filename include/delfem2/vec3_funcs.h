@@ -6,12 +6,12 @@
 */
 
 /**
- * geometry of 3d vector
+ * funcstions related to 3d vector
  * @detail The order of dependency in delfem2 is "vec2 -> mat2 -> vec3 -> quaternion -> mat3 -> mat4",
  */
 
-#ifndef DFM2_GEO_VEC3_H
-#define DFM2_GEO_VEC3_H
+#ifndef DFM2_VEC3_FUNCS_H
+#define DFM2_VEC3_FUNCS_H
 
 #include <cassert>
 #include <cmath>
@@ -126,6 +126,47 @@ T ScalarTripleProduct(
   return v0 + v1 + v2;
 }
 
+// ----------------
+
+template<typename REAL>
+void AverageTwo3(
+    REAL po[3],
+    const REAL p0[3], const REAL p1[3])  {
+  constexpr REAL half = static_cast<REAL>(0.5);
+  po[0] = (p0[0] + p1[0]) * half;
+  po[1] = (p0[1] + p1[1]) * half;
+  po[2] = (p0[2] + p1[2]) * half;
+}
+
+// --------------------
+
+template<typename REAL>
+void AverageFour3(
+    REAL po[3],
+    const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]) {
+  constexpr REAL quarter(0.25);
+  po[0] = (p0[0] + p1[0] + p2[0] + p3[0]) * quarter;
+  po[1] = (p0[1] + p1[1] + p2[1] + p3[1]) * quarter;
+  po[2] = (p0[2] + p1[2] + p2[2] + p3[2]) * quarter;
+}
+
+// ------------------
+
+/**
+ * @func add values for 3darray (vo += vi)
+ * @tparam REAL float and double
+ * @param vo (out)
+ * @param vi (in)
+ */
+template<typename REAL>
+DFM2_INLINE void Add3(
+    REAL vo[3],
+    const REAL vi[3]){
+  vo[0] += vi[0];
+  vo[1] += vi[1];
+  vo[2] += vi[2];
+}
+
 // -------------------------
 
 template<typename VEC0, typename VEC1>
@@ -134,6 +175,11 @@ void FrameFromVectorZ(
     VEC0 &&vec_y,
     const VEC1 &vec_n);
 
+
+template<typename VEC, typename T = delfem2::value_type<VEC>>
+VEC RotateVec3WithAxisAngleVector(
+    const VEC &vec0,
+    const VEC &rot);
 
 // =====================================
 // dependency to the std::vector
@@ -153,7 +199,7 @@ std::istream &operator>>(
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/geo_vec3.cpp"
+#  include "delfem2/vec3_funcs.cpp"
 #endif
 
-#endif // DFM2_GEO_VEC3_H
+#endif // DFM2_VEC3_FUNCS_H

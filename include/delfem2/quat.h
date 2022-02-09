@@ -16,14 +16,15 @@
 #define DFM2_QUAT_H
 
 #if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4201 )
+#  pragma warning( push )
+#  pragma warning( disable : 4201 )
 #endif
 
 #include <random>
 #include <array>
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/geo_meta_funcs.h"
 
 namespace delfem2 {
 
@@ -158,6 +159,26 @@ DFM2_INLINE void QuatVec(
     const REAL q[],
     const REAL vi[]);
 
+template<typename VEC, typename T=value_type<VEC>>
+std::array<T,3> QuatVec3(
+    const T q[],
+    const VEC& vi){
+  const T x2 = q[0] * q[0] * 2;
+  const T y2 = q[1] * q[1] * 2;
+  const T z2 = q[2] * q[2] * 2;
+  const T xy = q[0] * q[1] * 2;
+  const T yz = q[1] * q[2] * 2;
+  const T zx = q[2] * q[0] * 2;
+  const T xw = q[0] * q[3] * 2;
+  const T yw = q[1] * q[3] * 2;
+  const T zw = q[2] * q[3] * 2;
+  return {
+    (1 - y2 - z2) * vi[0] + (xy - zw) * vi[1] + (zx + yw) * vi[2],
+    (xy + zw) * vi[0] + (1 - z2 - x2) * vi[1] + (yz - xw) * vi[2],
+    (zx - yw) * vi[0] + (yz + xw) * vi[1] + (1 - x2 - y2) * vi[2] };
+}
+
+
 /**
  * trasnsform a 3D vector with conjusgate of a quaternion
  * @param[out] vo
@@ -289,7 +310,7 @@ using CQuatf = CQuat<float>;
 }
 
 #if defined(_MSC_VER)
-#pragma warning( pop )
+#  pragma warning( pop )
 #endif
 
 #ifndef DFM2_STATIC_LIBRARY

@@ -11,7 +11,7 @@
 #include <utility>
 
 #include "delfem2/geo3_v23m34q.h"  // update rotation by matching cluster
-#include "delfem2/geo_mat3.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/svd3.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/view_vectorx.h"

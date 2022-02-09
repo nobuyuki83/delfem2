@@ -11,7 +11,7 @@
 #include <cmath>
 
 #include "delfem2/geo_line.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846

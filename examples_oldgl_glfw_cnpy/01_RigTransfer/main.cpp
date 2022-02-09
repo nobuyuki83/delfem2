@@ -153,7 +153,7 @@ int main()
       if( ibp == -1 ) continue;
       dfm2::CVec3d vi(aBone[ib].transRelative);
       const double* qip = aQuat0.data()+ibp*4;
-      dfm2::CVec3d vi1 = dfm2::QuatVec(qip, vi);
+      dfm2::CVec3d vi1 = dfm2::QuatVec3(qip, vi);
       dfm2::CMat3d m0 = dfm2::Mat3_MinimumRotation(vi1,vj);
       const std::array<double,4> qij = m0.GetQuaternion();
       double qt[4];

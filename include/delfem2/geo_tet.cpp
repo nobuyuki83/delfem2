@@ -5,9 +5,9 @@
 
 #include "delfem2/geo_tet.h"
 
-#include "delfem2/geo_mat3.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/geo_tri.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 
 template<typename VEC, typename T>
 T delfem2::Volume_Tet(

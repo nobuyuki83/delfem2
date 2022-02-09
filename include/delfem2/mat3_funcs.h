@@ -11,8 +11,8 @@
  */
 
 
-#ifndef DFM2_GEO_MAT3_H
-#define DFM2_GEO_MAT3_H
+#ifndef DFM2_MAT3_FUNCS_H
+#define DFM2_MAT3_FUNCS_H
 
 #include <vector>
 #include <cassert>
@@ -22,8 +22,7 @@
 #include <limits> // using NaN Check
 
 #include "delfem2/dfm2_inline.h"
-
-#define NEARLY_ZERO 1.e-16
+#include "delfem2/geo_meta_funcs.h"
 
 // -----------------------------
 
@@ -197,6 +196,14 @@ void MatVec3(
     const T1 m[9],
     const T2 x[3]);
 
+template<typename VEC3, typename T = value_type<VEC3>>
+std::array<T,3> Mat3Vec3(const T mat[9], const VEC3 &v) {
+  return {
+    mat[0]*v[0] + mat[1]*v[1] + mat[2]*v[2],
+    mat[3]*v[0] + mat[4]*v[1] + mat[5]*v[2],
+    mat[6]*v[0] + mat[7]*v[1] + mat[8]*v[2] };
+}
+
 template<typename T>
 void MatVec3_ScaleAdd(
     T y[3],
@@ -227,6 +234,17 @@ DFM2_INLINE void Vec2_Mat3Vec2_AffineDirection(
     const T A[9],
     const T x[2]);
 
+/**
+ * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
+ * this functions is for dfm2::CVec3 or Eigen::Vector3
+ * @param[in] V rotation from
+ * @param[in] v rotation to
+ */
+template<typename VEC, typename REAL= typename VEC::Scalar>
+std::array<REAL, 9> Mat3_MinimumRotation(
+    const VEC &V,
+    const VEC &v);
+
 // --------------------------------
 // below: mat3 and quat
 
@@ -244,7 +262,7 @@ DFM2_INLINE void Quat_Mat3(
 
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/geo_mat3.cpp"
+#  include "delfem2/mat3_funcs.cpp"
 #endif
 
-#endif /* DFM2_GEO_MAT3_H */
+#endif /* DFM2_MAT3_FUNCS_H */

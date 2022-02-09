@@ -7,7 +7,7 @@
 
 #include "delfem2/geodelaunay3_v3.h"
 #include "delfem2/geo_tri.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 
 #include <cmath>
 #include <stack>

@@ -14,7 +14,7 @@
 #include "delfem2/lsitrsol.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/mat3.h"
-#include "delfem2/geo_mat3.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/mshuni.h"
 

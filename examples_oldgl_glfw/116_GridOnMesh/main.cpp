@@ -23,7 +23,7 @@
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"

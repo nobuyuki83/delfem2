@@ -6,7 +6,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
 #include "delfem2/mat3.h"
-#include "delfem2/geo_mat3.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/sampling.h"
 #include "delfem2/svd3.h"
 
@@ -137,7 +137,7 @@ TEST(mat3, quat) {
     }
     {
       dfm2::CVec3d v0(dist(mtd), dist(mtd), dist(mtd));
-      dfm2::CVec3d qv0 = dfm2::QuatVec(quat0, v0);
+      dfm2::CVec3d qv0 = dfm2::QuatVec3(quat0, v0);
       dfm2::CVec3d Rv0 = dfm2::MatVec(R0, v0);
       EXPECT_LT((qv0 - Rv0).norm(), 1.0e-20);
     }

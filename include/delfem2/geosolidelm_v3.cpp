@@ -10,7 +10,7 @@
 #include <cmath>
 #include <stack>
 
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/geo_tri.h"
 
 #ifndef M_PI

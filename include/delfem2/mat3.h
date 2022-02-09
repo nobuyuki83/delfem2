@@ -23,8 +23,6 @@
 
 #include "delfem2/dfm2_inline.h"
 
-#define NEARLY_ZERO 1.e-16
-
 // -----------------------------
 
 namespace delfem2 {

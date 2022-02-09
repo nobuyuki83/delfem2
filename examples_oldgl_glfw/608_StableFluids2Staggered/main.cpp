@@ -20,10 +20,10 @@
 #include "delfem2/glfw/util.h"
 
 template<typename T>
-class Array2 {
+class FdmArray2 {
  public:
-  Array2(int ni_, int nj_) : ni(ni_), nj(nj_) { v.resize(ni * nj); }
-  Array2(int ni_, int nj_, T v_) : ni(ni_), nj(nj_) { v.resize(ni * nj, v_); }
+  FdmArray2(int ni_, int nj_) : ni(ni_), nj(nj_) { v.resize(ni * nj); }
+  FdmArray2(int ni_, int nj_, T v_) : ni(ni_), nj(nj_) { v.resize(ni * nj, v_); }
 
   const T &operator()(int i, int j) const {
     assert(i >= 0 && i < ni && j >= 0 && j < nj);
@@ -56,7 +56,7 @@ class Array2 {
 
 template<int ndim>
 double LinearInterpolationOnGrid2(
-    const Array2<std::array<double, ndim>> &data,
+    const FdmArray2<std::array<double, ndim>> &data,
     unsigned int idim,
     double x,
     double y) {
@@ -81,16 +81,18 @@ double LinearInterpolationOnGrid2(
 
 // Gauss-Seidel Iteration
 void SolvePoissionEquationOnGrid2ByGaussSeidelMethod(
-    Array2<double> &p,
-    const Array2<double> &d,
+    FdmArray2<double> &p,
+    const FdmArray2<double> &d,
     double scale,
-    unsigned int nx,
-    unsigned int ny,
+    int nx,
+    int ny,
     unsigned int num_iteration) {
+  assert(p.ni == nx && p.nj == ny);
+  assert(d.ni == nx && d.nj == ny);
   for (unsigned int k = 0; k < num_iteration; k++) {
     double t = 0;
-    for (unsigned int j = 0; j < ny; j++) {
-      for (unsigned int i = 0; i < nx; i++) {
+    for (int j = 0; j < ny; j++) {
+      for (int i = 0; i < nx; i++) {
         const double p0 = p(i, j);
         double p21 = p.ClampedFetch(i + 1, j + 0);
         double p01 = p.ClampedFetch(i - 1, j + 0);
@@ -108,17 +110,17 @@ void SolvePoissionEquationOnGrid2ByGaussSeidelMethod(
 }
 
 void Divergence_StaggerdGrid2(
-    Array2<double> &divag,
-    int nx_grid,
-    int ny_grid,
-    const Array2<double> &velou,
-    const Array2<double> &velov,
+    FdmArray2<double> &divag,
+    int ni_grid,
+    int nj_grid,
+    const FdmArray2<double> &velou,
+    const FdmArray2<double> &velov,
     double h) {
-  assert(divag.ni == nx_grid && divag.nj == ny_grid);
-  assert(velou.ni == nx_grid + 1 && velou.nj == ny_grid);
-  assert(velov.ni == nx_grid && velov.nj == ny_grid + 1);
-  for (int jg = 0; jg < ny_grid; jg++) {
-    for (int ig = 0; ig < nx_grid; ig++) {
+  assert(divag.ni == ni_grid && divag.nj == nj_grid);
+  assert(velou.ni == ni_grid + 1 && velou.nj == nj_grid);
+  assert(velov.ni == ni_grid && velov.nj == nj_grid + 1);
+  for (int jg = 0; jg < nj_grid; jg++) {
+    for (int ig = 0; ig < ni_grid; ig++) {
       double du = velou(ig + 1, jg) - velou(ig, jg);
       double dv = velov(ig, jg + 1) - velov(ig, jg);
       divag(ig, jg) = (du + dv) / h;
@@ -126,9 +128,9 @@ void Divergence_StaggerdGrid2(
   }
 }
 
-void EnforceBoundary(
-    Array2<double> &velou,
-    Array2<double> &velov,
+void EnforceNonSlipBoundary_StaggeredGrid2(
+    FdmArray2<double> &velou,
+    FdmArray2<double> &velov,
     int nx_grid,
     int ny_grid) {
   assert(velou.ni == nx_grid + 1 && velou.nj == ny_grid);
@@ -143,43 +145,45 @@ void EnforceBoundary(
   }
 }
 
-void SubstructPressureGradientStaggeredGrid2(
-    Array2<double> &velou,
-    Array2<double> &velov,
-    int nx_grid,
-    int ny_grid,
-    double h,
-    double dt,
-    double rho,
-    const Array2<double> &press) {
-  double dtmp1 = dt / (rho * h);
-  for (int ig = 0; ig < nx_grid - 1; ig++) {
-    for (int jg = 0; jg < ny_grid; jg++) {
+void SubstructPressureGradient_StaggeredGrid2(
+    FdmArray2<double> &velou,
+    FdmArray2<double> &velov,
+    int ni_grid,
+    int nj_grid,
+    double scale,
+    const FdmArray2<double> &press) {
+  assert(velou.ni == ni_grid + 1 && velou.nj == nj_grid);
+  assert(velov.ni == ni_grid && velov.nj == nj_grid + 1);
+  assert(press.ni == ni_grid && press.nj == nj_grid);
+  for (int ig = 0; ig < ni_grid - 1; ig++) {
+    for (int jg = 0; jg < nj_grid; jg++) {
       double p1 = press(ig + 1, jg);
       double p0 = press(ig + 0, jg);
-      velou(ig + 1, jg) -= dtmp1 * (p1 - p0);
+      velou(ig + 1, jg) -= scale * (p1 - p0);
     }
   }
-  for (int ig = 0; ig < nx_grid; ig++) {
-    for (int jg = 0; jg < ny_grid - 1; jg++) {
+  for (int ig = 0; ig < ni_grid; ig++) {
+    for (int jg = 0; jg < nj_grid - 1; jg++) {
       double p1 = press(ig, jg + 1);
       double p0 = press(ig, jg + 0);
-      velov(ig, jg + 1) -= dtmp1 * (p1 - p0);
+      velov(ig, jg + 1) -= scale * (p1 - p0);
     }
   }
 }
 
-void CompAdvectionSemiLagrangianStaggeredGrid2(
-    Array2<double> &velou,
-    Array2<double> &velov,
-    Array2<std::array<double, 2>> &velou_tmp,
-    Array2<std::array<double, 2>> &velov_tmp,
-    int nx_grid,
-    int ny_grid,
+void AdvectionSemiLagrangian_StaggeredGrid2(
+    FdmArray2<double> &velou,
+    FdmArray2<double> &velov,
+    FdmArray2<std::array<double, 2>> &velou_tmp,
+    FdmArray2<std::array<double, 2>> &velov_tmp,
+    int ni_grid,
+    int nj_grid,
     double dt) {
-  assert(nx_grid > 0 && ny_grid > 0);
-  for (int jg = 0; jg < ny_grid + 0; jg++) {
-    for (int ig = 0; ig < nx_grid + 1; ig++) {
+  assert(velou.ni == ni_grid + 1 && velou.nj == nj_grid);
+  assert(velov.ni == ni_grid && velov.nj == nj_grid + 1);
+  assert(ni_grid > 0 && nj_grid > 0);
+  for (int jg = 0; jg < nj_grid + 0; jg++) {
+    for (int ig = 0; ig < ni_grid + 1; ig++) {
       double v01 = velov.ClampedFetch(ig - 1, jg + 0);
       double v11 = velov.ClampedFetch(ig + 0, jg + 0);
       double v02 = velov.ClampedFetch(ig - 1, jg + 1);
@@ -190,8 +194,8 @@ void CompAdvectionSemiLagrangianStaggeredGrid2(
     }
   }
 
-  for (int ig = 0; ig < nx_grid + 0; ig++) {
-    for (int jg = 0; jg < ny_grid + 1; jg++) {
+  for (int ig = 0; ig < ni_grid + 0; ig++) {
+    for (int jg = 0; jg < nj_grid + 1; jg++) {
       double u10 = velou.ClampedFetch(ig + 0, jg - 1);
       double u20 = velou.ClampedFetch(ig + 1, jg - 1);
       double u11 = velou.ClampedFetch(ig + 0, jg + 0);
@@ -202,20 +206,20 @@ void CompAdvectionSemiLagrangianStaggeredGrid2(
     }
   }
 
-  for (int jg = 0; jg < ny_grid + 0; jg++) {
-    for (int ig = 0; ig < nx_grid + 1; ig++) {
+  for (int jg = 0; jg < nj_grid + 0; jg++) {
+    for (int ig = 0; ig < ni_grid + 1; ig++) {
       const std::array<double, 2> &velo = velou_tmp(ig, jg);
-      const double p[2] = {ig - velo[0] * dt * nx_grid, jg - velo[1] * dt * ny_grid};
+      const double p[2] = {ig - velo[0] * dt * ni_grid, jg - velo[1] * dt * nj_grid};
       const double u = LinearInterpolationOnGrid2<2>(
           velou_tmp, 0, p[0], p[1]);
       velou(ig, jg) = u;
     }
   }
 
-  for (int jg = 0; jg < ny_grid + 1; jg++) {
-    for (int ig = 0; ig < nx_grid + 0; ig++) {
+  for (int jg = 0; jg < nj_grid + 1; jg++) {
+    for (int ig = 0; ig < ni_grid + 0; ig++) {
       const std::array<double, 2> &velo = velov_tmp(ig, jg);
-      const double p[2] = {ig - velo[0] * dt * nx_grid, jg - velo[1] * dt * ny_grid};
+      const double p[2] = {ig - velo[0] * dt * ni_grid, jg - velo[1] * dt * nj_grid};
       const double v = LinearInterpolationOnGrid2<2>(
           velov_tmp, 1, p[0], p[1]);
       velov(ig, jg) = v;
@@ -224,21 +228,21 @@ void CompAdvectionSemiLagrangianStaggeredGrid2(
 }
 
 void AssignGravity(
-    Array2<double> &velou,
-    Array2<double> &velov,
-    int nx_grid,
-    int ny_grid,
+    FdmArray2<double> &velou,
+    FdmArray2<double> &velov,
+    int ni_grid,
+    int nj_grid,
     const double gravity[2],
     double dt) {
-  assert(velou.ni == nx_grid + 1 && velou.nj == ny_grid);
-  assert(velov.ni == nx_grid && velov.nj == ny_grid + 1);
-  for (int jg = 0; jg < ny_grid + 0; jg++) {
-    for (int ig = 0; ig < nx_grid + 1; ig++) {
+  assert(velou.ni == ni_grid + 1 && velou.nj == nj_grid);
+  assert(velov.ni == ni_grid && velov.nj == nj_grid + 1);
+  for (int jg = 0; jg < nj_grid + 0; jg++) {
+    for (int ig = 0; ig < ni_grid + 1; ig++) {
       velou(ig, jg) += gravity[0] * dt;
     }
   }
-  for (int jg = 0; jg < ny_grid + 1; jg++) {
-    for (int ig = 0; ig < nx_grid + 0; ig++) {
+  for (int jg = 0; jg < nj_grid + 1; jg++) {
+    for (int ig = 0; ig < ni_grid + 0; ig++) {
       velov(ig, jg) += gravity[1] * dt;
     }
   }
@@ -246,17 +250,19 @@ void AssignGravity(
 }
 
 void glutMyDisplay(
-    int nx_grid,
-    int ny_grid,
+    int ni_grid,
+    int nj_grid,
     double h,
-    const Array2<double> &velou,
-    const Array2<double> &velov,
-    const Array2<double> &press) {
+    const FdmArray2<double> &velou,
+    const FdmArray2<double> &velov,
+    const FdmArray2<double> &press) {
+  assert(velou.ni == ni_grid + 1 && velou.nj == nj_grid);
+  assert(velov.ni == ni_grid && velov.nj == nj_grid + 1);
   glClear(GL_COLOR_BUFFER_BIT);
   { // quad for pressure
     ::glBegin(GL_QUADS);
-    for (int jg = 0; jg < ny_grid; jg++) {
-      for (int ig = 0; ig < nx_grid; ig++) {
+    for (int jg = 0; jg < nj_grid; jg++) {
+      for (int ig = 0; ig < ni_grid; ig++) {
         double p = press(ig, jg);
         glColor4d(p > 0, 0.0, p < 0, 0.8);
         ::glVertex2d((ig + 0) * h, (jg + 0) * h);
@@ -271,8 +277,8 @@ void glutMyDisplay(
   { // draw velocity
     ::glColor3d(0, 1, 1);
     ::glBegin(GL_LINES);
-    for (int ig = 0; ig < nx_grid; ig++) {
-      for (int jg = 0; jg < ny_grid; jg++) {
+    for (int ig = 0; ig < ni_grid; ig++) {
+      for (int jg = 0; jg < nj_grid; jg++) {
         const double p[2] = {(ig + 0.5) * h, (jg + 0.5) * h};
         double u0 = velou(ig + 0, jg);
         double u1 = velou(ig + 1, jg);
@@ -289,14 +295,14 @@ void glutMyDisplay(
 }
 
 int main() {
-  const unsigned int nx_grid = 32;
-  const unsigned int ny_grid = 40;
-  Array2<double> velou(nx_grid + 1, ny_grid, 0.0);
-  Array2<double> velov(nx_grid, ny_grid + 1, 0.0);
-  Array2<double> press(nx_grid, ny_grid);
-  Array2<double> divag(nx_grid, ny_grid);
-  Array2<std::array<double, 2>> velou_tmp(nx_grid + 1, ny_grid);
-  Array2<std::array<double, 2>> velov_tmp(nx_grid, ny_grid + 1);
+  const unsigned int ni_grid = 32;
+  const unsigned int nj_grid = 40;
+  FdmArray2<double> velou(ni_grid + 1, nj_grid, 0.0);
+  FdmArray2<double> velov(ni_grid, nj_grid + 1, 0.0);
+  FdmArray2<double> press(ni_grid, nj_grid);
+  FdmArray2<double> divag(ni_grid, nj_grid);
+  FdmArray2<std::array<double, 2>> velou_tmp(ni_grid + 1, nj_grid);
+  FdmArray2<std::array<double, 2>> velov_tmp(ni_grid, nj_grid + 1);
   // -----------
   const double h = 1.0 / 32;
   const double dt = 0.05;
@@ -319,26 +325,26 @@ int main() {
     // ----
     AssignGravity(
         velou, velov,
-        nx_grid, ny_grid, gravity, dt);
-    EnforceBoundary(
+        ni_grid, nj_grid, gravity, dt);
+    EnforceNonSlipBoundary_StaggeredGrid2(
         velou, velov,
-        nx_grid, ny_grid);
+        ni_grid, nj_grid);
     Divergence_StaggerdGrid2(
         divag,
-        nx_grid, ny_grid, velou, velov, h);
+        ni_grid, nj_grid, velou, velov, h);
     SolvePoissionEquationOnGrid2ByGaussSeidelMethod(
         press,
-        divag, rho / dt * h * h, nx_grid, ny_grid, 200);
-    SubstructPressureGradientStaggeredGrid2(
+        divag, rho / dt * h * h, ni_grid, nj_grid, 200);
+    SubstructPressureGradient_StaggeredGrid2(
         velou, velov,
-        nx_grid, ny_grid, h, dt, rho, press);
-    CompAdvectionSemiLagrangianStaggeredGrid2(
+        ni_grid, nj_grid, dt / (rho * h), press);
+    AdvectionSemiLagrangian_StaggeredGrid2(
         velou, velov, velou_tmp, velov_tmp,
-        nx_grid, ny_grid, dt);
+        ni_grid, nj_grid, dt);
     // ----
     viewer.DrawBegin_oldGL();
     glutMyDisplay(
-        nx_grid, ny_grid, h,
+        ni_grid, nj_grid, h,
         velou, velov, press);
     viewer.SwapBuffers();
     glfwPollEvents();

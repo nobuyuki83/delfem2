@@ -23,8 +23,6 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/geo_meta_funcs.h"
 
-#define NEARLY_ZERO 1.e-16
-
 // -----------------------------
 
 namespace delfem2 {
@@ -227,6 +225,14 @@ DFM2_INLINE void MatVec4(
     T v[4],
     const T A[16],
     const T x[4]);
+
+template<typename VEC, typename T=value_type<VEC>>
+std::array<T,3> Mat4Vec3(const T m[16], const VEC &v) {
+  return {
+    m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
+    m[4]*v[0] + m[5]*v[1] + m[6]*v[2],
+    m[8]*v[0] + m[9]*v[1] + m[10]*v[2] };
+}
 
 template<typename T>
 DFM2_INLINE void VecMat4(

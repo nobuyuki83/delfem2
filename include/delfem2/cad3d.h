@@ -16,7 +16,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/geo_curve_quadratic.h"
 #include "delfem2/geo_curve_cubic.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 
 
 // -------------------------------------

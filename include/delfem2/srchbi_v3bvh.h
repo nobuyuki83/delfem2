@@ -16,7 +16,7 @@
 
 #include "delfem2/srchbvh.h"
 #include "delfem2/vec3.h"
-#include "delfem2/geo_vec3.h"
+#include "delfem2/vec3_funcs.h"
 #include "delfem2/geo_plane.h"
 #include "delfem2/geo_tri.h"
 #include "delfem2/geo_tet.h"

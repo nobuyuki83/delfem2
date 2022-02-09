@@ -632,8 +632,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri_Edge
     (const std::vector<CVec3d> &aP,
      const std::vector<unsigned int> &aTri) {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
-  ////
-  /////
+  //
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
   ::glColor3d(0, 0, 0);
@@ -662,9 +661,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri_Edge
   if (is_lighting) { ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshQuad_Face
-    (const std::vector<CVec3d> &aPoint,
-     const std::vector<unsigned int> &aQuad) {
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad_Face(
+    const std::vector<CVec3d> &aPoint,
+    const std::vector<unsigned int> &aQuad) {
   ::glBegin(GL_QUADS);
   for (int iq = 0; iq < (int) aQuad.size() / 4; ++iq) {
     int iv0 = aQuad[iq * 4 + 0];
@@ -685,8 +684,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshQuad_Face
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawPoint3D
-    (const std::vector<CVec3d> &aPoint) {
+DFM2_INLINE void delfem2::opengl::DrawPoint3D(
+    const std::vector<CVec3d> &aPoint) {
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_POINTS);
   for (const auto &p : aPoint) {
@@ -697,9 +696,9 @@ DFM2_INLINE void delfem2::opengl::DrawPoint3D
 
 // ------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawQuad3D_Edge
-    (const std::vector<CVec3d> &aPoint,
-     const std::vector<unsigned int> &aQuad) {
+DFM2_INLINE void delfem2::opengl::DrawQuad3D_Edge(
+    const std::vector<CVec3d> &aPoint,
+    const std::vector<unsigned int> &aQuad) {
   ::glBegin(GL_LINES);
   for (int iq = 0; iq < (int) aQuad.size() / 4; ++iq) {
     int iv0 = aQuad[iq * 4 + 0];
@@ -720,9 +719,15 @@ DFM2_INLINE void delfem2::opengl::DrawQuad3D_Edge
 
 // ------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawSingleHex_Edge
-    (const CVec3d &p0, const CVec3d &p1, const CVec3d &p2, const CVec3d &p3,
-     const CVec3d &p4, const CVec3d &p5, const CVec3d &p6, const CVec3d &p7) {
+DFM2_INLINE void delfem2::opengl::DrawSingleHex_Edge(
+    const CVec3d &p0,
+    const CVec3d &p1,
+    const CVec3d &p2,
+    const CVec3d &p3,
+    const CVec3d &p4,
+    const CVec3d &p5,
+    const CVec3d &p6,
+    const CVec3d &p7) {
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINE_LOOP);
   myGlVertex(p0);
@@ -772,10 +777,10 @@ DFM2_INLINE void delfem2::opengl::DrawGrid2D
 
 // ------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawGridOutside
-    (int ndivx, int ndivy, int ndivz,
-     double elen,
-     const CVec3d &org) {
+DFM2_INLINE void delfem2::opengl::DrawGridOutside(
+    int ndivx, int ndivy, int ndivz,
+    double elen,
+    const CVec3d &org) {
   DrawGrid2D(ndivx, ndivy, CVec3d(elen, 0, 0), CVec3d(0, elen, 0), org);
   DrawGrid2D(ndivx, ndivy, CVec3d(elen, 0, 0), CVec3d(0, elen, 0), org + CVec3d(0, 0, elen * ndivz));
   DrawGrid2D(ndivy, ndivz, CVec3d(0, elen, 0), CVec3d(0, 0, elen), org);
@@ -786,26 +791,26 @@ DFM2_INLINE void delfem2::opengl::DrawGridOutside
 
 // -----------------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_Mat4
-    (const double Mat[16],
-     double size,
-     int ielem_picked) {
+DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_Mat4(
+    const double Mat[16],
+    double size,
+    int ielem_picked) {
   ::glDisable(GL_LIGHTING);
   {
     if (ielem_picked == 0) { ::glColor3d(1, 1, 0); } else { ::glColor3d(1, 0, 0); }
-    const CVec3d &ax = Mat4Vec(Mat, CVec3d(1, 0, 0)).normalized();
+    const CVec3d &ax = CVec3d(Mat4Vec3(Mat, CVec3d(1, 0, 0))).normalized();
     const CVec3d pos(Mat[3], Mat[7], Mat[11]);
     opengl::DrawCircleWire(ax, pos, size);
   }
   {
     if (ielem_picked == 1) { ::glColor3d(1, 1, 0); } else { ::glColor3d(0, 1, 0); }
-    const CVec3d &ay = Mat4Vec(Mat, CVec3d(0, 1, 0)).normalized();
+    const CVec3d &ay = CVec3d(Mat4Vec3(Mat, CVec3d(0, 1, 0))).normalized();
     const CVec3d pos(Mat[3], Mat[7], Mat[11]);
     opengl::DrawCircleWire(ay, pos, size);
   }
   {
     if (ielem_picked == 2) { ::glColor3d(1, 1, 0); } else { ::glColor3d(0, 0, 1); }
-    const CVec3d &az = Mat4Vec(Mat, CVec3d(0, 0, 1)).normalized();
+    const CVec3d &az = CVec3d(Mat4Vec3(Mat, CVec3d(0, 0, 1))).normalized();
     const CVec3d pos(Mat[3], Mat[7], Mat[11]);
     opengl::DrawCircleWire(az, pos, size);
   }
