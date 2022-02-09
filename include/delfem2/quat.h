@@ -17,7 +17,7 @@
 
 #if defined(_MSC_VER)
 #  pragma warning( push )
-#  pragma warning( disable : 4201 )
+#  pragma warning( disable : 4201 )  // because we use nameless union
 #endif
 
 #include <random>
@@ -193,34 +193,6 @@ DFM2_INLINE void QuatConjVec(
 
 // -------------------------------------------------------
 
-template<typename T>
-class CQuat;
-
-template<typename T>
-CQuat<T> operator+(const CQuat<T> &, const CQuat<T> &);
-
-template<typename T>
-CQuat<T> operator-(const CQuat<T> &, const CQuat<T> &);
-
-template<typename T>
-CQuat<T> operator*(const CQuat<T> &, T);    //!< multiply scalar
-
-template<typename T>
-CQuat<T> operator/(const CQuat<T> &, T);    //!< divide by scalar
-
-template<typename T>
-CQuat<T> operator*(const CQuat<T> &, const CQuat<T> &);
-
-template<typename T>
-std::ostream &operator<<(std::ostream &output, const CQuat<T> &q);
-
-template<typename T>
-CQuat<T> SphericalLinearInterp(const CQuat<T> &, const CQuat<T> &, T);
-
-template<typename T>
-CQuat<T> operator*(T, const CQuat<T> &);  //!< multiply scalar
-
-
 /**
  * @class class of Quaternion
  * @detail the storage order is (x,y,z,r) but interface is ordered as (r,x,y,z)
@@ -306,6 +278,30 @@ class CQuat {
 };
 using CQuatd = CQuat<double>;
 using CQuatf = CQuat<float>;
+
+template<typename T>
+CQuat<T> operator+(const CQuat<T> &, const CQuat<T> &);
+
+template<typename T>
+CQuat<T> operator-(const CQuat<T> &, const CQuat<T> &);
+
+template<typename T>
+CQuat<T> operator*(const CQuat<T> &, T);    //!< multiply scalar
+
+template<typename T>
+CQuat<T> operator/(const CQuat<T> &, T);    //!< divide by scalar
+
+template<typename T>
+CQuat<T> operator*(const CQuat<T> &, const CQuat<T> &);
+
+template<typename T>
+std::ostream &operator<<(std::ostream &output, const CQuat<T> &q);
+
+template<typename T>
+CQuat<T> SphericalLinearInterp(const CQuat<T> &, const CQuat<T> &, T);
+
+template<typename T>
+CQuat<T> operator*(T, const CQuat<T> &);  //!< multiply scalar
 
 }
 

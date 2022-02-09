@@ -17,10 +17,10 @@
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/points.h"
 #include "delfem2/msh_io_ply.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/srchbvh.h"
 #include "delfem2/mat4.h"
+#include "delfem2/thread.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/drawer_mshtex.h"
@@ -34,47 +34,43 @@ void ShadingImageRayLambertian(
     std::vector<unsigned char>& vec_rgb,
     unsigned int height,
     unsigned int width,
-    const float mat_mvp_rowmajor_float[16],
+    const double mat_mvp_rowmajor[16],
     const std::vector< delfem2::PointOnSurfaceMesh<double> >& aPointElemSurf,
     const std::vector<double>& vec_xyz, // 3d points
     const std::vector<unsigned int>& vec_tri)
 {
-  double mat_mvp_rowmajor_double[16];
-  for(int i=0;i<16;++i){ mat_mvp_rowmajor_double[i] = mat_mvp_rowmajor_float[i]; }
-  double mat_mvp_colmajor_inverse[16];
-  dfm2::Inverse_Mat4(mat_mvp_colmajor_inverse,mat_mvp_rowmajor_double);
+  const dfm2::CMat4d mat_mvp_colmajor_inverse = delfem2::Inverse_Mat4(mat_mvp_rowmajor);
   vec_rgb.resize(height*width*3);
-  for(unsigned int ih=0;ih<height;++ih){
-    for(unsigned int iw=0;iw<width;++iw) {
-      const double ps[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), +1., 1. };
-      const double pe[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), -1., 1. };
-      const std::array<double, 3> qs = dfm2::Vec3_Mat4Vec3_Homography(mat_mvp_colmajor_inverse, ps);
-      const std::array<double, 3> qe = dfm2::Vec3_Mat4Vec3_Homography(mat_mvp_colmajor_inverse, pe);
-      const dfm2::CVec3d src1(qs);
-      const dfm2::CVec3d dir1 = dfm2::CVec3d(qe.data()) - src1;
-      //
-      const delfem2::PointOnSurfaceMesh<double>& pes = aPointElemSurf[ih*width+iw];
-      if (pes.itri == UINT_MAX) {
-        vec_rgb[(ih * width + iw) * 3 + 0] = 200;
-        vec_rgb[(ih * width + iw) * 3 + 1] = 255;
-        vec_rgb[(ih * width + iw) * 3 + 2] = 255;
-      } else {
-        const unsigned int itri = pes.itri;
-        assert(itri < vec_tri.size() / 3);
-        double n[3], area;
-        delfem2::UnitNormalAreaTri3(
-            n, area,
-            vec_xyz.data() + vec_tri[itri * 3 + 0] * 3,
-            vec_xyz.data() + vec_tri[itri * 3 + 1] * 3,
-            vec_xyz.data() + vec_tri[itri * 3 + 2] * 3);
-        dfm2::CVec3d udir1 = dir1.normalized();
-        const double dot = n[0] * udir1[0] + n[1] * udir1[1] + n[2] * udir1[2];
-        vec_rgb[(ih * width + iw) * 3 + 0] = static_cast<unsigned char>(-dot * 255);
-        vec_rgb[(ih * width + iw) * 3 + 1] = static_cast<unsigned char>(-dot * 255);
-        vec_rgb[(ih * width + iw) * 3 + 2] = static_cast<unsigned char>(-dot * 255);
-      }
+  auto func0 = [&](int ih, int iw){
+    const double ps[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), +1., 1. };
+    const double pe[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), -1., 1. };
+    const std::array<double, 3> qs = dfm2::Vec3_Mat4Vec3_Homography(mat_mvp_colmajor_inverse.data(), ps);
+    const std::array<double, 3> qe = dfm2::Vec3_Mat4Vec3_Homography(mat_mvp_colmajor_inverse.data(), pe);
+    const dfm2::CVec3d src1(qs);
+    const dfm2::CVec3d dir1 = dfm2::CVec3d(qe.data()) - src1;
+    //
+    const delfem2::PointOnSurfaceMesh<double>& pes = aPointElemSurf[ih*width+iw];
+    if (pes.itri == UINT_MAX) {
+      vec_rgb[(ih * width + iw) * 3 + 0] = 200;
+      vec_rgb[(ih * width + iw) * 3 + 1] = 255;
+      vec_rgb[(ih * width + iw) * 3 + 2] = 255;
+    } else {
+      const unsigned int itri = pes.itri;
+      assert(itri < vec_tri.size() / 3);
+      double n[3], area;
+      delfem2::UnitNormalAreaTri3(
+          n, area,
+          vec_xyz.data() + vec_tri[itri * 3 + 0] * 3,
+          vec_xyz.data() + vec_tri[itri * 3 + 1] * 3,
+          vec_xyz.data() + vec_tri[itri * 3 + 2] * 3);
+      dfm2::CVec3d udir1 = dir1.normalized();
+      const double dot = n[0] * udir1[0] + n[1] * udir1[1] + n[2] * udir1[2];
+      vec_rgb[(ih * width + iw) * 3 + 0] = static_cast<unsigned char>(-dot * 255);
+      vec_rgb[(ih * width + iw) * 3 + 1] = static_cast<unsigned char>(-dot * 255);
+      vec_rgb[(ih * width + iw) * 3 + 2] = static_cast<unsigned char>(-dot * 255);
     }
-  }
+  };
+  delfem2::parallel_for(width, height, func0);
 }
 
 int main()
@@ -125,7 +121,7 @@ int main()
     {
       delfem2::CMat4f mP = viewer.GetProjectionMatrix();
       delfem2::CMat4f mMV = viewer.GetModelViewMatrix();
-      delfem2::CMat4f mMVP = mP * mMV;
+      delfem2::CMat4d mMVP = (mP * mMV).cast<double>();
       std::vector< delfem2::PointOnSurfaceMesh<double> > aPointElemSurf;
       Intersection_ImageRay_TriMesh3(aPointElemSurf,
            tex.height,tex.width, mMVP.data(),

@@ -65,7 +65,7 @@ void UpdateRotationsByMatchingCluster_SVD_Parallel(
         aQuat1,
         ip, aXYZ0, aXYZ1, psup_ind, psup);
   };
-  delfem2::thread::parallel_for(aXYZ0.size() / 3, func_matchrot);
+  delfem2::parallel_for(aXYZ0.size() / 3, func_matchrot);
 }
 
 void myGlutDisplay_Mesh(

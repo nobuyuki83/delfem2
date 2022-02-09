@@ -5,10 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_TH_H
-#define DFM2_TH_H
+#ifndef DFM2_THREAD_H
+#define DFM2_THREAD_H
 
 #include <functional>
+#include <future>
 #include <mutex>
 #include <queue>
 #include <thread>
@@ -16,41 +17,67 @@
 #include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
-namespace thread {
 
-DFM2_INLINE unsigned int mymin(unsigned int x, unsigned int y) {
-  return (x <= y) ? x : y;
-}
+template<typename T, typename Func>
+inline void parallel_for(
+    T num,
+    Func &&func,
+    [[maybe_unused]] unsigned int target_concurrency = 0) {
+  auto futures = std::vector<std::future<void>>{};
 
-DFM2_INLINE unsigned int mymax(unsigned int x, unsigned int y) {
-  return (x >= y) ? x : y;
-}
-
-template<typename FUNCTION>
-void parallel_for(
-    unsigned int ntask,
-    FUNCTION function,
-    unsigned int target_concurrency = 0) {
-  if( ntask == 0 ){ return; }
-  unsigned int nthread = (target_concurrency == 0) ? std::thread::hardware_concurrency()
-                                                               : target_concurrency;
-  nthread = mymin(ntask, (nthread == 0) ? 4 : nthread);
-  const unsigned int ntasks_per_thread = (ntask / nthread) + (ntask % nthread == 0 ? 0 : 1);
-  auto tasks_for_each_thread = [&](const unsigned int ithread) {
-    const unsigned int itask_start = ithread * ntasks_per_thread;
-    const unsigned int itask_end = mymin(ntask, itask_start + ntasks_per_thread);
-    for (unsigned int itask = itask_start; itask < itask_end; ++itask) {
-      function(itask);
-    }
-  };
-  std::vector<std::thread> aThread;
-  for (unsigned int jthread = 0; jthread < nthread; ++jthread) {
-    aThread.push_back(std::thread(tasks_for_each_thread, jthread));
+  const unsigned int nthreads = (target_concurrency == 0) ?
+                                std::thread::hardware_concurrency() : target_concurrency;
+  std::atomic<T> next_idx(0);
+  std::atomic<bool> has_error(false);
+  for (auto thread_id = 0; thread_id < (int) nthreads; thread_id++) {
+    futures.emplace_back(
+        std::async(std::launch::async, [&func, &next_idx, &has_error, num]() {
+          try {
+            while (true) {
+              auto idx = next_idx.fetch_add(1);
+              if (idx >= num) break;
+              if (has_error) break;
+              func(idx);
+            }
+          } catch (...) {
+            has_error = true;
+            throw;
+          }
+        }));
   }
-  for (auto &t : aThread) { t.join(); }
+  for (auto &f: futures) f.get();
+}
+
+template<typename T, typename Func>
+inline void parallel_for(
+    T num1,
+    T num2,
+    Func &&func,
+    unsigned int target_concurrency = 0) {
+  auto futures = std::vector<std::future<void>>{};
+  const unsigned int nthreads = (target_concurrency == 0) ?
+                                std::thread::hardware_concurrency() : target_concurrency;
+  std::atomic<T> next_idx(0);
+  std::atomic<bool> has_error(false);
+  for (auto thread_id = 0; thread_id < (int) nthreads; thread_id++) {
+    futures.emplace_back(std::async(
+        std::launch::async, [&func, &next_idx, &has_error, num1, num2]() {
+          try {
+            while (true) {
+              auto j = next_idx.fetch_add(1);
+              if (j >= num2) break;
+              if (has_error) break;
+              for (auto i = (T) 0; i < num1; i++) func(i, j);
+            }
+          } catch (...) {
+            has_error = true;
+            throw;
+          }
+        }));
+  }
+  for (auto &f: futures) f.get();
 }
 
 }
-}
 
-#endif /* TH_H */
+#endif /* DFM2_THREAD_H */
