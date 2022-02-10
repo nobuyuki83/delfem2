@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <array>
+#include <cassert>
 
 template<typename T>
 class FdmArray2 {

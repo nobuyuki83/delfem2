@@ -5,6 +5,11 @@
 #ifndef DFM2_FDM_STABLEFLUIDS_H_
 #define DFM2_FDM_STABLEFLUIDS_H_
 
+#include <cassert>
+#include <array>
+
+#include "delfem2/fdm_array2.h"
+
 // Gauss-Seidel Iteration
 void SolvePoissionEquationOnGrid2ByGaussSeidelMethod(
     FdmArray2<double> &p,
