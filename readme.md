@@ -28,8 +28,8 @@ There are currently no tutorial available for this library. To understand the co
   + [examples_oldgl_glfw](examples_oldgl_glfw):  dependency: GLFW
   + [examples_oldgl_glfw_glad](examples_oldgl_glfw_glad): dependencies: GLFW and glad (shader,FBO)
   + [examples_oldgl_glfw_cnpy](examples_oldgl_glfw_cnpy): dependencies: GLFW and cnpy (SMPL)
-  + [examples_oldgl_glfw_thread](examples_oldgl_glfw_thread): dependencies: GLFW and thread
-  + [examples_oldgl_glfw_tinygltf](examples_oldgl_glfw_tinygltf): dependencies: GLFW and TinyGLTF
+  + [examples_oldgl_glfw_pugixml](examples_oldgl_glfw_pugixml): dependencies: GLFW and pugixml (Metashape)
+  + [examples_oldgl_glfw_tinygltf](examples_oldgl_glfw_tinygltf): dependencies: GLFW and tinygltf
   + [examples_oldgl_glfw_eigen](examples_oldgl_glfw_eigen): dependencies: GLFW and Eigen
   + [examples_oldgl_glut](examples_oldgl_glut):  dependency: GLUT
 + examples usigng modern OpenGL
@@ -41,7 +41,7 @@ There are currently no tutorial available for this library. To understand the co
   + [examples_alembic](examples_alembic)
 + C++ test:
   + [test_cpp](test_cpp): tests using C++
-  + [test_cuda](test_cuda) : test using cuda
+  + [test_cpp/cuda](test_cpp/cuda) : test using cuda
   + [test_cpp/eigen](test_cpp/eigen) : test using eigen
 
 Several demos in "examples_newgl_glfw" can be run on the browser. Please take a look at https://nobuyuki83.github.io/delfem2/
