@@ -316,3 +316,7 @@ cmake --build .
 <img src="635_FemRod2Edit/thumbnail.png" width=200>
 
 ### [636_InvertibleFem](636_InvertibleFem)
+<img src="636_InvertibleFem/thumbnail.png" width=200>
+
+### [637_StableFluids2CellCentered](637_StableFluids2CellCentered)
+<img src="637_StableFluids2CellCentered/thumbnail.png" width=200>

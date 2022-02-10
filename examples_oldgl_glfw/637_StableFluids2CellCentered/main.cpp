@@ -21,40 +21,32 @@
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 
-void EnforceNonSlipBoundary_StaggeredGrid2(
-    FdmArray2<double> &velou,
-    FdmArray2<double> &velov,
+void EnforceNonSlipBoundary_CellCenteredGrid2(
+    FdmArray2<std::array<double,2>> &velo,
     int nx_grid,
     int ny_grid) {
-  assert(velou.ni == nx_grid + 1 && velou.nj == ny_grid);
-  assert(velov.ni == nx_grid && velov.nj == ny_grid + 1);
+  assert(velo.ni == nx_grid && velo.nj == ny_grid);
   for (int jg = 0; jg < ny_grid; jg++) {
-    velou(0, jg) = 0;
-    velou(nx_grid, jg) = 0;
+    velo(0, jg)[0] = 0;
+    velo(nx_grid-1, jg)[0] = 0;
   }
   for (int ig = 0; ig < nx_grid; ig++) {
-    velov(ig, 0) = 0;
-    velov(ig, ny_grid) = 0;
+    velo(ig, 0)[1] = 0;
+    velo(ig, ny_grid-1)[1] = 0;
   }
 }
 
-void AssignGravity_StaggeredGrid2(
-    FdmArray2<double> &velou,
-    FdmArray2<double> &velov,
+void AssignGravity_CellCnteredGrid2(
+    FdmArray2<std::array<double,2>> &velo,
     int ni_grid,
     int nj_grid,
     const double gravity[2],
     double dt) {
-  assert(velou.ni == ni_grid + 1 && velou.nj == nj_grid);
-  assert(velov.ni == ni_grid && velov.nj == nj_grid + 1);
-  for (int jg = 0; jg < nj_grid + 0; jg++) {
-    for (int ig = 0; ig < ni_grid + 1; ig++) {
-      velou(ig, jg) += gravity[0] * dt;
-    }
-  }
-  for (int jg = 0; jg < nj_grid + 1; jg++) {
-    for (int ig = 0; ig < ni_grid + 0; ig++) {
-      velov(ig, jg) += gravity[1] * dt;
+  assert(velo.ni == ni_grid && velo.nj == nj_grid);
+  for (int jg = 0; jg < nj_grid; jg++) {
+    for (int ig = 0; ig < ni_grid; ig++) {
+      velo(ig, jg)[0] += gravity[0] * dt;
+      velo(ig, jg)[1] += gravity[1] * dt;
     }
   }
 }
@@ -63,11 +55,11 @@ void glutMyDisplay(
     int ni_grid,
     int nj_grid,
     double h,
-    const FdmArray2<double> &velou,
-    const FdmArray2<double> &velov,
+    const FdmArray2<std::array<double,2>> &velo,
     const FdmArray2<double> &press) {
-  assert(velou.ni == ni_grid + 1 && velou.nj == nj_grid);
-  assert(velov.ni == ni_grid && velov.nj == nj_grid + 1);
+  assert(velo.ni == ni_grid && velo.nj == nj_grid);
+  assert(press.ni == ni_grid && press.nj == nj_grid);
+
   glClear(GL_COLOR_BUFFER_BIT);
   { // quad for pressure
     ::glBegin(GL_QUADS);
@@ -90,14 +82,9 @@ void glutMyDisplay(
     for (int ig = 0; ig < ni_grid; ig++) {
       for (int jg = 0; jg < nj_grid; jg++) {
         const double p[2] = {(ig + 0.5) * h, (jg + 0.5) * h};
-        double u0 = velou(ig + 0, jg);
-        double u1 = velou(ig + 1, jg);
-        const double u = (u0 + u1) * 0.5;
-        double v0 = velov(ig, jg + 0);
-        double v1 = velov(ig, jg + 1);
-        const double v = (v0 + v1) * 0.5;
+        const std::array<double,2>& v = velo(ig, jg);
         ::glVertex2d(p[0], p[1]);
-        ::glVertex2d(p[0] + u, p[1] + v);
+        ::glVertex2d(p[0] + v[0], p[1] + v[1]);
       }
     }
     ::glEnd();
@@ -107,15 +94,13 @@ void glutMyDisplay(
 int main() {
   const unsigned int ni_grid = 32;
   const unsigned int nj_grid = 40;
-  FdmArray2<double> velou(ni_grid + 1, nj_grid, 0.0);
-  FdmArray2<double> velov(ni_grid, nj_grid + 1, 0.0);
+  FdmArray2<std::array<double,2>> velo(ni_grid, nj_grid, {0.0,0.0});
   FdmArray2<double> press(ni_grid, nj_grid);
   FdmArray2<double> divag(ni_grid, nj_grid);
-  FdmArray2<std::array<double, 2>> velou_tmp(ni_grid + 1, nj_grid);
-  FdmArray2<std::array<double, 2>> velov_tmp(ni_grid, nj_grid + 1);
+  FdmArray2<std::array<double, 2>> velo_tmp(ni_grid, nj_grid);
   // -----------
   const double h = 1.0 / 32;
-  const double dt = 0.02;
+  const double dt = 0.05;
   const double rho = 1.0;
   const double gravity[2] = {0, -0.01};
   std::mt19937 rndeng(std::random_device{}());
@@ -129,33 +114,32 @@ int main() {
   while (true) {
     iframe = (iframe + 1) % 100;
     if (iframe == 0) {
-      for (auto &u: velou.v) { u = dist(rndeng); }
-      for (auto &v: velov.v) { v = dist(rndeng); }
+      for (auto &u: velo.v) { u = {dist(rndeng), dist(rndeng)}; }
     }
     // ----
-    AssignGravity_StaggeredGrid2(
-        velou, velov,
+    AssignGravity_CellCnteredGrid2(
+        velo,
         ni_grid, nj_grid, gravity, dt);
-    EnforceNonSlipBoundary_StaggeredGrid2(
-        velou, velov,
+    EnforceNonSlipBoundary_CellCenteredGrid2(
+        velo,
         ni_grid, nj_grid);
-    Divergence_StaggerdGrid2(
+    Divergence_CellCenteredGrid2(
         divag,
-        ni_grid, nj_grid, velou, velov, h);
+        ni_grid, nj_grid, velo, h);
     SolvePoissionEquationOnGrid2ByGaussSeidelMethod(
         press,
         divag, rho / dt * h * h, ni_grid, nj_grid, 200);
-    SubstructPressureGradient_StaggeredGrid2(
-        velou, velov,
+    SubstructPressureGradient_CellCenteredGrid2(
+        velo,
         ni_grid, nj_grid, dt / (rho * h), press);
-    AdvectionSemiLagrangian_StaggeredGrid2(
-        velou, velov, velou_tmp, velov_tmp,
+    AdvectionSemiLagrangian_CellCenteredGrid2(
+        velo, velo_tmp,
         ni_grid, nj_grid, dt, h);
     // ----
     viewer.DrawBegin_oldGL();
     glutMyDisplay(
         ni_grid, nj_grid, h,
-        velou, velov, press);
+        velo, press);
     viewer.SwapBuffers();
     glfwPollEvents();
     if (glfwWindowShouldClose(viewer.window)) goto EXIT;
