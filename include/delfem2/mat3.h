@@ -159,10 +159,7 @@ class CMat3 {
   // function whose name starts with "Set" changes itself
   void SetInverse();
   void SetSymetric(const REAL sm[6]);
-  void setZero();
   void SetRandom();
-  void SetRotMatrix_Rodrigues(const REAL vec[]);
-  void SetRotMatrix_CRV(const REAL crv[]);
   void SetRotMatrix_Quaternion(const REAL quat[]);
   void SetRotMatrix_BryantAngle(REAL rx, REAL ry, REAL rz);
   void SetIdentity(REAL scale = 1);
@@ -177,6 +174,13 @@ class CMat3 {
 
   // quaterion (x,y,z,w)
   [[nodiscard]] std::array<REAL, 4> GetQuaternion() const;
+
+  // -----------------------
+
+  /**
+   * named after Eigen library
+   */
+  void setZero();
 
   // ------------------------
   /**
@@ -334,7 +338,9 @@ template<typename T>
 CMat3<T> operator*(const CMat3<T> &lhs, const CMat3<T> &rhs);
 
 template<typename VEC,
-    typename T = typename VEC::Scalar, typename VEC::Scalar * = nullptr>
+    typename T = typename VEC::Scalar,
+    typename VEC::Scalar * = nullptr,
+    std::enable_if_t<!std::is_same_v<VEC,CMat3<T>>>* = nullptr >
 VEC operator*(
     const VEC &v,
     const CMat3<T> &m) {
@@ -345,7 +351,9 @@ VEC operator*(
 }
 
 template<typename VEC,
-    typename T = typename VEC::Scalar, typename VEC::Scalar * = nullptr>
+    typename T = typename VEC::Scalar,
+    typename VEC::Scalar * = nullptr,
+    std::enable_if_t<!std::is_same_v<VEC,CMat3<T>>>* = nullptr >
 VEC operator*(
     const CMat3<T> &m,
     const VEC &v) {

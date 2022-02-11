@@ -361,7 +361,7 @@ template void delfem2::Vec2_Mat3Vec2_Homography(double [2], const double [9], co
 // --------------
 
 template<typename T>
-DFM2_INLINE std::array<T,2> delfem2::Vec2_Mat3Vec2_Homography(
+DFM2_INLINE std::array<T, 2> delfem2::Vec2_Mat3Vec2_Homography(
     const T A[9],
     const T x[2]) {
   T y0 = A[0] * x[0] + A[1] * x[1] + A[2];
@@ -393,35 +393,35 @@ template void delfem2::Vec2_Mat3Vec2_AffineDirection(double [2], const double [9
 // --------------------------
 // below: mat3 and quaternion
 
-template <typename T>
+template<typename T>
 DFM2_INLINE void delfem2::Quat_Mat3(
-  T quat[4],
-  const T p_[9]){
+    T quat[4],
+    const T p_[9]) {
   constexpr T one4th = static_cast<T>(0.25);
   const T smat[16] = {
-    1 + p_[0 * 3 + 0] - p_[1 * 3 + 1] - p_[2 * 3 + 2],   // 00
-    p_[0 * 3 + 1] + p_[1 * 3 + 0],  // 01
-    p_[0 * 3 + 2] + p_[2 * 3 + 0],  // 02
-    p_[2 * 3 + 1] - p_[1 * 3 + 2],  // 03
-    p_[1 * 3 + 0] + p_[0 * 3 + 1],  // 10
-    1 - p_[0 * 3 + 0] + p_[1 * 3 + 1] - p_[2 * 3 + 2],  // 11
-    p_[1 * 3 + 2] + p_[2 * 3 + 1],  // 12
-    p_[0 * 3 + 2] - p_[2 * 3 + 0],  // 13
-    p_[0 * 3 + 2] + p_[2 * 3 + 0],  // 20
-    p_[1 * 3 + 2] + p_[2 * 3 + 1],  // 21
-    1 - p_[0 * 3 + 0] - p_[1 * 3 + 1] + p_[2 * 3 + 2],  // 22
-    p_[1 * 3 + 0] - p_[0 * 3 + 1],  // 23
-    p_[2 * 3 + 1] - p_[1 * 3 + 2],  // 30
-    p_[0 * 3 + 2] - p_[2 * 3 + 0],  // 31
-    p_[1 * 3 + 0] - p_[0 * 3 + 1],  // 32
-    1 + p_[0 * 3 + 0] + p_[1 * 3 + 1] + p_[2 * 3 + 2],  // 33
+      1 + p_[0 * 3 + 0] - p_[1 * 3 + 1] - p_[2 * 3 + 2],   // 00
+      p_[0 * 3 + 1] + p_[1 * 3 + 0],  // 01
+      p_[0 * 3 + 2] + p_[2 * 3 + 0],  // 02
+      p_[2 * 3 + 1] - p_[1 * 3 + 2],  // 03
+      p_[1 * 3 + 0] + p_[0 * 3 + 1],  // 10
+      1 - p_[0 * 3 + 0] + p_[1 * 3 + 1] - p_[2 * 3 + 2],  // 11
+      p_[1 * 3 + 2] + p_[2 * 3 + 1],  // 12
+      p_[0 * 3 + 2] - p_[2 * 3 + 0],  // 13
+      p_[0 * 3 + 2] + p_[2 * 3 + 0],  // 20
+      p_[1 * 3 + 2] + p_[2 * 3 + 1],  // 21
+      1 - p_[0 * 3 + 0] - p_[1 * 3 + 1] + p_[2 * 3 + 2],  // 22
+      p_[1 * 3 + 0] - p_[0 * 3 + 1],  // 23
+      p_[2 * 3 + 1] - p_[1 * 3 + 2],  // 30
+      p_[0 * 3 + 2] - p_[2 * 3 + 0],  // 31
+      p_[1 * 3 + 0] - p_[0 * 3 + 1],  // 32
+      1 + p_[0 * 3 + 0] + p_[1 * 3 + 1] + p_[2 * 3 + 2],  // 33
   };
-  
+
   unsigned int imax;
   imax = (smat[0 * 4 + 0] > smat[1 * 4 + 1]) ? 0 : 1;
   imax = (smat[imax * 4 + imax] > smat[2 * 4 + 2]) ? imax : 2;
   imax = (smat[imax * 4 + imax] > smat[3 * 4 + 3]) ? imax : 3;
-  
+
   quat[imax] = std::sqrt(smat[imax * 4 + imax]) / 2;
   for (unsigned int k = 0; k < 4; k++) {
     if (k == imax) continue;
@@ -475,8 +475,8 @@ void delfem2::MatMat3(
     for (int j = 0; j < 3; j++) {
       AB[i * 3 + j] =
           A[i * 3 + 0] * B[0 * 3 + j] +
-          A[i * 3 + 1] * B[1 * 3 + j] +
-          A[i * 3 + 2] * B[2 * 3 + j];
+              A[i * 3 + 1] * B[1 * 3 + j] +
+              A[i * 3 + 2] * B[2 * 3 + j];
     }
   }
 }
@@ -496,8 +496,8 @@ void delfem2::MatMatT3(
     for (int j = 0; j < 3; j++) {
       ABt[i * 3 + j] =
           A[i * 3 + 0] * B[j * 3 + 0] +
-          A[i * 3 + 1] * B[j * 3 + 1] +
-          A[i * 3 + 2] * B[j * 3 + 2];
+              A[i * 3 + 1] * B[j * 3 + 1] +
+              A[i * 3 + 2] * B[j * 3 + 2];
     }
   }
 }
@@ -516,8 +516,8 @@ void delfem2::MatTMat3(
     for (int j = 0; j < 3; j++) {
       AtB[i * 3 + j] =
           A[0 * 3 + i] * B[0 * 3 + j] +
-          A[1 * 3 + i] * B[1 * 3 + j] +
-          A[2 * 3 + i] * B[2 * 3 + j];
+              A[1 * 3 + i] * B[1 * 3 + j] +
+              A[2 * 3 + i] * B[2 * 3 + j];
     }
   }
 }
@@ -614,8 +614,8 @@ template void delfem2::Mat3_RotMatFromAxisAngleVec(double mat[9], const double v
 
 // ---------------------------------------
 
-template <typename VEC, typename REAL>
-std::array<REAL,9> delfem2::Mat3_RotMatFromAxisAngleVec(const VEC &vec) {
+template<typename VEC, typename REAL>
+std::array<REAL, 9> delfem2::Mat3_RotMatFromAxisAngleVec(const VEC &vec) {
   REAL sqt = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
   if (sqt < 1.0e-20) { // infinitesmal rotation approximation
     return {
@@ -627,7 +627,7 @@ std::array<REAL,9> delfem2::Mat3_RotMatFromAxisAngleVec(const VEC &vec) {
         -vec[0],
         -vec[1],
         +vec[0],
-        1 };
+        1};
   }
   REAL t = std::sqrt(sqt);
   REAL invt = 1 / t;
@@ -643,10 +643,79 @@ std::array<REAL,9> delfem2::Mat3_RotMatFromAxisAngleVec(const VEC &vec) {
       -n[0] * s0 + (1 - c0) * n[1] * n[2],
       -n[1] * s0 + (1 - c0) * n[2] * n[0],
       +n[0] * s0 + (1 - c0) * n[2] * n[1],
-      c0 + (1 - c0) * n[2] * n[2] };
+      c0 + (1 - c0) * n[2] * n[2]};
+}
+
+// ----------------------------------
+
+template<typename VEC, typename T>
+std::array<T, 9> delfem2::Mat3_RotMatFromRodriguesVector(
+    const VEC &vec) {
+  constexpr T half = static_cast<T>(0.5);
+  constexpr T quarter = static_cast<T>(0.25);
+  const T sqlen = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
+  const T tmp1 = 1 / (1 + quarter * sqlen);
+  return {
+      1 + tmp1 * (+half * vec[0] * vec[0] - half * sqlen),
+      +tmp1 * (-vec[2] + half * vec[0] * vec[1]),
+      +tmp1 * (+vec[1] + half * vec[0] * vec[2]),
+      +tmp1 * (+vec[2] + half * vec[1] * vec[0]),
+      1 + tmp1 * (+half * vec[1] * vec[1] - half * sqlen),
+      +tmp1 * (-vec[0] + half * vec[1] * vec[2]),
+      +tmp1 * (-vec[1] + half * vec[2] * vec[0]),
+      +tmp1 * (+vec[0] + half * vec[2] * vec[1]),
+      1 + tmp1 * (+half * vec[2] * vec[2] - half * sqlen)};
+}
+
+// --------------------------------
+
+template<typename VEC, typename T>
+std::array<T, 9> delfem2::Mat3_RotMatFromConformalRotationVector(
+    const VEC crv) {
+  constexpr T one8th = static_cast<T>(1.0 / 8.0);
+  const T c0 = one8th * (16 - crv[0] * crv[0] - crv[1] * crv[1] - crv[2] * crv[2]);
+  const T tmp = 1 / ((4 - c0) * (4 - c0));
+  return {
+      tmp * ((c0 * c0 + 8 * c0 - 16) + 2 * crv[0] * crv[0]),
+      tmp * (2 * crv[0] * crv[1] - 2 * c0 * crv[2]),
+      tmp * (2 * crv[0] * crv[2] + 2 * c0 * crv[1]),
+      tmp * (2 * crv[1] * crv[0] + 2 * c0 * crv[2]),
+      tmp * ((c0 * c0 + 8 * c0 - 16) + 2 * crv[1] * crv[1]),
+      tmp * (2 * crv[1] * crv[2] - 2 * c0 * crv[0]),
+      tmp * (2 * crv[2] * crv[0] - 2 * c0 * crv[1]),
+      tmp * (2 * crv[2] * crv[1] + 2 * c0 * crv[0]),
+      tmp * ((c0 * c0 + 8 * c0 - 16) + 2 * crv[2] * crv[2])};
 }
 
 // -----------------------------------
+// below: return vec3
+
+template<typename MAT, typename T>
+std::array<T, 3> delfem2::Vec3_SpinVectorFromMat3(
+    const MAT &m) {
+  constexpr T half = 0.5;
+  return {
+      (m[7] - m[5]) * half,
+      (m[2] - m[6]) * half,
+      (m[2] - m[6]) * half};
+}
+
+template<typename MAT, typename T>
+std::array<T, 3> delfem2::Vec3_AxisAngleVecFromMat3(
+    const MAT &m) {
+  std::array<T, 3> a = {
+      m[7] - m[5],
+      m[2] - m[6],
+      m[3] - m[1]};
+  double act = (m.trace() - 1) * 0.5;
+  if (act > +1) { act = +1; }
+  if (act < -1) { act = -1; }
+  double theta = std::acos(act);
+  if (myIsNAN_Matrix3(theta)) { return a; }
+  if (fabs(theta) < 1.0e-5) { return {a[0]/2, a[1]/2, a[2]/2}; }
+  T mag = 0.5 * theta / sin(theta);
+  return {a[0]*mag, a[1]*mag, a[2]*mag };
+}
 
 // https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation
 template<typename T>
@@ -682,26 +751,24 @@ DFM2_INLINE void delfem2::AxisAngleVectorCRV_Mat3(
 
 template<typename T>
 void delfem2::EulerAngle_Mat3(
-  T ea[3],
-  const T m[9],
-  const std::array<int, 3> &axis_idxs) {
+    T ea[3],
+    const T m[9],
+    const std::array<int, 3> &axis_idxs) {
   if (axis_idxs[0] == 2 && axis_idxs[1] == 1 && axis_idxs[2] == 0) {
-    const T y1 = -std::asin(m[2*3+0]);
+    const T y1 = -std::asin(m[2 * 3 + 0]);
     const T inv_cos_y1 = 1 / std::cos(y1);
-    assert(std::fabs(cos(y1))>1.0e-10);
+    assert(std::fabs(cos(y1)) > 1.0e-10);
     ea[1] = y1;
-    ea[0] = std::atan2(m[1*3+0] * inv_cos_y1, m[0*3+0] * inv_cos_y1);
-    ea[2] = std::atan2(m[2*3+1] * inv_cos_y1, m[2*3+2] * inv_cos_y1);
-  }
-  else if (axis_idxs[0] == 2 && axis_idxs[1] == 0 && axis_idxs[2] == 1) {
-    const T y1 = std::asin(m[2*3+1]);
-    assert(std::fabs(cos(y1))>1.0e-10);
+    ea[0] = std::atan2(m[1 * 3 + 0] * inv_cos_y1, m[0 * 3 + 0] * inv_cos_y1);
+    ea[2] = std::atan2(m[2 * 3 + 1] * inv_cos_y1, m[2 * 3 + 2] * inv_cos_y1);
+  } else if (axis_idxs[0] == 2 && axis_idxs[1] == 0 && axis_idxs[2] == 1) {
+    const T y1 = std::asin(m[2 * 3 + 1]);
+    assert(std::fabs(cos(y1)) > 1.0e-10);
     const T inv_cos_y1 = 1 / std::cos(y1);
     ea[1] = y1;
-    ea[0] = std::atan2(-m[0*3+1] * inv_cos_y1, m[1*3+1] * inv_cos_y1);
-    ea[2] = std::atan2(-m[2*3+0] * inv_cos_y1, m[2*3+2] * inv_cos_y1);
-  }
-  else{
+    ea[0] = std::atan2(-m[0 * 3 + 1] * inv_cos_y1, m[1 * 3 + 1] * inv_cos_y1);
+    ea[2] = std::atan2(-m[2 * 3 + 0] * inv_cos_y1, m[2 * 3 + 2] * inv_cos_y1);
+  } else {
     assert(0);
   }
 }
@@ -773,13 +840,13 @@ std::array<REAL, 9> delfem2::Mat3_MinimumRotation(
       ct + (1 - ct) * n.z * n.z};
 }
 
-template <typename VEC, typename T>
-std::array<T,9> delfem2::Mat3_CrossCross(const VEC &v) {
+template<typename VEC, typename T>
+std::array<T, 9> delfem2::Mat3_CrossCross(const VEC &v) {
   return CMat3<T>(Mat3_Spin(v)) * CMat3<T>(Mat3_Spin(v));
 }
 
-template <typename VEC, typename T>
-std::array<T,9> delfem2::Mat3_IrotPoint(
+template<typename VEC, typename T>
+std::array<T, 9> delfem2::Mat3_IrotPoint(
     const VEC &d0) {
   return (d0.squaredNorm() * CMat3<T>::Identity() - CMat3<T>(Mat3_OuterProduct(d0, d0)));
 }
@@ -812,10 +879,13 @@ template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f1 &vec);
 template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f2 &vec);
 template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f3 &vec);
 //
-template std::array<float,9> delfem2::Mat3_CrossCross(const f3 &);
-template std::array<double,9> delfem2::Mat3_CrossCross(const d3 &);
+template std::array<float,9> Mat3_CrossCross(const f3 &);
+template std::array<double,9> Mat3_CrossCross(const d3 &);
 //
-template std::array<float,9> delfem2::Mat3_IrotPoint(const f3 &);
-template std::array<double,9> delfem2::Mat3_IrotPoint(const d3 &);
+template std::array<float,9> Mat3_IrotPoint(const f3 &);
+template std::array<double,9> Mat3_IrotPoint(const d3 &);
+//
+template std::array<float, 3> Vec3_AxisAngleVecFromMat3(const CMat3f &m);
+template std::array<double, 3> Vec3_AxisAngleVecFromMat3(const CMat3d &m);
 }
 #endif

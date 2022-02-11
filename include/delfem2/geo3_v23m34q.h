@@ -42,12 +42,6 @@ DFM2_INLINE void SetDiag(
     CMat3d &m,
     const CVec3d &d);
 
-CVec3d GetSpinVector(
-    const CMat3d &m);
-
-CVec3d GetCartesianRotationVector(
-    const CMat3d &m);
-
 void Mat4_MatTransl(
     double m[16],
     const CMat3d &mat,

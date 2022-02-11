@@ -29,6 +29,35 @@
 
 namespace delfem2 {
 
+template<typename T>
+T SquareNormFrobenius_SymMat3(
+    const T sm[6]);
+
+// ---------------------
+// return vec3
+
+template <typename MAT, typename T>
+std::array<T,3> Vec3_SpinVectorFromMat3(
+    const MAT &m);
+
+template<typename T>
+DFM2_INLINE void AxisAngleVectorCRV_Mat3(
+    T crv[3],
+    const T mat[9]);
+
+template<typename T>
+DFM2_INLINE void EulerAngle_Mat3(
+    T ea[3],
+    const T m[9],
+    const std::array<int, 3> &axis_idxs);
+
+template <typename MAT, typename T>
+std::array<T,3> Vec3_AxisAngleVecFromMat3(
+    const MAT &m);
+
+// ---------------------
+// below: return mat3
+
 /**
  * @func Set spin 3x3 matrix (skew asymetric matrix)
  * @tparam REAL float and double
@@ -140,10 +169,6 @@ template<typename T>
 T Det_Mat3(
     const T U[9]);
 
-template<typename T>
-T SquareNormFrobenius_SymMat3(
-    const T sm[6]);
-
 // -----------------
 // below: axis angle vector
 
@@ -158,18 +183,16 @@ void Mat3_RotMatFromAxisAngleVec(
     const REAL vec[3]);
 
 template <typename VEC, typename REAL=vecn_value_t<VEC,3>>
-std::array<REAL,9> Mat3_RotMatFromAxisAngleVec(const VEC &vec);
+std::array<REAL,9> Mat3_RotMatFromAxisAngleVec(
+    const VEC &vec);
 
-template<typename T>
-DFM2_INLINE void AxisAngleVectorCRV_Mat3(
-    T crv[3],
-    const T mat[9]);
+template <typename VEC, typename REAL=vecn_value_t<VEC,3>>
+std::array<REAL,9> Mat3_RotMatFromRodriguesVector(
+    const VEC &vec);
 
-template<typename T>
-DFM2_INLINE void EulerAngle_Mat3(
-    T ea[3],
-    const T m[9],
-    const std::array<int, 3> &axis_idxs);
+template <typename VEC, typename REAL=vecn_value_t<VEC,3>>
+std::array<REAL,9> Mat3_RotMatFromConformalRotationVector(
+    const VEC crv);
 
 // ------------------------------------------------
 // below: mat3 and vec3

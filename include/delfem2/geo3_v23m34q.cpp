@@ -20,33 +20,6 @@
 
 // ----------------------------------------
 
-DFM2_INLINE delfem2::CVec3d delfem2::GetCartesianRotationVector(
-    const CMat3d &m) {
-  const double *mat = m.p_;
-  CVec3d a{
-    mat[7] - mat[5],
-    mat[2] - mat[6],
-    mat[3] - mat[1] };
-  double act = (m.trace() - 1) * 0.5;
-  if (act > +1) { act = +1; }
-  if (act < -1) { act = -1; }
-  double theta = acos(act);
-  if (myIsNAN_Matrix3(theta)) { return a; }
-  if (fabs(theta) < 1.0e-5) { return a * 0.5; }
-  double mag = 0.5 * theta / sin(theta);
-  a *= mag;
-  return a;
-}
-
-DFM2_INLINE delfem2::CVec3d delfem2::GetSpinVector(
-    const CMat3d &m) {
-  const double *mat = m.p_;
-  return CVec3d{
-      (mat[7] - mat[5]) * 0.5,
-      (mat[2] - mat[6]) * 0.5,
-      (mat[2] - mat[6]) * 0.5};
-}
-
 template<typename T>
 DFM2_INLINE delfem2::CVec3<T>
 delfem2::MatVec(
@@ -88,12 +61,6 @@ DFM2_INLINE void delfem2::SetDiag(
 
 // -----------------------------------------------------
 // below: rotational inertia
-
-
-
-// above: rotational inertia
-// ---------------------------------------------------------------------
-
 
 DFM2_INLINE void delfem2::Mat4_MatTransl(
     double m[16],

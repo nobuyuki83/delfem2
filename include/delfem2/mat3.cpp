@@ -259,49 +259,8 @@ DFM2_INLINE void CMat3<double>::SetRandom() {
 
 // -----------------------------------------
 
-template<typename T>
-void delfem2::CMat3<T>::SetRotMatrix_Rodrigues(const T vec[]) {
-  constexpr T half = static_cast<T>(0.5);
-  constexpr T quarter = static_cast<T>(0.25);
-  const T sqlen = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
-  const T tmp1 = 1 / (1 + quarter * sqlen);
-  p_[0] = 1 + tmp1 * (+half * vec[0] * vec[0] - half * sqlen);
-  p_[1] = +tmp1 * (-vec[2] + half * vec[0] * vec[1]);
-  p_[2] = +tmp1 * (+vec[1] + half * vec[0] * vec[2]);
-  p_[3] = +tmp1 * (+vec[2] + half * vec[1] * vec[0]);
-  p_[4] = 1 + tmp1 * (+half * vec[1] * vec[1] - half * sqlen);
-  p_[5] = +tmp1 * (-vec[0] + half * vec[1] * vec[2]);
-  p_[6] = +tmp1 * (-vec[1] + half * vec[2] * vec[0]);
-  p_[7] = +tmp1 * (+vec[0] + half * vec[2] * vec[1]);
-  p_[8] = 1 + tmp1 * (+half * vec[2] * vec[2] - half * sqlen);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CMat3<float>::SetRotMatrix_Rodrigues(const float vec[]);
-template void delfem2::CMat3<double>::SetRotMatrix_Rodrigues(const double vec[]);
-#endif
-
 
 // ----------------------------------
-
-template<typename T>
-void delfem2::CMat3<T>::SetRotMatrix_CRV(const T crv[]) {
-  constexpr T one8th = static_cast<T>(1.0 / 8.0);
-  const T c0 = one8th * (16 - crv[0] * crv[0] - crv[1] * crv[1] - crv[2] * crv[2]);
-  const T tmp = 1 / ((4 - c0) * (4 - c0));
-  p_[0 * 3 + 0] = tmp * ((c0 * c0 + 8 * c0 - 16) + 2 * crv[0] * crv[0]);
-  p_[0 * 3 + 1] = tmp * (2 * crv[0] * crv[1] - 2 * c0 * crv[2]);
-  p_[0 * 3 + 2] = tmp * (2 * crv[0] * crv[2] + 2 * c0 * crv[1]);
-  p_[1 * 3 + 0] = tmp * (2 * crv[1] * crv[0] + 2 * c0 * crv[2]);
-  p_[1 * 3 + 1] = tmp * ((c0 * c0 + 8 * c0 - 16) + 2 * crv[1] * crv[1]);
-  p_[1 * 3 + 2] = tmp * (2 * crv[1] * crv[2] - 2 * c0 * crv[0]);
-  p_[2 * 3 + 0] = tmp * (2 * crv[2] * crv[0] - 2 * c0 * crv[1]);
-  p_[2 * 3 + 1] = tmp * (2 * crv[2] * crv[1] + 2 * c0 * crv[0]);
-  p_[2 * 3 + 2] = tmp * ((c0 * c0 + 8 * c0 - 16) + 2 * crv[2] * crv[2]);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CMat3<float>::SetRotMatrix_CRV(const float crv[]);
-template void delfem2::CMat3<double>::SetRotMatrix_CRV(const double crv[]);
-#endif
 
 // ----------------------------------
 
