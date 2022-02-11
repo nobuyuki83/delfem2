@@ -41,7 +41,7 @@ void Inputs_SmplTshirt(
       CRigidTrans_2DTo3D& rt23 = aRT23[0];
       rt23.org2 = CVec2d(0.189,-0.5)*scale_adjust;
       rt23.org3 = CVec3d(0.0, 0.1, -0.2);
-      rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
+      rt23.R = Mat3_RotMatFromAxisAngleVec(std::array<double,3>{0.0, 3.1415, 0.0});
     }
     { // front body
       CRigidTrans_2DTo3D& rt23 = aRT23[1];
@@ -96,7 +96,7 @@ void Inputs_SmplTshirt2(
       CRigidTrans_2DTo3D& rt23 = aRT23[0];
       rt23.org2 = CVec2d(0.15,-0.18)*scale_adjust;
       rt23.org3 = CVec3d(0.0, 0.1, -0.2);
-      rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
+      rt23.R = Mat3_RotMatFromAxisAngleVec(std::array<double,3>{0.0, 3.1415, 0.0});
     }
     { // front body
       CRigidTrans_2DTo3D& rt23 = aRT23[1];
@@ -150,7 +150,7 @@ void Inputs_SmplLtshirt(
       CRigidTrans_2DTo3D& rt23 = aRT23[0];
       rt23.org2 = CVec2d(0.189-0.04553,-0.5+0.34009)*scale_adjust;
       rt23.org3 = CVec3d(0.0, 0.1, -0.15);
-      rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
+      rt23.R = Mat3_RotMatFromAxisAngleVec(std::array<double,3>{0.0, 3.1415, 0.0});
     }
     { // front body
       CRigidTrans_2DTo3D& rt23 = aRT23[1];
@@ -202,7 +202,7 @@ void Inputs_SmplRaglan(
       CRigidTrans_2DTo3D& rt23 = aRT23[0];
       rt23.org2 = CVec2d(0.18,-0.15)*scale_adjust;
       rt23.org3 = CVec3d(0.0, 0.1, -0.15);
-      rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
+      rt23.R = Mat3_RotMatFromAxisAngleVec(std::array<double,3>{0.0, 3.1415, 0.0});
     }
     { // front panel
       CRigidTrans_2DTo3D& rt23 = aRT23[1];

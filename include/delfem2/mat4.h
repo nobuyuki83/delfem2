@@ -238,7 +238,7 @@ DFM2_INLINE void MatVec4(
     const T A[16],
     const T x[4]);
 
-template<typename VEC, typename T=value_type<VEC>>
+template<typename VEC, typename T=vecn_value_t<VEC,3>>
 std::array<T, 3> Mat4Vec3(const T m[16], const VEC &v) {
   return {
       m[0] * v[0] + m[1] * v[1] + m[2] * v[2],

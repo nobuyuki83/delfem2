@@ -86,14 +86,6 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_PlaneTri3(
   r2 = v2 * vt_inv;
   return q0 * r0 + q1 * r1 + q2 * r2;
 }
-#ifdef DFM2_STATIC_LIBRARY
-template delfem2::CVec3d delfem2::Nearest_Origin3_PlaneTri3(
-  double &r0,
-  double &r1,
-  const CVec3d &q0,
-  const CVec3d &q1,
-  const CVec3d &q2);
-#endif
 
 // ----------------------------------------------------------------------
 
@@ -150,3 +142,22 @@ template delfem2::CVec3d delfem2::Intersection_Plane3_Line3(
 #endif
 
 
+#ifdef DFM2_STATIC_LIBRARY
+
+#include "delfem2/vec3.h"
+
+namespace delfem2 {
+  using f0 = double [3];
+  using d0 = double [3];
+  using f1 = float*;
+  using d1 = double*;
+  using f2 = std::array<float,3>;
+  using d2 = std::array<double,3>;
+  using f3 = CVec3f;
+  using d3 = CVec3d;
+
+template d3 delfem2::Nearest_Origin3_PlaneTri3(double &, double &, const d3 &, const d3 &q1, const d3 &);
+template f3 delfem2::Nearest_Origin3_PlaneTri3(float &, float &, const f3 &, const f3 &q1, const f3 &);
+
+}
+#endif

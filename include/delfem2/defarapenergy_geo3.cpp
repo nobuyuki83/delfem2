@@ -6,6 +6,8 @@
  */
 
 #include "delfem2/geo3_v23m34q.h"
+#include "delfem2/mat3.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/defarapenergy_geo3.h"
 
 // =======================================
@@ -82,7 +84,7 @@ DFM2_INLINE void delfem2::ddW_ArapEnergy(
   for(unsigned int iip=0;iip<nNg;++iip){
     const unsigned int jp = aIP[iip];
     const CVec3d v0 = (CVec3d(aXYZ0.data()+jp*3)-Pi);
-    LM += Mat3_CrossCross(v0);
+    LM += CMat3d(Mat3_CrossCross(v0));
   }
   CMat3d LMi = LM.Inverse();
   CMat3d Mrot = CMat3d::Quat(aQuat1.data()+ip*4);

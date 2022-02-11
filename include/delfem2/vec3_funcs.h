@@ -31,7 +31,7 @@ namespace delfem2 {
  * @tparam T
  * @return
  */
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T Dot3(
     const VEC &a,
     const VEC &b) {
@@ -40,7 +40,7 @@ T Dot3(
 
 // --------------------------------------
 
-template<typename VEC0, typename VEC1, typename T = value_type<VEC0>>
+template<typename VEC0, typename VEC1, typename T = vecn_value_t<VEC0,3>>
 T Distance3(
     const VEC0 &p0,
     const VEC1 &p1) {
@@ -52,7 +52,7 @@ T Distance3(
 
 // ---------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
  T Length3(
     const VEC &v) {
   return std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
@@ -60,7 +60,7 @@ template<typename VEC, typename T = value_type<VEC>>
 
 // ---------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 void Normalize3(VEC &&v) {
   const T len = std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
   v[0] /= len;
@@ -70,7 +70,7 @@ void Normalize3(VEC &&v) {
 
 // ---------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T SquareDistance3(
     const VEC& p0,
     const VEC& p1) {
@@ -115,7 +115,7 @@ VEC0 Cross(
 
 // ------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T ScalarTripleProduct(
     const VEC &a,
     const VEC &b,
@@ -176,7 +176,7 @@ void FrameFromVectorZ(
     const VEC1 &vec_n);
 
 
-template<typename VEC, typename T = delfem2::value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 VEC RotateVec3WithAxisAngleVector(
     const VEC &vec0,
     const VEC &rot);

@@ -41,7 +41,7 @@ class CRigidBodyState {
     rb_out.velo = velo + dt * vOpA[0];
     rb_out.Omega = Omega + dt * vOpA[1];
     rb_out.pos = pos + dt * vOpA[2];
-    CMat3d dR = dfm2::Mat3_FromCartesianRotationVector(dt * vOpA[3]);
+    CMat3d dR = dfm2::Mat3_RotMatFromAxisAngleVec(dt * vOpA[3]);
     if (dR.isNaN()) dR.setZero();
     rb_out.R = R * dR;
     return rb_out;
@@ -98,11 +98,11 @@ CRigidBodyState StepTime_RungeKutta4(
   const std::vector<CVec3d> &vrb3 = VelocityRigidBody(rb2, rbInertia, rbForceModel);
   const CRigidBodyState &rb3 = rb0.Step(dt * 1.0, vrb3);
   const std::vector<CVec3d> &vrb4 = VelocityRigidBody(rb3, rbInertia, rbForceModel);
-  std::vector<CVec3d> vrb1234(4);
-  vrb1234[0] = vrb1[0] + 2 * vrb2[0] + 2 * vrb3[0] + vrb4[0];
-  vrb1234[1] = vrb1[1] + 2 * vrb2[1] + 2 * vrb3[1] + vrb4[1];
-  vrb1234[2] = vrb1[2] + 2 * vrb2[2] + 2 * vrb3[2] + vrb4[2];
-  vrb1234[3] = vrb1[3] + 2 * vrb2[3] + 2 * vrb3[3] + vrb4[3];
+  std::vector<CVec3d> vrb1234 = {
+      vrb1[0] + 2 * vrb2[0] + 2 * vrb3[0] + vrb4[0],
+      vrb1[1] + 2 * vrb2[1] + 2 * vrb3[1] + vrb4[1],
+      vrb1[2] + 2 * vrb2[2] + 2 * vrb3[2] + vrb4[2],
+      vrb1[3] + 2 * vrb2[3] + 2 * vrb3[3] + vrb4[3] };
   return rb0.Step(dt / 6.0, vrb1234);
 }
 

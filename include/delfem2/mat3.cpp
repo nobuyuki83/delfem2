@@ -16,19 +16,6 @@
 namespace delfem2 {
 
 template<typename T>
-CMat3<T> operator*(const CMat3<T> &m, T d) {
-  CMat3<T> t = m;
-  t *= d;
-  return t;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template CMat3<float> operator*(const CMat3<float> &m, float d);
-template CMat3<double> operator*(const CMat3<double> &m, double d);
-#endif
-
-// --------------------
-
-template<typename T>
 CMat3<T> operator/(const CMat3<T> &m, T d) {
   CMat3<T> temp = m;
   temp /= d;

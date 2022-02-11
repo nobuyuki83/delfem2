@@ -14,7 +14,6 @@
 
 #include "delfem2/defarap.h"
 #include "delfem2/gizmo_geo3.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"

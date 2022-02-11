@@ -157,7 +157,7 @@ void Mat3_RotMatFromAxisAngleVec(
     REAL mat[9],
     const REAL vec[3]);
 
-template <typename VEC, typename REAL=value_type<VEC>>
+template <typename VEC, typename REAL=vecn_value_t<VEC,3>>
 std::array<REAL,9> Mat3_RotMatFromAxisAngleVec(const VEC &vec);
 
 template<typename T>
@@ -200,7 +200,7 @@ void MatVec3(
     const T1 m[9],
     const T2 x[3]);
 
-template<typename VEC3, typename T = value_type<VEC3>>
+template<typename VEC3, typename T = vecn_value_t<VEC3,3>>
 std::array<T, 3> Mat3Vec3(const T mat[9], const VEC3 &v) {
   return {
       mat[0] * v[0] + mat[1] * v[1] + mat[2] * v[2],
@@ -296,6 +296,12 @@ std::array<REAL, 9> Mat3_Spin(
   ::delfem2::Mat3_Spin(m.data(), vec0.p);
   return m;
 }
+
+template <typename VEC, typename T = vecn_value_t<VEC,3>>
+std::array<T,9> Mat3_CrossCross(const VEC &v);
+
+template <typename VEC, typename T>
+std::array<T,9> Mat3_IrotPoint(const VEC &v);
 
 template<typename VEC, typename REAL= typename VEC::Scalar>
 std::array<REAL, 9> Mat3_NormalProjection(

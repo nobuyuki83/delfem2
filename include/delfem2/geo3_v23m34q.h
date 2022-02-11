@@ -28,16 +28,6 @@ namespace delfem2 {
 // ---------------------------------------------------
 // matrix 3
 
-template <typename T>
-CVec3<T> operator*(
-    const CVec3<T> &v,
-    const CMat3<T> &m);
-
-template <typename T>
-CVec3<T> operator*(
-    const CMat3<T> &m,
-    const CVec3<T> &v);
-
 template<typename T>
 CVec3<T> MatVec(
     const CMat3<T> &m,
@@ -48,24 +38,15 @@ CVec3<T> MatVecTrans(
     const CMat3<T> &m,
     const CVec3<T> &vec0);
 
-void SetProjection(CMat3d &m, const CVec3d &vec0);
-
 DFM2_INLINE void SetDiag(
     CMat3d &m,
     const CVec3d &d);
-
-DFM2_INLINE void SetRotMatrix_Cartesian(
-    CMat3d &m,
-    const CVec3d &v);
 
 CVec3d GetSpinVector(
     const CMat3d &m);
 
 CVec3d GetCartesianRotationVector(
     const CMat3d &m);
-
-CMat3d Mat3_FromCartesianRotationVector(
-    const CVec3d &vec0);
 
 void Mat4_MatTransl(
     double m[16],
@@ -77,35 +58,6 @@ DFM2_INLINE void Mat4_ScaleMatTransl(
     double scale,
     const CMat3d &mat,
     const CVec3d &trans);
-
-
-// ----------------------
-// below: inertia tensor
-
-/**
- * @brief moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
- */
-CMat3d Mat3_IrotTriSolid(
-    const CVec3d &d0,
-    const CVec3d &d1,
-    const CVec3d &d2);
-
-CMat3d Mat3_IrotLineSeg(
-    const CVec3d &d0,
-    const CVec3d &d1);
-
-CMat3d Mat3_IrotPoint(
-    const CVec3d &d0);
-
-// above: inertia tensor
-// ----------------------
-
-/**
- * @brief matrix for two cross products
- * @details Ma = v^(v^a)
- */
-CMat3d Mat3_CrossCross(
-    const CVec3d &v);
 
 // mat3
 // -----------------------------------------------------------

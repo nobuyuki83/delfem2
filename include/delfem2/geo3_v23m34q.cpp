@@ -85,106 +85,10 @@ DFM2_INLINE void delfem2::SetDiag(
   mat[2 * 3 + 2] = d.z;
 }
 
-DFM2_INLINE void delfem2::SetRotMatrix_Cartesian(
-    CMat3d &m,
-    const CVec3d &v) {
-  m = Mat3_RotMatFromAxisAngleVec(v);
-}
-
-// ----------------------------
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_CrossCross(const CVec3d &v) {
-  return CMat3d(Mat3_Spin(v)) * CMat3d(Mat3_Spin(v));
-}
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_FromCartesianRotationVector(const CVec3d &vec0) {
-  return Mat3_RotMatFromAxisAngleVec(vec0);
-}
-
-#ifdef DFM2_STATIC_LIBRARY
-template std::array<float,9> delfem2::Mat3_From3Bases(
-    const delfem2::CVec3f &vec0,
-    const delfem2::CVec3f &vec1,
-    const delfem2::CVec3f &vec2);
-template std::array<double,9> delfem2::Mat3_From3Bases(
-    const delfem2::CVec3d &vec0,
-    const delfem2::CVec3d &vec1,
-    const delfem2::CVec3d &vec2);
-#endif
-
-// ------------------
-
-namespace delfem2 {
-
-template<typename T>
-DFM2_INLINE CVec3<T> operator*(
-    const CVec3<T> &v,
-    const CMat3<T> &m) {
-  return MatVecTrans(m, v);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template CVec3d operator*(const CVec3d &, const CMat3d &);
-template CVec3f operator*(const CVec3f &, const CMat3f &);
-#endif
-
-// -------------------------------------------
-
-template<typename T>
-DFM2_INLINE CVec3<T> operator*(
-    const CMat3<T> &m,
-    const CVec3<T> &v) {
-  return MatVec(m, v);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template CVec3d operator*(const CMat3d &, const CVec3d &);
-template CVec3f operator*(const CMat3f &, const CVec3f &);
-#endif
-
-}
-
-// ------------------------------
 
 // -----------------------------------------------------
 // below: rotational inertia
 
-// moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
-// see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTriSolid(
-    const CVec3d &d0,
-    const CVec3d &d1,
-    const CVec3d &d2) {
-  CVec3d dv = d0 + d1 + d2;
-  const CMat3d m0 = Mat3_OuterProduct(d0, d0);
-  const CMat3d m1 = Mat3_OuterProduct(d1, d1);
-  const CMat3d m2 = Mat3_OuterProduct(d2, d2);
-  const CMat3d mv = Mat3_OuterProduct(dv, dv);
-  const CMat3d I0 = m0 + m1 + m2 + mv;
-  double tr0 = I0.trace();
-  CMat3d I = tr0 * CMat3d::Identity() - I0;
-  double darea = d0.dot(d1.cross(d2));
-  I *= darea / 120.0;
-  return I;
-}
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotLineSeg(
-    const CVec3d &d0,
-    const CVec3d &d1) {
-  CVec3d dv = d1 - d0;
-  double l = dv.norm();
-  CMat3d I;
-  {
-    I = dv.squaredNorm() * CMat3d::Identity() - CMat3d(Mat3_OuterProduct(dv, dv));
-    I *= l / 12.0;
-  }
-  CVec3d p = (d0 + d1) * 0.5;
-  I += l * (p.squaredNorm() * CMat3d::Identity() - CMat3d(Mat3_OuterProduct(p, p)));
-  return I;
-}
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotPoint(
-    const CVec3d &d0) {
-  return (d0.squaredNorm() * CMat3d::Identity() - CMat3d(Mat3_OuterProduct(d0, d0)));
-}
 
 
 // above: rotational inertia

@@ -9,7 +9,7 @@ void delfem2::FrameFromVectorZ(
     VEC0 &&vec_x,
     VEC0 &&vec_y,
     const VEC1 &vec_n) {
-  using T = value_type<VEC1>;
+  using T = vecn_value_t<VEC1,3>;
   const T vec_s[3] = {0, 1, 0};
   Cross(vec_x, vec_s, vec_n);
   const T len = Length3(vec_x);

@@ -7,11 +7,12 @@
 
 namespace delfem2 {
 
-template<class T>
+template<class T, int N>
 class has_definition {
-  template<class VEC>
+
   // VEC is Eigen::Vector3& or dfm2::CVec3&
-  static constexpr int check(typename std::remove_reference<VEC>::type::Scalar *) {
+  template<class VEC>
+  static constexpr int check(typename std::remove_reference_t<VEC>::Scalar *) {
     if constexpr(std::is_reference<VEC>::value) {
       return 4;
     }
@@ -19,17 +20,17 @@ class has_definition {
   }
 
   template<class VEC>
-  static constexpr int check(typename std::remove_reference_t<VEC>::value_type *) { // VEC is std::array
-    if constexpr(std::is_reference_v<VEC>) {
+  static constexpr int check(typename std::remove_reference_t<VEC>::value_type *) { // std::array
+    if constexpr(std::is_reference_v<VEC>) {  // VEC is reference of std::array
       using type0 = std::remove_reference_t<VEC>;
       static_assert(
-          std::tuple_size<type0>::value == 3,
-          "the size of the std::array needs to be 3");
+          std::tuple_size<type0>::value == N,
+          "the size of the std::array is wrong"  );
       return 6;
-    } else {
+    } else {  // VEC is std::array
       static_assert(
-          std::tuple_size<VEC>::value == 3,
-          "the size of the std::array needs to be 3");
+          std::tuple_size<VEC>::value == N,
+          "the size of the std::array is wrong");
       return 1;
     }
 
@@ -38,16 +39,28 @@ class has_definition {
   template<class VEC>
   static constexpr int check(...) {
     if constexpr(std::is_array_v<VEC>) { // this is static array
+      static_assert(
+          std::rank_v<VEC> == 1,
+          "the dimension of the static array is wrong");
+      static_assert(
+          std::extent_v<VEC,0> == N,
+          "the size of the static array is wrong");
       return 2;
     } else {
       if constexpr(std::is_reference_v<VEC>) { // reference
         using type0 = std::remove_reference_t<VEC>;
         if constexpr(std::is_array_v<type0>) {
+          static_assert(
+              std::rank_v<type0> == 1,
+              "the dimension of the static array is wrong");
+          static_assert(
+              std::extent_v<type0,0> == N,
+              "the size of the static array is wrong");
           return 5;
         } else {
           static_assert(
               std::is_pointer_v<type0>,
-              "I guess tis is a pointer");
+              "this must be a pointer");
           return 7;
         }
       } else { // pointer
@@ -109,8 +122,8 @@ struct conditional<7, VEC> {
 };
 
 
-template<class T>
-using value_type = typename conditional<has_definition<T>::value, T>::type;
+template<class T, int N>
+using vecn_value_t = typename conditional<has_definition<T,N>::value, T>::type;
 
 }
 

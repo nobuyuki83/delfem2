@@ -12,6 +12,8 @@
 
 #include "delfem2/geo_line.h"
 #include "delfem2/vec3_funcs.h"
+#include "delfem2/mat3.h"
+#include "delfem2/mat3_funcs.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -469,3 +471,22 @@ template bool delfem2::IsContact_Edge3_Edge3_Proximity(
   const CVec3d &q0, const CVec3d &q1,
   const double delta);
 #endif
+
+// -------------------
+
+
+template <typename VEC, typename T>
+std::array<T,9> delfem2::Mat3_IrotLineSeg(
+    const VEC &d0,
+    const VEC &d1) {
+  CVec3d dv = d1 - d0;
+  double l = dv.norm();
+  CMat3d I;
+  {
+    I = dv.squaredNorm() * CMat3d::Identity() - CMat3d(Mat3_OuterProduct(dv, dv));
+    I *= l / 12.0;
+  }
+  CVec3d p = (d0 + d1) * 0.5;
+  I += l * (p.squaredNorm() * CMat3d::Identity() - CMat3d(Mat3_OuterProduct(p, p)));
+  return I;
+}

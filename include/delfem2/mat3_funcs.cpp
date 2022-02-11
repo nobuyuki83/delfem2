@@ -10,6 +10,7 @@
 #include <random>
 
 #include "delfem2/vec3_funcs.h"
+#include "delfem2/mat3.h"
 
 namespace delfem2::mat3 {
 
@@ -772,6 +773,17 @@ std::array<REAL, 9> delfem2::Mat3_MinimumRotation(
       ct + (1 - ct) * n.z * n.z};
 }
 
+template <typename VEC, typename T>
+std::array<T,9> delfem2::Mat3_CrossCross(const VEC &v) {
+  return CMat3<T>(Mat3_Spin(v)) * CMat3<T>(Mat3_Spin(v));
+}
+
+template <typename VEC, typename T>
+std::array<T,9> delfem2::Mat3_IrotPoint(
+    const VEC &d0) {
+  return (d0.squaredNorm() * CMat3<T>::Identity() - CMat3<T>(Mat3_OuterProduct(d0, d0)));
+}
+
 // ============================================
 
 #ifdef DFM2_STATIC_LIBRARY
@@ -799,5 +811,11 @@ template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f0 &vec);
 template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f1 &vec);
 template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f2 &vec);
 template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f3 &vec);
+//
+template std::array<float,9> delfem2::Mat3_CrossCross(const f3 &);
+template std::array<double,9> delfem2::Mat3_CrossCross(const d3 &);
+//
+template std::array<float,9> delfem2::Mat3_IrotPoint(const f3 &);
+template std::array<double,9> delfem2::Mat3_IrotPoint(const d3 &);
 }
 #endif

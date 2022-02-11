@@ -98,7 +98,7 @@ double DistanceFaceVertex(
     double &w0, 
     double &w1);
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 DFM2_INLINE T Area_Tri3(
   const VEC &v1,
   const VEC &v2,
@@ -109,7 +109,7 @@ DFM2_INLINE T Area_Tri3(
   return std::sqrt(x * x + y * y + z * z)/2;
 }
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T Area_Tri3(
     const int iv1,
     const int iv2,
@@ -118,7 +118,7 @@ T Area_Tri3(
   return Area_Tri3(aPoint[iv1], aPoint[iv2], aPoint[iv3]);
 }
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T SquareTriArea(
     const VEC &v1,
     const VEC &v2,
@@ -140,7 +140,7 @@ void Normal_Tri3(
   vnorm[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]);
 }
 
-template<typename VEC0, typename VEC1, typename T = value_type<VEC0>>
+template<typename VEC0, typename VEC1, typename T = vecn_value_t<VEC0,3>>
 void UnitNormal_Tri3(
     VEC0 &&vnorm,
     const VEC1 &v1,
@@ -157,7 +157,7 @@ void UnitNormal_Tri3(
 
 // --------------------
 
-template<typename VEC0, typename VEC1, typename T = value_type<VEC0>>
+template<typename VEC0, typename VEC1, typename T = vecn_value_t<VEC0,3>>
 void UnitNormalAreaTri3(
     VEC0 &&n,
     T &a,
@@ -223,8 +223,22 @@ std::array<T, 3> Normal_Tri3(
   return ret;
 }
 
+/**
+ * moment of inertia around origin triangle (d0,d1,d2) the area_density=1
+ * @tparam VEC
+ * @tparam T
+ */
 template<typename VEC, typename T = typename VEC::Scalar>
 std::array<T, 9> Mat3_IrotTri(
+    const VEC &d0,
+    const VEC &d1,
+    const VEC &d2);
+
+/**
+ * @brief moment of inertia of tetrahedra (origin,d0,d1,d2) with volume_density = 1
+ */
+template<typename VEC, typename T = typename VEC::Scalar>
+std::array<T,9> Mat3_IrotTriSolid(
     const VEC &d0,
     const VEC &d1,
     const VEC &d2);

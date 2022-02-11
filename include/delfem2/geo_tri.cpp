@@ -21,27 +21,26 @@
 #  define M_PI 3.14159265358979323846
 #endif
 
-
 namespace delfem2::geo_tri {
 
 template<typename T>
 T Volume_Tet3(
-  const T v1[3],
-  const T v2[3],
-  const T v3[3],
-  const T v4[3]) {
-  const T a0 = + (v2[0] - v1[0]) * ((v3[1] - v1[1]) * (v4[2] - v1[2]) - (v4[1] - v1[1]) * (v3[2] - v1[2]));
-  const T a1 = - (v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2]));
-  const T a2 = + (v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]));
-  return (a0+a1+a2) * 0.16666666666666666666666666666667;
+    const T v1[3],
+    const T v2[3],
+    const T v3[3],
+    const T v4[3]) {
+  const T a0 = +(v2[0] - v1[0]) * ((v3[1] - v1[1]) * (v4[2] - v1[2]) - (v4[1] - v1[1]) * (v3[2] - v1[2]));
+  const T a1 = -(v2[1] - v1[1]) * ((v3[0] - v1[0]) * (v4[2] - v1[2]) - (v4[0] - v1[0]) * (v3[2] - v1[2]));
+  const T a2 = +(v2[2] - v1[2]) * ((v3[0] - v1[0]) * (v4[1] - v1[1]) - (v4[0] - v1[0]) * (v3[1] - v1[1]));
+  return (a0 + a1 + a2) * 0.16666666666666666666666666666667;
 }
 
 template<typename T>
 bool isPointSameSide(
-  const CVec3<T> &p0,
-  const CVec3<T> &p1,
-  const CVec3<T> &line_p0,
-  const CVec3<T> &line_p1) {
+    const CVec3<T> &p0,
+    const CVec3<T> &p1,
+    const CVec3<T> &line_p0,
+    const CVec3<T> &line_p1) {
   CVec3<T> crossProd1 = Cross(line_p1 - line_p0, p0 - line_p0);
   CVec3<T> crossProd2 = Cross(line_p1 - line_p0, p1 - line_p0);
   if (crossProd1.dot(crossProd2) >= 0) {
@@ -56,13 +55,13 @@ bool isPointSameSide(
 // -------------------------------
 
 DFM2_INLINE void delfem2::Nearest_Triangle3_Point3(
-  double nearest_position[3],
-  double &r0,
-  double &r1,
-  const double ps[3], // origin point
-  const double q0[3],
-  const double q1[3],
-  const double q2[3]) {
+    double nearest_position[3],
+    double &r0,
+    double &r1,
+    const double ps[3], // origin point
+    const double q0[3],
+    const double q1[3],
+    const double q2[3]) {
   namespace lcl = delfem2::geo_tri;
   double area, n012[3];
   UnitNormalAreaTri3(n012, area, q0, q1, q2);
@@ -125,11 +124,11 @@ DFM2_INLINE void delfem2::Nearest_Triangle3_Point3(
 
 template<typename T>
 delfem2::CVec3<T> delfem2::Nearest_Origin3_Tri3(
-  T &r0,
-  T &r1,
-  const CVec3<T> &q0,
-  const CVec3<T> &q1,
-  const CVec3<T> &q2) {
+    T &r0,
+    T &r1,
+    const CVec3<T> &q0,
+    const CVec3<T> &q1,
+    const CVec3<T> &q2) {
 
   if (((q1 - q0).cross(q2 - q0)).norm() > 1.0e-10) {
     CVec3<T> p012 = Nearest_Origin3_PlaneTri3(r0, r1, q0, q1, q2);
@@ -180,14 +179,14 @@ delfem2::CVec3<T> delfem2::Nearest_Origin3_Tri3(
 
 template<typename REAL>
 bool delfem2::IntersectRay_Tri3(
-  REAL &r0,
-  REAL &r1,
-  const CVec3<REAL> &org,
-  const CVec3<REAL> &dir,
-  const CVec3<REAL> &p0,
-  const CVec3<REAL> &p1,
-  const CVec3<REAL> &p2,
-  REAL eps) {
+    REAL &r0,
+    REAL &r1,
+    const CVec3<REAL> &org,
+    const CVec3<REAL> &dir,
+    const CVec3<REAL> &p0,
+    const CVec3<REAL> &p1,
+    const CVec3<REAL> &p2,
+    REAL eps) {
   namespace lcl = delfem2::geo_tri;
   const REAL v0 = lcl::Volume_Tet3(p1.data(), p2.data(), org.data(), (org + dir).data());
   const REAL v1 = lcl::Volume_Tet3(p2.data(), p0.data(), org.data(), (org + dir).data());
@@ -203,12 +202,12 @@ bool delfem2::IntersectRay_Tri3(
 
 template<typename T>
 bool delfem2::isIntersectTriPair(
-  CVec3<T> &P0,
-  CVec3<T> &P1,
-  int itri,
-  int jtri,
-  const std::vector<unsigned int> &aTri,
-  const std::vector<double> &aXYZ) {
+    CVec3<T> &P0,
+    CVec3<T> &P1,
+    int itri,
+    int jtri,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &aXYZ) {
   const unsigned int i0 = aTri[itri * 3 + 0];
   const unsigned int i1 = aTri[itri * 3 + 1];
   const unsigned int i2 = aTri[itri * 3 + 2];
@@ -336,11 +335,11 @@ template<typename T>
 bool delfem2::isRayIntersectingTriangle(
     const CVec3<T> &line0, const CVec3<T> &line1,
     const CVec3<T> &tri0, const CVec3<T> &tri1, const CVec3<T> &tri2,
-   CVec3<T> &intersectionPoint) {
+    CVec3<T> &intersectionPoint) {
   CVec3<T> normal = Cross(tri1 - tri0, tri2 - tri0);
 
   // The ray is parallel to the triangle plane
-  if ( normal.dot(line1 - line0) == 0 ) {
+  if (normal.dot(line1 - line0) == 0) {
     return false;
   }
 
@@ -366,30 +365,29 @@ bool delfem2::isRayIntersectingTriangle(
 
 template<typename T>
 bool delfem2::isPointInsideTriangle(
-  const CVec3<T> &p0,
-  const CVec3<T> &tri_p1,
-  const CVec3<T> &tri_p2,
-  const CVec3<T> &tri_p3) {
+    const CVec3<T> &p0,
+    const CVec3<T> &tri_p1,
+    const CVec3<T> &tri_p2,
+    const CVec3<T> &tri_p3) {
   namespace lcl = delfem2::geo_tri;
   if (lcl::isPointSameSide(p0, tri_p1, tri_p2, tri_p3)
-    && lcl::isPointSameSide(p0, tri_p2, tri_p1, tri_p3)
-    && lcl::isPointSameSide(p0, tri_p3, tri_p1, tri_p2)) {
+      && lcl::isPointSameSide(p0, tri_p2, tri_p1, tri_p3)
+      && lcl::isPointSameSide(p0, tri_p3, tri_p1, tri_p2)) {
     return true;
   } else {
     return false;
   }
 }
 
-
 // distance VF
 template<typename T>
 double delfem2::DistanceFaceVertex(
-  const CVec3<T> &p0, 
-  const CVec3<T> &p1, 
-  const CVec3<T> &p2,
-  const CVec3<T> &p3,
-   double &w0, 
-   double &w1) {
+    const CVec3<T> &p0,
+    const CVec3<T> &p1,
+    const CVec3<T> &p2,
+    const CVec3<T> &p3,
+    double &w0,
+    double &w1) {
   CVec3<T> v20 = p0 - p2;
   CVec3<T> v21 = p1 - p2;
   double t0 = v20.dot(v20);
@@ -425,7 +423,6 @@ T delfem2::SolidAngleTri(
   return v;
 }
 
-
 template<typename VEC0, typename VEC1, typename T>
 void delfem2::UnitNormalAreaTri3(
     VEC0 &&n,
@@ -451,7 +448,7 @@ VEC delfem2::Normal_Tri3(
   return {
       (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v2[2] - v1[2]) * (v3[1] - v1[1]),
       (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v2[0] - v1[0]) * (v3[2] - v1[2]),
-      (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]) };
+      (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0])};
 }
 
 template<typename VEC>
@@ -459,7 +456,7 @@ VEC delfem2::UnitNormal_Tri3(
     const VEC &v1,
     const VEC &v2,
     const VEC &v3) {
-  VEC vnorm = Normal_Tri3(v1,v2,v3);
+  VEC vnorm = Normal_Tri3(v1, v2, v3);
   Normalize3(vnorm);
   return vnorm;
 }
@@ -483,12 +480,26 @@ std::array<T, 9> delfem2::Mat3_IrotTri(
   I *= darea / 24.0;
   return I;
 }
-#ifdef DFM2_STATIC_LIBRARY
-template std::array<float, 9> delfem2::Mat3_IrotTri(
-    const CVec3f &d0,
-    const CVec3f &d1,
-    const CVec3f &d2);
-#endif
+
+// moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
+// see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
+template<typename VEC, typename T>
+std::array<T, 9> delfem2::Mat3_IrotTriSolid(
+    const VEC &d0,
+    const VEC &d1,
+    const VEC &d2) {
+  VEC dv = d0 + d1 + d2;
+  const CMat3<T> m0 = Mat3_OuterProduct(d0, d0);
+  const CMat3<T> m1 = Mat3_OuterProduct(d1, d1);
+  const CMat3<T> m2 = Mat3_OuterProduct(d2, d2);
+  const CMat3<T> mv = Mat3_OuterProduct(dv, dv);
+  const CMat3<T> I0 = m0 + m1 + m2 + mv;
+  T tr0 = I0.trace();
+  CMat3<T> I = tr0 * CMat3<T>::Identity() - I0;
+  T darea = d0.dot(d1.cross(d2));
+  I *= darea / 120.0;
+  return I;
+}
 
 // ==============================================
 
@@ -530,17 +541,27 @@ namespace delfem2 {
   template float SolidAngleTri(const f3&, const f3&, const f3&);
   template double SolidAngleTri(const d3&, const d3&, const d3&);
   //
-  template bool IntersectRay_Tri3(double &, double &, const d3 &, const d3 &,
-                                  const d3 &, const d3 &, const d3 &, double);
-  template bool IntersectRay_Tri3(float &, float &, const f3 &, const f3 &,
-                                  const f3 &, const f3 &, const f3 &, float);
-  template bool isRayIntersectingTriangle(const d3 &, const d3 &,
-                                          const d3 &, const d3 &, const d3 &,
-                                          d3 &);
-  template double DistanceFaceVertex(const d3 &, const d3 &,
-                                     const d3 &, const d3 &,
-                                     double &, double &);
-  template d3 Nearest_Origin3_Tri3(double &, double &,
-                                   const d3 &, const d3 &, const d3 &);
+  template bool IntersectRay_Tri3(
+      double &, double &, const d3 &, const d3 &,
+      const d3 &, const d3 &, const d3 &, double);
+  template bool IntersectRay_Tri3(
+      float &, float &, const f3 &, const f3 &,
+      const f3 &, const f3 &, const f3 &, float);
+  template bool isRayIntersectingTriangle(
+      const d3 &, const d3 &,
+      const d3 &, const d3 &, const d3 &,
+      d3 &);
+  template double DistanceFaceVertex(
+      const d3 &, const d3 &,
+      const d3 &, const d3 &,
+      double &, double &);
+  template f3 Nearest_Origin3_Tri3(float &, float &,const f3 &, const f3 &, const f3 &);
+  template d3 Nearest_Origin3_Tri3(double &, double &,const d3 &, const d3 &, const d3 &);
+  //
+  template std::array<float, 9> Mat3_IrotTri(const f3 &,const f3 &,const f3 &);
+  template std::array<double, 9> Mat3_IrotTri(const d3 &,const d3 &,const d3 &);
+  //
+  template std::array<float,9> Mat3_IrotTriSolid(const f3 &,const f3 &,const f3 &);
+  template std::array<double,9> Mat3_IrotTriSolid(const d3 &,const d3 &,const d3 &);
 }
 #endif

@@ -22,6 +22,7 @@
 #include <limits> // using NaN Check
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/geo_meta_funcs.h"
 
 // -----------------------------
 
@@ -140,11 +141,11 @@ class CMat3 {
   }
 
   // implicit cast
-  operator std::array<REAL,9>() const {
+  operator std::array<REAL, 9>() const {
     return {
-      p_[0],p_[1],p_[2],
-      p_[3],p_[4],p_[5],
-      p_[6],p_[7],p_[8]};
+        p_[0], p_[1], p_[2],
+        p_[3], p_[4], p_[5],
+        p_[6], p_[7], p_[8]};
   }
 
   // above: operators
@@ -291,6 +292,7 @@ class CMat3 {
   }
  public:
   REAL p_[9]; // value with row-major order
+  using Scalar = REAL;
 };
 
 using CMat3d = CMat3<double>;
@@ -302,18 +304,58 @@ CMat3<T> operator+(const CMat3<T> &lhs, const CMat3<T> &rhs);
 template<typename T>
 CMat3<T> operator-(const CMat3<T> &lhs, const CMat3<T> &rhs);
 
-template<typename T0, typename T1>
-CMat3<T1> operator*(T0 d, const CMat3<T1> &rhs){
+// ------------
+
+/**
+ * scalar multiplication
+ */
+template<
+    typename T0, typename T1,
+    typename std::enable_if_t<std::is_scalar_v<T0>> * = nullptr>
+CMat3<T1> operator*(T0 d, const CMat3<T1> &rhs) {
   CMat3<T1> temp = rhs;
   temp *= d;
   return temp;
 }
 
-template<typename T>
-CMat3<T> operator*(const CMat3<T> &m, T d);
+/**
+ * scalar multiplication
+ */
+template<typename T0, typename T1,
+    typename std::enable_if_t<std::is_scalar_v<T1>> * = nullptr>
+// make sure T1 is scalar type
+CMat3<T0> operator*(const CMat3<T0> &m, T1 d) {
+  CMat3<T0> t = m;
+  t *= d;
+  return t;
+}
 
 template<typename T>
 CMat3<T> operator*(const CMat3<T> &lhs, const CMat3<T> &rhs);
+
+template<typename VEC,
+    typename T = typename VEC::Scalar, typename VEC::Scalar * = nullptr>
+VEC operator*(
+    const VEC &v,
+    const CMat3<T> &m) {
+  return {
+      m[0] * v[0] + m[3] * v[1] + m[6] * v[2],
+      m[1] * v[0] + m[4] * v[1] + m[7] * v[2],
+      m[2] * v[0] + m[5] * v[1] + m[8] * v[2]};
+}
+
+template<typename VEC,
+    typename T = typename VEC::Scalar, typename VEC::Scalar * = nullptr>
+VEC operator*(
+    const CMat3<T> &m,
+    const VEC &v) {
+  return {
+      m[0] * v[0] + m[1] * v[1] + m[2] * v[2],
+      m[3] * v[0] + m[4] * v[1] + m[5] * v[2],
+      m[6] * v[0] + m[7] * v[1] + m[8] * v[2]};
+}
+
+// -------
 
 template<typename T>
 CMat3<T> operator/(const CMat3<T> &m, T d);
@@ -324,7 +366,7 @@ std::ostream &operator<<(std::ostream &output, const CMat3<T> &m);
 template<typename T>
 std::istream &operator>>(std::istream &output, CMat3<T> &m);
 
-}
+}  // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
 #  include "delfem2/mat3.cpp"

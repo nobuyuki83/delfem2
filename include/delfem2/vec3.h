@@ -30,7 +30,7 @@ namespace delfem2 {
 /**
  * @class 3 dimentional vector class
  */
-template<typename T>
+template<typename T, typename std::enable_if_t<std::is_scalar_v<T>>* = nullptr>
 class CVec3 {
  public:
   CVec3(T vx, T vy, T vz) : p{vx, vy, vz} {}
@@ -108,7 +108,7 @@ class CVec3 {
     return *this;
   }
 
-  template<typename T1>
+  template<typename T1, typename std::enable_if_t<std::is_scalar_v<T1>>* = nullptr>
   CVec3 operator/(T1 d) const {
     if (fabs(d) < NEARLY_ZERO) { return CVec3(0,0,0); }
     return { x / d, y / d, z / d};
@@ -266,7 +266,7 @@ class CVec3 {
 using CVec3d = CVec3<double>;
 using CVec3f = CVec3<float>;
 
-template<typename T0, typename T1>
+template<typename T0, typename T1, typename std::enable_if_t<std::is_scalar_v<T1>>* = nullptr>
 CVec3<T0> operator*(T1 d, const CVec3<T0> &rhs) {
   return {
       static_cast<T0>(rhs.x * d),

@@ -24,6 +24,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/geo_meta_funcs.h"
 
 #define NEARLY_ZERO 1.e-16
 
@@ -132,6 +133,11 @@ bool IsContact_Edge3_Edge3_Proximity(
   const CVec3<T> &q0,
   const CVec3<T> &q1,
   const double delta);
+
+template <typename VEC, typename T=typename VEC::Scalar>
+std::array<T,9> Mat3_IrotLineSeg(
+    const VEC &d0,
+    const VEC &d1);
 
 } // end namespace delfem2
 

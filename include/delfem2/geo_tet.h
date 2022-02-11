@@ -22,7 +22,7 @@ namespace delfem2 {
 
 
 //! Hight of a tetrahedra
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 double Height_Tet(
     const VEC &v1,
     const VEC &v2,
@@ -31,7 +31,7 @@ double Height_Tet(
 
 // ---------------------------------------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 bool barycentricCoord_Origin_Tet(
     T &r0,
     T &r1,
@@ -44,7 +44,7 @@ bool barycentricCoord_Origin_Tet(
 // -----------------------------------------------
 
 //! Volume of a tetrahedra v0 is orgin
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T Volume_OrgTet(
     const VEC &v1,
     const VEC &v2,
@@ -57,7 +57,7 @@ T Volume_OrgTet(
  * @tparam VEC dfm2::CVec3, Eigen::Vector3, std::array<*,3>, * [3]
  * example: Volume_Tet<double [3], double >(v0,...)
  */
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T Volume_Tet(
     const VEC &v0,
     const VEC &v1,
@@ -71,7 +71,7 @@ T Volume_Tet(
  * @tparam VEC dfm2::CVec3, Eigen::Vector3, std::array<*,3>, * [3]
  * example: Mat3_3BasesOfTet<double [3], double >(v0,...)
  */
-template <typename VEC, typename REAL = value_type<VEC>>
+template <typename VEC, typename REAL = vecn_value_t<VEC,3>>
 std::array<REAL,9> Mat3_3BasesOfTet(
     const VEC &p0,
     const VEC &p1,
@@ -86,7 +86,7 @@ std::array<REAL,9> Mat3_3BasesOfTet(
 
 // -----------------------------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 std::array<T, 9> DeformationGradientOfTet(
     const VEC &P0,
     const VEC &P1,
@@ -99,7 +99,7 @@ std::array<T, 9> DeformationGradientOfTet(
 
 // -----------------------------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 void DiffDeformationGradientOfTet(
     T dF[4][3],
     const VEC &P0,
@@ -109,7 +109,7 @@ void DiffDeformationGradientOfTet(
 
 // ---------------------------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T LongestSquaredEdgeLengthOfTet(
     const VEC &ipo0,
     const VEC &ipo1,
@@ -118,7 +118,7 @@ T LongestSquaredEdgeLengthOfTet(
 
 // -----------------------------------------------
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T ShortestSquaredEdgeLengthOfTet(
     const VEC &ipo0,
     const VEC &ipo1,
@@ -128,7 +128,7 @@ T ShortestSquaredEdgeLengthOfTet(
 // ----------------------------------------------------------
 // here starts std::vector<CVector3>
 
-template<typename VEC, typename T = value_type<VEC>>
+template<typename VEC, typename T = vecn_value_t<VEC,3>>
 T Volume_Tet(
     int iv1,
     int iv2,

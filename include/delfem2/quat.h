@@ -159,7 +159,7 @@ DFM2_INLINE void QuatVec(
     const REAL q[],
     const REAL vi[]);
 
-template<typename VEC, typename T=value_type<VEC>>
+template<typename VEC, typename T=vecn_value_t<VEC,3>>
 std::array<T,3> QuatVec3(
     const T q[],
     const VEC& vi){
