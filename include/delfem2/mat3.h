@@ -340,7 +340,7 @@ CMat3<T> operator*(const CMat3<T> &lhs, const CMat3<T> &rhs);
 template<typename VEC,
     typename T = typename VEC::Scalar,
     typename VEC::Scalar * = nullptr,
-    std::enable_if_t<!std::is_same_v<VEC,CMat3<T>>>* = nullptr >
+    std::enable_if_t<!std::is_same_v<VEC, CMat3<T>>> * = nullptr>
 VEC operator*(
     const VEC &v,
     const CMat3<T> &m) {
@@ -353,7 +353,7 @@ VEC operator*(
 template<typename VEC,
     typename T = typename VEC::Scalar,
     typename VEC::Scalar * = nullptr,
-    std::enable_if_t<!std::is_same_v<VEC,CMat3<T>>>* = nullptr >
+    std::enable_if_t<!std::is_same_v<VEC, CMat3<T>>> * = nullptr>
 VEC operator*(
     const CMat3<T> &m,
     const VEC &v) {

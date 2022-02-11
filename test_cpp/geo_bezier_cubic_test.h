@@ -53,7 +53,7 @@ void TestBezierCubicUsingPolyline(unsigned int nitr)
           scr,
           p0, p1, p2, p3, 16);
       const VEC v2 = dfm2::PointOnCubicBezierCurve(t2, p0, p1, p2, p3);
-      EXPECT_NEAR((v0 - scr).norm(), (v2 - scr).norm(), 1.0e-6);
+      EXPECT_NEAR((v0 - scr).norm(), (v2 - scr).norm(), 2.0e-6);
     }
     {  // bb
       auto bb0 = dfm2::AABB_CubicBezierCurve(p0, p1, p2, p3);

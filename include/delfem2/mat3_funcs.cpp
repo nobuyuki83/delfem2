@@ -856,6 +856,7 @@ std::array<T, 9> delfem2::Mat3_IrotPoint(
 #ifdef DFM2_STATIC_LIBRARY
 
 #include "delfem2/vec3.h"
+#include "delfem2/mat3.h"
 //
 namespace delfem2 {
 using f0 = float [3];
