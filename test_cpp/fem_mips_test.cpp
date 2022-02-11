@@ -10,7 +10,7 @@
 #include "gtest/gtest.h" // need to be defiend in the beginning
 //
 #include "delfem2/sampling.h"
-#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/vec3_funcs.h"
 #include "delfem2/geo_tri.h"
 #include "delfem2/femmips_geo3.h"
@@ -32,8 +32,7 @@ TEST(fem_mips, MIPS) {
     if (dfm2::Area_Tri3(P[0], P[1], P[2]) < 0.01) { continue; }
     double p[3][3];
     {
-      dfm2::CMat3d m;
-      m.SetRotMatrix_Cartesian(0.3, 1.0, 0.5);
+      dfm2::CMat3d m = dfm2::Mat3_RotMatFromAxisAngleVec(std::array<double,3>{0.3, 1.0, 0.5});
       for (int ino = 0; ino < 3; ++ino) {
         auto vec = m.MatVec(P[ino]);
         p[ino][0] = vec[0];

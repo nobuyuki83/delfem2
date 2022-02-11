@@ -38,14 +38,13 @@ class CMatContact {
       const double aW[4] = {1 - ch.s, ch.s, -(1 - ch.t), -ch.t};
       const CVec3d &nrm = ch.norm;
 //        std::cout << "lennorm: " << nrm.Length() << std::endl;
-      const auto NN = Mat3_OuterProduct(nrm, nrm);
+      const std::array<double,9> NN = Mat3_OuterProduct(nrm, nrm);
       for (int iip = 0; iip < 4; ++iip) {
         unsigned int ip0 = aIP[iip];
         for (int jjp = 0; jjp < 4; ++jjp) {
           unsigned int jp0 = aIP[jjp];
           double v0[3];
-          MatVec3(v0,
-                  NN.p_, x + jp0 * 4);
+          MatVec3(v0, NN.data(), x + jp0 * 4);
           y[ip0 * 4 + 0] += alpha * stiffness * aW[iip] * aW[jjp] * v0[0];
           y[ip0 * 4 + 1] += alpha * stiffness * aW[iip] * aW[jjp] * v0[1];
           y[ip0 * 4 + 2] += alpha * stiffness * aW[iip] * aW[jjp] * v0[2];

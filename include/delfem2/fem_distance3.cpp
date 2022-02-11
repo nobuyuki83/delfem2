@@ -10,6 +10,7 @@
 
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mat3.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/mshuni.h"
 #include "delfem2/vec3_funcs.h"
 
@@ -29,8 +30,10 @@ DFM2_INLINE double delfem2::WdWddW_SquareLengthLineseg3D(
   const double R = edge_length_ini - l;
   dw_dp[0] = (-R * stiffness / l) * v;
   dw_dp[1] = (+R * stiffness / l) * v;
-  const CMat3d m = (stiffness * edge_length_ini / (l * l * l)) * Mat3_OuterProduct(v, v)
-      + (stiffness * (l - edge_length_ini) / l) * CMat3d::Identity(1.0);
+  const CMat3d mvv = Mat3_OuterProduct(v, v);
+  double t0 = stiffness * edge_length_ini / (l * l * l);
+  double t1 = stiffness * (l - edge_length_ini) / l;
+  const CMat3d m = t0 * mvv + t1 * CMat3d::Identity(1.0);
   ddw_ddp[0][0] = +m;
   ddw_ddp[0][1] = -m;
   ddw_ddp[1][0] = -m;

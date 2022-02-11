@@ -27,33 +27,6 @@
 
 namespace delfem2 {
 
-template<typename T>
-class CMat3; // this pre-definition is needed for following functions
-
-template<typename T>
-CMat3<T> operator+(const CMat3<T> &lhs, const CMat3<T> &rhs);
-
-template<typename T>
-CMat3<T> operator-(const CMat3<T> &lhs, const CMat3<T> &rhs);
-
-template<typename T>
-CMat3<T> operator*(double d, const CMat3<T> &rhs);
-
-template<typename T>
-CMat3<T> operator*(const CMat3<T> &m, T d);
-
-template<typename T>
-CMat3<T> operator*(const CMat3<T> &lhs, const CMat3<T> &rhs);
-
-template<typename T>
-CMat3<T> operator/(const CMat3<T> &m, T d);
-
-template<typename T>
-std::ostream &operator<<(std::ostream &output, const CMat3<T> &m);
-
-template<typename T>
-std::istream &operator>>(std::istream &output, CMat3<T> &m);
-
 static inline bool myIsNAN_Matrix3(double d) { return !(d > d - 1); }
 
 /**
@@ -132,6 +105,8 @@ class CMat3 {
     }
     return m;
   }
+  // -----------
+  // below: operator
   inline CMat3 operator-() const { return (*this) * static_cast<REAL>(-1); }
   inline CMat3 operator+() const { return (*this); }
   inline CMat3 &operator+=(const CMat3 &rhs) {
@@ -163,6 +138,16 @@ class CMat3 {
   inline const REAL &operator()(INDEX0 i, INDEX1 j) const {
     return this->p_[i * 3 + j];
   }
+
+  // implicit cast
+  operator std::array<REAL,9>() const {
+    return {
+      p_[0],p_[1],p_[2],
+      p_[3],p_[4],p_[5],
+      p_[6],p_[7],p_[8]};
+  }
+
+  // above: operators
   // -------------------------
   /**
    * @return
@@ -175,8 +160,6 @@ class CMat3 {
   void SetSymetric(const REAL sm[6]);
   void setZero();
   void SetRandom();
-  void SetRotMatrix_Cartesian(const REAL vec[]);
-  void SetRotMatrix_Cartesian(REAL x, REAL y, REAL z);
   void SetRotMatrix_Rodrigues(const REAL vec[]);
   void SetRotMatrix_CRV(const REAL crv[]);
   void SetRotMatrix_Quaternion(const REAL quat[]);
@@ -312,6 +295,34 @@ class CMat3 {
 
 using CMat3d = CMat3<double>;
 using CMat3f = CMat3<float>;
+
+template<typename T>
+CMat3<T> operator+(const CMat3<T> &lhs, const CMat3<T> &rhs);
+
+template<typename T>
+CMat3<T> operator-(const CMat3<T> &lhs, const CMat3<T> &rhs);
+
+template<typename T0, typename T1>
+CMat3<T1> operator*(T0 d, const CMat3<T1> &rhs){
+  CMat3<T1> temp = rhs;
+  temp *= d;
+  return temp;
+}
+
+template<typename T>
+CMat3<T> operator*(const CMat3<T> &m, T d);
+
+template<typename T>
+CMat3<T> operator*(const CMat3<T> &lhs, const CMat3<T> &rhs);
+
+template<typename T>
+CMat3<T> operator/(const CMat3<T> &m, T d);
+
+template<typename T>
+std::ostream &operator<<(std::ostream &output, const CMat3<T> &m);
+
+template<typename T>
+std::istream &operator>>(std::istream &output, CMat3<T> &m);
 
 }
 

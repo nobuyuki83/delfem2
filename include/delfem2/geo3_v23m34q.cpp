@@ -88,59 +88,17 @@ DFM2_INLINE void delfem2::SetDiag(
 DFM2_INLINE void delfem2::SetRotMatrix_Cartesian(
     CMat3d &m,
     const CVec3d &v) {
-  m.SetRotMatrix_Cartesian(v.p);
-}
-
-DFM2_INLINE void delfem2::SetSpinTensor(CMat3d &m, const CVec3d &vec0) {
-  Mat3_Spin(m.p_, vec0.p);
-}
-
-DFM2_INLINE void delfem2::SetOuterProduct(
-    CMat3d &m,
-    const CVec3d &vec0,
-    const CVec3d &vec1) {
-  double *mat = m.p_;
-  mat[0] = vec0.x * vec1.x;
-  mat[1] = vec0.x * vec1.y;
-  mat[2] = vec0.x * vec1.z;
-  mat[3] = vec0.y * vec1.x;
-  mat[4] = vec0.y * vec1.y;
-  mat[5] = vec0.y * vec1.z;
-  mat[6] = vec0.z * vec1.x;
-  mat[7] = vec0.z * vec1.y;
-  mat[8] = vec0.z * vec1.z;
-}
-
-DFM2_INLINE void delfem2::SetProjection(CMat3d &m, const CVec3d &vec0) {
-  double *mat = m.p_;
-  const CVec3d &u = vec0.normalized();
-  mat[0] = 1 - u.x * u.x;
-  mat[1] = 0 - u.x * u.y;
-  mat[2] = 0 - u.x * u.z;
-  mat[3] = 0 - u.y * u.x;
-  mat[4] = 1 - u.y * u.y;
-  mat[5] = 0 - u.y * u.z;
-  mat[6] = 0 - u.z * u.x;
-  mat[7] = 0 - u.z * u.y;
-  mat[8] = 1 - u.z * u.z;
+  m = Mat3_RotMatFromAxisAngleVec(v);
 }
 
 // ----------------------------
 
-DFM2_INLINE delfem2::CMat3d delfem2::Mirror(const CVec3d &n) {
-  CVec3d N = n;
-  N.normalize();
-  return CMat3d::Identity() - 2 * delfem2::Mat3_OuterProduct(N, N);
-}
-
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_CrossCross(const CVec3d &v) {
-  return Mat3_Spin(v) * Mat3_Spin(v);
+  return CMat3d(Mat3_Spin(v)) * CMat3d(Mat3_Spin(v));
 }
 
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_FromCartesianRotationVector(const CVec3d &vec0) {
-  CMat3d m;
-  m.SetRotMatrix_Cartesian(vec0.x, vec0.y, vec0.z);
-  return m;
+  return Mat3_RotMatFromAxisAngleVec(vec0);
 }
 
 #ifdef DFM2_STATIC_LIBRARY
@@ -153,18 +111,6 @@ template std::array<double,9> delfem2::Mat3_From3Bases(
     const delfem2::CVec3d &vec1,
     const delfem2::CVec3d &vec2);
 #endif
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_Spin(const CVec3d &vec0) {
-  CMat3d m;
-  ::delfem2::Mat3_Spin(m.p_, vec0.p);
-  return m;
-}
-
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_OuterProduct(const CVec3d &vec0, const CVec3d &vec1) {
-  CMat3d m;
-  SetOuterProduct(m, vec0, vec1);
-  return m;
-}
 
 // ------------------
 
@@ -201,27 +147,6 @@ template CVec3f operator*(const CMat3f &, const CVec3f &);
 // -----------------------------------------------------
 // below: rotational inertia
 
-// moment of inertia around origin triangle vtx (origin,d0,d1,d2) the area_density=1
-// see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
-DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTri(
-    const CVec3d &d0,
-    const CVec3d &d1,
-    const CVec3d &d2) {
-
-  CVec3d dv = d0 + d1 + d2;
-  CMat3d I0 =
-      Mat3_OuterProduct(d0, d0) +
-          Mat3_OuterProduct(d1, d1) +
-          Mat3_OuterProduct(d2, d2) +
-          Mat3_OuterProduct(dv, dv);
-  double tr0 = I0.trace();
-  CMat3d I = tr0 * CMat3d::Identity() - I0;
-
-  double darea = ((d1 - d0).cross(d2 - d0)).norm();
-  I *= darea / 24.0;
-  return I;
-}
-
 // moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
 // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTriSolid(
@@ -229,14 +154,13 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotTriSolid(
     const CVec3d &d1,
     const CVec3d &d2) {
   CVec3d dv = d0 + d1 + d2;
-  CMat3d I0 =
-      Mat3_OuterProduct(d0, d0) +
-          Mat3_OuterProduct(d1, d1) +
-          Mat3_OuterProduct(d2, d2) +
-          Mat3_OuterProduct(dv, dv);
+  const CMat3d m0 = Mat3_OuterProduct(d0, d0);
+  const CMat3d m1 = Mat3_OuterProduct(d1, d1);
+  const CMat3d m2 = Mat3_OuterProduct(d2, d2);
+  const CMat3d mv = Mat3_OuterProduct(dv, dv);
+  const CMat3d I0 = m0 + m1 + m2 + mv;
   double tr0 = I0.trace();
   CMat3d I = tr0 * CMat3d::Identity() - I0;
-
   double darea = d0.dot(d1.cross(d2));
   I *= darea / 120.0;
   return I;
@@ -249,17 +173,17 @@ DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotLineSeg(
   double l = dv.norm();
   CMat3d I;
   {
-    I = dv.squaredNorm() * CMat3d::Identity() - Mat3_OuterProduct(dv, dv);
+    I = dv.squaredNorm() * CMat3d::Identity() - CMat3d(Mat3_OuterProduct(dv, dv));
     I *= l / 12.0;
   }
   CVec3d p = (d0 + d1) * 0.5;
-  I += l * (p.squaredNorm() * CMat3d::Identity() - Mat3_OuterProduct(p, p));
+  I += l * (p.squaredNorm() * CMat3d::Identity() - CMat3d(Mat3_OuterProduct(p, p)));
   return I;
 }
 
 DFM2_INLINE delfem2::CMat3d delfem2::Mat3_IrotPoint(
     const CVec3d &d0) {
-  return (d0.squaredNorm() * CMat3d::Identity() - Mat3_OuterProduct(d0, d0));
+  return (d0.squaredNorm() * CMat3d::Identity() - CMat3d(Mat3_OuterProduct(d0, d0)));
 }
 
 

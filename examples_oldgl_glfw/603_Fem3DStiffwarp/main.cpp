@@ -18,6 +18,7 @@
 
 #include "delfem2/svd3.h"
 #include "delfem2/geo3_v23m34q.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/lsilu_mats.h"
 #include "delfem2/lsmats.h"
 #include "delfem2/vecxitrsol.h"

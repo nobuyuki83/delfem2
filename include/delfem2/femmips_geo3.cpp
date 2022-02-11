@@ -6,6 +6,7 @@
  */
 
 #include "delfem2/geo3_v23m34q.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/femmips_geo3.h"
 
 // =======================================
@@ -73,7 +74,9 @@ DFM2_INLINE void delfem2::WdWddW_MIPS(
   dE[1][0]=dECd1.x; dE[1][1]=dECd1.y; dE[1][2]=dECd1.z;
   dE[2][0]=dECd2.x; dE[2][1]=dECd2.y; dE[2][2]=dECd2.z;
   
-  CMat3d (*op)(const CVec3d&, const CVec3d&) = Mat3_OuterProduct;
+  //CMat3d (*op)(const CVec3d&, const CVec3d&) = CMat3d(Mat3_OuterProduct);
+
+  auto op = [](const CVec3d& a, const CVec3d& b){ return CMat3d(Mat3_OuterProduct(a,b)); };
   
   double tmp1 = 0.25/area;
   CVec3d dad0 = ((v20.dot(v12))*v01-(v01.dot(v12))*v20)*tmp1;

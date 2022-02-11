@@ -223,6 +223,12 @@ std::array<T, 3> Normal_Tri3(
   return ret;
 }
 
+template<typename VEC, typename T = typename VEC::Scalar>
+std::array<T, 9> Mat3_IrotTri(
+    const VEC &d0,
+    const VEC &d1,
+    const VEC &d2);
+
 } // end namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY

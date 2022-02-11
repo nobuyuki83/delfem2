@@ -6,6 +6,7 @@
 
 #include "delfem2/fem_invertiblefem.h"
 #include "delfem2/sampling.h"
+#include "delfem2/mat3_funcs.h"
 
 TEST(invertible_fem, dF) {
   namespace dfm2 = delfem2;

@@ -21,6 +21,7 @@
 #include <array>
 #include <limits> // using NaN Check
 
+// the interfaces of the functions are not depends on dfm2::CMat3d
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/geo_meta_funcs.h"
 
@@ -152,9 +153,12 @@ DFM2_INLINE void AxisAngleVectorCartesian_Mat3(
     const T m[9]);
 
 template<typename REAL>
-void Mat3_Rotation_Cartesian(
+void Mat3_RotMatFromAxisAngleVec(
     REAL mat[9],
     const REAL vec[3]);
+
+template <typename VEC, typename REAL=value_type<VEC>>
+std::array<REAL,9> Mat3_RotMatFromAxisAngleVec(const VEC &vec);
 
 template<typename T>
 DFM2_INLINE void AxisAngleVectorCRV_Mat3(
@@ -197,11 +201,11 @@ void MatVec3(
     const T2 x[3]);
 
 template<typename VEC3, typename T = value_type<VEC3>>
-std::array<T,3> Mat3Vec3(const T mat[9], const VEC3 &v) {
+std::array<T, 3> Mat3Vec3(const T mat[9], const VEC3 &v) {
   return {
-    mat[0]*v[0] + mat[1]*v[1] + mat[2]*v[2],
-    mat[3]*v[0] + mat[4]*v[1] + mat[5]*v[2],
-    mat[6]*v[0] + mat[7]*v[1] + mat[8]*v[2] };
+      mat[0] * v[0] + mat[1] * v[1] + mat[2] * v[2],
+      mat[3] * v[0] + mat[4] * v[1] + mat[5] * v[2],
+      mat[6] * v[0] + mat[7] * v[1] + mat[8] * v[2]};
 }
 
 template<typename T>
@@ -217,6 +221,9 @@ DFM2_INLINE void VecMat3(
     const double x[3],
     const double m[9]);
 
+// ----------------------------------------
+// below: interface contains 2D vector
+
 template<typename T>
 DFM2_INLINE void Vec2_Mat3Vec2_Homography(
     T y[2],
@@ -224,7 +231,7 @@ DFM2_INLINE void Vec2_Mat3Vec2_Homography(
     const T x[2]);
 
 template<typename T>
-std::array<T,2> Vec2_Mat3Vec2_Homography(
+std::array<T, 2> Vec2_Mat3Vec2_Homography(
     const T Z[9],
     const T x[2]);
 
@@ -233,6 +240,24 @@ DFM2_INLINE void Vec2_Mat3Vec2_AffineDirection(
     T y[2],
     const T A[9],
     const T x[2]);
+
+// --------------
+
+
+/**
+ * @tparam VEC dfm2::CVec3, Eigen::Vector3, * [3], std::array<*,3>
+ * example: Mat3_From3Bases<double [3], double>
+ */
+template<typename VEC, typename REAL = typename VEC::Scalar>
+std::array<REAL, 9> Mat3_From3Bases(
+    const VEC &vec0,
+    const VEC &vec1,
+    const VEC &vec2) {
+  return {
+      vec0[0], vec1[0], vec2[0],
+      vec0[1], vec1[1], vec2[1],
+      vec0[2], vec1[2], vec2[2]};
+}
 
 /**
  * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
@@ -244,6 +269,64 @@ template<typename VEC, typename REAL= typename VEC::Scalar>
 std::array<REAL, 9> Mat3_MinimumRotation(
     const VEC &V,
     const VEC &v);
+
+/**
+ * @brief output outer product Vec0 * Vec1^T
+ */
+template<typename VEC, typename REAL= typename VEC::Scalar>
+std::array<REAL, 9> Mat3_OuterProduct(
+    const VEC &vec0,
+    const VEC &vec1) {
+  return {
+      vec0[0] * vec1[0],
+      vec0[0] * vec1[1],
+      vec0[0] * vec1[2],
+      vec0[1] * vec1[0],
+      vec0[1] * vec1[1],
+      vec0[1] * vec1[2],
+      vec0[2] * vec1[0],
+      vec0[2] * vec1[1],
+      vec0[2] * vec1[2]};
+}
+
+template<typename VEC, typename REAL= typename VEC::Scalar>
+std::array<REAL, 9> Mat3_Spin(
+    const VEC &vec0) {
+  std::array<REAL, 9> m;
+  ::delfem2::Mat3_Spin(m.data(), vec0.p);
+  return m;
+}
+
+template<typename VEC, typename REAL= typename VEC::Scalar>
+std::array<REAL, 9> Mat3_NormalProjection(
+    const VEC &vec0) {
+  const VEC &u = vec0.normalized();
+  return {
+      - u[0] * u[0] + 1,
+      - u[0] * u[1],
+      - u[0] * u[2],
+      - u[1] * u[0],
+      - u[1] * u[1] + 1,
+      - u[1] * u[2],
+      - u[2] * u[0],
+      - u[2] * u[1],
+      - u[2] * u[2] + 1};
+}
+
+template<typename VEC, typename REAL = typename VEC::Scalar>
+std::array<REAL, 9> Mat3_Mirror(const VEC &n) {
+  const VEC N = n.normalized();
+  return {
+      -2 * N[0] * N[0] + 1,
+      -2 * N[0] * N[1],
+      -2 * N[0] * N[2],
+      -2 * N[1] * N[0],
+      -2 * N[1] * N[1] + 1,
+      -2 * N[1] * N[2],
+      -2 * N[2] * N[0],
+      -2 * N[2] * N[1],
+      -2 * N[2] * N[2] + 1};
+}
 
 // --------------------------------
 // below: mat3 and quat

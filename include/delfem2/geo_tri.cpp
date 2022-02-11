@@ -14,6 +14,9 @@
 #include "delfem2/geo_edge.h"
 #include "delfem2/geo_plane.h"
 
+#include "delfem2/mat3.h"
+#include "delfem2/mat3_funcs.h"
+
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
 #endif
@@ -460,6 +463,32 @@ VEC delfem2::UnitNormal_Tri3(
   Normalize3(vnorm);
   return vnorm;
 }
+
+// moment of inertia around origin triangle (d0,d1,d2) the area_density=1
+// see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
+template<typename VEC, typename T>
+std::array<T, 9> delfem2::Mat3_IrotTri(
+    const VEC &d0,
+    const VEC &d1,
+    const VEC &d2) {
+  const VEC dv = d0 + d1 + d2;
+  const CMat3<T> m0 = Mat3_OuterProduct(d0, d0);
+  const CMat3<T> m1 = Mat3_OuterProduct(d1, d1);
+  const CMat3<T> m2 = Mat3_OuterProduct(d2, d2);
+  const CMat3<T> mv = Mat3_OuterProduct(dv, dv);
+  const CMat3<T> I0 = m0 + m1 + m2 + mv;
+  T tr0 = I0.trace();
+  CMat3<T> I = tr0 * CMat3<T>::Identity() - I0;
+  T darea = ((d1 - d0).cross(d2 - d0)).norm();
+  I *= darea / 24.0;
+  return I;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template std::array<float, 9> delfem2::Mat3_IrotTri(
+    const CVec3f &d0,
+    const CVec3f &d1,
+    const CVec3f &d2);
+#endif
 
 // ==============================================
 

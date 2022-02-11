@@ -16,16 +16,6 @@
 namespace delfem2 {
 
 template<typename T>
-CMat3<T> operator*(double d, const CMat3<T> &rhs) {
-  CMat3<T> temp = rhs;
-  temp *= d;
-  return temp;
-}
-#ifdef DFM2_STATIC_LIBRARY
-template CMat3<double> operator*(double d, const CMat3<double> &rhs);
-#endif
-
-template<typename T>
 CMat3<T> operator*(const CMat3<T> &m, T d) {
   CMat3<T> t = m;
   t *= d;
@@ -282,55 +272,6 @@ DFM2_INLINE void CMat3<double>::SetRandom() {
 
 // -----------------------------------------
 
-template<typename REAL>
-void delfem2::CMat3<REAL>::SetRotMatrix_Cartesian(const REAL vec[]) {
-  REAL sqt = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
-  if (sqt < 1.0e-20) { // infinitesmal rotation approximation
-    p_[0] = 1;
-    p_[1] = -vec[2];
-    p_[2] = +vec[1];
-    p_[3] = +vec[2];
-    p_[4] = 1;
-    p_[5] = -vec[0];
-    p_[6] = -vec[1];
-    p_[7] = +vec[0];
-    p_[8] = 1;
-    return;
-  }
-  REAL t = std::sqrt(sqt);
-  REAL invt = 1 / t;
-  REAL n[3] = {vec[0] * invt, vec[1] * invt, vec[2] * invt};
-  const REAL c0 = cos(t);
-  const REAL s0 = sin(t);
-  p_[0 * 3 + 0] = c0 + (1 - c0) * n[0] * n[0];
-  p_[0 * 3 + 1] = -n[2] * s0 + (1 - c0) * n[0] * n[1];
-  p_[0 * 3 + 2] = +n[1] * s0 + (1 - c0) * n[0] * n[2];
-  p_[1 * 3 + 0] = +n[2] * s0 + (1 - c0) * n[1] * n[0];
-  p_[1 * 3 + 1] = c0 + (1 - c0) * n[1] * n[1];
-  p_[1 * 3 + 2] = -n[0] * s0 + (1 - c0) * n[1] * n[2];
-  p_[2 * 3 + 0] = -n[1] * s0 + (1 - c0) * n[2] * n[0];
-  p_[2 * 3 + 1] = +n[0] * s0 + (1 - c0) * n[2] * n[1];
-  p_[2 * 3 + 2] = c0 + (1 - c0) * n[2] * n[2];
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CMat3<float>::SetRotMatrix_Cartesian(const float vec[]);
-template void delfem2::CMat3<double>::SetRotMatrix_Cartesian(const double vec[]);
-#endif
-
-// -------------------------------
-
-template<typename T>
-void delfem2::CMat3<T>::SetRotMatrix_Cartesian(T x, T y, T z) {
-  const T vec[3] = {x, y, z};
-  this->SetRotMatrix_Cartesian(vec);
-}
-#ifdef DFM2_STATIC_LIBRARY
-template void delfem2::CMat3<float>::SetRotMatrix_Cartesian(float x, float y, float z);
-template void delfem2::CMat3<double>::SetRotMatrix_Cartesian(double x, double y, double z);
-#endif
-
-// ----------------------------------
-
 template<typename T>
 void delfem2::CMat3<T>::SetRotMatrix_Rodrigues(const T vec[]) {
   constexpr T half = static_cast<T>(0.5);
@@ -390,15 +331,9 @@ template void delfem2::CMat3<double>::SetRotMatrix_Quaternion(const double quat[
 
 template<typename T>
 void delfem2::CMat3<T>::SetRotMatrix_BryantAngle(T rx, T ry, T rz) {
-  CMat3 mx;
-  T rvx[3] = {rx, 0, 0};
-  mx.SetRotMatrix_Cartesian(rvx);
-  CMat3 my;
-  T rvy[3] = {0, ry, 0};
-  my.SetRotMatrix_Cartesian(rvy);
-  CMat3 mz;
-  T rvz[3] = {0, 0, rz};
-  mz.SetRotMatrix_Cartesian(rvz);
+  CMat3 mx = Mat3_RotMatFromAxisAngleVec(std::array<T,3>{rx, 0, 0});
+  CMat3 my = Mat3_RotMatFromAxisAngleVec(std::array<T,3>{0, ry, 0});
+  CMat3 mz = Mat3_RotMatFromAxisAngleVec(std::array<T,3>{0, 0, rz});
   CMat3 m = mz;
   m = m.MatMat(my);
   m = m.MatMat(mx);

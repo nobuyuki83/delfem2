@@ -24,7 +24,6 @@
 #include "delfem2/mshuni.h"
 #include "delfem2/point_on_surface_mesh.h"
 #include "delfem2/srchuni_v3.h"
-//
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/glfw/viewer3.h"

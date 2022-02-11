@@ -147,7 +147,7 @@ DFM2_INLINE void AddOuterProduct_FrameRod(
   const double dB_dt[2]) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
-      ddV_ddP[i][j] += c * Mat3_OuterProduct(dA_dP[i], dB_dP[j]);
+      ddV_ddP[i][j] += c * CMat3d(Mat3_OuterProduct(dA_dP[i], dB_dP[j]));
     }
   }
   for (int i = 0; i < 2; ++i) {
@@ -197,9 +197,9 @@ DFM2_INLINE void delfem2::DiffFrameRod(
   dF_dt[0] = +Frm[1];
   dF_dt[1] = -Frm[0];
   dF_dt[2].setZero();
-  dF_dv[0] = (-1.0 / l01) * Mat3_OuterProduct(Frm[2], Frm[0]);
-  dF_dv[1] = (-1.0 / l01) * Mat3_OuterProduct(Frm[2], Frm[1]);
-  dF_dv[2] = (+1.0 / l01) * (CMat3d::Identity(1.0) - Mat3_OuterProduct(Frm[2], Frm[2]));
+  dF_dv[0] = (-1.0 / l01) * CMat3d(Mat3_OuterProduct(Frm[2], Frm[0]));
+  dF_dv[1] = (-1.0 / l01) * CMat3d(Mat3_OuterProduct(Frm[2], Frm[1]));
+  dF_dv[2] = (+1.0 / l01) * (CMat3d::Identity(1.0) - CMat3d(Mat3_OuterProduct(Frm[2], Frm[2])));
 }
 
 DFM2_INLINE void delfem2::DifDifFrameRod(
@@ -223,11 +223,11 @@ DFM2_INLINE void delfem2::DifDifFrameRod(
   }
   {
     CMat3d S = Mat3_Spin(Frm[2]);
-    CMat3d A = Mat3_Spin(Frm[iaxis]) * Mat3_Spin(Q);
+    CMat3d A = CMat3d(Mat3_Spin(Frm[iaxis])) * CMat3d(Mat3_Spin(Q));
     CMat3d M0a = -S * (A * S);
     CVec3d b0 = (-A + A.transpose()) * Frm[2];
     CMat3d M1 = Mat3_OuterProduct(Frm[2], b0);
-    CMat3d M3 = (b0.dot(Frm[2])) * (3 * Mat3_OuterProduct(Frm[2], Frm[2]) - CMat3d::Identity(1.0));
+    CMat3d M3 = (b0.dot(Frm[2])) * (3 * CMat3d(Mat3_OuterProduct(Frm[2], Frm[2])) - CMat3d::Identity(1.0));
     ddW_ddv = (1.0 / (l01 * l01)) * (M0a + M1 + M1.transpose() + M3);
   }
 }
@@ -441,10 +441,11 @@ DFM2_INLINE double delfem2::WdWddW_Rod3Approx(
   }
   for (int ino = 0; ino < 3; ++ino) {
     for (int jno = 0; jno < 3; ++jno) {
+      const CMat3d m0 = Mat3_OuterProduct(dC_dp[0][ino], dC_dp[0][jno]);
+      const CMat3d m1 = Mat3_OuterProduct(dC_dp[1][ino], dC_dp[1][jno]);
+      const CMat3d m2 = Mat3_OuterProduct(dC_dp[2][ino], dC_dp[2][jno]);
       ddW_ddP[ino][jno] =
-        stiff_bendtwist[0] * Mat3_OuterProduct(dC_dp[0][ino], dC_dp[0][jno])
-          + stiff_bendtwist[1] * Mat3_OuterProduct(dC_dp[1][ino], dC_dp[1][jno])
-          + stiff_bendtwist[2] * Mat3_OuterProduct(dC_dp[2][ino], dC_dp[2][jno]);
+        stiff_bendtwist[0] * m0 + stiff_bendtwist[1] * m1 + stiff_bendtwist[2] * m2;
     }
   }
   for (int ino = 0; ino < 2; ++ino) {
@@ -503,9 +504,10 @@ DFM2_INLINE double delfem2::WdWddW_HairApprox(
   std::fill_n(&ddW[0][0][0][0], 3 * 3 * 4 * 4, 0.0);
   for (int ino = 0; ino < 3; ++ino) {
     for (int jno = 0; jno < 3; ++jno) {
-      const CMat3d m = stiff_bendtwist[0] * Mat3_OuterProduct(dC_dp[0][ino], dC_dp[0][jno])
-        + stiff_bendtwist[1] * Mat3_OuterProduct(dC_dp[1][ino], dC_dp[1][jno])
-        + stiff_bendtwist[2] * Mat3_OuterProduct(dC_dp[2][ino], dC_dp[2][jno]);
+      CMat3d m0 = Mat3_OuterProduct(dC_dp[0][ino], dC_dp[0][jno]);
+      CMat3d m1 = Mat3_OuterProduct(dC_dp[1][ino], dC_dp[1][jno]);
+      CMat3d m2 = Mat3_OuterProduct(dC_dp[2][ino], dC_dp[2][jno]);
+      const CMat3d m = stiff_bendtwist[0] * m0 + stiff_bendtwist[1] * m1 + stiff_bendtwist[2] * m2;
       m.CopyToMat4(&ddW[ino][jno][0][0]);
     }
   }

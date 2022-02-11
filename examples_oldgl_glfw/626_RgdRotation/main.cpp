@@ -15,6 +15,7 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
@@ -156,9 +157,12 @@ int main(
   {
     rbi.Irot = dfm2::CMat3d::Zero();
     dfm2::CVec3d ex(1, 0, 0), ey(0, 1, 0), ez(0, 0, 1);
-    rbi.Irot += 1.0 * dfm2::Mat3_OuterProduct(ex, ex);
-    rbi.Irot += 3.0 * dfm2::Mat3_OuterProduct(ey, ey);
-    rbi.Irot += 5.0 * dfm2::Mat3_OuterProduct(ez, ez);
+    const dfm2::CMat3d m0 = dfm2::Mat3_OuterProduct(ex, ex);
+    const dfm2::CMat3d m1 = dfm2::Mat3_OuterProduct(ey, ey);
+    const dfm2::CMat3d m2 = dfm2::Mat3_OuterProduct(ez, ez);
+    rbi.Irot += 1.0 * m0;
+    rbi.Irot += 3.0 * m1;
+    rbi.Irot += 5.0 * m2;
   }
   rbi.invIrot = rbi.Irot.Inverse();
 
@@ -189,8 +193,6 @@ int main(
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
-
-  return 0;
 }
 
 

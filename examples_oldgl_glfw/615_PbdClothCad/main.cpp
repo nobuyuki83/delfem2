@@ -28,6 +28,8 @@
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/mshprimitive.h"
+#include "delfem2/mat3_funcs.h"
+//
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -157,7 +159,7 @@ int main(
     CRigidTrans_2DTo3D rt23;
     rt23.org2 = dfm2::CVec2d(2.5, 0.5);
     rt23.org3 = dfm2::CVec3d(0.0, 0.0, 0.5);
-    rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
+    rt23.R = dfm2::Mat3_RotMatFromAxisAngleVec(std::array<double,3>{0.0, 3.1415, 0.0});
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1, 1), cad);
     for (int ip : aIP) {
       dfm2::CVec3d p0(aVec2[ip].x - rt23.org2.x, aVec2[ip].y - rt23.org2.y, 0.0);

@@ -203,6 +203,8 @@ template void delfem2::Mat3_Identity(float *mat, float alpha);
 template void delfem2::Mat3_Identity(double *mat, double alpha);
 #endif
 
+// -------------
+
 
 // -------------
 
@@ -573,7 +575,7 @@ template double delfem2::SquareNormFrobenius_SymMat3(const double sm[6]);
 // ---------------------------------------
 
 template<typename REAL>
-void delfem2::Mat3_Rotation_Cartesian(
+void delfem2::Mat3_RotMatFromAxisAngleVec(
     REAL mat[9],
     const REAL vec[3]) {
   REAL sqt = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
@@ -605,12 +607,43 @@ void delfem2::Mat3_Rotation_Cartesian(
   mat[2 * 3 + 2] = c0 + (1 - c0) * n[2] * n[2];
 }
 #ifdef DFM2_STATIC_LIBRARY
-template void delfem2::Mat3_Rotation_Cartesian(float mat[9], const float vec[3]);
-template void delfem2::Mat3_Rotation_Cartesian(double mat[9], const double vec[3]);
+template void delfem2::Mat3_RotMatFromAxisAngleVec(float mat[9], const float vec[3]);
+template void delfem2::Mat3_RotMatFromAxisAngleVec(double mat[9], const double vec[3]);
 #endif
 
-
 // ---------------------------------------
+
+template <typename VEC, typename REAL>
+std::array<REAL,9> delfem2::Mat3_RotMatFromAxisAngleVec(const VEC &vec) {
+  REAL sqt = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
+  if (sqt < 1.0e-20) { // infinitesmal rotation approximation
+    return {
+        1,
+        -vec[2],
+        +vec[1],
+        +vec[2],
+        1,
+        -vec[0],
+        -vec[1],
+        +vec[0],
+        1 };
+  }
+  REAL t = std::sqrt(sqt);
+  REAL invt = 1 / t;
+  REAL n[3] = {vec[0] * invt, vec[1] * invt, vec[2] * invt};
+  const REAL c0 = cos(t);
+  const REAL s0 = sin(t);
+  return {
+      c0 + (1 - c0) * n[0] * n[0],
+      -n[2] * s0 + (1 - c0) * n[0] * n[1],
+      +n[1] * s0 + (1 - c0) * n[0] * n[2],
+      +n[2] * s0 + (1 - c0) * n[1] * n[0],
+      c0 + (1 - c0) * n[1] * n[1],
+      -n[0] * s0 + (1 - c0) * n[1] * n[2],
+      -n[1] * s0 + (1 - c0) * n[2] * n[0],
+      +n[0] * s0 + (1 - c0) * n[2] * n[1],
+      c0 + (1 - c0) * n[2] * n[2] };
+}
 
 // -----------------------------------
 
@@ -757,5 +790,14 @@ using d3 = CVec3d;
 //
 template std::array<float, 9> Mat3_MinimumRotation(const f3 &, const f3 &);
 template std::array<double, 9> Mat3_MinimumRotation(const d3 &, const d3 &);
+//
+template std::array<double,9> Mat3_RotMatFromAxisAngleVec(const d0 &vec);
+template std::array<double,9> Mat3_RotMatFromAxisAngleVec(const d1 &vec);
+template std::array<double,9> Mat3_RotMatFromAxisAngleVec(const d2 &vec);
+template std::array<double,9> Mat3_RotMatFromAxisAngleVec(const d3 &vec);
+template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f0 &vec);
+template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f1 &vec);
+template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f2 &vec);
+template std::array<float,9> Mat3_RotMatFromAxisAngleVec(const f3 &vec);
 }
 #endif

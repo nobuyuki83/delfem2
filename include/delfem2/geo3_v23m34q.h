@@ -58,48 +58,13 @@ DFM2_INLINE void SetRotMatrix_Cartesian(
     CMat3d &m,
     const CVec3d &v);
 
-void SetSpinTensor(
-    CMat3d &m,
-    const CVec3d &vec0);
-
-void SetOuterProduct(
-    CMat3d &m,
-    const CVec3d &vec0,
-    const CVec3d &vec1);
-
 CVec3d GetSpinVector(
     const CMat3d &m);
 
 CVec3d GetCartesianRotationVector(
     const CMat3d &m);
 
-/**
- * @tparam VEC dfm2::CVec3, Eigen::Vector3, * [3], std::array<*,3>
- * example: Mat3_From3Bases<double [3], double>
- */
-template <typename VEC, typename REAL = typename VEC::Scalar>
-std::array<REAL,9> Mat3_From3Bases(
-    const VEC &vec0,
-    const VEC &vec1,
-    const VEC &vec2)
-{
-  return  {
-    vec0[0], vec1[0], vec2[0],
-    vec0[1], vec1[1], vec2[1],
-    vec0[2], vec1[2], vec2[2]};
-}
-
 CMat3d Mat3_FromCartesianRotationVector(
-    const CVec3d &vec0);
-
-/**
- * @brief output outer product Vec0 * Vec1^T
- */
-CMat3d Mat3_OuterProduct(
-    const CVec3d &vec0,
-    const CVec3d &vec1);
-
-CMat3d Mat3_Spin(
     const CVec3d &vec0);
 
 void Mat4_MatTransl(
@@ -116,11 +81,6 @@ DFM2_INLINE void Mat4_ScaleMatTransl(
 
 // ----------------------
 // below: inertia tensor
-
-CMat3d Mat3_IrotTri(
-    const CVec3d &d0,
-    const CVec3d &d1,
-    const CVec3d &d2);
 
 /**
  * @brief moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
@@ -139,9 +99,6 @@ CMat3d Mat3_IrotPoint(
 
 // above: inertia tensor
 // ----------------------
-
-CMat3d Mirror(
-    const CVec3d &n);
 
 /**
  * @brief matrix for two cross products
