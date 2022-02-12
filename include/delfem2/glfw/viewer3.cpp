@@ -43,9 +43,7 @@ static void glfw_callback_key(
     if (key == GLFW_KEY_PAGE_UP) { pViewer3->scale *= 1.03; }
     if (key == GLFW_KEY_PAGE_DOWN) { pViewer3->scale *= (1.0 / 1.03); }
     pViewer3->key_press(key, mods);
-    for(const auto& func : pViewer3->keypress_callbacks){
-      func(key, mods);
-    }
+    for(const auto& func : pViewer3->keypress_callbacks){ func(key, mods); }
   } else if (action == GLFW_RELEASE) { pViewer3->key_release(key, mods);
   } else if (action == GLFW_REPEAT) { pViewer3->key_repeat(key, mods); }
 
@@ -123,6 +121,7 @@ static void glfw_callback_scroll(
   assert(pViewer3 != nullptr);
   pViewer3->scale *= pow(1.01, yoffset);
   pViewer3->mouse_wheel(yoffset);
+  for(const auto& func : pViewer3->camerachange_callbacks){ func(); }
 }
 
 }  // namespace delfem2
@@ -154,6 +153,7 @@ void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {
       this->view_rotation->Rot_Camera(
           static_cast<float>(nav.dx),
           static_cast<float>(nav.dy));
+      for(const auto& func : this->camerachange_callbacks){ func(); }
       return;
     } else if (nav.imodifier == GLFW_MOD_SHIFT) {
       const delfem2::CMat4f mP = this->GetProjectionMatrix();
@@ -161,6 +161,7 @@ void delfem2::glfw::CViewer3::CursorPosition(double xpos, double ypos) {
       const float sy = (mP(3,3) - mP(1,3))/mP(1,1);
       this->trans[0] += sx*nav.dx;
       this->trans[1] += sy*nav.dy;
+      for(const auto& func : this->camerachange_callbacks){ func(); }
       return;
     }
   }

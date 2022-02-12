@@ -184,13 +184,13 @@ void delfem2::IntersectionRay_MeshTri3DPart(
     assert(ip0 < aXYZ_.size() / 3);
     assert(ip1 < aXYZ_.size() / 3);
     assert(ip2 < aXYZ_.size() / 3);
-    const CVec3<T> p0(aXYZ_[ip0 * 3 + 0], aXYZ_[ip0 * 3 + 1], aXYZ_[ip0 * 3 + 2]);
-    const CVec3<T> p1(aXYZ_[ip1 * 3 + 0], aXYZ_[ip1 * 3 + 1], aXYZ_[ip1 * 3 + 2]);
-    const CVec3<T> p2(aXYZ_[ip2 * 3 + 0], aXYZ_[ip2 * 3 + 1], aXYZ_[ip2 * 3 + 2]);
+    const CVec3<T> p0(aXYZ_.data()+ip0 * 3);
+    const CVec3<T> p1(aXYZ_.data()+ip1 * 3);
+    const CVec3<T> p2(aXYZ_.data()+ip2 * 3);
     double r0, r1;
-    bool res = IntersectRay_Tri3(r0, r1,
-                                 org, dir, p0, p1, p2,
-                                 eps);
+    bool res = IntersectRay_Tri3(
+        r0, r1,
+        org, dir, p0, p1, p2, eps);
     if (!res) { continue; }
     double r2 = 1 - r0 - r1;
     CVec3<T> q0 = p0 * r0 + p1 * r1 + p2 * r2;

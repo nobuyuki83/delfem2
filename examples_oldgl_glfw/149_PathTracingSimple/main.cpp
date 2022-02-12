@@ -64,7 +64,7 @@ std::tuple<bool, VEC, VEC, VEC, VEC, Refl_t> RayIntersection(
   double dist_nearest;
   int isphere_nearest;
   double inf = dist_nearest = 1e20;
-  for (int isphere = 0; isphere<spheres.size(); ++isphere) {
+  for (int isphere = 0; isphere < spheres.size(); ++isphere) {
     const double d = spheres[isphere].intersect(r);
     if ((d > 0) && d < dist_nearest) {
       dist_nearest = d;
@@ -97,7 +97,7 @@ delfem2::CVec3d Radiance(
 
   VEC nl = hit_nrm.dot(r.d) < 0 ? hit_nrm : hit_nrm * -1.;  // normal should have component of ray direction
   depth++;
-  if( depth > max_depth ){ return mtrl_emis; }
+  if (depth > max_depth) { return mtrl_emis; }
   if (depth > 5) { // Russian roulette
     double p = (mtrl_refl.x > mtrl_refl.y && mtrl_refl.x) >
         mtrl_refl.z ? mtrl_refl.x : mtrl_refl.y > mtrl_refl.z ? mtrl_refl.y : mtrl_refl.z;  // maximum reflectance
@@ -109,7 +109,7 @@ delfem2::CVec3d Radiance(
   }
   if (mtrl_type == DIFF) {
     const VEC d = SampleHemisphereNormalCos(nl, delfem2::RandomVec2<double>(Xi));
-    return mtrl_emis + mtrl_refl.mult(Radiance(Ray(hit_pos, d), depth, Xi, render_target,max_depth));
+    return mtrl_emis + mtrl_refl.mult(Radiance(Ray(hit_pos, d), depth, Xi, render_target, max_depth));
   } else if (mtrl_type == SPEC) {
     const VEC r0 = Radiance(Ray(hit_pos, r.d - hit_nrm * 2. * hit_nrm.dot(r.d)), depth, Xi, render_target, max_depth);
     return mtrl_emis + mtrl_refl.mult(r0);
@@ -191,19 +191,26 @@ int main() {
 
   unsigned int isample = 0;
   auto render = [&](int iw, int ih) {
-    std::array<unsigned short, 3> Xi = {0, 0, (unsigned short) (ih * ih + iw + isample * isample)}; // random seed
+    std::array<unsigned short, 3> Xi = {
+        (unsigned short) ih,
+        (unsigned short) iw,
+        (unsigned short) (isample * isample)}; // random seed
+    CVec3f r_ave(0,0,0);
     for (int sy = 0; sy < 2; sy++) {
       for (int sx = 0; sx < 2; sx++) {
         const auto dx = SampleTent<double>(Xi);
         const auto dy = SampleTent<double>(Xi);
         CVec3d d = cx * (((sx + .5 + dx) / 2 + iw) / nw - .5) +
             cy * (((sy + .5 + dy) / 2 + ih) / nh - .5) + cam.d;
-        CVec3d r = Radiance(Ray(cam.o + d * 140., d.normalized()), 0, Xi, aSphere, 300);
-        afRGB[(ih * nw + iw) * 3 + 0] += static_cast<float>(r.x);
-        afRGB[(ih * nw + iw) * 3 + 1] += static_cast<float>(r.y);
-        afRGB[(ih * nw + iw) * 3 + 2] += static_cast<float>(r.z);
+        CVec3d r = Radiance(Ray(cam.o + d * 140., d.normalized()), 0, Xi, aSphere, 10);
+        r_ave += r.cast<float>() * 0.25;
       }
     }
+    float *ptr = afRGB.data() + (ih * nw + iw) * 3;
+    const float isamplef = static_cast<float>(isample);
+    ptr[0] = (isamplef * ptr[0] + r_ave[0]) / (isamplef + 1.f);
+    ptr[1] = (isamplef * ptr[1] + r_ave[1]) / (isamplef + 1.f);
+    ptr[2] = (isamplef * ptr[2] + r_ave[2]) / (isamplef + 1.f);
   };
 
   while (!glfwWindowShouldClose(viewer.window)) {
@@ -212,7 +219,7 @@ int main() {
     for (unsigned int ih = 0; ih < tex.height; ++ih) {
       for (unsigned int iw = 0; iw < tex.width; ++iw) {
         for (int ic = 0; ic < 3; ++ic) {
-          float fc = afRGB[(ih * tex.width + iw) * 3 + ic] * 0.25f / float(isample);
+          float fc = afRGB[(ih * tex.width + iw) * 3 + ic];
           fc = (fc > 1.f) ? 1.f : fc;
           fc = (fc < 0.f) ? 0.f : fc;
           int ifc = int(pow(fc, 1 / 2.2) * 255 + .5);

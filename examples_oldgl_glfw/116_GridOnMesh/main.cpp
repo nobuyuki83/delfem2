@@ -38,25 +38,10 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------
 
-std::vector<double> vtx_xyz;
-std::vector<unsigned int> tri_vtx;
-std::vector<double> vtx_norm;
-std::vector<unsigned int> tri_adjtri;
-
-double pos2d_org_corner[4][2] = {
-    {-0.2, -0.4},
-    {+0.2, -0.4},
-    {+0.2, -0.0},
-    {-0.2, -0.0},
-};
-std::vector<dfm2::PointOnSurfaceMesh<double>> aPES0;
-
-const unsigned int ndiv = 8;
-std::vector<dfm2::PointOnSurfaceMesh<double>> aPES1;
-
-// ---------------------------------------------------
-
-void InitializeProblem() {
+void InitializeProblem(
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    std::vector<unsigned int> &tri_adjtri ) {
   {
     dfm2::Read_Ply(
         vtx_xyz, tri_vtx,
@@ -93,12 +78,19 @@ void InitializeProblem() {
   }
 }
 
-void UpdateProblem() {
+void UpdateProblem(
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    std::vector<double> &vtx_norm,
+    std::vector<dfm2::PointOnSurfaceMesh<double>> &aPES0,
+    std::vector<dfm2::PointOnSurfaceMesh<double>> &aPES1,
+    const unsigned int ndiv,
+    const double pos2d_org_corner[4][2]) {
   {
     aPES0.clear();
     dfm2::CVec3d dir(0, 0, -1);
-    for (auto o2d : pos2d_org_corner) {
-      const dfm2::CVec3d o3d(o2d[0], o2d[1], 10);
+    for (int i=0;i<4;++i) {
+      const dfm2::CVec3d o3d(pos2d_org_corner[i][0], pos2d_org_corner[i][1], 10);
       std::map<double, dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
       IntersectionRay_MeshTri3(
           mapDepthPES,
@@ -171,7 +163,12 @@ void UpdateProblem() {
 
 // -----------------------------------------------------
 
-void myGlutDisplay() {
+void myGlutDisplay(
+    const std::vector<double> &vtx_xyz,
+    const std::vector<unsigned int> &tri_vtx,
+    const std::vector<dfm2::PointOnSurfaceMesh<double>> &aPES0,
+    const std::vector<dfm2::PointOnSurfaceMesh<double>> &aPES1,
+    const unsigned int ndiv){
   ::glEnable(GL_LIGHTING);
   { // ball
     ::glDisable(GL_TEXTURE_2D);
@@ -213,24 +210,41 @@ void myGlutDisplay() {
 }
 
 int main() {
-  dfm2::glfw::CViewer3 viewer;
+  std::vector<double> vtx_xyz;
+  std::vector<unsigned int> tri_vtx;
+  std::vector<double> vtx_norm;
+  std::vector<unsigned int> tri_adjtri;
+  double pos2d_org_corner[4][2] = {
+      {-0.2, -0.4},
+      {+0.2, -0.4},
+      {+0.2, -0.0},
+      {-0.2, -0.0},
+  };
+  std::vector<dfm2::PointOnSurfaceMesh<double>> aPES0;
+  const unsigned int ndiv = 8;
+  std::vector<dfm2::PointOnSurfaceMesh<double>> aPES1;
   //
+  dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.OpenWindow();
   dfm2::opengl::setSomeLighting();
 
-  InitializeProblem();
-  UpdateProblem();
+  InitializeProblem(vtx_xyz, tri_vtx, tri_adjtri );
+  UpdateProblem(
+      vtx_xyz, tri_vtx, vtx_norm, aPES0, aPES1,
+      ndiv, pos2d_org_corner);
 
   int iframe = 0;
   while (!glfwWindowShouldClose(viewer.window)) {
     iframe += 1;
     pos2d_org_corner[2][0] = +0.2 + 0.1 * sin(iframe * 0.2);
     pos2d_org_corner[2][1] = +0.0 + 0.1 * cos(iframe * 0.2);
-    UpdateProblem();
+    UpdateProblem(
+        vtx_xyz, tri_vtx, vtx_norm, aPES0, aPES1,
+        ndiv, pos2d_org_corner);
     // -------
     viewer.DrawBegin_oldGL();
-    myGlutDisplay();
+    myGlutDisplay(vtx_xyz, tri_vtx, aPES0, aPES1, ndiv);
     viewer.SwapBuffers();
     glfwPollEvents();
   }

@@ -162,6 +162,8 @@ cmake --build .
 ### [149_PathTracingSimple](149_PathTracingSimple)
 <img src="149_PathTracingSimple/thumbnail.png" width=200>
 
+### [150_PathTracingTriMesh](150_PathTracingTriMesh)
+<img src="150_PathTracingTriMesh/thumbnail.png" width=200>
 
 
 ## Dynamic Triangle

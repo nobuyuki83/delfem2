@@ -29,18 +29,15 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------
 
-std::vector<double> aXYZ;
-std::vector<unsigned int> aTri;
-
-const unsigned int nsubdiv = 3;
-std::vector<double> aXYZ_Quad;
-std::vector<double> aNorm_Quad;
-std::vector<std::vector<unsigned int>> aaQuad;
-
-
 // ---------------------------------------------------
 
-void InitializeProblem() {
+void InitializeProblem(
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri,
+    std::vector<double> &aXYZ_Quad,
+    std::vector<double> &aNorm_Quad,
+    std::vector<std::vector<unsigned int>> &aaQuad,
+    const unsigned int nsubdiv) {
 
   dfm2::MeshTri3D_Sphere(
       aXYZ, aTri,
@@ -156,7 +153,12 @@ void UpdateProblem() {
 
 // -----------------------------------------------------
 
-void myGlutDisplay() {
+void myGlutDisplay(
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &aXYZ_Quad,
+    const std::vector<std::vector<unsigned int>> &aaQuad,
+    const unsigned int nsubdiv) {
   ::glEnable(GL_LIGHTING);
   { //
     ::glDisable(GL_TEXTURE_2D);
@@ -184,13 +186,21 @@ void myGlutDisplay() {
 }
 
 int main() {
-  dfm2::glfw::CViewer3 viewer;
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  const unsigned int nsubdiv = 3;
+  std::vector<double> aXYZ_Quad;
+  std::vector<double> aNorm_Quad;
+  std::vector<std::vector<unsigned int>> aaQuad;
   //
+  dfm2::glfw::CViewer3 viewer;
   dfm2::glfw::InitGLOld();
   viewer.OpenWindow();
   dfm2::opengl::setSomeLighting();
 
-  InitializeProblem();
+  InitializeProblem(
+      aXYZ, aTri,
+      aXYZ_Quad, aNorm_Quad, aaQuad, nsubdiv);
   UpdateProblem();
 
   int iframe = 0;
@@ -199,7 +209,7 @@ int main() {
     UpdateProblem();
     // -------
     viewer.DrawBegin_oldGL();
-    myGlutDisplay();
+    myGlutDisplay(aXYZ, aTri, aXYZ_Quad, aaQuad, nsubdiv);
     viewer.SwapBuffers();
     glfwPollEvents();
   }

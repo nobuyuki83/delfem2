@@ -6,10 +6,7 @@
  */
 
 #include <vector>
-#include <string>
-#include <cassert>
 #include <cstdlib>
-#include <set>
 #include <filesystem>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro

@@ -79,54 +79,50 @@ void AddQuads(
   }
 }
 
-
-// -----------------------------
-
-std::vector<int> aIndCP;
-std::vector<dfm2::CVec3d> aCP;
-std::vector<dfm2::CVec3d> aPQuad;
-int n = 20;
-
 // ------------------------------
 
-void Random()
+void Random(
+    std::vector<int> &patch_vtx,
+    std::vector<dfm2::CVec3d> &vtx_xyz_controlpoints,
+    std::vector<dfm2::CVec3d> &quad_xyz,
+    int n)
 {
   int nCP = 16;
-  aCP.resize(nCP);
+  vtx_xyz_controlpoints.resize(nCP);
   {
     std::random_device rd;
     std::mt19937 mt(rd());
     std::uniform_real_distribution<> dist(-1.0, 1.0);
     for(int iCP=0;iCP<16;iCP++) {
-      aCP[iCP].p[0] = dist(mt);
-      aCP[iCP].p[1] = dist(mt);
-      aCP[iCP].p[2] = dist(mt);
+      vtx_xyz_controlpoints[iCP].p[0] = dist(mt);
+      vtx_xyz_controlpoints[iCP].p[1] = dist(mt);
+      vtx_xyz_controlpoints[iCP].p[2] = dist(mt);
     }
   }
-  aIndCP.resize(16);
-  for(int i=0;i<16;++i){ aIndCP[i] = i; }
-  aCP[ 0] += dfm2::CVec3d(-2,-2,0);
-  aCP[ 1] += dfm2::CVec3d(-2,-1,0);
-  aCP[ 2] += dfm2::CVec3d(-2,+1,0);
-  aCP[ 3] += dfm2::CVec3d(-2,+2,0);
+  patch_vtx.resize(16);
+  for(int i=0;i<16;++i){ patch_vtx[i] = i; }
+  vtx_xyz_controlpoints[ 0] += dfm2::CVec3d(-2, -2, 0);
+  vtx_xyz_controlpoints[ 1] += dfm2::CVec3d(-2, -1, 0);
+  vtx_xyz_controlpoints[ 2] += dfm2::CVec3d(-2, +1, 0);
+  vtx_xyz_controlpoints[ 3] += dfm2::CVec3d(-2, +2, 0);
   //
-  aCP[ 4] += dfm2::CVec3d(-1,-2,0);
-  aCP[ 5] += dfm2::CVec3d(-1,-1,0);
-  aCP[ 6] += dfm2::CVec3d(-1,+1,0);
-  aCP[ 7] += dfm2::CVec3d(-1,+2,0);
+  vtx_xyz_controlpoints[ 4] += dfm2::CVec3d(-1, -2, 0);
+  vtx_xyz_controlpoints[ 5] += dfm2::CVec3d(-1, -1, 0);
+  vtx_xyz_controlpoints[ 6] += dfm2::CVec3d(-1, +1, 0);
+  vtx_xyz_controlpoints[ 7] += dfm2::CVec3d(-1, +2, 0);
   //
-  aCP[ 8] += dfm2::CVec3d(+1,-2,0);
-  aCP[ 9] += dfm2::CVec3d(+1,-1,0);
-  aCP[10] += dfm2::CVec3d(+1,+1,0);
-  aCP[11] += dfm2::CVec3d(+1,+2,0);
+  vtx_xyz_controlpoints[ 8] += dfm2::CVec3d(+1, -2, 0);
+  vtx_xyz_controlpoints[ 9] += dfm2::CVec3d(+1, -1, 0);
+  vtx_xyz_controlpoints[10] += dfm2::CVec3d(+1, +1, 0);
+  vtx_xyz_controlpoints[11] += dfm2::CVec3d(+1, +2, 0);
   //
-  aCP[12] += dfm2::CVec3d(+2,-2,0);
-  aCP[13] += dfm2::CVec3d(+2,-1,0);
-  aCP[14] += dfm2::CVec3d(+2,+1,0);
-  aCP[15] += dfm2::CVec3d(+2,+2,0);
+  vtx_xyz_controlpoints[12] += dfm2::CVec3d(+2, -2, 0);
+  vtx_xyz_controlpoints[13] += dfm2::CVec3d(+2, -1, 0);
+  vtx_xyz_controlpoints[14] += dfm2::CVec3d(+2, +1, 0);
+  vtx_xyz_controlpoints[15] += dfm2::CVec3d(+2, +2, 0);
   //
-  aPQuad.clear();
-  AddQuads(aPQuad,n,0,aIndCP,aCP);
+  quad_xyz.clear();
+  AddQuads(quad_xyz, n, 0, patch_vtx, vtx_xyz_controlpoints);
 }
 
 
@@ -142,7 +138,9 @@ static void myGlVertex3d(int i, const std::vector<dfm2::CVec3d>& aV)
 }
 
 
-void myGlutDisplay()
+void myGlutDisplay(
+    const std::vector<dfm2::CVec3d> &aCP,
+    const std::vector<dfm2::CVec3d> &aPQuad)
 {
   ::glEnable(GL_BLEND);
   ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -186,6 +184,11 @@ void myGlutDisplay()
 
 int main()
 {
+  std::vector<int> aIndCP;
+  std::vector<dfm2::CVec3d> control_points;
+  std::vector<dfm2::CVec3d> aPQuad;
+  int n = 20;
+  //
   delfem2::glfw::CViewer3 viewer(4);
   //
   delfem2::glfw::InitGLOld();
@@ -196,14 +199,14 @@ int main()
     {
       static int iframe = 0;
       if( iframe == 0 ){
-        Random();
+        Random(aIndCP, control_points, aPQuad, n);
       }
       iframe = (iframe + 1)%300;
     }
     
     viewer.DrawBegin_oldGL();
     
-    myGlutDisplay();
+    myGlutDisplay(control_points, aPQuad);
     
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
