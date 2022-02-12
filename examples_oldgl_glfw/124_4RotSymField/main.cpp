@@ -7,7 +7,8 @@
 
 /**
  * @brief implementation of 4 rotatoinal symetry field
- * @details implementation is based on "Wenzel Jakob, Marco Tarini, Daniele Panozzo, and Olga Sorkine-Hornung. Instant field-aligned meshes. Siggraph Asia 2015"
+ * @details implementation is based on "Wenzel Jakob, Marco Tarini, Daniele Panozzo, and Olga Sorkine-Hornung.
+ * Instant field-aligned meshes. Siggraph Asia 2015"
  */
 
 #include <cstdlib>

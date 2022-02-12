@@ -7,6 +7,7 @@
 
 #include "delfem2/mat4.h"
 #include "delfem2/vec3.h"
+#include "delfem2/mat3_funcs.h"
 
 namespace delfem2 {
 

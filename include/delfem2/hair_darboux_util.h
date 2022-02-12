@@ -13,6 +13,10 @@
 #include "delfem2/mat3.h"
 #include "delfem2/mat3_funcs.h"
 
+#ifndef M_PI
+#  define M_PI 3.14159265359
+#endif
+
 namespace delfem2 {
 
 // --------------

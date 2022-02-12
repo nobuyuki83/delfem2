@@ -29,40 +29,40 @@ namespace delfem2 {
  * @param v1
  * @param v2
  */
-template<class VEC>
+template<class VEC, typename T = typename VEC::Scalar>
 void MeanValueCoordinate_Triangle(
-    double w[3],
+    T w[3],
     const VEC &v0,
     const VEC &v1,
     const VEC &v2) {
-  double eps = 1.0e-5;
-  double d0 = v0.norm();
-  double d1 = v1.norm();
-  double d2 = v2.norm();
+  const T eps = 1.0e-5;
+  const T d0 = v0.norm();
+  const T d1 = v1.norm();
+  const T d2 = v2.norm();
   const VEC u0 = v0 / d0;
   const VEC u1 = v1 / d1;
   const VEC u2 = v2 / d2;
-  double l0 = (u1 - u2).norm();
-  double l1 = (u2 - u0).norm();
-  double l2 = (u0 - u1).norm();
+  const T l0 = (u1 - u2).norm();
+  const T l1 = (u2 - u0).norm();
+  const T l2 = (u0 - u1).norm();
   if (l0 < eps || l1 < eps || l2 < eps) {
     w[0] = 0;
     w[1] = 0;
     w[2] = 0;
     return;
   }
-  double t0 = 2 * asin(l0 * 0.5);
-  double t1 = 2 * asin(l1 * 0.5);
-  double t2 = 2 * asin(l2 * 0.5);
-  double h = (t0 + t1 + t2) * 0.5;
-  double c0 = 2 * sin(h) * sin(h - t0) / (sin(t1) * sin(t2)) - 1;
-  double c1 = 2 * sin(h) * sin(h - t1) / (sin(t2) * sin(t0)) - 1;
-  double c2 = 2 * sin(h) * sin(h - t2) / (sin(t0) * sin(t1)) - 1;
-  double vol012 = ScalarTripleProduct(u0, u1, u2);
-  double sign = (vol012 > 0) ? 1 : -1;
-  double s0 = sign * sqrt(1.0 - c0 * c0);
-  double s1 = sign * sqrt(1.0 - c1 * c1);
-  double s2 = sign * sqrt(1.0 - c2 * c2);
+  const T t0 = 2 * asin(l0 * 0.5);
+  const T t1 = 2 * asin(l1 * 0.5);
+  const T t2 = 2 * asin(l2 * 0.5);
+  const T h = (t0 + t1 + t2) * 0.5;
+  const T c0 = 2 * sin(h) * sin(h - t0) / (sin(t1) * sin(t2)) - 1;
+  const T c1 = 2 * sin(h) * sin(h - t1) / (sin(t2) * sin(t0)) - 1;
+  const T c2 = 2 * sin(h) * sin(h - t2) / (sin(t0) * sin(t1)) - 1;
+  const T vol012 = ScalarTripleProduct(u0, u1, u2);
+  const T sign = (vol012 > 0) ? 1 : -1;
+  const T s0 = sign * sqrt(1.0 - c0 * c0);
+  const T s1 = sign * sqrt(1.0 - c1 * c1);
+  const T s2 = sign * sqrt(1.0 - c2 * c2);
   if (std::isnan(s0) || std::isnan(s1) || std::isnan(s2)) {
     w[0] = 0;
     w[1] = 0;
