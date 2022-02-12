@@ -10,7 +10,9 @@
 #include <cstring>  // memcpy
 #include <utility>
 
-#include "delfem2/geo3_v23m34q.h"  // update rotation by matching cluster
+#include "delfem2/vec3.h"
+#include "delfem2/quat.h"
+#include "delfem2/mat3.h"
 #include "delfem2/mat3_funcs.h"
 #include "delfem2/svd3.h"
 #include "delfem2/mshuni.h"
@@ -577,7 +579,7 @@ DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_Linear(
     rhs.setZero();
     for (unsigned int ipsup = psup_ind[ip]; ipsup < psup_ind[ip + 1]; ++ipsup) {
       const unsigned int jp = psup[ipsup];
-      const CVec3d v0 = Qi * (CVec3d(aXYZ0.data() + jp * 3) - Pi);
+      const CVec3d v0 = Qi.RotateVector(CVec3d(aXYZ0.data() + jp * 3) - Pi);
       const CVec3d d01 = CVec3d(aXYZ1.data() + jp * 3) - pi - v0;
       Mat += Mat3_CrossCross(v0);
       rhs += d01.cross(v0);

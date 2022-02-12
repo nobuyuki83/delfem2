@@ -8,7 +8,6 @@
 
 #include "delfem2/fem_rod3_straight.h"
 
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mat3.h"
 
 // -------------------------------------------------

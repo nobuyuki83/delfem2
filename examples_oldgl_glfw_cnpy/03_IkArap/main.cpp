@@ -20,7 +20,6 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/defarapenergy_geo3.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/rigopt.h"

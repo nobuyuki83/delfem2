@@ -9,7 +9,6 @@
 #define DFM2_HAIR_DARBOUX_H
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mat3_funcs.h"

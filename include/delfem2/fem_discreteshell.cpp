@@ -8,7 +8,6 @@
 #include "delfem2/fem_discreteshell.h"
 
 #include "delfem2/mat2.h"
-#include "delfem2/geo3_v23m34q.h"
 
 // =======================================
 

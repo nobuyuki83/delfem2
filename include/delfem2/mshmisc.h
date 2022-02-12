@@ -230,6 +230,14 @@ DFM2_INLINE double Area_MeshTri3(
     const std::function<bool(unsigned int)>& flag);
 
 
+DFM2_INLINE bool Distortion_MappingTriangleFrom2To3Dim(
+    double thresA,
+    double thresE,
+    unsigned int it0,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &aXYZ,
+    const std::vector<double> &aTexP);
+
 } // delfem2
 
 #ifndef DFM2_STATIC_LIBRARY

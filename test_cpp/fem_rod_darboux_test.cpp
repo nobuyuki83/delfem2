@@ -3,7 +3,6 @@
 #include "gtest/gtest.h" // need to be defiend in the beginning
 
 #include "delfem2/fem_rod3_darboux.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/sampling.h"
 
 bool GenRandomConfigRod(

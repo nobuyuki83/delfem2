@@ -15,7 +15,6 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/cad2.h"
 #include "delfem2/cad2_mesher.h"
@@ -29,7 +28,6 @@
 #include "delfem2/srchbv3sphere.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mat3_funcs.h"
-//
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
@@ -163,7 +161,7 @@ int main(
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1, 1), cad);
     for (int ip : aIP) {
       dfm2::CVec3d p0(aVec2[ip].x - rt23.org2.x, aVec2[ip].y - rt23.org2.y, 0.0);
-      dfm2::CVec3d p1 = rt23.org3 + dfm2::MatVec(rt23.R, p0);
+      dfm2::CVec3d p1 = rt23.org3 + rt23.R * p0;
       aXYZ[ip * 3 + 0] = p1.x;
       aXYZ[ip * 3 + 1] = p1.y;
       aXYZ[ip * 3 + 2] = p1.z;
@@ -176,7 +174,7 @@ int main(
       std::vector<int> aIP0 = mesher.IndPoint_IndFaceArray(std::vector<int>(1, 0), cad);
       for (int ip : aIP0) {
         dfm2::CVec3d p0(aVec2[ip].x - rt23_.org2.x, aVec2[ip].y - rt23_.org2.y, 0.0);
-        dfm2::CVec3d p1 = rt23_.org3 + dfm2::MatVec(rt23_.R, p0);
+        dfm2::CVec3d p1 = rt23_.org3 + rt23_.R * p0;
         aXYZ[ip * 3 + 0] = p1.x;
         aXYZ[ip * 3 + 1] = p1.y;
         aXYZ[ip * 3 + 2] = p1.z;

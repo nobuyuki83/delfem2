@@ -8,7 +8,7 @@
 
 #include "delfem2/fem_distance3.h"
 
-#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/vec2.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mat3_funcs.h"
 #include "delfem2/mshuni.h"

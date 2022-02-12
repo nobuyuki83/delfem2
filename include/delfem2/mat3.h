@@ -337,6 +337,10 @@ CMat3<T0> operator*(const CMat3<T0> &m, T1 d) {
 template<typename T>
 CMat3<T> operator*(const CMat3<T> &lhs, const CMat3<T> &rhs);
 
+/**
+ *
+ * @tparam VEC has definition VEC::Scalar, is not CMat3 (e.g., dfm2::CVec3, Eigen::Vector3)
+ */
 template<typename VEC,
     typename T = typename VEC::Scalar,
     typename VEC::Scalar * = nullptr,
@@ -350,6 +354,10 @@ VEC operator*(
       m[2] * v[0] + m[5] * v[1] + m[8] * v[2]};
 }
 
+/**
+ *
+ * @tparam VEC has definition VEC::Scalar, is not CMat3 (e.g., dfm2::CVec3, Eigen::Vector3)
+ */
 template<typename VEC,
     typename T = typename VEC::Scalar,
     typename VEC::Scalar * = nullptr,

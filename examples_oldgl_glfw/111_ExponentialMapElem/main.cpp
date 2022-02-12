@@ -20,6 +20,7 @@
 #include "delfem2/points.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshuni.h"
+#include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec3_funcs.h"
 #include "delfem2/img_ioppm.h"

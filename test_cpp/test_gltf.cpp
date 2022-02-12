@@ -10,7 +10,6 @@
 #include "delfem2/tinygltf/io_gltf.h"
 #include "delfem2/rigopt.h"
 #include "delfem2/rig_geo3.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/quat.h"
 #include "delfem2/sampling.h"
 

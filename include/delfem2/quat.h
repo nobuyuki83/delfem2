@@ -191,6 +191,14 @@ DFM2_INLINE void QuatConjVec(
     const T q[],
     const T vi[]);
 
+
+template <typename VEC, typename T = vecn_value_t<VEC,3>>
+std::array<T,4> Quat_CartesianAngle(const VEC &p) {
+  std::array<T,4> r;
+  Quat_CartesianAngle(r.data(), p.p);
+  return r;
+}
+
 // -------------------------------------------------------
 
 /**
@@ -259,10 +267,9 @@ class CQuat {
 
   void SetSmallerRotation();
 
-  std::array<T,3> RotateVector(const T v[3]) const{
-    std::array<T,3> vo;
-    QuatVec(vo.data(), p, v);
-    return vo;
+  template <typename VEC>
+  std::array<T,3> RotateVector(const VEC &v) const{
+    return QuatVec3(p, v);
   }
 
   static CQuat<T> Identity() {

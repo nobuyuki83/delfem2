@@ -9,8 +9,8 @@
 
 #include "gtest/gtest.h" // need to be defiend in the beginning
 //
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/defarapenergy_geo3.h"
+#include "delfem2/quat.h"
 #include "delfem2/defarap.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/vecxitrsol.h"

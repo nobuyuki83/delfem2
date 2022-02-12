@@ -7,7 +7,6 @@
 
 #include "delfem2/bem.h"
 
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mat3_funcs.h"
 #include "delfem2/geo_tri.h"
 

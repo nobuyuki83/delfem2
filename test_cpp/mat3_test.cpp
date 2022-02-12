@@ -2,7 +2,6 @@
 
 #include "gtest/gtest.h" // need to be defiend in the beginning
 
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
 #include "delfem2/mat3.h"
@@ -138,7 +137,7 @@ TEST(mat3, quat) {
     {
       dfm2::CVec3d v0(dist(mtd), dist(mtd), dist(mtd));
       dfm2::CVec3d qv0 = dfm2::QuatVec3(quat0, v0);
-      dfm2::CVec3d Rv0 = dfm2::MatVec(R0, v0);
+      dfm2::CVec3d Rv0 = R0 * v0;
       EXPECT_LT((qv0 - Rv0).norm(), 1.0e-20);
     }
   }

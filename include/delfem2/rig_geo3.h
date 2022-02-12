@@ -16,8 +16,9 @@
 #include <cassert>
 #include <array>
 
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/mat4.h"
+#include "delfem2/quat.h"
 
 namespace delfem2 {
 

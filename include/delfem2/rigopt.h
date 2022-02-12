@@ -9,6 +9,8 @@
 #define DFM2_RIGOPT_H
 
 #include "delfem2/rig_geo3.h"
+#include "delfem2/vec3.h"
+#include "delfem2/mat3.h"
 #include "delfem2/quat.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/lsitrsol.h"

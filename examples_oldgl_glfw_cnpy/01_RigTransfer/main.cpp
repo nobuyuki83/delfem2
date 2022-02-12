@@ -23,7 +23,6 @@
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/quat.h"
 #include "delfem2/mat3.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/rig_bvh.h"
 #include "delfem2/glfw/viewer3.h"

@@ -9,7 +9,9 @@
 #define DFM2_GIZMO_GEO3_H
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/vec2.h"
+#include "delfem2/vec3.h"
+#include "delfem2/mat4.h"
 
 namespace delfem2 {
 

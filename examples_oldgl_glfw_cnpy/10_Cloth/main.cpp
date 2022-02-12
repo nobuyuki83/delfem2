@@ -15,7 +15,6 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/garment.h"
 #include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/cad2.h"

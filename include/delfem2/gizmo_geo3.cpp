@@ -317,7 +317,7 @@ void delfem2::CGizmo_Rotation<REAL>::Drag(
   using CQ = CQuat<REAL>;
   int ielem = ielem_picked;
   if (ielem >= 0 && ielem < 3) {
-    CV3 va = (CQ(quat) * CV3::Axis(ielem)).normalized();
+    CV3 va = CV3(CQ(quat).RotateVector(CV3::Axis(ielem))).normalized();
     CV3 pz0, qz0;
     Nearest_Line_Circle(pz0, qz0,
                         CV3(src0), CV3(dir),

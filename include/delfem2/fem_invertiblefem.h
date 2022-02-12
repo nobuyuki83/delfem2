@@ -8,7 +8,6 @@
 
 #include <functional>
 
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mat3.h"
 #include "delfem2/geo_tet.h"
 #include "delfem2/svd3.h"

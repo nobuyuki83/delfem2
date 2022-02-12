@@ -9,7 +9,7 @@
 
 #include "delfem2/opengl/new/drawer_sphere.h"
 #include "delfem2/vec3.h"
-#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/mat3.h"
 
 namespace delfem2::opengl {
 

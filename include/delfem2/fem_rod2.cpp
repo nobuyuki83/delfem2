@@ -8,7 +8,7 @@
 
 #include "delfem2/fem_rod2.h"
 
-#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/vec2.h"
 
 DFM2_INLINE void delfem2::WdWddW_Rod2(
     double &W,

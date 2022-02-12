@@ -7,9 +7,9 @@
 
 #include "delfem2/pbd_geo3.h"
 
+#include "delfem2/vec2.h"
 #include "delfem2/mat2.h"
 #include "delfem2/svd3.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/vec3_funcs.h"
 #include "delfem2/mat3_funcs.h"
 

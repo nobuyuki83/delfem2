@@ -6,7 +6,6 @@
 #define DFM2_OPENGL_NEW_DRAWER_SPHERE_H_
 
 #include "delfem2/vec3.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mshprimitive.h"
 #include "delfem2/mat4.h"
 #include "delfem2/opengl/new/drawer_msh.h"

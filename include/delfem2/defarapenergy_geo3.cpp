@@ -5,10 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/defarapenergy_geo3.h"
+
+#include "delfem2/quat.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mat3_funcs.h"
-#include "delfem2/defarapenergy_geo3.h"
+
 
 // =======================================
 
@@ -30,7 +32,7 @@ DFM2_INLINE double delfem2::W_ArapEnergy(
     CQuatd Qi(aQuat1.data()+4*ip);
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       const unsigned int jp = psup[ipsup];
-      const CVec3d v0 = Qi*(CVec3d(aXYZ0.data()+jp*3)-Pi);
+      const CVec3d v0 = Qi.RotateVector(CVec3d(aXYZ0.data()+jp*3)-Pi);
       CVec3d pj(aXYZ1.data()+jp*3);
       const CVec3d v1 = pj-pi;
       CVec3d v = v0-v1;
@@ -59,7 +61,7 @@ DFM2_INLINE void delfem2::dW_ArapEnergy
     CMat3d LM; LM.setZero();
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       const unsigned int jp = psup[ipsup];
-      const CVec3d v0 = Qi*(CVec3d(aXYZ0.data()+jp*3)-Pi);
+      const CVec3d v0 = Qi.RotateVector(CVec3d(aXYZ0.data()+jp*3)-Pi);
       CVec3d pj(aXYZ1.data()+jp*3);
       const CVec3d v1 = pj-pi;
       const CVec3d r = -(v1-v0);

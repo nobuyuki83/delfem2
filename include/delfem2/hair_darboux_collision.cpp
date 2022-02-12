@@ -10,7 +10,6 @@
 
 #include "delfem2/hair_darboux_util.h"
 #include "delfem2/hair_darboux_solver.h"
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/mat3.h"

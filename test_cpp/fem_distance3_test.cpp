@@ -9,10 +9,10 @@
 
 #include "gtest/gtest.h" // need to be defiend in the beginning
 //
-#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/fem_distance3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/sampling.h"
+#include "delfem2/vec2.h"
 
 namespace dfm2 = delfem2;
 
