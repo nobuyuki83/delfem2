@@ -117,8 +117,8 @@ cd ../../
 
 git submodule update --init -- 3rd_party/Imath
 cd 3rd_party/Imath 
-git checkout master
-git pull origin master
+git checkout main
+git pull origin main
 mkdir build
 cd build 
 cmake -A x64 .. ^

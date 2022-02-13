@@ -320,8 +320,8 @@ echo "################################"
 
 git submodule update --init -- 3rd_party/Imath
 cd 3rd_party/Imath || exit
-git checkout master
-git pull origin master
+git checkout main
+git pull origin main
 mkdir build
 cd build || exit
 cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
