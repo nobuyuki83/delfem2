@@ -31,6 +31,16 @@ find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 # dfm2
+IF (USE_STATIC_LIB)
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  if (MSVC)
+    set(DFM2_LIBRARY
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
+  else ()
+    set(DFM2_LIBRARY
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a)
+  endif ()
+endif ()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 ############################################

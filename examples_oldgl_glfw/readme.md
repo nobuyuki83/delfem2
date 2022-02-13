@@ -159,12 +159,6 @@ cmake --build .
 ### [148_RayCasting](148_RayCasting)
 <img src="148_RayCasting/thumbnail.png" width=200>
 
-### [149_PathTracingSimple](149_PathTracingSimple)
-<img src="149_PathTracingSimple/thumbnail.png" width=200>
-
-### [150_PathTracingTriMesh](150_PathTracingTriMesh)
-<img src="150_PathTracingTriMesh/thumbnail.png" width=200>
-
 
 ## Dynamic Triangle
 

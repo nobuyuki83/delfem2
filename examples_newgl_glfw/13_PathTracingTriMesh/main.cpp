@@ -12,6 +12,7 @@
 #  include <windows.h>  // this should come before glfw3.h
 #endif
 #define GL_SILENCE_DEPRECATION
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "delfem2/srch_v3bvhmshtopo.h"
@@ -22,39 +23,16 @@
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mat4.h"
 #include "delfem2/thread.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/sampling.h"
+#include "delfem2/opengl/tex.h"
+#include "delfem2/opengl/new/drawer_mshtex.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/tex.h"
 
 namespace dfm2 = delfem2;
 
 // ----------------------------------------
-
-bool Intersection(
-    dfm2::PointOnSurfaceMesh<double> &pos_mesh,
-    const dfm2::CVec3d &src1,
-    const dfm2::CVec3d &dir1,
-    const std::vector<double> &vec_xyz,
-    const std::vector<unsigned int> &vec_tri,
-    const std::vector<dfm2::CNodeBVH2> &bvh_nodes,
-    const std::vector<dfm2::CBV3_Sphere<double>> &bvh_volumes){
-  std::vector<unsigned int> aIndElem;
-  BVH_GetIndElem_Predicate(
-      aIndElem,
-      dfm2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>, double>(src1.p, dir1.p),
-      0, bvh_nodes, bvh_volumes);
-  if (aIndElem.empty()) { return false; } // no bv hit the ray
-  std::map<double, dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
-  IntersectionRay_MeshTri3DPart(
-      mapDepthPES,
-      src1, dir1,
-      vec_tri, vec_xyz, aIndElem, 1.0e-10);
-  if (mapDepthPES.empty()) { return false; }
-  pos_mesh = mapDepthPES.begin()->second;
-  return true;
-}
 
 double Radiance_Retroreflection(
     std::array<unsigned short, 3> &Xi,
@@ -65,41 +43,36 @@ double Radiance_Retroreflection(
     const std::vector<dfm2::CNodeBVH2> &bvh_nodes,
     const std::vector<dfm2::CBV3_Sphere<double>> &bvh_volumes,
     const dfm2::CVec3d &dir_view,
-    int idepth){
-  if( idepth >= 3 ){ return 0; }
+    int idepth) {
+  if (idepth >= 3) { return 0; }
   dfm2::PointOnSurfaceMesh<double> pos_mesh;
-  bool is_hit = Intersection(
+  bool is_hit = Intersection_Ray3_Tri3_Bvh(
       pos_mesh,
       src1, dir1, vec_xyz, vec_tri, bvh_nodes, bvh_volumes);
-  if( !is_hit ){ return 0; }
+  if (!is_hit) { return 0; }
   unsigned int itri = pos_mesh.itri;
   assert(itri < vec_tri.size() / 3);
-  double n[3], area;
-  delfem2::UnitNormalAreaTri3(
-      n, area,
-      vec_xyz.data() + vec_tri[itri * 3 + 0] * 3,
-      vec_xyz.data() + vec_tri[itri * 3 + 1] * 3,
-      vec_xyz.data() + vec_tri[itri * 3 + 2] * 3);
+  dfm2::CVec3d nrm_tri = dfm2::Normal_TriInMeshTri3(itri, vec_xyz.data(), vec_tri.data());
+  nrm_tri.normalize();
   dfm2::CVec3d src2 = pos_mesh.PositionOnMeshTri3(vec_xyz, vec_tri);
-  double d0 = -dir_view.dot(dfm2::CVec3d(n));
-  dfm2::CVec3d src2a = src2 + dfm2::CVec3d(n) * 1.0e-3;
+  src2 += nrm_tri * 1.0e-3;
+  double d0 = -dir_view.dot(nrm_tri);
   double visiblity = 0.;
-  if( idepth == 0 ) {
+  if (idepth == 0) {
     visiblity = 1.0;
-  }
-  else if( d0 > 0 ){
+  } else if (d0 > 0) {
     dfm2::PointOnSurfaceMesh<double> pos_mesh2;
-    bool is_hit2 = Intersection(
+    bool is_hit2 = Intersection_Ray3_Tri3_Bvh(
         pos_mesh2,
-        src2a, -dir_view, vec_xyz, vec_tri, bvh_nodes, bvh_volumes);
-    if( !is_hit2 ){ visiblity = 1.; }
+        src2, -dir_view, vec_xyz, vec_tri, bvh_nodes, bvh_volumes);
+    if (!is_hit2) { visiblity = 1.; }
   }
-  const dfm2::CVec3d dir2 = SampleHemisphereNormalCos(dfm2::CVec3d(n), delfem2::RandomVec2<double>(Xi));
+  const dfm2::CVec3d dir2 = SampleHemisphereNormalCos(
+      dfm2::CVec3d(nrm_tri), delfem2::RandomVec2<double>(Xi));
   return d0 * visiblity + Radiance_Retroreflection(
       Xi,
-      src2a,dir2,vec_xyz,vec_tri,bvh_nodes,bvh_volumes,dir_view,idepth+1);
+      src2, dir2, vec_xyz, vec_tri, bvh_nodes, bvh_volumes, dir_view, idepth + 1);
 }
-
 
 double Radiance_AmbientOcclusion(
     std::array<unsigned short, 3> &Xi,
@@ -108,28 +81,24 @@ double Radiance_AmbientOcclusion(
     const std::vector<double> &vec_xyz,
     const std::vector<unsigned int> &vec_tri,
     const std::vector<dfm2::CNodeBVH2> &bvh_nodes,
-    const std::vector<dfm2::CBV3_Sphere<double>> &bvh_volumes ) {
+    const std::vector<dfm2::CBV3_Sphere<double>> &bvh_volumes) {
   dfm2::PointOnSurfaceMesh<double> pos_mesh;
-  bool is_hit = Intersection(
+  bool is_hit = Intersection_Ray3_Tri3_Bvh(
       pos_mesh,
       src1, dir1, vec_xyz, vec_tri, bvh_nodes, bvh_volumes);
-  if( !is_hit ){ return 0; }
+  if (!is_hit) { return 0; }
   unsigned int itri = pos_mesh.itri;
   assert(itri < vec_tri.size() / 3);
-  double n[3], area;
-  delfem2::UnitNormalAreaTri3(
-      n, area,
-      vec_xyz.data() + vec_tri[itri * 3 + 0] * 3,
-      vec_xyz.data() + vec_tri[itri * 3 + 1] * 3,
-      vec_xyz.data() + vec_tri[itri * 3 + 2] * 3);
+  dfm2::CVec3d nrm_tri = dfm2::Normal_TriInMeshTri3(itri, vec_xyz.data(), vec_tri.data());
+  nrm_tri.normalize();
   dfm2::CVec3d src2 = pos_mesh.PositionOnMeshTri3(vec_xyz, vec_tri);
-  dfm2::CVec3d src2a = src2 + dfm2::CVec3d(n) * 1.0e-3;
-  const dfm2::CVec3d dir2 = SampleHemisphereNormalCos(dfm2::CVec3d(n), delfem2::RandomVec2<double>(Xi));
+  src2 += nrm_tri * 1.0e-3;
+  const dfm2::CVec3d dir2 = SampleHemisphereNormalCos(nrm_tri, delfem2::RandomVec2<double>(Xi));
   dfm2::PointOnSurfaceMesh<double> pos_mesh2;
-  bool is_hit2 = Intersection(
+  bool is_hit2 = Intersection_Ray3_Tri3_Bvh(
       pos_mesh2,
-      src2a, dir2, vec_xyz, vec_tri, bvh_nodes, bvh_volumes);
-  if( !is_hit2 ){ return 1; }
+      src2, dir2, vec_xyz, vec_tri, bvh_nodes, bvh_volumes);
+  if (!is_hit2) { return 1; }
   return 0;
 }
 
@@ -158,27 +127,22 @@ int main() {
   unsigned int imode = 0;
   auto render = [&](int iw, int ih) {
     std::array<unsigned short, 3> Xi = {
-        (unsigned short) (ih*ih),
-        (unsigned short) (iw*iw),
-        (unsigned short) (isample * isample) };
-    const double ps[4] = {-1. + (2. / nw) * (iw + 0.5), -1. + (2. / nh) * (ih + 0.5), +1., 1.};
-    const double pe[4] = {-1. + (2. / nw) * (iw + 0.5), -1. + (2. / nh) * (ih + 0.5), -1., 1.};
-    std::array<double, 3> qs = mMVPd_inv.MultVec3_Homography(ps);
-    std::array<double, 3> qe = mMVPd_inv.MultVec3_Homography(pe);
-    const dfm2::CVec3d src1(qs.data());
-    const dfm2::CVec3d dir1 = (dfm2::CVec3d(qe.data()) - src1).normalized();
+        (unsigned short) (ih * ih),
+        (unsigned short) (iw * iw),
+        (unsigned short) (isample * isample)};
+    const std::pair<dfm2::CVec3d,dfm2::CVec3d> ray = dfm2::RayFromInverseMvpMatrix(
+        mMVPd_inv.data(), iw, ih, nw, nh );
     double rd0;
-    if( imode == 0 ) {
+    if (imode == 0) {
       rd0 = Radiance_Retroreflection(
           Xi,
-          src1, dir1, vec_xyz, vec_tri, bvh_nodes, bvh_volumes, dir1, 0);
-    }
-    else{
+          ray.first, ray.second, vec_xyz, vec_tri, bvh_nodes, bvh_volumes, ray.second, 0);
+    } else {
       rd0 = Radiance_AmbientOcclusion(
           Xi,
-          src1, dir1, vec_xyz, vec_tri, bvh_nodes, bvh_volumes);
+          ray.first, ray.second, vec_xyz, vec_tri, bvh_nodes, bvh_volumes);
     }
-    dfm2::CVec3d r_ave(rd0,rd0,rd0);
+    dfm2::CVec3d r_ave(rd0, rd0, rd0);
     {
       float *ptr = afRGB.data() + (ih * nw + iw) * 3;
       const auto isamplef = static_cast<float>(isample);
@@ -199,28 +163,33 @@ int main() {
   dfm2::glfw::CViewer3 viewer(2.f);
   viewer.width = 400;
   viewer.height = 400;
-  viewer.camerachange_callbacks.emplace_back(
+  viewer.camerachange_callbacks.emplace_back( // reset when camera moves
       [&afRGB, &isample] {
         std::fill(afRGB.begin(), afRGB.end(), 0.0);
         isample = 0;
       }
   );
-  delfem2::glfw::InitGLOld();
+  dfm2::opengl::Drawer_RectangleTex drawer;
+  delfem2::glfw::InitGLNew();
   viewer.OpenWindow();
-  delfem2::opengl::setSomeLighting();
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
+    std::cout << "Failed to initialize GLAD" << std::endl;
+    return -1;
+  }
   tex.InitGL();
+  drawer.InitGL();
 
   while (!glfwWindowShouldClose(viewer.window)) {
-    {
+    {  // switch mode every 2 seconds
       double t = glfwGetTime();
       unsigned int imode_old = imode;
-      imode = static_cast<int>(t*0.5) % 2;
-      if( imode != imode_old ){
+      imode = static_cast<int>(t * 0.5) % 2;
+      if (imode != imode_old) {
         std::fill(afRGB.begin(), afRGB.end(), 0.0);
         isample = 0;
       }
     }
-    {
+    {   //
       const dfm2::CMat4f mP = viewer.GetProjectionMatrix();
       const dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
       const dfm2::CMat4d mMVP = (mP * mMV).cast<double>();
@@ -240,16 +209,19 @@ int main() {
       }
     }
     tex.InitGL();
-    //
-    viewer.DrawBegin_oldGL();
-    ::glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    ::glClear(GL_COLOR_BUFFER_BIT);
-    ::glDisable(GL_LIGHTING);
-    ::glMatrixMode(GL_PROJECTION);
-    ::glLoadIdentity();
-    ::glMatrixMode(GL_MODELVIEW);
-    ::glLoadIdentity();
-    tex.Draw_oldGL();
+    ::glfwMakeContextCurrent(viewer.window);
+    ::glClearColor(0.8, 1.0, 1.0, 1.0);
+    ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//  ::glEnable(GL_DEPTH_TEST);
+//  ::glDepthFunc(GL_LESS);
+    ::glEnable(GL_POLYGON_OFFSET_FILL );
+    ::glPolygonOffset( 1.1f, 4.0f );
+
+    glEnable(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
+    glBindTexture(GL_TEXTURE_2D , tex.id_tex);
+    drawer.Draw(dfm2::CMat4f::Identity().data(),
+                dfm2::CMat4f::Identity().data());
     viewer.SwapBuffers();
     glfwPollEvents();
   }

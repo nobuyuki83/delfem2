@@ -15,13 +15,17 @@ ENDIF ()
 
 ####################################
 
-project(150_PathTracingTriMesh)
+project(13_PathTracingTriMesh)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
 find_package(glfw3 REQUIRED)
+
+# glad
+set(GLAD_INCLUDE_DIR "../../3rd_party/glad4/include")
+get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 # opengl
 find_package(OpenGL REQUIRED)
@@ -31,10 +35,10 @@ IF (USE_STATIC_LIB)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   if (MSVC)
     set(DFM2_LIBRARY
-        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
   else ()
     set(DFM2_LIBRARY
-        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a)
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a)
   endif ()
 ENDIF ()
 set(DELFEM2_INCLUDE_DIR "../../include")
@@ -42,12 +46,15 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 #################################################
 
 set(3RD_PARTY "../../3rd_party")
-include_directories(        
+include_directories(
+    ${GLAD_INCLUDE_DIR}
     ${DELFEM2_INCLUDE_DIR}
     ${3RD_PARTY}
     )
 
 add_executable(${PROJECT_NAME}
+    ${PROJECT_SOURCE_DIR}/../../3rd_party/glad4/include/glad/glad.h
+    ${PROJECT_SOURCE_DIR}/../../3rd_party/glad4/src/glad.c
     main.cpp
     )
 

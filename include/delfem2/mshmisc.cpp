@@ -11,6 +11,7 @@
 #include <cmath>
 #include <vector>
 #include <functional>
+#include <array>
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -67,6 +68,17 @@ DFM2_INLINE void UnitNormalAreaTri3(
   n[0] *= invlen;
   n[1] *= invlen;
   n[2] *= invlen;
+}
+
+template<typename T>
+std::array<T,3> Normal_Tri3(
+    const T v1[3],
+    const T v2[3],
+    const T v3[3]) {
+  return {
+      (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]),
+      (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]),
+      (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]) };
 }
 
 template<typename T>
@@ -428,6 +440,19 @@ template void delfem2::Normal_MeshTri3D(
     const unsigned int *,
     size_t);
 #endif
+
+// --------------------------------
+
+template<typename REAL>
+std::array<REAL,3> delfem2::Normal_TriInMeshTri3(
+    unsigned int itri,
+    const REAL *vtx_xyz,
+    const unsigned int *tri_vtx) {
+  return mshmisc::Normal_Tri3(
+      vtx_xyz + tri_vtx[itri * 3 + 0] * 3,
+      vtx_xyz + tri_vtx[itri * 3 + 1] * 3,
+      vtx_xyz + tri_vtx[itri * 3 + 2] * 3);
+}
 
 // ---------------------------------------
 
@@ -1061,10 +1086,10 @@ void delfem2::MassPoint_Tri2D(
   for (unsigned int i = 0; i < nXY; ++i) { aMass[i] = 0.0; }
   for (unsigned int it = 0; it < nTri; ++it) {
     const unsigned int i0 = aTri[it * 3 + 0];
-    assert(i0 < nXY);
     const unsigned int i1 = aTri[it * 3 + 1];
-    assert(i1 < nXY);
     const unsigned int i2 = aTri[it * 3 + 2];
+    assert(i0 < nXY);
+    assert(i1 < nXY);
     assert(i2 < nXY);
     const double *p0 = aXY + i0 * 2;
     const double *p1 = aXY + i1 * 2;
@@ -1156,3 +1181,22 @@ DFM2_INLINE bool delfem2::Distortion_MappingTriangleFrom2To3Dim(
   if (0.5 * (len01 / Len01 + Len01 / len01) > thresE) { return true; }
   return false;
 }
+
+// ======================================
+
+#ifdef DFM2_STATIC_LIBRARY
+
+namespace delfem2 {
+
+template std::array<float,3> Normal_TriInMeshTri3(
+    unsigned int itri,
+    const float *vtx_xyz,
+    const unsigned int *tri_vtx);
+template std::array<double,3> Normal_TriInMeshTri3(
+    unsigned int itri,
+    const double *vtx_xyz,
+    const unsigned int *tri_vtx);
+
+}
+
+#endif

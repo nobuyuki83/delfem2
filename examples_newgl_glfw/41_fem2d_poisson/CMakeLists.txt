@@ -20,6 +20,13 @@ project(41_fem2d_poisson)
 get_filename_component(GLAD_INCLUDE_DIR
     ${PROJECT_SOURCE_DIR}/../../3rd_party/glad4/include ABSOLUTE)
 
+# glfw
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
+find_package(glfw3 REQUIRED)
+
+# opengl
+find_package(OpenGL REQUIRED)
+
 # dfm2
 IF (USE_STATIC_LIB)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
@@ -32,13 +39,6 @@ IF (USE_STATIC_LIB)
   endif ()
 endif ()
 set(DELFEM2_INCLUDE_DIR "../../include")
-
-# glfw
-set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/libglfw)
-find_package(glfw3 REQUIRED)
-
-# opengl
-find_package(OpenGL REQUIRED)
 
 #############################################
 

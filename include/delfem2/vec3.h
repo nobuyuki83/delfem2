@@ -134,6 +134,10 @@ class CVec3 {
     assert(i < 3);
     return p[i];
   }
+  // implicit cast
+  operator std::array<T, 3>() const {
+    return { p[0], p[1], p[2] };
+  }
 
   // above: operator
   // ------

@@ -589,7 +589,8 @@ void delfem2::makeLinearSystem_VortexSheet_Order0th(
     const CVec3d p1(aXYZ[ip1 * 3 + 0], aXYZ[ip1 * 3 + 1], aXYZ[ip1 * 3 + 2]);
     const CVec3d p2(aXYZ[ip2 * 3 + 0], aXYZ[ip2 * 3 + 1], aXYZ[ip2 * 3 + 2]);
     {
-      const CVec3d nx = Normal_Tri3(p0, p1, p2).normalized();
+      CVec3d nx = Normal_Tri3(p0, p1, p2);
+      nx.normalize();
       const CVec3d ux = (p1 - p0).normalized();
       const CVec3d vx = nx.cross(ux);
       f[it * 2 + 0] = ux.dot(velo);

@@ -43,13 +43,8 @@ void ShadingImageRayLambertian(
   const dfm2::CMat4d mMVPd_inv = dfm2::Inverse_Mat4(mMVPd);
   aRGB.resize(nheight * nwidth * 3);
   auto render = [&](int iw, int ih) {
-    const double ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
-    const double pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
-    std::array<double,3> qs = mMVPd_inv.MultVec3_Homography(ps);
-    std::array<double,3> qe = mMVPd_inv.MultVec3_Homography(pe);
-    const dfm2::CVec3d src1(qs.data());
-    const dfm2::CVec3d dir1 = dfm2::CVec3d(qe.data()) - src1;
-    //
+    const std::pair<dfm2::CVec3d, dfm2::CVec3d> ray = dfm2::RayFromInverseMvpMatrix(
+        mMVPd_inv.data(), iw, ih, nwidth, nheight);
     const delfem2::PointOnSurfaceMesh<double> &pes = aPointElemSurf[ih * nwidth + iw];
     if (pes.itri == UINT_MAX) {
       aRGB[(ih * nwidth + iw) * 3 + 0] = 200;
@@ -58,14 +53,8 @@ void ShadingImageRayLambertian(
     } else {
       const unsigned int itri = pes.itri;
       assert(itri < aTri.size() / 3);
-      double n[3], area;
-      delfem2::UnitNormalAreaTri3(
-          n, area,
-          aXYZ.data() + aTri[itri * 3 + 0] * 3,
-          aXYZ.data() + aTri[itri * 3 + 1] * 3,
-          aXYZ.data() + aTri[itri * 3 + 2] * 3);
-      dfm2::CVec3d udir1 = dir1.normalized();
-      const double dot = n[0] * udir1[0] + n[1] * udir1[1] + n[2] * udir1[2];
+      dfm2::CVec3d n = dfm2::Normal_TriInMeshTri3(itri, aXYZ.data(), aTri.data());
+      const double dot = n.normalized().dot(ray.second);
       aRGB[(ih * nwidth + iw) * 3 + 0] = static_cast<unsigned char>(-dot * 255);
       aRGB[(ih * nwidth + iw) * 3 + 1] = static_cast<unsigned char>(-dot * 255);
       aRGB[(ih * nwidth + iw) * 3 + 2] = static_cast<unsigned char>(-dot * 255);

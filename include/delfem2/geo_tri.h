@@ -140,6 +140,12 @@ void Normal_Tri3(
   vnorm[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]);
 }
 
+template<typename VEC, typename T=vecn_value_t<VEC,3>>
+std::array<T,3> Normal_Tri3(
+    const VEC &v1,
+    const VEC &v2,
+    const VEC &v3);
+
 template<typename VEC0, typename VEC1, typename T = vecn_value_t<VEC0,3>>
 void UnitNormal_Tri3(
     VEC0 &&vnorm,
@@ -164,12 +170,6 @@ void UnitNormalAreaTri3(
     const VEC1 &v1,
     const VEC1 &v2,
     const VEC1 &v3);
-
-template<typename VEC>
-VEC Normal_Tri3(
-    const VEC &v1,
-    const VEC &v2,
-    const VEC &v3);
 
 template<typename VEC>
 VEC UnitNormal_Tri3(

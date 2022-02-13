@@ -331,6 +331,22 @@ DFM2_INLINE void Mat4_ScaleRotTrans(
     const double quat[4],
     const double trans[3]);
 
+template <typename T>
+std::pair<std::array<T, 3>, std::array<T, 3>> RayFromInverseMvpMatrix(
+    const T mMVPd_inv[16],
+    int iw,
+    int ih,
+    unsigned int nwidth,
+    unsigned int nheight) {
+  const T ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
+  const T pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
+  std::array<T, 3> qs = Vec3_Mat4Vec3_Homography(mMVPd_inv,ps);
+  std::array<T, 3> qe = Vec3_Mat4Vec3_Homography(mMVPd_inv,pe);
+  std::array<T, 3> d = {qe[0] - qs[0], qe[1] - qs[1], qe[2] - qs[2]};
+  const T l = std::sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+  return {qs, {d[0] / l, d[1] / l, d[2] / l}};
+}
+
 // =============================================
 
 template<typename T>

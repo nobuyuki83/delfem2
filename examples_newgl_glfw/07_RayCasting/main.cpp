@@ -42,13 +42,8 @@ void ShadingImageRayLambertian(
   const dfm2::CMat4d mat_mvp_colmajor_inverse = delfem2::Inverse_Mat4(mat_mvp_rowmajor);
   vec_rgb.resize(height*width*3);
   auto func0 = [&](int ih, int iw){
-    const double ps[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), +1., 1. };
-    const double pe[4] = { -1. + (2./width)*(iw+0.5), -1. + (2./height)*(ih+0.5), -1., 1. };
-    const std::array<double, 3> qs = dfm2::Vec3_Mat4Vec3_Homography(mat_mvp_colmajor_inverse.data(), ps);
-    const std::array<double, 3> qe = dfm2::Vec3_Mat4Vec3_Homography(mat_mvp_colmajor_inverse.data(), pe);
-    const dfm2::CVec3d src1(qs);
-    const dfm2::CVec3d dir1 = dfm2::CVec3d(qe.data()) - src1;
-    //
+    const std::pair<dfm2::CVec3d, dfm2::CVec3d> ray = delfem2::RayFromInverseMvpMatrix(
+        mat_mvp_colmajor_inverse.data(), iw, ih, width, height);
     const delfem2::PointOnSurfaceMesh<double>& pes = aPointElemSurf[ih*width+iw];
     if (pes.itri == UINT_MAX) {
       vec_rgb[(ih * width + iw) * 3 + 0] = 200;
@@ -57,14 +52,8 @@ void ShadingImageRayLambertian(
     } else {
       const unsigned int itri = pes.itri;
       assert(itri < vec_tri.size() / 3);
-      double n[3], area;
-      delfem2::UnitNormalAreaTri3(
-          n, area,
-          vec_xyz.data() + vec_tri[itri * 3 + 0] * 3,
-          vec_xyz.data() + vec_tri[itri * 3 + 1] * 3,
-          vec_xyz.data() + vec_tri[itri * 3 + 2] * 3);
-      dfm2::CVec3d udir1 = dir1.normalized();
-      const double dot = n[0] * udir1[0] + n[1] * udir1[1] + n[2] * udir1[2];
+      dfm2::CVec3d n = delfem2::Normal_TriInMeshTri3(itri, vec_xyz.data(), vec_tri.data());
+      const double dot = n.normalized().dot(ray.second);
       vec_rgb[(ih * width + iw) * 3 + 0] = static_cast<unsigned char>(-dot * 255);
       vec_rgb[(ih * width + iw) * 3 + 1] = static_cast<unsigned char>(-dot * 255);
       vec_rgb[(ih * width + iw) * 3 + 2] = static_cast<unsigned char>(-dot * 255);

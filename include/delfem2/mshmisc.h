@@ -125,6 +125,15 @@ DFM2_INLINE void Normal_MeshTri3D(
     size_t num_tri);
 
 /**
+ * @brief Normal at the vertex of a triangle mesh.
+ */
+template<typename REAL>
+std::array<REAL,3> Normal_TriInMeshTri3(
+    unsigned int itri,
+    const REAL *vtx_xyz,
+    const unsigned int *tri_vtx);
+
+/**
  * @brief Normal at the vertex of a quad mesh. Defined for "float" and "double"
  */
 template<typename REAL>

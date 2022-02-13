@@ -48,7 +48,11 @@ bool delfem2::isPickQuad(
   a23 /= a0123;
   a30 /= a0123;
   if (a01 < eps || a12 < eps || a23 < eps || a30 < eps) { return false; }
-  CVec3d n0123 = Normal_Tri3(p0, p1, p2) + Normal_Tri3(p1, p2, p3) + Normal_Tri3(p2, p3, p0) + Normal_Tri3(p3, p0, p1);
+  CVec3d n3 = Normal_Tri3(p0, p1, p2);
+  CVec3d n0 = Normal_Tri3(p1, p2, p3);
+  CVec3d n1 = Normal_Tri3(p2, p3, p0);
+  CVec3d n2 = Normal_Tri3(p3, p0, p1);
+  CVec3d n0123 =  n0 + n1 + n2 + n3;
   return n0123.dot(pick_dir) <= 0;
 }
 

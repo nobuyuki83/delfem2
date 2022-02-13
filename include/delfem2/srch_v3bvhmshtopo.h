@@ -422,6 +422,31 @@ void Project_PointsIncludedInBVH_Outside_Cache(
 }
 
 template<typename BV>
+bool Intersection_Ray3_Tri3_Bvh(
+    PointOnSurfaceMesh<double> &pos_mesh,
+    const CVec3d &src1,
+    const CVec3d &dir1,
+    const std::vector<double> &vec_xyz,
+    const std::vector<unsigned int> &vec_tri,
+    const std::vector<CNodeBVH2> &bvh_nodes,
+    const std::vector<BV> &bvh_volumes) {
+  std::vector<unsigned int> aIndElem;
+  BVH_GetIndElem_Predicate(
+      aIndElem,
+      CIsBV_IntersectLine<BV, double>(src1.p, dir1.p),
+      0, bvh_nodes, bvh_volumes);
+  if (aIndElem.empty()) { return false; } // no bv hit the ray
+  std::map<double, PointOnSurfaceMesh<double>> mapDepthPES;
+  IntersectionRay_MeshTri3DPart(
+      mapDepthPES,
+      src1, dir1,
+      vec_tri, vec_xyz, aIndElem, 1.0e-10);
+  if (mapDepthPES.empty()) { return false; }
+  pos_mesh = mapDepthPES.begin()->second;
+  return true;
+}
+
+template<typename BV>
 void Intersection_ImageRay_TriMesh3(
     std::vector<delfem2::PointOnSurfaceMesh<double> > &aPointElemSurf,
     unsigned int nheight,
@@ -434,25 +459,14 @@ void Intersection_ImageRay_TriMesh3(
   aPointElemSurf.resize(nheight * nwidth);
   const std::array<double,16> mMVPd_inv = Inverse_Mat4(mMVPd);
   auto func = [&](int ih, int iw) {
-    const double ps[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), +1., 1.};
-    const double pe[4] = {-1. + (2. / nwidth) * (iw + 0.5), -1. + (2. / nheight) * (ih + 0.5), -1., 1.};
-    std::array<double,3> qs = Vec3_Mat4Vec3_Homography(mMVPd_inv.data(), ps);
-    std::array<double,3> qe = Vec3_Mat4Vec3_Homography(mMVPd_inv.data(), pe);
-    const CVec3d src1(qs.data());
-    const CVec3d dir1 = CVec3d(qe.data()) - src1;
-    std::vector<unsigned int> aIndElem;
-    BVH_GetIndElem_Predicate(
-        aIndElem,
-        CIsBV_IntersectLine<BV, double>(src1.p, dir1.p),
-        0, aNodeBVH, aAABB);
-    if (aIndElem.empty()) { return; } // no bv hit the ray
-    std::map<double, PointOnSurfaceMesh<double>> mapDepthPES;
-    IntersectionRay_MeshTri3DPart(
-        mapDepthPES,
-        src1, dir1,
-        aTri, aXYZ, aIndElem, 1.0e-10);
-    if (mapDepthPES.empty()) { return; }
-    aPointElemSurf[ih * nwidth + iw] = mapDepthPES.begin()->second;
+    const std::pair<CVec3d,CVec3d> ray = RayFromInverseMvpMatrix(mMVPd_inv.data(), iw,ih, nwidth,nheight);
+    PointOnSurfaceMesh<double> pos_mesh;
+    bool is_hit = Intersection_Ray3_Tri3_Bvh(
+        pos_mesh,
+        ray.first, ray.second,
+        aXYZ, aTri, aNodeBVH, aAABB);
+    if( !is_hit ){ return; }
+    aPointElemSurf[ih * nwidth + iw] = pos_mesh;
   };
   parallel_for(nwidth, nheight, func);
   /*

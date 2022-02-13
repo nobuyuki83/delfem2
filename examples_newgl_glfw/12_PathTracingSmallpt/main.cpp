@@ -12,14 +12,16 @@
 #  include <windows.h>  // this should come before glfw3.h
 #endif
 #define GL_SILENCE_DEPRECATION
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "delfem2/sampling.h"
+#include "delfem2/vec3.h"
+#include "delfem2/thread.h"
 #include "delfem2/opengl/tex.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/vec3.h"
-#include "delfem2/thread.h"
+#include "delfem2/opengl/new/drawer_mshtex.h"
 
 struct Ray {
   delfem2::CVec3d o, d;
@@ -176,9 +178,15 @@ int main() {
   delfem2::glfw::CViewer3 viewer(2);
   viewer.width = 300;
   viewer.height = 300;
-  delfem2::glfw::InitGLOld();
+  delfem2::opengl::Drawer_RectangleTex drawer;
+  delfem2::glfw::InitGLNew();
   viewer.OpenWindow();
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
+    std::cout << "Failed to initialize GLAD" << std::endl;
+    return -1;
+  }
   tex.InitGL();
+  drawer.InitGL();
 
   const unsigned int nh = tex.height;
   const unsigned int nw = tex.width;
@@ -229,16 +237,19 @@ int main() {
     }
     std::cout << " " << isample << std::endl;
     tex.InitGL();
-    //
-    viewer.DrawBegin_oldGL();
-    ::glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    ::glClear(GL_COLOR_BUFFER_BIT);
-    ::glDisable(GL_LIGHTING);
-    ::glMatrixMode(GL_PROJECTION);
-    ::glLoadIdentity();
-    ::glMatrixMode(GL_MODELVIEW);
-    ::glLoadIdentity();
-    tex.Draw_oldGL();
+    ::glfwMakeContextCurrent(viewer.window);
+    ::glClearColor(0.8, 1.0, 1.0, 1.0);
+    ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//  ::glEnable(GL_DEPTH_TEST);
+//  ::glDepthFunc(GL_LESS);
+    ::glEnable(GL_POLYGON_OFFSET_FILL );
+    ::glPolygonOffset( 1.1f, 4.0f );
+
+    glEnable(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
+    glBindTexture(GL_TEXTURE_2D , tex.id_tex);
+    drawer.Draw(delfem2::CMat4f::Identity().data(),
+                delfem2::CMat4f::Identity().data());
     viewer.SwapBuffers();
     glfwPollEvents();
   }

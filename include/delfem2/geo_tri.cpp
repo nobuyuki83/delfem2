@@ -440,8 +440,8 @@ void delfem2::UnitNormalAreaTri3(
   n[2] *= invlen;
 }
 
-template<typename VEC>
-VEC delfem2::Normal_Tri3(
+template<typename VEC, typename T>
+std::array<T,3> delfem2::Normal_Tri3(
     const VEC &v1,
     const VEC &v2,
     const VEC &v3) {
@@ -508,7 +508,7 @@ std::array<T, 9> delfem2::Mat3_IrotTriSolid(
 #include "delfem2/vec3.h"
 
 namespace delfem2 {
-  using f0 = double [3];
+  using f0 = float [3];
   using d0 = double [3];
   using f1 = float*;
   using d1 = double*;
@@ -524,8 +524,10 @@ namespace delfem2 {
   template double Area_Tri3(const d2&, const d2&, const d2&);
   template double Area_Tri3(const d3&, const d3&, const d3&);
   //
-  template f2 Normal_Tri3(const f2 &v1, const f2 &v2, const f2 &v3);
-  template f3 Normal_Tri3(const f3 &v1, const f3 &v2, const f3 &v3);
+  template f2 Normal_Tri3(const f0 &, const f0 &, const f0 &);
+  template f2 Normal_Tri3(const f1 &, const f1 &, const f1 &);
+  template f2 Normal_Tri3(const f2 &, const f2 &, const f2 &);
+  template f2 Normal_Tri3(const f3 &, const f3 &, const f3 &);
   //
   template f2 UnitNormal_Tri3(const f2 &, const f2 &, const f2 &);
   template f3 UnitNormal_Tri3(const f3 &, const f3 &, const f3 &);

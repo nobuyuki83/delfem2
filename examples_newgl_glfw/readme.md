@@ -32,6 +32,15 @@
 ### [10_FlatColorTriangles](10_FlatColorTriangles)
 <img src="10_FlatColorTriangles/thumbnail.png" width=200px>
 
+### [11_TriangleSelect](11_TriangleSelect)
+<img src="11_TriangleSelect/thumbnail.png" width=200px>
+
+### [12_PathTracingSimple](12_PathTracingSmallpt)
+<img src="12_PathTracingSmallpt/thumbnail.png" width=200>
+
+### [13_PathTracingTriMesh](13_PathTracingTriMesh)
+<img src="13_PathTracingTriMesh/thumbnail.png" width=200>
+
 ### [20_cad2d](20_cad2d)
 <img src="20_cad2d/thumbnail.png" width=200px>
 

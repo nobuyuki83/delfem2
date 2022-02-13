@@ -619,7 +619,8 @@ DFM2_INLINE void delfem2::opengl::DrawTriMeshNorm
     const CVec3d &v0 = aP[i0];
     const CVec3d &v1 = aP[i1];
     const CVec3d &v2 = aP[i2];
-    const CVec3d &n = Normal_Tri3(v0, v1, v2).normalized();
+    CVec3d n = Normal_Tri3(v0, v1, v2);
+    n.normalize();
     myGlNormal(n);
     myGlVertex(v0);
     myGlVertex(v1);
