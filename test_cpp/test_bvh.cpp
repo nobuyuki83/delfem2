@@ -9,16 +9,16 @@
 
 #include "gtest/gtest.h" // need to be defined in the beginning
 
-#include "delfem2/srchuni_v3.h"
-#include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/srchbv3sphere.h"
-#include "delfem2/srchbv3aabb.h"
-#include "delfem2/srchbvh.h"
+#include "delfem2/srch_bruteforce.h"
+#include "delfem2/srch_trimesh3_class.h"
+#include "delfem2/srch_bv3_sphere.h"
+#include "delfem2/srch_bv3_aabb.h"
+#include "delfem2/srch_bvh.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec3_funcs.h"
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/sampling.h"
 
 #ifndef M_PI

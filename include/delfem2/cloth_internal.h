@@ -1,8 +1,8 @@
 #ifndef CLOTH_INTERNAL_H
 #define CLOTH_INTERNAL_H
 
-#include "delfem2/lsilu_mats.h"
-#include "delfem2/lsmats.h"
+#include "delfem2/ls_ilu_block_sparse.h"
+#include "delfem2/ls_block_sparse.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/femcloth.h"

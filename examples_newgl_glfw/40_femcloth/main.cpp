@@ -14,7 +14,7 @@
 #include "delfem2/opengl/new/drawer_mshtri.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/jagarray.h"
 #include <iostream>
 #include <cmath>

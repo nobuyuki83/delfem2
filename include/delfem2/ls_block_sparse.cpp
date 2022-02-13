@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/lsmats.h"
+#include "delfem2/ls_block_sparse.h"
 
 #include <cassert>
 #include <complex>

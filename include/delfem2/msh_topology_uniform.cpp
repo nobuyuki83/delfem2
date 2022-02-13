@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 
 #include <vector>
 #include <cassert>

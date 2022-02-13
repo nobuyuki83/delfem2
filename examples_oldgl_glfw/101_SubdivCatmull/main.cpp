@@ -25,7 +25,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/mshsubdiv.h"
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_primitive.h"
 
 namespace dfm2 = delfem2;
 

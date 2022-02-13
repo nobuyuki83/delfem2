@@ -16,7 +16,7 @@
 #include "delfem2/ls_pentadiagonal.h"
 #include "delfem2/hair_darboux_solver.h"
 #include "delfem2/hair_darboux_util.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/v3q.h"

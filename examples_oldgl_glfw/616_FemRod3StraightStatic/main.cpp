@@ -14,7 +14,7 @@
 
 #include "delfem2/ls_solver_block_sparse.h"
 #include "delfem2/ls_pentadiagonal.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/fem_distance3.h"
 #include "delfem2/fem_rod3_straight.h"
 #include "delfem2/glfw/viewer3.h"

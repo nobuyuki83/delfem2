@@ -14,7 +14,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/bem.h"
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"

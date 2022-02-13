@@ -12,7 +12,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/vec3_funcs.h"

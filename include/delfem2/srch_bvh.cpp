@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/srchbvh.h"
+#include "delfem2/srch_bvh.h"
 
 #include <cmath>
 #include <algorithm>

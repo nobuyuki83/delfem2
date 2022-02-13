@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-#include "delfem2/lsmats.h"
+#include "delfem2/ls_block_sparse.h"
 #include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
@@ -62,7 +62,7 @@ class CPreconditionerILU {
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/lsilu_mats.cpp"
+#  include "delfem2/ls_ilu_block_sparse.cpp"
 #endif
 
 #endif 

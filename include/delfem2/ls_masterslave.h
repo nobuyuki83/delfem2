@@ -18,7 +18,7 @@
 #include <iostream>
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/lsmats.h"
+#include "delfem2/ls_block_sparse.h"
 
 namespace delfem2 {
 

@@ -11,14 +11,6 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/tinygltf/io_gltf.h"
-#include "tinygltf/tiny_gltf.h"
-#include "delfem2/rig_geo3.h"
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/caddtri_v3.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/pbd_geo3dtri23.h"
 #include "delfem2/fem_quadratic_bending.h"
@@ -27,8 +19,16 @@
 #include "delfem2/cad2_mesher.h"
 #include "delfem2/dtri.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/srchbv3sphere.h"
+#include "delfem2/srch_trimesh3_class.h"
+#include "delfem2/srch_bv3_sphere.h"
+#include "delfem2/tinygltf/io_gltf.h"
+#include "tinygltf/tiny_gltf.h"
+#include "delfem2/rig_geo3.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/caddtri_v3.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/mshuni.h"
 
 namespace dfm2 = delfem2;
 

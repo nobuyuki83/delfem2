@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/srchuni_v3.h"
+#include "delfem2/srch_bruteforce.h"
 
 #include <map>
 #include <set>

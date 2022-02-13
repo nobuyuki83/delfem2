@@ -18,9 +18,9 @@
 #endif
 #include <GLFW/glfw3.h>
 
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/vec3.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/opengl/new/drawer_points.h"
 #include "delfem2/opengl/new/drawer_mshtri.h"
 #include "delfem2/opengl/new/drawer_render2tex.h"

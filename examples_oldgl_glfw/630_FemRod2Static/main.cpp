@@ -15,11 +15,11 @@
 
 #include "delfem2/ls_solver_block_sparse.h"
 #include "delfem2/ls_pentadiagonal.h"
+#include "delfem2/ls_block_sparse.h"
 #include "delfem2/vec2.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/femutil.h"
 #include "delfem2/fem_rod2.h"
-#include "delfem2/lsmats.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/glfw/viewer2.h"

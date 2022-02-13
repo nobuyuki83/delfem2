@@ -11,7 +11,7 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/lsmats.h"
+#include "delfem2/ls_block_sparse.h"
 #include "delfem2/hair_darboux_util.h"
 #include "delfem2/fem_distance3.h"
 #include "delfem2/fem_rod3_darboux.h"

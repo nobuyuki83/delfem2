@@ -15,7 +15,7 @@
 
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/msh_io_ply.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/mat4.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"

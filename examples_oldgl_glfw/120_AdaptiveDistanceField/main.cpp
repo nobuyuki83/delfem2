@@ -16,14 +16,14 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/srch_v3bvhmshtopo.h"
+#include "delfem2/srch_trimesh3_class.h"
+#include "delfem2/srch_bv3_sphere.h"
 #include "delfem2/isrf_adf.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/msh_unindexed.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/msh_io_ply.h"
-#include "delfem2/mshprimitive.h"
-#include "delfem2/srchbv3sphere.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"

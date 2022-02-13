@@ -251,7 +251,7 @@ DFM2_INLINE void MakeGroupElem(
 } // end namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/mshuni.cpp"
+#  include "delfem2/msh_topology_uniform.cpp"
 #endif
 
 #endif /* DFM2_MSHUNI_H */

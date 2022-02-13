@@ -5,9 +5,9 @@
 #ifndef LS_SOLVER_BLOCK_SPARSE_H_
 #define LS_SOLVER_BLOCK_SPARSE_H_
 
-#include "delfem2/lsmats.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/lsitrsol.h"
+#include "delfem2/ls_block_sparse.h"
 #include "delfem2/vecxitrsol.h"
 
 namespace delfem2 {

@@ -6,7 +6,7 @@
  */
 
 #include "delfem2/opengl/old/gridcube.h"
-#include "delfem2/srchbv3aabb.h"
+#include "delfem2/srch_bv3_aabb.h"
 #include "delfem2/vec3.h"
 
 #if defined(_WIN32) // windows

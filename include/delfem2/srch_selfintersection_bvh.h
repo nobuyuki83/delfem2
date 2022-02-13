@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 
-#include "delfem2/srchbvh.h"
+#include "delfem2/srch_bvh.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec3_funcs.h"
 #include "delfem2/geo_plane.h"

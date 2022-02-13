@@ -20,7 +20,7 @@
 
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/msh_unindexed.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/vec3.h"
 #include "delfem2/opengl/new/drawer_mshunindex.h"
 #include "delfem2/glfw/viewer3.h"

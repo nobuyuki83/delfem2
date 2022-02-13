@@ -6,8 +6,8 @@
 #define DFM2_OPENGL_NEW_DRAWER_SPHERE_H_
 
 #include "delfem2/vec3.h"
-#include "delfem2/mshprimitive.h"
 #include "delfem2/mat4.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/opengl/new/drawer_msh.h"
 
 namespace delfem2::opengl {

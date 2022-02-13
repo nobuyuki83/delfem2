@@ -193,7 +193,7 @@ class CKineticDamper {
 } // delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/points.cpp"
+#  include "delfem2/msh_points.cpp"
 #endif
 
 #endif

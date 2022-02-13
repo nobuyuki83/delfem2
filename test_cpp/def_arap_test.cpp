@@ -14,11 +14,11 @@
 #include "delfem2/defarap.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/lsmats.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/ls_block_sparse.h"
+#include "delfem2/msh_topology_uniform.h"
+#include "delfem2/msh_points.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
-#include "delfem2/mshprimitive.h"
 
 namespace dfm2 = delfem2;
 

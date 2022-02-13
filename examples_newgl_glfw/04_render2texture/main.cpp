@@ -18,12 +18,12 @@
 #endif
 #include <GLFW/glfw3.h>
 
+#include "delfem2/noise.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/new/drawer_mshtex.h"
 #include "delfem2/opengl/new/drawer_mshtri.h"
-#include "delfem2/noise.h"
-#include "delfem2/mshprimitive.h"
 
 namespace dfm2 = delfem2;
 

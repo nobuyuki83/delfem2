@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/lsilu_mats.h"
+#include "delfem2/ls_ilu_block_sparse.h"
 
 #include <cstdlib>
 #include <cassert>

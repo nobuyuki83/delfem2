@@ -15,15 +15,15 @@
 #include <cmath>
 #include <vector>
 
-#include "delfem2/srchuni_v3.h" // CPointElemSurf
-#include "delfem2/srchbvh.h"
-#include "delfem2/mshuni.h" // sourrounding relationship
+#include "delfem2/srch_bruteforce.h" // CPointElemSurf
+#include "delfem2/srch_bvh.h"
+#include "delfem2/msh_topology_uniform.h" // sourrounding relationship
+#include "delfem2/mshmisc.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec3_funcs.h"
-#include "delfem2/geo_tri.h"
 #include "delfem2/mat4.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
+#include "delfem2/geo_tri.h"
 #include "delfem2/thread.h"
 
 namespace delfem2 {

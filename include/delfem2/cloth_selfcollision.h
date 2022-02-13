@@ -10,8 +10,8 @@
 
 #include <vector>
 
-#include "delfem2/srchbv3aabb.h"
-#include "delfem2/srchbvh.h"
+#include "delfem2/srch_bv3_aabb.h"
+#include "delfem2/srch_bvh.h"
 
 // 衝突が解消された中間速度を返す
 void GetIntermidiateVelocityContactResolved(

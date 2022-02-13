@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 
 #include <cassert>
 #include <cmath>

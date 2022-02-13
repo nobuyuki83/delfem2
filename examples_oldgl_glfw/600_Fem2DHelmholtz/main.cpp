@@ -17,13 +17,13 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/lsilu_mats.h"
-#include "delfem2/lsmats.h"
+#include "delfem2/ls_ilu_block_sparse.h"
+#include "delfem2/ls_block_sparse.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/femhelmholtz.h"
 #include "delfem2/cad2.h"
 #include "delfem2/cad2_mesher.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"

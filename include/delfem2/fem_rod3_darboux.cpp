@@ -9,7 +9,7 @@
 
 #include "delfem2/mat3.h"
 #include "delfem2/mat3_funcs.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 
 namespace delfem2::femrod {
 

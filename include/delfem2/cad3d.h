@@ -11,7 +11,7 @@
 #include <climits>
 
 #include "delfem2/opengl/old/color.h"
-#include "delfem2/srchuni_v3.h"
+#include "delfem2/srch_bruteforce.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
 #include "delfem2/geo_curve_quadratic.h"

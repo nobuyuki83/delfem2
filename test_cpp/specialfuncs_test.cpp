@@ -9,7 +9,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/geo_tri.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/specialfuncs.h"
 
 #ifndef M_PI

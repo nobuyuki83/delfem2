@@ -9,7 +9,7 @@
 
 #include "gtest/gtest.h" // need to be defiend in the beginning
 //
-#include "delfem2/lsmats.h" // this is necessary for merge operation in fem-related headers
+#include "delfem2/ls_block_sparse.h" // this is necessary for merge operation in fem-related headers
 #include "delfem2/geo_tri.h"
 #include "delfem2/fem_discreteshell.h"
 #include "delfem2/fempoisson.h"

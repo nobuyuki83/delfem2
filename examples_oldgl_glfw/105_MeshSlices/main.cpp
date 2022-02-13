@@ -18,9 +18,9 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/msh_io_ply.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/vec3.h"
 #include "delfem2/slice.h"
 #include "delfem2/geo_tri.h"

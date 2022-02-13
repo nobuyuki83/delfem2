@@ -26,7 +26,7 @@
 #include "delfem2/deflap.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_primitive.h"
 
 namespace dfm2 = delfem2;
 

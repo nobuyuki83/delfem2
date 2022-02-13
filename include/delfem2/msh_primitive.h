@@ -404,7 +404,7 @@ public:
 
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/mshprimitive.cpp"
+#  include "delfem2/msh_primitive.cpp"
 #endif
 
 #endif

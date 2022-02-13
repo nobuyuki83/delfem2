@@ -370,7 +370,7 @@ DFM2_INLINE void MatSparse_ScaleBlkLen_LeftRight(
 } // delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/lsmats.cpp"
+#  include "delfem2/ls_block_sparse.cpp"
 #endif
 
 #endif // DFM2_LSMATS_H

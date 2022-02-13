@@ -14,7 +14,7 @@
 #include "delfem2/mat3_funcs.h"
 #include "delfem2/cagedef.h"
 #include "delfem2/gizmo_geo3.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/geo_plane.h"
 #include "delfem2/geo_line.h"

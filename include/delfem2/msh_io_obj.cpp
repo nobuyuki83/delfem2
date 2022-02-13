@@ -17,7 +17,7 @@
 #include <cstring>
 #include <map>
 
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 
 namespace delfem2::msh_ioobj {
 

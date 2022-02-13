@@ -5,15 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/cloth_selfcollision.h"
+
 #include <stack>
 #include <map>
 
-#include "delfem2/cloth_selfcollision.h"
-#include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec3_funcs.h"
-#include "delfem2/srchbv3aabb.h"
-#include "delfem2/srchbvh.h"
+#include "delfem2/srch_selfintersection_bvh.h"
+#include "delfem2/srch_bv3_aabb.h"
+#include "delfem2/srch_bvh.h"
 
 namespace dfm2 = delfem2;
 

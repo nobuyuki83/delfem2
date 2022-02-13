@@ -15,7 +15,7 @@
 
 #include "delfem2/polyline_elastic_rod2.h"
 #include "delfem2/vec2.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/geo_polyline.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/glfw/viewer2.h"

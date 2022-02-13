@@ -10,7 +10,7 @@
 #define DFM2_DEFLAP_H
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/lsilu_mats.h"
+#include "delfem2/ls_ilu_block_sparse.h"
 #include "delfem2/vec3.h"
 
 // ---------------------------

@@ -23,10 +23,10 @@
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/mshmisc.h"  // Rotate, NormalMeshTri3D
-#include "delfem2/points.h"  // Rotate, NormalMeshTri3D
-#include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/srchbv3sphere.h"
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_points.h"  // Rotate, NormalMeshTri3D
+#include "delfem2/msh_primitive.h"
+#include "delfem2/srch_trimesh3_class.h"
+#include "delfem2/srch_bv3_sphere.h"
 #include "delfem2/mat3_funcs.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"

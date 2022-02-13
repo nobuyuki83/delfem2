@@ -16,11 +16,11 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/sampler_trimesh.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/msh_io_ply.h"
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/point_on_surface_mesh.h"
-#include "delfem2/srchuni_v3.h"
+#include "delfem2/srch_bruteforce.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/glfw/viewer3.h"

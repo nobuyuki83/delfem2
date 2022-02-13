@@ -7,7 +7,7 @@
 
 #include "gtest/gtest.h"
 
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridvoxel.h"
 

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_primitive.h"
 
 #include <vector>
 #include <cmath>

@@ -13,7 +13,7 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/vec2.h"
 #include "delfem2/cadtopo.h"
-#include "delfem2/srchbv2aabb.h"
+#include "delfem2/srch_bv2_aabb.h"
 
 namespace delfem2 {
 

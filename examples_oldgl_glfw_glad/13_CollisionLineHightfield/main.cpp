@@ -15,15 +15,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "delfem2/srch_bruteforce.h"
+#include "delfem2/msh_io_obj.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/r2tglo.h"
-#include "delfem2/srchuni_v3.h"
-#include "delfem2/msh_io_obj.h"
-#include "delfem2/points.h"
 
 namespace dfm2 = delfem2;
 

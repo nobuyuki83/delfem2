@@ -190,7 +190,7 @@ bool IsTherePointOnMeshInsideSphere(
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/srchuni_v3.cpp"
+#  include "delfem2/srch_bruteforce.cpp"
 #endif
 
 #endif /* DFM2_SRCHUNI_V3_H */

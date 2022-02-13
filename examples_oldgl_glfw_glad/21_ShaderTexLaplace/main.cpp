@@ -18,12 +18,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+#include "delfem2/msh_primitive.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/opengl/tex.h"
-#include "delfem2/mshprimitive.h"
 
 namespace dfm2 = delfem2;
 

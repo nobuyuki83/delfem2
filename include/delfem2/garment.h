@@ -16,9 +16,9 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/srchbv3aabb.h"
-#include "delfem2/srchbv3sphere.h"
+#include "delfem2/srch_trimesh3_class.h"
+#include "delfem2/srch_bv3_aabb.h"
+#include "delfem2/srch_bv3_sphere.h"
 
 namespace delfem2 {
 

@@ -20,7 +20,7 @@
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/msh_io_obj.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/gridvoxel.h"
 
 namespace dfm2 = delfem2;

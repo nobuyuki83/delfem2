@@ -15,8 +15,8 @@
 
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshuni.h"
-#include "delfem2/mshprimitive.h"
+#include "delfem2/msh_topology_uniform.h"
+#include "delfem2/msh_primitive.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"

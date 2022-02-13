@@ -454,14 +454,8 @@ void delfem2::BVH_IndPoint_NearestPoint(
   BVH_IndPoint_NearestPoint(ip,cur_dist, p, ichild1,aBVH,aBB);
 }
 
-
-
-
-
-
-
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/srchbvh.cpp"
+#  include "delfem2/srch_bvh.cpp"
 #endif
 
 

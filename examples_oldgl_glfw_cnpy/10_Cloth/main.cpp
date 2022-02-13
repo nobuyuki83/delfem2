@@ -14,7 +14,6 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/garment.h"
 #include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/cad2.h"
@@ -23,9 +22,10 @@
 #include "delfem2/rig_geo3.h"
 #include "inputs_garment.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/dtri.h"
 #include "delfem2/color.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"

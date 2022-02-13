@@ -16,16 +16,16 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/funcs.h"
-#include "delfem2/opengl/old/r2tglo.h"
-#include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/opengl/funcs.h"
 #include "delfem2/vec3.h"
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_points.h"
+#include "delfem2/opengl/funcs.h"
+#include "delfem2/opengl/old/funcs.h"
+#include "delfem2/opengl/old/r2tglo.h"
+#include "delfem2/opengl/old/mshuni.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"

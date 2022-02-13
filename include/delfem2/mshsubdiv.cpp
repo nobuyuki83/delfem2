@@ -11,7 +11,7 @@
 #include <cassert>
 #include <climits>
 
-#include "delfem2/mshuni.h"
+#include "delfem2/msh_topology_uniform.h"
 
 // ----------------------------------------------------
 
