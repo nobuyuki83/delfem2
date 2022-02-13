@@ -4,11 +4,12 @@
 #include <unordered_map>
 #include <array>
 #include <random>
+
 #include "delfem2/mat3.h"
 #include "delfem2/svd3.h"
 #include "delfem2/msh_io_obj.h"
-#include "delfem2/mshprimitive.h"
-#include "delfem2/points.h"
+#include "delfem2/msh_primitive.h"
+#include "delfem2/msh_points.h"
 #include "delfem2/grid3hash.h"
 
 // ---------------

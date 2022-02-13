@@ -15,8 +15,8 @@
 // DONE(2020/12/12): separated mshsubdiv
 // DONE(2020/12/09): separate mixed elem
 
-#ifndef DFM2_MSHUNI_H
-#define DFM2_MSHUNI_H
+#ifndef DFM2_MSH_TOPOLOGY_UNIFORM_H
+#define DFM2_MSH_TOPOLOGY_UNIFORM_H
 
 #include <cstdio>
 #include <vector>
