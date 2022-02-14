@@ -23,8 +23,7 @@
 
 #if defined(_MSC_VER)
 #  pragma warning( push )
-// nonstandard extension used : nameless struct/union
-#  pragma warning( disable : 4201 )
+#  pragma warning( disable : 4201 ) // nonstandard extension used : nameless struct/union
 #endif
 
 // -----------------------------------------------------

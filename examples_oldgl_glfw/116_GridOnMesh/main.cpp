@@ -22,6 +22,7 @@
 #include "delfem2/msh_points.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/msh_topology_uniform.h"
+#include "delfem2/msh_boundingbox.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec3_funcs.h"
 #include "delfem2/glfw/viewer3.h"

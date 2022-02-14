@@ -19,6 +19,7 @@
 #include "delfem2/srch_bvh.h"
 #include "delfem2/msh_topology_uniform.h" // sourrounding relationship
 #include "delfem2/msh_center_of_gravity.h"
+#include "delfem2/msh_boundingbox.h"
 #include "delfem2/msh_points.h"
 #include "delfem2/vec3.h"
 #include "delfem2/vec3_funcs.h"

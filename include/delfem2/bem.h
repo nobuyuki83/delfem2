@@ -44,70 +44,80 @@ inline delfem2::CVec3d MidPoint(
 
 // ----------------------------------
 
-void makeLinearSystem_PotentialFlow_Order0th(std::vector<double> &A,
-                                             std::vector<double> &f,
+void makeLinearSystem_PotentialFlow_Order0th(
+    std::vector<double> &A,
+    std::vector<double> &f,
     //
-                                             const delfem2::CVec3d &velo_inf,
-                                             int ngauss,
-                                             const std::vector<double> &aXYZ,
-                                             const std::vector<unsigned int> &aTri);
+    const delfem2::CVec3d &velo_inf,
+    int ngauss,
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri);
 
 /**
  * @brief evaluate BEM solution where the value is constant over a triangle
  */
-void evaluateField_PotentialFlow_Order0th(double &phi_pos,
-                                          delfem2::CVec3d &gradphi_pos,
+void evaluateField_PotentialFlow_Order0th(
+    double &phi_pos,
+    delfem2::CVec3d &gradphi_pos,
     //
-                                          const delfem2::CVec3d &pos,
-                                          const delfem2::CVec3d &velo_inf,
-                                          int ngauss,
-                                          const std::vector<double> &aValTri,
-                                          const std::vector<double> &aXYZ,
-                                          const std::vector<unsigned int> &aTri);
+    const delfem2::CVec3d &pos,
+    const delfem2::CVec3d &velo_inf,
+    int ngauss,
+    const std::vector<double> &aValTri,
+    const std::vector<double> &aXYZ,
+    const std::vector<unsigned int> &aTri);
 
 // --------------------------------------
 
-delfem2::CVec3d evaluateField_PotentialFlow_Order1st(double &phi_pos,
-                                                     const delfem2::CVec3d &pos,
-                                                     const delfem2::CVec3d &velo_inf,
-                                                     int ngauss,
-                                                     const std::vector<double> &aValSrf,
-                                                     const std::vector<double> &aXYZ,
-                                                     const std::vector<int> &aTri);
+delfem2::CVec3d evaluateField_PotentialFlow_Order1st(
+    double &phi_pos,
+    const delfem2::CVec3d &pos,
+    const delfem2::CVec3d &velo_inf,
+    int ngauss,
+    const std::vector<double> &aValSrf,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTri);
 
-void makeLinearSystem_PotentialFlow_Order1st(std::vector<double> &A,
-                                             std::vector<double> &f,
+void makeLinearSystem_PotentialFlow_Order1st(
+    std::vector<double> &A,
+    std::vector<double> &f,
     //
-                                             const delfem2::CVec3d &velo_inf,
-                                             int ngauss,
-                                             const std::vector<double> &aXYZ,
-                                             const std::vector<int> &aTri,
-                                             const std::vector<double> &aSolidAngle);
+    const delfem2::CVec3d &velo_inf,
+    int ngauss,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTri,
+    const std::vector<double> &aSolidAngle);
 
 // -----------------------------------
 
-void BEM_VortexSheet_Coeff_0th
-    (double aC[4],
-     const CVec3d& x0, const CVec3d& x1, const CVec3d& x2,
-     const CVec3d& y0, const CVec3d& y1, const CVec3d& y2,
-     const CVec3d& velo,
-     int ngauss);
+void BEM_VortexSheet_Coeff_0th(
+    double aC[4],
+    const CVec3d& x0,
+    const CVec3d& x1,
+    const CVec3d& x2,
+    const CVec3d& y0,
+    const CVec3d& y1,
+    const CVec3d& y2,
+    const CVec3d& velo,
+    int ngauss);
 
-void makeLinearSystem_VortexSheet_Order0th(std::vector<double> &A,
-                                           std::vector<double> &f,
+void makeLinearSystem_VortexSheet_Order0th(
+    std::vector<double> &A,
+    std::vector<double> &f,
     //
-                                           const delfem2::CVec3d &velo,
-                                           int ngauss,
-                                           const std::vector<double> &aXYZ,
-                                           const std::vector<int> &aTri);
+    const delfem2::CVec3d &velo,
+    int ngauss,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTri);
 
-delfem2::CVec3d evaluateField_VortexSheet_Order0th(const delfem2::CVec3d &pos,
-                                                   const std::vector<double> &aValSrf,
+delfem2::CVec3d evaluateField_VortexSheet_Order0th(
+    const delfem2::CVec3d &pos,
+    const std::vector<double> &aValSrf,
     //
-                                                   int ngauss,
-                                                   const std::vector<double> &aXYZ,
-                                                   const std::vector<int> &aTri,
-                                                   int jtri_exclude);
+    int ngauss,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTri,
+    int jtri_exclude);
 
 class CVortexParticle {
 public:
@@ -141,18 +151,18 @@ CMat3d gradveloVortexParticles(
     const std::vector<CVortexParticle> &aVortexParticle,
     int ivp_self);
 
-CVec3d veloVortexParticle
-    (const CVec3d& pos_eval,
-     const CVec3d& pos_vp,
-     const CVec3d& circ_vp,
-     double rad_vp);
+CVec3d veloVortexParticle(
+    const CVec3d& pos_eval,
+    const CVec3d& pos_vp,
+    const CVec3d& circ_vp,
+    double rad_vp);
 
-CMat3d gradveloVortexParticle
-    (CVec3d& velo_eval,
-     const CVec3d& pos_eval,
-     const CVec3d& pos_vp,
-     const CVec3d& circ_vp,
-     double rad_vp);
+CMat3d gradveloVortexParticle(
+    CVec3d& velo_eval,
+    const CVec3d& pos_eval,
+    const CVec3d& pos_vp,
+    const CVec3d& circ_vp,
+    double rad_vp);
 
 void setGradVeloVortexParticles(std::vector<CVortexParticle> &aVortexParticle);
 
@@ -175,8 +185,10 @@ public:
 //  void drawBoundingBox() const;
 };
 
-void viscousityVortexParticleGrid(std::vector<CVortexParticle> &aVortexParticle,
-                                  CGrid_Vortex &grid, double resolution);
+void viscousityVortexParticleGrid(
+    std::vector<CVortexParticle> &aVortexParticle,
+    CGrid_Vortex &grid,
+    double resolution);
 
 
 
@@ -192,12 +204,12 @@ std::complex<double> evaluateField_Helmholtz_Order0th(
     const std::vector<double> &aXYZ,
     bool is_inverted_norm);
 
-void Helmholtz_TransferOrder1st_PntTri
-    (std::complex<double> aC[3],
-     const CVec3d& p0,
-     const CVec3d& q0, const CVec3d& q1, const CVec3d& q2,
-     double k, double beta,
-     int ngauss);
+void Helmholtz_TransferOrder1st_PntTri(
+    std::complex<double> aC[3],
+    const CVec3d& p0,
+    const CVec3d& q0, const CVec3d& q1, const CVec3d& q2,
+    double k, double beta,
+    int ngauss);
 
 std::complex<double> evaluateField_Helmholtz_Order1st(
     const std::vector<std::complex<double>> &aSol,
@@ -210,11 +222,11 @@ std::complex<double> evaluateField_Helmholtz_Order1st(
     bool is_inverted_norm,
     int ngauss);
 
-CVec3d evaluateField_PotentialFlow
-    (const std::vector<double>& aSol,
-     const CVec3d& p,
-     const std::vector<unsigned int> &aTri,
-     const std::vector<double>& aXYZ);
+CVec3d evaluateField_PotentialFlow(
+    const std::vector<double>& aSol,
+    const CVec3d& p,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double>& aXYZ);
 
 }
 

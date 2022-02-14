@@ -257,6 +257,7 @@ class CVec3 {
   }
 
   using Scalar = T;
+  using value_type = Scalar;
   static constexpr T NEARLY_ZERO = static_cast<T>(1.e-16);
 
  public:

@@ -217,6 +217,220 @@ template void updateMinMaxXYZ(
 
 // -----------------------------------------------------------------------------
 
+
+
+template<typename T>
+void CenterWidth_MinMaxXYZ(
+    T &cx, T &cy, T &cz,
+    T &wx, T &wy, T &wz,
+    //
+    T x_min, T x_max,
+    T y_min, T y_max,
+    T z_min, T z_max) {
+  cx = (x_min + x_max) / 2;
+  cy = (y_min + y_max) / 2;
+  cz = (z_min + z_max) / 2;
+  wx = x_max - x_min;
+  wy = y_max - y_min;
+  wz = z_max - z_min;
+}
+
+// -----------------------------------------------------------------------------
+
+template<typename T>
+void delfem2::updateMinMaxXYZ(
+    T &x_min, T &x_max,
+    T &y_min, T &y_max,
+    T &z_min, T &z_max,
+    T x, T y, T z) {
+  if (x_min > x_max) {
+    x_min = x_max = x;
+    y_min = y_max = y;
+    z_min = z_max = z;
+    return;
+  }
+  x_min = (x_min < x) ? x_min : x;
+  x_max = (x_max > x) ? x_max : x;
+  y_min = (y_min < y) ? y_min : y;
+  y_max = (y_max > y) ? y_max : y;
+  z_min = (z_min < z) ? z_min : z;
+  z_max = (z_max > z) ? z_max : z;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::updateMinMaxXYZ(
+    float &x_min, float &x_max,
+    float &y_min, float &y_max,
+    float &z_min, float &z_max,
+    float X, float Y, float Z);
+template void delfem2::updateMinMaxXYZ(
+    double &x_min, double &x_max,
+    double &y_min, double &y_max,
+    double &z_min, double &z_max,
+    double X, double Y, double Z);
+#endif
+
+// -----------------------------
+
+template<typename T>
+void delfem2::BoundingBox3_Points3(
+    T min3[3],
+    T max3[3],
+    const T *vtx_xyz,
+    const size_t num_vtx) {
+  min3[0] = +1;
+  max3[0] = -1;
+  for (unsigned int ixyz = 0; ixyz < num_vtx; ++ixyz) {
+    updateMinMaxXYZ(
+        min3[0], max3[0],
+        min3[1], max3[1],
+        min3[2], max3[2],
+        vtx_xyz[ixyz * 3 + 0],
+        vtx_xyz[ixyz * 3 + 1],
+        vtx_xyz[ixyz * 3 + 2]);
+  }
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::BoundingBox3_Points3(
+    double min3[3], double max3[3],
+    const double *aXYZ, const size_t nXYZ);
+template void delfem2::BoundingBox3_Points3(
+    float min3[3], float max3[3],
+    const float *aXYZ, const size_t nXYZ);
+#endif
+
+// --------------------------------------------------------------------------------
+
+template<typename T>
+void delfem2::CenterWidth_Point3(
+    T &cx, T &cy, T &cz,
+    T &wx, T &wy, T &wz,
+    const T *vtx_xyz,
+    const size_t num_vtx) {
+  if (vtx_xyz == nullptr) {
+    cx = cy = cz = 0;
+    wx = wy = wz = 1;
+    return;
+  }
+  T x_min = vtx_xyz[0], x_max = vtx_xyz[0];
+  T y_min = vtx_xyz[1], y_max = vtx_xyz[1];
+  T z_min = vtx_xyz[2], z_max = vtx_xyz[2];
+  for (unsigned int ino = 0; ino < num_vtx; ino++) {
+    updateMinMaxXYZ(
+        x_min, x_max, y_min, y_max, z_min, z_max,
+        vtx_xyz[ino * 3 + 0], vtx_xyz[ino * 3 + 1], vtx_xyz[ino * 3 + 2]);
+  }
+  CenterWidth_MinMaxXYZ(
+      cx, cy, cz, wx, wy, wz,
+      x_min, x_max, y_min, y_max, z_min, z_max);
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::CenterWidth_Point3(
+    float &cx, float &cy, float &cz,
+    float &wx, float &wy, float &wz,
+    const float *paXYZ, const size_t nXYZ);
+template void delfem2::CenterWidth_Point3(
+    double &cx, double &cy, double &cz,
+    double &wx, double &wy, double &wz,
+    const double *paXYZ, const size_t nXYZ);
+#endif
+
+
+// ---------------------------------
+
+template<typename T>
+void delfem2::CenterWidth_Points3(
+    T &cx, T &cy, T &cz,
+    T &wx, T &wy, T &wz,
+    const std::vector<T> &vtx_xyz) {
+  const size_t np = vtx_xyz.size() / 3;
+  if (np == 0) {
+    cx = cy = cz = 0;
+    wx = wy = wz = 1;
+    return;
+  }
+  T x_min = vtx_xyz[0], x_max = vtx_xyz[0];
+  T y_min = vtx_xyz[1], y_max = vtx_xyz[1];
+  T z_min = vtx_xyz[2], z_max = vtx_xyz[2];
+  for (unsigned int ip = 0; ip < np; ++ip) {
+    updateMinMaxXYZ(
+        x_min, x_max, y_min, y_max, z_min, z_max,
+        vtx_xyz[ip * 3 + 0], vtx_xyz[ip * 3 + 1], vtx_xyz[ip * 3 + 2]);
+  }
+  CenterWidth_MinMaxXYZ(
+      cx, cy, cz, wx, wy, wz,
+      x_min, x_max, y_min, y_max, z_min, z_max);
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::CenterWidth_Points3(
+    float &cx, float &cy, float &cz,
+    float &wx, float &wy, float &wz,
+    const std::vector<float> &);
+template void delfem2::CenterWidth_Points3(
+    double &cx, double &cy, double &cz,
+    double &wx, double &wy, double &wz,
+    const std::vector<double> &);
+#endif
+
+// -------------------------------------
+
+template<typename T>
+void delfem2::CenterWidth_Points3(
+    T c[3],
+    T w[3],
+    const std::vector<T> &vtx_xyz) {
+  delfem2::CenterWidth_Points3(c[0], c[1], c[2],
+                               w[0], w[1], w[2],
+                               vtx_xyz);
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::CenterWidth_Points3(
+    float c[3],
+    float w[3],
+    const std::vector<float> &aXYZ);
+template void delfem2::CenterWidth_Points3(
+    double c[3],
+    double w[3],
+    const std::vector<double> &aXYZ);
+#endif
+
+// -------------------------------------------
+
+void delfem2::GetCenterWidthLocal(
+    double &lcx, double &lcy, double &lcz,
+    double &lwx, double &lwy, double &lwz,
+    const std::vector<double> &aXYZ,
+    const double lex[3],
+    const double ley[3],
+    const double lez[3]) {
+  namespace lcl = delfem2::msh_boundingbox;
+  const size_t nno = aXYZ.size() / 3;
+  if (nno == 0) {
+    lcx = lcy = lcz = 0;
+    lwx = lwy = lwz = 1;
+    return;
+  }
+  const double p0[3] = {aXYZ[0], aXYZ[1], aXYZ[2]};
+  double x_min = lcl::Dot3(p0, lex);
+  double x_max = x_min;
+  double y_min = lcl::Dot3(p0, ley);
+  double y_max = y_min;
+  double z_min = lcl::Dot3(p0, lez);
+  double z_max = z_min;
+  for (unsigned int ino = 0; ino < nno; ++ino) {
+    const double pi[3] = {
+        aXYZ[ino * 3 + 0],
+        aXYZ[ino * 3 + 1],
+        aXYZ[ino * 3 + 2]};
+    updateMinMaxXYZ(x_min, x_max, y_min, y_max, z_min, z_max,
+                    lcl::Dot3(pi, lex),
+                    lcl::Dot3(pi, ley),
+                    lcl::Dot3(pi, lez));
+  }
+  CenterWidth_MinMaxXYZ(lcx, lcy, lcz, lwx, lwy, lwz,
+                        x_min, x_max, y_min, y_max, z_min, z_max);
+}
+
+
 void delfem2::GetCenterWidthGroup(
     double &cx, double &cy, double &cz,
     double &wx, double &wy, double &wz,
@@ -308,4 +522,12 @@ void delfem2::GetCenterWidth3DGroup(
   GetCenterWidthGroup(
       cw[0], cw[1], cw[2], cw[3], cw[4], cw[5],
       aXYZ, aElemInd, aElem, igroup, aIndGroup);
+}
+
+double delfem2::Size_Points3D_LongestAABBEdge(
+    const std::vector<double> &aXYZ) {
+  double c[3], w[3];
+  CenterWidth_Points3(c, w,
+                      aXYZ);
+  return msh_boundingbox::largest(w[0], w[1], w[2]);
 }

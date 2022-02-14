@@ -225,12 +225,17 @@ cmake .. -G Xcode
 cd ../../
 
 cd examples_oldgl_glfw_eigen || exit
+mkdir buildXcodeStatic
+cd buildXcodeStatic || exit
+cmake .. -G Xcode -DUSE_STATIC_LIB=ON
+cd ../../
+
+cd examples_oldgl_glfw_eigen || exit
 mkdir buildMakeHdronly
 cd buildMakeHdronly || exit
 cmake ..
 cmake --build .
 cd ../../
-
 
 echo "################################"
 echo "build examples_thread"

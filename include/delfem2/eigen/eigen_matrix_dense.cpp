@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <fstream>
 
-#include "delfem2/eigen_densemat.h"
+#include "delfem2/eigen/eigen_matrix_dense.h"
 
 #include "Eigen/Core"
 #include "Eigen/SVD"

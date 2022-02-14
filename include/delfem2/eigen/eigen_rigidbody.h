@@ -7,7 +7,6 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/v23m3q.h"
 
 
 // class of rigid body
@@ -26,23 +25,23 @@ public:
     cg.x = xyz_cg[0];
     cg.y = xyz_cg[1];
     cg.z = xyz_cg[2];
-    u = CVector3(0,0,0);
+    u = delfem2::CVec3d(0,0,0);
     R.SetIdentity();
   }
   void addCP(std::vector<double> p){
     assert( aCP.size() == aCForce.size() );
-    aCP.push_back(p);
+    aCP.push_back({p[0],p[1],p[2]});
     aCForce.resize(aCForce.size()+1);
   }
 public:
-  CVector3 cg; // the center of gravity.
+  delfem2::CVec3d cg; // the center of gravity.
   double m;     // mass of this plate
-  std::vector<CVector3> aCP; // contact point
-  std::vector< std::pair<CVector3,CVector3> > aExForce; // (position,magnitude) of external forces
-  ////
-  CVector3 u; // deformation
-  CMatrix3  R; // rotation
-  std::vector<CVector3> aCForce;
+  std::vector<delfem2::CVec3d> aCP; // contact point
+  std::vector< std::pair<delfem2::CVec3d,delfem2::CVec3d> > aExForce; // (position,magnitude) of external forces
+  //
+  delfem2::CVec3d u; // deformation
+  delfem2::CMat3d R; // rotation
+  std::vector<delfem2::CVec3d> aCForce;
 };
 
 class CJoint {
@@ -56,15 +55,15 @@ public:
     p.z = xyz_p[2];
   }
 public:
-  CVector3 p; // position
+  delfem2::CVec3d p; // position
   int irb0;    // id of rigid body
   int irb1;    // id of rigid body
   ////
   double jp0[4]; // joint position
   double jp1[4]; // joint position
   ////
-  CVector3 linear;
-  CVector3 torque;
+  delfem2::CVec3d linear;
+  delfem2::CVec3d torque;
 };
 
       
@@ -105,16 +104,16 @@ private: // non-static private functions
   void Solve_InterPlane();
   void SolveOneIteration();
 private:  // static functions
-  static CVector3 rand_vec(double s);
-  static CMatrix3 rand_rot();
+  static delfem2::CVec3d rand_vec(double s);
+  static delfem2::CMat3d rand_rot();
 public:
   //members
   std::vector<CRigidBody> aRigidBody; // array of rigid body
   std::vector<CJoint> aJoint; // array of joint
 //  std::vector<CPlate> aPlate;
   
-  CVector3 n; // normal direction of floor (should be an unit vector)
-  CVector3 gravity; // gravity
+  delfem2::CVec3d n; // normal direction of floor (should be an unit vector)
+  delfem2::CVec3d gravity; // gravity
   double cont_stiff; // contact_stiffness (insensitive)
   double trans_stiff; // joint_translation_stiffness (insensitive)
   double rot_stiff; // joint_rotation_stiffness (insensitive)
