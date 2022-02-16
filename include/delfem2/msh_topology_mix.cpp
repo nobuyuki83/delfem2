@@ -1,6 +1,7 @@
 
 
-#include "delfem2/mshmix.h"
+#include "delfem2/msh_topology_mix.h"
+
 #include <stack>
 #include <cassert>
 

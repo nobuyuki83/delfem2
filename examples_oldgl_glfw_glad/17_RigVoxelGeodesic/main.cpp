@@ -15,6 +15,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "delfem2/geo_plane.h"
+#include "delfem2/rig_geo3.h"
+#include "delfem2/msh_io_ply.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/msh_affine_transformation.h"
+#include "delfem2/gridvoxel.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/rigv3.h"
@@ -22,12 +28,6 @@
 #include "delfem2/opengl/old/color.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/funcs.h"
-#include "delfem2/geo_plane.h"
-#include "delfem2/rig_geo3.h"
-#include "delfem2/msh_io_ply.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/gridvoxel.h"
-#include "delfem2/msh_points.h"
 
 namespace dfm2 = delfem2;
 

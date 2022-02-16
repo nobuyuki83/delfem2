@@ -216,7 +216,28 @@ template void updateMinMaxXYZ(
 // exposed function below
 
 
-// -------------------------------------
+template<typename T>
+void delfem2::CG_Point3(
+    T *center_of_gravity,
+    const std::vector<T> &vtx_xyz) {
+  center_of_gravity[0] = center_of_gravity[1] = center_of_gravity[2] = 0;
+  const size_t nXYZ = vtx_xyz.size() / 3;
+  for (unsigned int ixyz = 0; ixyz < nXYZ; ixyz++) {
+    center_of_gravity[0] += vtx_xyz[ixyz * 3 + 0];
+    center_of_gravity[1] += vtx_xyz[ixyz * 3 + 1];
+    center_of_gravity[2] += vtx_xyz[ixyz * 3 + 2];
+  }
+  center_of_gravity[0] /= nXYZ;
+  center_of_gravity[1] /= nXYZ;
+  center_of_gravity[2] /= nXYZ;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::CG_Point3(float *, const std::vector<float> &);
+template void delfem2::CG_Point3(double *, const std::vector<double> &);
+#endif
+
+
+// ---------------------
 
 template<typename T>
 T delfem2::CentsMaxRad_MeshTri3(

@@ -16,14 +16,14 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/glfw/viewer3.h"
-#include "delfem2/glfw/util.h"
-#include "delfem2/opengl/old/v3q.h"
 #include "delfem2/geodelaunay3_v3.h"
 #include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/msh_io_ply.h"
+#include "delfem2/glfw/viewer3.h"
+#include "delfem2/glfw/util.h"
+#include "delfem2/opengl/old/v3q.h"
 
 namespace dfm2 = delfem2;
 

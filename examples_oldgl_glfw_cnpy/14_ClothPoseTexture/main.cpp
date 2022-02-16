@@ -19,7 +19,6 @@
 #include <GLFW/glfw3.h>
 
 #include "inputs_garment.h"
-#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/garment.h"
 #include "delfem2/pbd_geo3.h"
@@ -27,8 +26,10 @@
 #include "delfem2/srch_bv3_aabb.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/msh_io_obj.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/cad2_io_svg.h"
+#include "delfem2/kinetic_damping.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"

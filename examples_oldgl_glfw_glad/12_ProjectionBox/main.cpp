@@ -15,14 +15,14 @@
 #include <glad/glad.h> // glad need to be defiend in the begenning
 #include <GLFW/glfw3.h>
 
+#include "delfem2/msh_io_obj.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/r2tglo.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/msh_io_obj.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/msh_points.h"
 
 namespace dfm2 = delfem2;
 

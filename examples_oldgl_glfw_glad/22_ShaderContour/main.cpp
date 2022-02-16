@@ -19,7 +19,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/opengl/funcs.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/r2tglo.h"

@@ -24,7 +24,7 @@
 #include "imgui_impl_opengl3.h"
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/msh_io_ply.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/opengl/new/drawer_mshtri.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"

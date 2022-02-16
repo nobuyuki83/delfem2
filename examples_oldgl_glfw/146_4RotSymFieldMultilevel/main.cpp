@@ -21,7 +21,7 @@
 
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/vec3.h"
 #include "delfem2/4rotsym.h"

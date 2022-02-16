@@ -7,7 +7,6 @@
 
 #include <cassert>
 #include <iostream>
-#include <string>
 #include <vector>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
@@ -21,7 +20,7 @@
 #include "delfem2/isrf_adf.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/msh_unindexed.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/msh_primitive.h"
 #include "delfem2/glfw/viewer3.h"
@@ -33,17 +32,14 @@ namespace dfm2 = delfem2;
 
 // -----------------------
 
-delfem2::AdaptiveDistanceField3 adf;
-std::vector<unsigned int> aTri;
-std::vector<double> aXYZ;
-std::vector<double> tri_xyz;
-std::vector<double> edge_xyz;
-bool is_show_cage = false;
-const double color_face[3] = {1,1,1};
-
 // ---------------
 
-void Draw(const delfem2::AdaptiveDistanceField3 &adf) {
+void Draw(
+    const delfem2::AdaptiveDistanceField3 &adf,
+    const std::vector<double> &tri_xyz,
+    const std::vector<double> &edge_xyz,
+    bool is_show_cage) {
+  const double color_face[3] = {1,1,1};
   //    std::cout << "ADF" << aNode.size() << std::endl;
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glDisable(GL_LIGHTING);
@@ -68,7 +64,15 @@ void Draw(const delfem2::AdaptiveDistanceField3 &adf) {
   if (is_lighting) { ::glEnable(GL_LIGHTING); }
 }
 
-void SetProblem(int iprob) {
+
+std::vector<unsigned int> aTri;
+std::vector<double> aXYZ;
+
+void SetProblem(
+    delfem2::AdaptiveDistanceField3 &adf,
+    std::vector<double> &tri_xyz,
+    std::vector<double> &edge_xyz,
+    int iprob) {
   if (iprob == 0) {
     class CInSphere : public delfem2::Input_AdaptiveDistanceField3 {
      public:
@@ -148,8 +152,12 @@ void SetProblem(int iprob) {
 // ------------------------------------------------
 
 int main() {
-  delfem2::glfw::CViewer3 viewer(2.0);
+  delfem2::AdaptiveDistanceField3 adf;
+  std::vector<double> tri_xyz;
+  std::vector<double> edge_xyz;
+  bool is_show_cage = false;
   //
+  delfem2::glfw::CViewer3 viewer(2.0);
   delfem2::glfw::InitGLOld();
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
@@ -160,7 +168,9 @@ int main() {
     {
       const double time = glfwGetTime();
       if (time - time_last_update > 2) {
-        SetProblem(iproblem);
+        SetProblem(
+            adf, tri_xyz, edge_xyz,
+            iproblem);
         iproblem = (iproblem + 1) % 3;
         time_last_update = glfwGetTime();
       }
@@ -169,13 +179,13 @@ int main() {
     viewer.DrawBegin_oldGL();
     if (iproblem == 0) {
         is_show_cage = false;
-      Draw(adf);
+      Draw(adf,tri_xyz,edge_xyz,is_show_cage);
     } else if (iproblem == 1) {
         is_show_cage = true;
-      Draw(adf);
+      Draw(adf,tri_xyz,edge_xyz,is_show_cage);
     } else if (iproblem == 2) {
 //      opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
-      Draw(adf);
+      Draw(adf,tri_xyz,edge_xyz,is_show_cage);
     }
     viewer.SwapBuffers();
     glfwPollEvents();

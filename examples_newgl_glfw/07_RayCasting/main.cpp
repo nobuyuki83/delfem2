@@ -16,7 +16,7 @@
 #include "delfem2/srch_trimesh3_class.h"
 #include "delfem2/srch_bruteforce.h"
 #include "delfem2/srch_bv3_sphere.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/srch_bvh.h"

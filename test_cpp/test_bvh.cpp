@@ -18,7 +18,7 @@
 #include "delfem2/vec3_funcs.h"
 #include "delfem2/msh_primitive.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/sampling.h"
 
 #ifndef M_PI

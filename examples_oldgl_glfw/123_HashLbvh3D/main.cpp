@@ -14,7 +14,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/msh_points.h" // random uniform
+#include "delfem2/msh_affine_transformation.h" // random uniform
 #include "delfem2/srch_bvh.h"
 #include "delfem2/srch_bv3_aabb.h"
 #include "delfem2/srch_bv3_sphere.h"

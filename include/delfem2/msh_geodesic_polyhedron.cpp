@@ -5,17 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/msh_uniform_class.h"
+#include "delfem2/msh_geodesic_polyhedron.h"
 
-#include <string>
 #include <vector>
 
-#include "delfem2/msh_io_misc.h"
-#include "delfem2/msh_io_obj.h"
-#include "delfem2/msh_io_ply.h"
 #include "delfem2/msh_topology_uniform.h"
+#include "delfem2/jagarray.h"
+#include "delfem2/mshsubdiv.h"
 #include "delfem2/msh_primitive.h"
-#include "delfem2/dtri3_v3dtri.h"
 
 // --------------------------------------------------
 

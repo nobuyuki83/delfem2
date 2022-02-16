@@ -15,9 +15,8 @@
 #include <cassert>
 #include <string>
 #include <cstring>
-#include <map>
 
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 
 namespace delfem2::msh_ioobj {
 

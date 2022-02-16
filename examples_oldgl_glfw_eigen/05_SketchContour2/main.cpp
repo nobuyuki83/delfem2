@@ -16,7 +16,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/vec2.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/msh_primitive.h"
 #include "delfem2/slice.h"

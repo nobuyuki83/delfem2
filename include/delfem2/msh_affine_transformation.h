@@ -11,8 +11,8 @@
  * @details this file should not depends on anything except for  std::vector
  */
 
-#ifndef DFM2_POINTS_H
-#define DFM2_POINTS_H
+#ifndef DFM2_AFFINE_TRANSFORMATION_H
+#define DFM2_AFFINE_TRANSFORMATION_H
 
 #include <vector>
 
@@ -79,7 +79,7 @@ DFM2_INLINE void Scale_Points(
  * @param length_longest_edge_boundingbox length of longest edge of axis-aligned bounding box
  */
 template<typename REAL>
-DFM2_INLINE void Normalize_Points3(
+void Normalize_Points3(
     std::vector<REAL> &vtx_xyz,
     REAL length_longest_edge_boundingbox = 1);
 
@@ -94,18 +94,6 @@ DFM2_INLINE void NormalizeVector_Points(
     unsigned int np,
     unsigned int ndim);
 
-/**
- * @details implemented for "float" and "double"
- */
-template<typename T>
-DFM2_INLINE void CG_Point3(
-    T *center_of_gravity,
-    const std::vector<T> &vtx_xyz);
-
-DFM2_INLINE double EnergyKinetic(
-    const double *aUVW,
-    size_t np);
-
 template<typename T>
 DFM2_INLINE void Points_RandomUniform(
     T *aOdir,
@@ -118,25 +106,11 @@ DFM2_INLINE void TangentVector_Points3(
     std::vector<double> &aOdir,
     const std::vector<double> &aNorm);
 
-class CKineticDamper {
- public:
-  void Damp(std::vector<double> &aUVW) {
-    aEnergy.push_back(EnergyKinetic(aUVW.data(), aUVW.size() / 3));
-    if (aEnergy.size() > 3) {
-      aEnergy.erase(aEnergy.begin());
-      const double g0 = aEnergy[1] - aEnergy[0];
-      const double g1 = aEnergy[2] - aEnergy[1];
-      if (g0 > 0 && g1 < 0) { aUVW.assign(aUVW.size(), 0.0); }
-    }
-  }
- public:
-  std::vector<double> aEnergy;
-};
 
 } // delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/msh_points.cpp"
+#  include "delfem2/msh_affine_transformation.cpp"
 #endif
 
 #endif

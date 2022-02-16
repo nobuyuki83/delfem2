@@ -9,7 +9,7 @@
 #include "delfem2/svd3.h"
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/msh_primitive.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/grid3hash.h"
 
 // ---------------

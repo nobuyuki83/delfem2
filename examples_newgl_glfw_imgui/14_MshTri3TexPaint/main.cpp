@@ -25,7 +25,7 @@
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/msh_topology_uniform.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/srch_bruteforce.h"
 #include "delfem2/opengl/new/drawer_mshtex.h"
 #include "delfem2/opengl/new/drawer_sphere.h"

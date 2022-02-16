@@ -12,8 +12,8 @@
 
 // (2020/12/00) created
 
-#ifndef DFM2_MSHMIX_H
-#define DFM2_MSHMIX_H
+#ifndef DFM2_MSH_TOPOLOGY_MIX_H
+#define DFM2_MSH_TOPOLOGY_MIX_H
 
 #include "delfem2/mshelm.h"
 #include "delfem2/dfm2_inline.h"
@@ -224,7 +224,7 @@ public:
 } // end namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/mshmix.cpp"
+#  include "delfem2/msh_topology_mix.cpp"
 #endif
 
 #endif /* mshmix_h */

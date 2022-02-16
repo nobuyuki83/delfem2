@@ -24,6 +24,15 @@
 namespace delfem2 {
 
 
+/**
+ * @details implemented for "float" and "double"
+ */
+template<typename T>
+DFM2_INLINE void CG_Point3(
+    T *center_of_gravity,
+    const std::vector<T> &vtx_xyz);    
+
+
 DFM2_INLINE void CG_Tri(
     double &cgx,
     double &cgy,

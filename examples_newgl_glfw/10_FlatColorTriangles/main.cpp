@@ -18,10 +18,10 @@
 #endif
 #include <GLFW/glfw3.h>
 
+#include "delfem2/vec3.h"
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/msh_unindexed.h"
-#include "delfem2/msh_points.h"
-#include "delfem2/vec3.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/opengl/new/drawer_mshunindex.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"

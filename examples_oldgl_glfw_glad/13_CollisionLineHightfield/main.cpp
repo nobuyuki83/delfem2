@@ -17,7 +17,7 @@
 
 #include "delfem2/srch_bruteforce.h"
 #include "delfem2/msh_io_obj.h"
-#include "delfem2/msh_points.h"
+#include "delfem2/msh_affine_transformation.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
