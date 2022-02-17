@@ -30,8 +30,8 @@ void delfem2::CdC_Rod3BendStraight(
   const M3 du2dp2 = +(M3::Identity() - M3::OuterProduct(u2.p, u2.p)) / l2;
   const T cos0 = 1 + u0.dot(u2);
   const V3 tan0 = u0.cross(u2) / cos0;
-  const M3 dtdu0 = (-M3::Spin(u2.p) - M3::OuterProduct(tan0.p, u2.p)) / cos0;
-  const M3 dtdu2 = (+M3::Spin(u0.p) - M3::OuterProduct(tan0.p, u0.p)) / cos0;
+  const M3 dtdu0 = (-M3::Skew(u2) - M3::OuterProduct(tan0.p, u2.p)) / cos0;
+  const M3 dtdu2 = (+M3::Skew(u0) - M3::OuterProduct(tan0.p, u0.p)) / cos0;
   const M3 dtdp0 = dtdu0 * du0dp0;
   const M3 dtdp2 = dtdu2 * du2dp2;
   tan0.CopyTo(C);
@@ -71,16 +71,16 @@ double delfem2::WdWddW_Rod3BendStraight(
   const dfm2::CVec3d t = u0.cross(u2) / c;
   const double w = 0.5 * t.squaredNorm();
   const dfm2::CMat3d dtdu0 =
-      (-dfm2::CMat3d::Spin(u2.p) - dfm2::CMat3d::OuterProduct(t.p, u2.p)) / c;
+      (-dfm2::CMat3d::Skew(u2) - dfm2::CMat3d::OuterProduct(t.p, u2.p)) / c;
   const dfm2::CMat3d dtdu2 =
-      (+dfm2::CMat3d::Spin(u0.p) - dfm2::CMat3d::OuterProduct(t.p, u0.p)) / c;
+      (+dfm2::CMat3d::Skew(u0) - dfm2::CMat3d::OuterProduct(t.p, u0.p)) / c;
   dW_dP[0] = +t * dtdu0 * du0;
   dW_dP[2] = +t * dtdu2 * du2;
   dW_dP[1] = -(dW_dP[0] + dW_dP[2]);
   {
     const dfm2::CMat3d tddtddu0 =
-        -dfm2::CMat3d::Spin(u2.p) * dfm2::CMat3d::OuterProduct(t.p, u2.p) / (c * c) +
-            dfm2::CMat3d::OuterProduct(u2.p, t.p) * dfm2::CMat3d::Spin(u2.p) / (c * c) +
+        -dfm2::CMat3d::Skew(u2) * dfm2::CMat3d::OuterProduct(t.p, u2.p) / (c * c) +
+            dfm2::CMat3d::OuterProduct(u2.p, t.p) * dfm2::CMat3d::Skew(u2) / (c * c) +
             2 * dfm2::CMat3d::OuterProduct(u2.p, u2.p) * t.squaredNorm() / (c * c);
     const dfm2::CVec3d x = +t * dtdu0;
     const dfm2::CMat3d xddu0 =
@@ -95,10 +95,10 @@ double delfem2::WdWddW_Rod3BendStraight(
   }
   {
     const dfm2::CMat3d tddtdu2du0 =
-        -dfm2::CMat3d::Spin(t.p) / c
+        -dfm2::CMat3d::Skew(t) / c
             - (t.squaredNorm() / c) * dfm2::CMat3d::Identity()
-            + dfm2::CMat3d::Spin(t.p) * dfm2::CMat3d::OuterProduct(u2.p, u0.p) / (c * c)
-            + dfm2::CMat3d::OuterProduct(u2.p, u0.p) * dfm2::CMat3d::Spin(t.p) / (c * c)
+            + dfm2::CMat3d::Skew(t) * dfm2::CMat3d::OuterProduct(u2.p, u0.p) / (c * c)
+            + dfm2::CMat3d::OuterProduct(u2.p, u0.p) * dfm2::CMat3d::Skew(t) / (c * c)
             + 2 * dfm2::CMat3d::OuterProduct(u2.p, u0.p) * t.squaredNorm() / (c * c);
     ddW_ddP[2][0] = du2.transpose() * dtdu2.transpose() * dtdu0 * du0
         + du2.transpose() * tddtdu2du0.transpose() * du0;
@@ -106,8 +106,8 @@ double delfem2::WdWddW_Rod3BendStraight(
   }
   {
     const dfm2::CMat3d tddtddu2 =
-        dfm2::CMat3d::Spin(u0.p) * dfm2::CMat3d::OuterProduct(t.p, u0.p) / (c * c) -
-            dfm2::CMat3d::OuterProduct(u0.p, t.p) * dfm2::CMat3d::Spin(u0.p) / (c * c) +
+        dfm2::CMat3d::Skew(u0) * dfm2::CMat3d::OuterProduct(t.p, u0.p) / (c * c) -
+            dfm2::CMat3d::OuterProduct(u0.p, t.p) * dfm2::CMat3d::Skew(u0) / (c * c) +
             2 * dfm2::CMat3d::OuterProduct(u0.p, u0.p) * t.squaredNorm() / (c * c);
     const dfm2::CVec3d x = +t * dtdu2;
     const dfm2::CMat3d xddu2 =

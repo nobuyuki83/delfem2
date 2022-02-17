@@ -44,7 +44,7 @@ DFM2_INLINE void Rig_SensitivityBoneTransform(
     CMat4d m01 = CMat4d::AffineScale(aBone1[ibone].scale);
     m01 = CMat4d::Quat(aBone1[ibone].quatRelativeRot) * m01;
     if( ibone == ib_s && is_rot ){
-      CMat3d dn1 = CMat3d::Spin(CVec3d::Axis(idim_s).p) + CMat3d::Identity();
+      CMat3d dn1 = CMat3d::Skew(CVec3d::Axis(idim_s)) + CMat3d::Identity();
       CMat4d dm1 = CMat4d::Mat3(dn1.data());
       m01 = dm1 * m01;
     }

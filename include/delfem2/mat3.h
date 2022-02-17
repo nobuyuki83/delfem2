@@ -259,7 +259,8 @@ class CMat3 {
     m.setZero();
     return m;
   }
-  static CMat3 Spin(const REAL *v) {
+  template <typename VEC>
+  static CMat3 Skew(const VEC &v) {
     return CMat3{
         0, -v[2], +v[1],
         +v[2], 0, -v[0],

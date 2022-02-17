@@ -76,10 +76,20 @@ void Mat3_Spin_ScaleAdd(
     REAL alpha,
     REAL beta);
 
+// -----------
+
+template<typename REAL>
+std::array<REAL,9> Mat3_Identity(
+    REAL alpha = 1);
+
+// -----------
+
 template<typename REAL>
 void Mat3_Identity(
     REAL *mat,
     REAL alpha);
+
+// -----------
 
 template<typename REAL>
 DFM2_INLINE void Mat3_Identity_ScaleAdd(

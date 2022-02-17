@@ -30,10 +30,10 @@ double DiffPiolaKirchhoff1st(
   P0 = U0 * (T0 * V0.transpose());
   for (unsigned i = 0; i < 3; ++i) {
     for (unsigned j = 0; j < 3; ++j) {
-      const dfm2::CMat3d dU = -U0 * dfm2::CMat3d::Spin(
-          std::array<double, 3>{diff[0][i][j], diff[1][i][j], diff[2][i][j]}.data());
-      const dfm2::CMat3d dV = -V0 * dfm2::CMat3d::Spin(
-          std::array<double, 3>{diff[6][i][j], diff[7][i][j], diff[8][i][j]}.data());
+      const dfm2::CMat3d dU = -U0 * dfm2::CMat3d::Skew(
+          std::array<double, 3>{diff[0][i][j], diff[1][i][j], diff[2][i][j]});
+      const dfm2::CMat3d dV = -V0 * dfm2::CMat3d::Skew(
+          std::array<double, 3>{diff[6][i][j], diff[7][i][j], diff[8][i][j]});
       const dfm2::CMat3d dS(diff[3][i][j], diff[4][i][j], diff[5][i][j]);
       const double t0 = ddWddl0[0][0] * dS(0, 0) + ddWddl0[0][1] * dS(1, 1) + ddWddl0[0][2] * dS(2, 2);
       const double t1 = ddWddl0[1][0] * dS(0, 0) + ddWddl0[1][1] * dS(1, 1) + ddWddl0[1][2] * dS(2, 2);

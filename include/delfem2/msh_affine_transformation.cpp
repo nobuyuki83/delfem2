@@ -322,14 +322,6 @@ template void delfem2::NormalizeVector_Points(
     double *, unsigned int, unsigned int);
 #endif
 
-// --------------------------------------
-
-
-
-
-// ---------------------------------------
-
-
 // -------------------------------------------------
 
 template<typename T>

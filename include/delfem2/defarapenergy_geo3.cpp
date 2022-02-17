@@ -96,7 +96,7 @@ DFM2_INLINE void delfem2::ddW_ArapEnergy(
     for(unsigned int kkp=0;kkp<nNg;++kkp){
       const CVec3d vj = (CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
       const CVec3d vk = (CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
-      CMat3d L1 = Mrot*CMat3d::Spin(vk.p)*LMi*CMat3d::Spin(vj.p)*Mrot.transpose();
+      CMat3d L1 = Mrot*CMat3d::Skew(vk)*LMi*CMat3d::Skew(vj)*Mrot.transpose();
       //        L1 = CMat3d::Spin(vk.p)*LMi*CMat3d::Spin(vj.p);
       L1.AddToScale(eM.data()+(kkp*nIP+jjp)*9, -1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, -1.0);

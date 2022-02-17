@@ -186,6 +186,19 @@ template void delfem2::Mat3_Identity_ScaleAdd(float *mat, float alpha, float bet
 template void delfem2::Mat3_Identity_ScaleAdd(double *mat, double alpha, double beta);
 #endif
 
+// ----------
+
+template<typename REAL>
+std::array<REAL,9> delfem2::Mat3_Identity(
+    REAL alpha) {
+  return {
+    alpha, 0, 0,
+    0, alpha, 0,
+    0, 0, alpha };
+}
+
+// ----------
+
 template<typename REAL>
 void delfem2::Mat3_Identity(REAL *mat,
                             REAL alpha) {
