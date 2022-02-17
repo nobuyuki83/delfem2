@@ -61,7 +61,6 @@ add_executable(${PROJECT_NAME}
     ${IMGUI_DIR}/backends/imgui_impl_glfw.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/glad4/include/glad/glad.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/glad4/src/glad.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../3rd_party/ImGuiFileDialog/ImGuiFileDialog.cpp
     main.cpp
     )
 

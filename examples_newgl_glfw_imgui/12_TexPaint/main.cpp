@@ -18,7 +18,7 @@
 #endif
 #include <GLFW/glfw3.h>
 
-#include "ImGuiFileDialog/ImGuiFileDialog.h"
+//#include "ImGuiFileDialog/ImGuiFileDialog.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -107,6 +107,7 @@ void draw(GLFWwindow *window) {
   { // render your GUI
     ImGui::Begin("Triangle Mesh");
     // open Dialog Simple
+    /*
     if (ImGui::Button("Load Texture")) {
       ImGuiFileDialog::Instance()->OpenDialog(
           "ChooseTexFileDlgKey",
@@ -122,6 +123,7 @@ void draw(GLFWwindow *window) {
       }
       ImGuiFileDialog::Instance()->Close();
     }
+     */
     ImGui::End();
   }
 

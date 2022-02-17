@@ -18,7 +18,7 @@
 #endif
 #include <GLFW/glfw3.h>
 
-#include "ImGuiFileDialog/ImGuiFileDialog.h"
+//#include "ImGuiFileDialog/ImGuiFileDialog.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -216,6 +216,7 @@ void draw(GLFWwindow *window) {
 
   { // render your GUI
     ImGui::Begin("Triangle Mesh");
+    /*
     ImGui::Text(
         "%s", std::filesystem::path(viewer.obj_file_path_).filename().c_str());
     // open Dialog Simple
@@ -302,6 +303,7 @@ void draw(GLFWwindow *window) {
       }
       ImGuiFileDialog::Instance()->Close();
     }
+     */
     ImGui::End();
   }
 
