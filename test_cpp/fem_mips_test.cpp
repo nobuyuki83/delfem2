@@ -13,7 +13,7 @@
 #include "delfem2/mat3_funcs.h"
 #include "delfem2/vec3_funcs.h"
 #include "delfem2/geo_tri.h"
-#include "delfem2/femmips_geo3.h"
+#include "delfem2/fem_mips.h"
 #include "delfem2/mshmisc.h"
 
 namespace dfm2 = delfem2;

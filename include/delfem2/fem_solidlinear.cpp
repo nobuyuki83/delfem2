@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/femsolidlinear.h"
+#include "delfem2/fem_solidlinear.h"
 
 #include "delfem2/quadrature.h"
 

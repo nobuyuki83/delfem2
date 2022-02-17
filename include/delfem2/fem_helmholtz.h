@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_FEMHELMHOLTZ_H
-#define DFM2_FEMHELMHOLTZ_H
+#ifndef DFM2_FEM_HELMHOLTZ_H
+#define DFM2_FEM_HELMHOLTZ_H
 
 #include <vector>
 #include <complex>
@@ -110,7 +110,7 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/femhelmholtz.cpp"
+#  include "delfem2/fem_helmholtz.cpp"
 #endif
   
 #endif /* fem_ematrix_h */

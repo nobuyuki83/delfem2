@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/femstokes.h"
+#include "delfem2/fem_stokes.h"
 
 #include <cmath>
 

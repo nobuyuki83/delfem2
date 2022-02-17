@@ -55,7 +55,7 @@ void AddWdWddW_Solid3Compression_Hex(
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/femsolidhyper.cpp"
+#  include "delfem2/fem_solidhyper.cpp"
 #endif
 
 #endif

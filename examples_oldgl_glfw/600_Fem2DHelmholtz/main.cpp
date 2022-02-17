@@ -20,7 +20,7 @@
 #include "delfem2/ls_ilu_block_sparse.h"
 #include "delfem2/ls_block_sparse.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/femhelmholtz.h"
+#include "delfem2/fem_helmholtz.h"
 #include "delfem2/cad2.h"
 #include "delfem2/cad2_mesher.h"
 #include "delfem2/msh_topology_uniform.h"

@@ -10,7 +10,7 @@
 #include <cassert>
 #include <complex>
 
-#include "delfem2/femdkt.h"
+#include "delfem2/fem_dkt.h"
 
 DFM2_INLINE void delfem2::MakeCurvetureDKT(
     double B1[][3], double B2[][3][2],

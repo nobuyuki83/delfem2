@@ -106,7 +106,7 @@ void MassLumped_ShellPlateBendingMITC3(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/femmitc3.cpp"
+#  include "delfem2/fem_mitc3.cpp"
 #endif
 
 #endif /* fem_ematrix_h */

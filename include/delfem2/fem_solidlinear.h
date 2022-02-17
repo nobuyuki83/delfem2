@@ -533,7 +533,7 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-  #include "delfem2/femsolidlinear.cpp"
+  #include "delfem2/fem_solidlinear.cpp"
 #endif
   
 #endif /* fem_ematrix_h */

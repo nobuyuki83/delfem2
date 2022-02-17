@@ -6,7 +6,7 @@
 
 #include "gtest/gtest.h" // need to be defiend in the beginning
 
-#include "delfem2/femsolidhyper.h"
+#include "delfem2/fem_solidhyper.h"
 
 void MakeRandomHex(
     double aP0[8][3],

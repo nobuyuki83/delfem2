@@ -270,7 +270,7 @@ void MergeLinSys_Stokes3D_Dynamic(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/femstokes.cpp"
+#  include "delfem2/fem_stokes.cpp"
 #endif
   
 #endif /* fem_ematrix_h */

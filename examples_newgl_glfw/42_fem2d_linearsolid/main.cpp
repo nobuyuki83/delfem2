@@ -30,7 +30,7 @@
 #include "delfem2/ls_block_sparse.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/view_vectorx.h"
-#include "delfem2/femsolidlinear.h"
+#include "delfem2/fem_solidlinear.h"
 #include "delfem2/opengl/new/drawer_mshdisp.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"

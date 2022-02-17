@@ -15,7 +15,7 @@
 #include "delfem2/view_vectorx.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/femmitc3.h"
+#include "delfem2/fem_mitc3.h"
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/vec2.h"
 #include "delfem2/jagarray.h"

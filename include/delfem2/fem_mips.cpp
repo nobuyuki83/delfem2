@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/femmips_geo3.h"
+#include "delfem2/fem_mips.h"
 
 #include "delfem2/mat3_funcs.h"
 

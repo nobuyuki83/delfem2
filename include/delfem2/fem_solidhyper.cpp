@@ -1,6 +1,6 @@
 
 
-#include "delfem2/femsolidhyper.h"
+#include "delfem2/fem_solidhyper.h"
 
 #include <cmath>
 

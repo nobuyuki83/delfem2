@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/femnavierstokes.h"
+#include "delfem2/fem_navierstokes.h"
 
 #include <cmath>
 #include <cassert>

@@ -206,7 +206,7 @@ void MergeLinSys_NavierStokes3D_Dynamic(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/femnavierstokes.cpp"
+#  include "delfem2/fem_navierstokes.cpp"
 #endif
   
 #endif /* DFM2_FEMNAVIERSTOKES_H */

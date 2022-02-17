@@ -20,7 +20,7 @@
 #include "delfem2/lsitrsol.h"
 #include "delfem2/ls_block_sparse.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/femmitc3.h"
+#include "delfem2/fem_mitc3.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/mshmisc.h"

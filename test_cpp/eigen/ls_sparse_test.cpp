@@ -15,7 +15,7 @@
 #include "delfem2/ls_block_sparse.h"
 #include "delfem2/ls_ilu_block_sparse.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/femsolidlinear.h"
+#include "delfem2/fem_solidlinear.h"
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri.h"

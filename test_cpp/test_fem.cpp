@@ -12,7 +12,7 @@
 #include "delfem2/ls_block_sparse.h" // this is necessary for merge operation in fem-related headers
 #include "delfem2/geo_tri.h"
 #include "delfem2/fem_discreteshell.h"
-#include "delfem2/fempoisson.h"
+#include "delfem2/fem_poisson.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/sampling.h"
 #include "delfem2/vec3_funcs.h"

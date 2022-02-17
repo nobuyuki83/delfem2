@@ -25,7 +25,7 @@ DFM2_INLINE void WdWddW_MIPS(
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/femmips_geo3.cpp"
+#  include "delfem2/fem_mips.cpp"
 #endif
 
 #endif /* pbd_v23_h */

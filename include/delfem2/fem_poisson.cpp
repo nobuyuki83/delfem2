@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/fempoisson.h"
+#include "delfem2/fem_poisson.h"
 
 #include "delfem2/quadrature.h"
 

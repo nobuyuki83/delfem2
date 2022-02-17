@@ -24,7 +24,7 @@
 #include "delfem2/eigen/ls_sparse.h"
 #include "delfem2/eigen/ls_ilu_sparse.h"
 #include "delfem2/lsitrsol.h"
-#include "delfem2/femsolidlinear.h"
+#include "delfem2/fem_solidlinear.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/mshuni.h"

@@ -15,12 +15,12 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/femsolidhyper.h"
 #include "delfem2/ls_ilu_block_sparse.h"
 #include "delfem2/lsitrsol.h"
 #include "delfem2/ls_block_sparse.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/fem_solidhyper.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/msh_primitive.h"

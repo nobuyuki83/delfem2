@@ -15,7 +15,7 @@
 #include "delfem2/ls_ilu_block_sparse.h"
 #include "delfem2/view_vectorx.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/fempoisson.h"
+#include "delfem2/fem_poisson.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/colormap.h"
 

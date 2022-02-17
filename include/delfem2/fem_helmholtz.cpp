@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/femhelmholtz.h"
+#include "delfem2/fem_helmholtz.h"
 
 #include <cmath>
 #include <cassert>

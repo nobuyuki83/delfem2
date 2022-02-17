@@ -248,7 +248,7 @@ void MergeLinSys_Diffusion_MeshTet3D(
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/fempoisson.cpp"
+#  include "delfem2/fem_poisson.cpp"
 #endif
   
 #endif /* fem_ematrix_h */
