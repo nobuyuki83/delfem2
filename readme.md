@@ -13,7 +13,9 @@
 
 DelFEM2 is a end-to-end framework for geometry processing and FEM simulation covering wide range of components including shape editing, meshing, FEM simulation, linear solver, variational mesh deformer, and visualization. DelFEM2 is aiming to be an interactive digital engineering and authoring tool.
 
-**There is a python binding available at**: [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2)
+**There is a python binding available at** 
++ [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2) (deprecated)
++ [delfem2-python-bindings](https://github.com/nobuyuki83/delfem2-python-bindings) (maintained)
 
 The implementation is based on my old open source project [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
@@ -44,13 +46,9 @@ There are currently no tutorial available for this library. To understand the co
   + [test_cpp/cuda](test_cpp/cuda) : test using cuda
   + [test_cpp/eigen](test_cpp/eigen) : test using eigen
 
-Several demos in "examples_newgl_glfw" can be run on the browser. Please take a look at https://nobuyuki83.github.io/delfem2/
-
 See [docs/coding.md](docs/coding.md) for the coding convention. 
 
-Please also checkout  these alternative opensource projects [CGAL](https://www.cgal.org/), [libIGL](https://github.com/libigl/libigl).
-
-
+Please also checkout these alternative opensource projects [CGAL](https://www.cgal.org/), [libIGL](https://github.com/libigl/libigl).
 
 
 ***
@@ -106,7 +104,7 @@ DelFEM2 is distributed under the [MIT licence](https://github.com/nobuyuki83/del
 In a nut shell, it is free to use/distribute this software commercially for any purpose. But please always keep the copyright notice below and the MIT lisence statement.
 
 
-	Copyright (C) Nobuyuki Umetani 2020
+	Copyright (C) Nobuyuki Umetani 2021
 
 If DelFEM2 contributes to an academic publication, cite it as:
 
