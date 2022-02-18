@@ -8,13 +8,8 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
+#include "delfem2/ls_solver_block_sparse_ilu.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/ls_ilu_block_sparse.h"
-#include "delfem2/ls_block_sparse.h"
-#include "delfem2/ls_solver_block_sparse.h"
-#include "delfem2/view_vectorx.h"
-#include "delfem2/lsitrsol.h"
-#include "delfem2/vecxitrsol.h"
 #include "delfem2/fem_mitc3.h"
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/vec2.h"
@@ -29,8 +24,8 @@ namespace dfm2 = delfem2;
 // ------------------------
 
 void InitializeProblem_PlateBendingMITC3(
-    dfm2::LinearSystemSolver_BlockSparse &ls,
-    dfm2::CPreconditionerILU<double> &ilu_sparse,
+    std::vector<double> &vtx_disp,
+    dfm2::LinearSystemSolver_BlockSparseILU &ls,
     const double lenx,
     [[maybe_unused]] const double leny,
     const std::vector<double> &vtx_xy_initial,
@@ -45,7 +40,6 @@ void InitializeProblem_PlateBendingMITC3(
     dfm2::JArray_Sort(psup_ind, psup);
     ls.Initialize(np, 3, psup_ind, psup);
   }
-  ls.vec_x.resize(vtx_xy_initial.size() / 2 * 3, 0.0);
   // set boundary condition flag
   for (unsigned int ip = 0; ip < np; ++ip) {
     const double px = vtx_xy_initial[ip * 2 + 0];
@@ -55,8 +49,7 @@ void InitializeProblem_PlateBendingMITC3(
       ls.dof_bcflag[ip * 3 + 2] = 1;
     }
   }
-  // initialize sparse solver
-  ilu_sparse.Initialize_ILUk(ls.matrix, 0);
+  vtx_disp.resize(vtx_xy_initial.size() / 2 * 3, 0.0);
 }
 
 /**
@@ -75,11 +68,8 @@ void InitializeProblem_PlateBendingMITC3(
  * @param aTri
  */
 void SolveProblem_PlateBendingMITC3(
-    std::vector<double> &vec_x,
-    std::vector<double> &vec_r,
-    dfm2::CMatrixSparse<double> &mat_A,
-    dfm2::CPreconditionerILU<double> &ilu_A,
-    const std::vector<int> &aBCFlag,
+    std::vector<double> &vtx_disp,
+    dfm2::LinearSystemSolver_BlockSparseILU &ls,
     const double thickness,
     const double myu,
     const double lambda,
@@ -89,41 +79,19 @@ void SolveProblem_PlateBendingMITC3(
     const std::vector<unsigned int> &aTri) {
   const std::size_t np = aXY0.size() / 2;
   const std::size_t nDoF = np * 3;
-  //
-  mat_A.setZero();
-  vec_r.assign(nDoF, 0.0);
-  assert(vec_x.size() == nDoF);
+  ls.BeginMerge();
+  //assert(vec_x.size() == nDoF);
   dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
-      mat_A, vec_r.data(),
+      ls.matrix, ls.vec_r.data(),
       thickness, lambda, myu,
       rho, gravity_z,
       aXY0.data(), aXY0.size() / 2,
       aTri.data(), aTri.size() / 3,
-      vec_x.data());
-  mat_A.SetFixedBC(aBCFlag.data());
-  dfm2::setRHS_Zero(vec_r, aBCFlag, 0);
-  //
-  std::vector<double> vec_u;
-  {
-    ilu_A.CopyValue(mat_A);
-    ilu_A.Decompose();
-    vec_u.resize(vec_r.size());
-    {
-      const std::size_t n = vec_r.size();
-      std::vector<double> tmp0(n), tmp1(n);
-      auto vr = dfm2::ViewAsVectorXd(vec_r);
-      auto vu = dfm2::ViewAsVectorXd(vec_u);
-      auto vt = dfm2::ViewAsVectorXd(tmp0);
-      auto vs = dfm2::ViewAsVectorXd(tmp1);
-      std::vector<double> conv = dfm2::Solve_PCG(
-          vr, vu, vt, vs,
-          1.0e-5, 1000, mat_A, ilu_A);
-      std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size() - 1] << std::endl;
-    }
-  }
-  //
-  dfm2::XPlusAY(vec_x, nDoF, aBCFlag,
-                1.0, vec_u);
+      vtx_disp.data());
+  ls.Solve_PcgIlu();
+  dfm2::XPlusAY(
+      vtx_disp, nDoF, ls.dof_bcflag,
+      1.0, ls.vec_x);
 }
 
 void MyDisplay(
@@ -183,21 +151,22 @@ int main() {
     std::cout << "  ntri;" << tri_vtx.size() / 3 << "  nXY:" << vtx_xy_initial.size() / 2 << std::endl;
   }
   // -------------
-  dfm2::LinearSystemSolver_BlockSparse ls;
-  dfm2::CPreconditionerILU<double> ilu_A;
-  InitializeProblem_PlateBendingMITC3(
-      ls, ilu_A,
-      lenx, leny, vtx_xy_initial, tri_vtx);
-  // -----------
+  std::vector<double> vtx_disp;
   const double thickness = 0.05;
   const double myu = 10000.0;
   const double lambda = 0.0;
   const double rho = 1.0;
   const double gravity_z = -10.0;
-  SolveProblem_PlateBendingMITC3(
-      ls.vec_x, ls.vec_r, ls.matrix, ilu_A, ls.dof_bcflag,
-      thickness, myu, lambda, rho, gravity_z,
-      vtx_xy_initial, tri_vtx);
+  {
+    dfm2::LinearSystemSolver_BlockSparseILU ls;
+    InitializeProblem_PlateBendingMITC3(
+        vtx_disp, ls,
+        lenx, leny, vtx_xy_initial, tri_vtx);
+    SolveProblem_PlateBendingMITC3(
+        vtx_disp, ls,
+        thickness, myu, lambda, rho, gravity_z,
+        vtx_xy_initial, tri_vtx);
+  }
 
   delfem2::glfw::CViewer3 viewer(0.8);
   delfem2::glfw::InitGLOld();
@@ -216,13 +185,13 @@ int main() {
     for (size_t ip = 0; ip < vtx_xy_initial.size() / 2; ++ip) {
       const double px = vtx_xy_initial[ip * 2 + 0];
       if (fabs(px - (+lenx * 0.5)) > 0.0001) { continue; }
-      std::cout << ls.vec_x[ip * 3 + 0] << std::endl;
+      std::cout << vtx_disp[ip * 3 + 0] << std::endl;
     }
   }
 
   while (!glfwWindowShouldClose(viewer.window)) {
     viewer.DrawBegin_oldGL();
-    MyDisplay(vtx_xy_initial, tri_vtx, ls.vec_x);
+    MyDisplay(vtx_xy_initial, tri_vtx, vtx_disp);
     viewer.SwapBuffers();
     glfwPollEvents();
   }

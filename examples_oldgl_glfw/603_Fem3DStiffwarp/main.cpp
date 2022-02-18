@@ -16,12 +16,15 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/svd3.h"
-#include "delfem2/mat3.h"
-#include "delfem2/mat3_funcs.h"
+/*
 #include "delfem2/ls_ilu_block_sparse.h"
 #include "delfem2/ls_block_sparse.h"
 #include "delfem2/vecxitrsol.h"
+ */
+#include "delfem2/ls_solver_block_sparse_ilu.h"
+#include "delfem2/svd3.h"
+#include "delfem2/mat3.h"
+#include "delfem2/mat3_funcs.h"
 #include "delfem2/fem_solidlinear.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/mshmisc.h"
@@ -105,29 +108,16 @@ void RotationAtMeshPoints(
 
 // ---------------------------
 
-bool is_stiffness_warping = true;
-
-std::vector<unsigned int> aTet;
-std::vector<double> aXYZ;
-std::vector<double> aDisp;
-std::vector<double> aVelo;
-std::vector<int> aBCFlag;
-double dt = 0.03;
-double myu = 200.0;
-double lambda = 1.0;
-double rho = 1.0;
-const double gravity[3] = {0.0, -4.0, 0.0};
-
-dfm2::CMatrixSparse<double> mat_A;
-std::vector<double> vec_b;
-dfm2::CPreconditionerILU<double> ilu_A;
-std::vector<unsigned int> psup_ind, psup;
-std::vector<double> aR;
-
 // --------------------------------------------
 
 
-void InitializeProblem_ShellEigenPB() {
+void InitializeProblem_ShellEigenPB(
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTet,
+    std::vector<unsigned int> &psup_ind,
+    std::vector<unsigned int> &psup,
+    dfm2::CMatrixSparse<double> &mat_A,
+    dfm2::CPreconditionerILU<double> &ilu_A) {
   const size_t np = aXYZ.size() / 3;
   dfm2::JArray_PSuP_MeshElem(
       psup_ind, psup,
@@ -142,7 +132,20 @@ void InitializeProblem_ShellEigenPB() {
 
 // ------------------------------------------------------
 
-void Solve_Linear() {
+void Solve_Linear(
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTet,
+    std::vector<double> &aDisp,
+    std::vector<double> &aVelo,
+    dfm2::CMatrixSparse<double> &mat_A,
+    std::vector<double> &vec_b,
+    dfm2::CPreconditionerILU<double> &ilu_A,
+    double myu,
+    double lambda,
+    double rho,
+    const double gravity[3],
+    double dt,
+    const std::vector<int> &aBCFlag) {
   mat_A.setZero();
   vec_b.assign(aXYZ.size(), 0.0);
   dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
@@ -173,7 +176,23 @@ void Solve_Linear() {
   std::cout << "conv; " << aConv.size() << std::endl;
 }
 
-void Solve_StiffnessWarping() {
+void Solve_StiffnessWarping(
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTet,
+    std::vector<double> &aDisp,
+    std::vector<double> &aVelo,
+    std::vector<double> &aR,
+    dfm2::CMatrixSparse<double> &mat_A,
+    std::vector<double> &vec_b,
+    dfm2::CPreconditionerILU<double> &ilu_A,
+    double myu,
+    double lambda,
+    double rho,
+    const double gravity[3],
+    double dt,
+    const std::vector<int> &aBCFlag,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup) {
   RotationAtMeshPoints(aR,
                        aXYZ, aDisp, psup_ind, psup);
   // ----------------------
@@ -209,7 +228,11 @@ void Solve_StiffnessWarping() {
 
 // --------------------------------------------------------------
 
-void myGlutDisplay() {
+void myGlutDisplay(
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTet,
+    std::vector<double> &aDisp,
+    std::vector<double> &aR ) {
   {
     float color[4] = {200.0 / 256.0, 200.0 / 256.0, 200.0 / 256.0, 1.0f};
     ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
@@ -266,6 +289,20 @@ void myGlutDisplay() {
 }
 
 int main() {
+  std::vector<unsigned int> tet_vtx;
+  std::vector<double> vtx_xyz;
+  std::vector<double> vtx_dispxyz;
+  std::vector<double> vtx_veloxyz;
+  std::vector<int> vtx_bcflag;
+  double dt = 0.03;
+  double myu = 200.0;
+  double lambda = 1.0;
+  double rho = 1.0;
+  const double gravity[3] = {0.0, -4.0, 0.0};
+
+  dfm2::LinearSystemSolver_BlockSparseILU solver;
+  std::vector<unsigned int> psup_ind, psup;
+  std::vector<double> aR;
   {
     std::vector<std::vector<double> > aaXY;
     {
@@ -286,39 +323,60 @@ int main() {
     CMeshTri2D(aXY, aTri,
                aVec2, aETri);
     dfm2::ExtrudeTri2Tet(3, 0.075,
-                         aXYZ, aTet,
+                         vtx_xyz, tet_vtx,
                          aXY, aTri);
   }
-  aDisp.assign(aXYZ.size(), 0.0);
-  aVelo.assign(aXYZ.size(), 0.0);
-  aBCFlag.assign(aXYZ.size(), 0);
-  for (std::size_t ip = 0; ip < aXYZ.size() / 3; ++ip) {
-    double x0 = aXYZ[ip * 3 + 0];
+  vtx_dispxyz.assign(vtx_xyz.size(), 0.0);
+  vtx_veloxyz.assign(vtx_xyz.size(), 0.0);
+  vtx_bcflag.assign(vtx_xyz.size(), 0);
+  for (std::size_t ip = 0; ip < vtx_xyz.size() / 3; ++ip) {
+    double x0 = vtx_xyz[ip * 3 + 0];
     if (fabs(x0 + 1) < 1.0e-10) {
-      aBCFlag[ip * 3 + 0] = 1;
-      aBCFlag[ip * 3 + 1] = 1;
-      aBCFlag[ip * 3 + 2] = 1;
+      vtx_bcflag[ip * 3 + 0] = 1;
+      vtx_bcflag[ip * 3 + 1] = 1;
+      vtx_bcflag[ip * 3 + 2] = 1;
     }
   }
-  InitializeProblem_ShellEigenPB();
-  RotationAtMeshPoints(aR,
-                       aXYZ, aDisp, psup_ind, psup);
+  InitializeProblem_ShellEigenPB(
+      vtx_xyz, tet_vtx, psup_ind, psup, solver.matrix, solver.ilu_sparse);
+  RotationAtMeshPoints(
+      aR,
+      vtx_xyz, vtx_dispxyz, psup_ind, psup);
 
   delfem2::glfw::CViewer3 viewer(2.0);
   {
     viewer.view_rotation = std::make_unique<delfem2::ModelView_Ytop>();
   }
+  bool is_stiffness_warping = true;
+  viewer.keypress_callbacks.emplace_back([&is_stiffness_warping](int key, int){
+    if( key == GLFW_KEY_SPACE ) {
+      is_stiffness_warping = !is_stiffness_warping;
+    }
+  });
   //
   delfem2::glfw::InitGLOld();
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
   //
   while (!glfwWindowShouldClose(viewer.window)) {
-    if (is_stiffness_warping) { Solve_StiffnessWarping(); }
-    else { Solve_Linear(); }
+    if (is_stiffness_warping) {
+      Solve_StiffnessWarping(
+          vtx_xyz, tet_vtx, vtx_dispxyz, vtx_veloxyz, aR,
+          solver.matrix, solver.vec_r, solver.ilu_sparse,
+          myu, lambda, rho, gravity, dt,
+          vtx_bcflag, psup_ind, psup);
+    }
+    else {
+      Solve_Linear(
+          vtx_xyz, tet_vtx, vtx_dispxyz, vtx_veloxyz,
+          solver.matrix, solver.vec_r, solver.ilu_sparse,
+          myu, lambda, rho, gravity, dt,
+          vtx_bcflag);
+    }
     // -----
     viewer.DrawBegin_oldGL();
-    myGlutDisplay();
+    myGlutDisplay(
+        vtx_xyz, tet_vtx, vtx_dispxyz, aR );
     viewer.SwapBuffers();
     glfwPollEvents();
   }

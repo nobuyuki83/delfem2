@@ -25,10 +25,6 @@
 #include "delfem2/str.h"
 #include "delfem2/file.h"
 
-void MeshTri3D_GeodesicPolyhedron(
-    std::vector<double>& aXYZ1,
-    std::vector<unsigned int>& aTri1);
-
 class CMeshElem{
 public:
   CMeshElem(){
