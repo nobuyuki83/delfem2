@@ -40,10 +40,8 @@ void Draw(
   ::glEnable(GL_DEPTH_TEST);
   dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), aTri.data(), aTri.size()/3);
   ::glDisable(GL_DEPTH_TEST);
-  delfem2::opengl::DrawBone_Line(
-      aBone,
-      -1, -1,
-      0.01, 1.0);
+  delfem2::opengl::DrawBoneCurrent_Line(
+      aBone, -1, 0.01);
 //    dfm2::opengl::DrawJoints(aJntPos1, aIndBoneParent);
 //    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0.data(), aTri.data(), aTri.size()/3);
 //    dfm2::opengl::DrawJoints(aJntPos0, aIndBoneParent);
@@ -74,7 +72,8 @@ int main()
           aJntPos0,
           aJntRgrs, aXYZ0);
       for(unsigned int ij=0;ij<aJntPos0.size()/3;++ij){
-        std::cout << ij << " " << aIndBoneParent[ij] << " " << aJntPos0[ij*3+0] << " " << aJntPos0[ij*3+1] << " " << aJntPos0[ij*3+2] << std::endl;
+        std::cout << ij << " " << aIndBoneParent[ij] << std::endl;
+        std::cout << " " << aJntPos0[ij*3+0] << " " << aJntPos0[ij*3+1] << " " << aJntPos0[ij*3+2] << std::endl;
       }
       dfm2::InitBones_JointPosition(
           aBone,

@@ -237,10 +237,8 @@ void Draw(
     ::glEnd();
   }
   ::glDisable(GL_DEPTH_TEST);
-  delfem2::opengl::DrawBone_Line(
-      aBone,
-      -1, -1,
-      0.01, 1.0);
+  delfem2::opengl::DrawBoneCurrent_Line(
+      aBone, -1, 0.01);
   ::glEnable(GL_DEPTH_TEST);
   //    dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat1,0.02);
 }

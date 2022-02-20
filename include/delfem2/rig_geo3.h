@@ -89,7 +89,7 @@ class CRigBone {
   }
 
   // TODO: rename this function PosRoot
-  [[nodiscard]] std::array<double,3> RootPosition() const {
+  [[nodiscard]] std::array<double, 3> RootPosition() const {
     // invBindMat will map the global position to the origin.
     // the translation component of affmat3Global represent the root position after skeletal deformation
     return {affmat3Global[3], affmat3Global[7], affmat3Global[11]};
@@ -108,7 +108,7 @@ class CRigBone {
   std::string name; // initialized and stay constant
 
   /** 
-   * @brief Inverse of Affine matrix to send the skin to the bone reference config.
+   * @brief Inverse of Affine matrix to send the bone to its reference config.
    * @details The joint position of this bone will be mapped to the origin.
    * The data format is column-major
    */
@@ -144,7 +144,7 @@ class CRigBone {
 /**
  * @brief set CRigBone.affmat3Global for all the bones
  * @details transformation goes in the order of "scale(S)" -> rotation(R) -> translation(T)
- * Affine matrix of i-th bone will be computed as A_i = T_i*R_i*S_i * T_i-1*R_i-1*S_i-1 * .... * T_0*R_0*S_0
+ * Affine matrix of i-th bone will be computed as A_i = (T_0*R_0*S_0) * ... * (T_i-1*R_i-1*S_i-1) * (T_i*R_i*S_i)
  * The point is transfromed for i-th bone as V = A_i*B_i*v where B_i is the "inverseBindingMatrix"
  */
 DFM2_INLINE void UpdateBoneRotTrans(
@@ -210,7 +210,7 @@ DFM2_INLINE void InitBones_JointPosition(
 
 DFM2_INLINE void Rig_SkinReferncePositionsBoneWeighted(
     std::vector<double> &aRefPosAff,
-    const std::vector<CRigBone>& aBone1,
+    const std::vector<CRigBone> &aBone1,
     const std::vector<double> &aXYZ0,
     const std::vector<double> &aW);
 

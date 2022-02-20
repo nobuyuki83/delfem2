@@ -73,9 +73,19 @@ DFM2_INLINE void Quat_Identity(
  * @param[in] z radian
  */
 template<typename REAL>
-DFM2_INLINE void Quat_Bryant(
+void Quat_Bryant(
     REAL q[4],
     REAL x, REAL y, REAL z);
+
+// ------------------
+
+template<typename REAL>
+std::array<REAL,4> Quat_Bryant(
+    REAL x, REAL y, REAL z){
+  std::array<REAL,4> r;
+  Quat_Bryant(r.data(), x, y, z);
+  return r;
+}
 
 // ==================
 

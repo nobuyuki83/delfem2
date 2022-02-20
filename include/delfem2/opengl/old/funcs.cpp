@@ -439,11 +439,13 @@ DFM2_INLINE void delfem2::opengl::DrawSphereAt(
     int nla, int nlo, double rad,
     double x, double y, double z) {
   ::glMatrixMode(GL_MODELVIEW);
+  ::glPushMatrix();
   ::glTranslated(+x, +y, +z);
   ::glScaled(rad, rad, rad);
   DrawSphere(nla, nlo);
-  ::glScaled(1.0 / rad, 1.0 / rad, 1.0 / rad);
-  ::glTranslated(-x, -y, -z);
+  ::glPopMatrix();
+//  ::glScaled(1.0 / rad, 1.0 / rad, 1.0 / rad);
+  //::glTranslated(-x, -y, -z);
 }
 
 DFM2_INLINE void delfem2::opengl::DrawSphere_Edge

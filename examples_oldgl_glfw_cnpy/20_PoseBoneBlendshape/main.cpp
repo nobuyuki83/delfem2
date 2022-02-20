@@ -40,10 +40,8 @@ void Draw(
   ::glEnable(GL_DEPTH_TEST);
   dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), aTri.data(), aTri.size()/3);
   ::glDisable(GL_DEPTH_TEST);
-  delfem2::opengl::DrawBone_Line(
-      aBone,
-      -1, -1,
-      0.01, 1.0);
+  delfem2::opengl::DrawBoneCurrent_Line(
+      aBone, -1, 0.01);
 //    dfm2::opengl::DrawJoints(aJntPos1, aIndBoneParent);
 //    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0.data(), aTri.data(), aTri.size()/3);
 //    dfm2::opengl::DrawJoints(aJntPos0, aIndBoneParent);

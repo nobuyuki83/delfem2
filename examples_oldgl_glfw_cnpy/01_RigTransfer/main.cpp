@@ -230,14 +230,10 @@ int main()
 //    dfm2::opengl::DrawJoints(aJntPos1, aIndBoneParent);
 //    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0.data(), aTri.data(), aTri.size()/3);
 //    dfm2::opengl::DrawJoints(aJntPos0, aIndBoneParent);
-    dfm2::opengl::DrawBone_Line(
-        aBone,
-        -1, -1,
-        0.02, 1.0);
-    dfm2::opengl::DrawBone_Line(
-        aBone_MotionSrc,
-        -1, -1,
-        0.02, 1.0);
+    dfm2::opengl::DrawBoneCurrent_Line(
+        aBone, -1, 0.02);
+    dfm2::opengl::DrawBoneCurrent_Line(
+        aBone_MotionSrc, -1, 0.02);
     for(unsigned int ibs=0;ibs<aBone.size();++ibs){
       int ibt = aMapBoneTrg2Src[ibs].ibone_dist;
       if( ibt < 0 ){ continue; }

@@ -19,9 +19,9 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/mat4.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/glfw/ViewRig.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"

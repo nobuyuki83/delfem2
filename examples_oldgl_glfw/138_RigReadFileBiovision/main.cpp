@@ -31,7 +31,8 @@ int main() {
   size_t nframe = 0;
   std::vector<double> aValRotTransBone;
 
-  std::string path_bvh = std::string(PATH_INPUT_DIR) + "/jump.bvh";
+  //std::string path_bvh = std::string(PATH_INPUT_DIR) + "/jump.bvh";
+  std::string path_bvh = std::string(PATH_INPUT_DIR) + "/walk.bvh";
 //  std::cout << "path:" << path_bvh << std::endl;
   {
     double frame_time;
@@ -73,7 +74,7 @@ int main() {
         -1, -1,
         0.1, 1.0);
         */
-    dfm2::opengl::DrawBone_Octahedron(
+    dfm2::opengl::DrawBoneCurrent_Octahedron(
       aBone,
       UINT_MAX, UINT_MAX,
       0.1, 1.0);
@@ -84,56 +85,3 @@ int main() {
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }
-
-// ----------------------------------------------------------------------
-
-/*
- int ibone_selected = -1;
- int ielem_bone_selected = -1;
- bool is_animation = false;
- double rad_bone_sphere = 0.1;
- double rad_rot_hndlr = 1.0;
- 
- void myGlutMotion( int x, int y )
- {
- nav.glutMotion(x, y);
- if( nav.imodifier != 0 ) return;
- ////
- if( ibone_selected>=0 && ibone_selected<aBone.size() ){
- nav.SetGL_Camera();
- float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
- float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
- CVector2 sp1(nav.mouse_x, nav.mouse_y);
- CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
- CRigBone& bone = aBone[ibone_selected];
- DragHandlerRot_Mat4(bone.rot,
- ielem_bone_selected, sp0, sp1, bone.Mat,
- mMV, mPj);
- UpdateBoneRotTrans(aBone);
- }
- ::glutPostRedisplay();
- }
- 
- void myGlutMouse(int button, int state, int x, int y)
- {
- nav.glutMouse(button, state, x, y);
- /////
- nav.SetGL_Camera();
- float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
- float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
- CVector3 src = screenUnProjection(CVector3(nav.mouse_x,nav.mouse_y,0.0), mMV, mPj);
- CVector3 dir = screenDepthDirection(src,mMV,mPj);
- if( state == GLUT_DOWN ){
- const double wh = 1.0/mPj[5];
- PickBone(ibone_selected, ielem_bone_selected,
- aBone,
- src,dir,
- rad_rot_hndlr,
- wh*0.02);
- }
- else{
- }
- /////
- ::glutPostRedisplay();
- }
- */

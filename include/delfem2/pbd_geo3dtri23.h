@@ -50,4 +50,4 @@ void PBD_Bend(
 #  include "delfem2/pbd_geo3dtri23.cpp"
 #endif
 
-#endif /* pbd_v23_h */
+#endif /* DFM2_PBD_GEO3DTRI23_H */

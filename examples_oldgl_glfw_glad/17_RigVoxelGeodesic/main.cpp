@@ -343,7 +343,7 @@ int main() {
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), tri_vtx.data(), tri_vtx.size() / 3);
       ::glDisable(GL_DEPTH_TEST);
       ::glDisable(GL_LIGHTING);
-      dfm2::opengl::DrawBone_Line(bones, -1, -1, 0.02, -0.2);
+      dfm2::opengl::DrawBoneCurrent_Line(bones, -1, 0.02);
       dfm2::opengl::myGlColorDiffuse(dfm2::CColor::Red());
       ::glColor3d(0, 0, 0);
       viewer.SwapBuffers();

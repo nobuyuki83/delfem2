@@ -172,10 +172,8 @@ public:
         aXYZ1.data(),
         aTri.data(), aTri.size() / 3);
     ::glDisable(GL_DEPTH_TEST);
-    ::delfem2::opengl::DrawBone_Line(
-        aBone,
-        -1, -1,
-        0.01, 1.0);
+    ::delfem2::opengl::DrawBoneCurrent_Line(
+        aBone, -1, 0.01);
     ::delfem2::glfw::Draw(gizmo, aBone);
   }
 

@@ -13,7 +13,6 @@
 
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/pbd_geo3dtri23.h"
-#include "delfem2/fem_quadratic_bending.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/cad2.h"
 #include "delfem2/cad2_mesher.h"
@@ -38,58 +37,55 @@ std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
 std::vector<dfm2::CVec2d> aVec2;
 std::vector<unsigned int> aLine;
-std::vector<double> aXYZ; // deformed vertex positions
-std::vector<double> aXYZt;
-std::vector<double> aUVW; // deformed vertex velocity
-std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
 std::vector<dfm2::CInfoNearest<double>> aInfoNearest;
 
-std::vector<double> aXYZ_Contact;
-std::vector<unsigned int> aTri_Contact;
-std::vector<double> aNorm_Contact(aXYZ.size());
 dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
-std::vector<double> aXYZ0_Contact;
-std::vector<double> aRigSparseW_Contact;
-std::vector<unsigned int> aRigSparseI_Contact;
-std::vector<dfm2::CRigBone> aBone;
 
 const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, 0.0};
 const double contact_clearance = 0.0001;
 const double rad_explore = 0.1;
 
-bool is_animation = false;
-
 // ------------------------------------
 
-void StepTime() {
+void StepTime(
+    std::vector<double> &vtx_xyz_cloth,
+    std::vector<double> &vtx_xyz_clothtmp,
+    std::vector<double> &vtx_uvw_cloth,
+    const std::vector<int> &vtx_bcflag,
+    const std::vector<double> &vtx_xyz_body,
+    const std::vector<unsigned int> &tri_vtx_body,
+    const std::vector<double> &vtx_nrm_body) {
   dfm2::PBD_Pre3D(
-      aXYZt,
-      dt, gravity, aXYZ, aUVW, aBCFlag);
+      vtx_xyz_clothtmp,
+      dt, gravity, vtx_xyz_cloth, vtx_uvw_cloth, vtx_bcflag);
   dfm2::PBD_TriStrain(
-      aXYZt.data(),
-      aXYZt.size() / 3, aETri, aVec2);
+      vtx_xyz_clothtmp.data(),
+      vtx_xyz_clothtmp.size() / 3, aETri, aVec2);
   dfm2::PBD_Bend(
-      aXYZt.data(),
-      aXYZt.size() / 3, aETri, aVec2, 1.0);
+      vtx_xyz_clothtmp.data(),
+      vtx_xyz_clothtmp.size() / 3, aETri, aVec2, 1.0);
   dfm2::PBD_Seam(
-      aXYZt.data(),
-      aXYZt.size() / 3, aLine.data(), aLine.size() / 2);
+      vtx_xyz_clothtmp.data(),
+      vtx_xyz_clothtmp.size() / 3, aLine.data(), aLine.size() / 2);
   dfm2::Project_PointsIncludedInBVH_Outside_Cache(
-      aXYZt.data(), aInfoNearest,
-      aXYZt.size() / 3,
+      vtx_xyz_clothtmp.data(), aInfoNearest,
+      vtx_xyz_clothtmp.size() / 3,
       contact_clearance, bvh,
-      aXYZ_Contact.data(), aXYZ_Contact.size() / 3,
-      aTri_Contact.data(), aTri_Contact.size() / 3,
-      aNorm_Contact.data(), rad_explore);
+      vtx_xyz_body.data(), vtx_xyz_body.size() / 3,
+      tri_vtx_body.data(), tri_vtx_body.size() / 3,
+      vtx_nrm_body.data(), rad_explore);
   dfm2::PBD_Post(
-      aXYZ, aUVW,
-      dt, aXYZt, aBCFlag);
+      vtx_xyz_cloth, vtx_uvw_cloth,
+      dt, vtx_xyz_clothtmp, vtx_bcflag);
 }
 
 // ---------------------------------------
 
-void myGlutDisplay() {
+void myGlutDisplay(
+    const std::vector<double> &vtx_xyz_cloth,
+    const std::vector<double> &vtx_xyz_body,
+    const std::vector<unsigned int> &tri_vtx_body) {
   ::glClearColor(1.0, 1.0, 1.0, 1.0);
   //  ::glClearColor(0.0, .0, 0.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -113,11 +109,12 @@ void myGlutDisplay() {
 
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0, 0, 0);
-  delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
+  delfem2::opengl::DrawMeshDynTri3D_Edge(vtx_xyz_cloth, aETri);
 
   ::glColor3d(1, 0, 0);
-  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size() / 3,
-                                      aTri_Contact.data(), aTri_Contact.size() / 3);
+  delfem2::opengl::DrawMeshTri3D_Edge(
+      vtx_xyz_body.data(), vtx_xyz_body.size() / 3,
+      tri_vtx_body.data(), tri_vtx_body.size() / 3);
 //  DrawSphere_Edge(rad0);
 }
 
@@ -147,10 +144,14 @@ int main() {
   aVec2 = dmesh.aVec2;
 
   // -----------------------------
+  std::vector<double> vtx_xyz_cloth; // deformed vertex positions
+  std::vector<double> vtx_xyz_clothtmp;
+  std::vector<double> vtx_uvw_cloth; // deformed vertex velocity
+  std::vector<int> vtx_bcflag;  // boundary condition flag (0:free 1:fixed)
   const int np = aPo2D.size();
-  aUVW.resize(np * 3, 0.0);
-  aBCFlag.resize(np, 0);
-  aXYZ.resize(np * 3);
+  vtx_uvw_cloth.resize(np * 3, 0.0);
+  vtx_bcflag.resize(np, 0);
+  vtx_xyz_cloth.resize(np * 3);
   {
     CRigidTrans_2DTo3D rt23;
     rt23.org2 = dfm2::CVec2d(2.5, 0.5);
@@ -160,9 +161,9 @@ int main() {
     for (int ip: aIP) {
       dfm2::CVec3d p0(aVec2[ip].x - rt23.org2.x, aVec2[ip].y - rt23.org2.y, 0.0);
       dfm2::CVec3d p1 = rt23.org3 + rt23.R * p0;
-      aXYZ[ip * 3 + 0] = p1.x;
-      aXYZ[ip * 3 + 1] = p1.y;
-      aXYZ[ip * 3 + 2] = p1.z;
+      vtx_xyz_cloth[ip * 3 + 0] = p1.x;
+      vtx_xyz_cloth[ip * 3 + 1] = p1.y;
+      vtx_xyz_cloth[ip * 3 + 2] = p1.z;
     }
     {
       CRigidTrans_2DTo3D rt23;
@@ -173,9 +174,9 @@ int main() {
       for (int ip: aIP) {
         dfm2::CVec3d p0(aVec2[ip].x - rt23.org2.x, aVec2[ip].y - rt23.org2.y, 0.0);
         dfm2::CVec3d p1 = rt23.org3 + rt23.R * p0;
-        aXYZ[ip * 3 + 0] = p1.x;
-        aXYZ[ip * 3 + 1] = p1.y;
-        aXYZ[ip * 3 + 2] = p1.z;
+        vtx_xyz_cloth[ip * 3 + 0] = p1.x;
+        vtx_xyz_cloth[ip * 3 + 1] = p1.y;
+        vtx_xyz_cloth[ip * 3 + 2] = p1.z;
       }
     }
     aLine.clear();
@@ -204,8 +205,11 @@ int main() {
       }
     }
   }
-  aXYZt = aXYZ;
+  vtx_xyz_clothtmp = vtx_xyz_cloth;
 
+  std::vector<double> vtx_xyz_body;
+  std::vector<unsigned int> tri_vtx_body;
+  std::vector<double> vtx_nrm_body;
   { // make a unit sphere
     {
       tinygltf::Model model;
@@ -225,31 +229,37 @@ int main() {
         return -1;
       }
       dfm2::Print(model);
+      //
+      std::vector<double> vtx_xyz_bodyini;
+      std::vector<double> skinning_sparse_weight;
+      std::vector<unsigned int> skinning_sparse_index;
+      std::vector<dfm2::CRigBone> bones;
       dfm2::GetMeshInfo(
-          aXYZ0_Contact, aTri_Contact,
-          aRigSparseW_Contact, aRigSparseI_Contact,
+          vtx_xyz_bodyini, tri_vtx_body,
+          skinning_sparse_weight, skinning_sparse_index,
           model, 0, 0);
-      dfm2::GetBone(aBone, model, 0);
+      dfm2::GetBone(bones, model, 0);
       {
-        dfm2::Quat_Bryant(aBone[0].quatRelativeRot, -90.0 / 180.0 * 3.1415, 0.0, 0.0);
-        aBone[0].transRelative[2] -= 1.0;
+        dfm2::Quat_Bryant(bones[0].quatRelativeRot, -90.0 / 180.0 * 3.1415, 0.0, 0.0);
+        bones[0].transRelative[2] -= 1.0;
 //        Quat_Bryant(aBone[0].rot, 0, 0, 0);
       }
-      UpdateBoneRotTrans(aBone);
-      aXYZ_Contact = aXYZ0_Contact;
+      UpdateBoneRotTrans(bones);
+      vtx_xyz_body = vtx_xyz_bodyini;
       dfm2::Skinning_LBS_LocalWeight(
-          aXYZ_Contact.data(),
-          aXYZ0_Contact.data(), aXYZ0_Contact.size() / 3,
-          aBone, aRigSparseW_Contact.data(), aRigSparseI_Contact.data());
+          vtx_xyz_body.data(),
+          vtx_xyz_bodyini.data(), vtx_xyz_bodyini.size() / 3,
+          bones, skinning_sparse_weight.data(), skinning_sparse_index.data());
     }
-    aNorm_Contact.resize(aXYZ_Contact.size());
+
+    vtx_nrm_body.resize(vtx_xyz_body.size());
     delfem2::Normal_MeshTri3D(
-        aNorm_Contact.data(),
-        aXYZ_Contact.data(), aXYZ_Contact.size() / 3,
-        aTri_Contact.data(), aTri_Contact.size() / 3);
+        vtx_nrm_body.data(),
+        vtx_xyz_body.data(), vtx_xyz_body.size() / 3,
+        tri_vtx_body.data(), tri_vtx_body.size() / 3);
     bvh.Init(
-        aXYZ_Contact.data(), aXYZ_Contact.size() / 3,
-        aTri_Contact.data(), aTri_Contact.size() / 3,
+        vtx_xyz_body.data(), vtx_xyz_body.size() / 3,
+        tri_vtx_body.data(), tri_vtx_body.size() / 3,
         0.01);
   }
 
@@ -260,10 +270,14 @@ int main() {
   delfem2::opengl::setSomeLighting();
   // Enter main loop
   while (true) {
-    StepTime();
+    StepTime(
+        vtx_xyz_cloth, vtx_xyz_clothtmp, vtx_uvw_cloth, vtx_bcflag,
+        vtx_xyz_body, tri_vtx_body, vtx_nrm_body);
     // ------------
     viewer.DrawBegin_oldGL();
-    myGlutDisplay();
+    myGlutDisplay(
+        vtx_xyz_cloth,
+        vtx_xyz_body, tri_vtx_body);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }

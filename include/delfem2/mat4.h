@@ -422,6 +422,14 @@ class CMat4 {
     assert(i < 4 && j < 4);
     return mat[i * 4 + j];
   }
+  // implicit cast
+  operator std::array<REAL, 16>() const {
+    return {
+        mat[0], mat[1], mat[2], mat[3],
+        mat[4], mat[5], mat[6], mat[7],
+        mat[8], mat[9], mat[10], mat[11],
+        mat[12], mat[13], mat[14], mat[15]};
+  }
   // ------------------------
   // below: "set" functions
   void SetAffineTranslate(REAL x, REAL y, REAL z) {
@@ -466,12 +474,8 @@ class CMat4 {
         mat[8], mat[9], mat[10]};
   }
 
-  std::array<REAL, 16> GetStlArray() const {
-    return {
-        mat[0], mat[1], mat[2], mat[3],
-        mat[4], mat[5], mat[6], mat[7],
-        mat[8], mat[9], mat[10], mat[11],
-        mat[12], mat[13], mat[14], mat[15]};
+  std::array<REAL, 3> GetTranslationComponent() const {
+    return { mat[3], mat[7], mat[11] };
   }
 
   std::array<REAL, 3> MultVec3_Homography(const REAL *v) const {
