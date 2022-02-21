@@ -52,7 +52,7 @@ bool delfem2::isPickQuad(
   CVec3d n0 = Normal_Tri3(p1, p2, p3);
   CVec3d n1 = Normal_Tri3(p2, p3, p0);
   CVec3d n2 = Normal_Tri3(p3, p0, p1);
-  CVec3d n0123 =  n0 + n1 + n2 + n3;
+  CVec3d n0123 = n0 + n1 + n2 + n3;
   return n0123.dot(pick_dir) <= 0;
 }
 
@@ -144,12 +144,8 @@ DFM2_INLINE bool delfem2::DragHandlerRot_PosQuat(
   if (ielem >= 0 && ielem < 3) {
     double vi[3] = {0, 0, 0};
     vi[ielem] = 1;
-    double vo[3];
-    QuatVec(vo, quat, vi);
-    CVec3d v0(0, 0, 0);
-    v0[ielem] = 1;
-    CVec3d v1(vo[0], vo[1], vo[2]);
-    v1.normalize();
+    const CVec3d v1 = CVec3d(QuatVec3(quat, vi)).normalized();
+    const CVec3d v0 = CVec3d::Axis(ielem);
     double ar = -DragCircle(sp0, sp1, pos, v1, mMV, mPj);
     const double dq[4] = {
         v0.x * sin(ar * 0.5),
@@ -321,7 +317,7 @@ void delfem2::CGizmo_Rotation<REAL>::Drag(
   using CQ = CQuat<REAL>;
   int ielem = ielem_picked;
   if (ielem >= 0 && ielem < 3) {
-    CV3 va = CV3(CQ(quat).RotateVector(CV3::Axis(ielem))).normalized();
+    const CV3 va = CV3(CQ(quat).RotateVector(CV3::Axis(ielem))).normalized(); // rotation axis
     CV3 pz0, qz0;
     Nearest_Line_Circle(pz0, qz0,
                         CV3(src0), CV3(dir),
@@ -332,15 +328,9 @@ void delfem2::CGizmo_Rotation<REAL>::Drag(
                         pos, va, size);
     CV3 a0 = (qz0 - pos) / size;
     CV3 a1 = (qz1 - pos) / size;
-    const double ar = atan2((a0.cross(a1)).dot(va), a0.dot(a1));
-    const REAL dq[4] = {
-        (REAL) (va.x * sin(ar * 0.5)),
-        (REAL) (va.y * sin(ar * 0.5)),
-        (REAL) (va.z * sin(ar * 0.5)),
-        (REAL) cos(ar * 0.5)};
-    REAL qtmp[4];
-    QuatQuat(qtmp, dq, quat);
-    Copy_Quat(quat, qtmp);
+    const double ar = atan2((a0.cross(a1)).dot(va), a0.dot(a1)); // rotation angle
+    const CQuat<REAL> dq = Quat_CartesianAngle(ar * va);
+    (dq * CQuat<REAL>(quat)).CopyTo(quat);
   }
 }
 #ifdef DFM2_STATIC_LIBRARY
@@ -369,10 +359,10 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   {
     CVec3<REAL> pls, pl;
     ::delfem2::Nearest_Edge3_Line3<CVec3<REAL> >
-      (pls, pl,
-       pos - size * CVec3<REAL>::Axis(0),
-       pos + size * CVec3<REAL>::Axis(0),
-       CVec3<REAL>(src), CVec3<REAL>(dir));
+        (pls, pl,
+         pos - size * CVec3<REAL>::Axis(0),
+         pos + size * CVec3<REAL>::Axis(0),
+         CVec3<REAL>(src), CVec3<REAL>(dir));
     if ((pls - pl).norm() < tol) {
       ielem_picked = 0;
       return;
@@ -381,10 +371,10 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   {
     CVec3<REAL> pls, pl;
     ::delfem2::Nearest_Edge3_Line3<CVec3<REAL> >
-      (pls, pl,
-       pos - size * CVec3<REAL>::Axis(1),
-       pos + size * CVec3<REAL>::Axis(1),
-       CVec3<REAL>(src), CVec3<REAL>(dir));
+        (pls, pl,
+         pos - size * CVec3<REAL>::Axis(1),
+         pos + size * CVec3<REAL>::Axis(1),
+         CVec3<REAL>(src), CVec3<REAL>(dir));
     if ((pls - pl).norm() < tol) {
       ielem_picked = 1;
       return;
@@ -393,10 +383,10 @@ void delfem2::CGizmo_Transl<REAL>::Pick(
   {
     CVec3<REAL> pls, pl;
     ::delfem2::Nearest_Edge3_Line3<CVec3<REAL>>(
-      pls, pl,
-      pos - size * CVec3<REAL>::Axis(2),
-      pos + size * CVec3<REAL>::Axis(2),
-      CVec3<REAL>(src), CVec3<REAL>(dir));
+        pls, pl,
+        pos - size * CVec3<REAL>::Axis(2),
+        pos + size * CVec3<REAL>::Axis(2),
+        CVec3<REAL>(src), CVec3<REAL>(dir));
     if ((pls - pl).norm() < tol) {
       ielem_picked = 2;
       return;

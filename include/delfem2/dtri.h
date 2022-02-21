@@ -22,6 +22,11 @@ namespace delfem2 {
  */
 class CDynTri {
  public:
+  inline unsigned operator[](int i) const {
+    assert(i < 3);
+    return v[i];
+  }
+ public:
   /**
    * @brief index of vertex
    */

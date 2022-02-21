@@ -232,26 +232,7 @@ class CQuat {
 
   ~CQuat() = default;
   // -----------
-  static CQuat Random(T a) {
-    CQuat<T> q;
-    q.p[0] = 2 * a * rand() / (RAND_MAX + 1.0) - a;
-    q.p[1] = 2 * a * rand() / (RAND_MAX + 1.0) - a;
-    q.p[2] = 2 * a * rand() / (RAND_MAX + 1.0) - a;
-    q.p[3] = 1.0;
-    Normalize_Quat(q.p);
-    return q;
-  }
 
-  /**
-   * raw pointer copy (order of x,y,z,w)
-   */
-  template<typename T1>
-  void CopyTo(T1 *q1) const {
-    q1[0] = static_cast<T1>(p[0]);
-    q1[1] = static_cast<T1>(p[1]);
-    q1[2] = static_cast<T1>(p[2]);
-    q1[3] = static_cast<T1>(p[3]);
-  }
   template<typename T1>
   CQuat<T1> cast() const {
     // initialization is in the order of (w,x,y,z)
@@ -274,6 +255,27 @@ class CQuat {
   T *data() { return p; }
 
   const T *data() const { return p; }
+
+  static CQuat Random(T a) {
+    CQuat<T> q;
+    q.p[0] = 2 * a * rand() / (RAND_MAX + 1.0) - a;
+    q.p[1] = 2 * a * rand() / (RAND_MAX + 1.0) - a;
+    q.p[2] = 2 * a * rand() / (RAND_MAX + 1.0) - a;
+    q.p[3] = 1.0;
+    Normalize_Quat(q.p);
+    return q;
+  }
+
+  /**
+   * raw pointer copy (order of x,y,z,w)
+   */
+  template<typename T1>
+  void CopyTo(T1 *q1) const {
+    q1[0] = static_cast<T1>(p[0]);
+    q1[1] = static_cast<T1>(p[1]);
+    q1[2] = static_cast<T1>(p[2]);
+    q1[3] = static_cast<T1>(p[3]);
+  }
 
   void SetSmallerRotation();
 

@@ -10,7 +10,8 @@
 
 #include "delfem2/cad2.h"
 #include "delfem2/cad2_mesher.h"
-#include "delfem2/pbd_geo3dtri23.h"
+#include "delfem2/pbd_bending_for_dtri.h"
+#include "delfem2/pbd_stvk.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/mshmisc.h"

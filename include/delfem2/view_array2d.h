@@ -1,5 +1,5 @@
-
-
+#ifndef DFM2_VIEW_ARRAY2D_H
+#define DFM2_VIEW_ARRAY2D_H
 
 /**
  * view a raw array into array of array such as std::vector<dfm2::CVecXx> std::vector<Eigen::Vector2x>
@@ -21,3 +21,5 @@ class ViewAsArray2D {
   const size_t nvtx_;
   const size_t ndim_;
 };
+
+#endif

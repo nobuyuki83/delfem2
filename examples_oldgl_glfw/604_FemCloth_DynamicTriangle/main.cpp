@@ -61,12 +61,6 @@ dfm2::CMatrixSparse<double> mat_A; // coefficient matrix
 dfm2::CPreconditionerILU<double>  ilu_A; // ilu decomposition of the coefficient matrix
 double mass_point = 0.01;
 
-int idp_nearest = -1;
-int press_button = -1;
-double mov_begin_x, mov_begin_y;
-bool is_animation = true;
-double mag = 1.0;
-
 // ----------------------------------
 
 void GenMesh(const std::vector< std::vector<double> >& aaXY)
@@ -97,7 +91,7 @@ void GenMesh(const std::vector< std::vector<double> >& aaXY)
     std::vector<unsigned int> aFlgPnt(aPo2D.size());
     std::vector<unsigned int> aFlgTri(aETri.size(),0);
     MeshingInside(
-		aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,                
+		aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
 		aVec2.size(),0, elen, param);
   }
 }
@@ -131,13 +125,13 @@ void myGlutDisplay()
   ::glClearColor(1.0, 1.0, 1.0, 1.0);
   //  ::glClearColor(0.0, .0, 0.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  
+
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  
+
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
-  
+
   ::glPointSize(5);
   ::glLineWidth(1);
   ::glPointSize(5);
@@ -153,7 +147,7 @@ void myGlutDisplay()
      */
     delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   }
-  
+
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);

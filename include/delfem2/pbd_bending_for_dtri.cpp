@@ -5,13 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/pbd_geo3dtri23.h"
+#include "delfem2/pbd_bending_for_dtri.h"
 
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/fem_quadratic_bending.h"
-#include "delfem2/fem_stvk.h"
 
 // -------------------------------------
 
@@ -33,28 +31,6 @@ static void FetchData(
   }
 }
 
-}
-
-void delfem2::PBD_TriStrain(
-    double *aXYZt,
-    [[maybe_unused]] size_t nXYZ,
-    const std::vector<delfem2::CDynTri> &aETri,
-    const std::vector<CVec2d> &aVec2) {
-  for (const auto &etri : aETri) {
-    const unsigned int aIP[3] = {etri.v[0], etri.v[1], etri.v[2]};
-    const double P[3][2] = {
-        {aVec2[aIP[0]].x, aVec2[aIP[0]].y},
-        {aVec2[aIP[1]].x, aVec2[aIP[1]].y},
-        {aVec2[aIP[2]].x, aVec2[aIP[2]].y}};
-    double p[3][3];
-    objfdtri::FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
-    double C[3], dCdp[3][9];
-    CdC_StVK(C, dCdp, P, p);
-    const double mass[3] = {1, 1, 1};
-    PBD_Update_Const3(
-        aXYZt,
-        3, 3, mass, C, &dCdp[0][0], aIP, 1.0);
-  }
 }
 
 void delfem2::PBD_Bend(
