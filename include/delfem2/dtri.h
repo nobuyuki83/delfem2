@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <climits>
+#include <cassert>
 
 #include "delfem2/dfm2_inline.h"
 

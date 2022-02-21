@@ -55,22 +55,14 @@ int main() {
         path_bvh);
     UpdateBoneRotTrans(bones_bvh);
   }
-  // std::cout << bones_gltf.size() << " " << bones_bvh.size() << std::endl;
   std::vector<unsigned int> mapGltf2Bvh(bones_gltf.size(), UINT_MAX);
   for (unsigned int igltf = 0; igltf < bones_gltf.size(); ++igltf) {
-    // std::cout << igltf << " " << bones_gltf[igltf].name << std::endl;
     unsigned int jbvh = 0;
     for (jbvh = 0; jbvh < bones_bvh.size(); ++jbvh) {
       if (bones_gltf[igltf].name != bones_bvh[jbvh].name) { continue; }
       mapGltf2Bvh[igltf] = jbvh;
       break;
     }
-    //delfem2::Print_Mat4(bones_gltf[igltf].affmat3Global);
-    //delfem2::Print_Mat4(bones_gltf[igltf].invBindMat);
-    //delfem2::CMat4d m = (delfem2::CMat4d(bones_gltf[igltf].affmat3Global)).Inverse();
-    //delfem2::Print_Mat4(m);
-    //delfem2::Print_Mat4(bones_bvh[jbvh].affmat3Global);
-    //delfem2::Print_Mat4(bones_bvh[jbvh].invBindMat);
   }
 
   for (unsigned int igltf1 = 0; igltf1 < bones_gltf.size(); ++igltf1) {

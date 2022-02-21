@@ -40,8 +40,6 @@ std::vector<dfm2::CVec2d> aVec2;
 std::vector<unsigned int> aLine;
 std::vector<dfm2::CInfoNearest<double>> aInfoNearest;
 
-dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
-
 const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, 0.0};
 const double contact_clearance = 0.0001;
@@ -56,7 +54,8 @@ void StepTime(
     const std::vector<int> &vtx_bcflag,
     const std::vector<double> &vtx_xyz_body,
     const std::vector<unsigned int> &tri_vtx_body,
-    const std::vector<double> &vtx_nrm_body) {
+    const std::vector<double> &vtx_nrm_body,
+    const dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> &bvh_nodes_body) {
   dfm2::PBD_Pre3D(
       vtx_xyz_clothtmp,
       dt, gravity, vtx_xyz_cloth, vtx_uvw_cloth, vtx_bcflag);
@@ -72,7 +71,7 @@ void StepTime(
   dfm2::Project_PointsIncludedInBVH_Outside_Cache(
       vtx_xyz_clothtmp.data(), aInfoNearest,
       vtx_xyz_clothtmp.size() / 3,
-      contact_clearance, bvh,
+      contact_clearance, bvh_nodes_body,
       vtx_xyz_body.data(), vtx_xyz_body.size() / 3,
       tri_vtx_body.data(), tri_vtx_body.size() / 3,
       vtx_nrm_body.data(), rad_explore);
@@ -103,8 +102,8 @@ void myGlutDisplay(
     float color[4] = {200.0/256.0, 200.0/256.0, 200.0/256.0,1.0f};
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,color);
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
-    ::glEnable(GL_DEPTH_TEST);
      */
+    ::glEnable(GL_DEPTH_TEST);
 //    DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   }
 
@@ -211,6 +210,7 @@ int main() {
   std::vector<double> vtx_xyz_body;
   std::vector<unsigned int> tri_vtx_body;
   std::vector<double> vtx_nrm_body;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh_nodes_body;
   { // make a unit sphere
     {
       tinygltf::Model model;
@@ -258,7 +258,7 @@ int main() {
         vtx_nrm_body.data(),
         vtx_xyz_body.data(), vtx_xyz_body.size() / 3,
         tri_vtx_body.data(), tri_vtx_body.size() / 3);
-    bvh.Init(
+    bvh_nodes_body.Init(
         vtx_xyz_body.data(), vtx_xyz_body.size() / 3,
         tri_vtx_body.data(), tri_vtx_body.size() / 3,
         0.01);
@@ -273,7 +273,7 @@ int main() {
   while (true) {
     StepTime(
         vtx_xyz_cloth, vtx_xyz_clothtmp, vtx_uvw_cloth, vtx_bcflag,
-        vtx_xyz_body, tri_vtx_body, vtx_nrm_body);
+        vtx_xyz_body, tri_vtx_body, vtx_nrm_body, bvh_nodes_body);
     // ------------
     viewer.DrawBegin_oldGL();
     myGlutDisplay(
