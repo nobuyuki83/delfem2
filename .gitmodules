@@ -37,3 +37,6 @@
 [submodule "3rd_party/stb"]
 	path = 3rd_party/stb
 	url = https://github.com/nothings/stb.git
+[submodule "3rd_party/openvdb"]
+	path = 3rd_party/openvdb
+	url = https://github.com/AcademySoftwareFoundation/openvdb

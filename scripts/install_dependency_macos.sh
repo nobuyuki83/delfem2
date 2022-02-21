@@ -128,3 +128,18 @@ git checkout master
 git pull origin master
 cd ../../
 
+echo "################################"
+echo "fetch latest OpenVDB and build"
+echo "################################"
+
+git submodule update --init -- 3rd_party/openvdb
+cd 3rd_party/openvdb || exit
+git checkout master
+git pull origin master
+mkdir build
+cd build
+cmake ..
+# build with 8 threads
+cmake --build . -- -j8 
+cmake --install . --prefix ../../openvdblib
+cd ../../

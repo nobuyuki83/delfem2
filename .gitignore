@@ -87,6 +87,9 @@ test_inputs/smpl_model_m.npz
 3rd_party/eigenlib
 
 3rd_party/Imathlib
+3rd_party/openvdblib
+
+
 
 examples_oldgl_glfw_cnpy/14_ClothPoseTexture/body.obj
 examples_oldgl_glfw_cnpy/14_ClothPoseTexture/cloth.obj
