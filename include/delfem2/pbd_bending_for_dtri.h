@@ -10,7 +10,7 @@
 #define DFM2_PBD_BENDING_FOR_DTRI_H
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 #include "delfem2/vec2.h"
 
 // ------------------------------

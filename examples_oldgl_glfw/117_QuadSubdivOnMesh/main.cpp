@@ -15,7 +15,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/srch_bruteforce.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_normal.h"
 #include "delfem2/mshsubdiv.h"
 #include "delfem2/msh_primitive.h"
 #include "delfem2/vec3.h"

@@ -27,7 +27,7 @@
 #include "delfem2/fem_poisson.h"
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 #include "delfem2/color.h"
 #include "delfem2/jagarray.h"
 #include "delfem2/geo_polygon2.h"

@@ -20,6 +20,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/msh_io_ply.h"
+#include "delfem2/msh_normal.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/msh_affine_transformation.h"
 #include "delfem2/msh_topology_uniform.h"

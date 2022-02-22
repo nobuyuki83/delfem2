@@ -14,7 +14,7 @@
 #include "delfem2/pbd_stvk.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/rig_geo3.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_normal.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/srch_trimesh3_class.h"

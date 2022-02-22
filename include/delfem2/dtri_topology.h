@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_DTRI_H
-#define DFM2_DTRI_H
+#ifndef DFM2_DTRI_TOPOLOGY_H
+#define DFM2_DTRI_TOPOLOGY_H
 
 #include <vector>
 #include <climits>
@@ -213,7 +213,7 @@ DFM2_INLINE void extractHoles(
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/dtri.cpp"
+#  include "delfem2/dtri_topology.cpp"
 #endif
 
 #endif // DFM2_DTRI_H

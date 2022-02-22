@@ -18,12 +18,12 @@
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/cad2.h"
 #include "delfem2/cad2_mesher.h"
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 #include "delfem2/pbd_bending_for_dtri.h"
 #include "delfem2/pbd_geo3.h"
 #include "delfem2/pbd_stvk.h"
-#include "delfem2/mshmisc.h"  // Rotate, NormalMeshTri3D
-#include "delfem2/msh_affine_transformation.h"  // Rotate, NormalMeshTri3D
+#include "delfem2/msh_normal.h"  // NormalMeshTri3D
+#include "delfem2/msh_affine_transformation.h"  // Rotate
 #include "delfem2/msh_primitive.h"
 #include "delfem2/srch_trimesh3_class.h"
 #include "delfem2/srch_bv3_sphere.h"

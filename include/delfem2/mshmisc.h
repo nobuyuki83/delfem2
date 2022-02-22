@@ -31,35 +31,6 @@ DFM2_INLINE void RemoveUnreferencedPoints_MeshElem(
     const std::vector<double> &aXYZ0,
     const std::vector<unsigned int> &aElem0);
 
-/**
- * @brief Normal at the vertex of a triangle mesh.
- */
-template<typename REAL>
-DFM2_INLINE void Normal_MeshTri3D(
-    REAL *vtx_normal,
-    const REAL *vtx_xyz,
-    size_t num_vtx,
-    const unsigned int *tri_vtx,
-    size_t num_tri);
-
-/**
- * @brief Normal at the vertex of a triangle mesh.
- */
-template<typename REAL>
-std::array<REAL,3> Normal_TriInMeshTri3(
-    unsigned int itri,
-    const REAL *vtx_xyz,
-    const unsigned int *tri_vtx);
-
-/**
- * @brief Normal at the vertex of a quad mesh. Defined for "float" and "double"
- */
-template<typename REAL>
-DFM2_INLINE void Normal_MeshQuad3(
-    std::vector<REAL> &aNorm,
-    const std::vector<REAL> &aXYZ,
-    const std::vector<unsigned int> &aQuad);
-
 DFM2_INLINE void Quality_MeshTri2D(
     double &max_aspect, 
 	double &min_area,

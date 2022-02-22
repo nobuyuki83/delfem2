@@ -21,7 +21,7 @@
 #include "delfem2/msh_affine_transformation.h"
 #include "delfem2/msh_io_ply.h"
 #include "delfem2/msh_topology_uniform.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_normal.h"
 #include "delfem2/isrf_iss.h"
 #include "delfem2/srch_bv3_sphere.h"
 #include "delfem2/srch_trimesh3_class.h"

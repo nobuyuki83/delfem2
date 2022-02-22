@@ -18,7 +18,7 @@
 #include "delfem2/pbd_bending_for_dtri.h"
 #include "delfem2/pbd_stvk.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"

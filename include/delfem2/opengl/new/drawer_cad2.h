@@ -14,7 +14,7 @@
 
 #include "delfem2/opengl/new/funcs.h" // for CGL4_VAO_Mesh
 #include "delfem2/vec2.h"
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dfm2_inline.h"
 

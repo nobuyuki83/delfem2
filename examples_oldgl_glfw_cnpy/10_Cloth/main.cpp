@@ -24,7 +24,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/msh_affine_transformation.h"
 #include "delfem2/kinetic_damping.h"
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 #include "delfem2/color.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/glfw/viewer3.h"

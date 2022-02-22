@@ -20,7 +20,7 @@
 #include "delfem2/opengl/funcs.h" // compile shader
 #include "delfem2/opengl/new/funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/msh_topology_uniform.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_normal.h"
 
 // ------------------------------------------
 

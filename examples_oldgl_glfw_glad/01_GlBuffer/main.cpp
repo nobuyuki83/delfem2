@@ -16,7 +16,7 @@
 
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/msh_topology_uniform.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_normal.h"
 #include "delfem2/msh_affine_transformation.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/color.h"

@@ -13,7 +13,7 @@
 #include <cassert>
 #include <climits>
 
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 
 // ---------------------------------------------
 

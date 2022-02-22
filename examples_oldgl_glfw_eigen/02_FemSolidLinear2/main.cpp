@@ -19,7 +19,7 @@
 
 #include "delfem2/msh_topology_uniform.h"
 #include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 #include "delfem2/eigen/ls_dense.h"
 #include "delfem2/eigen/ls_sparse.h"
 #include "delfem2/eigen/ls_ilu_sparse.h"
