@@ -17,7 +17,7 @@
 #include "delfem2/cam_projection.h"
 #include "delfem2/cam_modelview.h"
 #include "delfem2/msh_io_obj.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_normal.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/opengl/old/funcs.h"

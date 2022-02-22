@@ -7,7 +7,7 @@
 #include "gtest/gtest.h" // need to be defiend in the beginning
 
 #include "delfem2/vec2.h"
-#include "delfem2/dtri.h"
+#include "delfem2/dtri_topology.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/ls_block_sparse.h"
 #include "delfem2/ls_ilu_block_sparse.h"

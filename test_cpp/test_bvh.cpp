@@ -17,7 +17,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/vec3_funcs.h"
 #include "delfem2/msh_primitive.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_normal.h"
 #include "delfem2/msh_affine_transformation.h"
 #include "delfem2/sampling.h"
 

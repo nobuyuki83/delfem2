@@ -14,6 +14,7 @@
 #define DFM2_MSH_NORMAL_H
 
 #include <vector>
+#include <array>
 
 #include "delfem2/dfm2_inline.h"
 

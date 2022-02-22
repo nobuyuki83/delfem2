@@ -172,23 +172,6 @@ cmake ..
 cmake --build .
 cd ../../
 
-echo "################################"
-echo "build examples_thread"
-echo "################################"
-
-cd examples_oldgl_glfw_thread || exit
-mkdir buildXcodeHdronly
-cd buildXcodeHdronly || exit
-cmake .. -G Xcode
-cd ../../
-
-cd examples_oldgl_glfw_thread || exit
-mkdir buildMakeHdronly
-cd buildMakeHdronly || exit
-cmake ..
-cmake --build .
-cd ../../
-
 echo "###############################"
 echo "test"
 echo "###############################"
@@ -264,5 +247,12 @@ cd examples_oldgl_glfw_pugixml || exit
 mkdir buildMake 
 cd buildMake || exit
 cmake ..
+cmake --build .
+cd ../../
+
+cd examples_oldgl_glfw_pugixml || exit
+mkdir buildXcode
+cd buildXcode || exit
+cmake -G Xcode ..
 cmake --build .
 cd ../../

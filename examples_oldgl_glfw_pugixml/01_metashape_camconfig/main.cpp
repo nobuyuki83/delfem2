@@ -17,16 +17,15 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "delfem2/msh_io_obj.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/msh_normal.h"
+#include "delfem2/metashape_camera.h"
+#include "drawer_camera_config.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 #include "delfem2/openglstb/img2tex.h"
-
-#include "delfem2/metashape_camera.h"
 #include "delfem2/pugixml/metashape_camera.h"
-#include "drawer_camera_config.h"
 
 void View(
     const std::filesystem::path &path_xml,
