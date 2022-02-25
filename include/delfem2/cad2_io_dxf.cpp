@@ -23,7 +23,6 @@ DFM2_INLINE bool delfem2::WriteCAD_DXF(
 {
   FILE *fp;
   if( (fp = ::fopen(file_name.c_str(),"w"))== nullptr ){
-    fclose(fp);
     assert(0);
     return false;
   }

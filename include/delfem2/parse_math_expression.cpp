@@ -304,7 +304,7 @@ int GetLowestPriorityOperator(
     return 0;
   }
   // sign operator( -hoge )
-  if (ipos_min == 0) {
+  if (ipos_min == 0) {   // this looks always false
     assert(itype_min == 2);
     assert(iopr_min != -1);
     ibegin = ipos_min;

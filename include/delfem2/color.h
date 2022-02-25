@@ -97,12 +97,12 @@ public:
     }
   }
   void setRandomColor(){
-    r = (float)rand()/(float(RAND_MAX)+1.0f);
-    g = (float)rand()/(float(RAND_MAX)+1.0f);
-    b = (float)rand()/(float(RAND_MAX)+1.0f);
+    r = (float)rand()/(static_cast<float>(RAND_MAX)+1.0f);
+    g = (float)rand()/(static_cast<float>(RAND_MAX)+1.0f);
+    b = (float)rand()/(static_cast<float>(RAND_MAX)+1.0f);
   }
   void setRandomVividColor(){
-    const float hue = (float)rand()/float(RAND_MAX+1.f);
+    const float hue = (float)rand()/(static_cast<float>(RAND_MAX)+1.f);
     GetRGB_HSV(r,g,b, hue,1.f,1.f);
   }
   /*

@@ -14,8 +14,7 @@
 #  define M_PI 3.141592653589793
 #endif
 
-namespace delfem2 {
-namespace bem {
+namespace delfem2::bem {
 
 // vai*conj(vbi)
 DFM2_INLINE double dot(
@@ -49,7 +48,6 @@ CVec3d NormalTri(
   return n;
 }
 
-}
 }
 
 

@@ -50,8 +50,8 @@ public:
   CVec3d pos;
   CVec3d norm;
   bool isConst[3];
-  int iq_right; // id of mesh point right
-  int iq_left;  // id of mesh point left
+  int iq_right = -1; // id of mesh point right
+  int iq_left = -1;  // id of mesh point left
 };
 
 
@@ -428,7 +428,7 @@ public:
 
   // ---------------
   // pick related
-  unsigned int ivtx_picked;
+  unsigned int ivtx_picked = UINT_MAX;
   int ielem_vtx_picked;
   
   // edge related pick

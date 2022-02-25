@@ -164,7 +164,6 @@ DFM2_INLINE void Solve_RodHair(
   assert( sparse.ndim() == 4 && sparse.nblk() == aP.size() );
   assert(aP0.size() == aP.size());
   assert(aS0.size() == aP.size());
-  assert(aP.size() == aP.size());
   assert(aS.size() == aP.size());
   sparse.BeginMerge();
   double W = 0.;

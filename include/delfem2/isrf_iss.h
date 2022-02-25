@@ -57,7 +57,7 @@ public:
 public:
   double pos[3];
   double sdf;
-  int iflg;
+  int iflg = -1;
 };
 
 void makeBackgroundLattice(

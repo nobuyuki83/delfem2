@@ -75,9 +75,9 @@ DFM2_INLINE bool delfem2::InverseMat2(
   return true;
 }
 
-DFM2_INLINE void delfem2::gramian2
-    (double AtA[3],
-     const double A[4]) {
+DFM2_INLINE void delfem2::gramian2(
+    double AtA[4],
+    const double A[4]) {
   AtA[0] = A[0 * 2 + 0] * A[0 * 2 + 0] + A[1 * 2 + 0] * A[1 * 2 + 0];
   AtA[1] = A[0 * 2 + 0] * A[0 * 2 + 1] + A[1 * 2 + 0] * A[1 * 2 + 1];
   AtA[2] = AtA[1];

@@ -41,7 +41,7 @@ DFM2_INLINE bool InverseMat2(
     const double B[4]);
 
 DFM2_INLINE void gramian2(
-    double AtA[3],
+    double AtA[4],
     const double A[4]);
 
 DFM2_INLINE void VLVt2(
@@ -55,14 +55,6 @@ DFM2_INLINE void RotationalComponentOfMatrix2(
     const double M[4]);
 
 // ----------------------
-
-template<typename T>
-class CMat2; // this pre-definition is needed for following functions
-
-template<typename T>
-CMat2<T> operator*(
-    T d,
-    const CMat2<T> &rhs);
 
 /**
  * @brief 2 dimensional vector class
@@ -137,22 +129,22 @@ class CMat2 {
   }
 
   inline T operator[](int i) const {
-    assert(i < 4);
+    assert(i < 4);  // PVS warning V1056
     return p[i];
   }
 
   inline T &operator[](int i) {
-    assert(i < 4);
+    assert(i < 4);  // PVS warning V1056
     return p[i];
   }
 
   inline T operator()(int i, int j) const {
-    assert(i < 2 && j < 2);
+    assert(i < 2 && j < 2);  // PVS warning V1056
     return p[i * 2 + j];
   }
 
   inline T &operator()(int i, int j) {
-    assert(i < 2 && j < 2);
+    assert(i < 2 && j < 2);  // PVS warning V1056
     return p[i * 2 + j];
   }
 
@@ -212,6 +204,11 @@ class CMat2 {
 using CMat2d = CMat2<double>;
 using CMat2f = CMat2<float>;
 using CMat2i = CMat2<int>;
+
+template<typename T>
+CMat2<T> operator*(
+    T d,
+    const CMat2<T> &rhs);
 
 // --------------------
 

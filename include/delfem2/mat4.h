@@ -349,22 +349,6 @@ std::pair<std::array<T, 3>, std::array<T, 3>> RayFromInverseMvpMatrix(
 
 // =============================================
 
-template<typename T>
-class CMat4;
-
-/**
- * matrix-matrix product
- * @tparam T float and double is defined for the static library
- */
-template<typename T>
-CMat4<T> operator*(const CMat4<T> &lhs, const CMat4<T> &rhs);
-
-template<typename T>
-CMat4<T> operator-(const CMat4<T> &lhs, const CMat4<T> &rhs);
-
-template<typename T>
-CMat4<T> operator+(const CMat4<T> &lhs, const CMat4<T> &rhs);
-
 /**
  * @brief 4x4 matrix class
  * @class 4x4 matrix class
@@ -414,12 +398,12 @@ class CMat4 {
   const REAL *data() const { return mat; }
  public:
   inline REAL operator()(int i, int j) const {
-    assert(i < 4 && j < 4);
+    assert(i < 4 && j < 4);   // PVS warning V1056
     return mat[i * 4 + j];
   }
 
   inline REAL &operator()(int i, int j) {
-    assert(i < 4 && j < 4);
+    assert(i < 4 && j < 4);  // PVS warning V1056
     return mat[i * 4 + j];
   }
   // implicit cast
@@ -432,6 +416,7 @@ class CMat4 {
   }
   // ------------------------
   // below: "set" functions
+
   void SetAffineTranslate(REAL x, REAL y, REAL z) {
     Mat4_AffineTranslation(mat,
                            x, y, z);
@@ -549,8 +534,8 @@ class CMat4 {
         0, 0, sz, 0,
         0, 0, 0, 1};
   }
-  [[nodiscard]] static CMat4<REAL> Spin(const REAL *v) {
-    return CMat4<REAL>{
+  [[nodiscard]] static CMat4<REAL> Skew(const REAL *v) {
+    return {
         0, -v[2], +v[1], 0,
         +v[2], 0, -v[0], 0,
         -v[1], +v[0], 0, 0,
@@ -611,6 +596,19 @@ class CMat4 {
 };
 using CMat4d = CMat4<double>;
 using CMat4f = CMat4<float>;
+
+/**
+ * matrix-matrix product
+ * @tparam T float and double is defined for the static library
+ */
+template<typename T>
+CMat4<T> operator*(const CMat4<T> &lhs, const CMat4<T> &rhs);
+
+template<typename T>
+CMat4<T> operator-(const CMat4<T> &lhs, const CMat4<T> &rhs);
+
+template<typename T>
+CMat4<T> operator+(const CMat4<T> &lhs, const CMat4<T> &rhs);
 
 }
 

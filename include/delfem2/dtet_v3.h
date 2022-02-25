@@ -934,8 +934,7 @@ inline int DetDelaunay
       return 0;
     }
   }
-  assert(0);
-  return -1;
+  return -1; // unreachable
 }
 
 /*! 

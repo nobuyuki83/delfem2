@@ -131,10 +131,19 @@ DFM2_INLINE void Copy_Quat(
  * @details quaternions don't commute (qp!=pq)
  */
 template<typename REAL>
-DFM2_INLINE void QuatQuat(
+void QuatQuat(
     REAL r[],
     const REAL p[],
     const REAL q[]);
+
+template<typename REAL>
+std::array<REAL,4> Mult_QuatQuat(
+    const REAL p[],
+    const REAL q[]){
+  std::array<REAL,4> r;
+  QuatQuat(r.data(),p,q);
+  return r;
+}
 
 // ==================
 
