@@ -117,7 +117,7 @@ int main() {
       Intersection_ImageRay_TriMesh3(
           vec_point_on_tri,
           tex.height, tex.width, mMVP.data(),
-          bvh_nodes, bvh_volumes, vec_xyz, vec_tri);
+          bvh_nodes, bvh_volumes, vec_xyz, vec_tri, true);
       ShadingImageRayLambertian(
           tex.pixel_color,
           tex.height, tex.width, mMVP.data(),

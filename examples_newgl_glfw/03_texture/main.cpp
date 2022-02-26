@@ -29,13 +29,15 @@
 namespace dfm2 = delfem2;
 
 // ---------------------------
-dfm2::opengl::Drawer_RectangleTex shdr(0.5);
-delfem2::glfw::CViewer2 viewer;
-GLuint m_texName = -1;
+struct MyData {
+  dfm2::opengl::Drawer_RectangleTex shdr;
+  delfem2::glfw::CViewer2 viewer;
+  GLuint m_texName = -1;
+};
 
 // ---------------------------
 
-void draw(GLFWwindow* window)
+void draw(MyData* data)
 {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -46,25 +48,27 @@ void draw(GLFWwindow* window)
 
   glEnable(GL_TEXTURE_2D);
   glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
-  glBindTexture(GL_TEXTURE_2D , m_texName);
+  glBindTexture(GL_TEXTURE_2D , data->m_texName);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
-  dfm2::CMat4f mP = viewer.GetProjectionMatrix();
-  dfm2::CMat4f mMV = viewer.GetModelViewMatrix();
-  shdr.Draw(mP.data(),mMV.data());
+  dfm2::CMat4f mP = data->viewer.GetProjectionMatrix();
+  dfm2::CMat4f mMV = data->viewer.GetModelViewMatrix();
+  data->shdr.Draw(mP.data(),mMV.data());
   
-  viewer.SwapBuffers();
+  data->viewer.SwapBuffers();
   glfwPollEvents();
 }
 
 int main()
 {
+  MyData data;
+  //
   dfm2::glfw::InitGLNew();
-  viewer.view_height = 1.0;
-  viewer.OpenWindow();
+  data.viewer.view_height = 2.0;
+  data.viewer.OpenWindow();
 
 #ifndef EMSCRIPTEN
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -73,7 +77,7 @@ int main()
   }
 #endif
 
-  shdr.InitGL();
+  data.shdr.InitGL();
   
   {
    const int nSize = 256;
@@ -94,17 +98,17 @@ int main()
     // -------------
     glEnable(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE0);
-    m_texName = dfm2::opengl::SetTexture_RGB(nSize,nSize,image);
+    data.m_texName = dfm2::opengl::SetTexture_RGB(nSize,nSize,image);
     glGenerateMipmap(GL_TEXTURE_2D);
   }
   
 #ifdef EMSCRIPTEN
-  emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
+  emscripten_set_main_loop_arg((em_arg_callback_func) draw, &data, 60, 1);
 #else
-  while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
+  while (!glfwWindowShouldClose(data.viewer.window)) { draw(&data); }
 #endif
   
-  glfwDestroyWindow(viewer.window);
+  glfwDestroyWindow(data.viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }

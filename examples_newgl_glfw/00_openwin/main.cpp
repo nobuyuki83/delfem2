@@ -4,31 +4,29 @@
  */
 
 #ifdef EMSCRIPTEN
-  #include <emscripten/emscripten.h>
-  #define GLFW_INCLUDE_ES3
+#include <emscripten/emscripten.h>
+#define GLFW_INCLUDE_ES3
 #endif
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 #include <iostream>
 
 void callback_resize(
-    [[maybe_unused]] GLFWwindow* window,
+    [[maybe_unused]] GLFWwindow *window,
     int width,
-    int height)
-{
+    int height) {
   printf("window_size_callback received width: %i, height: %i\n", width, height);
 }
 
 void callback_key(
-    GLFWwindow* window,
+    GLFWwindow *window,
     int key,
     [[maybe_unused]] int scancode,
     int action,
-    [[maybe_unused]] int modifier)
-{
+    [[maybe_unused]] int modifier) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
     glfwSetWindowShouldClose(window, 1);
-  
+
   if (key == GLFW_KEY_ENTER)
     std::cout << "Enter was hit\n" << std::endl;
 }
@@ -42,8 +40,7 @@ void callback_mouse(
   printf("Mouse buttion! \n");
 }
 
-void do_frame(GLFWwindow *window)
-{
+void do_frame(GLFWwindow *window) {
   /*
   static int a = 0;
   printf("Fc: %d \n", ++a);
@@ -59,22 +56,22 @@ void do_frame(GLFWwindow *window)
 }
 
 int main() {
-  if (glfwInit()!=GL_TRUE) {
+  if (glfwInit() != GL_TRUE) {
     printf("glfwInit() failed\n");
     glfwTerminate();
     return 0;
   }
   printf("glfwInit() success\n");
-  GLFWwindow* window = glfwCreateWindow(
+  GLFWwindow *window = glfwCreateWindow(
       512, 512,
       "GLFW test", nullptr, nullptr);
-  
-  if (!window){
+
+  if (!window) {
     printf("glfwCreateWindow() failed\n");
     glfwTerminate();
     return 0;
   }
-  
+
   printf("glfwCreateWindow() success\n");
   glfwMakeContextCurrent(window);
   int windowWidth;
@@ -85,12 +82,12 @@ int main() {
   glfwSetKeyCallback(window, callback_key);
   //glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 #ifdef EMSCRIPTEN
-//  emscripten_set_main_loop(do_frame, 0, 1);
-  emscripten_set_main_loop_arg((em_arg_callback_func) do_frame, window, 60, 1);
+  //  emscripten_set_main_loop(do_frame, 0, 1);
+    emscripten_set_main_loop_arg((em_arg_callback_func) do_frame, window, 60, 1);
 #else
-  while (!glfwWindowShouldClose(window)){ do_frame(window); }
+  while (!glfwWindowShouldClose(window)) { do_frame(window); }
 #endif
-  
+
   glfwTerminate();
   return EXIT_SUCCESS;
 }

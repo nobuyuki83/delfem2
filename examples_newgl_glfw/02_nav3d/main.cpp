@@ -22,13 +22,15 @@
 namespace dfm2 = delfem2;
 
 // ---------------------------
-// global variables
-dfm2::opengl::CShader_TriMesh shdr;
-delfem2::glfw::CViewer3 viewer(2.0);
+
+struct MyData {
+  dfm2::opengl::CShader_TriMesh shdr;
+  delfem2::glfw::CViewer3 viewer;
+};
 
 // ---------------------------
 
-void draw()
+void draw(MyData* data)
 {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -36,16 +38,20 @@ void draw()
   ::glDepthFunc(GL_LESS);
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  shdr.Draw(viewer.GetProjectionMatrix().data(),
-            viewer.GetModelViewMatrix().data());
-  viewer.SwapBuffers();
+  data->shdr.Draw(
+      data->viewer.GetProjectionMatrix().data(),
+      data->viewer.GetModelViewMatrix().data());
+  data->viewer.SwapBuffers();
   glfwPollEvents();
 }
 
 int main()
 {
+  MyData data;
+  data.viewer.projection = std::make_unique<delfem2::Projection_LookOriginFromZplus>(2, false);
+
   dfm2::glfw::InitGLNew();
-  viewer.OpenWindow();
+  data.viewer.OpenWindow();
   
   // glad: load all OpenGL function pointers
   // ---------------------------------------
@@ -57,23 +63,23 @@ int main()
   }
 #endif
 
-  shdr.InitGL();
+  data.shdr.InitGL();
   {
     std::vector<float> aXYZd;
     std::vector<unsigned int> aTri;
-    delfem2::MeshTri3_Torus(aXYZd, aTri,
-                            1.f, 0.2f,
-                            32,18);
-    shdr.Initialize(aXYZd, 3, aTri);
+    delfem2::MeshTri3_Torus(
+        aXYZd, aTri,
+        1.f, 0.2f, 32,18);
+    data.shdr.Initialize(aXYZd, 3, aTri);
   }
   
 #ifdef EMSCRIPTEN
-  emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
+  emscripten_set_main_loop_arg((em_arg_callback_func) draw, &data, 60, 1);
 #else
-  while (!glfwWindowShouldClose(viewer.window)) { draw(); }
+  while (!glfwWindowShouldClose(data.viewer.window)) { draw(&data); }
 #endif
   
-  glfwDestroyWindow(viewer.window);
+  glfwDestroyWindow(data.viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }

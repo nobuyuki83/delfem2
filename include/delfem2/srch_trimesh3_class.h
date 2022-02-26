@@ -29,14 +29,14 @@
 
 namespace delfem2 {
 
-template <class BV>
+template<class BV>
 void ConstructBVHTriangleMeshMortonCode(
     std::vector<delfem2::CNodeBVH2> &aNodeBVH,
     std::vector<BV> &aAABB,
     const std::vector<double> &aXYZ,
-    const std::vector<unsigned int> &aTri)
-{
+    const std::vector<unsigned int> &aTri) {
   namespace dfm2 = delfem2;
+  assert(!aTri.empty());
   std::vector<double> vec_center_of_tri;
   dfm2::CentsMaxRad_MeshTri3(
       vec_center_of_tri,
@@ -51,6 +51,7 @@ void ConstructBVHTriangleMeshMortonCode(
   dfm2::SortedMortenCode_Points3(
       aSortedId, aSortedMc,
       vec_center_of_tri, min_xyz, max_xyz);
+  assert(!aSortedMc.empty() && !aSortedId.empty());
   dfm2::BVHTopology_Morton(
       aNodeBVH,
       aSortedId, aSortedMc);
@@ -456,27 +457,30 @@ void Intersection_ImageRay_TriMesh3(
     const std::vector<CNodeBVH2> &aNodeBVH,
     const std::vector<BV> &aAABB,
     const std::vector<double> &aXYZ, // 3d points
-    const std::vector<unsigned int> &aTri) {
+    const std::vector<unsigned int> &aTri,
+    bool is_parallel) {
   aPointElemSurf.resize(nheight * nwidth);
-  const std::array<double,16> mMVPd_inv = Inverse_Mat4(mMVPd);
+  const std::array<double, 16> mMVPd_inv = Inverse_Mat4(mMVPd);
   auto func = [&](int ih, int iw) {
-    const std::pair<CVec3d,CVec3d> ray = RayFromInverseMvpMatrix(mMVPd_inv.data(), iw,ih, nwidth,nheight);
+    const std::pair<CVec3d, CVec3d> ray = RayFromInverseMvpMatrix(mMVPd_inv.data(), iw, ih, nwidth, nheight);
     PointOnSurfaceMesh<double> pos_mesh;
     bool is_hit = Intersection_Ray3_Tri3_Bvh(
         pos_mesh,
         ray.first, ray.second,
         aXYZ, aTri, aNodeBVH, aAABB);
-    if( !is_hit ){ return; }
+    if (!is_hit) { return; }
     aPointElemSurf[ih * nwidth + iw] = pos_mesh;
   };
-  parallel_for(nwidth, nheight, func);
-  /*
-  for (unsigned int ih = 0; ih < nheight; ++ih) {
-    for (unsigned int iw = 0; iw < nwidth; ++iw) {
-      func(ih, iw);
+  if( is_parallel ) {
+    parallel_for(nwidth, nheight, func);
+  }
+  else {
+    for (unsigned int ih = 0; ih < nheight; ++ih) {
+      for (unsigned int iw = 0; iw < nwidth; ++iw) {
+        func(ih, iw);
+      }
     }
   }
-   */
 }
 
 template<typename BV>
