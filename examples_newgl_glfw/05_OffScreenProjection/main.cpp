@@ -100,7 +100,7 @@ int main() {
   data.drawer_r2t.SetDepth(data.r2t);
 
 #ifdef EMSCRIPTEN
-  emscripten_set_main_loop_arg((em_arg_callback_func) draw, &data, 60, 1);
+  emscripten_set_main_loop_arg((em_arg_callback_func) draw, &data, 0, 1);
 #else
   while (!glfwWindowShouldClose(data.viewer.window)) { draw(&data); }
 #endif

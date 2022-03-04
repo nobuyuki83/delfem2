@@ -17,8 +17,8 @@ ReadTriangleMeshObj(
   std::vector<double> vec_xyz;
   std::vector<unsigned int> vec_tri;
   delfem2::Read_Obj3(
-      fpath,
-      vec_xyz, vec_tri);
+      vec_xyz, vec_tri,
+      fpath);
   const auto V =
       Eigen::Map<Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(
           vec_xyz.data(),
@@ -33,18 +33,16 @@ ReadTriangleMeshObj(
 // -----------------------------------------------
 
 void WriteUniformMesh(
-  const std::string& file_path,
-  const Eigen::Matrix<double, -1, -1, Eigen::RowMajor>& v,
-  const Eigen::Matrix<unsigned int, -1, -1, Eigen::RowMajor>& f)
-{
+    const std::string &file_path,
+    const Eigen::Matrix<double, -1, -1, Eigen::RowMajor> &v,
+    const Eigen::Matrix<unsigned int, -1, -1, Eigen::RowMajor> &f) {
   const std::filesystem::path path(file_path);
-  if( path.extension() == ".obj" || path.extension() == ".OBJ" ){
+  if (path.extension() == ".obj" || path.extension() == ".OBJ") {
     delfem2::Write_Obj_UniformMesh(
-      file_path,
-      v.data(), v.rows(),
-      f.data(), f.rows(), f.cols());
-  }
-  else{
+        file_path,
+        v.data(), v.rows(),
+        f.data(), f.rows(), f.cols());
+  } else {
     std::cerr << "Error->there's no support for extension: " << path.extension() << std::endl;
   }
 }

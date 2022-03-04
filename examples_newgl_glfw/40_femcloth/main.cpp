@@ -173,7 +173,7 @@ int main()
 
 
 #ifdef EMSCRIPTEN
-  emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
+  emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 0, 1);
 #else
   while (!glfwWindowShouldClose(viewer.window)) { draw(); }
 #endif

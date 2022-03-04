@@ -98,10 +98,11 @@ DFM2_INLINE void Read_Obj2(
     std::vector<double> &aXYZ,
     std::vector<unsigned int> &aTri);
 
-DFM2_INLINE void Read_Obj3(
-    const std::filesystem::path &file_path,
-    std::vector<double> &vtx_xyz,
-    std::vector<unsigned int> &tri_vtx);
+template <typename REAL>
+void Read_Obj3(
+    std::vector<REAL> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    const std::filesystem::path &file_path);
 
 // --------------------------
 // below: obj with surface attributes

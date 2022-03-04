@@ -390,10 +390,11 @@ DFM2_INLINE void delfem2::Read_Obj2(
   }
 }
 
-DFM2_INLINE void delfem2::Read_Obj3(
-    const std::filesystem::path &file_path,
-    std::vector<double> &vtx_xyz,
-    std::vector<unsigned int> &tri_vtx) {
+template <typename REAL>
+void delfem2::Read_Obj3(
+    std::vector<REAL> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    const std::filesystem::path &file_path) {
   std::ifstream fin;
   fin.open(file_path);
   if (fin.fail()) {
@@ -410,7 +411,7 @@ DFM2_INLINE void delfem2::Read_Obj3(
     if (buff[0] == '#') { continue; }
     if (buff[0] == 'v' && buff[1] == ' ') {
       char str[256];
-      double x, y, z;
+      REAL x, y, z;
       std::istringstream is(buff);
       is >> str >> x >> y >> z;
 //      sscanf(buff, "%s %lf %lf %lf", str, &x, &y, &z);

@@ -92,8 +92,8 @@ int main(int, char **) {
   {
     std::string filePathName = std::string(PATH_SOURCE_DIR) + "/../../test_inputs/bunny_1k.obj";
     delfem2::Read_Obj3(
-      filePathName,
-      vtx_xyz, tri_vtx);
+      vtx_xyz, tri_vtx,
+      filePathName);
     delfem2::Normalize_Points3(
       vtx_xyz,
       1.);

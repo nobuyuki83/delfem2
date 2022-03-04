@@ -179,13 +179,14 @@ int main()
                                                       std::string("precision highp float;\n")+
                                                       glslfrg_simplest).c_str());
 #else
-    shaderProgram = dfm2::opengl::GL24_CompileShader(("#version 330 core\n"+glslvrt_simplest).c_str(),
-                                                     ("#version 330 core\n"+glslfrg_simplest).c_str());
+    shaderProgram = dfm2::opengl::GL24_CompileShader(
+        ("#version 330 core\n"+glslvrt_simplest).c_str(),
+        ("#version 330 core\n"+glslfrg_simplest).c_str());
 #endif
   }
 
 #ifdef EMSCRIPTEN
-  emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 60, 1);
+  emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 0, 1);
 #else
   while (!glfwWindowShouldClose(window)) { draw(window); }
 #endif

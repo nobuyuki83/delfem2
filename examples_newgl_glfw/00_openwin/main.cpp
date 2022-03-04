@@ -83,7 +83,7 @@ int main() {
   //glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 #ifdef EMSCRIPTEN
   //  emscripten_set_main_loop(do_frame, 0, 1);
-    emscripten_set_main_loop_arg((em_arg_callback_func) do_frame, window, 60, 1);
+    emscripten_set_main_loop_arg((em_arg_callback_func) do_frame, window, 0, 1);
 #else
   while (!glfwWindowShouldClose(window)) { do_frame(window); }
 #endif
