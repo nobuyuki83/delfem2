@@ -462,6 +462,18 @@ void delfem2::Read_Obj3(
     }
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
+template void delfem2::Read_Obj3(
+    std::vector<double> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    const std::filesystem::path &file_path);
+template void delfem2::Read_Obj3(
+    std::vector<float> &vtx_xyz,
+    std::vector<unsigned int> &tri_vtx,
+    const std::filesystem::path &file_path);
+#endif
+
+// ==========================
 
 template<typename T>
 DFM2_INLINE bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
