@@ -9,6 +9,8 @@
 
 #include "delfem2/msh_io_obj.h"
 
+namespace delfem2::eigen {
+
 std::tuple<
     Eigen::Matrix<double, -1, 3, Eigen::RowMajor>,
     Eigen::Matrix<unsigned int, -1, 3, Eigen::RowMajor> >
@@ -46,5 +48,8 @@ void WriteUniformMesh(
     std::cerr << "Error->there's no support for extension: " << path.extension() << std::endl;
   }
 }
+
+}
+
 
 #endif
