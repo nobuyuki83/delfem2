@@ -26,7 +26,7 @@
 #include "delfem2/img_ioppm.h"
 #include "delfem2/msh_primitive.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "delfem2/openglstb/img2tex.h"
+#include "delfem2/stb_opengl/img2tex.h"
 
 namespace dfm2 = delfem2;
 

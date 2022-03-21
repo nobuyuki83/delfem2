@@ -19,7 +19,7 @@
 #include "delfem2/geo_convhull3.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengleigen/funcs.h"
+#include "delfem2/eigen_opengl/funcs.h"
 
 namespace dfm2 = delfem2;
 // ---------------------------------------
@@ -77,13 +77,13 @@ int main()
     {
       ::glColor3d(0,0,0);
       ::glPointSize(3);
-      delfem2::opengleigen::DrawPoints(vtx_xyz);
+      delfem2::eigen_opengl::DrawPoints(vtx_xyz);
       //
       ::glColor4d(1,1,1,0.8);
-      delfem2::opengleigen::DrawMeshTri3(tri_vtx, vtx_xyz);
+      delfem2::eigen_opengl::DrawMeshTri3(tri_vtx, vtx_xyz);
       //
       ::glColor3d(0,0,0);
-      delfem2::opengleigen::DrawMeshTri3_Edge(tri_vtx, vtx_xyz);
+      delfem2::eigen_opengl::DrawMeshTri3_Edge(tri_vtx, vtx_xyz);
     }
     
     glfwSwapBuffers(viewer.window);

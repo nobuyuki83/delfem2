@@ -51,7 +51,7 @@ public:
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/openglstb/glyph.cpp"
+#  include "delfem2/stb_opengl/glyph.cpp"
 #endif
 
 #endif

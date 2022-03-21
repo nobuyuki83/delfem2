@@ -24,7 +24,7 @@
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
-#include "delfem2/openglstb/img2tex.h"
+#include "delfem2/stb_opengl/img2tex.h"
 #include "delfem2/pugixml/metashape_camera.h"
 
 void View(

@@ -1,5 +1,5 @@
 
-#include "delfem2/openglstb/glyph.h"
+#include "delfem2/stb_opengl/glyph.h"
 
 #include <iostream>
 #include <fstream>

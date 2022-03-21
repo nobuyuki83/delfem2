@@ -27,7 +27,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/cad2_io_svg.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
-#include "delfem2/openglstb/glyph.h"
+#include "delfem2/stb_opengl/glyph.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/viewer3.h"

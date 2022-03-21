@@ -18,7 +18,7 @@
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
-#include "delfem2/openglstb/glyph.h"
+#include "delfem2/stb_opengl/glyph.h"
 
 namespace dfm2 = delfem2;
 

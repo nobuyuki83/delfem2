@@ -20,7 +20,7 @@
 #include "delfem2/msh_io_obj.h"
 #include "delfem2/glfw/viewer3.h"
 #include "delfem2/glfw/util.h"
-#include "delfem2/opengleigen/funcs.h"
+#include "delfem2/eigen_opengl/funcs.h"
 #include "delfem2/opengl/old/mshuni.h"
 
 namespace dfm2 = delfem2;
@@ -30,7 +30,7 @@ namespace dfm2 = delfem2;
 int main() {
   std::cout << "Available :SIMD Instructions: " << Eigen::SimdInstructionSetsInUse() << std::endl;
 
-  const auto res = ReadTriangleMeshObj(std::string(PATH_INPUT_DIR) + "/bunny_1k.obj");
+  const auto res = delfem2::eigen::ReadTriangleMeshObj(std::string(PATH_INPUT_DIR) + "/bunny_1k.obj");
   const auto& V = std::get<0>(res)*0.02;
   const auto& F = std::get<1>(res);
   std::cout << V.rows() << std::endl;
@@ -45,7 +45,7 @@ int main() {
     viewer.DrawBegin_oldGL();
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0.,0.,0.);
-    delfem2::opengleigen::DrawMeshTri3_Edge_EigenMats(V,F);
+    delfem2::eigen_opengl::DrawMeshTri3_Edge_EigenMats(V,F);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

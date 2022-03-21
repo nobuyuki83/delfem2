@@ -15,14 +15,14 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
+#include "delfem2/cad2.h"
+#include "delfem2/cad2_mesher.h"
+#include "delfem2/cad2_io_svg.h"
 #include "delfem2/glfw/viewer2.h"
 #include "delfem2/glfw/util.h"
 #include "delfem2/opengl/old/funcs.h"
 #include "delfem2/opengl/old/cad2dtriv2.h"
-#include "delfem2/openglstb/glyph.h"
-#include "delfem2/cad2.h"
-#include "delfem2/cad2_mesher.h"
-#include "delfem2/cad2_io_svg.h"
+#include "delfem2/stb_opengl/glyph.h"
 
 #ifndef M_PI
 #  define M_PI 3.141592653589793

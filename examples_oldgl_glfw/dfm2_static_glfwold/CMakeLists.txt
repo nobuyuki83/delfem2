@@ -62,8 +62,8 @@ add_library(${PROJ_NAME} STATIC
     ${DFM2_OPENGL_SRC}
     ${DFM2_OPENGL_OLD_SRC}
     ${DFM2_GLFW_SRC}    
-    ${DELFEM2_INC}/openglstb/glyph.h
-    ${DELFEM2_INC}/openglstb/glyph.cpp
+    ${DELFEM2_INC}/stb_opengl/glyph.h
+    ${DELFEM2_INC}/stb_opengl/glyph.cpp
 )
 
 file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)

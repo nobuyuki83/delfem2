@@ -33,7 +33,7 @@
 #include "delfem2/glfw/util.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "delfem2/openglstb/img2tex.h"
+#include "delfem2/stb_opengl/img2tex.h"
 #include "stb/stb_image_write.h"
 
 namespace dfm2 = delfem2;

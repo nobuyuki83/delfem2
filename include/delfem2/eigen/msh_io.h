@@ -32,6 +32,27 @@ ReadTriangleMeshObj(
   return std::make_tuple(V, F);
 }
 
+
+// -----------------------------------------------
+
+template <typename REAL>
+void ReadTriangleMeshObj(
+    Eigen::Matrix<REAL, -1, 3, Eigen::RowMajor>& V,
+    Eigen::Matrix<unsigned int, -1, 3, Eigen::RowMajor>& F,
+    const std::string &fpath) {
+  std::vector<REAL> vec_xyz;
+  std::vector<unsigned int> vec_tri;
+  delfem2::Read_Obj3<REAL>(
+      vec_xyz, vec_tri,
+      fpath);
+  V = Eigen::Map<Eigen::Matrix<REAL, -1, -1, Eigen::RowMajor>>(
+      vec_xyz.data(),
+      static_cast<unsigned int>(vec_xyz.size() / 3), 3);
+  F = Eigen::Map<Eigen::Matrix<unsigned int, -1, -1, Eigen::RowMajor>>(
+      vec_tri.data(),
+      static_cast<unsigned int>(vec_tri.size() / 3), 3);
+}
+
 // -----------------------------------------------
 
 void WriteUniformMesh(

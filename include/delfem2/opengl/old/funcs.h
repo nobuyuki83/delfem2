@@ -22,8 +22,7 @@
 #  define M_PI 3.14159265358979323846264338327950288
 #endif
 
-namespace delfem2 {
-namespace opengl {
+namespace delfem2::opengl {
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
@@ -154,7 +153,6 @@ class CAxisXYZ {
   double line_width;
 };
 
-} // namespace opengl
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY

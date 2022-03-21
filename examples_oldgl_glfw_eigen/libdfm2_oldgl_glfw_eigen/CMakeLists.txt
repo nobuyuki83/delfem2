@@ -71,8 +71,8 @@ add_library(${PROJ_NAME} STATIC
     ${DFM2_OPENGL_OLD_SRC}
     ${DFM2_GLFW_SRC}
     ${DFM2_EIGEN_SRC}
-    ${DELFEM2_INC}/openglstb/glyph.h
-    ${DELFEM2_INC}/openglstb/glyph.cpp
+    ${DELFEM2_INC}/stb_opengl/glyph.h
+    ${DELFEM2_INC}/stb_opengl/glyph.cpp
 )
 
 target_link_libraries (${PROJ_NAME}
