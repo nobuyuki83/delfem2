@@ -100,10 +100,10 @@ void DrawMeshTri3_FaceFlatNorm(
     unsigned int i0 = F0(ifc,0);
     unsigned int i1 = F0(ifc,1);
     unsigned int i2 = F0(ifc,2);
-    const Eigen::Vector3<REAL> v0 = V0.row(i0);
-    const Eigen::Vector3<REAL> v1 = V0.row(i1);
-    const Eigen::Vector3<REAL> v2 = V0.row(i2);
-    const Eigen::Vector3<REAL> n = (v1-v0).cross(v2-v0).normalized();
+    const Eigen::Matrix<REAL,3,1> v0 = V0.row(i0);
+    const Eigen::Matrix<REAL,3,1> v1 = V0.row(i1);
+    const Eigen::Matrix<REAL,3,1> v2 = V0.row(i2);
+    const Eigen::Matrix<REAL,3,1> n = (v1-v0).cross(v2-v0).normalized();
     ::glNormal3dv(n.data());
     ::glVertex3dv(v0.data());
     ::glVertex3dv(v1.data());
