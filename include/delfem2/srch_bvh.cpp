@@ -136,7 +136,9 @@ DFM2_INLINE void DevideElemAryConnex(
   aNodeBVH[iroot_node].ichild[0] = inode_ch0;
   aNodeBVH[iroot_node].ichild[1] = inode_ch1;
   std::vector<unsigned int> list_ch0;
-  { // 子ノード０に含まれる三角形を抽出（itri_kerと接続していて，dirベクトルの正方向にある三角形）
+  {
+    // extract the triangles in the child node 0
+    // triangles connected to `itri_ker` and in the direction of `dir`
     aElem2Node[itri_ker] = inode_ch0;
     list_ch0.push_back(itri_ker);
     std::stack<unsigned int> stack;
@@ -158,7 +160,8 @@ DFM2_INLINE void DevideElemAryConnex(
     }
     assert(!list_ch0.empty());
   }
-  // 子ノード１に含まれる三角形を抽出(入力リストから子ノード0に含まれる物を除外)
+  // extract the triangles in child node １
+  // exclude the triangles that is included in the child node 0
   std::vector<unsigned int> list_ch1;
   for (unsigned int itri: list) {
     if (aElem2Node[itri] == inode_ch0) continue;
@@ -171,7 +174,7 @@ DFM2_INLINE void DevideElemAryConnex(
   if (list_ch0.size() == 1) {
     aNodeBVH[inode_ch0].ichild[0] = list_ch0[0];
     aNodeBVH[inode_ch0].ichild[1] = UINT_MAX;
-  } else { // 子ノード0にある三角形を再度分割
+  } else { // subdivide child node 0
     DevideElemAryConnex(inode_ch0, aElem2Node, aNodeBVH,
                         list_ch0, nfael, aElSuEl, aElemCenter);
   }
@@ -180,7 +183,7 @@ DFM2_INLINE void DevideElemAryConnex(
   if (list_ch1.size() == 1) {
     aNodeBVH[inode_ch1].ichild[0] = list_ch1[0];
     aNodeBVH[inode_ch1].ichild[1] = UINT_MAX;
-  } else { // 子ノード1にある三角形を再度分割
+  } else { // subdivide the child node 1
     DevideElemAryConnex(inode_ch1, aElem2Node, aNodeBVH,
                         list_ch1, nfael, aElSuEl, aElemCenter);
   }

@@ -83,7 +83,7 @@ DFM2_INLINE int delfem2::opengl::compileShader(
   glShaderSource(id_shader, 1, &vfile, nullptr);
   glCompileShader(id_shader); // compile the code
 
-  {
+  { // print if failed
     GLint res;
     glGetShaderiv(id_shader, GL_COMPILE_STATUS, &res);
     if (res == GL_FALSE) {
@@ -93,6 +93,15 @@ DFM2_INLINE int delfem2::opengl::compileShader(
         std::cout << "compile fragment shader failed" << std::endl;
       }
     }
+  }
+  { // show log
+    const GLsizei maxLength = 1024;
+    GLsizei length;
+    auto* infoLog = new GLchar [maxLength];
+    glGetShaderInfoLog(id_shader, maxLength,
+                       &length, infoLog);
+    std::cout << infoLog << std::endl;
+    delete [] infoLog;
   }
   return id_shader;
 }

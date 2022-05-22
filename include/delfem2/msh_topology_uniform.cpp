@@ -524,8 +524,8 @@ void delfem2::UnifySeparateIndexing_PosTex(
       if( tri_uni[itri*3+ino] != UINT_MAX ) { continue; }
       unsigned int ixyz = elem_vtx_xyz[itri*3+ino];
       unsigned int itex = elem_vtx_tex[itri*3+ino];
-      const std::set s0(elsup0.data()+elsup0_ind[ixyz], elsup0.data()+elsup0_ind[ixyz+1]);
-      const std::set s1(elsup1.data()+elsup1_ind[itex], elsup1.data()+elsup1_ind[itex+1]);
+      const std::set<unsigned int> s0(elsup0.data()+elsup0_ind[ixyz], elsup0.data()+elsup0_ind[ixyz+1]);
+      const std::set<unsigned int> s1(elsup1.data()+elsup1_ind[itex], elsup1.data()+elsup1_ind[itex+1]);
       std::vector<unsigned int> tris;
       set_intersection(
           s0.begin(),s0.end(),
