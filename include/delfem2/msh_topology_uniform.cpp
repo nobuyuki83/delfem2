@@ -527,7 +527,7 @@ void delfem2::UnifySeparateIndexing_PosTex(
       const std::set<unsigned int> s0(elsup0.data()+elsup0_ind[ixyz], elsup0.data()+elsup0_ind[ixyz+1]);
       const std::set<unsigned int> s1(elsup1.data()+elsup1_ind[itex], elsup1.data()+elsup1_ind[itex+1]);
       std::vector<unsigned int> tris;
-      set_intersection(
+      std::set_intersection(
           s0.begin(),s0.end(),
           s1.begin(),s1.end(),
           std::back_inserter(tris));
