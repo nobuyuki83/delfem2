@@ -15,7 +15,7 @@ ENDIF ()
 
 ####################################
 
-project(13_PathTracingTriMesh)
+project(task04)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

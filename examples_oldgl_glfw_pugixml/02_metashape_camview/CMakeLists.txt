@@ -18,7 +18,7 @@ project(02_metashape_camview)
 add_definitions(-DPATH_SOURCE_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
-set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/../../3rd_party/glfwlib)
+set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/../../3rd_party/libglfw)
 find_package(glfw3 REQUIRED)
 
 # opengl
