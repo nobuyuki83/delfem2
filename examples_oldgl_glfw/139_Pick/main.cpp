@@ -30,6 +30,7 @@
 
 namespace dfm2 = delfem2;
 
+/*
 class MyView
     : public dfm2::glfw::CViewer3 {
  public:
@@ -41,7 +42,41 @@ class MyView
       const std::vector<unsigned int> &aTri0)
       : CViewer3(view_height), 
       tri_flg(aFlagElem0), vtx_xyz(aXYZ0), tri_vtx(aTri0) {
-          
+
+  }
+
+  void mouse_press(const float src[3], const float dir[3]) override {
+    unsigned int itri = this->PickTri(src, dir);
+    if (itri == UINT_MAX) { return; }
+    tri_flg[itri] = 1;
+  }
+ private:
+
+ public:
+  std::vector<unsigned int> &tri_flg;
+  const std::vector<double> &vtx_xyz; // 3d points
+  const std::vector<unsigned int> &tri_vtx;
+};
+ */
+
+int main() {
+  std::vector<double> vtx_xyz; // 3d points
+  std::vector<unsigned int> tri_vtx;
+
+  { // load input mesh
+    delfem2::Read_Ply(
+        vtx_xyz, tri_vtx,
+        std::filesystem::path(PATH_SOURCE_DIR) / ".." / ".." / "test_inputs" / "arm_16k.ply");
+    dfm2::Normalize_Points3(vtx_xyz, 2.0);
+    std::cout << "point_size: " << vtx_xyz.size() / 3 << std::endl;
+    std::cout << "triangle_size: " << tri_vtx.size() / 3 << std::endl;
+  }
+
+  std::vector<unsigned int> aFlagElem(tri_vtx.size() / 3, 0);
+  std::vector<dfm2::CNodeBVH2> bvhnodes;
+  std::vector<dfm2::CBV3_Sphere<double>> bvhnode_aabb;
+  std::vector<unsigned int> tri_adjtri;
+  {
     { // make BVH
       std::vector<double> aCent;
       dfm2::CentsMaxRad_MeshTri3(
@@ -91,56 +126,28 @@ class MyView
     }
   }
 
-  void mouse_press(const float src[3], const float dir[3]) override {
-    unsigned int itri = this->PickTri(src, dir);
-    if (itri == UINT_MAX) { return; }
-    tri_flg[itri] = 1;
-  }
- private:
-  unsigned int PickTri(const float src[3], const float dir[3]) {
-    std::vector<unsigned int> aIndElem;
-    dfm2::BVH_GetIndElem_Predicate(
-        aIndElem,
-        delfem2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>, float>(src, dir),
-        0, bvhnodes, bvhnode_aabb);
-    std::map<double, dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
-    dfm2::IntersectionRay_MeshTri3DPart(
-        mapDepthPES,
-        dfm2::CVec3d(src), dfm2::CVec3d(dir),
-        tri_vtx, vtx_xyz, aIndElem,
-        1.0e-3);
-    if (mapDepthPES.empty()) { return UINT_MAX; }
-    return mapDepthPES.begin()->second.itri;
-  }
+  delfem2::glfw::CViewer3 viewer(1.5);
+  viewer.mousepress_callbacks.emplace_back(
+      [&aFlagElem,&bvhnodes,&bvhnode_aabb,&tri_vtx,&vtx_xyz](const float src[3], const float dir[3]){
+        std::vector<unsigned int> aIndElem;
+        dfm2::BVH_GetIndElem_Predicate(
+            aIndElem,
+            delfem2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>, float>(src, dir),
+            0, bvhnodes, bvhnode_aabb);
+        std::map<double, dfm2::PointOnSurfaceMesh<double>> mapDepthPES;
+        dfm2::IntersectionRay_MeshTri3DPart(
+            mapDepthPES,
+            dfm2::CVec3d(src), dfm2::CVec3d(dir),
+            tri_vtx, vtx_xyz, aIndElem,
+            1.0e-3);
+        if (mapDepthPES.empty()) { return UINT_MAX; }
+        unsigned int itri = mapDepthPES.begin()->second.itri;
+        aFlagElem[itri] = 1;
+      }
+  );
 
- public:
-  std::vector<unsigned int> &tri_flg;
-  const std::vector<double> &vtx_xyz; // 3d points
-  const std::vector<unsigned int> &tri_vtx;
-  std::vector<dfm2::CNodeBVH2> bvhnodes;
-  std::vector<dfm2::CBV3_Sphere<double>> bvhnode_aabb;
-  std::vector<unsigned int> tri_adjtri;
-};
-
-int main() {
-  std::vector<double> vtx_xyz; // 3d points
-  std::vector<unsigned int> tri_vtx;
-
-  { // load input mesh
-    delfem2::Read_Ply(
-        vtx_xyz, tri_vtx,
-        std::filesystem::path(PATH_SOURCE_DIR) / ".." / ".." / "test_inputs" / "arm_16k.ply");
-    dfm2::Normalize_Points3(vtx_xyz, 2.0);
-    std::cout << "point_size: " << vtx_xyz.size() / 3 << std::endl;
-    std::cout << "triangle_size: " << tri_vtx.size() / 3 << std::endl;
-  }
-
-  std::vector<unsigned int> aFlagElem(tri_vtx.size() / 3, 0);
-
-  MyView viewer(
-      1.5,
-      aFlagElem,
-      vtx_xyz, tri_vtx);
+  // ----------------------
+  // opengl start from here
   dfm2::glfw::InitGLOld();
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();

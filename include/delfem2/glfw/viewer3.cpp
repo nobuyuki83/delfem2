@@ -91,6 +91,7 @@ static void glfw_callback_mouse_button(
         src, dir,
         (mP * mMV).data());
       pViewer3->mouse_press(src, dir);
+      for(const auto& func : pViewer3->mousepress_callbacks){ func(src,dir); }
     }
   }
   if (action == GLFW_RELEASE) { // "release callback"

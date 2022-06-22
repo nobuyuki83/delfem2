@@ -96,6 +96,7 @@ class CViewer3 {
   std::unique_ptr<ModelView> view_rotation;
   std::vector< std::function< void(int,int) >> keypress_callbacks;
   std::vector< std::function< void() >> camerachange_callbacks;
+  std::vector< std::function< void(const float[3], const float [3])>> mousepress_callbacks;
 };
 
 } // namespace delfem2
