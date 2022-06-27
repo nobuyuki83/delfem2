@@ -198,6 +198,10 @@ void delfem2::glfw::CViewer3::OpenWindow() {
   glfwSetScrollCallback(this->window, lcl::glfw_callback_scroll);
 }
 
+void delfem2::glfw::CViewer3::SetCurrentContext() {
+    glfwMakeContextCurrent(this->window);
+}
+
 void delfem2::glfw::CViewer3::DrawBegin_oldGL() const {
   ::glfwMakeContextCurrent(window);
   //::glClearColor(0.8f, 1.0f, 1.0f, 1.0f);

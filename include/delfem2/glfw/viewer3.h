@@ -39,6 +39,8 @@ class CViewer3 {
 
   virtual void OpenWindow();
 
+  virtual void SetCurrentContext();
+
   void ExitIfClosed() const;
 
   /**
