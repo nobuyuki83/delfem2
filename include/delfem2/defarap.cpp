@@ -512,6 +512,15 @@ void delfem2::CDef_Arap::Deform(
   }
   Mat.AddDia(1.0e-8);
 
+  // for(unsigned int icrs=0;icrs<Mat.val_crs_.size()/9;++icrs){
+  {
+    unsigned int icrs = 1352;
+    std::cout << icrs << std::endl;
+    std::cout << "   " << Mat.val_crs_[icrs*9+0] << " " << Mat.val_crs_[icrs*9+1] << " " << Mat.val_crs_[icrs*9+2] << std::endl;
+    std::cout << "   " << Mat.val_crs_[icrs*9+3] << " " << Mat.val_crs_[icrs*9+4] << " " << Mat.val_crs_[icrs*9+5] << std::endl;
+    std::cout << "   " << Mat.val_crs_[icrs*9+6] << " " << Mat.val_crs_[icrs*9+7] << " " << Mat.val_crs_[icrs*9+8] << std::endl;
+  }
+
   Mat.SetFixedBC(aBCFlag.data());
   setRHS_Zero(aRes1, aBCFlag, 0);
 

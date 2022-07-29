@@ -504,6 +504,7 @@ DFM2_INLINE bool delfem2::Read_WavefrontObjWithMaterialMixedElem(
   elem_vtx_nrm.clear();
   //
   group_names.clear();
+  group_names.push_back("default");
   group_elem_index.clear();
   group_elem_index.push_back(0);
   //
