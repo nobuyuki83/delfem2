@@ -52,4 +52,4 @@ void TestGjkSat3Test0(unsigned int nitr)
 	}
 }
 
-#endif //GEO_GJKSAT2_TEST_H_
+#endif //GEO_GJKSAT3_TEST_H_
