@@ -120,9 +120,10 @@ int main() {
       def0.Deform(
           aXYZ1, aQuat1,
           aXYZ0, aBCFlag);
-      def0.UpdateQuaternions_Svd(
+      dfm2::UpdateQuaternions_Svd(
           aQuat1,
-          aXYZ0, aXYZ1);
+          aXYZ0, aXYZ1,
+          def0.psup_ind, def0.psup);
       // -------------------------------
       DrawBegin_oldGL();
       delfem2::opengl::DrawAxis(1);
@@ -164,7 +165,7 @@ int main() {
     std::vector<double> aXYZ0, aXYZ1;
     std::vector<double> aQuat1;
     std::vector<int> aBCFlag;
-    delfem2::CDef_Arap def0;
+    delfem2::Deformer_Arap def0;
   } viewer;
   // --------------------
   dfm2::glfw::InitGLOld();

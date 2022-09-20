@@ -59,6 +59,7 @@ class CTexRGB {
   }
 
   virtual void InitGL();
+  virtual void UpdateGL(int xo, int yo, int w0, int h0);
 };
 
 // ----------------------------------

@@ -433,11 +433,11 @@ void delfem2::CDef_ArapEdge::Deform(
 // ===========================================================
 // below: implementation of CDef_Arap class
 
-void delfem2::CDef_Arap::Init(
+void delfem2::Deformer_Arap::Init(
     const std::vector<double> &aXYZ0,
     const std::vector<unsigned int> &aTri,
-    bool is_preconditioner_) {
-  this->is_preconditioner = is_preconditioner_;
+    bool is_preconditioner) {
+  this->is_preconditioner_ = is_preconditioner;
   const size_t np = aXYZ0.size() / 3;
   JArray_PSuP_MeshElem(
       psup_ind, psup,
@@ -450,14 +450,14 @@ void delfem2::CDef_Arap::Init(
         psup_ind1, psup1,
         psup_ind.data(), psup_ind.size(), psup.data());
     JArray_Sort(psup_ind1, psup1);
-    Mat.Initialize(
+    sparse_.Initialize(
         static_cast<unsigned int>(np), 3, true);
     assert(psup_ind1.size() == np + 1);
-    Mat.SetPattern(psup_ind1.data(), psup_ind1.size(),
-                   psup1.data(), psup1.size());
+    sparse_.SetPattern(psup_ind1.data(), psup_ind1.size(),
+                       psup1.data(), psup1.size());
   }
 
-  Precomp.resize(np * 9);
+  precomp_.resize(np * 9);
   for (unsigned int ip = 0; ip < np; ++ip) {
     const CVec3d Pi(aXYZ0.data() + ip * 3);
     CMat3d LM;
@@ -468,25 +468,24 @@ void delfem2::CDef_Arap::Init(
       LM += Mat3_CrossCross(v0);
     }
     CMat3d LMi = LM.Inverse();
-    LMi.CopyTo(Precomp.data() + ip * 9);
+    LMi.CopyTo(precomp_.data() + ip * 9);
   }
 
-  this->Prec.Clear();
-  if (is_preconditioner) {
-    this->Prec.SetPattern0(Mat);
+  this->precond_.Clear();
+  if (is_preconditioner_) {
+    this->precond_.SetPattern0(sparse_);
   }
 
 }
 
-void delfem2::CDef_Arap::Deform(
+void delfem2::Deformer_Arap::Deform(
     std::vector<double> &aXYZ1,
     std::vector<double> &aQuat1,
     const std::vector<double> &aXYZ0,
     const std::vector<int> &aBCFlag) {
   const size_t np = aXYZ0.size() / 3;
-  Mat.setZero();
-  this->aRes1.assign(np * 3, 0.0);
-  std::vector<unsigned int> tmp_buffer;
+  sparse_.setZero();
+  this->residual_.assign(np * 3, 0.0);
   for (unsigned int ip = 0; ip < np; ++ip) {
     std::vector<unsigned int> aIP;
     for (unsigned int ipsup = psup_ind[ip]; ipsup < psup_ind[ip + 1]; ++ipsup) {
@@ -496,59 +495,49 @@ void delfem2::CDef_Arap::Deform(
     std::vector<double> eM, eR;
     deflap::dWddW_ArapEnergy(
         eM, eR,
-        Precomp.data() + ip * 9,
+        precomp_.data() + ip * 9,
         aIP, aXYZ0, aXYZ1, aQuat1);
-    Mearge(Mat,
+    Mearge(sparse_,
            aIP.size(), aIP.data(),
            aIP.size(), aIP.data(),
            9, eM.data(),
-           tmp_buffer);
+           tmp_buffer_for_merge_);
     for (unsigned int iip = 0; iip < aIP.size(); ++iip) {
       const unsigned int jp0 = aIP[iip];
-      aRes1[jp0 * 3 + 0] += eR[iip * 3 + 0];
-      aRes1[jp0 * 3 + 1] += eR[iip * 3 + 1];
-      aRes1[jp0 * 3 + 2] += eR[iip * 3 + 2];
+      residual_[jp0 * 3 + 0] += eR[iip * 3 + 0];
+      residual_[jp0 * 3 + 1] += eR[iip * 3 + 1];
+      residual_[jp0 * 3 + 2] += eR[iip * 3 + 2];
     }
   }
-  Mat.AddDia(1.0e-8);
+  sparse_.AddDia(1.0e-8);
 
-  // for(unsigned int icrs=0;icrs<Mat.val_crs_.size()/9;++icrs){
-  {
-    unsigned int icrs = 1352;
-    std::cout << icrs << std::endl;
-    std::cout << "   " << Mat.val_crs_[icrs*9+0] << " " << Mat.val_crs_[icrs*9+1] << " " << Mat.val_crs_[icrs*9+2] << std::endl;
-    std::cout << "   " << Mat.val_crs_[icrs*9+3] << " " << Mat.val_crs_[icrs*9+4] << " " << Mat.val_crs_[icrs*9+5] << std::endl;
-    std::cout << "   " << Mat.val_crs_[icrs*9+6] << " " << Mat.val_crs_[icrs*9+7] << " " << Mat.val_crs_[icrs*9+8] << std::endl;
-  }
+  sparse_.SetFixedBC(aBCFlag.data());
+  setRHS_Zero(residual_, aBCFlag, 0);
 
-  Mat.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(aRes1, aBCFlag, 0);
-
-  aUpd1.resize(aRes1.size());
-  if (is_preconditioner) {
-    this->Prec.CopyValue(Mat);
-    this->Prec.Decompose();
-    const std::size_t n = np * 3;
-    std::vector<double> tmp0(n), tmp1(n);
-    aConvHist = Solve_PCG(
-        ViewAsVectorXd(aRes1),
-        ViewAsVectorXd(aUpd1),
-        ViewAsVectorXd(tmp0),
-        ViewAsVectorXd(tmp1),
-        1.0e-7, 300, Mat, Prec);
+  update_.resize(residual_.size());
+  tmp_vec0_.resize(residual_.size());
+  tmp_vec1_.resize(residual_.size());
+  if (is_preconditioner_) {
+    this->precond_.CopyValue(sparse_);
+    this->precond_.Decompose();
+    convergence_history = Solve_PCG(
+        ViewAsVectorXd(residual_),
+        ViewAsVectorXd(update_),
+        ViewAsVectorXd(tmp_vec0_),
+        ViewAsVectorXd(tmp_vec1_),
+        1.0e-7, 300, sparse_, precond_);
   } else {
     const std::size_t n = np * 3;
-    assert(aRes1.size() == n && aUpd1.size() == n);
-    std::vector<double> tmp0(n), tmp1(n);
-    aConvHist = Solve_CG(
-        ViewAsVectorXd(aRes1),
-        ViewAsVectorXd(aUpd1),
-        ViewAsVectorXd(tmp0),
-        ViewAsVectorXd(tmp1),
-        1.0e-7, 300, Mat);
+    assert(residual_.size() == n && update_.size() == n);
+    convergence_history = Solve_CG(
+        ViewAsVectorXd(residual_),
+        ViewAsVectorXd(update_),
+        ViewAsVectorXd(tmp_vec0_),
+        ViewAsVectorXd(tmp_vec1_),
+        1.0e-7, 300, sparse_);
   }
 
-  for (unsigned int i = 0; i < np * 3; ++i) { aXYZ1[i] -= aUpd1[i]; }
+  for (unsigned int i = 0; i < np * 3; ++i) { aXYZ1[i] -= update_[i]; }
   // ----
   /*
   for(int itr=0;itr<1;++itr){
@@ -559,10 +548,12 @@ void delfem2::CDef_Arap::Deform(
 
 }
 
-void delfem2::CDef_Arap::UpdateQuaternions_Svd(
+void delfem2::UpdateQuaternions_Svd(
     std::vector<double> &aQuat1,
     const std::vector<double> &aXYZ0,
-    const std::vector<double> &aXYZ1) const {
+    const std::vector<double> &aXYZ1,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup) {
   std::size_t np = aXYZ1.size() / 3;
   for (unsigned int ip = 0; ip < np; ++ip) {
     UpdateRotationsByMatchingCluster_SVD(
@@ -570,6 +561,107 @@ void delfem2::CDef_Arap::UpdateQuaternions_Svd(
         ip, aXYZ0, aXYZ1, psup_ind, psup);
   }
 }
+
+// ----------------------------------------------
+
+void delfem2::Deformer_Arap2::Init(
+    const std::vector<double> &aXYZ0,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &vtx_quaternion,
+    const std::vector<int> &dof_bcflag) {
+  const size_t np = aXYZ0.size() / 3;
+  JArray_PSuP_MeshElem(
+      psup_ind, psup,
+      aTri.data(), aTri.size() / 3, 3,
+      aXYZ0.size() / 3);
+  JArray_Sort(psup_ind, psup);
+
+  sparse_.Initialize(
+      static_cast<unsigned int>(np), 3, true);
+  assert(psup_ind.size() == np + 1);
+  sparse_.SetPattern(psup_ind.data(), psup_ind.size(),
+                     psup.data(), psup.size());
+
+  std::vector<double> eM(4*9);
+  {
+    CMat3d L1 = CMat3d::Identity();
+    L1.AddToScale(eM.data() + 0 * 9, +1.0);
+    L1.AddToScale(eM.data() + 3 * 9, +1.0);
+    L1.AddToScale(eM.data() + 1 * 9, -1.0);
+    L1.AddToScale(eM.data() + 2 * 9, -1.0);
+  }
+
+  sparse_.setZero();
+  for (unsigned int ip = 0; ip < np; ++ip) {
+    for (unsigned int ipsup = psup_ind[ip]; ipsup < psup_ind[ip + 1]; ++ipsup) {
+      unsigned int jp = psup[ipsup];
+      const unsigned int aIP[2] = {ip,jp};
+      Mearge(sparse_,
+             2, aIP,
+             2, aIP,
+             9, eM.data(),
+             tmp_buffer_for_merge_);
+    }
+  }
+  sparse_.AddDia(1.0e-5);
+  sparse_.SetFixedBC(dof_bcflag.data());
+
+  this->precond_.Clear();
+  this->precond_.SetPattern0(sparse_);
+  this->precond_.CopyValue(sparse_);
+  this->precond_.Decompose();
+}
+
+void delfem2::Deformer_Arap2::Deform(
+    std::vector<double> &aXYZ1,
+    std::vector<double> &aQuat1,
+    const std::vector<double> &aXYZ0,
+    const std::vector<int> &aBCFlag) {
+  const size_t np = aXYZ0.size() / 3;
+  this->residual_.assign(np * 3, 0.0);
+  for (unsigned int ip = 0; ip < np; ++ip) {
+    const CVec3d Pi(aXYZ0.data() + ip * 3);
+    const CVec3d pi(aXYZ1.data() + ip * 3);
+    const CMat3d Ri = CMat3d::Quat(aQuat1.data() + ip * 4);
+    CVec3d r(0,0,0);
+    for (unsigned int ipsup = psup_ind[ip]; ipsup < psup_ind[ip + 1]; ++ipsup) {
+      unsigned int jp = psup[ipsup];
+      const CMat3d Rj = CMat3d::Quat(aQuat1.data() + jp * 4);
+      const CVec3d Eij = CVec3d(aXYZ0.data() + jp * 3) - Pi;
+      const CVec3d eij = CVec3d(aXYZ1.data() + jp * 3) - pi;
+      r += (2*eij - (Ri+Rj)*Eij);
+    }
+    residual_[ip * 3 + 0] = r[0];
+    residual_[ip * 3 + 1] = r[1];
+    residual_[ip * 3 + 2] = r[2];
+  }
+  setRHS_Zero(residual_, aBCFlag, 0);
+
+  update_.resize(residual_.size());
+  tmp_vec0_.resize(residual_.size());
+  tmp_vec1_.resize(residual_.size());
+
+  convergence_history = Solve_PCG(
+      ViewAsVectorXd(residual_),
+      ViewAsVectorXd(update_),
+      ViewAsVectorXd(tmp_vec0_),
+      ViewAsVectorXd(tmp_vec1_),
+      1.0e-7, 300, sparse_, precond_);
+
+  /*
+  convergence_history = Solve_CG(
+      ViewAsVectorXd(residual_),
+      ViewAsVectorXd(update_),
+      ViewAsVectorXd(tmp_vec0_),
+      ViewAsVectorXd(tmp_vec1_),
+      1.0e-7, 300, sparse_);
+      */
+
+  for (unsigned int i = 0; i < np * 3; ++i) { aXYZ1[i] += update_[i]; }
+}
+
+
+// ----------------------------------------------
 
 DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster_Linear(
     std::vector<double> &aQuat1,

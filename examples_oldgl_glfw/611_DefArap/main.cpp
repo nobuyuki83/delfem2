@@ -103,30 +103,28 @@ void Draw_BCFlag(
 
 // --------------------------------------------------
 
-int main(
-    [[maybe_unused]] int argc,
-    [[maybe_unused]] char *argv[]) {
-  std::vector<unsigned int> aTri;
-  std::vector<double> aXYZ0;
-  std::vector<int> aBCFlag;
+int main() {
+  std::vector<unsigned int> tri_vtx;
+  std::vector<double> vtx_xyz_ini;
+  std::vector<int> dof_bcflag;
   {
     dfm2::MeshTri3D_CylinderClosed(
-        aXYZ0, aTri,
+        vtx_xyz_ini, tri_vtx,
         0.2, 1.6,
         32, 32);
-    const size_t np = aXYZ0.size() / 3;
-    aBCFlag.assign(np * 3, 0);
+    const size_t np = vtx_xyz_ini.size() / 3;
+    dof_bcflag.assign(np * 3, 0);
     for (unsigned int ip = 0; ip < np; ++ip) {
-      double y0 = aXYZ0[ip * 3 + 1];
+      double y0 = vtx_xyz_ini[ip * 3 + 1];
       if (y0 < -0.65) {
-        aBCFlag[ip * 3 + 0] = 1;
-        aBCFlag[ip * 3 + 1] = 1;
-        aBCFlag[ip * 3 + 2] = 1;
+        dof_bcflag[ip * 3 + 0] = 1;
+        dof_bcflag[ip * 3 + 1] = 1;
+        dof_bcflag[ip * 3 + 2] = 1;
       }
       if (y0 > +0.65) {
-        aBCFlag[ip * 3 + 0] = 2;
-        aBCFlag[ip * 3 + 1] = 2;
-        aBCFlag[ip * 3 + 2] = 2;
+        dof_bcflag[ip * 3 + 0] = 2;
+        dof_bcflag[ip * 3 + 1] = 2;
+        dof_bcflag[ip * 3 + 2] = 2;
       }
     }
   }
@@ -136,16 +134,53 @@ int main(
   viewer.OpenWindow();
   delfem2::opengl::setSomeLighting();
 
+  {
+    const unsigned int np = vtx_xyz_ini.size() / 3;
+    std::vector<double> vtx_xyz_def = vtx_xyz_ini;
+    std::vector<double> vtx_quaternion(np * 4);
+    for (unsigned int ip = 0; ip < np; ++ip) {
+      dfm2::Quat_Identity(vtx_quaternion.data() + 4 * ip);
+    }
+    dfm2::Deformer_Arap2 def;
+    def.Init(vtx_xyz_ini, tri_vtx, vtx_quaternion, dof_bcflag);
+
+    int iframe = 0;
+    glfwSetWindowTitle(viewer.window, "hoge");
+    for (; iframe < 200; ++iframe) {
+      SetPositionAtFixedBoundary(
+          vtx_xyz_def,
+          iframe, vtx_xyz_ini, dof_bcflag);
+      for(int itr=0;itr<3;++itr) {
+        def.Deform(
+            vtx_xyz_def, vtx_quaternion,
+            vtx_xyz_ini, dof_bcflag);
+        UpdateRotationsByMatchingCluster_SVD_Parallel(
+            vtx_quaternion,
+            vtx_xyz_ini, vtx_xyz_def,
+            def.psup_ind, def.psup);
+      }
+      // --------------------
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay_Mesh(vtx_xyz_ini, vtx_xyz_def, tri_vtx);
+      dfm2::opengl::Draw_QuaternionsCoordinateAxes(vtx_xyz_def, vtx_quaternion, 0.04);
+      Draw_BCFlag(vtx_xyz_def, dof_bcflag);
+      viewer.SwapBuffers();
+      glfwPollEvents();
+      viewer.ExitIfClosed();
+    }  // end linear displacement only
+  }
+
   for (unsigned int itr = 0; itr < 2; ++itr) {
-    std::vector<double> aXYZ1 = aXYZ0;
-    std::vector<double> aQuat1(aXYZ0.size() / 3 * 4);
-    for (unsigned int ip = 0; ip < aXYZ0.size() / 3; ++ip) {
-      dfm2::Quat_Identity(aQuat1.data() + 4 * ip);
+    const unsigned int np = vtx_xyz_ini.size() / 3;
+    std::vector<double> vtx_xyz_def = vtx_xyz_ini;
+    std::vector<double> vtx_quaternion(np * 4);
+    for (unsigned int ip = 0; ip < np; ++ip) {
+      dfm2::Quat_Identity(vtx_quaternion.data() + 4 * ip);
     }
     int iframe = 0;
     { // arap edge linear disponly
-      dfm2::CDef_Arap def0;
-      def0.Init(aXYZ0, aTri, false);
+      dfm2::Deformer_Arap def0;
+      def0.Init(vtx_xyz_ini, tri_vtx, false);
       if (itr == 0) {
         glfwSetWindowTitle(viewer.window, "(1) ARAP without preconditioner");
       } else {
@@ -153,33 +188,34 @@ int main(
       }
       for (; iframe < 200; ++iframe) {
         SetPositionAtFixedBoundary(
-            aXYZ1,
-            iframe, aXYZ0, aBCFlag);
+            vtx_xyz_def,
+            iframe, vtx_xyz_ini, dof_bcflag);
         def0.Deform(
-            aXYZ1, aQuat1,
-            aXYZ0, aBCFlag);
+            vtx_xyz_def, vtx_quaternion,
+            vtx_xyz_ini, dof_bcflag);
         if (itr == 0) {
-          def0.UpdateQuaternions_Svd(
-              aQuat1,
-              aXYZ0, aXYZ1);
+          dfm2::UpdateQuaternions_Svd(
+              vtx_quaternion,
+              vtx_xyz_ini, vtx_xyz_def,
+              def0.psup_ind, def0.psup);
         } else {
           UpdateRotationsByMatchingCluster_SVD_Parallel(
-              aQuat1,
-              aXYZ0, aXYZ1, def0.psup_ind, def0.psup);
+              vtx_quaternion,
+              vtx_xyz_ini, vtx_xyz_def, def0.psup_ind, def0.psup);
         }
         // --------------------
         viewer.DrawBegin_oldGL();
-        myGlutDisplay_Mesh(aXYZ0, aXYZ1, aTri);
-        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1, aQuat1, 0.04);
-        Draw_BCFlag(aXYZ1, aBCFlag);
+        myGlutDisplay_Mesh(vtx_xyz_ini, vtx_xyz_def, tri_vtx);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(vtx_xyz_def, vtx_quaternion, 0.04);
+        Draw_BCFlag(vtx_xyz_def, dof_bcflag);
         viewer.SwapBuffers();
         glfwPollEvents();
         viewer.ExitIfClosed();
       }
     }  // end linear displacement only
     {  // arap edge linear displacement only
-      dfm2::CDef_Arap def0;
-      def0.Init(aXYZ0, aTri, true);
+      dfm2::Deformer_Arap def0;
+      def0.Init(vtx_xyz_ini, tri_vtx, true);
       if (itr == 0) {
         glfwSetWindowTitle(viewer.window, "(2) ARAP with preconditioner");
       } else {
@@ -187,25 +223,25 @@ int main(
       }
       for (; iframe < 400; ++iframe) {
         SetPositionAtFixedBoundary(
-            aXYZ1,
-            iframe, aXYZ0, aBCFlag);
+            vtx_xyz_def,
+            iframe, vtx_xyz_ini, dof_bcflag);
         def0.Deform(
-            aXYZ1, aQuat1,
-            aXYZ0, aBCFlag);
+            vtx_xyz_def, vtx_quaternion,
+            vtx_xyz_ini, dof_bcflag);
         if (itr == 0) {
-          def0.UpdateQuaternions_Svd(
-              aQuat1,
-              aXYZ0, aXYZ1);
+          dfm2::UpdateQuaternions_Svd(
+              vtx_quaternion,
+              vtx_xyz_ini, vtx_xyz_def, def0.psup_ind, def0.psup);
         } else {
           UpdateRotationsByMatchingCluster_SVD_Parallel(
-              aQuat1,
-              aXYZ0, aXYZ1, def0.psup_ind, def0.psup);
+              vtx_quaternion,
+              vtx_xyz_ini, vtx_xyz_def, def0.psup_ind, def0.psup);
         }
         // --------------------
         viewer.DrawBegin_oldGL();
-        myGlutDisplay_Mesh(aXYZ0, aXYZ1, aTri);
-        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1, aQuat1, 0.04);
-        Draw_BCFlag(aXYZ1, aBCFlag);
+        myGlutDisplay_Mesh(vtx_xyz_ini, vtx_xyz_def, tri_vtx);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(vtx_xyz_def, vtx_quaternion, 0.04);
+        Draw_BCFlag(vtx_xyz_def, dof_bcflag);
         viewer.SwapBuffers();
         glfwPollEvents();
         viewer.ExitIfClosed();

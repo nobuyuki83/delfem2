@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <random>
 #if defined(_WIN32) // windows
 #  define NOMINMAX   // to remove min,max macro
 #  include <windows.h>  // this should come before glfw3.h
@@ -88,55 +89,58 @@ void Draw_BCFlag(
 // --------------------------------------------------
 
 int main() {
-  dfm2::glfw::CViewer3 viewer;
-  //
-  dfm2::glfw::InitGLOld();
-  viewer.OpenWindow();
-  delfem2::opengl::setSomeLighting();
-  //
-  std::vector<unsigned int> aTri;
-  std::vector<double> aXYZ0;
-  std::vector<int> aBCFlag;
+
+  std::vector<unsigned int> tri_vtx;
+  std::vector<double> vtx_xyz_ini;
+  std::vector<int> dof_bcflag;
   {
     dfm2::MeshTri3D_CylinderClosed(
-        aXYZ0, aTri,
+        vtx_xyz_ini, tri_vtx,
         0.2, 1.6,
         16, 16);
     {
-      const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
-      aBCFlag.assign(np * 3, 0);
+      const auto np = static_cast<unsigned int>(vtx_xyz_ini.size() / 3);
+      dof_bcflag.assign(np * 3, 0);
       for (unsigned int ip = 0; ip < np; ++ip) {
-        double y0 = aXYZ0[ip * 3 + 1];
+        double y0 = vtx_xyz_ini[ip * 3 + 1];
         if (y0 < -0.65) {
-          aBCFlag[ip * 3 + 0] = 1;
-          aBCFlag[ip * 3 + 1] = 1;
-          aBCFlag[ip * 3 + 2] = 1;
+          dof_bcflag[ip * 3 + 0] = 1;
+          dof_bcflag[ip * 3 + 1] = 1;
+          dof_bcflag[ip * 3 + 2] = 1;
         }
         if (y0 > +0.65) {
-          aBCFlag[ip * 3 + 0] = 2;
-          aBCFlag[ip * 3 + 1] = 2;
-          aBCFlag[ip * 3 + 2] = 2;
+          dof_bcflag[ip * 3 + 0] = 2;
+          dof_bcflag[ip * 3 + 1] = 2;
+          dof_bcflag[ip * 3 + 2] = 2;
         }
       }
     }
   }
-  std::vector<double> aXYZ1 = aXYZ0;
+  std::vector<double> vtx_xyz_def = vtx_xyz_ini;
 
+  // ---------------
+
+  dfm2::glfw::CViewer3 viewer;
+  dfm2::glfw::InitGLOld();
+  viewer.OpenWindow();
+  delfem2::opengl::setSomeLighting();
+  //
   for (unsigned int itr = 0; itr < 3; ++itr) {
     const double weight_bc = 100.0;
     int iframe = 0;
     { // arap edge linear disponly
-      dfm2::CDef_ArapEdgeLinearDisponly def0(aXYZ0, aTri, weight_bc, aBCFlag);
+      dfm2::CDef_ArapEdgeLinearDisponly def0(vtx_xyz_ini, tri_vtx, weight_bc, dof_bcflag);
       glfwSetWindowTitle(viewer.window, "(1) ARAP Edge Linear Disponly");
       for (; iframe < 50; ++iframe) {
-        SetPositionAtFixedBoundary(aXYZ1,
-                                   iframe, aXYZ0, aBCFlag);
-        def0.Deform(aXYZ1,
-                    aXYZ0);
+        SetPositionAtFixedBoundary(
+            vtx_xyz_def,
+            iframe, vtx_xyz_ini, dof_bcflag);
+        def0.Deform(vtx_xyz_def,
+                    vtx_xyz_ini);
         // --------------------
         viewer.DrawBegin_oldGL();
-        myGlutDisplay_Mesh(aXYZ0, aXYZ1, aTri);
-        Draw_BCFlag(aXYZ1, aBCFlag);
+        myGlutDisplay_Mesh(vtx_xyz_ini, vtx_xyz_def, tri_vtx);
+        Draw_BCFlag(vtx_xyz_def, dof_bcflag);
         viewer.SwapBuffers();
         glfwPollEvents();
         viewer.ExitIfClosed();
@@ -145,21 +149,22 @@ int main() {
     // -------------------------------------------------------
     { // begin lienar disprot without preconditioner
       glfwSetWindowTitle(viewer.window, "(2) Arap Edge Linear Disprot without Prec");
-      unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
+      auto np = static_cast<unsigned int>(vtx_xyz_ini.size() / 3);
       dfm2::CDef_ArapEdge def1;
-      def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, false);
+      def1.Init(vtx_xyz_ini, tri_vtx, weight_bc, dof_bcflag, false);
       std::vector<double> aQuat(np * 4); // array of quaternion
       for (; iframe < 100; ++iframe) {
         for (unsigned int ip = 0; ip < np; ++ip) { dfm2::Quat_Identity(aQuat.data() + ip * 4); } // Initialize
-        SetPositionAtFixedBoundary(aXYZ1,
-                                   iframe, aXYZ0, aBCFlag);
-        def1.Deform(aXYZ1, aQuat,
-                    aXYZ0);
+        SetPositionAtFixedBoundary(
+            vtx_xyz_def,
+            iframe, vtx_xyz_ini, dof_bcflag);
+        def1.Deform(vtx_xyz_def, aQuat,
+                    vtx_xyz_ini);
         // ------
         viewer.DrawBegin_oldGL();
-        myGlutDisplay_Mesh(aXYZ0, aXYZ1, aTri);
-        Draw_BCFlag(aXYZ1, aBCFlag);
-        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1, aQuat, 0.04);
+        myGlutDisplay_Mesh(vtx_xyz_ini, vtx_xyz_def, tri_vtx);
+        Draw_BCFlag(vtx_xyz_def, dof_bcflag);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(vtx_xyz_def, aQuat, 0.04);
         viewer.SwapBuffers();
         glfwPollEvents();
         viewer.ExitIfClosed();
@@ -168,26 +173,26 @@ int main() {
     // -------------------------------
     { // begin lienar disprot with preconditioner
       glfwSetWindowTitle(viewer.window, "(3) Arap Edge Linear Disprot with Prec");
-      const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
+      const auto np = static_cast<unsigned int>(vtx_xyz_ini.size() / 3);
       dfm2::CDef_ArapEdge def1;
-      def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
+      def1.Init(vtx_xyz_ini, tri_vtx, weight_bc, dof_bcflag, true);
       std::vector<double> aQuat(np * 4);
       for (; iframe < 200; ++iframe) {
         for (unsigned int ip = 0; ip < np; ++ip) { dfm2::Quat_Identity(aQuat.data() + ip * 4); } // initialize
         for (unsigned int i = 0; i < np * 3; ++i) { // adding noise for debuggng purpose
-          aXYZ1[i] += 0.02 * (double) rand() / (RAND_MAX + 1.0) - 0.01;
+          vtx_xyz_def[i] += 0.02 * (double) rand() / (RAND_MAX + 1.0) - 0.01;
         }
         SetPositionAtFixedBoundary(
-            aXYZ1,
-            iframe, aXYZ0, aBCFlag);
+            vtx_xyz_def,
+            iframe, vtx_xyz_ini, dof_bcflag);
         def1.Deform(
-            aXYZ1, aQuat,
-            aXYZ0);
+            vtx_xyz_def, aQuat,
+            vtx_xyz_ini);
         // ------
         viewer.DrawBegin_oldGL();
-        myGlutDisplay_Mesh(aXYZ0, aXYZ1, aTri);
-        Draw_BCFlag(aXYZ1, aBCFlag);
-        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1, aQuat, 0.04);
+        myGlutDisplay_Mesh(vtx_xyz_ini, vtx_xyz_def, tri_vtx);
+        Draw_BCFlag(vtx_xyz_def, dof_bcflag);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(vtx_xyz_def, aQuat, 0.04);
         viewer.SwapBuffers();
         glfwPollEvents();
         viewer.ExitIfClosed();
@@ -196,26 +201,26 @@ int main() {
     // -------------------------------
     { // begin nonlienar disprot with preconditioner
       glfwSetWindowTitle(viewer.window, "(4) Arap Edge NonLinear Disprot with Prec");
-      const unsigned int np = static_cast<unsigned int>(aXYZ0.size() / 3);
+      const auto np = static_cast<unsigned int>(vtx_xyz_ini.size() / 3);
       dfm2::CDef_ArapEdge def1;
-      def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
-      std::vector<double> aQuat(np * 4);
-      for (unsigned int ip = 0; ip < np; ++ip) { dfm2::Quat_Identity(aQuat.data() + ip * 4); }
+      def1.Init(vtx_xyz_ini, tri_vtx, weight_bc, dof_bcflag, true);
+      std::vector<double> vtx_quaternion(np * 4);
+      for (unsigned int ip = 0; ip < np; ++ip) { dfm2::Quat_Identity(vtx_quaternion.data() + ip * 4); }
       for (; iframe < 400; ++iframe) {
         for (unsigned int i = 0; i < np * 3; ++i) { // adding noise for debuggng purpose
-          aXYZ1[i] += 0.02 * (double) rand() / (RAND_MAX + 1.0) - 0.01;
+          vtx_xyz_def[i] += 0.02 * (double) rand() / (RAND_MAX + 1.0) - 0.01;
         }
         SetPositionAtFixedBoundary(
-            aXYZ1,
-            iframe, aXYZ0, aBCFlag);
+            vtx_xyz_def,
+            iframe, vtx_xyz_ini, dof_bcflag);
         def1.Deform(
-            aXYZ1, aQuat,
-            aXYZ0);
+            vtx_xyz_def, vtx_quaternion,
+            vtx_xyz_ini);
         // ------
         viewer.DrawBegin_oldGL();
-        myGlutDisplay_Mesh(aXYZ0, aXYZ1, aTri);
-        Draw_BCFlag(aXYZ1, aBCFlag);
-        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1, aQuat, 0.04);
+        myGlutDisplay_Mesh(vtx_xyz_ini, vtx_xyz_def, tri_vtx);
+        Draw_BCFlag(vtx_xyz_def, dof_bcflag);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(vtx_xyz_def, vtx_quaternion, 0.04);
         viewer.SwapBuffers();
         glfwPollEvents();
         viewer.ExitIfClosed();

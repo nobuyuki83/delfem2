@@ -39,30 +39,30 @@ DFM2_INLINE void UpdateRotationsByMatchingCluster_SVD(
  * @brief Edge-based As-Rigid-As-Possible shape deformation wihtout rotation
  */
 class CDef_ArapEdgeLinearDisponly {
-public:
+ public:
   CDef_ArapEdgeLinearDisponly(
-      const std::vector<double>& aXYZ0,
-      const std::vector<unsigned int>& aTri,
+      const std::vector<double> &aXYZ0,
+      const std::vector<unsigned int> &aTri,
       double weight_bc0,
-      std::vector<int>  aBCFlag0);
+      std::vector<int> aBCFlag0);
   void Deform(
-      std::vector<double>& aXYZ1,
-      const std::vector<double>& aXYZ0);
+      std::vector<double> &aXYZ1,
+      const std::vector<double> &aXYZ0);
   void MatVec(
-      double* y,
+      double *y,
       double alpha,
-      const double* vec,
+      const double *vec,
       double beta) const;
-private:
+ private:
   void MakeLinearSystem(
-      double* aRhs,
-      const double* aXYZ0,
-      const double* aXYZ1) const;
+      double *aRhs,
+      const double *aXYZ0,
+      const double *aXYZ1) const;
   void JacobiTVecTmp(
-      double*y ,
+      double *y,
       double alpha,
       double beta) const;
-public:
+ public:
   std::vector<unsigned int> psup_ind;
   std::vector<unsigned int> psup;
   const double weight_bc;
@@ -72,41 +72,40 @@ public:
   mutable std::vector<double> vec_tmp;
 };
 
-
 /**
  * @brief Edge-based As-Rigid-As-Possible shape deformation
  */
 class CDef_ArapEdge {
-public:
-  CDef_ArapEdge(){}
+ public:
+  CDef_ArapEdge() {}
   void Init(
-      const std::vector<double>& aXYZ0,
-      const std::vector<unsigned int>& aTri,
+      const std::vector<double> &aXYZ0,
+      const std::vector<unsigned int> &aTri,
       double weight_bc0,
-      const std::vector<int>& aBCFlag,
+      const std::vector<int> &aBCFlag,
       bool is_preconditioner);
   void Deform(
-      std::vector<double>& aXYZ1,
-      std::vector<double>& aQuat,
-      const std::vector<double>& aXYZ0);
+      std::vector<double> &aXYZ1,
+      std::vector<double> &aQuat,
+      const std::vector<double> &aXYZ0);
   void MatVec(
-      double* y,
+      double *y,
       double alpha,
-      const double* vec,
+      const double *vec,
       double beta) const;
-  void SolvePrecond(double* v) const;
-private:
+  void SolvePrecond(double *v) const;
+ private:
   void JacobiTVecTmp(
-      double*y,
+      double *y,
       double alpha,
       double beta) const;
   void MakeLinearSystem(
-      double* aRhs,
-      const double* aXYZ0,
-      const double* aXYZ1,
-      const double* aQuat);
+      double *aRhs,
+      const double *aXYZ0,
+      const double *aXYZ1,
+      const double *aQuat);
   void MakePreconditionerJacobi();
-public:
+ public:
   std::vector<unsigned int> psup_ind, psup;
   double weight_bc;
   std::vector<int> aBCFlag;
@@ -119,34 +118,67 @@ public:
 
 // =============================================
 
+void UpdateQuaternions_Svd(
+    std::vector<double> &vtx_quaternion,
+    const std::vector<double> &vtx_xyz_ini,
+    const std::vector<double> &vtx_xyz_def,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup);
+
 /**
  * @brief As-Rigid-As-Possible shape deformation
  */
-class CDef_Arap {
-public:
-  CDef_Arap(){}
+class Deformer_Arap {
+ public:
+  Deformer_Arap() {}
   void Init(
-      const std::vector<double>& aXYZ0,
-      const std::vector<unsigned int>& aTri,
+      const std::vector<double> &vtx_xyz_ini,
+      const std::vector<unsigned int> &tri_vtx,
       bool is_preconditioner);
   void Deform(
-      std::vector<double>& aXYZ1,
-      std::vector<double>& aQuat,
-      const std::vector<double>& aXYZ0,
-      const std::vector<int>& aBCFlag);
-  void UpdateQuaternions_Svd(
-      std::vector<double>& aQuat1,
-      const std::vector<double>& aXYZ0,
-      const std::vector<double>& aXYZ1) const;
-public:
-  mutable std::vector<double> aConvHist;
+      std::vector<double> &vtx_xyz_def,
+      std::vector<double> &vtx_quaternion,
+      const std::vector<double> &vtx_xyz_ini,
+      const std::vector<int> &aBCFlag);
+ public:
+  mutable std::vector<double> convergence_history;
   std::vector<unsigned int> psup_ind, psup;
-private:
-  bool is_preconditioner;
-  std::vector<double> Precomp;
-  CMatrixSparse<double> Mat;
-  std::vector<double> aRes1, aUpd1;
-  CPreconditionerILU<double> Prec;
+ private:
+  bool is_preconditioner_; // use preconditioner or not
+  std::vector<double> precomp_; // size: np * 9, precomputed component of sparse
+  CMatrixSparse<double> sparse_;
+  std::vector<double> residual_, update_;
+  std::vector<double> tmp_vec0_, tmp_vec1_;
+  std::vector<unsigned int> tmp_buffer_for_merge_;
+  CPreconditionerILU<double> precond_;
+};
+
+/**
+ * @brief As-Rigid-As-Possible shape deformation
+ */
+class Deformer_Arap2 {
+ public:
+  Deformer_Arap2() {}
+  void Init(
+      const std::vector<double> &vtx_xyz_ini,
+      const std::vector<unsigned int> &tri_vtx,
+      const std::vector<double> &vtx_quaternion,
+      const std::vector<int> &dof_bcflag);
+  void Deform(
+      std::vector<double> &vtx_xyz_def,
+      std::vector<double> &vtx_quaternion,
+      const std::vector<double> &vtx_xyz_ini,
+      const std::vector<int> &aBCFlag);
+ public:
+  mutable std::vector<double> convergence_history;
+  std::vector<unsigned int> psup_ind, psup;
+ private:
+  std::vector<double> precomp_;
+  CMatrixSparse<double> sparse_;
+  std::vector<double> residual_, update_;
+  std::vector<double> tmp_vec0_, tmp_vec1_;
+  std::vector<unsigned int> tmp_buffer_for_merge_;
+  CPreconditionerILU<double> precond_;
 };
 
 } // namespace delfem2
